@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    <div id="app"></div>
+  </body>
+
+  <script>
+  import Vue from 'vue';
+  import Test from './test';
+
+  const app = new Vue(Test).$mount('#app');
+
+  app.text = "Electron Forge with Vue.js!";
+
+  </script>
+</html>
