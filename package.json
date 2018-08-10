@@ -50,6 +50,7 @@
     "electron-compile": "^6.4.3",
     "electron-devtools-installer": "^2.2.4",
     "electron-squirrel-startup": "^1.0.0",
+    "socket.io": "^2.1.1",
     "vue": "^2.5.17"
   },
   "devDependencies": {
