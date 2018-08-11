@@ -19,7 +19,9 @@ export default class CompanionAPI {
 
     static async [Actions.GET_ACCOUNT](request, vue) {
         //return {id:request.id, result:PermissionService.identityFromPermissions(request.payload.origin)};
-        return vue.$refs.accountReqModal.show();
+        let response= await vue.$refs.accountReqModal.show();
+        console.log (response);
+        return response;
     }
 
 }

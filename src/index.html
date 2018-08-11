@@ -17,22 +17,28 @@
 </head>
 
 <body class="text-center">
-    <div id="app">
- 
-</div>
-        <script>
-        import Vue from 'vue';
+
+
+    <div class="main" id="app">
+        <router-view name="header"></router-view>
+        <router-view></router-view>
+    </div>
+
+    <script>
+        import Vue from 'vue/dist/vue.js';
         import BootstrapVue from 'bootstrap-vue';
-        
+        import VueRouter from 'vue-router';
+        import router from './router/index.js';
+
         Vue.use(BootstrapVue);
-        import App from './app';
-        
-      
-        const app = new Vue(App).$mount('#app');
-      
+        Vue.use(VueRouter);
+        console.log(router);
+        const app = new Vue({
+            router
+        }).$mount('#app');
+
         //app.text = "BitShares Companion";
-      
-        </script>
+    </script>
 </body>
 
 </html>

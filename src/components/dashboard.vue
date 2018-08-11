@@ -34,7 +34,7 @@ import NodeSelect from "./node-select";
 import Balances from "./balances";
 
 export default {
-  name: "app",
+  name: "dashboard",
   data() {
     return {
       text: "",

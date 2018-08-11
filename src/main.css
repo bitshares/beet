@@ -29,8 +29,10 @@ body {
 .main {
     width: 100%;
     max-width: 350px;
-    margin: auto;
-    
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
 }
 
 .btn:focus {
