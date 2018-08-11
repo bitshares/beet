@@ -1,7 +1,7 @@
-//import CompanionAPI from '../lib/CompanionAPI';
+import CompanionAPI from '../lib/CompanionAPI';
 
 let io = null;
-
+let vueInst=null;
 const socketHandler = (socket) => {
 
     // TODO: Testing the event system.
@@ -16,12 +16,12 @@ const socketHandler = (socket) => {
 
     // When something connects we automatically
     // notify it of a successful connection
-    socket.emit('connected');
-
+    socket.emit('connected');    
     // All authenticated api requests pass through the 'api' route.
     socket.on('api', async request => {
-        console.log('api req', request);
-  //      socket.emit('api', await ApiService.handler(Object.assign(request.data, {plugin:request.plugin})));
+        let req=JSON.parse(request);
+        console.log(req);
+        socket.emit('api', await CompanionAPI.handler(Object.assign(req.data, {plugin:req.plugin}),vueInst));
     });
 
     socket.on('disconnect', () => {
@@ -31,14 +31,16 @@ const socketHandler = (socket) => {
 
 export default class CompanionServer {
 
-    static initialize(){
+    static initialize(vue){
+        vueInst=vue;
         const server = window.require('http').createServer();
         server.listen(60555, 'localhost');
         io = window.require('socket.io').listen(server);
+        console.log('Listening');
     }
 
     static open(){
-        const namespace = io.of(`/bitsharescompanion`);
+        const namespace = io.of(`/`);
         namespace.on('connection', socket => {
             socketHandler(socket);
         })
@@ -46,7 +48,7 @@ export default class CompanionServer {
 
     static close(){
         // Getting namespace
-        const socket = io.of(`/scatter`);
+        const socket = io.of(`/`);
 
         // Disconnecting all active connections to this namespace
         Object.keys(socket.connected).map(socketId => {
@@ -58,7 +60,7 @@ export default class CompanionServer {
 
         // Deleting the namespace from the array of
         // available namespaces for connections
-        delete io.nsps[`/bitsharescompanion`];
+        delete io.nsps[`/`];
     }
 
 }

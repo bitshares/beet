@@ -47,6 +47,8 @@
     }
   },
   "dependencies": {
+    "bitsharesjs": "^1.7.10",
+    "bootstrap-vue": "^2.0.0-rc.11",
     "electron-compile": "^6.4.3",
     "electron-devtools-installer": "^2.2.4",
     "electron-squirrel-startup": "^1.0.0",
