@@ -52,6 +52,7 @@
     "electron-compile": "^6.4.3",
     "electron-devtools-installer": "^2.2.4",
     "electron-squirrel-startup": "^1.0.0",
+    "secure-ls": "^1.2.1",
     "socket.io": "^2.1.1",
     "vue": "^2.5.17",
     "vue-router": "^3.0.1",

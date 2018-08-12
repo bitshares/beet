@@ -1,55 +1,105 @@
 <template>
-     <div class="main">
-        <div class="top">
-            <div class="row">
-                <div class="col-12 d-flex">
-                    <img class="" src="img/bitshares.png" alt="" width="56" height="56">
-                    <h4 class="h4 font-weight-normal align-self-center">BitShares Companion</h4>
-                </div>
-            </div>
-        </div>
         <div class="bottom ">
 
             <div class="row mb-2">
                 <div class="col-12 text-center account py-2">
-                    clockwork (1.2.12345)
+                    {{this.$root.$data.wallet.accountName}} ({{this.$root.$data.wallet.accountID}})
                 </div>
             </div>
             <Balances ref="balancetable"></Balances>
-            <NodeSelect  @first-connect="getBalances"></NodeSelect>
-                
-        </div>
-        
-        <b-modal id="accountRequest" ref="accountReqModal" title="Account Details Request">
-            The page/app <strong>'BitShares Companion-enabled app'</strong> is requesting to access your account ID.<br/>
+            <NodeSelect  @first-connect="getBalances" ref="apinode"></NodeSelect>
+             
+        <b-modal id="accountRequest" ref="accountReqModal" hide-footer title="Account Details Request">
+            The page/app <strong>'{{this.incoming.origin}}'</strong> is requesting to access your account ID.<br/>
                     <br/>
                     Do you want to allow access?
+                    <b-btn class="mt-3" variant="success" block @click="allowAccess">Allow</b-btn>
+                    <b-btn class="mt-1" variant="danger" block @click="denyAccess">Deny</b-btn>
         </b-modal>
-    </div>
+        <b-modal id="transactionRequest" ref="transactionReqModal" hide-footer title="Transaction Request">
+            The page/app
+                    <strong>'{{this.incoming.origin}}'</strong> has submitted the following transaction.
+                    <br/>
+                    <br/>
+                    <pre class="text-left"><code>{{this.incoming.operation}}</code></pre>
+                     Do you want to execute it?
+                    <b-btn class="mt-3" variant="success" block @click="acceptTx">Sign &amp; Broadcast</b-btn>
+                    <b-btn class="mt-1" variant="danger" block @click="rejectTx">Ignore</b-btn>
+        </b-modal>
+        </div>
+        
 </template>
 
 <script>
-import CompanionServer from "./lib/CompanionServer";
+import CompanionServer from "../lib/CompanionServer";
 import NodeSelect from "./node-select";
 import Balances from "./balances";
+import {PrivateKey, TransactionHelper, Aes, TransactionBuilder} from "bitsharesjs";
 
 export default {
   name: "dashboard",
   data() {
     return {
       text: "",
-      api: {}
+      api: {},
+      incoming: ""
     };
   },
   components: { NodeSelect, Balances },
   mounted() {
     CompanionServer.initialize(this);
     CompanionServer.open();
+    console.log(this.$root.$data.wallet);
   },
   methods: {
     getBalances: function() {
       console.log("Called from first connect");
       this.$refs.balancetable.getBalances();
+    },
+    requestAccess: function(request) {
+        this.incoming=request;
+        this.$refs.accountReqModal.show();
+        return new Promise((res,rej) => {
+            this.incoming.accept=res;
+            this.incoming.reject=rej;
+        });
+    },
+    requestTx: function(request) {
+        this.incoming=request;
+        this.$refs.transactionReqModal.show();
+        return new Promise((res,rej) => {
+            this.incoming.accept=res;
+            this.incoming.reject=rej;
+        });
+    },
+    allowAccess: function() {        
+        this.$refs.accountReqModal.hide();
+        this.incoming.accept({account: this.$root.$data.wallet.accountName, id: this.$root.$data.wallet.accountID});
+    },
+    denyAccess: function() {        
+        this.$refs.accountReqModal.hide();
+        this.incoming.reject({});
+    },
+    acceptTx: function () {
+
+        let tr = new TransactionBuilder()
+this.$root.$data.api.init_promise.then(res=> {
+        tr.add_type_operation( "transfer",  this.incoming.operation );
+
+        tr.set_required_fees().then(() => {
+            let pKey=PrivateKey.fromWif(this.$root.$data.wallet.keys.active);
+            tr.add_signer(pKey, pKey.toPublicKey().toPublicKeyString());
+            console.log("serialized transaction:", tr.serialize());
+            tr.broadcast();
+        })
+        this.$refs.transactionReqModal.hide();
+        this.incoming.reject({});
+        });
+
+    },
+    rejectTx: function () {
+        this.$refs.transactionReqModal.hide();
+        this.incoming.reject({});
     }
   }
 };

@@ -15,7 +15,7 @@
 
 <script>
 import { Apis } from "bitsharesjs-ws";
-import {nodeList} from "./config/config";
+import {nodeList} from "../config/config";
 
 export default {
   name: "NodeSelect",

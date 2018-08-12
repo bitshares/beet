@@ -18,6 +18,7 @@
 <script>
 import { PrivateKey, key } from "bitsharesjs";
 import { Apis } from "bitsharesjs-ws";
+import SecureLS from 'secure-ls';
 
 export default {
   name: "create",
@@ -68,7 +69,8 @@ export default {
       if (verified!==null) {
           localStorage.setItem("accountName",this.accountname);
           localStorage.setItem("accountID",verified);
-          localStorage.setItem("wallet",{active: this.activepk, owner: this.ownerpk, memo: this.memopk});
+          let ls = new SecureLS({encodingType: 'aes', isCompression: true, encryptionSecret: 'test'});
+          ls.set("wallet",{active: this.activepk, owner: this.ownerpk, memo: this.memopk});
 
       }
     }
