@@ -9,14 +9,14 @@
             <Balances ref="balancetable"></Balances>
             <NodeSelect  @first-connect="getBalances" ref="apinode"></NodeSelect>
              
-        <b-modal id="accountRequest" ref="accountReqModal" hide-footer title="Account Details Request">
+        <b-modal id="accountRequest" centered ref="accountReqModal" no-close-on-esc no-close-on-backdrop hide-header-close hide-footer title="Account Details Request" @hidden="denyAccess">
             The page/app <strong>'{{this.$data.incoming.origin}}'</strong> is requesting to access your account ID.<br/>
                     <br/>
                     Do you want to allow access?
                     <b-btn class="mt-3" variant="success" block @click="allowAccess">Allow</b-btn>
                     <b-btn class="mt-1" variant="danger" block @click="denyAccess">Deny</b-btn>
         </b-modal>
-        <b-modal id="transactionRequest" ref="transactionReqModal" hide-footer title="Transaction Request">
+        <b-modal id="transactionRequest" centered ref="transactionReqModal" no-close-on-esc no-close-on-backdrop hide-header-close hide-footer title="Transaction Request" @hidden="rejectTx">
             The page/app
                     <strong>'{{this.$data.incoming.origin}}'</strong> has submitted the following transaction.
                     <br/>

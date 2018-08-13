@@ -1,12 +1,39 @@
 import * as Actions from '../lib/Actions';
-import Action from '../lib/Action'
+import Action from '../lib/Action';
+import Queue from '../lib/Queue';
 
+var popupQ=new Queue();
 export default class CompanionAPI {
 
     static async handler(request, vueInst) {
         const action = Action.fromJson(request);
         if (!Object.keys(Actions).map(key => Actions[key]).includes(request.type)) return;
-        return await this[request.type](request, vueInst);
+        console.log(popupQ);
+        let result;
+        if (popupQ.isEmpty()) {
+            let qresolve;
+            let queued=new Promise(function(resolve, reject) {
+                qresolve=resolve
+            });
+            popupQ.enqueue({promise: queued,resolve: qresolve});
+            console.log(popupQ);
+            result=await this[request.type](request, vueInst);
+            let finished=popupQ.dequeue();
+            finished.resolve(true);
+        }else{
+            let qresolve;
+            let queued=new Promise(function(resolve, reject) {
+                qresolve=resolve
+            });              
+            let previous= popupQ.tail();
+            popupQ.enqueue({promise: queued,resolve: qresolve});
+            let done=await previous.promise;
+            result=await this[request.type](request, vueInst);
+            let finished=popupQ.dequeue();
+            finished.resolve(true);
+        }
+        console.log(popupQ);
+        return result;
         
     }
 

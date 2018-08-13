@@ -2,7 +2,7 @@
 <div class="row node-selector">
     <div class="col-10 p-0">
                         <div class="input-group mb-0">
-                            <select class="custom-select small" id="node-select" v-model="selectedNode">                                
+                            <select class="form-control small" id="node-select" v-model="selectedNode">                                
                                 <option v-for="node in nodes" v-bind:value="node.url" v-bind:key="node.url">{{node.url}}</option>
                             </select>
                         </div>
