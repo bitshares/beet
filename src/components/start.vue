@@ -1,8 +1,9 @@
 <template>
     <div class="bottom">
-        <p class="mb-3 font-weight-normal" v-if="!hasWallet"><em>There is no wallet stored in this computer.</em></p>
+      <div class="content">
+        <p class="mt-3 mb-3 font-weight-normal" v-if="!hasWallet"><em>There is no wallet stored in this computer.</em></p>
         <router-link to="/create" tag="button" v-if="!hasWallet" class="btn btn-lg btn-primary btn-block" replace>Get Started</router-link>        
-        <select class="form-control my-2" id="wallet-select" v-model="selectedWallet"  v-if="hasWallet">                                
+        <select class="form-control my-3" id="wallet-select" v-model="selectedWallet"  v-if="hasWallet">                                
           <option selected disabled value="0">Select Wallet:</option>
           <option v-for="wallet in walletlist" v-bind:value="wallet.id" v-bind:key="wallet.id">{{wallet.name}}</option>
         </select>
@@ -10,7 +11,8 @@
         <button class="btn btn-lg btn-primary btn-block" type="submit" v-if="hasWallet" v-on:click="unlockWallet">Unlock</button>
         <p class="my-2 font-weight-normal" v-if="hasWallet"><em>or</em></p>
         <router-link to="/create" tag="button" v-if="hasWallet" class="btn btn-lg btn-primary btn-block" replace>Create a new wallet</router-link>     
-        <p class="mt-2 mb-3">&copy; 2017-2018</p>
+        </div>
+        <p class="mt-2 mb-3">&copy; 2018 BitShares</p>
     </div>
 </template>
 <script>

@@ -1,13 +1,13 @@
 <template>
         <div class="bottom ">
         <div id="step1" v-if="step==1">
-        <h4 class="h4 font-weight-bold">Step 1</h4>        
-        <p class="mb-2 font-weight-bold">Set a friendly name for your new wallet:</p>
-        <input type="text" id="inputWallet" class="form-control mb-3" placeholder="Wallet Name" required="" v-model="walletname">
+        <h4 class="h4 mt-3 font-weight-bold">Step 1</h4>        
+        <p class="my-3 font-weight-bold">Set a friendly name for your new wallet:</p>
+        <input type="text" id="inputWallet" class="form-control mb-3" v-bind:class="s1c" placeholder="Wallet Name" required="" v-model="walletname">
         <button class="btn btn-lg btn-primary btn-block" type="submit" v-on:click="step2">Next</button>
         </div>
         <div id="step2"  v-if="step==2">
-        <h4 class="h4 font-weight-bold">Step 2</h4>        
+        <h4 class="h4 mt-3 font-weight-bold">Step 2</h4>        
         <p class="mb-2 font-weight-bold">Account Name</p>
         <input type="text" id="inputAccount" class="form-control mb-3" placeholder="BTS Account Name" required="" v-model="accountname">
         <p class="my-3 font-weight-normal">Please enter the private keys for your account below:</p>
@@ -20,13 +20,14 @@
         <button class="btn btn-lg btn-primary btn-block" type="submit" v-on:click="step3">Next</button>
         </div>
         <div id="step3"  v-if="step==3">
+        <h4 class="h4 mt-3 font-weight-bold">Step 3</h4>   
         <p class="mb-2 font-weight-bold">Set a password for this wallet:</p>
         <input type="password" id="inputPass" class="form-control mb-3" placeholder="Password" required="" v-model="password">
         <p class="mb-2 font-weight-bold">Confirm password:</p>
         <input type="password" id="inputConfirmPass" class="form-control mb-3" placeholder="Confirm Password" required="" v-model="confirmpassword">
         <button class="btn btn-lg btn-primary btn-block" type="submit" v-on:click="verifyAndCreate">Next</button>
         </div>
-        <p class="mt-5 mb-3">&copy; 2017-2018</p>
+        <p class="mt-5 mb-3">&copy; 2018 BitShares</p>
         </div>
 </template>
 
@@ -47,12 +48,20 @@ export default {
       memopk: "",
       password: "",
       confirmpassword: "",
-      step:1
+      step:1,
+      s1c:''
+
     };
   },
   methods: {
     step2: function() {
-      this.$data.step=2;
+      if (this.$data.walletname.trim()=="") {
+        this.$data.s1c='is-invalid';
+      }else{
+        let wallets=localStorage.getItem(wallets);
+        // TODO: check if wallet exists
+        this.$data.step=2;
+      }
     },
     step3: function() {
       this.$data.step=3;
