@@ -34,7 +34,12 @@
 import CompanionServer from "../lib/CompanionServer";
 import NodeSelect from "./node-select";
 import Balances from "./balances";
-import {PrivateKey, TransactionHelper, Aes, TransactionBuilder} from "bitsharesjs";
+import {
+  PrivateKey,
+  TransactionHelper,
+  Aes,
+  TransactionBuilder
+} from "bitsharesjs";
 
 export default {
   name: "dashboard",
@@ -57,49 +62,50 @@ export default {
       this.$refs.balancetable.getBalances();
     },
     requestAccess: function(request) {
-        this.incoming=request;
-        this.$refs.accountReqModal.show();
-        return new Promise((res,rej) => {
-            this.incoming.accept=res;
-            this.incoming.reject=rej;
-        });
+      this.incoming = request;
+      this.$refs.accountReqModal.show();
+      return new Promise((res, rej) => {
+        this.incoming.accept = res;
+        this.incoming.reject = rej;
+      });
     },
     requestTx: function(request) {
-        this.incoming=request;
-        this.$refs.transactionReqModal.show();
-        return new Promise((res,rej) => {
-            this.incoming.accept=res;
-            this.incoming.reject=rej;
-        });
+      this.incoming = request;
+      this.$refs.transactionReqModal.show();
+      return new Promise((res, rej) => {
+        this.incoming.accept = res;
+        this.incoming.reject = rej;
+      });
     },
-    allowAccess: function() {        
-        this.$refs.accountReqModal.hide();
-        this.incoming.accept({account: this.$root.$data.wallet.accountName, id: this.$root.$data.wallet.accountID});
+    allowAccess: function() {
+      this.$refs.accountReqModal.hide();
+      this.incoming.accept({
+        account: this.$root.$data.wallet.accountName,
+        id: this.$root.$data.wallet.accountID
+      });
     },
-    denyAccess: function() {        
-        this.$refs.accountReqModal.hide();
-        this.incoming.reject({});
+    denyAccess: function() {
+      this.$refs.accountReqModal.hide();
+      this.incoming.reject({});
     },
-    acceptTx: function () {
+    acceptTx: async function() {
+      let tr = new TransactionBuilder();
+      this.$root.$data.api.init_promise.then(res => {
+        tr.add_type_operation(this.incoming.operation.op_type, this.incoming.operation.op_data);
 
-        let tr = new TransactionBuilder()
-this.$root.$data.api.init_promise.then(res=> {
-        tr.add_type_operation( "transfer",  this.incoming.operation );
-
-        tr.set_required_fees().then(() => {
-            let pKey=PrivateKey.fromWif(this.$root.$data.wallet.keys.active);
-            tr.add_signer(pKey, pKey.toPublicKey().toPublicKeyString());
-            console.log("serialized transaction:", tr.serialize());
-            tr.broadcast();
-        })
+        tr.set_required_fees().then(async () => {
+          let pKey = PrivateKey.fromWif(this.$root.$data.wallet.keys.active);
+          tr.add_signer(pKey, pKey.toPublicKey().toPublicKeyString());
+          console.log("serialized transaction:", tr.serialize());
+          let id= await tr.broadcast();
+          this.incoming.accept({id: id});          
         this.$refs.transactionReqModal.hide();
-        this.incoming.reject({});
         });
-
+      });
     },
-    rejectTx: function () {
-        this.$refs.transactionReqModal.hide();
-        this.incoming.reject({});
+    rejectTx: function() {
+      this.$refs.transactionReqModal.hide();
+      this.incoming.reject({});
     }
   }
 };
