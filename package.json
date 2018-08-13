@@ -54,6 +54,7 @@
     "electron-squirrel-startup": "^1.0.0",
     "secure-ls": "^1.2.1",
     "socket.io": "^2.1.1",
+    "uuid": "^3.3.2",
     "vue": "^2.5.17",
     "vue-router": "^3.0.1",
     "vueify": "^9.4.1"
