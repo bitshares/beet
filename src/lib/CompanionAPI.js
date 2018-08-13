@@ -5,36 +5,26 @@ export default class CompanionAPI {
 
     static async handler(request, vueInst) {
         const action = Action.fromJson(request);
-        // Only accept pre-defined messages.
         if (!Object.keys(Actions).map(key => Actions[key]).includes(request.type)) return;
         return await this[request.type](request, vueInst);
+        
     }
 
-
-    /***
-     * Checks if an Identity has permissions for the origin
-     * @param request
-     * @returns {Promise.<*>}
-     */
-
     static async [Actions.GET_ACCOUNT](request, vue) {
-        //return {id:request.id, result:PermissionService.identityFromPermissions(request.payload.origin)};
         try {
-            let response= await vue.requestAccess(request);
+            let response= await vue.requestAccess(request.payload);
             console.log (response);
-            return response;
+            return {id:request.id, result: response};
         }catch(e) {
             return e;
         }
     }
 
-    static async [Actions.REQUEST_SIGNATURE](request, vue) {
-        //return {id:request.id, result:PermissionService.identityFromPermissions(request.payload.origin)};
-            
+    static async [Actions.REQUEST_SIGNATURE](request, vue) {            
         try {
-            let response= await vue.requestTx(request);
+            let response= await vue.requestTx(request.payload);
             console.log (response);
-            return response;
+            return {id:request.id, result:response};
         }catch(e) {
 
             return e;

@@ -17,9 +17,9 @@ const socketHandler = (socket) => {
     // When something connects we automatically
     // notify it of a successful connection
     socket.emit('connected');    
+
     // All authenticated api requests pass through the 'api' route.
-    socket.on('api', async request => {
-        let req=JSON.parse(request);
+    socket.on('api', async req => {
         console.log(req);
         socket.emit('api', await CompanionAPI.handler(Object.assign(req.data, {plugin:req.plugin}),vueInst));
     });
@@ -40,7 +40,7 @@ export default class CompanionServer {
     }
 
     static open(){
-        const namespace = io.of(`/`);
+        const namespace = io.of(`/btscompanion`);
         namespace.on('connection', socket => {
             socketHandler(socket);
         })
@@ -48,7 +48,7 @@ export default class CompanionServer {
 
     static close(){
         // Getting namespace
-        const socket = io.of(`/`);
+        const socket = io.of(`/btscompanion`);
 
         // Disconnecting all active connections to this namespace
         Object.keys(socket.connected).map(socketId => {
@@ -60,7 +60,7 @@ export default class CompanionServer {
 
         // Deleting the namespace from the array of
         // available namespaces for connections
-        delete io.nsps[`/`];
+        delete io.nsps[`/btscompanion`];
     }
 
 }

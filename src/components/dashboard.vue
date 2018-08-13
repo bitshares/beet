@@ -10,7 +10,7 @@
             <NodeSelect  @first-connect="getBalances" ref="apinode"></NodeSelect>
              
         <b-modal id="accountRequest" ref="accountReqModal" hide-footer title="Account Details Request">
-            The page/app <strong>'{{this.incoming.origin}}'</strong> is requesting to access your account ID.<br/>
+            The page/app <strong>'{{this.$data.incoming.origin}}'</strong> is requesting to access your account ID.<br/>
                     <br/>
                     Do you want to allow access?
                     <b-btn class="mt-3" variant="success" block @click="allowAccess">Allow</b-btn>
@@ -18,10 +18,13 @@
         </b-modal>
         <b-modal id="transactionRequest" ref="transactionReqModal" hide-footer title="Transaction Request">
             The page/app
-                    <strong>'{{this.incoming.origin}}'</strong> has submitted the following transaction.
+                    <strong>'{{this.$data.incoming.origin}}'</strong> has submitted the following transaction.
                     <br/>
                     <br/>
-                    <pre class="text-left"><code>{{this.incoming.operation}}</code></pre>
+                    <pre class="text-left"><code>{ 
+                      op_type: {{this.$data.incoming.op_type}},
+                      op_data: {{this.$data.incoming.op_data}}
+                      </code></pre>
                      Do you want to execute it?
                     <b-btn class="mt-3" variant="success" block @click="acceptTx">Sign &amp; Broadcast</b-btn>
                     <b-btn class="mt-1" variant="danger" block @click="rejectTx">Ignore</b-btn>
@@ -62,50 +65,50 @@ export default {
       this.$refs.balancetable.getBalances();
     },
     requestAccess: function(request) {
-      this.incoming = request;
+      this.$data.incoming = request;
       this.$refs.accountReqModal.show();
       return new Promise((res, rej) => {
-        this.incoming.accept = res;
-        this.incoming.reject = rej;
+        this.$data.incoming.accept = res;
+        this.$data.incoming.reject = rej;
       });
     },
     requestTx: function(request) {
-      this.incoming = request;
+      this.$data.incoming = request;
       this.$refs.transactionReqModal.show();
       return new Promise((res, rej) => {
-        this.incoming.accept = res;
-        this.incoming.reject = rej;
+        this.$data.incoming.accept = res;
+        this.$data.incoming.reject = rej;
       });
     },
     allowAccess: function() {
       this.$refs.accountReqModal.hide();
-      this.incoming.accept({
+      this.$data.incoming.accept({
         account: this.$root.$data.wallet.accountName,
         id: this.$root.$data.wallet.accountID
       });
     },
     denyAccess: function() {
       this.$refs.accountReqModal.hide();
-      this.incoming.reject({});
+      this.$data.incoming.reject({});
     },
     acceptTx: async function() {
       let tr = new TransactionBuilder();
       this.$root.$data.api.init_promise.then(res => {
-        tr.add_type_operation(this.incoming.operation.op_type, this.incoming.operation.op_data);
+        tr.add_type_operation(this.$data.incoming.op_type, this.$data.incoming.op_data);
 
         tr.set_required_fees().then(async () => {
           let pKey = PrivateKey.fromWif(this.$root.$data.wallet.keys.active);
           tr.add_signer(pKey, pKey.toPublicKey().toPublicKeyString());
           console.log("serialized transaction:", tr.serialize());
           let id= await tr.broadcast();
-          this.incoming.accept({id: id});          
+          this.$data.incoming.accept({id: id});          
         this.$refs.transactionReqModal.hide();
         });
       });
     },
     rejectTx: function() {
       this.$refs.transactionReqModal.hide();
-      this.incoming.reject({});
+      this.$data.incoming.reject({});
     }
   }
 };
