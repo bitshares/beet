@@ -9,8 +9,7 @@
 export default {
   name: "headerGuest",
   data() {
-    return {
-    };
+    return {};
   }
 };
 </script>

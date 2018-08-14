@@ -19,43 +19,47 @@
     </div>
 </template>
 <script>
-import SecureLS from 'secure-ls';
+import SecureLS from "secure-ls";
 
-export default { 
+export default {
   name: "start",
   data() {
     return {
       hasWallet: false,
-      walletpass: '',
+      walletpass: "",
       walletlist: [],
-      selectedWallet: '0',
-      passincorrect: '',
-      errorMsg: ''
+      selectedWallet: "0",
+      passincorrect: "",
+      errorMsg: ""
     };
   },
   mounted() {
-    let wallets=JSON.parse(localStorage.getItem("wallets"));
-    if (wallets && wallets.length>0) {
+    let wallets = JSON.parse(localStorage.getItem("wallets"));
+    if (wallets && wallets.length > 0) {
       this.$data.hasWallet = true;
-      this.$data.walletlist=wallets;      
+      this.$data.walletlist = wallets;
     }
   },
   methods: {
     unlockWallet() {
-      let ls = new SecureLS({encodingType: 'aes', isCompression: true, encryptionSecret: this.walletpass});
+      let ls = new SecureLS({
+        encodingType: "aes",
+        isCompression: true,
+        encryptionSecret: this.walletpass
+      });
       try {
-        let wallet=ls.get(this.selectedWallet);
-        
-        this.$root.$data.wallet=wallet;
-        
-        this.$router.replace('/dashboard');
-        console.log('Password accepted!');
-      }catch(e) {
-        this.$data.passincorrect='is-invalid';
-        
+        let wallet = ls.get(this.selectedWallet);
+
+        this.$root.$data.wallet = wallet;
+
+        this.$router.replace("/dashboard");
+        console.log("Password accepted!");
+      } catch (e) {
+        this.$data.passincorrect = "is-invalid";
+
         this.$data.errorMsg = "Invalid Password.";
         this.$refs.errorModal.show();
-        console.log('Error: Wrong Password');
+        console.log("Error: Wrong Password");
       }
     }
   }

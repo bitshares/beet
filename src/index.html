@@ -22,15 +22,18 @@
         import BootstrapVue from 'bootstrap-vue';
         import VueRouter from 'vue-router';
         import router from './router/index.js';
-        import {ipcRenderer, remote} from 'electron';
-        
+        import {
+            ipcRenderer,
+            remote
+        } from 'electron';
+
         Vue.use(BootstrapVue);
         Vue.use(VueRouter);
         console.log(router);
         const app = new Vue({
             router
         }).$mount('#app');
-        app.$root.$data.ipc=ipcRenderer;
+        app.$root.$data.ipc = ipcRenderer;
     </script>
 </body>
 

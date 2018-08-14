@@ -1,9 +1,9 @@
 class Queue {
     constructor() {
         this.items = [];
-    }    
+    }
     enqueue(item) {
-        this.items.unshift(item);        
+        this.items.unshift(item);
     }
     dequeue() {
         return this.items.pop();
@@ -28,4 +28,4 @@ class Queue {
         return this.items.length;
     }
 }
-module.exports=Queue;
+module.exports = Queue;

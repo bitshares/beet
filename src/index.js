@@ -2,7 +2,8 @@ import {
   app,
   BrowserWindow,
   Menu,
-  Tray,ipcMain
+  Tray,
+  ipcMain
 } from 'electron';
 import installExtension, {
   VUEJS_DEVTOOLS
@@ -20,7 +21,7 @@ const isDevMode = process.execPath.match(/[\\/]electron/);
 if (isDevMode) enableLiveReload();
 
 let tray = null;
-let minimised=false;
+let minimised = false;
 const createWindow = async () => {
   // Create the browser window.
   mainWindow = new BrowserWindow({
@@ -68,43 +69,56 @@ const createWindow = async () => {
 
   mainWindow.on('minimize', function (event) {
     event.preventDefault();
-    tray.displayBalloon({ icon: __dirname + '/img/bitshares.png',title: "BitShares Companion is minimised.",content: "It will run in the background until you quit."});
-    minimised=true;
+    tray.displayBalloon({
+      icon: __dirname + '/img/bitshares.png',
+      title: "BitShares Companion is minimised.",
+      content: "It will run in the background until you quit."
+    });
+    minimised = true;
     mainWindow.hide();
   });
 
   mainWindow.on('show', function () {
-    minimised=false;
+    minimised = false;
     tray.setHighlightMode('always')
   });
 
   mainWindow.on('close', function (event) {
     if (!app.isQuiting) {
       event.preventDefault();
-      minimised=true;
+      tray.displayBalloon({
+        icon: __dirname + '/img/bitshares.png',
+        title: "BitShares Companion is minimised.",
+        content: "It will run in the background until you quit."
+      });
+      minimised = true;
       mainWindow.hide();
     }
 
     return false;
   });
-  ipcMain.on('notify', (event, arg) => {      
+  ipcMain.on('notify', (event, arg) => {
     if (minimised) {
-      tray.displayBalloon({ icon: __dirname + '/img/bitshares.png',title: "BitShares Companion has a new request.",content: "Click here to view"});
+      tray.displayBalloon({
+        icon: __dirname + '/img/bitshares.png',
+        title: "BitShares Companion has a new request.",
+        content: "Click here to view"
+      });
     }
   });
-  tray.on('click',(event)=> {
+  tray.on('click', (event) => {
     mainWindow.setAlwaysOnTop(true);
     mainWindow.show();
     mainWindow.focus();
     mainWindow.setAlwaysOnTop(false);
-    minimised=false;
+    minimised = false;
   });
-  tray.on('balloon-click',(event)=> {
+  tray.on('balloon-click', (event) => {
     mainWindow.setAlwaysOnTop(true);
     mainWindow.show();
     mainWindow.focus();
     mainWindow.setAlwaysOnTop(false);
-    minimised=false;
+    minimised = false;
   });
 };
 // This method will be called when Electron has finished

@@ -14,14 +14,13 @@
     
 <script>
 import { Apis } from "bitsharesjs-ws";
-import { setInterval } from 'timers';
+import { setInterval } from "timers";
 export default {
   name: "Balances",
   data() {
     return {
       rawbalances: [],
-      balances: [],
-      
+      balances: []
     };
   },
   methods: {
@@ -71,13 +70,13 @@ export default {
             prefix: ""
           };
         }
-      }      
+      }
       return;
     },
     formatMoney: function(n, decimals, decimal_sep, thousands_sep) {
       var c = isNaN(decimals) ? 2 : Math.abs(decimals),
-        d = decimal_sep || ".", 
-        t = typeof thousands_sep === "undefined" ? "," : thousands_sep, 
+        d = decimal_sep || ".",
+        t = typeof thousands_sep === "undefined" ? "," : thousands_sep,
         sign = n < 0 ? "-" : "",
         i = parseInt((n = Math.abs(n).toFixed(c))) + "",
         j = (j = i.length) > 3 ? j % 3 : 0;
@@ -94,7 +93,6 @@ export default {
       );
     }
   },
-  mounted() {
-  }
+  mounted() {}
 };
 </script>

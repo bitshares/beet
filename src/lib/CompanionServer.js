@@ -1,7 +1,7 @@
 import CompanionAPI from '../lib/CompanionAPI';
 
 let io = null;
-let vueInst=null;
+let vueInst = null;
 const socketHandler = (socket) => {
 
     // TODO: Testing the event system.
@@ -22,35 +22,37 @@ const socketHandler = (socket) => {
     // All authenticated api requests pass through the 'api' route.
     socket.on('api', async req => {
         console.log(req);
-        socket.emit('api', await CompanionAPI.handler(Object.assign(req.data, {plugin:req.plugin}),vueInst));
+        socket.emit('api', await CompanionAPI.handler(Object.assign(req.data, {
+            plugin: req.plugin
+        }), vueInst));
     });
 
     socket.on('disconnect', () => {
 
     });
-//    }else{
-//        socket.disconnect();
-//    }
+    //    }else{
+    //        socket.disconnect();
+    //    }
 };
 
 export default class CompanionServer {
 
-    static initialize(vue){
-        vueInst=vue;
+    static initialize(vue) {
+        vueInst = vue;
         const server = window.require('http').createServer();
         server.listen(60555, 'localhost');
         io = window.require('socket.io').listen(server);
         console.log('Listening');
     }
 
-    static open(){
+    static open() {
         const namespace = io.of(`/btscompanion`);
         namespace.on('connection', socket => {
             socketHandler(socket);
         })
     }
 
-    static close(){
+    static close() {
         // Getting namespace
         const socket = io.of(`/btscompanion`);
 

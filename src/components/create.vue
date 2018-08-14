@@ -97,13 +97,14 @@ export default {
         let wallets = JSON.parse(localStorage.getItem("wallets"));
 
         if (
-          wallets && wallets.filter(wallet => wallet.name === this.$data.walletname.trim())
+          wallets &&
+          wallets.filter(wallet => wallet.name === this.$data.walletname.trim())
             .length > 0
         ) {
           console.log("A wallet with this name already exists.");
-          
-         this.$data.errorMsg = "A wallet with this name already exists.";
-         this.$refs.errorModal.show();
+
+          this.$data.errorMsg = "A wallet with this name already exists.";
+          this.$refs.errorModal.show();
           this.$data.s1c = "is-invalid";
         } else {
           this.$data.walletname = this.$data.walletname.trim();
@@ -175,14 +176,15 @@ export default {
       }
     },
     verifyAndCreate: async function() {
-      if (this.$data.password!=this.$data.confirmpassword || this.$data.password=='') {
-        
+      if (
+        this.$data.password != this.$data.confirmpassword ||
+        this.$data.password == ""
+      ) {
         this.$refs.errorModal.show();
-        this.$data.errorMsg =
-          "Passwords do not match!";
+        this.$data.errorMsg = "Passwords do not match!";
         return;
       }
-      
+
       this.$refs.loaderAnimModal.show();
       if (this.$data.accountID !== null) {
         let wallets = localStorage.getItem("wallets");

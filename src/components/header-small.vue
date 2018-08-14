@@ -13,8 +13,7 @@
 export default {
   name: "headerSmall",
   data() {
-    return {
-    };
+    return {};
   }
 };
 </script>

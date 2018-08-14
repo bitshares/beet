@@ -18,7 +18,7 @@
 
 <script>
 import { Apis } from "bitsharesjs-ws";
-import {nodeList} from "../config/config";
+import { nodeList } from "../config/config";
 
 export default {
   name: "NodeSelect",
@@ -31,36 +31,43 @@ export default {
     };
   },
   watch: {
-    'selectedNode': function() {
-      console.log('Switching...');
-        Apis.close().then(()=> {
-          console.log('Closed...');
-          this.isConnected = false;
-          Apis.instance(this.selectedNode, true,10000,{enableCrypto: false, enableOrders: false} ,this.onClose).init_promise.then(
-            res => {
-              
-          console.log('Opened...');
+    selectedNode: function() {
+      console.log("Switching...");
+      Apis.close().then(() => {
+        console.log("Closed...");
+        this.isConnected = false;
+        Apis.instance(
+          this.selectedNode,
+          true,
+          10000,
+          { enableCrypto: false, enableOrders: false },
+          this.onClose
+        ).init_promise.then(res => {
+          console.log("Opened...");
           this.isConnected = true;
-              this.$root.$data.api=Apis.instance();
-            }
-          );
+          this.$root.$data.api = Apis.instance();
         });
+      });
     }
   },
   mounted() {
     console.log(this.selectedNode);
     console.log(nodeList);
-    Apis.instance(this.selectedNode, true,10000,{enableCrypto: false, enableOrders: false} ,this.onClose).init_promise.then(
-      res => {
-        this.isConnected = true;
-        this.$root.$data.api=Apis.instance();
-        this.$emit('first-connect'); 
-        console.log('emmited');
-      }
-    );
+    Apis.instance(
+      this.selectedNode,
+      true,
+      10000,
+      { enableCrypto: false, enableOrders: false },
+      this.onClose
+    ).init_promise.then(res => {
+      this.isConnected = true;
+      this.$root.$data.api = Apis.instance();
+      this.$emit("first-connect");
+      console.log("emmited");
+    });
   },
   onClose() {
-    this.isConnected=false;
+    this.isConnected = false;
   }
 };
 </script>
