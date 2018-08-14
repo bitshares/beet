@@ -22,7 +22,7 @@
                     <strong>'{{this.$data.incoming.origin}}'</strong> has submitted the following transaction.
                     <br/>
                     <br/>
-                    <pre class="text-left"><code>
+                    <pre class="text-left custom-content"><code>
 { 
   op_type: {{this.$data.incoming.op_type}},
   op_data: {{this.$data.incoming.op_data}}
@@ -37,7 +37,7 @@
                     <strong>'{{this.$data.incoming.origin}}'</strong> {{this.$data.genericmsg}}:
                     <br/>
                     <br/>
-                      <pre class="text-left"><code>
+                      <pre class="text-left custom-content"><code>
 {{this.$data.specifics}}
                       </code></pre>
                     
