@@ -16,8 +16,9 @@ const socketHandler = (socket) => {
 
     // When something connects we automatically
     // notify it of a successful connection
-    socket.emit('connected');    
-
+    socket.emit('connected');
+    //let authorized=await vueInst.authorize(req);
+    //if (authorized) {
     // All authenticated api requests pass through the 'api' route.
     socket.on('api', async req => {
         console.log(req);
@@ -27,6 +28,9 @@ const socketHandler = (socket) => {
     socket.on('disconnect', () => {
 
     });
+//    }else{
+//        socket.disconnect();
+//    }
 };
 
 export default class CompanionServer {

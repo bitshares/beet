@@ -50,6 +50,15 @@ export default class CompanionAPI {
         }
     }
 
+    static async [Actions.VOTE_FOR](request, vue) {
+        try {
+            let response= await vue.requestVote(request.payload);
+            console.log (response);
+            return {id:request.id, result: response};
+        }catch(e) {
+            return e;
+        }
+    }
     static async [Actions.REQUEST_SIGNATURE](request, vue) {            
         try {
             let response= await vue.requestTx(request.payload);
