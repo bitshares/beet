@@ -90,7 +90,7 @@ export default {
       this.$refs.loaderAnimModal.hide();
     },
     requestAccess: function(request) {
-      this.$root.$data.ipc.send('notify','oops');
+      this.$root.$data.ipc.send('notify','request');
       this.$data.incoming={};
       this.$data.incoming = request;
       this.$refs.accountReqModal.show();
@@ -100,6 +100,7 @@ export default {
       });
     },    
     requestVote: async function(request) {
+      this.$root.$data.ipc.send('notify','request');
       this.$data.incoming={};
       this.$data.incoming = request;
       
@@ -151,6 +152,7 @@ export default {
       });
     },
     requestTx: function(request) {
+      this.$root.$data.ipc.send('notify','request');
       this.$data.incoming={};
       this.$data.incoming = request;
       this.$refs.transactionReqModal.show();
