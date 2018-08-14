@@ -1,6 +1,15 @@
-import { app, BrowserWindow } from 'electron';
-import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
-import { enableLiveReload } from 'electron-compile';
+import {
+  app,
+  BrowserWindow,
+  Menu,
+  Tray,ipcMain
+} from 'electron';
+import installExtension, {
+  VUEJS_DEVTOOLS
+} from 'electron-devtools-installer';
+import {
+  enableLiveReload
+} from 'electron-compile';
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -10,6 +19,8 @@ const isDevMode = process.execPath.match(/[\\/]electron/);
 
 if (isDevMode) enableLiveReload();
 
+let tray = null;
+let minimised=false;
 const createWindow = async () => {
   // Create the browser window.
   mainWindow = new BrowserWindow({
@@ -24,7 +35,23 @@ const createWindow = async () => {
 
   // and load the index.html of the app.
   mainWindow.loadURL(`file://${__dirname}/index.html`);
-
+  tray = new Tray(__dirname + '/img/bitshares.png');
+  const contextMenu = Menu.buildFromTemplate([{
+      label: 'Show App',
+      click: function () {
+        mainWindow.show();
+      }
+    },
+    {
+      label: 'Quit',
+      click: function () {
+        app.isQuiting = true;
+        app.quit();
+      }
+    }
+  ]);
+  tray.setToolTip('BitShares Companion')
+  tray.setContextMenu(contextMenu)
   // Open the DevTools.
   if (isDevMode) {
     await installExtension(VUEJS_DEVTOOLS);
@@ -38,8 +65,48 @@ const createWindow = async () => {
     // when you should delete the corresponding element.
     mainWindow = null;
   });
-};
 
+  mainWindow.on('minimize', function (event) {
+    event.preventDefault();
+    tray.displayBalloon({ icon: __dirname + '/img/bitshares.png',title: "BitShares Companion is minimised.",content: "It will run in the background until you quit."});
+    minimised=true;
+    mainWindow.hide();
+  });
+
+  mainWindow.on('show', function () {
+    minimised=false;
+    tray.setHighlightMode('always')
+  });
+
+  mainWindow.on('close', function (event) {
+    if (!app.isQuiting) {
+      event.preventDefault();
+      minimised=true;
+      mainWindow.hide();
+    }
+
+    return false;
+  });
+  ipcMain.on('notify', (event, arg) => {      
+    if (minimised) {
+      tray.displayBalloon({ icon: __dirname + '/img/bitshares.png',title: "BitShares Companion has a new request.",content: "Click here to view"});
+    }
+  });
+  tray.on('click',(event)=> {
+    mainWindow.setAlwaysOnTop(true);
+    mainWindow.show();
+    mainWindow.focus();
+    mainWindow.setAlwaysOnTop(false);
+    minimised=false;
+  });
+  tray.on('balloon-click',(event)=> {
+    mainWindow.setAlwaysOnTop(true);
+    mainWindow.show();
+    mainWindow.focus();
+    mainWindow.setAlwaysOnTop(false);
+    minimised=false;
+  });
+};
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.

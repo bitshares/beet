@@ -7,37 +7,30 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <title>BitShares Companion</title>
-
-    <!-- Bootstrap core CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
-        crossorigin="anonymous">
-
+    <link rel="stylesheet" href="./css/bootstrap.min.css">
     <!-- Custom styles for this template -->
-    <link href="main.css" rel="stylesheet">
+    <link href="./css/main.css" rel="stylesheet">
 </head>
 
 <body class="text-center">
-
-
     <div class="main" id="app">
         <router-view name="header"></router-view>
         <router-view></router-view>
     </div>
-
     <script>
         import Vue from 'vue/dist/vue.js';
         import BootstrapVue from 'bootstrap-vue';
         import VueRouter from 'vue-router';
         import router from './router/index.js';
-
+        import {ipcRenderer, remote} from 'electron';
+        
         Vue.use(BootstrapVue);
         Vue.use(VueRouter);
         console.log(router);
         const app = new Vue({
             router
         }).$mount('#app');
-
-        //app.text = "BitShares Companion";
+        app.$root.$data.ipc=ipcRenderer;
     </script>
 </body>
 

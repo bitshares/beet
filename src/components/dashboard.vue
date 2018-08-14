@@ -90,6 +90,7 @@ export default {
       this.$refs.loaderAnimModal.hide();
     },
     requestAccess: function(request) {
+      this.$root.$data.ipc.send('notify','oops');
       this.$data.incoming={};
       this.$data.incoming = request;
       this.$refs.accountReqModal.show();

@@ -95,8 +95,9 @@ export default {
         this.$data.s1c = "is-invalid";
       } else {
         let wallets = JSON.parse(localStorage.getItem("wallets"));
+
         if (
-          wallets.filter(wallet => wallet.name === this.$data.walletname.trim())
+          wallets && wallets.filter(wallet => wallet.name === this.$data.walletname.trim())
             .length > 0
         ) {
           console.log("A wallet with this name already exists.");
