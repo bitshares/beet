@@ -21,6 +21,9 @@ export default class CompanionAPI {
             let finished=popupQ.dequeue();
             finished.resolve(true);
         }else{
+            if (popupQ.size()>10) {
+                return { id: request.id, result: { isError: true, error: 'Too many pending requests.'}}
+            }
             let qresolve;
             let queued=new Promise(function(resolve, reject) {
                 qresolve=resolve
