@@ -14,11 +14,11 @@ const createWindow = async () => {
   // Create the browser window.
   mainWindow = new BrowserWindow({
     width: 500,
-    height: 620,
+    height: 660,
     minWidth: 500,
-    minHeight: 620,
+    minHeight: 660,
     maxWidth: 500,
-    maxHeight: 620,
+    maxHeight: 660,
     useContentSize: true,
   });
 

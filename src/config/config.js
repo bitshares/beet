@@ -1,8 +1,5 @@
 export const nodeList = [
-        {
-            url: "wss://fake.automatic-selection.com",
-            location: {translate: "settings.api_closest"}
-        },
+     
         {
             url: "ws://127.0.0.1:8090",
             location: "Locally hosted"

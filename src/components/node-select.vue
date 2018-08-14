@@ -1,6 +1,9 @@
 <template>
 <div class="row node-selector">
-    <div class="col-10 p-0">
+  <div class="col-2 p-0 text-center d-flex  justify-content-center">
+    <span class="align-self-center">Node:</span>
+  </div>
+    <div class="col-8 p-0">
                         <div class="input-group mb-0">
                             <select class="form-control small" id="node-select" v-model="selectedNode">                                
                                 <option v-for="node in nodes" v-bind:value="node.url" v-bind:key="node.url">{{node.url}}</option>

@@ -1,12 +1,13 @@
 <template>
         <div class="bottom ">
-
+<div class="content">
             <div class="row mb-2">
                 <div class="col-12 text-center account py-2">
                     {{this.$root.$data.wallet.accountName}} ({{this.$root.$data.wallet.accountID}})
                 </div>
             </div>
             <Balances ref="balancetable"></Balances>
+            </div>
             <NodeSelect  @first-connect="getBalances" ref="apinode"></NodeSelect>
              
         <b-modal id="accountRequest" centered ref="accountReqModal" no-close-on-esc no-close-on-backdrop hide-header-close hide-footer title="Account Details Request" @hidden="denyAccess">
@@ -35,93 +36,7 @@
         </div>
         
 </template>
-<style>
-.lds-roller {
-  display: inline-block;
-  position: relative;
-  width: 64px;
-  height: 64px;
-}
-.lds-roller div {
-  animation: lds-roller 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-  transform-origin: 32px 32px;
-}
-.lds-roller div:after {
-  content: " ";
-  display: block;
-  position: absolute;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #cef;
-  margin: -3px 0 0 -3px;
-}
-.lds-roller div:nth-child(1) {
-  animation-delay: -0.036s;
-}
-.lds-roller div:nth-child(1):after {
-  top: 50px;
-  left: 50px;
-}
-.lds-roller div:nth-child(2) {
-  animation-delay: -0.072s;
-}
-.lds-roller div:nth-child(2):after {
-  top: 54px;
-  left: 45px;
-}
-.lds-roller div:nth-child(3) {
-  animation-delay: -0.108s;
-}
-.lds-roller div:nth-child(3):after {
-  top: 57px;
-  left: 39px;
-}
-.lds-roller div:nth-child(4) {
-  animation-delay: -0.144s;
-}
-.lds-roller div:nth-child(4):after {
-  top: 58px;
-  left: 32px;
-}
-.lds-roller div:nth-child(5) {
-  animation-delay: -0.18s;
-}
-.lds-roller div:nth-child(5):after {
-  top: 57px;
-  left: 25px;
-}
-.lds-roller div:nth-child(6) {
-  animation-delay: -0.216s;
-}
-.lds-roller div:nth-child(6):after {
-  top: 54px;
-  left: 19px;
-}
-.lds-roller div:nth-child(7) {
-  animation-delay: -0.252s;
-}
-.lds-roller div:nth-child(7):after {
-  top: 50px;
-  left: 14px;
-}
-.lds-roller div:nth-child(8) {
-  animation-delay: -0.288s;
-}
-.lds-roller div:nth-child(8):after {
-  top: 45px;
-  left: 10px;
-}
-@keyframes lds-roller {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
 
-</style>
 <script>
 import CompanionServer from "../lib/CompanionServer";
 import NodeSelect from "./node-select";
@@ -144,14 +59,17 @@ export default {
   },
   components: { NodeSelect, Balances },
   mounted() {
+    this.$refs.loaderAnimModal.show();
     CompanionServer.initialize(this);
     CompanionServer.open();
     console.log(this.$root.$data.wallet);
   },
   methods: {
-    getBalances: function() {
+    getBalances: async function() {
       console.log("Called from first connect");
-      this.$refs.balancetable.getBalances();
+      
+      await this.$refs.balancetable.getBalances();
+      this.$refs.loaderAnimModal.hide();
     },
     requestAccess: function(request) {
       this.$data.incoming = request;
@@ -183,15 +101,20 @@ export default {
     acceptTx: async function() {
       let tr = new TransactionBuilder();
       this.$root.$data.api.init_promise.then(res => {
-        tr.add_type_operation(this.$data.incoming.op_type, this.$data.incoming.op_data);
+        tr.add_type_operation(
+          this.$data.incoming.op_type,
+          this.$data.incoming.op_data
+        );
 
         tr.set_required_fees().then(async () => {
+          this.$refs.loaderAnimModal.show();
           let pKey = PrivateKey.fromWif(this.$root.$data.wallet.keys.active);
           tr.add_signer(pKey, pKey.toPublicKey().toPublicKeyString());
           console.log("serialized transaction:", tr.serialize());
-          let id= await tr.broadcast();
-          this.$data.incoming.accept({id: id});          
-        this.$refs.transactionReqModal.hide();
+          let id = await tr.broadcast();
+          this.$data.incoming.accept({ id: id });
+          this.$refs.transactionReqModal.hide();
+          this.$refs.loaderAnimModal.hide();
         });
       });
     },
