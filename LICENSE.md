@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2018 Alex Megalokonomos
+Copyright (c) 2018 Alex Megalokonomos  
 Copyright (c) 2018 Nathan James - EOS Essentials
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
