@@ -1,7 +1,7 @@
 MIT License
 
 Copyright (c) 2018 Alex Megalokonomos  
-Copyright (c) 2018 Nathan James - EOS Essentials
+Copyright (c) 2018 Nathan James - GetScatter
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
