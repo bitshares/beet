@@ -14,7 +14,7 @@ Once your keys and account are verified, you will be redirected to the dashboard
 
 The dashboard also allows you to set the preferred node used by the companion app.
 
-While logged-in, the Companion exposes an API **LOCALLY** within your computer only that can be accessed by any web page displayed on your computer's internet browser or third party installed application, as long as it includes our client-side javascript connector (https://github.com/clockworkgr/bitshares-companion-js).
+While logged-in, the Companion exposes an API **LOCALLY** within your computer only that can be accessed by any web page displayed on your computer's internet browser or third party installed application, as long as it includes our client-side javascript connector (https://github.com/bitshares/beet-js).
 
 This API allows any web-page using the connector to send requests to the companion app in order to retrieve identity (account id) or ask for an action to be taken (sign a transaction).
 
