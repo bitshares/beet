@@ -1,8 +1,8 @@
 {
-  "name": "bitshares-companion",
-  "productName": "bitshares-companion",
+  "name": "beet",
+  "productName": "Beet",
   "version": "1.0.0",
-  "description": "My Electron application description",
+  "description": "Beet is a stand-alone key-manager and signing app for BitShares.",
   "main": "src/index.js",
   "scripts": {
     "start": "electron-forge start",
@@ -12,7 +12,7 @@
     "lint": "echo \"No linting configured\""
   },
   "keywords": [],
-  "author": "sagge",
+  "author": "clockworkgr",
   "license": "MIT",
   "config": {
     "forge": {
@@ -32,7 +32,7 @@
         "packageManager": "npm"
       },
       "electronWinstallerConfig": {
-        "name": "bitshares_companion"
+        "name": "beet"
       },
       "electronInstallerDebian": {},
       "electronInstallerRedhat": {},
@@ -42,7 +42,7 @@
       },
       "windowsStoreConfig": {
         "packageName": "",
-        "name": "bitsharescompanion"
+        "name": "beet"
       }
     }
   },
@@ -57,13 +57,15 @@
     "uuid": "^3.3.2",
     "vue": "^2.5.17",
     "vue-router": "^3.0.1",
-    "vueify": "^9.4.1"
+    "vueify": "^9.4.1",
+    "vuex": "^3.0.1"
   },
   "devDependencies": {
     "babel-plugin-transform-async-to-generator": "^6.24.1",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.7.0",
     "babel-preset-react": "^6.24.1",
     "electron-forge": "^5.2.2",
-    "electron-prebuilt-compile": "^2.0.7"
+    "electron-prebuilt-compile": "2.0.7"
   }
 }

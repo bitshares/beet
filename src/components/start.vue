@@ -19,48 +19,49 @@
     </div>
 </template>
 <script>
-import SecureLS from "secure-ls";
+import store from '../store/index.js';
+import { mapGetters } from 'vuex'
 
 export default {
   name: "start",
   data() {
     return {
-      hasWallet: false,
       walletpass: "",
-      walletlist: [],
       selectedWallet: "0",
       passincorrect: "",
       errorMsg: ""
+      
     };
   },
+  store,
   mounted() {
-    let wallets = JSON.parse(localStorage.getItem("wallets"));
-    if (wallets && wallets.length > 0) {
-      this.$data.hasWallet = true;
-      this.$data.walletlist = wallets;
+     store
+        .dispatch("BeetStore/loadWallets", {
+        })
+  },
+  computed: {    
+    hasWallet() {
+      return store.state.BeetStore.hasWallet;     
+    },
+    walletlist() {
+      return store.getters.getWalletlist;
     }
   },
   methods: {
-    unlockWallet() {
-      let ls = new SecureLS({
-        encodingType: "aes",
-        isCompression: true,
-        encryptionSecret: this.walletpass
-      });
-      try {
-        let wallet = ls.get(this.selectedWallet);
-
-        this.$root.$data.wallet = wallet;
-
-        this.$router.replace("/dashboard");
-        console.log("Password accepted!");
-      } catch (e) {
-        this.$data.passincorrect = "is-invalid";
-
-        this.$data.errorMsg = "Invalid Password.";
-        this.$refs.errorModal.show();
-        console.log("Error: Wrong Password");
-      }
+    unlockWallet() {      
+      store
+        .dispatch("BeetStore/getWallet", {
+          wallet_id: this.$data.selectedWallet,
+          wallet_pass: this.$data.walletpass
+        })
+        .then(response => {
+          this.$router.replace("/dashboard");
+        })
+        .catch(response => {
+          this.$data.passincorrect = "is-invalid";
+          this.$data.errorMsg = "Invalid Password.";
+          this.$refs.errorModal.show();
+        });
     }
   }
 };

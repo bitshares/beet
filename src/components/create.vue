@@ -189,10 +189,8 @@ export default {
       if (this.$data.accountID !== null) {
         let wallets = localStorage.getItem("wallets");
         let walletid = uuid();
-        let newwallet = { id: walletid, name: this.$data.walletname };
-        console.log(wallets);
+        let newwallet = { id: walletid, name: this.$data.walletname };        
         if (!wallets) {
-          console.log(wallets);
           wallets = [];
         } else {
           wallets = JSON.parse(wallets);

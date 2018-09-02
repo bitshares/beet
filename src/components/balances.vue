@@ -15,6 +15,8 @@
 <script>
 import { Apis } from "bitsharesjs-ws";
 import { setInterval } from "timers";
+import store from '../store/index.js';
+
 export default {
   name: "Balances",
   data() {
@@ -35,7 +37,7 @@ export default {
     getBalances: async function() {
       let result = await Apis.instance()
         .db_api()
-        .exec("get_full_accounts", [[this.$root.$data.wallet.accountID], false])
+        .exec("get_full_accounts", [[store.state.BeetStore.wallet.accountID], false])
         .then(res => {
           this.$data.rawbalances = res[0][1].balances;
           let neededassets = [];

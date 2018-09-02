@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>BitShares Companion</title>
+    <title>Beet - The BitShares companion</title>
     <link rel="stylesheet" href="./css/bootstrap.min.css">
     <!-- Custom styles for this template -->
     <link href="./css/main.css" rel="stylesheet">
@@ -21,6 +21,7 @@
         import Vue from 'vue/dist/vue.js';
         import BootstrapVue from 'bootstrap-vue';
         import VueRouter from 'vue-router';
+        import store from './store/index.js';
         import router from './router/index.js';
         import {
             ipcRenderer,
@@ -28,10 +29,10 @@
         } from 'electron';
 
         Vue.use(BootstrapVue);
-        Vue.use(VueRouter);
-        console.log(router);
+        Vue.use(VueRouter);        
         const app = new Vue({
-            router
+            router,
+            store
         }).$mount('#app');
         app.$root.$data.ipc = ipcRenderer;
     </script>

@@ -32,9 +32,9 @@ export default {
   },
   watch: {
     selectedNode: function() {
-      console.log("Switching...");
+      console.log("Switching Node.");
       Apis.close().then(() => {
-        console.log("Closed...");
+        console.log("Closed Node.");
         this.isConnected = false;
         Apis.instance(
           this.selectedNode,
@@ -43,16 +43,13 @@ export default {
           { enableCrypto: false, enableOrders: false },
           this.onClose
         ).init_promise.then(res => {
-          console.log("Opened...");
-          this.isConnected = true;
-          this.$root.$data.api = Apis.instance();
+          console.log("Opened Node");
+          this.isConnected = true;          
         });
       });
     }
   },
   mounted() {
-    console.log(this.selectedNode);
-    console.log(nodeList);
     Apis.instance(
       this.selectedNode,
       true,
@@ -60,10 +57,8 @@ export default {
       { enableCrypto: false, enableOrders: false },
       this.onClose
     ).init_promise.then(res => {
-      this.isConnected = true;
-      this.$root.$data.api = Apis.instance();
-      this.$emit("first-connect");
-      console.log("emmited");
+      this.isConnected = true;      
+      this.$emit("first-connect");      
     });
   },
   onClose() {
