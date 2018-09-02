@@ -1,4 +1,4 @@
-import CompanionAPI from '../lib/CompanionAPI';
+import BeetAPI from './BeetAPI';
 
 let io = null;
 let vueInst = null;
@@ -21,8 +21,7 @@ const socketHandler = (socket) => {
     //if (authorized) {
     // All authenticated api requests pass through the 'api' route.
     socket.on('api', async req => {
-        console.log(req);
-        socket.emit('api', await CompanionAPI.handler(Object.assign(req.data, {
+        socket.emit('api', await BeetAPI.handler(Object.assign(req.data, {
             plugin: req.plugin
         }), vueInst));
     });
@@ -35,14 +34,14 @@ const socketHandler = (socket) => {
     //    }
 };
 
-export default class CompanionServer {
+export default class BeetServer {
 
     static initialize(vue) {
         vueInst = vue;
         const server = window.require('http').createServer();
         server.listen(60555, 'localhost');
         io = window.require('socket.io').listen(server);
-        console.log('Listening');
+        console.log('Beet listening...');
     }
 
     static open() {

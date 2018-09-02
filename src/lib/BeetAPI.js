@@ -1,14 +1,13 @@
-import * as Actions from '../lib/Actions';
-import Action from '../lib/Action';
-import Queue from '../lib/Queue';
+import * as Actions from './Actions';
+import Action from './Action';
+import Queue from './Queue';
 
 var popupQ = new Queue();
-export default class CompanionAPI {
+export default class BeetAPI {
 
     static async handler(request, vueInst) {
         const action = Action.fromJson(request);
         if (!Object.keys(Actions).map(key => Actions[key]).includes(request.type)) return;
-        console.log(popupQ);
         let result;
         if (popupQ.isEmpty()) {
             let qresolve;
@@ -19,7 +18,6 @@ export default class CompanionAPI {
                 promise: queued,
                 resolve: qresolve
             });
-            console.log(popupQ);
             result = await this[request.type](request, vueInst);
             let finished = popupQ.dequeue();
             finished.resolve(true);
@@ -47,15 +45,12 @@ export default class CompanionAPI {
             let finished = popupQ.dequeue();
             finished.resolve(true);
         }
-        console.log(popupQ);
         return result;
-
     }
 
     static async [Actions.GET_ACCOUNT](request, vue) {
         try {
-            let response = await vue.requestAccess(request.payload);
-            console.log(response);
+            let response = await vue.requestAccess(request.payload);            
             return {
                 id: request.id,
                 result: response
@@ -68,7 +63,6 @@ export default class CompanionAPI {
     static async [Actions.VOTE_FOR](request, vue) {
         try {
             let response = await vue.requestVote(request.payload);
-            console.log(response);
             return {
                 id: request.id,
                 result: response
@@ -80,7 +74,6 @@ export default class CompanionAPI {
     static async [Actions.REQUEST_SIGNATURE](request, vue) {
         try {
             let response = await vue.requestTx(request.payload);
-            console.log(response);
             return {
                 id: request.id,
                 result: response
