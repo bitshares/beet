@@ -3,7 +3,7 @@
 <div class="content">
             <div class="row mb-2">
                 <div class="col-12 text-center account py-2">
-                    {{this.$root.$data.wallet.accountName}} ({{this.$root.$data.wallet.accountID}})
+                      {{accountName}} ({{accountID}})
                 </div>
             </div>
             <Balances ref="balancetable"></Balances>
@@ -53,10 +53,11 @@
 </template>
 
 <script>
-import CompanionServer from "../lib/CompanionServer";
+import BeetServer from "../lib/BeetServer";
 import Operations from "../lib/Operations";
 import NodeSelect from "./node-select";
 import Balances from "./balances";
+import { Apis } from "bitsharesjs-ws";
 import {
   PrivateKey,
   TransactionHelper,
@@ -75,22 +76,31 @@ export default {
       specifics: ""
     };
   },
+  computed: {
+    accountName () {
+      return this.$store.state.BeetStore.wallet.accountName
+    },
+    accountID () {
+      return this.$store.state.BeetStore.wallet.accountID
+    }
+  },
   components: { NodeSelect, Balances },
   mounted() {
     this.$refs.loaderAnimModal.show();
-    CompanionServer.initialize(this);
-    CompanionServer.open();
-    console.log(this.$root.$data.wallet);
+    BeetServer.initialize(this);
+    BeetServer.open();
   },
   methods: {
     getBalances: async function() {
-      console.log("Called from first connect");
+      
 
       await this.$refs.balancetable.getBalances();
       this.$refs.loaderAnimModal.hide();
     },
     requestAccess: function(request) {
-      this.$root.$data.ipc.send("notify", "request");
+       this.$store
+        .dispatch("BeetStore/notifyUser", { notify: 'request'
+        })
       this.$data.incoming = {};
       this.$data.incoming = request;
       this.$refs.accountReqModal.show();
@@ -100,7 +110,9 @@ export default {
       });
     },
     requestVote: async function(request) {
-      this.$root.$data.ipc.send("notify", "request");
+      this.$store
+        .dispatch("BeetStore/notifyUser", { notify: 'request'
+        })
       this.$data.incoming = {};
       this.$data.incoming = request;
 
@@ -114,7 +126,7 @@ export default {
       }
 
       let entity = "";
-      let objdata = await this.$root.$data.api
+      let objdata = await Apis.instance()
         .db_api()
         .exec("get_objects", [[this.$data.incoming.id]]);
 
@@ -122,7 +134,7 @@ export default {
       switch (entity_id[1]) {
         case "5":
           entity = "committee member";
-          objextradata = await this.$root.$data.api
+          objextradata = await Apis.instance()
             .db_api()
             .exec("get_objects", [[objdata[0].committee_member_account]]);
           this.$data.specifics =
@@ -134,7 +146,7 @@ export default {
           break;
         case "6":
           entity = "witness";
-          objextradata = await this.$root.$data.api
+          objextradata = await Apis.instance()
             .db_api()
             .exec("get_objects", [[objdata[0].witness_account]]);
           this.$data.specifics =
@@ -146,7 +158,7 @@ export default {
           break;
         case "14":
           entity = "worker proposal";
-          objextradata = await this.$root.$data.api
+          objextradata = await Apis.instance()
             .db_api()
             .exec("get_objects", [[objdata[0].worker_account]]);
           this.$data.specifics =
@@ -160,12 +172,9 @@ export default {
             objextradata[0].name;
           this.$data.incoming.vote_id = objdata[0].vote_for;
           break;
-      }
-      console.log(objextradata);
-      this.$data.genericmsg = "wants you to vote for the following " + entity;
-      console.log("pre-show");
-      this.$refs.genericReqModal.show();
-      console.log("shown");
+      }      
+      this.$data.genericmsg = "wants you to vote for the following " + entity;      
+      this.$refs.genericReqModal.show();      
       return new Promise((res, rej) => {
         this.$data.incoming.acceptgen = res;
         this.$data.incoming.rejectgen = rej;
@@ -184,8 +193,8 @@ export default {
     allowAccess: function() {
       this.$refs.accountReqModal.hide();
       this.$data.incoming.accept({
-        account: this.$root.$data.wallet.accountName,
-        id: this.$root.$data.wallet.accountID
+        account: this.$store.state.BeetStore.wallet.accountName,
+        id: this.$store.state.BeetStore.wallet.accountID
       });
     },
     denyAccess: function() {
@@ -194,16 +203,15 @@ export default {
     },
     acceptTx: async function() {
       let tr = new TransactionBuilder();
-      this.$root.$data.api.init_promise.then(res => {
+      Apis.instance().init_promise.then(res => {
         tr.add_type_operation(
           this.$data.incoming.op_type,
           this.$data.incoming.op_data
         );
         tr.set_required_fees().then(async () => {
           this.$refs.loaderAnimModal.show();
-          let pKey = PrivateKey.fromWif(this.$root.$data.wallet.keys.active);
-          tr.add_signer(pKey, pKey.toPublicKey().toPublicKeyString());
-          console.log("serialized transaction:", tr.serialize());
+          let pKey = PrivateKey.fromWif(this.$store.state.BeetStore.wallet.keys.active);
+          tr.add_signer(pKey, pKey.toPublicKey().toPublicKeyString());          
           let id = await tr.broadcast();
           this.$data.incoming.accepttx({ id: id });
           this.$refs.transactionReqModal.hide();
@@ -217,19 +225,17 @@ export default {
     },
     acceptGeneric: async function() {
       let tr = new TransactionBuilder();
-      let res = await this.$root.$data.api.init_promise;
+      let res = await Apis.instance().init_promise;
       let operation = await Operations.generate(
         this.$data.incoming,
-        this.$root.$data.api,
-        this.$root.$data.wallet.accountID
+        this.$store.state.BeetStore.wallet.accountID
       );
-      console.log(operation);
+      
       tr.add_type_operation(operation.op_type, operation.op_data);
       tr.set_required_fees().then(async () => {
         this.$refs.loaderAnimModal.show();
-        let pKey = PrivateKey.fromWif(this.$root.$data.wallet.keys.active);
-        tr.add_signer(pKey, pKey.toPublicKey().toPublicKeyString());
-        console.log("serialized transaction:", tr.serialize());
+        let pKey = PrivateKey.fromWif(this.$store.state.BeetStore.wallet.keys.active);
+        tr.add_signer(pKey, pKey.toPublicKey().toPublicKeyString());        
         let id = await tr.broadcast();
         this.$data.incoming.acceptgen({ id: id });
         this.$refs.genericReqModal.hide();
