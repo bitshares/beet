@@ -37,7 +37,7 @@ export default {
     getBalances: async function() {
       let result = await Apis.instance()
         .db_api()
-        .exec("get_full_accounts", [[store.state.BeetStore.wallet.accountID], false])
+        .exec("get_full_accounts", [[this.$store.state.BeetStore.wallet.accountID], false])
         .then(res => {
           this.$data.rawbalances = res[0][1].balances;
           let neededassets = [];

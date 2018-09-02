@@ -62,7 +62,6 @@
 <script>
 import { PrivateKey, key } from "bitsharesjs";
 import { Apis } from "bitsharesjs-ws";
-import { v4 as uuid } from "uuid";
 import SecureLS from "secure-ls";
 
 export default {
@@ -186,23 +185,10 @@ export default {
       }
 
       this.$refs.loaderAnimModal.show();
+      
       if (this.$data.accountID !== null) {
-        let wallets = localStorage.getItem("wallets");
-        let walletid = uuid();
-        let newwallet = { id: walletid, name: this.$data.walletname };        
-        if (!wallets) {
-          wallets = [];
-        } else {
-          wallets = JSON.parse(wallets);
-        }
-        wallets.push(newwallet);
-        localStorage.setItem("wallets", JSON.stringify(wallets));
-        let ls = new SecureLS({
-          encodingType: "aes",
-          isCompression: true,
-          encryptionSecret: this.$data.password
-        });
-        let walletdata = {
+       this.$store
+        .dispatch("BeetStore/saveWallet", { walletname: this.$data.walletname, password: this.$data.password, walletdata:  {
           accountName: this.$data.accountname,
           accountID: this.$data.accountID,
           keys: {
@@ -210,9 +196,8 @@ export default {
             owner: this.ownerpk,
             memo: this.memopk
           }
-        };
-        ls.set(walletid, walletdata);
-        this.$root.$data.wallet = walletdata;
+        }
+        });
         this.$router.replace("/dashboard");
       }
     }

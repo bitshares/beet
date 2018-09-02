@@ -19,7 +19,6 @@
     </div>
 </template>
 <script>
-import store from '../store/index.js';
 import { mapGetters } from 'vuex'
 
 export default {
@@ -33,23 +32,22 @@ export default {
       
     };
   },
-  store,
   mounted() {
-     store
+     this.$store
         .dispatch("BeetStore/loadWallets", {
         })
   },
   computed: {    
     hasWallet() {
-      return store.state.BeetStore.hasWallet;     
+      return this.$store.state.BeetStore.hasWallet;     
     },
     walletlist() {
-      return store.getters.getWalletlist;
+      return this.$store.state.BeetStore.walletlist;
     }
   },
   methods: {
     unlockWallet() {      
-      store
+      this.$store
         .dispatch("BeetStore/getWallet", {
           wallet_id: this.$data.selectedWallet,
           wallet_pass: this.$data.walletpass

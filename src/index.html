@@ -17,16 +17,12 @@
         <router-view name="header"></router-view>
         <router-view></router-view>
     </div>
-    <script>
+    <script>        
         import Vue from 'vue/dist/vue.js';
         import BootstrapVue from 'bootstrap-vue';
         import VueRouter from 'vue-router';
         import store from './store/index.js';
-        import router from './router/index.js';
-        import {
-            ipcRenderer,
-            remote
-        } from 'electron';
+        import router from './router/index.js';        
 
         Vue.use(BootstrapVue);
         Vue.use(VueRouter);        
@@ -34,7 +30,6 @@
             router,
             store
         }).$mount('#app');
-        app.$root.$data.ipc = ipcRenderer;
     </script>
 </body>
 

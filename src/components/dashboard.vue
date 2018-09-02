@@ -57,7 +57,6 @@ import BeetServer from "../lib/BeetServer";
 import Operations from "../lib/Operations";
 import NodeSelect from "./node-select";
 import Balances from "./balances";
-import store from '../store/index.js';
 import { Apis } from "bitsharesjs-ws";
 import {
   PrivateKey,
@@ -77,20 +76,19 @@ export default {
       specifics: ""
     };
   },
-  store,
   computed: {
     accountName () {
-      return store.state.BeetStore.wallet.accountName
+      return this.$store.state.BeetStore.wallet.accountName
     },
     accountID () {
-      return store.state.BeetStore.wallet.accountID
+      return this.$store.state.BeetStore.wallet.accountID
     }
   },
   components: { NodeSelect, Balances },
   mounted() {
     this.$refs.loaderAnimModal.show();
     BeetServer.initialize(this);
-    BeetServer.open();    
+    BeetServer.open();
   },
   methods: {
     getBalances: async function() {
@@ -100,7 +98,9 @@ export default {
       this.$refs.loaderAnimModal.hide();
     },
     requestAccess: function(request) {
-      this.$root.$data.ipc.send("notify", "request");
+       this.$store
+        .dispatch("BeetStore/notifyUser", { notify: 'request'
+        })
       this.$data.incoming = {};
       this.$data.incoming = request;
       this.$refs.accountReqModal.show();
@@ -110,7 +110,9 @@ export default {
       });
     },
     requestVote: async function(request) {
-      this.$root.$data.ipc.send("notify", "request");
+      this.$store
+        .dispatch("BeetStore/notifyUser", { notify: 'request'
+        })
       this.$data.incoming = {};
       this.$data.incoming = request;
 
@@ -191,8 +193,8 @@ export default {
     allowAccess: function() {
       this.$refs.accountReqModal.hide();
       this.$data.incoming.accept({
-        account: store.state.BeetStore.wallet.accountName,
-        id: store.state.BeetStore.wallet.accountID
+        account: this.$store.state.BeetStore.wallet.accountName,
+        id: this.$store.state.BeetStore.wallet.accountID
       });
     },
     denyAccess: function() {
@@ -208,7 +210,7 @@ export default {
         );
         tr.set_required_fees().then(async () => {
           this.$refs.loaderAnimModal.show();
-          let pKey = PrivateKey.fromWif(store.state.BeetStore.wallet.keys.active);
+          let pKey = PrivateKey.fromWif(this.$store.state.BeetStore.wallet.keys.active);
           tr.add_signer(pKey, pKey.toPublicKey().toPublicKeyString());          
           let id = await tr.broadcast();
           this.$data.incoming.accepttx({ id: id });
@@ -226,13 +228,13 @@ export default {
       let res = await Apis.instance().init_promise;
       let operation = await Operations.generate(
         this.$data.incoming,
-        store.state.BeetStore.wallet.accountID
+        this.$store.state.BeetStore.wallet.accountID
       );
       
       tr.add_type_operation(operation.op_type, operation.op_data);
       tr.set_required_fees().then(async () => {
         this.$refs.loaderAnimModal.show();
-        let pKey = PrivateKey.fromWif(store.state.BeetStore.wallet.keys.active);
+        let pKey = PrivateKey.fromWif(this.$store.state.BeetStore.wallet.keys.active);
         tr.add_signer(pKey, pKey.toPublicKey().toPublicKeyString());        
         let id = await tr.broadcast();
         this.$data.incoming.acceptgen({ id: id });
