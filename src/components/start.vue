@@ -7,7 +7,7 @@
           <option selected disabled value="0">{{ $t('select_wallet') }}</option>
           <option v-for="wallet in walletlist" v-bind:value="wallet.id" v-bind:key="wallet.id">{{wallet.name}}</option>
         </select>
-        <input type="password" id="inputPassword" class="form-control mb-3" placeholder="{{ $t('password_placeholder') }}" required="" v-model="walletpass"  v-if="hasWallet" v-bind:class="passincorrect" v-on:focus="passincorrect=''">        
+        <input type="password" id="inputPassword" class="form-control mb-3" :placeholder=" $t('password_placeholder')" required="" v-model="walletpass"  v-if="hasWallet" v-bind:class="passincorrect" v-on:focus="passincorrect=''">        
         <button class="btn btn-lg btn-primary btn-block" type="submit" v-if="hasWallet" v-on:click="unlockWallet">{{ $t('unlock_cta') }}</button>
         <p class="my-2 font-weight-normal" v-if="hasWallet"><em>{{ $t('or') }}</em></p>
         <router-link to="/create" tag="button" v-if="hasWallet" class="btn btn-lg btn-primary btn-block" replace>{{ $t('create_cta') }}</router-link>     
