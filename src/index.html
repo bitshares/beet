@@ -17,18 +17,37 @@
         <router-view name="header"></router-view>
         <router-view></router-view>
     </div>
-    <script>        
+    <script>
         import Vue from 'vue/dist/vue.js';
         import BootstrapVue from 'bootstrap-vue';
         import VueRouter from 'vue-router';
         import store from './store/index.js';
-        import router from './router/index.js';        
+        import router from './router/index.js';
+        import i18next from 'i18next';
+        import Backend from "i18next-node-fs-backend";
 
+        import VueI18Next from '@panter/vue-i18next';
+        
+        Vue.use(VueI18Next);
         Vue.use(BootstrapVue);
-        Vue.use(VueRouter);        
+        Vue.use(VueRouter);
+
+        i18next.use(Backend).init({
+            lng: "en",
+            fallbackLng: "en",
+            ns: ['common', 'operations'],
+            defaultNS: 'common',
+            backend: {
+                loadPath: `${__dirname}/translations/{{ns}}/{{lng}}.json`,
+            }
+        });
+
+        store.dispatch("SettingsStore/loadSettings");
+        const i18n = new VueI18Next(i18next);
         const app = new Vue({
             router,
-            store
+            store,
+            i18n: i18n
         }).$mount('#app');
     </script>
 </body>

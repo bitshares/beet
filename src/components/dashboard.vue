@@ -3,7 +3,7 @@
 <div class="content">
             <div class="row mb-2">
                 <div class="col-12 text-center account py-2">
-                      {{accountName}} ({{accountID}})
+                      {{accountName}} ({{accountID}})                      
                 </div>
             </div>
             <Balances ref="balancetable"></Balances>
@@ -67,6 +67,7 @@ import {
 
 export default {
   name: "dashboard",
+  i18nOptions: { namespaces: ["common","operations"] },
   data() {
     return {
       text: "",
@@ -89,6 +90,7 @@ export default {
     this.$refs.loaderAnimModal.show();
     BeetServer.initialize(this);
     BeetServer.open();
+    
   },
   methods: {
     getBalances: async function() {

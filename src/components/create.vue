@@ -27,7 +27,7 @@
                      v-model="includeOwner"
                      value="1"
                      unchecked-value="0" class="mb-3">
-      Include Owner Key
+      Include Owner Key?
     </b-form-checkbox>
     <div v-if="includeOwner==1">        
         <input type="text" id="inputOwner" class="form-control mb-3 small" placeholder="Owner Private Key" required=""  v-model="ownerpk">

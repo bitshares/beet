@@ -47,11 +47,14 @@
     }
   },
   "dependencies": {
+    "@panter/vue-i18next": "^0.12.0",
     "bitsharesjs": "^1.8.0",
     "bootstrap-vue": "^2.0.0-rc.11",
     "electron-compile": "^6.4.3",
     "electron-devtools-installer": "^2.2.4",
     "electron-squirrel-startup": "^1.0.0",
+    "i18next": "^11.6.0",
+    "i18next-node-fs-backend": "^2.0.0",
     "secure-ls": "^1.2.1",
     "socket.io": "^2.1.1",
     "uuid": "^3.3.2",
