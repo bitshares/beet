@@ -1,6 +1,7 @@
 <template>
     <div class="bottom">
       <div class="content">
+            <LangSelect ref="langswitch"></LangSelect>
         <p class="mt-3 mb-3 font-weight-normal" v-if="!hasWallet"><em>{{ $t('no_wallet') }}</em></p>
         <router-link to="/create" tag="button" v-if="!hasWallet" class="btn btn-lg btn-primary btn-block" replace>{{ $t('start_cta') }}</router-link>        
         <select class="form-control my-3" id="wallet-select" v-model="selectedWallet"  v-if="hasWallet" v-on:change="passincorrect=''">                                
@@ -19,7 +20,8 @@
     </div>
 </template>
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters } from 'vuex';
+import LangSelect from "./lang-select";
 
 export default {
   name: "start",
@@ -46,6 +48,7 @@ export default {
       return this.$store.state.BeetStore.walletlist;
     }
   },
+  components: { LangSelect },
   methods: {
     unlockWallet() {      
       this.$store

@@ -1,4 +1,5 @@
 import Vue from 'vue/dist/vue.js';
+import defaultLocale from '../../config/i18n.js'
 const LOAD_SETTINGS = 'LOAD_SETTINGS';
 
 
@@ -55,7 +56,7 @@ const getters = {
 
 const initialState = {
     'settings': {
-    'locale': 'en',
+    'locale': defaultLocale,
     'selected_node': 'wss://bts-seoul.clockwork.gr'
     }
 };
