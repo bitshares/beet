@@ -14,12 +14,12 @@ const actions = {
         commit
     }) {
         return new Promise((resolve, reject) => {
-            try  {
-                let settings=localStorage.getItem("settings");
+            try {
+                let settings = localStorage.getItem("settings");
                 if (settings && settings.length > 0) {
 
                     commit(LOAD_SETTINGS, JSON.parse(settings));
-                }else{
+                } else {
                     localStorage.setItem("settings", JSON.stringify(initialState.settings));
                     commit(LOAD_SETTINGS, JSON.parse(initialState.settings));
                 }
@@ -29,16 +29,38 @@ const actions = {
             }
         });
     },
-    setNode({commit},payload) {
+    setNode({
+        commit
+    }, payload) {
         return new Promise((resolve, reject) => {
-            try  {
-                let settings=localStorage.getItem("settings");
+            try {
+                let settings = localStorage.getItem("settings");
                 if (settings && settings.length > 0) {
-                    settings=JSON.parse(settings)
-                }else{
-                    settings=initialState.settings;
+                    settings = JSON.parse(settings)
+                } else {
+                    settings = initialState.settings;
                 }
-                settings.selected_node=payload.node;
+                settings.selected_node = payload.node;
+                localStorage.setItem("settings", JSON.stringify(settings));
+                commit(LOAD_SETTINGS, settings);
+                resolve();
+            } catch (e) {
+                reject();
+            }
+        });
+    },
+    setLocale({
+        commit
+    }, payload) {
+        return new Promise((resolve, reject) => {
+            try {
+                let settings = localStorage.getItem("settings");
+                if (settings && settings.length > 0) {
+                    settings = JSON.parse(settings)
+                } else {
+                    settings = initialState.settings;
+                }
+                settings.locale = payload.locale;
                 localStorage.setItem("settings", JSON.stringify(settings));
                 commit(LOAD_SETTINGS, settings);
                 resolve();
@@ -50,14 +72,13 @@ const actions = {
 }
 
 
-const getters = {
-};
+const getters = {};
 
 
 const initialState = {
     'settings': {
-    'locale': defaultLocale,
-    'selected_node': 'wss://bts-seoul.clockwork.gr'
+        'locale': defaultLocale,
+        'selected_node': 'wss://bts-seoul.clockwork.gr'
     }
 };
 

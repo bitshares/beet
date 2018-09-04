@@ -1,17 +1,15 @@
 import * as Actions from './Actions';
-import Action from './Action';
 import Queue from './Queue';
 
 var popupQ = new Queue();
 export default class BeetAPI {
 
-    static async handler(request, vueInst) {
-        const action = Action.fromJson(request);
+    static async handler(request, vueInst) {        
         if (!Object.keys(Actions).map(key => Actions[key]).includes(request.type)) return;
         let result;
         if (popupQ.isEmpty()) {
             let qresolve;
-            let queued = new Promise(function (resolve, reject) {
+            let queued = new Promise(function (resolve) {
                 qresolve = resolve
             });
             popupQ.enqueue({
@@ -32,7 +30,7 @@ export default class BeetAPI {
                 }
             }
             let qresolve;
-            let queued = new Promise(function (resolve, reject) {
+            let queued = new Promise(function (resolve) {
                 qresolve = resolve
             });
             let previous = popupQ.tail();
@@ -40,7 +38,7 @@ export default class BeetAPI {
                 promise: queued,
                 resolve: qresolve
             });
-            let done = await previous.promise;
+            await previous.promise;
             result = await this[request.type](request, vueInst);
             let finished = popupQ.dequeue();
             finished.resolve(true);
@@ -50,7 +48,7 @@ export default class BeetAPI {
 
     static async [Actions.GET_ACCOUNT](request, vue) {
         try {
-            let response = await vue.requestAccess(request.payload);            
+            let response = await vue.requestAccess(request.payload);
             return {
                 id: request.id,
                 result: response

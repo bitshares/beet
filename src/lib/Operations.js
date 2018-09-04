@@ -1,4 +1,6 @@
-import {Apis} from "bitsharesjs-ws";
+import {
+    Apis
+} from "bitsharesjs-ws";
 
 export default class operations {
 
@@ -7,7 +9,7 @@ export default class operations {
         let op_data;
         let api = Apis.instance();
         switch (data.action) {
-            case 'vote':
+            case 'vote': {
                 op_type = 'account_update';
                 let accounts = await api.db_api()
                     .exec("get_objects", [
@@ -32,6 +34,7 @@ export default class operations {
                 op_data = updateObject;
 
                 break;
+            }
         }
         return {
             op_type: op_type,
