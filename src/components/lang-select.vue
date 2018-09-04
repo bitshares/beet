@@ -1,30 +1,41 @@
 <template>
-    <div class="row lang-selector">
-        <div class="col-12 p-0">
-            <div class="input-group mb-0">
-                <select 
-                    id="lang-select" 
-                    v-model="selectLang" 
-                    class="form-control small"
-                >
-                    <option 
-                        v-for="loc in locales" 
-                        :key="loc['code']" 
-                        :value="loc['code']"
-                    >{{ loc['code'] }}</option>
-                </select>
-            </div>
-        </div>
-    </div>
+    <multiselect
+        v-model="selectLang" 
+        :options="locales"
+        :value="this.$store.state.SettingsStore.settings.locale"
+        :searchable="false"
+        label="name"
+        track-by="iso"
+        class="lang-select"
+    > 
+        <template 
+            slot="singleLabel" 
+            slot-scope="props"
+        >
+            
+            <span class="option__desc"><span class="option__title">{{ props.option.iso }}</span></span>
+        </template>
+        <template 
+            slot="option" 
+            slot-scope="props"
+        >
+            
+            <span class="option__desc"><span class="option__title">{{ props.option.iso }} - {{ props.option.name }}</span></span>
+        </template>
+    </multiselect>
 </template>
 
 <script>
     import { locales } from "../config/i18n.js";
+    import Multiselect from 'vue-multiselect'
+    import i18next from 'i18next';
+    
 
 
     export default {
         name: "LangSelect",
         i18nOptions: { namespaces: "common" },
+        components: { Multiselect },
         data() {
             return {
                 locales:locales,
@@ -35,6 +46,7 @@
             selectLang: function() {
                 console.log("Switching Lang.");
                 this.$store.dispatch("SettingsStore/setLocale", { 'locale': this.selectLang });
+                i18next.changeLanguage(this.selectLang.iso);
             }
         },
         mounted() {

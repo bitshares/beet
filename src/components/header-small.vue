@@ -9,15 +9,19 @@
                     width="56"
                     height="56"
                 >
-                <h4 class="h4 font-weight-normal align-self-center">Beet</h4>
+                <h4 class="h4 font-weight-normal align-self-center">{{ $t('app_name') }}</h4>
+                <LangSelect ref="langswitch" />
             </div>
         </div>
     </div>
 </template>
 
 <script>
+    import LangSelect from "./lang-select";
     export default {
         name: "HeaderSmall",
+        i18nOptions: { namespaces: "common" },
+        components: { LangSelect },
         data() {
             return {};
         }

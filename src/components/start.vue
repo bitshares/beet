@@ -1,70 +1,69 @@
 <template>
     <div class="bottom">
         <div class="content">
-            <LangSelect ref="langswitch" />
-            <p 
-                v-if="!hasWallet" 
+            <p
+                v-if="!hasWallet"
                 class="mt-3 mb-3 font-weight-normal"
             ><em>{{ $t('no_wallet') }}</em></p>
-            <router-link 
-                v-if="!hasWallet" 
-                to="/create" 
-                tag="button" 
-                class="btn btn-lg btn-primary btn-block" 
+            <router-link
+                v-if="!hasWallet"
+                to="/create"
+                tag="button"
+                class="btn btn-lg btn-primary btn-block"
                 replace
-            >{{ $t('start_cta') }}</router-link>        
-            <select 
-                v-if="hasWallet" 
-                id="wallet-select" 
-                v-model="selectedWallet" 
-                class="form-control my-3" 
+            >{{ $t('start_cta') }}</router-link>
+            <select
+                v-if="hasWallet"
+                id="wallet-select"
+                v-model="selectedWallet"
+                class="form-control my-3"
                 @change="passincorrect=''"
-            >                                
-                <option 
-                    selected 
-                    disabled 
+            >
+                <option
+                    selected
+                    disabled
                     value="0"
                 >{{ $t('select_wallet') }}</option>
-                <option 
-                    v-for="wallet in walletlist" 
-                    :key="wallet.id" 
+                <option
+                    v-for="wallet in walletlist"
+                    :key="wallet.id"
                     :value="wallet.id"
                 >{{ wallet.name }}</option>
             </select>
-            <input 
-                v-if="hasWallet" 
-                id="inputPassword" 
-                v-model="walletpass" 
-                type="password" 
-                class="form-control mb-3" 
-                :placeholder=" $t('password_placeholder')" 
-                required="" 
-                :class="passincorrect" 
+            <input
+                v-if="hasWallet"
+                id="inputPassword"
+                v-model="walletpass"
+                type="password"
+                class="form-control mb-3"
+                :placeholder=" $t('password_placeholder')"
+                required=""
+                :class="passincorrect"
                 @focus="passincorrect=''"
-            >        
-            <button 
-                v-if="hasWallet" 
-                class="btn btn-lg btn-primary btn-block" 
-                type="submit" 
+            >
+            <button
+                v-if="hasWallet"
+                class="btn btn-lg btn-primary btn-block"
+                type="submit"
                 @click="unlockWallet"
             >{{ $t('unlock_cta') }}</button>
-            <p 
-                v-if="hasWallet" 
+            <p
+                v-if="hasWallet"
                 class="my-2 font-weight-normal"
             ><em>{{ $t('or') }}</em></p>
-            <router-link 
-                v-if="hasWallet" 
-                to="/create" 
-                tag="button" 
-                class="btn btn-lg btn-primary btn-block" 
+            <router-link
+                v-if="hasWallet"
+                to="/create"
+                tag="button"
+                class="btn btn-lg btn-primary btn-block"
                 replace
-            >{{ $t('create_cta') }}</router-link>     
+            >{{ $t('create_cta') }}</router-link>
         </div>
-        <b-modal 
-            id="error" 
-            ref="errorModal" 
-            centered 
-            hide-footer 
+        <b-modal
+            id="error"
+            ref="errorModal"
+            centered
+            hide-footer
             title="Error"
         >
             {{ errorMsg }}
@@ -73,12 +72,10 @@
     </div>
 </template>
 <script>
-    import LangSelect from "./lang-select";
 
     export default {
         name: "Start",
         i18nOptions: { namespaces: "common" },
-        components: { LangSelect },
         data() {
             return {
                 walletpass: "",

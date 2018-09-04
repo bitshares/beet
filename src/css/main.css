@@ -1,5 +1,4 @@
 /* Fixed Layout */
-
 html,
 body {
   height: 100%;
@@ -220,6 +219,7 @@ pre {
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(360deg);
   }
@@ -231,4 +231,37 @@ pre {
 
 .custom-content {
   max-height: 280px;
+}
+
+.lang-select {
+  position: absolute;
+  top: 10px;
+  right: 0;
+  width: 40px;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  color: white;
+}
+.lang-select:focus {
+  
+  position: absolute;
+  top: 10px;
+  right: 0;
+  width: 40px;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  color: white;
+  outline: 0;
+  box-shadow: none;
+}
+.lang-select option {
+  background: none;
+  color: white;
+  outline: 0;
 }

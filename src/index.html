@@ -25,24 +25,23 @@
         import router from './router/index.js';
         import i18next from 'i18next';
         import Backend from "i18next-node-fs-backend";
-
         import VueI18Next from '@panter/vue-i18next';
+        
+
         
         Vue.use(VueI18Next);
         Vue.use(BootstrapVue);
         Vue.use(VueRouter);
 
+        store.dispatch("SettingsStore/loadSettings");
         i18next.use(Backend).init({
-            lng: "en",
-            fallbackLng: "en",
+            lng: store.state.SettingsStore.settings.locale.iso,
             ns: ['common', 'operations'],
             defaultNS: 'common',
             backend: {
                 loadPath: `${__dirname}/translations/{{ns}}/{{lng}}.json`,
             }
         });
-
-        store.dispatch("SettingsStore/loadSettings");
         const i18n = new VueI18Next(i18next);
         const app = new Vue({
             router,

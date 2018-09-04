@@ -1,10 +1,12 @@
-export const defaultLocale = 'en';
-export const locales = [{
-    code: 'en',
+let localelist = [{
+    iso: 'en',
     name: 'English',
     dir: 'ltr',
 }, {
-    code: 'de',
+    iso: 'de',
     name: 'Deutsch',
     dir: 'ltr',
-}]
+}];
+
+export const locales=localelist;
+export const defaultLocale = localelist[0];
