@@ -28,7 +28,7 @@ export default {
       nodes: nodeList,
       isConnected: false,
       api: null,
-      selectedNode: 'wss://bts-seoul.clockwork.gr'
+      selectedNode: this.$store.state.SettingsStore.settings.selected_node
     };
   },
   watch: {
@@ -52,9 +52,9 @@ export default {
     }
   },
   mounted() {    
-    console.log(this.$store.state.SettingsStore.settings.selected_node);
+    
     Apis.instance(
-      this.$store.state.SettingsStore.settings.selected_node,
+      this.selectedNode,
       true,
       10000,
       { enableCrypto: false, enableOrders: false },
