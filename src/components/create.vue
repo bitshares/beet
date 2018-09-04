@@ -139,7 +139,7 @@ export default {
       }
       this.$refs.loaderAnimModal.show();
       let verified = await Apis.instance(
-        "wss://bts-seoul.clockwork.gr",
+         this.$store.state.SettingsStore.settings.selected_node,
         true
       ).init_promise.then(res => {
         return Apis.instance()

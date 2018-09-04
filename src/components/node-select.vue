@@ -5,7 +5,7 @@
   </div>
     <div class="col-8 p-0">
                         <div class="input-group mb-0">
-                            <select class="form-control small" id="node-select" v-model="selectedNode">                                
+                            <select class="form-control small" id="node-select" v-model="selectedNode">
                                 <option v-for="node in nodes" v-bind:value="node.url" v-bind:key="node.url">{{node.url}}</option>
                             </select>
                         </div>
@@ -28,7 +28,7 @@ export default {
       nodes: nodeList,
       isConnected: false,
       api: null,
-      selectedNode: "wss://bts-seoul.clockwork.gr"
+      selectedNode: 'wss://bts-seoul.clockwork.gr'
     };
   },
   watch: {
@@ -45,14 +45,16 @@ export default {
           this.onClose
         ).init_promise.then(res => {
           console.log("Opened Node");
+          this.$store.dispatch("SettingsStore/setNode", { 'node': this.selectedNode })
           this.isConnected = true;          
         });
       });
     }
   },
-  mounted() {
+  mounted() {    
+    console.log(this.$store.state.SettingsStore.settings.selected_node);
     Apis.instance(
-      this.selectedNode,
+      this.$store.state.SettingsStore.settings.selected_node,
       true,
       10000,
       { enableCrypto: false, enableOrders: false },
