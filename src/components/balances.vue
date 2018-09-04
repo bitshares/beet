@@ -1,6 +1,6 @@
 <template>
 <div class="balances mt-3">
-                <p class="mb-1 font-weight-bold small">Balances</p>
+                <p class="mb-1 font-weight-bold small">{{$t('balances_lbl')}}</p>
                 <table class="table small table-striped table-sm">
                     <tbody>                    
                         <tr v-for="balance in balances" :key="balance.id">
@@ -19,6 +19,7 @@ import store from '../store/index.js';
 
 export default {
   name: "Balances",
+  i18nOptions: { namespaces: "common" },
   data() {
     return {
       rawbalances: [],

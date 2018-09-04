@@ -1,7 +1,7 @@
 <template>
 <div class="row node-selector">
   <div class="col-2 p-0 text-center d-flex  justify-content-center">
-    <span class="align-self-center">Node:</span>
+    <span class="align-self-center">{{$t('node_lbl')}}</span>
   </div>
     <div class="col-8 p-0">
                         <div class="input-group mb-0">
@@ -22,6 +22,7 @@ import { nodeList } from "../config/config";
 
 export default {
   name: "NodeSelect",
+  i18nOptions: { namespaces: "common" },
   data() {
     return {
       nodes: nodeList,

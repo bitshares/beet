@@ -23,6 +23,7 @@ import { mapGetters } from 'vuex'
 
 export default {
   name: "start",
+  i18nOptions: { namespaces: "common" },
   data() {
     return {
       walletpass: "",
