@@ -1,12 +1,14 @@
+import {Apis} from "bitsharesjs-ws";
+
 export default class operations {
 
-    static async generate(data, api, account_id) {
+    static async generate(data, account_id) {
         let op_type;
         let op_data;
+        let api = Apis.instance();
         switch (data.action) {
             case 'vote':
                 op_type = 'account_update';
-                console.log('here' + account_id);
                 let accounts = await api.db_api()
                     .exec("get_objects", [
                         [account_id]
