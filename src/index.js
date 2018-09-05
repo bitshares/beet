@@ -5,9 +5,7 @@ import {
   Tray,
   ipcMain
 } from 'electron';
-import installExtension, {
-  VUEJS_DEVTOOLS
-} from 'electron-devtools-installer';
+import installExtension from 'electron-devtools-installer';
 import {
   enableLiveReload
 } from 'electron-compile';
@@ -55,7 +53,8 @@ const createWindow = async () => {
   tray.setContextMenu(contextMenu)
   // Open the DevTools.
   if (isDevMode) {
-    await installExtension(VUEJS_DEVTOOLS);
+    //await installExtension(VUEJS_DEVTOOLS);
+    await installExtension('ljjemllljcmogpfapbkkighbhhppjdbg');
     //mainWindow.webContents.openDevTools();
   }
 
