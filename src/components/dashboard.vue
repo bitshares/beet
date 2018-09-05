@@ -20,23 +20,24 @@
             no-close-on-backdrop
             hide-header-close
             hide-footer
-            title="Account Details Request"
+            :title="$t('operations:account_id.title')"
         >
-            The page/app <strong>'{{ this.$data.incoming.origin }}'</strong> is requesting to access your account ID.<br>
+            {{ $t('operations:account_id.request',{origin: this.$data.incoming.origin }) }}
             <br>
-            Do you want to allow access?
+            <br>
+            {{ $t('operations:account_id.request_cta') }}
             <b-btn
                 class="mt-3"
                 variant="success"
                 block
                 @click="allowAccess"
-            >Allow</b-btn>
+            >{{ $t('operations:account_id.accept_btn') }}</b-btn>
             <b-btn
                 class="mt-1"
                 variant="danger"
                 block
                 @click="denyAccess"
-            >Deny</b-btn>
+            >{{ $t('operations:account_id.reject_btn') }}</b-btn>
         </b-modal>
         <b-modal
             id="transactionRequest"
@@ -46,10 +47,9 @@
             no-close-on-backdrop
             hide-header-close
             hide-footer
-            title="Transaction Request"
+            :title="$t('operations:rawsig.title')"
         >
-            The page/app
-            <strong>'{{ this.$data.incoming.origin }}'</strong> has submitted the following transaction.
+            {{ $t('operations:rawsig.request',{origin: this.$data.incoming.origin }) }}
             <br>
             <br>
             <pre class="text-left custom-content"><code>
@@ -58,19 +58,22 @@
   op_data: {{ this.$data.incoming.op_data }}
 }
             </code></pre>
-            Do you want to execute it?
+            
+            {{ $t('operations:rawsig.request_cta') }}
             <b-btn
                 class="mt-3"
                 variant="success"
                 block
                 @click="acceptTx"
-            >Sign &amp; Broadcast</b-btn>
+            >
+                {{ $t('operations:rawsig.accept_btn') }}</b-btn>
             <b-btn
                 class="mt-1"
                 variant="danger"
                 block
                 @click="rejectTx"
-            >Ignore</b-btn>
+            >
+                {{ $t('operations:rawsig.reject_btn') }}</b-btn>
         </b-modal>
         <b-modal
             id="genericRequest"
@@ -80,10 +83,9 @@
             no-close-on-backdrop
             hide-header-close
             hide-footer
-            title="Incoming Request"
+            :title="this.$data.generictitle "
         >
-            The page/app
-            <strong>'{{ this.$data.incoming.origin }}'</strong> {{ this.$data.genericmsg }}:
+            {{ this.$data.genericmsg }}:
             <br>
             <br>
             <pre class="text-left custom-content"><code>
@@ -94,13 +96,13 @@
                 variant="success"
                 block
                 @click="acceptGeneric"
-            >Approve</b-btn>
+            >{{ this.$data.genericaccept }}</b-btn>
             <b-btn
                 class="mt-1"
                 variant="danger"
                 block
                 @click="rejectGeneric"
-            >Ignore</b-btn>
+            >{{ this.$data.genericreject }}</b-btn>
         </b-modal>
         <b-modal
             id="loaderAnim"
@@ -111,7 +113,6 @@
             hide-header
             hide-header-close
             hide-footer
-            title="Loading..."
         >
             <div class="lds-roller"><div /><div /><div /><div /><div /><div /><div /><div /></div>
         </b-modal>
@@ -237,7 +238,10 @@
                     this.$data.incoming.vote_id = objdata[0].vote_for;
                     break;
                 }
-                this.$data.genericmsg = "wants you to vote for the following " + entity;
+                this.$data.genericmsg = this.$t('operations:vote.request', {origin: this.$data.incoming.origin, entity: entity });
+                this.$data.generictitle=this.$t('operations:vote.title');
+                this.$data.genericaccept=this.$t('operations:vote.accept_btn');
+                this.$data.genericreject=this.$t('operations:vote.reject_btn');
                 this.$refs.genericReqModal.show();
                 return new Promise((res, rej) => {
                     this.$data.incoming.acceptgen = res;
