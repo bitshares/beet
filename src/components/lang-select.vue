@@ -4,6 +4,7 @@
         :options="locales"
         :value="this.$store.state.SettingsStore.settings.locale"
         :searchable="false"
+        :allow-empty="false"
         label="name"
         track-by="iso"
         class="lang-select"
