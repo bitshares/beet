@@ -287,7 +287,7 @@
 
                 if (this.$data.accountID !== null) {
                     this.$store
-                        .dispatch("BeetStore/saveWallet", { walletname: this.$data.walletname, password: this.$data.password, walletdata:  {
+                        .dispatch("WalletStore/saveWallet", { walletname: this.$data.walletname, password: this.$data.password, walletdata:  {
                             accountName: this.$data.accountname,
                             accountID: this.$data.accountID,
                             keys: {

@@ -86,19 +86,19 @@
         },
         computed: {
             hasWallet() {
-                return this.$store.state.BeetStore.hasWallet;
+                return this.$store.state.WalletStore.hasWallet;
             },
             walletlist() {
-                return this.$store.state.BeetStore.walletlist;
+                return this.$store.state.WalletStore.walletlist;
             }
         },
         mounted() {
-            this.$store.dispatch("BeetStore/loadWallets", {});
+            this.$store.dispatch("WalletStore/loadWallets", {});
         },
         methods: {
             unlockWallet() {
                 this.$store
-                    .dispatch("BeetStore/getWallet", {
+                    .dispatch("WalletStore/getWallet", {
                         wallet_id: this.$data.selectedWallet,
                         wallet_pass: this.$data.walletpass
                     })

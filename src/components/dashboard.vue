@@ -146,10 +146,10 @@
         },
         computed: {
             accountName() {
-                return this.$store.state.BeetStore.wallet.accountName;
+                return this.$store.state.WalletStore.wallet.accountName;
             },
             accountID() {
-                return this.$store.state.BeetStore.wallet.accountID;
+                return this.$store.state.WalletStore.wallet.accountID;
             }
         },
         mounted() {
@@ -163,7 +163,7 @@
                 this.$refs.loaderAnimModal.hide();
             },
             requestAccess: function(request) {
-                this.$store.dispatch("BeetStore/notifyUser", {
+                this.$store.dispatch("WalletStore/notifyUser", {
                     notify: "request"
                 });
                 this.$data.incoming = {};
@@ -175,7 +175,7 @@
                 });
             },
             requestVote: async function(request) {
-                this.$store.dispatch("BeetStore/notifyUser", {
+                this.$store.dispatch("WalletStore/notifyUser", {
                     notify: "request"
                 });
                 this.$data.incoming = {};
@@ -261,8 +261,8 @@
             allowAccess: function() {
                 this.$refs.accountReqModal.hide();
                 this.$data.incoming.accept({
-                    account: this.$store.state.BeetStore.wallet.accountName,
-                    id: this.$store.state.BeetStore.wallet.accountID
+                    account: this.$store.state.WalletStore.wallet.accountName,
+                    id: this.$store.state.WalletStore.wallet.accountID
                 });
             },
             denyAccess: function() {
@@ -279,7 +279,7 @@
                     tr.set_required_fees().then(async () => {
                         this.$refs.loaderAnimModal.show();
                         let pKey = PrivateKey.fromWif(
-                            this.$store.state.BeetStore.wallet.keys.active
+                            this.$store.state.WalletStore.wallet.keys.active
                         );
                         tr.add_signer(pKey, pKey.toPublicKey().toPublicKeyString());
                         let id = await tr.broadcast();
@@ -297,14 +297,14 @@
                 let tr = new TransactionBuilder();
                 let operation = await Operations.generate(
                     this.$data.incoming,
-                    this.$store.state.BeetStore.wallet.accountID
+                    this.$store.state.WalletStore.wallet.accountID
                 );
 
                 tr.add_type_operation(operation.op_type, operation.op_data);
                 tr.set_required_fees().then(async () => {
                     this.$refs.loaderAnimModal.show();
                     let pKey = PrivateKey.fromWif(
-                        this.$store.state.BeetStore.wallet.keys.active
+                        this.$store.state.WalletStore.wallet.keys.active
                     );
                     tr.add_signer(pKey, pKey.toPublicKey().toPublicKeyString());
                     let id = await tr.broadcast();
