@@ -60,29 +60,33 @@ const actions = {
         commit
     }, payload) {
         return new Promise((resolve, reject) => {
-            let wallets = localStorage.getItem("wallets");
-            let walletid = uuid();
-            let newwallet = {
-                id: walletid,
-                name: payload.walletname
-            };
-            if (!wallets) {
-                wallets = [];
-            } else {
-                wallets = JSON.parse(wallets);
+            try {
+                let wallets = localStorage.getItem("wallets");
+                let walletid = uuid();
+                let newwallet = {
+                    id: walletid,
+                    name: payload.walletname
+                };
+                if (!wallets) {
+                    wallets = [];
+                } else {
+                    wallets = JSON.parse(wallets);
+                }
+                wallets.push(newwallet);
+                localStorage.setItem("wallets", JSON.stringify(wallets));
+                commit(SET_WALLET_STATUS, true);
+                commit(SET_WALLETLIST, wallets);
+                let ls = new SecureLS({
+                    encodingType: "aes",
+                    isCompression: true,
+                    encryptionSecret: payload.password
+                });
+                ls.set(walletid, payload.walletdata);
+                commit(GET_WALLET, payload.walletdata);
+                resolve();
+            } catch (e) {
+                reject();
             }
-            wallets.push(newwallet);
-            localStorage.setItem("wallets", JSON.stringify(wallets));
-            commit(SET_WALLET_STATUS, true);
-            commit(SET_WALLETLIST, wallets);
-            let ls = new SecureLS({
-                encodingType: "aes",
-                isCompression: true,
-                encryptionSecret: payload.password
-            });
-            ls.set(walletid, payload.walletdata);
-            commit(GET_WALLET, payload.walletdata);
-            resolve();
         });
     },
     loadWallets({
@@ -91,16 +95,16 @@ const actions = {
 
         return new Promise((resolve, reject) => {
             try {
-            let wallets = JSON.parse(localStorage.getItem("wallets"));
-            if (wallets && wallets.length > 0) {
-                commit(SET_WALLET_STATUS, true);
-                commit(SET_WALLETLIST, wallets);
-                resolve('Wallets Found');
-            } else {
-                resolve('Wallets not found');
-            }
-            }catch(e) {
-                resolve('Wallets not found');
+                let wallets = JSON.parse(localStorage.getItem("wallets"));
+                if (wallets && wallets.length > 0) {
+                    commit(SET_WALLET_STATUS, true);
+                    commit(SET_WALLETLIST, wallets);
+                    resolve('Wallets Found');
+                } else {
+                    resolve('Wallets not found');
+                }
+            } catch (e) {
+                reject('Wallets not found');
             }
         });
     },
@@ -108,10 +112,12 @@ const actions = {
         commit
     }, payload) {
         return new Promise((resolve, reject) => {
-
-            commit(REQ_NOTIFY, payload.notify);
-            resolve();
-
+            if (payload.notify == 'request') {
+                commit(REQ_NOTIFY, payload.notify);
+                resolve();
+            } else {
+                reject();
+            }
         });
     }
 }
@@ -125,7 +131,7 @@ const getters = {
 
 
 const initialState = {
-    wallet: {},
+    wallet: wallet,
     hasWallet: false,
     walletlist: [],
     ipc: ipcRenderer
