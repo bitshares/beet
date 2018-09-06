@@ -32,7 +32,7 @@
                 let result = await Apis.instance()
                     .db_api()
                     .exec("get_full_accounts", [
-                        [this.$store.state.BeetStore.wallet.accountID],
+                        [this.$store.state.WalletStore.wallet.accountID],
                         false
                     ])
                     .then(res => {
