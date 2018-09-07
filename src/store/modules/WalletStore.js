@@ -8,7 +8,9 @@ import {
 } from "uuid";
 const GET_WALLET = 'GET_WALLET';
 const CREATE_WALLET = 'CREATE_WALLET';
+const CONFIRM_UNLOCK = 'CONFIRM_UNLOCK';
 const SET_WALLET_STATUS = 'SET_WALLET_STATUS';
+const SET_WALLET_UNLOCKED = 'SET_WALLET_UNLOCKED';
 const SET_WALLETLIST = 'SET_WALLETLIST';
 const REQ_NOTIFY = 'REQ_NOTIFY';
 
@@ -17,14 +19,22 @@ const wallet = {};
 
 const mutations = {
     [GET_WALLET](state, wallet) {
+        
+       
         Vue.set(state, 'wallet', wallet);
     },
-
+    [CONFIRM_UNLOCK](state) {
+        state.unlocked.resolve();
+    },
     [SET_WALLET_STATUS](state, status) {
 
         Vue.set(state, 'hasWallet', status);
     },
 
+    [SET_WALLET_UNLOCKED](state, unlocked) {
+
+        Vue.set(state, 'unlocked', unlocked);
+    },
     [SET_WALLETLIST](state, walletlist) {
 
         Vue.set(state, 'walletlist', walletlist);
@@ -52,9 +62,13 @@ const actions = {
                 commit(GET_WALLET, wallet);
                 resolve();
             } catch (e) {
+                console.log(e);
                 reject();
             }
         });
+    },
+    confirmUnlock({commit}) {
+        commit(CONFIRM_UNLOCK);
     },
     saveWallet({
         commit
@@ -97,6 +111,14 @@ const actions = {
             try {
                 let wallets = JSON.parse(localStorage.getItem("wallets"));
                 if (wallets && wallets.length > 0) {
+                    let unlock;
+                    let unlocked = new Promise(function (resolve) {
+                        unlock = resolve
+                    });
+                    commit(SET_WALLET_UNLOCKED, {
+                        promise: unlocked,
+                        resolve: unlock
+                    });
                     commit(SET_WALLET_STATUS, true);
                     commit(SET_WALLETLIST, wallets);
                     resolve('Wallets Found');
@@ -129,12 +151,12 @@ const getters = {
     getWalletList: state => state.walletlist
 };
 
-
 const initialState = {
     wallet: wallet,
     hasWallet: false,
     walletlist: [],
-    ipc: ipcRenderer
+    ipc: ipcRenderer,
+    unlocked: {}
 };
 
 export default {

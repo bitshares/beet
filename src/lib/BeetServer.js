@@ -1,5 +1,7 @@
 import BeetAPI from './BeetAPI';
 
+const version= {release: 1, name:'1.0.0beta'};
+
 let io = null;
 let vueInst = null;
 const socketHandler = (socket) => {
@@ -16,7 +18,7 @@ const socketHandler = (socket) => {
 
     // When something connects we automatically
     // notify it of a successful connection
-    socket.emit('connected');
+    socket.emit('connected',version);
     //let authorized=await vueInst.authorize(req);
     //if (authorized) {
     // All authenticated api requests pass through the 'api' route.
@@ -25,7 +27,10 @@ const socketHandler = (socket) => {
             plugin: req.plugin
         }), vueInst));
     });
-
+    socket.on('link',asynq req=> {
+        //TODO
+        //socket.emit('link',await vueInst.)
+    })
     socket.on('disconnect', () => {
 
     });

@@ -121,7 +121,6 @@
 </template>
 
 <script>
-    import BeetServer from "../lib/BeetServer";
     import Operations from "../lib/Operations";
     import NodeSelect from "./node-select";
     import Balances from "./balances";
@@ -154,15 +153,15 @@
         },
         mounted() {
             this.$refs.loaderAnimModal.show();
-            BeetServer.initialize(this);
-            BeetServer.open();
         },
         methods: {
             getBalances: async function() {
                 await this.$refs.balancetable.getBalances();
+                this.$store.dispatch("WalletStore/confirmUnlock");
                 this.$refs.loaderAnimModal.hide();
             },
             requestAccess: function(request) {
+                
                 this.$store.dispatch("WalletStore/notifyUser", {
                     notify: "request"
                 });
