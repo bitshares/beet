@@ -1,6 +1,6 @@
 import BeetAPI from './BeetAPI';
 import BeetWS from './BeetWS';
-const version= {release: 1, name:'1.0.0beta'};
+import CryptoJS from 'crypto-js';
 
 let io = null;
 let vueInst = null;
@@ -18,7 +18,7 @@ const socketHandler = (socket) => {
 
     // When something connects we automatically
     // notify it of a successful connection
-    socket.emit('connected',version);
+    //socket.emit('connected',version);
     //let authorized=await vueInst.authorize(req);
     //if (authorized) {
     // All authenticated api requests pass through the 'api' route.
@@ -38,15 +38,41 @@ const socketHandler = (socket) => {
     //        socket.disconnect();
     //    }
 };
-const server=new BeetWS(60556,10000);
+
+const linkHandler = async (req) => {
+   return await BeetAPI.handler(Object.assign(req.data, {}), vueInst);
+};
+
+const authHandler = async (req) => {
+    console.log(req)
+
+    let key=CryptoJS.SHA256(req.data.appid+' '+req.data.account_id).toString()
+    return  {isLinked: true, counter: 1 , sharedKey: key};
+ };
+
 export default class BeetServer {
 
     static initialize(vue) {
         vueInst = vue;
         const server = window.require('http').createServer();
         server.listen(60555, 'localhost');
+        const server2=new BeetWS(60556,10000);
         io = window.require('socket.io').listen(server);
         console.log('Beet listening...');
+        server2.on('link',async (data)=> {
+            let status=await linkHandler(data);
+            console.log(status);
+            server2.respondLink(data.client, status);
+        });
+        server2.on('authenticate',async (data)=> {
+            let status=await authHandler(data);
+            console.log(status);
+            let result={};
+            result.original=data.data.data;
+            result.response=status;
+            result.id=data.id;
+            server2.respondAuth(data.client, result);
+        });
     }
 
     static open() {

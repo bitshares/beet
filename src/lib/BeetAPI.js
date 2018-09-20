@@ -19,7 +19,7 @@ export default class BeetAPI {
             });
             console.log('waiting');
             let unlocked=await store.state.WalletStore.unlocked.promise;
-            result = await this[request.type](request, vueInst.$children[1]);
+            result = await this[request.type](request, vueInst.$children[2]);
             let finished = popupQ.dequeue();
             finished.resolve(true);
         } else {
@@ -45,7 +45,7 @@ export default class BeetAPI {
             await previous.promise;
             
             console.log('waiting done');
-            result = await this[request.type](request, vueInst.$children[1]);
+            result = await this[request.type](request, vueInst.$children[2]);
             let finished = popupQ.dequeue();
             finished.resolve(true);
         }
@@ -66,7 +66,24 @@ export default class BeetAPI {
             return e;
         }
     }
-
+    static async [Actions.REQUEST_LINK](request, vue) {
+        try {
+            
+            console.log(vue);
+            let response = await vue.requestAccess(request);
+            console.log({
+                id: request.id,
+                result: response
+            });
+            return {
+                id: request.id,
+                response: { isLinked: true, counter: 0 , sharedKey: 'ddfe', identity:  response }
+            };
+        } catch (e) {
+            console.log(e);
+            return { id: request.id, response: { isLinked: false }};
+        }
+    }
     static async [Actions.VOTE_FOR](request, vue) {
         try {
             let response = await vue.requestVote(request.payload);
