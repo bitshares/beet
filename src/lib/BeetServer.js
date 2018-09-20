@@ -1,5 +1,5 @@
 import BeetAPI from './BeetAPI';
-
+import BeetWS from './BeetWS';
 const version= {release: 1, name:'1.0.0beta'};
 
 let io = null;
@@ -27,7 +27,7 @@ const socketHandler = (socket) => {
             plugin: req.plugin
         }), vueInst));
     });
-    socket.on('link',asynq req=> {
+    socket.on('link',async req=> {
         //TODO
         //socket.emit('link',await vueInst.)
     })
@@ -38,7 +38,7 @@ const socketHandler = (socket) => {
     //        socket.disconnect();
     //    }
 };
-
+const server=new BeetWS(60556,10000);
 export default class BeetServer {
 
     static initialize(vue) {

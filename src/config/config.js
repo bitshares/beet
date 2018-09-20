@@ -1,3 +1,4 @@
+export const version ={release: 1, name:'1.0.0beta'};
 export const nodeList = [
 
     {
