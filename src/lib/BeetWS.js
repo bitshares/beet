@@ -109,7 +109,7 @@ export default class BeetWS extends EventEmitter {
         algorithm: "SHA1",
         digits: 32,
         counter: data.response.counter,
-        secret: OTPAuth.Secret.fromB32(data.response.sharedKey)
+        secret: OTPAuth.Secret.fromHex(data.response.sharedKey)
       });
       this._clients[client].otp = otp;
       this._clients[client].isLinked = true;
