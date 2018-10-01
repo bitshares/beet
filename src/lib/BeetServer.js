@@ -1,7 +1,7 @@
 import BeetAPI from './BeetAPI';
 import BeetWS from './BeetWS';
 import CryptoJS from 'crypto-js';
-import store from './store/index.js';
+import store from '../store/index.js';
 
 let io = null;
 let vueInst = null;
@@ -55,9 +55,12 @@ const linkHandler = async (req) => {
 
 const authHandler = async (req) => {
    
-    let key=CryptoJS.SHA256(req.data.appid+' '+req.data.account_id).toString()
-    
-    return  {isLinked: true, counter: 1 , sharedKey: key};
+    // TODO: Check against blacklist;    
+    if (req.payload.apphash!=null & req.payload.apphash!=undefined) {
+        return {authenticate:true,link:true};
+    }else{
+        return {authenticate:true,link:false};
+    }
  };
 
 export default class BeetServer {
@@ -78,10 +81,9 @@ export default class BeetServer {
             let status=await authHandler(data);
             console.log(status);
             let result={};
-            result.original=data.data.data;
-            result.response=status;
-            result.id=data.id;
-            server2.respondAuth(data.client, result);
+            console.log(data);
+            status.id=data.id;
+            server2.respondAuth(data.client, status);
         });
     }
 
