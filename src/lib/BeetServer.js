@@ -43,13 +43,15 @@ const socketHandler = (socket) => {
 const linkHandler = async (req) => {
     let userResponse;
     try {
-       userResponse = await BeetAPI.handler(Object.assign(req.data, {}), vueInst);
-       store.dispatch('OriginStore/addApp', {appname:req.data.appname , apphash: req.data.appid , origin: req.data.origin, account_id: userResponse.id, nonce: 0});
+        console.log(req);
+       userResponse = await BeetAPI.handler(Object.assign(req, {}), vueInst);
+       console.log(userResponse);
+       store.dispatch('OriginStore/addApp', {appname:req.app_name , apphash: req.data.appid , origin: req.data.origin, account_id: userResponse.id, nonce: 0});
+       console.log('here');
        let key=CryptoJS.SHA256(req.data.appid+' '+userResponse.id).toString();
-
        return  { isLinked: true, counter: 0 , sharedKey: key, identity: userResponse };
     }catch(e) {
-        
+        console.log(e);
     }
 };
 
@@ -57,9 +59,9 @@ const authHandler = async (req) => {
    
     // TODO: Check against blacklist;    
     if (req.payload.apphash!=null & req.payload.apphash!=undefined) {
-        return {authenticate:true,link:true};
+        return Object.assign(req.payload, {authenticate:true,link:true});
     }else{
-        return {authenticate:true,link:false};
+        return Object.assign(req.payload, {authenticate:true,link:false});
     }
  };
 
@@ -79,9 +81,6 @@ export default class BeetServer {
         });
         server2.on('authenticate',async (data)=> {
             let status=await authHandler(data);
-            console.log(status);
-            let result={};
-            console.log(data);
             status.id=data.id;
             server2.respondAuth(data.client, status);
         });

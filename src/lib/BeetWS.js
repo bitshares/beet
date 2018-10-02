@@ -77,11 +77,17 @@ export default class BeetWS extends EventEmitter {
         }
       } else {
         if (data.type == 'link') {
-          this.emit('link', {
+          console.log(client);
+          let linkobj= {
             "id": data.id,
             "client": client.id,
-            "payload": data.payload
-          });
+            "payload": data.payload,
+            "origin": client.origin,
+            "appname": client.app_name,
+            "type": 'link'
+          };
+
+          this.emit('link',linkobj);
         } else {
           client.send('{ "id": "' + data.id + '", "error": true, "payload": { "message": "This app is not yet linked"}}');
         }
@@ -98,7 +104,7 @@ export default class BeetWS extends EventEmitter {
       }
     }
   }
-  async respondLink(client, result) {
+  async respondLink(client, result) {    
     if (result.isLinked == true) {
       this._clients[client].isLinked = true;
       this._clients[client].apphash = result.apphash;
@@ -128,6 +134,7 @@ export default class BeetWS extends EventEmitter {
   }
   respondAuth(client, result) {
     if (result.authenticate) {
+      console.log(result);
       this._clients[client].isAuthenticated = true;
       this._clients[client].origin = result.origin;
       this._clients[client].app_name = result.app_name;

@@ -6,6 +6,7 @@ var popupQ = new Queue();
 export default class BeetAPI {
 
     static async handler(request, vueInst) {        
+        console.log(request);
         if (!Object.keys(Actions).map(key => Actions[key]).includes(request.type)) return;
         let result;
         if (popupQ.isEmpty()) {
