@@ -2,6 +2,7 @@ import BeetAPI from './BeetAPI';
 import BeetWS from './BeetWS';
 import CryptoJS from 'crypto-js';
 import store from '../store/index.js';
+import eccrypto from 'eccrypto';
 
 let io = null;
 let vueInst = null;
@@ -46,10 +47,11 @@ const linkHandler = async (req) => {
         console.log(req);
        userResponse = await BeetAPI.handler(Object.assign(req, {}), vueInst);
        console.log(userResponse);
-       store.dispatch('OriginStore/addApp', {appname:req.app_name , apphash: req.data.appid , origin: req.data.origin, account_id: userResponse.id, nonce: 0});
-       console.log('here');
-       let key=CryptoJS.SHA256(req.data.appid+' '+userResponse.id).toString();
-       return  { isLinked: true, counter: 0 , sharedKey: key, identity: userResponse };
+       let apphash=CryptoJS.SHA256(req.browser + ' ' + req.origin + ' ' + req.appname+ ' '+userResponse.id).toString();    
+       let secret = await eccrypto.derive(req.key, Buffer.from(req.payload.pubkey,'hex'));
+       store.dispatch('OriginStore/addApp', {appname:req.appname , apphash: apphash , origin: req.origin, account_id: userResponse.id, chain: req.chain, secret: secret});
+       
+       return  { isLinked: true, sharedKey: secret, identity: userResponse };
     }catch(e) {
         console.log(e);
     }

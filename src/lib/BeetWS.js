@@ -84,6 +84,8 @@ export default class BeetWS extends EventEmitter {
             "payload": data.payload,
             "origin": client.origin,
             "appname": client.app_name,
+            "browser":client.browser,
+            "key":client.pk,
             "type": 'link'
           };
 
@@ -110,7 +112,6 @@ export default class BeetWS extends EventEmitter {
       this._clients[client].apphash = result.apphash;
       this._clients[client].chain = result.chain;
       this._clients[client].next_hash = result.next_hash;
-      let secret = await eccrypto.derive(this._clients[client].pk, result.pubkey);
       let otp = new OTPAuth.HOTP({
         issuer: "Beet",
         label: "BeetAuth",
