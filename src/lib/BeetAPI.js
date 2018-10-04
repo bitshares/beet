@@ -76,10 +76,7 @@ export default class BeetAPI {
                 id: request.id,
                 result: response
             });
-            return {
-                id: request.id,
-                response: { isLinked: true, counter: 0 , sharedKey: 'ddfe', identity:  response }
-            };
+            return Object.assign(request, { identity: response});
         } catch (e) {
             console.log(e);
             return { id: request.id, response: { isLinked: false }};

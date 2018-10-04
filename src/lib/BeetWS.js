@@ -10,15 +10,22 @@ const OTPAuth = require("otpauth");
 import CryptoJS from 'crypto-js';
 import crypto from 'crypto';
 import eccrypto from 'eccrypto';
+import Https from 'https';
+import Fs from 'fs';
 
 export default class BeetWS extends EventEmitter {
   constructor(port, timeout) {
     super() // required
     var self = this;
-    const server = new WebSocket.Server({
-      port: port
+    const httpsServer = Https.createServer({
+      key: Fs.readFileSync(__dirname+'/ssl/beet.key'),
+      cert: Fs.readFileSync(__dirname+'/ssl/beet.cert')
     });
-    this._clients = [];
+    const server = new WebSocket.Server({
+      server: httpsServer
+    });
+    httpsServer.listen(port); 
+    this._clients = []; 
     this._monitor = setInterval(function () {
       for (var clientid in self._clients) {
 
@@ -118,7 +125,7 @@ export default class BeetWS extends EventEmitter {
         algorithm: "SHA1",
         digits: 32,
         counter: 0,
-        secret: OTPAuth.Secret.fromHex(secret)
+        secret: OTPAuth.Secret.fromHex(result.secret)
       });
       this._clients[client].otp = otp;
       this._clients[client].send('{"id": ' + result.id + ', "error": false, "payload": { "authenticate": true, "link": true, "account_id": "' + result.account_id + '"}}');

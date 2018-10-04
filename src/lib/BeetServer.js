@@ -47,11 +47,12 @@ const linkHandler = async (req) => {
         console.log(req);
        userResponse = await BeetAPI.handler(Object.assign(req, {}), vueInst);
        console.log(userResponse);
-       let apphash=CryptoJS.SHA256(req.browser + ' ' + req.origin + ' ' + req.appname+ ' '+userResponse.id).toString();    
+       let apphash=CryptoJS.SHA256(req.browser + ' ' + req.origin + ' ' + req.appname+ ' '+req.payload.chain+' '+userResponse.identity.id).toString();    
+       console.log(req.browser + ' ' + req.origin + ' ' + req.appname+ ' '+req.payload.chain+' '+userResponse.identity.id);
        let secret = await eccrypto.derive(req.key, Buffer.from(req.payload.pubkey,'hex'));
-       store.dispatch('OriginStore/addApp', {appname:req.appname , apphash: apphash , origin: req.origin, account_id: userResponse.id, chain: req.chain, secret: secret});
-       
-       return  { isLinked: true, sharedKey: secret, identity: userResponse };
+       store.dispatch('OriginStore/addApp', {appname:req.appname , apphash: apphash , origin: req.origin, account_id: userResponse.identity.id, chain: req.payload.chain, secret: secret.toString('hex'),next_hash:req.payload.next_hash});
+       let response = Object.assign(req,  {isLinked: true, apphash: apphash,  account_id: userResponse.identity.id, secret: secret.toString('hex')});
+       return response;
     }catch(e) {
         console.log(e);
     }
@@ -70,7 +71,7 @@ const authHandler = async (req) => {
 export default class BeetServer {
 
     static initialize(vue) {
-        vueInst = vue;
+        vueInst = vue; 
         const server = window.require('http').createServer();
         server.listen(60555, 'localhost');
         const server2=new BeetWS(60556,10000);
