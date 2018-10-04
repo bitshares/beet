@@ -150,18 +150,18 @@ export default class BeetWS extends EventEmitter {
       if (result.link) {
         this._clients[client].isLinked = true;
         this._clients[client].apphash = result.apphash;
-        this._clients[client].chain = result.chain;
-        this._clients[client].next_hash = result.next_hash;
+        this._clients[client].chain = result.app.chain;
+        this._clients[client].next_hash = result.app.next_hash;
         let otp = new OTPAuth.HOTP({
           issuer: "Beet",
           label: "BeetAuth",
           algorithm: "SHA1",
           digits: 32,
           counter: 0,
-          secret: OTPAuth.Secret.fromHex(this._clients[client].secret)
+          secret: OTPAuth.Secret.fromHex(result.app.secret)
         });
         this._clients[client].otp = otp;
-        this._clients[client].send('{"id": ' + result.id + ', "error": false, "payload": { "authenticate": true, "link": true, "account_id": "' + result.account_id + '"}}');
+        this._clients[client].send('{"id": ' + result.id + ', "error": false, "payload": { "authenticate": true, "link": true, "account_id": "' + result.app.account_id + '"}}');
       } else { 
         this._clients[client].pk = crypto.randomBytes(32);
         let pubkey = eccrypto.getPublic(this._clients[client].pk).toString('hex');

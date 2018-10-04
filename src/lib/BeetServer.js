@@ -75,10 +75,20 @@ const authHandler = async (req) => {
 
     // TODO: Check against blacklist;    
     if (req.payload.apphash != null & req.payload.apphash != undefined) {
-        return Object.assign(req.payload, {
-            authenticate: true,
-            link: true
-        });
+        let apps=store.state.OriginStore.apps;        
+        const app = apps.find(x => x.apphash === req.payload.apphash);
+        if (!app) {          
+            return Object.assign(req.payload, {
+                authenticate: false,
+                link: false
+            });  
+        }else{
+            return Object.assign(req.payload, {
+                authenticate: true,
+                link: true,
+                app: app
+            });
+        }
     } else {
         return Object.assign(req.payload, {
             authenticate: true,
