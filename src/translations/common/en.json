@@ -1,5 +1,5 @@
 {
-    "app_name": "Beet",
+    "appName": "Beet",
     "slogan": "The BitShares companion",
     "welcome": "Welcome to Beet!",
     "no_wallet": "There is no wallet stored in this computer.",

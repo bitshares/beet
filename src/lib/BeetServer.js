@@ -47,11 +47,11 @@ const linkHandler = async (req) => {
         console.log(req);
         userResponse = await BeetAPI.handler(Object.assign(req, {}), vueInst);
         console.log(userResponse);
-        let apphash = CryptoJS.SHA256(req.browser + ' ' + req.origin + ' ' + req.appname + ' ' + req.payload.chain + ' ' + userResponse.identity.id).toString();
-        console.log(req.browser + ' ' + req.origin + ' ' + req.appname + ' ' + req.payload.chain + ' ' + userResponse.identity.id);
+        let apphash = CryptoJS.SHA256(req.browser + ' ' + req.origin + ' ' + req.appName + ' ' + req.payload.chain + ' ' + userResponse.identity.id).toString();
+        console.log(req.browser + ' ' + req.origin + ' ' + req.appName + ' ' + req.payload.chain + ' ' + userResponse.identity.id);
         let secret = await eccrypto.derive(req.key, Buffer.from(req.payload.pubkey, 'hex'));
         store.dispatch('OriginStore/addApp', {
-            appname: req.appname,
+            appName: req.appName,
             apphash: apphash,
             origin: req.origin,
             account_id: userResponse.identity.id,
@@ -83,11 +83,20 @@ const authHandler = async (req) => {
                 link: false
             });  
         }else{
-            return Object.assign(req.payload, {
-                authenticate: true,
-                link: true,
-                app: app
-            });
+            console.log(req);
+            console.log(app);
+            if (req.payload.origin==app.origin && req.payload.appName==app.appName)  {
+                return Object.assign(req.payload, {
+                    authenticate: true,
+                    link: true,
+                    app: app
+                });
+            }else{
+                return Object.assign(req.payload, {
+                    authenticate: false,
+                    link: false
+                });
+            }
         }
     } else {
         return Object.assign(req.payload, {

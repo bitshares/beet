@@ -9,7 +9,7 @@
                     width="56"
                     height="56"
                 >
-                <h4 class="h4 font-weight-normal align-self-center">{{ $t('app_name') }}</h4>
+                <h4 class="h4 font-weight-normal align-self-center">{{ $t('appName') }}</h4>
                 <LangSelect ref="langswitch" />
             </div>
         </div>

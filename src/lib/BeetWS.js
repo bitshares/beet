@@ -90,7 +90,7 @@ export default class BeetWS extends EventEmitter {
             "client": client.id,
             "payload": data.payload,
             "origin": client.origin,
-            "appname": client.app_name,
+            "appName": client.appName,
             "browser":client.browser,
             "key":client.pk,
             "type": 'link'
@@ -145,7 +145,7 @@ export default class BeetWS extends EventEmitter {
       console.log(result);
       this._clients[client].isAuthenticated = true;
       this._clients[client].origin = result.origin;
-      this._clients[client].app_name = result.app_name;
+      this._clients[client].appName = result.appName;
       this._clients[client].browser = result.browser;
       if (result.link) {
         this._clients[client].isLinked = true;
