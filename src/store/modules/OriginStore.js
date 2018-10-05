@@ -2,6 +2,7 @@ import Vue from 'vue/dist/vue.js';
 import BeetDB from '../../lib/BeetDB.js';
 const LOAD_APPS = 'LOAD_APPS';
 const ADD_APP = 'ADD_APP';
+const NEW_REQUEST = 'NEW_REQUEST';
 
 const mutations = {
     [LOAD_APPS](state, apps) {
@@ -9,6 +10,9 @@ const mutations = {
     },
     [ADD_APP](state, app) {
         state.apps.push(app);
+    },
+    [NEW_REQUEST]() {
+
     }
 };
 
@@ -24,6 +28,20 @@ const actions = {
                 reject();
             });
         });
+    },    
+    newRequest({dispatch,
+        commit
+    }, payload) {
+        return new Promise((resolve, reject) => {
+            BeetDB.apps.where('apphash').equals(payload.apphash).modify({next_hash: payload.next_hash}).then(() => {            
+            dispatch('loadApps');
+            commit(NEW_REQUEST, payload);
+            resolve();
+        }).catch((e) => {
+            console.log(e);
+            reject();
+        });
+    });
     },
     addApp({
         commit

@@ -115,7 +115,8 @@ export default class BeetServer {
         const server2 = new BeetWS(60556, 10000);
         io = window.require('socket.io').listen(server);
         console.log('Beet listening...');
-        server2.on('link', async (data) => {
+        server2.on('link', async (data) => { 
+            
             let status = await linkHandler(data);
             console.log(status);
             server2.respondLink(data.client, status);
@@ -124,6 +125,17 @@ export default class BeetServer {
             let status = await authHandler(data);
             status.id = data.id;
             server2.respondAuth(data.client, status);
+        });
+        server2.on('api', async (data) => {
+            console.log(data);
+            store.dispatch('OriginStore/newRequest', {
+                apphash: data.payload.apphash,
+                next_hash: data.payload.next_hash
+            });
+            let status = await BeetAPI.handler(data, vueInst);
+            console.log(status);
+            status.id = data.id;
+            server2.respondAPI(data.client, status);
         });
     }
 

@@ -181,7 +181,7 @@
                 this.$data.incoming = request;
 
                 this.$data.incoming.action = "vote";
-                let entity_id = this.$data.incoming.id.split(".");
+                let entity_id = this.$data.incoming.params.id.split(".");
                 if (entity_id[0] != "1") {
                     return Promise.reject();
                 }
@@ -205,7 +205,7 @@
                         "Commitee member: " +
                         objextradata[0].name +
                         "\nCommittee Member ID: " +
-                        this.$data.incoming.id;
+                        this.$data.incoming.params.id;
                     this.$data.incoming.vote_id = objdata[0].vote_id;
                     break;
                 case "6":
@@ -217,7 +217,7 @@
                         "Witness: " +
                         objextradata[0].name +
                         "\nWitness ID: " +
-                        this.$data.incoming.id;
+                        this.$data.incoming.params.id;
                     this.$data.incoming.vote_id = objdata[0].vote_id;
                     break;
                 case "14":
@@ -229,7 +229,7 @@
                         "Proposal: " +
                         objdata[0].name +
                         "\nProposal ID: " +
-                        this.$data.incoming.id +
+                        this.$data.incoming.params.id +
                         "\nDaily Pay: " +
                         this.formatMoney(objdata[0].daily_pay / Math.pow(10, 5), 5) +
                         "BTS\nWorker: " +
@@ -272,8 +272,8 @@
                 let tr = new TransactionBuilder();
                 Apis.instance().init_promise.then(() => {
                     tr.add_type_operation(
-                        this.$data.incoming.op_type,
-                        this.$data.incoming.op_data
+                        this.$data.incoming.params.op_type,
+                        this.$data.incoming.params.op_data
                     );
                     tr.set_required_fees().then(async () => {
                         this.$refs.loaderAnimModal.show();

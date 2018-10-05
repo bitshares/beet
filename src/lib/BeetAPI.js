@@ -58,6 +58,7 @@ export default class BeetAPI {
             
             console.log(vue);
             let response = await vue.requestAccess(request.payload);
+            console.log(response);
             return {
                 id: request.id,
                 result: response
