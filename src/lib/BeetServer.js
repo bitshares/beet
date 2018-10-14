@@ -62,6 +62,8 @@ const linkHandler = async (req) => {
         let response = Object.assign(req, {
             isLinked: true,
             apphash: apphash,
+            chain: req.payload.chain,
+            next_hash: req.payload.next_hash,
             account_id: userResponse.identity.id,
             secret: secret.toString('hex')
         });

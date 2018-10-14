@@ -1,7 +1,6 @@
 import * as Actions from './Actions';
 import Queue from './Queue';
 import store from '../store/index.js';
-
 var popupQ = new Queue();
 export default class BeetAPI {
 
@@ -19,6 +18,11 @@ export default class BeetAPI {
                 resolve: qresolve
             });
             console.log('waiting');
+            console.log(store.state.WalletStore);
+            if (store.state.WalletStore.isUnlocked==false) {
+                
+                vueInst.$children[2].showAlert(request);
+            }
             let unlocked=await store.state.WalletStore.unlocked.promise;
             result = await this[request.type](request, vueInst.$children[2]);
             let finished = popupQ.dequeue();
@@ -43,6 +47,11 @@ export default class BeetAPI {
                 resolve: qresolve
             });
             console.log('waiting2');
+            if (store.state.WalletStore.isUnlocked==false) {
+                //console.log(vueInst.$children);
+                vueInst.$children[2].showAlert('Please unlock');
+            }
+            
             await previous.promise;
             
             console.log('waiting done');
@@ -75,7 +84,7 @@ export default class BeetAPI {
             let response = await vue.requestAccess(request);
             console.log({
                 id: request.id,
-                result: response
+                result: response 
             });
             return Object.assign(request, { identity: response});
         } catch (e) {

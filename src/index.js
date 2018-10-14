@@ -17,7 +17,7 @@ let mainWindow;
 const isDevMode = process.execPath.match(/[\\/]electron/);
 
 if (isDevMode) enableLiveReload();
-
+let first=true;
 let tray = null;
 let minimised = false;
 const createWindow = async () => {
@@ -49,7 +49,7 @@ const createWindow = async () => {
       }
     }
   ]);
-  tray.setToolTip('BitShares Companion')
+  tray.setToolTip('Beet')
   tray.setContextMenu(contextMenu)
   // Open the DevTools.
   if (isDevMode) {
@@ -68,11 +68,14 @@ const createWindow = async () => {
 
   mainWindow.on('minimize', function (event) {
     event.preventDefault();
-    tray.displayBalloon({
-      icon: __dirname + '/img/bitshares.png',
-      title: "BitShares Companion is minimised.",
-      content: "It will run in the background until you quit."
-    });
+    if (first) {
+      tray.displayBalloon({
+        icon: __dirname + '/img/bitshares.png',
+        title: "Beet is minimised.",
+        content: "It will run in the background until you quit."
+      });
+      first=false;
+    } 
     minimised = true;
     mainWindow.hide();
   });
@@ -85,11 +88,16 @@ const createWindow = async () => {
   mainWindow.on('close', function (event) {
     if (!app.isQuiting) {
       event.preventDefault();
+      
+    if (first) {
       tray.displayBalloon({
         icon: __dirname + '/img/bitshares.png',
-        title: "BitShares Companion is minimised.",
+        title: "Beet is minimised.",
         content: "It will run in the background until you quit."
       });
+      first=false;
+    } 
+      
       minimised = true;
       mainWindow.hide();
     }
@@ -100,12 +108,13 @@ const createWindow = async () => {
     if (minimised) {
       tray.displayBalloon({
         icon: __dirname + '/img/bitshares.png',
-        title: "BitShares Companion has a new request.",
+        title: "Beet has received a new request.",
         content: "Click here to view"
       });
     }
   });
   tray.on('click', (event) => {
+    
     mainWindow.setAlwaysOnTop(true);
     mainWindow.show();
     mainWindow.focus();

@@ -25,6 +25,7 @@ const mutations = {
     },
     [CONFIRM_UNLOCK](state) {
         state.unlocked.resolve();
+        Vue.set(state, 'isUnlocked', true);
     },
     [SET_WALLET_STATUS](state, status) {
 
@@ -79,7 +80,9 @@ const actions = {
                 let walletid = uuid();
                 let newwallet = {
                     id: walletid,
-                    name: payload.walletname
+                    name: payload.walletname,
+                    chain: payload.walletdata.chain, 
+                    accounts: [payload.walletdata.accountID]
                 };
                 if (!wallets) {
                     wallets = [];
@@ -156,7 +159,8 @@ const initialState = {
     hasWallet: false,
     walletlist: [],
     ipc: ipcRenderer,
-    unlocked: {}
+    unlocked: {},
+    isUnlocked:false
 };
 
 export default {

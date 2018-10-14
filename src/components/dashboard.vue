@@ -192,7 +192,7 @@
                 let entity = "";
                 let objdata = await Apis.instance()
                     .db_api()
-                    .exec("get_objects", [[this.$data.incoming.id]]);
+                    .exec("get_objects", [[this.$data.incoming.params.id]]);
 
                 let objextradata;
                 switch (entity_id[1]) {
@@ -306,8 +306,8 @@
                         this.$store.state.WalletStore.wallet.keys.active
                     );
                     tr.add_signer(pKey, pKey.toPublicKey().toPublicKeyString());
-                    let id = await tr.broadcast();
-                    this.$data.incoming.acceptgen({ id: id });
+                    let resp = await tr.broadcast();
+                    this.$data.incoming.acceptgen(resp);
                     this.$refs.genericReqModal.hide();
                     this.$refs.loaderAnimModal.hide();
                 });

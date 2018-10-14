@@ -16,6 +16,26 @@
                 required=""
                 @focus="s1c=''"
             >
+            <p class="my-3 font-weight-bold">{{ $t('chain_cta') }}</p>
+            <select                
+                id="chain-select"
+                v-model="selectedChain"
+                class="form-control mb-3"
+                :class="s1c"
+                :placeholder="$t('chain_placeholder')"
+                required=""
+            >
+                <option
+                    selected
+                    disabled
+                    value="0"
+                >{{ $t('select_chain') }}</option>
+                <option
+                    v-for="chain in chainList"
+                    :key="chain.short"
+                    :value="chain.short"
+                >{{ chain.name }} ({{ chain.short }})</option>
+            </select>
             <div class="row">
                 <div class="col-6">
                     <router-link
@@ -39,13 +59,13 @@
             id="step2"
         >
             <h4 class="h4 mt-3 font-weight-bold">{{ $t('step_counter',{ 'step_no' : 2}) }}</h4>
-            <p class="mb-2 font-weight-bold">{{ $t('account_name',{ 'chain' : 'BTS'}) }}</p>
+            <p class="mb-2 font-weight-bold">{{ $t('account_name',{ 'chain' : selectedChain}) }}</p>
             <input
                 id="inputAccount"
                 v-model="accountname"
                 type="text"
                 class="form-control mb-3"
-                :placeholder="$t('account_name',{ 'chain' : 'BTS'})"
+                :placeholder="$t('account_name',{ 'chain' : selectedChain})"
                 required=""
             >
             <p class="my-3 font-weight-normal">{{ $t('keys_cta') }}</p>
@@ -131,7 +151,7 @@
                 class="btn btn-lg btn-primary btn-block"
                 type="submit"
                 @click="verifyAndCreate"
-            >{{ $t('next_lbl') }}</button>
+            >{{ $t('next_btn') }}</button>
         </div>
         <b-modal
             id="loaderAnim"
@@ -162,7 +182,8 @@
 <script>
     import { PrivateKey } from "bitsharesjs";
     import { Apis } from "bitsharesjs-ws";
-
+    import { chainList } from "../config/config.js";
+    console.log(chainList);
     export default {
         name: "Create",
         i18nOptions: { namespaces: "common" },
@@ -179,7 +200,9 @@
                 step: 1,
                 s1c: "",
                 includeOwner: 0,
-                errorMsg: ""
+                errorMsg: "",
+                selectedChain: 0,
+                chainList: chainList
             };
         },
         methods: {
@@ -214,21 +237,21 @@
             step3: async function() {
                 let apkey, mpkey, opkey;
                 if (this.$data.accountname == "") {
-                    this.$data.errorMsg = this.$t('missing_account_error',{'chain': 'BTS'});
+                    this.$data.errorMsg = this.$t('missing_account_error',{'chain': this.$data.selectedChain});
                     this.$refs.errorModal.show();
                     return;
                 }
                 try {
                     apkey = PrivateKey.fromWif(this.activepk)
                         .toPublicKey()
-                        .toString("BTS");
+                        .toString(this.$data.selectedChain);
                     mpkey = PrivateKey.fromWif(this.memopk)
                         .toPublicKey()
-                        .toString("BTS");
+                        .toString(this.$data.selectedChain);
                     if (this.$data.includeOwner == 1) {
                         opkey = PrivateKey.fromWif(this.ownerpk)
                             .toPublicKey()
-                            .toString("BTS");
+                            .toString(this.$data.selectedChain);
                     }
                 } catch (e) {
                     console.log("Invalid Private Key format.");
@@ -290,6 +313,7 @@
                         .dispatch("WalletStore/saveWallet", { walletname: this.$data.walletname, password: this.$data.password, walletdata:  {
                             accountName: this.$data.accountname,
                             accountID: this.$data.accountID,
+                            chain: this.$data.selectedChain,
                             keys: {
                                 active: this.activepk,
                                 owner: this.ownerpk,

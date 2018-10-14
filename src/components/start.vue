@@ -28,7 +28,7 @@
                     v-for="wallet in walletlist"
                     :key="wallet.id"
                     :value="wallet.id"
-                >{{ wallet.name }}</option>
+                >{{ wallet.name }} ({{ wallet.chain }})</option>
             </select>
             <input
                 v-if="hasWallet"
