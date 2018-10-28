@@ -9,12 +9,14 @@ import installExtension from 'electron-devtools-installer';
 import {
   enableLiveReload
 } from 'electron-compile';
+import Logger from './lib/Logger';
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 
 const isDevMode = process.execPath.match(/[\\/]electron/);
+const logger=new Logger(3);
 
 if (isDevMode) enableLiveReload();
 let first=true;
@@ -120,6 +122,11 @@ const createWindow = async () => {
       });
     }
     }
+  });
+  
+  ipcMain.on('log', (event, arg) => {
+    
+    logger[arg.level](arg.data);
   });
   tray.on('click', (event) => {
     

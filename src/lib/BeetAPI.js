@@ -1,11 +1,15 @@
 import * as Actions from './Actions';
 import Queue from './Queue';
 import store from '../store/index.js';
+import RendererLogger from "./RendererLogger";
+
+const logger=new RendererLogger();
+
 var popupQ = new Queue();
 export default class BeetAPI {
 
     static async handler(request, vueInst) {        
-        console.log(request);
+        logger.log(request);
         if (!Object.keys(Actions).map(key => Actions[key]).includes(request.type)) return;
         let result;
         if (popupQ.isEmpty()) {
@@ -17,8 +21,8 @@ export default class BeetAPI {
                 promise: queued,
                 resolve: qresolve
             });
-            console.log('waiting');
-            console.log(store.state.WalletStore);
+            logger.log('waiting');
+            logger.log(store.state.WalletStore);
             if (store.state.WalletStore.isUnlocked==false) {
                 
                 vueInst.$refs.popupComp.showAlert(request);
@@ -46,15 +50,15 @@ export default class BeetAPI {
                 promise: queued,
                 resolve: qresolve
             });
-            console.log('waiting2');
+            logger.log('waiting2');
             if (store.state.WalletStore.isUnlocked==false) {
-                //console.log(vueInst.$children);
+                //logger.log(vueInst.$children);
                 vueInst.$refs.popupComp.showAlert('Please unlock');
             }
             
             await previous.promise;
             
-            console.log('waiting done');
+            logger.log('waiting done');
             result = await this[request.type](request, vueInst.$refs.popupComp);
             let finished = popupQ.dequeue();
             finished.resolve(true);
@@ -65,30 +69,30 @@ export default class BeetAPI {
     static async [Actions.GET_ACCOUNT](request, vue) {
         try {
             
-            console.log(vue);
+            logger.log(vue);
             let response = await vue.requestAccess(request.payload);
-            console.log(response);
+            logger.log(response);
             return {
                 id: request.id,
                 result: response
             };
         } catch (e) {
-            console.log(e);
+            logger.log(e);
             return e;
         }
     }
     static async [Actions.REQUEST_LINK](request, vue) {
         try {
             
-            console.log(vue);
+            logger.log(vue);
             let response = await vue.requestAccess(request);
-            console.log({
+            logger.log({
                 id: request.id,
                 result: response 
             });
             return Object.assign(request, { identity: response});
         } catch (e) {
-            console.log(e);
+            logger.log(e);
             return { id: request.id, response: { isLinked: false }};
         }
     }

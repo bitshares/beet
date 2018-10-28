@@ -153,7 +153,7 @@ import { Apis } from "bitsharesjs-ws";
                 genericmsg: '',
                 alerts: [],
                 api: null,
-                incoming: null,                
+                incoming: {},                
                 specifics: ""
             };
         },  
@@ -191,7 +191,6 @@ import { Apis } from "bitsharesjs-ws";
                         });                        
                         break;
                     default:
-                        console.log(request.payload);
                         alertmsg=this.$t('access_alert',request.payload);
                         
                         this.$store.dispatch("WalletStore/notifyUser", {
@@ -297,7 +296,9 @@ import { Apis } from "bitsharesjs-ws";
                 });
             },
             requestTx: function(request) {
-                this.$root.$data.ipc.send("notify", "request");
+                this.$store.dispatch("WalletStore/notifyUser", {
+                    notify: "request", message: "request"
+                });
                 this.incoming = {};
                 this.incoming = request;
                 this.$refs.transactionReqModal.show();

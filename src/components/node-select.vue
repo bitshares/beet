@@ -30,6 +30,9 @@
 <script>
     import { Apis } from "bitsharesjs-ws";
     import { nodeList } from "../config/config";
+    import RendererLogger from "../lib/RendererLogger";
+
+    const logger=new RendererLogger();
 
     export default {
         name: "NodeSelect",
@@ -44,9 +47,9 @@
         },
         watch: {
             selectedNode: function() {
-                console.log("Switching Node.");
+                logger.log("Switching Node.");
                 Apis.close().then(() => {
-                    console.log("Closed Node.");
+                    logger.log("Closed Node.");
                     this.isConnected = false;
                     Apis.instance(
                         this.selectedNode,
@@ -55,7 +58,7 @@
                         { enableCrypto: false, enableOrders: false },
                         this.onClose
                     ).init_promise.then(() => {
-                        console.log("Opened Node");
+                        logger.log("Opened Node");
                         this.$store.dispatch("SettingsStore/setNode", {
                             node: this.selectedNode
                         });

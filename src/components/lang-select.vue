@@ -44,8 +44,7 @@
             };
         },
         watch: {
-            selectLang: function() {
-                console.log("Switching Lang.");
+            selectLang: function() {                
                 this.$store.dispatch("SettingsStore/setLocale", { 'locale': this.selectLang });
                 i18next.changeLanguage(this.selectLang.iso);
             }

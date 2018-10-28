@@ -13,6 +13,9 @@ const SET_WALLET_STATUS = 'SET_WALLET_STATUS';
 const SET_WALLET_UNLOCKED = 'SET_WALLET_UNLOCKED';
 const SET_WALLETLIST = 'SET_WALLETLIST';
 const REQ_NOTIFY = 'REQ_NOTIFY';
+import RendererLogger from "../../lib/RendererLogger";
+
+const logger=new RendererLogger();
 
 const wallet = {};
 
@@ -63,7 +66,7 @@ const actions = {
                 commit(GET_WALLET, wallet);
                 resolve();
             } catch (e) {
-                console.log(e);
+                logger.log(e);
                 reject();
             }
         });

@@ -183,7 +183,10 @@
     import { PrivateKey } from "bitsharesjs";
     import { Apis } from "bitsharesjs-ws";
     import { chainList } from "../config/config.js";
-    console.log(chainList);
+    import RendererLogger from "../lib/RendererLogger";
+
+    const logger=new RendererLogger();
+    logger.log(chainList);
     export default {
         name: "Create",
         i18nOptions: { namespaces: "common" },
@@ -211,7 +214,7 @@
             },
             step2: function() {
                 if (this.walletname.trim() == "") {
-                    console.log("Cannot create a wallet with an empty name.");
+                    logger.log("Cannot create a wallet with an empty name.");
                     this.errorMsg = this.$t('empty_wallet_error');
                     this.$refs.errorModal.show();
                     this.s1c = "is-invalid";
@@ -223,7 +226,7 @@
                         wallets.filter(wallet => wallet.name === this.walletname.trim())
                         .length > 0
                     ) {
-                        console.log("A wallet with this name already exists.");
+                        logger.log("A wallet with this name already exists.");
 
                         this.errorMsg = this.$t('duplicate_wallet_error');
                         this.$refs.errorModal.show();
@@ -254,7 +257,7 @@
                             .toString(this.selectedChain);
                     }
                 } catch (e) {
-                    console.log("Invalid Private Key format.");
+                    logger.log("Invalid Private Key format.");
                     this.errorMsg = this.$t('invalid_key_error');
                     this.$refs.errorModal.show();
                     return;
@@ -275,13 +278,13 @@
                                 this.includeOwner == 0) &&
                                 res[0][1].account.options.memo_key == mpkey
                             ) {
-                                console.log(
+                                logger.log(
                                     "Keys verified. Account ID is: " + res[0][1].account.id
                                 );
                                 this.$refs.loaderAnimModal.hide();
                                 return res[0][1].account.id;
                             } else {
-                                console.log("Keys not verified for provided account name.");
+                                logger.log("Keys not verified for provided account name.");
                                 this.$refs.loaderAnimModal.hide();
                                 this.$refs.errorModal.show();
                                 this.errorMsg = this.$t('unverified_account_error');

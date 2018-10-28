@@ -3,6 +3,9 @@ import BeetDB from '../../lib/BeetDB.js';
 const LOAD_APPS = 'LOAD_APPS';
 const ADD_APP = 'ADD_APP';
 const NEW_REQUEST = 'NEW_REQUEST';
+import RendererLogger from "../../lib/RendererLogger";
+
+const logger=new RendererLogger();
 
 const mutations = {
     [LOAD_APPS](state, apps) {
@@ -38,7 +41,7 @@ const actions = {
             commit(NEW_REQUEST, payload);
             resolve();
         }).catch((e) => {
-            console.log(e);
+            logger.log(e);
             reject();
         });
     });

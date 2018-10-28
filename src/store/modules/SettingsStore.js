@@ -75,7 +75,6 @@ const actions = {
 
 const getters = {};
 
-console.log(defaultLocale);
 const initialState = {
     'settings': {
         'locale': defaultLocale,

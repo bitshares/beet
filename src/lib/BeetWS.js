@@ -12,6 +12,9 @@ import crypto from 'crypto';
 import eccrypto from 'eccrypto';
 import Https from 'https';
 import Fs from 'fs';
+import RendererLogger from "./RendererLogger";
+
+const logger=new RendererLogger();
 
 export default class BeetWS extends EventEmitter {
   constructor(port, timeout) {
@@ -30,11 +33,11 @@ export default class BeetWS extends EventEmitter {
       for (var clientid in self._clients) {
 
         let client = self._clients[clientid];
-        console.log(client);
+        logger.log(client);
         if (client.isAlive === false || client.readyState != 1) {
           self.emit("disconnected", client.id);
           delete(self._clients[client.id]);
-          console.log("Terminating client")
+          logger.log("Terminating client")
           return client.terminate();
         } else {
           client.isAlive = false;
@@ -42,7 +45,7 @@ export default class BeetWS extends EventEmitter {
         }
       }
     }, timeout);
-    console.log(self);
+    logger.log(self);
     server.on("connection", (client) => {
       self._handleConnection(client);
     });
@@ -62,8 +65,8 @@ export default class BeetWS extends EventEmitter {
         if (client.isLinked) {
           if (data.type == 'api') {
             let hash =  CryptoJS.SHA256(''+data.id).toString();
-            console.log(hash);
-            console.log(client.next_hash);
+            logger.log(hash);
+            logger.log(client.next_hash);
             if (hash == client.next_hash) {
               client.otp.counter = data.id;
               var key = client.otp.generate();
@@ -83,7 +86,7 @@ export default class BeetWS extends EventEmitter {
                   "payload": msg
                 });
               } catch (e) {
-                console.log (e);
+                logger.log (e);
                 client.send('{ "id": "' + data.id + '", "error": true, "payload": { "code": 3, message": "Could not decrypt message"}}');
               }
             } else {
@@ -94,7 +97,7 @@ export default class BeetWS extends EventEmitter {
           }
         } else {
           if (data.type == 'link') {
-            console.log(client);
+            logger.log(client);
             let linkobj= {
               "id": data.id,
               "client": client.id,
@@ -106,8 +109,8 @@ export default class BeetWS extends EventEmitter {
               "key":client.pk,
               "type": 'link'
             };
-            console.log('Link:');
-            console.log(linkobj);
+            logger.log('Link:');
+            logger.log(linkobj);
             this.emit('link',linkobj);
           } else {
             client.send('{ "id": "' + data.id + '", "error": true, "payload": { "code":4, "message": "This app is not yet linked"}}');
@@ -156,7 +159,7 @@ export default class BeetWS extends EventEmitter {
   }
   respondAuth(client, result) {
     if (result.authenticate) {
-      console.log(result);
+      logger.log(result);
       this._clients[client].isAuthenticated = true;
       this._clients[client].origin = result.origin;
       this._clients[client].appName = result.appName;
@@ -194,7 +197,7 @@ export default class BeetWS extends EventEmitter {
     client.on("pong", this._heartbeat);
     this._clients[client.id] = client;
     this.emit("connected", client.id);
-    console.log(this);
+    logger.log(this);
     client.on("message", function (msg) {
       let message = JSON.parse(msg);
       self._handleMessage(client, message);
