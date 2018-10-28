@@ -180,153 +180,146 @@
 </template>
 
 <script>
-    import { PrivateKey } from "bitsharesjs";
-    import { Apis } from "bitsharesjs-ws";
-    import { chainList } from "../config/config.js";
-    import RendererLogger from "../lib/RendererLogger";
+import { PrivateKey } from "bitsharesjs";
+import { Apis } from "bitsharesjs-ws";
+import { chainList } from "../config/config.js";
+import RendererLogger from "../lib/RendererLogger";
 
-    const logger=new RendererLogger();
-    logger.log(chainList);
-    export default {
-        name: "Create",
-        i18nOptions: { namespaces: "common" },
-        data() {
-            return {
-                walletname: "",
-                accountname: "",
-                accountID: "",
-                activepk: "",
-                ownerpk: "",
-                memopk: "",
-                password: "",
-                confirmpassword: "",
-                step: 1,
-                s1c: "",
-                includeOwner: 0,
-                errorMsg: "",
-                selectedChain: 0,
-                chainList: chainList
-            };
-        },
-        methods: {
-            step1: function() {
-                this.step = 1;
-            },
-            step2: function() {
-                if (this.walletname.trim() == "") {
-                    logger.log("Cannot create a wallet with an empty name.");
-                    this.errorMsg = this.$t('empty_wallet_error');
-                    this.$refs.errorModal.show();
-                    this.s1c = "is-invalid";
-                } else {
-                    let wallets = JSON.parse(localStorage.getItem("wallets"));
+const logger = new RendererLogger();
 
-                    if (
-                        wallets &&
-                        wallets.filter(wallet => wallet.name === this.walletname.trim())
-                        .length > 0
-                    ) {
-                        logger.log("A wallet with this name already exists.");
-
-                        this.errorMsg = this.$t('duplicate_wallet_error');
-                        this.$refs.errorModal.show();
-                        this.s1c = "is-invalid";
-                    } else {
-                        this.walletname = this.walletname.trim();
-                        this.step = 2;
-                    }
-                }
-            },
-            step3: async function() {
-                let apkey, mpkey, opkey;
-                if (this.accountname == "") {
-                    this.errorMsg = this.$t('missing_account_error',{'chain': this.selectedChain});
-                    this.$refs.errorModal.show();
-                    return;
-                }
-                try {
-                    apkey = PrivateKey.fromWif(this.activepk)
-                        .toPublicKey()
-                        .toString(this.selectedChain);
-                    mpkey = PrivateKey.fromWif(this.memopk)
-                        .toPublicKey()
-                        .toString(this.selectedChain);
-                    if (this.includeOwner == 1) {
-                        opkey = PrivateKey.fromWif(this.ownerpk)
-                            .toPublicKey()
-                            .toString(this.selectedChain);
-                    }
-                } catch (e) {
-                    logger.log("Invalid Private Key format.");
-                    this.errorMsg = this.$t('invalid_key_error');
-                    this.$refs.errorModal.show();
-                    return;
-                }
-                this.$refs.loaderAnimModal.show();
-                let verified = await Apis.instance(
-                    this.$store.state.SettingsStore.settings.selected_node,
-                    true
-                ).init_promise.then(() => {
-                    return Apis.instance()
-                        .db_api()
-                        .exec("get_full_accounts", [[this.accountname], false])
-                        .then(res => {
-                            // TODO: Better verification
-                            if (
-                                res[0][1].account.active.key_auths[0][0] == apkey &&
-                                (res[0][1].account.owner.key_auths[0][0] == opkey ||
-                                this.includeOwner == 0) &&
-                                res[0][1].account.options.memo_key == mpkey
-                            ) {
-                                logger.log(
-                                    "Keys verified. Account ID is: " + res[0][1].account.id
-                                );
-                                this.$refs.loaderAnimModal.hide();
-                                return res[0][1].account.id;
-                            } else {
-                                logger.log("Keys not verified for provided account name.");
-                                this.$refs.loaderAnimModal.hide();
-                                this.$refs.errorModal.show();
-                                this.errorMsg = this.$t('unverified_account_error');
-                                return null;
-                            }
-                    });
-                });
-                if (verified != null) {
-                    this.accountID = verified;
-                    this.step = 3;
-                } else {
-                    return;
-                }
-            },
-            verifyAndCreate: async function() {
-                if (
-                    this.password != this.confirmpassword ||
-                    this.password == ""
-                ) {
-                    this.$refs.errorModal.show();
-                    this.errorMsg = this.$t('confirm_pass_error');
-                    return;
-                }
-
-                this.$refs.loaderAnimModal.show();
-
-                if (this.accountID !== null) {
-                    this.$store
-                        .dispatch("WalletStore/saveWallet", { walletname: this.walletname, password: this.password, walletdata:  {
-                            accountName: this.accountname,
-                            accountID: this.accountID,
-                            chain: this.selectedChain,
-                            keys: {
-                                active: this.activepk,
-                                owner: this.ownerpk,
-                                memo: this.memopk
-                            }
-                        }
-                        });
-                    this.$router.replace("/dashboard");
-                }
-            }
-        }
+export default {
+  name: "Create",
+  i18nOptions: { namespaces: "common" },
+  data() {
+    return {
+      walletname: "",
+      accountname: "",
+      accountID: "",
+      activepk: "",
+      ownerpk: "",
+      memopk: "",
+      password: "",
+      confirmpassword: "",
+      step: 1,
+      s1c: "",
+      includeOwner: 0,
+      errorMsg: "",
+      selectedChain: 0,
+      chainList: chainList
     };
+  },
+  methods: {
+    step1: function() {
+      this.step = 1;
+    },
+    step2: function() {
+      if (this.walletname.trim() == "") {
+        this.errorMsg = this.$t("empty_wallet_error");
+        this.$refs.errorModal.show();
+        this.s1c = "is-invalid";
+      } else {
+        let wallets = JSON.parse(localStorage.getItem("wallets"));
+
+        if (
+          wallets &&
+          wallets.filter(wallet => wallet.name === this.walletname.trim())
+            .length > 0
+        ) {
+          this.errorMsg = this.$t("duplicate_wallet_error");
+          this.$refs.errorModal.show();
+          this.s1c = "is-invalid";
+        } else {
+          this.walletname = this.walletname.trim();
+          this.step = 2;
+        }
+      }
+    },
+    step3: async function() {
+      let apkey, mpkey, opkey;
+      if (this.accountname == "") {
+        this.errorMsg = this.$t("missing_account_error", {
+          chain: this.selectedChain
+        });
+        this.$refs.errorModal.show();
+        return;
+      }
+      try {
+        apkey = PrivateKey.fromWif(this.activepk)
+          .toPublicKey()
+          .toString(this.selectedChain);
+        mpkey = PrivateKey.fromWif(this.memopk)
+          .toPublicKey()
+          .toString(this.selectedChain);
+        if (this.includeOwner == 1) {
+          opkey = PrivateKey.fromWif(this.ownerpk)
+            .toPublicKey()
+            .toString(this.selectedChain);
+        }
+      } catch (e) {
+        this.errorMsg = this.$t("invalid_key_error");
+        this.$refs.errorModal.show();
+        return;
+      }
+      this.$refs.loaderAnimModal.show();
+      let verified = await Apis.instance(
+        this.$store.state.SettingsStore.settings.selected_node,
+        true
+      ).init_promise.then(() => {
+        return Apis.instance()
+          .db_api()
+          .exec("get_full_accounts", [[this.accountname], false])
+          .then(res => {
+            // TODO: Better verification
+            if (
+              res[0][1].account.active.key_auths[0][0] == apkey &&
+              (res[0][1].account.owner.key_auths[0][0] == opkey ||
+                this.includeOwner == 0) &&
+              res[0][1].account.options.memo_key == mpkey
+            ) {
+              this.$refs.loaderAnimModal.hide();
+              return res[0][1].account.id;
+            } else {
+              this.$refs.loaderAnimModal.hide();
+              this.$refs.errorModal.show();
+              this.errorMsg = this.$t("unverified_account_error");
+              return null;
+            }
+          });
+      });
+      if (verified != null) {
+        this.accountID = verified;
+        this.step = 3;
+      } else {
+        return;
+      }
+    },
+    verifyAndCreate: async function() {
+      if (this.password != this.confirmpassword || this.password == "") {
+        this.$refs.errorModal.show();
+        this.errorMsg = this.$t("confirm_pass_error");
+        return;
+      }
+
+      this.$refs.loaderAnimModal.show();
+
+      if (this.accountID !== null) {
+        this.$store.dispatch("WalletStore/saveWallet", {
+          walletname: this.walletname,
+          password: this.password,
+          walletdata: {
+            accountName: this.accountname,
+            accountID: this.accountID,
+            chain: this.selectedChain,
+            keys: {
+              active: this.activepk,
+              owner: this.ownerpk,
+              memo: this.memopk
+            }
+          }
+        });
+        this.$router.replace("/dashboard");
+      }
+    }
+  }
+};
 </script>

@@ -30,14 +30,14 @@
         import VueI18Next from '@panter/vue-i18next';
         import BeetServer from "./lib/BeetServer";
         import RendererLogger from "./lib/RendererLogger";
-        
 
-        
+
+
         Vue.use(VueI18Next);
         Vue.use(BootstrapVue);
         Vue.use(VueRouter);
-        Vue.component('Popups',Popups);
-        const logger=new RendererLogger;
+        Vue.component('Popups', Popups);
+        const logger = new RendererLogger;
         store.dispatch("SettingsStore/loadSettings");
         store.dispatch("OriginStore/loadApps");
         i18next.use(Backend).init({
@@ -54,10 +54,10 @@
             store,
             i18n: i18n
         }).$mount('#app');
-        
+
         BeetServer.initialize(app);
         BeetServer.open();
-        
+
         window.onerror = function (msg, url, lineNo, columnNo, error) {
             logger.error(error);
             return false;

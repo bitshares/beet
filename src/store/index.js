@@ -12,6 +12,6 @@ const store = new Vuex.Store({
         SettingsStore,
         OriginStore
     }
-  });
+});
 
 export default store;

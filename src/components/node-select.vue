@@ -28,59 +28,56 @@
 </template>
 
 <script>
-    import { Apis } from "bitsharesjs-ws";
-    import { nodeList } from "../config/config";
-    import RendererLogger from "../lib/RendererLogger";
+import { Apis } from "bitsharesjs-ws";
+import { nodeList } from "../config/config";
+import RendererLogger from "../lib/RendererLogger";
 
-    const logger=new RendererLogger();
+const logger = new RendererLogger();
 
-    export default {
-        name: "NodeSelect",
-        i18nOptions: { namespaces: "common" },
-        data() {
-            return {
-                nodes: nodeList,
-                isConnected: false,
-                api: null,
-                selectedNode: this.$store.state.SettingsStore.settings.selected_node
-            };
-        },
-        watch: {
-            selectedNode: function() {
-                logger.log("Switching Node.");
-                Apis.close().then(() => {
-                    logger.log("Closed Node.");
-                    this.isConnected = false;
-                    Apis.instance(
-                        this.selectedNode,
-                        true,
-                        10000,
-                        { enableCrypto: false, enableOrders: false },
-                        this.onClose
-                    ).init_promise.then(() => {
-                        logger.log("Opened Node");
-                        this.$store.dispatch("SettingsStore/setNode", {
-                            node: this.selectedNode
-                        });
-                        this.isConnected = true;
-                    });
-                });
-            }
-        },
-        mounted() {
-            Apis.instance(
-                this.selectedNode,
-                true,
-                10000,
-                { enableCrypto: false, enableOrders: false },
-                this.onClose
-            ).init_promise.then(() => {
-                this.isConnected = true;
-                this.$emit("first-connect");
-            });
-        },
-        onClose() {
-            this.isConnected = false;
-        }
+export default {
+  name: "NodeSelect",
+  i18nOptions: { namespaces: "common" },
+  data() {
+    return {
+      nodes: nodeList,
+      isConnected: false,
+      api: null,
+      selectedNode: this.$store.state.SettingsStore.settings.selected_node
     };
+  },
+  watch: {
+    selectedNode: function() {
+      Apis.close().then(() => {
+        this.isConnected = false;
+        Apis.instance(
+          this.selectedNode,
+          true,
+          10000,
+          { enableCrypto: false, enableOrders: false },
+          this.onClose
+        ).init_promise.then(() => {
+          this.$store.dispatch("SettingsStore/setNode", {
+            node: this.selectedNode
+          });
+          this.isConnected = true;
+        });
+      });
+    }
+  },
+  mounted() {
+    Apis.instance(
+      this.selectedNode,
+      true,
+      10000,
+      { enableCrypto: false, enableOrders: false },
+      this.onClose
+    ).init_promise.then(() => {
+      this.isConnected = true;
+      this.$emit("first-connect");
+    });
+  },
+  onClose() {
+    this.isConnected = false;
+  }
+};
 </script>

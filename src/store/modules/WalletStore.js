@@ -13,17 +13,14 @@ const SET_WALLET_STATUS = 'SET_WALLET_STATUS';
 const SET_WALLET_UNLOCKED = 'SET_WALLET_UNLOCKED';
 const SET_WALLETLIST = 'SET_WALLETLIST';
 const REQ_NOTIFY = 'REQ_NOTIFY';
-import RendererLogger from "../../lib/RendererLogger";
-
-const logger=new RendererLogger();
 
 const wallet = {};
 
 
 const mutations = {
     [GET_WALLET](state, wallet) {
-        
-       
+
+
         Vue.set(state, 'wallet', wallet);
     },
     [CONFIRM_UNLOCK](state) {
@@ -66,12 +63,13 @@ const actions = {
                 commit(GET_WALLET, wallet);
                 resolve();
             } catch (e) {
-                logger.log(e);
                 reject();
             }
         });
     },
-    confirmUnlock({commit}) {
+    confirmUnlock({
+        commit
+    }) {
         commit(CONFIRM_UNLOCK);
     },
     saveWallet({
@@ -84,7 +82,7 @@ const actions = {
                 let newwallet = {
                     id: walletid,
                     name: payload.walletname,
-                    chain: payload.walletdata.chain, 
+                    chain: payload.walletdata.chain,
                     accounts: [payload.walletdata.accountID]
                 };
                 if (!wallets) {
@@ -163,7 +161,7 @@ const initialState = {
     walletlist: [],
     ipc: ipcRenderer,
     unlocked: {},
-    isUnlocked:false
+    isUnlocked: false
 };
 
 export default {

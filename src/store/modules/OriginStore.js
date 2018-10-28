@@ -3,9 +3,6 @@ import BeetDB from '../../lib/BeetDB.js';
 const LOAD_APPS = 'LOAD_APPS';
 const ADD_APP = 'ADD_APP';
 const NEW_REQUEST = 'NEW_REQUEST';
-import RendererLogger from "../../lib/RendererLogger";
-
-const logger=new RendererLogger();
 
 const mutations = {
     [LOAD_APPS](state, apps) {
@@ -31,20 +28,22 @@ const actions = {
                 reject();
             });
         });
-    },    
-    newRequest({dispatch,
+    },
+    newRequest({
+        dispatch,
         commit
     }, payload) {
         return new Promise((resolve, reject) => {
-            BeetDB.apps.where('apphash').equals(payload.apphash).modify({next_hash: payload.next_hash}).then(() => {            
-            dispatch('loadApps');
-            commit(NEW_REQUEST, payload);
-            resolve();
-        }).catch((e) => {
-            logger.log(e);
-            reject();
+            BeetDB.apps.where('apphash').equals(payload.apphash).modify({
+                next_hash: payload.next_hash
+            }).then(() => {
+                dispatch('loadApps');
+                commit(NEW_REQUEST, payload);
+                resolve();
+            }).catch((e) => {
+                reject(e);
+            });
         });
-    });
     },
     addApp({
         commit

@@ -37,7 +37,7 @@
     "confirm_pass_error": "Passwords do not match.",
     "balances_lbl": "Balances",
     "error_lbl": "Error",
-    "node_lbl": "Node:",    
+    "node_lbl": "Node:",
     "link_alert": "App: `{{appName}}` from `{{origin}}` wants to link to a {{chain}} chain. Please create or unlock the appropriate wallet.",
     "access_alert": "App: `{{appName}}` from `{{origin}}` wants to interact with linked account {{chain}}:{{account_id}}. Please create or unlock the appropriate wallet."
 }

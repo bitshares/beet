@@ -1,12 +1,14 @@
 import Vue from 'vue/dist/vue.js';
-import {defaultLocale} from '../../config/i18n.js'
+import {
+    defaultLocale
+} from '../../config/i18n.js'
 const LOAD_SETTINGS = 'LOAD_SETTINGS';
 
 
 const mutations = {
     [LOAD_SETTINGS](state, settings) {
         Vue.set(state, 'settings', settings);
-    } 
+    }
 };
 
 const actions = {
@@ -20,7 +22,7 @@ const actions = {
 
                     commit(LOAD_SETTINGS, JSON.parse(settings));
                 } else {
-                    
+
                     localStorage.setItem("settings", JSON.stringify(initialState.settings));
                     commit(LOAD_SETTINGS, JSON.parse(initialState.settings));
                 }

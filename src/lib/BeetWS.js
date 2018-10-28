@@ -12,32 +12,30 @@ import crypto from 'crypto';
 import eccrypto from 'eccrypto';
 import Https from 'https';
 import Fs from 'fs';
+/*
 import RendererLogger from "./RendererLogger";
-
-const logger=new RendererLogger();
-
+const logger = new RendererLogger();
+*/
 export default class BeetWS extends EventEmitter {
   constructor(port, timeout) {
     super() // required
     var self = this;
     const httpsServer = Https.createServer({
-      key: Fs.readFileSync(__dirname+'/ssl/beet.key'),
-      cert: Fs.readFileSync(__dirname+'/ssl/beet.cert')
+      key: Fs.readFileSync(__dirname + '/ssl/beet.key'),
+      cert: Fs.readFileSync(__dirname + '/ssl/beet.cert')
     });
     const server = new WebSocket.Server({
       server: httpsServer
     });
-    httpsServer.listen(port); 
-    this._clients = []; 
+    httpsServer.listen(port);
+    this._clients = [];
     this._monitor = setInterval(function () {
       for (var clientid in self._clients) {
 
         let client = self._clients[clientid];
-        logger.log(client);
         if (client.isAlive === false || client.readyState != 1) {
           self.emit("disconnected", client.id);
           delete(self._clients[client.id]);
-          logger.log("Terminating client")
           return client.terminate();
         } else {
           client.isAlive = false;
@@ -45,7 +43,6 @@ export default class BeetWS extends EventEmitter {
         }
       }
     }, timeout);
-    logger.log(self);
     server.on("connection", (client) => {
       self._handleConnection(client);
     });
@@ -57,36 +54,33 @@ export default class BeetWS extends EventEmitter {
     this.isAlive = true;
   }
   _handleMessage(client, data) {
- 
-    if (data.type == 'version') { 
+
+    if (data.type == 'version') {
       client.send('{ "type": "version", "error": false, "result": { "version": ' + JSON.stringify(version) + '}}');
-    }else{
+    } else {
       if (client.isAuthenticated) {
         if (client.isLinked) {
           if (data.type == 'api') {
-            let hash =  CryptoJS.SHA256(''+data.id).toString();
-            logger.log(hash);
-            logger.log(client.next_hash);
+            let hash = CryptoJS.SHA256('' + data.id).toString();
             if (hash == client.next_hash) {
               client.otp.counter = data.id;
               var key = client.otp.generate();
               try {
                 var msg = JSON.parse(CryptoJS.AES.decrypt(data.payload, key).toString(CryptoJS.enc.Utf8));
 
-                msg.origin=client.origin;
-                msg.appName=client.appName;
-                msg.apphash=client.apphash;
-                msg.chain=client.chain;
-                msg.account_id=client.account_id;
+                msg.origin = client.origin;
+                msg.appName = client.appName;
+                msg.apphash = client.apphash;
+                msg.chain = client.chain;
+                msg.account_id = client.account_id;
                 client.next_hash = msg.next_hash;
                 this.emit('api', {
                   "client": client.id,
                   "id": data.id,
-                  "type":msg.method,
+                  "type": msg.method,
                   "payload": msg
                 });
               } catch (e) {
-                logger.log (e);
                 client.send('{ "id": "' + data.id + '", "error": true, "payload": { "code": 3, message": "Could not decrypt message"}}');
               }
             } else {
@@ -97,21 +91,18 @@ export default class BeetWS extends EventEmitter {
           }
         } else {
           if (data.type == 'link') {
-            logger.log(client);
-            let linkobj= {
+            let linkobj = {
               "id": data.id,
               "client": client.id,
               "payload": data.payload,
               "chain": data.payload.chain,
               "origin": client.origin,
               "appName": client.appName,
-              "browser":client.browser,
-              "key":client.pk,
+              "browser": client.browser,
+              "key": client.pk,
               "type": 'link'
             };
-            logger.log('Link:');
-            logger.log(linkobj);
-            this.emit('link',linkobj);
+            this.emit('link', linkobj);
           } else {
             client.send('{ "id": "' + data.id + '", "error": true, "payload": { "code":4, "message": "This app is not yet linked"}}');
           }
@@ -129,7 +120,7 @@ export default class BeetWS extends EventEmitter {
       }
     }
   }
-  async respondLink(client, result) {    
+  async respondLink(client, result) {
     if (result.isLinked == true) {
       this._clients[client].isLinked = true;
       this._clients[client].apphash = result.apphash;
@@ -153,13 +144,12 @@ export default class BeetWS extends EventEmitter {
   respondAPI(client, response) {
     this._clients[client].otp.counter = response.id;
     var key = this._clients[client].otp.generate();
-    
+
     var payload = CryptoJS.AES.encrypt(JSON.stringify(response.result), key).toString();
     this._clients[client].send('{"id": ' + response.id + ', "error": false , "encrypted": true, "payload": "' + payload + '"}');
   }
   respondAuth(client, result) {
     if (result.authenticate) {
-      logger.log(result);
       this._clients[client].isAuthenticated = true;
       this._clients[client].origin = result.origin;
       this._clients[client].appName = result.appName;
@@ -180,7 +170,7 @@ export default class BeetWS extends EventEmitter {
         });
         this._clients[client].otp = otp;
         this._clients[client].send('{"id": ' + result.id + ', "error": false, "payload": { "authenticate": true, "link": true, "account_id": "' + result.app.account_id + '"}}');
-      } else { 
+      } else {
         this._clients[client].pk = crypto.randomBytes(32);
         let pubkey = eccrypto.getPublic(this._clients[client].pk).toString('hex');
         this._clients[client].send('{"id": ' + result.id + ', "error": false, "payload": { "authenticate": true, "link": false, "pub_key": "' + pubkey + '"}}');
@@ -197,7 +187,6 @@ export default class BeetWS extends EventEmitter {
     client.on("pong", this._heartbeat);
     this._clients[client.id] = client;
     this.emit("connected", client.id);
-    logger.log(this);
     client.on("message", function (msg) {
       let message = JSON.parse(msg);
       self._handleMessage(client, message);

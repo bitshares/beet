@@ -16,10 +16,10 @@ import Logger from './lib/Logger';
 let mainWindow;
 
 const isDevMode = process.execPath.match(/[\\/]electron/);
-const logger=new Logger(3);
+const logger = new Logger(3);
 
 if (isDevMode) enableLiveReload();
-let first=true;
+let first = true;
 let tray = null;
 let minimised = false;
 const createWindow = async () => {
@@ -76,8 +76,8 @@ const createWindow = async () => {
         title: "Beet is minimised.",
         content: "It will run in the background until you quit."
       });
-      first=false;
-    } 
+      first = false;
+    }
     minimised = true;
     mainWindow.hide();
   });
@@ -90,16 +90,16 @@ const createWindow = async () => {
   mainWindow.on('close', function (event) {
     if (!app.isQuiting) {
       event.preventDefault();
-      
-    if (first) {
-      tray.displayBalloon({
-        icon: __dirname + '/img/bitshares.png',
-        title: "Beet is minimised.",
-        content: "It will run in the background until you quit."
-      });
-      first=false;
-    } 
-      
+
+      if (first) {
+        tray.displayBalloon({
+          icon: __dirname + '/img/bitshares.png',
+          title: "Beet is minimised.",
+          content: "It will run in the background until you quit."
+        });
+        first = false;
+      }
+
       minimised = true;
       mainWindow.hide();
     }
@@ -108,35 +108,35 @@ const createWindow = async () => {
   });
   ipcMain.on('notify', (event, arg) => {
     if (minimised) {
-      if (arg=='request') {
-      tray.displayBalloon({
-        icon: __dirname + '/img/bitshares.png',
-        title: "Beet has received a new request.",
-        content: "Click here to view"
-      });
-    }else{
-      tray.displayBalloon({
-        icon: __dirname + '/img/bitshares.png',
-        title: arg,
-        content: "Click here to view"
-      });
-    }
+      if (arg == 'request') {
+        tray.displayBalloon({
+          icon: __dirname + '/img/bitshares.png',
+          title: "Beet has received a new request.",
+          content: "Click here to view"
+        });
+      } else {
+        tray.displayBalloon({
+          icon: __dirname + '/img/bitshares.png',
+          title: arg,
+          content: "Click here to view"
+        });
+      }
     }
   });
-  
+
   ipcMain.on('log', (event, arg) => {
-    
+
     logger[arg.level](arg.data);
   });
-  tray.on('click', (event) => {
-    
+  tray.on('click', () => {
+
     mainWindow.setAlwaysOnTop(true);
     mainWindow.show();
     mainWindow.focus();
     mainWindow.setAlwaysOnTop(false);
     minimised = false;
   });
-  tray.on('balloon-click', (event) => {
+  tray.on('balloon-click', () => {
     mainWindow.setAlwaysOnTop(true);
     mainWindow.show();
     mainWindow.focus();
