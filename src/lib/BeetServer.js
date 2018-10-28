@@ -129,7 +129,6 @@ export default class BeetServer {
             server2.respondAuth(data.client, status);
         });
         server2.on('api', async (data) => {
-            console.log(data);
             store.dispatch('OriginStore/newRequest', {
                 apphash: data.payload.apphash,
                 next_hash: data.payload.next_hash

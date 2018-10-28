@@ -138,7 +138,7 @@ const actions = {
     }, payload) {
         return new Promise((resolve, reject) => {
             if (payload.notify == 'request') {
-                commit(REQ_NOTIFY, payload.notify);
+                commit(REQ_NOTIFY, payload.message);
                 resolve();
             } else {
                 reject();

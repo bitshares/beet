@@ -99,15 +99,15 @@
             unlockWallet() {
                 this.$store
                     .dispatch("WalletStore/getWallet", {
-                        wallet_id: this.$data.selectedWallet,
-                        wallet_pass: this.$data.walletpass
+                        wallet_id: this.selectedWallet,
+                        wallet_pass: this.walletpass
                     })
                     .then(() => {
                         this.$router.replace("/dashboard");
                     })
                     .catch(() => {
-                        this.$data.passincorrect = "is-invalid";
-                        this.$data.errorMsg = "Invalid Password.";
+                        this.passincorrect = "is-invalid";
+                        this.errorMsg = "Invalid Password.";
                         this.$refs.errorModal.show();
                 });
             }

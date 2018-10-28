@@ -207,55 +207,55 @@
         },
         methods: {
             step1: function() {
-                this.$data.step = 1;
+                this.step = 1;
             },
             step2: function() {
-                if (this.$data.walletname.trim() == "") {
+                if (this.walletname.trim() == "") {
                     console.log("Cannot create a wallet with an empty name.");
-                    this.$data.errorMsg = this.$t('empty_wallet_error');
+                    this.errorMsg = this.$t('empty_wallet_error');
                     this.$refs.errorModal.show();
-                    this.$data.s1c = "is-invalid";
+                    this.s1c = "is-invalid";
                 } else {
                     let wallets = JSON.parse(localStorage.getItem("wallets"));
 
                     if (
                         wallets &&
-                        wallets.filter(wallet => wallet.name === this.$data.walletname.trim())
+                        wallets.filter(wallet => wallet.name === this.walletname.trim())
                         .length > 0
                     ) {
                         console.log("A wallet with this name already exists.");
 
-                        this.$data.errorMsg = this.$t('duplicate_wallet_error');
+                        this.errorMsg = this.$t('duplicate_wallet_error');
                         this.$refs.errorModal.show();
-                        this.$data.s1c = "is-invalid";
+                        this.s1c = "is-invalid";
                     } else {
-                        this.$data.walletname = this.$data.walletname.trim();
-                        this.$data.step = 2;
+                        this.walletname = this.walletname.trim();
+                        this.step = 2;
                     }
                 }
             },
             step3: async function() {
                 let apkey, mpkey, opkey;
-                if (this.$data.accountname == "") {
-                    this.$data.errorMsg = this.$t('missing_account_error',{'chain': this.$data.selectedChain});
+                if (this.accountname == "") {
+                    this.errorMsg = this.$t('missing_account_error',{'chain': this.selectedChain});
                     this.$refs.errorModal.show();
                     return;
                 }
                 try {
                     apkey = PrivateKey.fromWif(this.activepk)
                         .toPublicKey()
-                        .toString(this.$data.selectedChain);
+                        .toString(this.selectedChain);
                     mpkey = PrivateKey.fromWif(this.memopk)
                         .toPublicKey()
-                        .toString(this.$data.selectedChain);
-                    if (this.$data.includeOwner == 1) {
+                        .toString(this.selectedChain);
+                    if (this.includeOwner == 1) {
                         opkey = PrivateKey.fromWif(this.ownerpk)
                             .toPublicKey()
-                            .toString(this.$data.selectedChain);
+                            .toString(this.selectedChain);
                     }
                 } catch (e) {
                     console.log("Invalid Private Key format.");
-                    this.$data.errorMsg = this.$t('invalid_key_error');
+                    this.errorMsg = this.$t('invalid_key_error');
                     this.$refs.errorModal.show();
                     return;
                 }
@@ -272,7 +272,7 @@
                             if (
                                 res[0][1].account.active.key_auths[0][0] == apkey &&
                                 (res[0][1].account.owner.key_auths[0][0] == opkey ||
-                                this.$data.includeOwner == 0) &&
+                                this.includeOwner == 0) &&
                                 res[0][1].account.options.memo_key == mpkey
                             ) {
                                 console.log(
@@ -284,36 +284,36 @@
                                 console.log("Keys not verified for provided account name.");
                                 this.$refs.loaderAnimModal.hide();
                                 this.$refs.errorModal.show();
-                                this.$data.errorMsg = this.$t('unverified_account_error');
+                                this.errorMsg = this.$t('unverified_account_error');
                                 return null;
                             }
                     });
                 });
                 if (verified != null) {
-                    this.$data.accountID = verified;
-                    this.$data.step = 3;
+                    this.accountID = verified;
+                    this.step = 3;
                 } else {
                     return;
                 }
             },
             verifyAndCreate: async function() {
                 if (
-                    this.$data.password != this.$data.confirmpassword ||
-                    this.$data.password == ""
+                    this.password != this.confirmpassword ||
+                    this.password == ""
                 ) {
                     this.$refs.errorModal.show();
-                    this.$data.errorMsg = this.$t('confirm_pass_error');
+                    this.errorMsg = this.$t('confirm_pass_error');
                     return;
                 }
 
                 this.$refs.loaderAnimModal.show();
 
-                if (this.$data.accountID !== null) {
+                if (this.accountID !== null) {
                     this.$store
-                        .dispatch("WalletStore/saveWallet", { walletname: this.$data.walletname, password: this.$data.password, walletdata:  {
-                            accountName: this.$data.accountname,
-                            accountID: this.$data.accountID,
-                            chain: this.$data.selectedChain,
+                        .dispatch("WalletStore/saveWallet", { walletname: this.walletname, password: this.password, walletdata:  {
+                            accountName: this.accountname,
+                            accountID: this.accountID,
+                            chain: this.selectedChain,
                             keys: {
                                 active: this.activepk,
                                 owner: this.ownerpk,

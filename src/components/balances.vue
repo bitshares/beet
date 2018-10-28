@@ -36,7 +36,7 @@
                         false
                     ])
                     .then(res => {
-                        this.$data.rawbalances = res[0][1].balances;
+                        this.rawbalances = res[0][1].balances;
                         let neededassets = [];
                         for (var i = 0; i < res[0][1].balances.length; i++) {
                             neededassets.push(res[0][1].balances[i].asset_type);
@@ -45,23 +45,23 @@
                             .db_api()
                             .exec("get_objects", [neededassets]);
                     });
-                this.$data.balances = [];
-                for (var i = 0; i < this.$data.rawbalances.length; i++) {
+                this.balances = [];
+                for (var i = 0; i < this.rawbalances.length; i++) {
                     if (result[i].issuer == "1.2.0") {
-                        this.$data.balances[i] = {
-                            asset_type: this.$data.rawbalances[i].asset_type,
+                        this.balances[i] = {
+                            asset_type: this.rawbalances[i].asset_type,
                             asset_name: result[i].symbol,
-                            balance: this.$data.rawbalances[i].balance,
+                            balance: this.rawbalances[i].balance,
                             owner: result[i].issuer,
                             prefix: "BIT"
                         };
                     } else {
-                        this.$data.balances[i] = {
-                            asset_type: this.$data.rawbalances[i].asset_type,
+                        this.balances[i] = {
+                            asset_type: this.rawbalances[i].asset_type,
                             asset_name: result[i].symbol,
-                            rawbalance: this.$data.rawbalances[i].balance,
+                            rawbalance: this.rawbalances[i].balance,
                             balance: this.formatMoney(
-                                this.$data.rawbalances[i].balance /
+                                this.rawbalances[i].balance /
                                     Math.pow(10, result[i].precision),
                                 result[i].precision
                             ),

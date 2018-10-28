@@ -106,11 +106,19 @@ const createWindow = async () => {
   });
   ipcMain.on('notify', (event, arg) => {
     if (minimised) {
+      if (arg=='request') {
       tray.displayBalloon({
         icon: __dirname + '/img/bitshares.png',
         title: "Beet has received a new request.",
         content: "Click here to view"
       });
+    }else{
+      tray.displayBalloon({
+        icon: __dirname + '/img/bitshares.png',
+        title: arg,
+        content: "Click here to view"
+      });
+    }
     }
   });
   tray.on('click', (event) => {

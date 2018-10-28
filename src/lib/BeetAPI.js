@@ -21,10 +21,10 @@ export default class BeetAPI {
             console.log(store.state.WalletStore);
             if (store.state.WalletStore.isUnlocked==false) {
                 
-                vueInst.$children[2].showAlert(request);
+                vueInst.$refs.popupComp.showAlert(request);
             }
             let unlocked=await store.state.WalletStore.unlocked.promise;
-            result = await this[request.type](request, vueInst.$children[2]);
+            result = await this[request.type](request, vueInst.$refs.popupComp);
             let finished = popupQ.dequeue();
             finished.resolve(true);
         } else {
@@ -49,13 +49,13 @@ export default class BeetAPI {
             console.log('waiting2');
             if (store.state.WalletStore.isUnlocked==false) {
                 //console.log(vueInst.$children);
-                vueInst.$children[2].showAlert('Please unlock');
+                vueInst.$refs.popupComp.showAlert('Please unlock');
             }
             
             await previous.promise;
             
             console.log('waiting done');
-            result = await this[request.type](request, vueInst.$children[2]);
+            result = await this[request.type](request, vueInst.$refs.popupComp);
             let finished = popupQ.dequeue();
             finished.resolve(true);
         }
