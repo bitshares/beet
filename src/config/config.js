@@ -1,6 +1,6 @@
 export const version = {
-    release: 1,
-    name: '1.0.0beta'
+    release: 2,
+    name: '0.5.0'
 };
 export const chainList = [{
     short: 'BTS',

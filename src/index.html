@@ -56,7 +56,7 @@
         }).$mount('#app');
 
         BeetServer.initialize(app);
-        BeetServer.open();
+        
 
         window.onerror = function (msg, url, lineNo, columnNo, error) {
             logger.error(error);
