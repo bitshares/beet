@@ -92,6 +92,14 @@ const actions = {
                 }
                 wallets.push(newwallet);
                 localStorage.setItem("wallets", JSON.stringify(wallets));
+                let unlock;
+                let unlocked = new Promise(function (resolve) {
+                    unlock = resolve
+                });
+                commit(SET_WALLET_UNLOCKED, {
+                    promise: unlocked,
+                    resolve: unlock
+                });
                 commit(SET_WALLET_STATUS, true);
                 commit(SET_WALLETLIST, wallets);
                 let ls = new SecureLS({
