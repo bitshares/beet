@@ -9,9 +9,11 @@ import {
 const OTPAuth = require("otpauth");
 import CryptoJS from 'crypto-js';
 import crypto from 'crypto';
-import eccrypto from 'eccrypto';
+//import eccrypto from 'eccrypto';
 import Https from 'https';
 import Fs from 'fs';
+import { ec as EC } from "elliptic"; 
+var ec = new EC('curve25519');
 /*
 import RendererLogger from "./RendererLogger";
 const logger = new RendererLogger();
@@ -99,7 +101,7 @@ export default class BeetWS extends EventEmitter {
               "origin": client.origin,
               "appName": client.appName,
               "browser": client.browser,
-              "key": client.pk,
+              "key": client.keypair,
               "type": 'link'
             };
             this.emit('link', linkobj);
@@ -171,8 +173,9 @@ export default class BeetWS extends EventEmitter {
         this._clients[client].otp = otp;
         this._clients[client].send('{"id": ' + result.id + ', "error": false, "payload": { "authenticate": true, "link": true, "account_id": "' + result.app.account_id + '"}}');
       } else {
-        this._clients[client].pk = crypto.randomBytes(32);
-        let pubkey = eccrypto.getPublic(this._clients[client].pk).toString('hex');
+        let keypair= ec.genKeyPair();
+        this._clients[client].keypair = keypair;
+        let pubkey = keypair.getPublic().encode('hex');
         this._clients[client].send('{"id": ' + result.id + ', "error": false, "payload": { "authenticate": true, "link": false, "pub_key": "' + pubkey + '"}}');
       }
     } else {

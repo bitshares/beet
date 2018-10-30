@@ -2,8 +2,10 @@ import BeetAPI from './BeetAPI';
 import BeetWS from './BeetWS';
 import CryptoJS from 'crypto-js';
 import store from '../store/index.js';
-import eccrypto from 'eccrypto';
-import RendererLogger from "./RendererLogger";
+//import eccrypto from 'eccrypto';
+import { ec as EC } from "elliptic"; 
+var ec = new EC('curve25519');
+import RendererLogger from "./RendererLogger"; 
 
 const logger = new RendererLogger();
 
@@ -14,14 +16,15 @@ const linkHandler = async (req) => {
     try {
         userResponse = await BeetAPI.handler(Object.assign(req, {}), vueInst);
         let apphash = CryptoJS.SHA256(req.browser + ' ' + req.origin + ' ' + req.appName + ' ' + req.payload.chain + ' ' + userResponse.identity.id).toString();
-        let secret = await eccrypto.derive(req.key, Buffer.from(req.payload.pubkey, 'hex'));
+        //let secret = await eccrypto.derive(req.key, Buffer.from(req.payload.pubkey, 'hex'));
+        let secret =req.key.derive(ec.keyFromPublic(req.payload.pubkey, 'hex').getPublic());
         store.dispatch('OriginStore/addApp', {
             appName: req.appName,
             apphash: apphash,
             origin: req.origin,
             account_id: userResponse.identity.id,
             chain: req.payload.chain,
-            secret: secret.toString('hex'),
+            secret: secret.toString(16),
             next_hash: req.payload.next_hash
         });
         let response = Object.assign(req, {
@@ -30,7 +33,7 @@ const linkHandler = async (req) => {
             chain: req.payload.chain,
             next_hash: req.payload.next_hash,
             account_id: userResponse.identity.id,
-            secret: secret.toString('hex')
+            secret: secret.toString(16)
         });
         return response;
     } catch (e) {
