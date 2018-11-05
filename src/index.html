@@ -16,24 +16,30 @@
     <div class="main" id="app">
         <router-view name="header"></router-view>
         <router-view></router-view>
+        <Popups ref="popupComp"></Popups>
     </div>
     <script>
         import Vue from 'vue/dist/vue.js';
         import BootstrapVue from 'bootstrap-vue';
+        import Popups from './components/popups';
         import VueRouter from 'vue-router';
         import store from './store/index.js';
         import router from './router/index.js';
         import i18next from 'i18next';
         import Backend from "i18next-node-fs-backend";
         import VueI18Next from '@panter/vue-i18next';
-        
+        import BeetServer from "./lib/BeetServer";
+        import RendererLogger from "./lib/RendererLogger";
 
-        
+
+
         Vue.use(VueI18Next);
         Vue.use(BootstrapVue);
         Vue.use(VueRouter);
-
+        Vue.component('Popups', Popups);
+        const logger = new RendererLogger;
         store.dispatch("SettingsStore/loadSettings");
+        store.dispatch("OriginStore/loadApps");
         i18next.use(Backend).init({
             lng: store.state.SettingsStore.settings.locale.iso,
             ns: ['common', 'operations'],
@@ -48,6 +54,14 @@
             store,
             i18n: i18n
         }).$mount('#app');
+
+        BeetServer.initialize(app);
+        
+
+        window.onerror = function (msg, url, lineNo, columnNo, error) {
+            logger.error(error);
+            return false;
+        }
     </script>
 </body>
 

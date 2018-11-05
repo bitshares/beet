@@ -9,15 +9,17 @@ import installExtension from 'electron-devtools-installer';
 import {
   enableLiveReload
 } from 'electron-compile';
+import Logger from './lib/Logger';
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 
 const isDevMode = process.execPath.match(/[\\/]electron/);
+const logger = new Logger(3);
 
 if (isDevMode) enableLiveReload();
-
+let first = true;
 let tray = null;
 let minimised = false;
 const createWindow = async () => {
@@ -49,7 +51,7 @@ const createWindow = async () => {
       }
     }
   ]);
-  tray.setToolTip('BitShares Companion')
+  tray.setToolTip('Beet')
   tray.setContextMenu(contextMenu)
   // Open the DevTools.
   if (isDevMode) {
@@ -68,11 +70,14 @@ const createWindow = async () => {
 
   mainWindow.on('minimize', function (event) {
     event.preventDefault();
-    tray.displayBalloon({
-      icon: __dirname + '/img/bitshares.png',
-      title: "BitShares Companion is minimised.",
-      content: "It will run in the background until you quit."
-    });
+    if (first) {
+      tray.displayBalloon({
+        icon: __dirname + '/img/bitshares.png',
+        title: "Beet is minimised.",
+        content: "It will run in the background until you quit."
+      });
+      first = false;
+    }
     minimised = true;
     mainWindow.hide();
   });
@@ -85,11 +90,16 @@ const createWindow = async () => {
   mainWindow.on('close', function (event) {
     if (!app.isQuiting) {
       event.preventDefault();
-      tray.displayBalloon({
-        icon: __dirname + '/img/bitshares.png',
-        title: "BitShares Companion is minimised.",
-        content: "It will run in the background until you quit."
-      });
+
+      if (first) {
+        tray.displayBalloon({
+          icon: __dirname + '/img/bitshares.png',
+          title: "Beet is minimised.",
+          content: "It will run in the background until you quit."
+        });
+        first = false;
+      }
+
       minimised = true;
       mainWindow.hide();
     }
@@ -98,21 +108,35 @@ const createWindow = async () => {
   });
   ipcMain.on('notify', (event, arg) => {
     if (minimised) {
-      tray.displayBalloon({
-        icon: __dirname + '/img/bitshares.png',
-        title: "BitShares Companion has a new request.",
-        content: "Click here to view"
-      });
+      if (arg == 'request') {
+        tray.displayBalloon({
+          icon: __dirname + '/img/bitshares.png',
+          title: "Beet has received a new request.",
+          content: "Click here to view"
+        });
+      } else {
+        tray.displayBalloon({
+          icon: __dirname + '/img/bitshares.png',
+          title: arg,
+          content: "Click here to view"
+        });
+      }
     }
   });
-  tray.on('click', (event) => {
+
+  ipcMain.on('log', (event, arg) => {
+
+    logger[arg.level](arg.data);
+  });
+  tray.on('click', () => {
+
     mainWindow.setAlwaysOnTop(true);
     mainWindow.show();
     mainWindow.focus();
     mainWindow.setAlwaysOnTop(false);
     minimised = false;
   });
-  tray.on('balloon-click', (event) => {
+  tray.on('balloon-click', () => {
     mainWindow.setAlwaysOnTop(true);
     mainWindow.show();
     mainWindow.focus();

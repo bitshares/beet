@@ -237,53 +237,61 @@ pre {
   position: absolute;
   top: 10px;
   right: 10px;
-  left:10px;
-  text-align:right;
+  left: 10px;
+  text-align: right;
 }
-.lang-select.multiselect--active .singleLabel{
-  background:white;
+
+.lang-select.multiselect--active .singleLabel {
+  background: white;
   color: #0a4f79;
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;
 }
-.lang-select .singleLabel{
-  text-transform:uppercase;
-  font-weight:bold;
-  padding:5px 10px;
+
+.lang-select .singleLabel {
+  text-transform: uppercase;
+  font-weight: bold;
+  padding: 5px 10px;
 }
-.lang-select .singleLabel:hover {  
+
+.lang-select .singleLabel:hover {
   cursor: pointer;
-  background:white;
+  background: white;
   color: #0a4f79;
   border-radius: 5px;
- 
+
 }
-.lang-select .options .isoCode{
-  text-transform:uppercase;
+
+.lang-select .options .isoCode {
+  text-transform: uppercase;
 }
+
 .lang-select:focus {
-  outline:0;
+  outline: 0;
 }
+
 .lang-select ul {
-  list-style:none;
-  padding:0;
-  background:white;
+  list-style: none;
+  padding: 0;
+  background: white;
   color: #0a4f79;
   border-radius: 5px;
   border-top-right-radius: 0px;
-  overflow:hidden;
+  overflow: hidden;
   max-height: 80vh;
-  font-size:14px;
+  font-size: 14px;
 }
 
 .lang-select ul li {
-  text-align:left;
-  padding:5px 10px;
+  text-align: left;
+  padding: 5px 10px;
   border-bottom: 1px solid #0a4f79;
 }
+
 .lang-select .multiselect__option--selected {
-  font-weight:bold;
+  font-weight: bold;
 }
+
 .lang-select ul li:hover {
   background: #77c5ec;
   cursor: pointer;

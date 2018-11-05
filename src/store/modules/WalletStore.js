@@ -8,7 +8,9 @@ import {
 } from "uuid";
 const GET_WALLET = 'GET_WALLET';
 const CREATE_WALLET = 'CREATE_WALLET';
+const CONFIRM_UNLOCK = 'CONFIRM_UNLOCK';
 const SET_WALLET_STATUS = 'SET_WALLET_STATUS';
+const SET_WALLET_UNLOCKED = 'SET_WALLET_UNLOCKED';
 const SET_WALLETLIST = 'SET_WALLETLIST';
 const REQ_NOTIFY = 'REQ_NOTIFY';
 
@@ -17,14 +19,23 @@ const wallet = {};
 
 const mutations = {
     [GET_WALLET](state, wallet) {
+
+
         Vue.set(state, 'wallet', wallet);
     },
-
+    [CONFIRM_UNLOCK](state) {
+        state.unlocked.resolve();
+        Vue.set(state, 'isUnlocked', true);
+    },
     [SET_WALLET_STATUS](state, status) {
 
         Vue.set(state, 'hasWallet', status);
     },
 
+    [SET_WALLET_UNLOCKED](state, unlocked) {
+
+        Vue.set(state, 'unlocked', unlocked);
+    },
     [SET_WALLETLIST](state, walletlist) {
 
         Vue.set(state, 'walletlist', walletlist);
@@ -56,6 +67,11 @@ const actions = {
             }
         });
     },
+    confirmUnlock({
+        commit
+    }) {
+        commit(CONFIRM_UNLOCK);
+    },
     saveWallet({
         commit
     }, payload) {
@@ -65,7 +81,9 @@ const actions = {
                 let walletid = uuid();
                 let newwallet = {
                     id: walletid,
-                    name: payload.walletname
+                    name: payload.walletname,
+                    chain: payload.walletdata.chain,
+                    accounts: [payload.walletdata.accountID]
                 };
                 if (!wallets) {
                     wallets = [];
@@ -74,6 +92,14 @@ const actions = {
                 }
                 wallets.push(newwallet);
                 localStorage.setItem("wallets", JSON.stringify(wallets));
+                let unlock;
+                let unlocked = new Promise(function (resolve) {
+                    unlock = resolve
+                });
+                commit(SET_WALLET_UNLOCKED, {
+                    promise: unlocked,
+                    resolve: unlock
+                });
                 commit(SET_WALLET_STATUS, true);
                 commit(SET_WALLETLIST, wallets);
                 let ls = new SecureLS({
@@ -97,6 +123,14 @@ const actions = {
             try {
                 let wallets = JSON.parse(localStorage.getItem("wallets"));
                 if (wallets && wallets.length > 0) {
+                    let unlock;
+                    let unlocked = new Promise(function (resolve) {
+                        unlock = resolve
+                    });
+                    commit(SET_WALLET_UNLOCKED, {
+                        promise: unlocked,
+                        resolve: unlock
+                    });
                     commit(SET_WALLET_STATUS, true);
                     commit(SET_WALLETLIST, wallets);
                     resolve('Wallets Found');
@@ -113,7 +147,7 @@ const actions = {
     }, payload) {
         return new Promise((resolve, reject) => {
             if (payload.notify == 'request') {
-                commit(REQ_NOTIFY, payload.notify);
+                commit(REQ_NOTIFY, payload.message);
                 resolve();
             } else {
                 reject();
@@ -129,12 +163,13 @@ const getters = {
     getWalletList: state => state.walletlist
 };
 
-
 const initialState = {
     wallet: wallet,
     hasWallet: false,
     walletlist: [],
-    ipc: ipcRenderer
+    ipc: ipcRenderer,
+    unlocked: {},
+    isUnlocked: false
 };
 
 export default {
