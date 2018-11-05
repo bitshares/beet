@@ -1,8 +1,6 @@
-import * as Actions from './Actions';
-
 export default class Action {
 
-    constructor(_type = '', _payload = {}, _resolver = '', _domain = '') {
+    constructor(_type = '', _payload = {}) {
         this.type = _type;
         this.payload = _payload;
     }

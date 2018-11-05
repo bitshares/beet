@@ -1,3 +1,12 @@
+export const version = {
+    release: 2,
+    name: '0.5.0'
+};
+export const chainList = [{
+    short: 'BTS',
+    name: 'BitShares',
+    chainId: '4018d7844c78f6a6c41c6a552b898022310fc5dec06da467ee7905a8dad512c8'
+}];
 export const nodeList = [
 
     {

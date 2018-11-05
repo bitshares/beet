@@ -1,0 +1,23 @@
+{
+    "account_id": {
+        "title": "Account Details Request",
+        "request": "The page/app {{- origin}} is requesting to access your account ID.",
+        "request_cta": "Do you want to allow access?",
+        "accept_btn": "Allow",
+        "reject_btn": "Deny"
+    },
+    "rawsig": {
+        "title": "Transaction Request",
+        "request": "The page/app {{- origin}} has submitted the following transaction.",
+        "request_cta": "Do you want to execute it?",
+        "accept_btn": "Sign &amp; Broadcast",
+        "reject_btn": "Ignore"
+    },
+    "vote": {
+        "title": "Vote Request",
+        "request": "The page/app {{- origin}} wants you to vote for the following {{entity}}",
+        "request_cta": "",
+        "accept_btn": "Approve",
+        "reject_btn": "Ignore"
+    }
+}
