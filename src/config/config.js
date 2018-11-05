@@ -336,7 +336,7 @@ export const nodeList = [
     {
         url: "wss://node.bitshares.eu",
         location: "Nuremberg",
-        region: "Central Europe",
+        region: "Western Europe",
         country: "Germany",
         operator: "ChainSquad GmbH (xeroc)",
         contact: "info@chainsquad.com"
