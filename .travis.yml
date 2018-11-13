@@ -21,6 +21,4 @@ addons:
     - graphicsmagick
     - xz-utils
     - fakeroot
-install:
-- npm ci
-script: "./packageAndPublish.sh"
+script: "./publish.sh"
