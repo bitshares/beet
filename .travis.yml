@@ -23,4 +23,4 @@ addons:
     - fakeroot
 install:
 - npm ci
-script: "./buildAndPublish.sh"
+script: "./packageAndPublish.sh"

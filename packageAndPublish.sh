@@ -12,7 +12,7 @@ then
 fi
 
 ## Make the binaries
-npm run install
+npm run package
 
 ## Publish the binaries if on release
 if [ $TRAVIS_TAG ]
