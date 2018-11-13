@@ -6,6 +6,7 @@
   "main": "src/index.js",
   "scripts": {
     "start": "electron-forge start",
+    "install": "electron-forge install",
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
