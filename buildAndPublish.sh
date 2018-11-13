@@ -12,10 +12,7 @@ then
 fi
 
 ## Make the binaries
-if [ "$unamestr" == 'Linux' ]
-then
-    npm run make
-fi
+npm run install
 
 ## Publish the binaries if on release
 if [ $TRAVIS_TAG ]
