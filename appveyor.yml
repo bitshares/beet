@@ -17,8 +17,6 @@ platform:
     - x64
 before_package: echo Before package
 test_script:
-    - npm run package
-deploy_script:
     - npm run publish
 skip_non_tags: true
 artifacts:
