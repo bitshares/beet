@@ -1,7 +1,7 @@
 {
   "name": "beet",
   "productName": "Beet",
-  "version": "0.1.0",
+  "version": "0.1.0-rc4",
   "description": "Beet is a stand-alone key-manager and signing app for BitShares.",
   "main": "src/index.js",
   "scripts": {
@@ -21,10 +21,12 @@
           "squirrel"
         ],
         "darwin": [
-          "zip", "dmg"
+          "zip",
+          "dmg"
         ],
         "linux": [
-          "deb", "snap"
+          "deb",
+          "snap"
         ]
       },
       "electronPackagerConfig": {
