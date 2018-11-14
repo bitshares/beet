@@ -11,7 +11,7 @@ then
     export BRANCH=$TRAVIS_BRANCH
 fi
 
-## Make the binaries
+## Test packaging
 npm run package
 
 ## Publish the binaries if on release
