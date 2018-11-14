@@ -24,7 +24,7 @@
           "zip", "dmg"
         ],
         "linux": [
-          "deb"
+          "deb", "snap"
         ]
       },
       "electronPackagerConfig": {
