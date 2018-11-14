@@ -23,4 +23,5 @@ addons:
     - fakeroot
 install:
   - npm ci
-script: "./publish.sh"
+script: "./package.sh"
+after_success: "./deploy.sh"

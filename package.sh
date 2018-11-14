@@ -11,10 +11,11 @@ then
     export BRANCH=$TRAVIS_BRANCH
 fi
 
+## Test packaging
+npm run package
+
 ## Publish the binaries if on release
 if [ $TRAVIS_TAG ]
 then
     npm run publish
-else
-    echo "No tag found, skipping publish"
 fi
