@@ -21,7 +21,6 @@ addons:
     - graphicsmagick
     - xz-utils
     - fakeroot
-    - snapd
 install:
   - npm ci
 script: "./package.sh"
