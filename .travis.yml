@@ -22,5 +22,5 @@ addons:
     - xz-utils
     - fakeroot
 install:
-  - npm install
+  - npm ci
 script: "./publish.sh"
