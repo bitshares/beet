@@ -1,6 +1,12 @@
 version: 0.1.{build}
 environment:
     nodejs_version: 10
+    GITHUB_TOKEN:
+        secure: 6ld2MBbd9Dep8sD6q3on5JHh2QBG2dSOPwS4Gp4/mG7/RLXdrB9H/ibNXI+4FeX+
+branches:
+  only:
+    - master
+    - develop
 install:
     # Get the latest stable version of Node.js or io.js
     - ps: Install-Product node $env:nodejs_version
@@ -11,4 +17,10 @@ platform:
     - x64
 before_package: echo Before package
 test_script:
-    - npm run make
+    - npm run package
+deploy_script:
+    - npm run publish
+skip_non_tags: true
+artifacts:
+    - path: out\make\*.exe
+      name: WindowsApp

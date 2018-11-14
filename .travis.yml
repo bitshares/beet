@@ -21,6 +21,7 @@ addons:
     - graphicsmagick
     - xz-utils
     - fakeroot
+    - snapcraft
 install:
   - npm ci
 script: "./package.sh"
