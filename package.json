@@ -36,7 +36,8 @@
       "electronInstallerDebian": {},
       "github_repository": {
         "owner": "bitshares",
-        "name": "beet"
+        "name": "beet",
+        "draft": true
       }
     }
   },
