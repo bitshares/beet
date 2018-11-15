@@ -20,5 +20,5 @@ test_script:
     - npm run publish
 skip_non_tags: true
 artifacts:
-    - path: out
-      name: WindowsApp
+    - path: out/make/squirrel.windows/ia32/*.exe
+      name: BeetSetup
