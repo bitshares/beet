@@ -24,4 +24,4 @@ addons:
 install:
   - npm ci
 script: "./package.sh"
-after_success: "./deploy.sh"
+after_success: "./publish.sh"

@@ -20,5 +20,5 @@ test_script:
     - npm run publish
 skip_non_tags: true
 artifacts:
-    - path: out\make\*.exe
+    - path: out
       name: WindowsApp

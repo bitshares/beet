@@ -12,10 +12,4 @@ then
 fi
 
 ## Test packaging
-npm run package
-
-## Publish the binaries if on release
-if [ $TRAVIS_TAG ]
-then
-    npm run publish
-fi
+npm run make
