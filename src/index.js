@@ -30,8 +30,11 @@ const createWindow = async () => {
     minWidth: 500,
     minHeight: 660,
     maxWidth: 500,
+    maximizable: false,
     maxHeight: 660,
-    useContentSize: true,
+    useContentSize: true, 
+    frame:false,
+    transparent: true
   });
 
   // and load the index.html of the app.
@@ -47,12 +50,16 @@ const createWindow = async () => {
       label: 'Quit',
       click: function () {
         app.isQuiting = true;
+        tray = null;
         app.quit();
       }
     }
   ]);
   tray.setToolTip('Beet')
-  tray.setContextMenu(contextMenu)
+  tray.on('right-click', (event, bounds) => {
+    tray.popUpContextMenu(contextMenu);
+  });
+
   // Open the DevTools.
   if (isDevMode) {
     //await installExtension(VUEJS_DEVTOOLS);
@@ -128,8 +135,8 @@ const createWindow = async () => {
 
     logger[arg.level](arg.data);
   });
-  tray.on('click', () => {
-
+  tray.on('click', (event) => {
+    console.log(event);
     mainWindow.setAlwaysOnTop(true);
     mainWindow.show();
     mainWindow.focus();
