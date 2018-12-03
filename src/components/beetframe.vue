@@ -2,17 +2,15 @@
     <div class="container-fluid menubar">
         <div class="row">
             <div class="col-12 p-0 m-0">
-                Test
+                Beet Blockchain Companion
+                <div class="frame-controls">
+                    <span class="icon-minus"></span>
+                    <span class="icon-cross"></span>
+                </div>
             </div>
         </div>
     </div>
 </template>
-<style>
-    .menubar {
-        background: #0a4f79;
-  -webkit-app-region: drag;
-    }
-</style>
 <script>
 
 import { EventBus } from '../lib/event-bus.js';

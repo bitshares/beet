@@ -12,7 +12,9 @@
                 class="btn btn-lg btn-primary btn-block"
                 replace
             >{{ $t('start_cta') }}</router-link>
-            <select
+            
+                <span v-if="hasWallet" class="icon-account"></span>
+                <select
                 v-if="hasWallet"
                 id="wallet-select"
                 v-model="selectedWallet"
@@ -29,13 +31,14 @@
                     :key="wallet.id"
                     :value="wallet.id"
                 >{{ wallet.name }} ({{ wallet.chain }})</option>
-            </select>
+            </select><br/>
+            <span v-if="hasWallet" class="icon-lock1"></span>
             <input
                 v-if="hasWallet"
                 id="inputPassword"
                 v-model="walletpass"
                 type="password"
-                class="form-control mb-3"
+                class="form-control mb-4"
                 :placeholder=" $t('password_placeholder')"
                 required=""
                 :class="passincorrect"
