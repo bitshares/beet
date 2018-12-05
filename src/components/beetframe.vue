@@ -2,10 +2,10 @@
     <div class="container-fluid menubar">
         <div class="row">
             <div class="col-12 p-0 m-0">
-                Beet Blockchain Companion
+                <div class="title">Beet Blockchain Companion</div>
                 <div class="frame-controls">
-                    <span class="icon-minus"></span>
-                    <span class="icon-cross"></span>
+                    <span class="icon-minus" @click="minimise()"></span>
+                    <span class="icon-cross" @click="close()"></span>
                 </div>
             </div>
         </div>
@@ -15,6 +15,9 @@
 
 import { EventBus } from '../lib/event-bus.js';
 
+import {
+    ipcRenderer,
+} from 'electron';
 
     export default {
         name: "Beetframe",
@@ -31,6 +34,12 @@ import { EventBus } from '../lib/event-bus.js';
             
         },      
         methods: {
+            minimise: ()=> {
+                ipcRenderer.send("minimise", true);
+            },
+            close:()=> {
+                ipcRenderer.send("close", false);
+            }
         }
     };
 </script>

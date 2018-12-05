@@ -53,17 +53,27 @@ const actions = {
         commit
     }, payload) {
         return new Promise((resolve, reject) => {
+            console.log(payload.wallet_pass);
             let ls = new SecureLS({
                 encodingType: "aes",
                 isCompression: true,
                 encryptionSecret: payload.wallet_pass
             });
+            let ls2 = new SecureLS({
+                encodingType: "aes",
+                isCompression: true,
+                encryptionSecret: ''
+            });
             try {
                 let wallet = ls.get(payload.wallet_id);
+                let wallet2 = ls2.get(payload.wallet_id);
+                console.log(wallet);
+                console.log(wallet2);
                 commit(GET_WALLET, wallet);
                 resolve();
             } catch (e) {
-                reject();
+                console.log(e);
+                reject(e);
             }
         });
     },
@@ -107,6 +117,7 @@ const actions = {
                     isCompression: true,
                     encryptionSecret: payload.password
                 });
+                console.log(payload.password);
                 ls.set(walletid, payload.walletdata);
                 commit(GET_WALLET, payload.walletdata);
                 resolve();

@@ -33,7 +33,7 @@ const createWindow = async () => {
     maximizable: false,
     maxHeight: 660,
     useContentSize: true, 
-    //frame:false,
+    frame:false,
     transparent: true
   });
 
@@ -74,7 +74,7 @@ const createWindow = async () => {
     // when you should delete the corresponding element.
     mainWindow = null;
   });
-
+/*
   mainWindow.on('minimize', function (event) {
     event.preventDefault();
     if (first) {
@@ -88,12 +88,12 @@ const createWindow = async () => {
     minimised = true;
     mainWindow.hide();
   });
-
+*/
   mainWindow.on('show', function () {
     minimised = false;
     tray.setHighlightMode('always')
   });
-
+/*
   mainWindow.on('close', function (event) {
     if (!app.isQuiting) {
       event.preventDefault();
@@ -112,6 +112,26 @@ const createWindow = async () => {
     }
 
     return false;
+  });
+  */
+  ipcMain.on('minimise',(event, arg) => {    
+    minimised = true;
+    mainWindow.minimize();
+  });
+  ipcMain.on('close',(event, arg) => {
+    if (first) {
+      tray.displayBalloon({
+        icon: __dirname + '/img/bitshares.png',
+        title: "Beet is minimised.",
+        content: "It will run in the background until you quit."
+      });
+      if (arg==true) {
+        first = false;
+      }
+    }
+
+    minimised = true;
+    mainWindow.hide();
   });
   ipcMain.on('notify', (event, arg) => {
     if (minimised) {

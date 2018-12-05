@@ -100,6 +100,7 @@
         },
         methods: {
             unlockWallet() {
+                console.log(this.walletpass);
                 this.$store
                     .dispatch("WalletStore/getWallet", {
                         wallet_id: this.selectedWallet,
