@@ -19,7 +19,7 @@
     "forge": {
       "make_targets": {
         "win32": [
-          "squirrel"
+          "nsis"
         ],
         "darwin": [
           "zip",
@@ -43,6 +43,14 @@
       }
     }
   },
+  "build": {
+    "nsis": {
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true,
+      "oneClick": false,
+      "perMachine": false
+    }
+  },
   "dependencies": {
     "@panter/vue-i18next": "^0.12.0",
     "bitsharesjs": "^1.8.0",
@@ -52,7 +60,7 @@
     "dexie": "^2.0.4",
     "electron-compile": "^6.4.3",
     "electron-devtools-installer": "^2.2.4",
-    "electron-squirrel-startup": "^1.0.0",
+    "electron-forge-maker-nsis": "^20.37.0",
     "elliptic": "^6.4.1",
     "i18next": "^11.6.0",
     "i18next-node-fs-backend": "^2.0.0",

@@ -36,7 +36,7 @@ const createWindow = async () => {
 
   // and load the index.html of the app.
   mainWindow.loadURL(`file://${__dirname}/index.html`);
-  tray = new Tray(__dirname + '/img/bitshares.png');
+  tray = new Tray(__dirname + '/img/beet.png');
   const contextMenu = Menu.buildFromTemplate([{
       label: 'Show App',
       click: function () {
@@ -72,7 +72,7 @@ const createWindow = async () => {
     event.preventDefault();
     if (first) {
       tray.displayBalloon({
-        icon: __dirname + '/img/bitshares.png',
+        icon: __dirname + '/img/beet.png',
         title: "Beet is minimised.",
         content: "It will run in the background until you quit."
       });
@@ -93,7 +93,7 @@ const createWindow = async () => {
 
       if (first) {
         tray.displayBalloon({
-          icon: __dirname + '/img/bitshares.png',
+          icon: __dirname + '/img/beet.png',
           title: "Beet is minimised.",
           content: "It will run in the background until you quit."
         });
@@ -110,13 +110,13 @@ const createWindow = async () => {
     if (minimised) {
       if (arg == 'request') {
         tray.displayBalloon({
-          icon: __dirname + '/img/bitshares.png',
+          icon: __dirname + '/img/beet.png',
           title: "Beet has received a new request.",
           content: "Click here to view"
         });
       } else {
         tray.displayBalloon({
-          icon: __dirname + '/img/bitshares.png',
+          icon: __dirname + '/img/beet.png',
           title: arg,
           content: "Click here to view"
         });
