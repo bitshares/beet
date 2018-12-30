@@ -341,5 +341,13 @@ export const nodeList = [
         location: "Paris",
         operator: "Witness: zapata42-witness",
         contact: "telegram:Zapata_42"
+    },
+    {
+        url: "wss://node.bitshares.eu",
+        location: "Nuremberg",
+        region: "Western Europe",
+        country: "Germany",
+        operator: "ChainSquad GmbH (xeroc)",
+        contact: "info@chainsquad.com"
     }
 ];
