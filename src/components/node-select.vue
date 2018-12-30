@@ -5,22 +5,22 @@
         </div>
         <div class="col-8 p-0">
             <div class="input-group mb-0">
-                <select 
-                    id="node-select" 
-                    v-model="selectedNode" 
+                <select
+                    id="node-select"
+                    v-model="selectedNode"
                     class="form-control "
                 >
-                    <option 
-                        v-for="node in nodes" 
-                        :key="node.url" 
+                    <option
+                        v-for="node in nodes"
+                        :key="node.url"
                         :value="node.url"
                     >{{ node.url }}</option>
                 </select>
             </div>
         </div>
         <div class="col-2 p-0 text-center d-flex  justify-content-center">
-            <span 
-                class="status align-self-center" 
+            <span
+                class="status align-self-center"
                 :class="{'icon-connected': isConnected,'icon-disconnected': !isConnected}"
             />
         </div>
@@ -28,8 +28,7 @@
 </template>
 
 <script>
-import { Apis } from "bitsharesjs-ws";
-import { nodeList } from "../config/config";
+import getBlockchain from "../lib/blockchains/blockchainFactory"
 import RendererLogger from "../lib/RendererLogger";
 
 const logger = new RendererLogger();
@@ -39,7 +38,8 @@ export default {
   i18nOptions: { namespaces: "common" },
   data() {
     return {
-      nodes: nodeList,
+      blockchain: getBlockchain("BTS"),
+      nodes: getBlockchain("BTS").getNodes(),
       isConnected: false,
       api: null,
       selectedNode: this.$store.state.SettingsStore.settings.selected_node
@@ -47,37 +47,24 @@ export default {
   },
   watch: {
     selectedNode: function() {
-      Apis.close().then(() => {
-        this.isConnected = false;
-        Apis.instance(
-          this.selectedNode,
-          true,
-          10000,
-          { enableCrypto: false, enableOrders: false },
-          this.onClose
-        ).init_promise.then(() => {
-          this.$store.dispatch("SettingsStore/setNode", {
-            node: this.selectedNode
-          });
-          this.isConnected = true;
+      this.blockchain.connect(this.selectedNode).then(() => {
+        this._updateConnectionStatus();
+        this.$store.dispatch("SettingsStore/setNode", {
+          node: this.selectedNode
         });
       });
     }
   },
   mounted() {
-    Apis.instance(
-      this.selectedNode,
-      true,
-      10000,
-      { enableCrypto: false, enableOrders: false },
-      this.onClose
-    ).init_promise.then(() => {
-      this.isConnected = true;
+    this.blockchain.connect(this.selectedNode).then(() => {
+      this._updateConnectionStatus();
       this.$emit("first-connect");
     });
   },
-  onClose() {
-    this.isConnected = false;
+  methods: {
+    _updateConnectionStatus() {
+      this.isConnected = this.blockchain.isConnected();
+    },
   }
 };
 </script>
