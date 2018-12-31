@@ -10,7 +10,7 @@ export default class BlockchainAPI {
     }
 
     connect(nodeToConnect, onClose, onError) {
-        return new Promise(() => {});
+        return new Promise((resolve) => resolve());
     }
 
     _connectionEstablished(resolveCallback, node) {
@@ -22,4 +22,13 @@ export default class BlockchainAPI {
     getNodes() {
         return this._config.nodeList;
     }
+
+    getAccount() {
+        throw "Needs implementation"
+    }
+
+    verifyPrivateKey(key) {
+        throw "Needs implementation"
+    }
+
 }

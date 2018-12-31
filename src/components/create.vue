@@ -180,10 +180,10 @@
 </template>
 
 <script>
-import { PrivateKey } from "bitsharesjs";
-import { Apis } from "bitsharesjs-ws";
-import { chainList } from "../config/config.js";
+import { blockchains } from "../config/config.js";
 import RendererLogger from "../lib/RendererLogger";
+
+import getBlockchain from "../lib/blockchains/blockchainFactory"
 
 const logger = new RendererLogger();
 
@@ -205,7 +205,7 @@ export default {
       includeOwner: 0,
       errorMsg: "",
       selectedChain: 0,
-      chainList: chainList
+      chainList: Object.values(blockchains)
     };
   },
   methods: {
@@ -243,17 +243,14 @@ export default {
         this.$refs.errorModal.show();
         return;
       }
+
+      let blockchain = getBlockchain(this.selectedChain);
+
       try {
-        apkey = PrivateKey.fromWif(this.activepk)
-          .toPublicKey()
-          .toString(this.selectedChain);
-        mpkey = PrivateKey.fromWif(this.memopk)
-          .toPublicKey()
-          .toString(this.selectedChain);
+        apkey = blockchain.getPublicKey(this.activepk);
+        mpkey = blockchain.getPublicKey(this.memopk);
         if (this.includeOwner == 1) {
-          opkey = PrivateKey.fromWif(this.ownerpk)
-            .toPublicKey()
-            .toString(this.selectedChain);
+          opkey =blockchain.getPublicKey(this.ownerpk);
         }
       } catch (e) {
         this.errorMsg = this.$t("invalid_key_error");
@@ -261,37 +258,29 @@ export default {
         return;
       }
       this.$refs.loaderAnimModal.show();
-      let verified = await Apis.instance(
-        this.$store.state.SettingsStore.settings.selected_node,
-        true
-      ).init_promise.then(() => {
-        return Apis.instance()
-          .db_api()
-          .exec("get_full_accounts", [[this.accountname], false])
-          .then(res => {
-            // TODO: Better verification
-            if (
-              res[0][1].account.active.key_auths[0][0] == apkey &&
-              (res[0][1].account.owner.key_auths[0][0] == opkey ||
-                this.includeOwner == 0) &&
-              res[0][1].account.options.memo_key == mpkey
-            ) {
-              this.$refs.loaderAnimModal.hide();
-              return res[0][1].account.id;
-            } else {
-              this.$refs.loaderAnimModal.hide();
-              this.$refs.errorModal.show();
-              this.errorMsg = this.$t("unverified_account_error");
-              return null;
-            }
-          });
+
+      console.log(this.selectedChain);
+      blockchain.getAccount(this.accountname).then((account) => {
+        if (
+          account.active.key_auths[0][0] == apkey &&
+          (account.owner.key_auths[0][0] == opkey || this.includeOwner == 0) &&
+          account.options.memo_key == mpkey
+        ) {
+          this.$refs.loaderAnimModal.hide();
+          this.accountID = account.id;
+          this.step = 3;
+        } else {
+          this.$refs.loaderAnimModal.hide();
+          this.$refs.errorModal.show();
+          this.errorMsg = this.$t("unverified_account_error");
+          this.accountID = "";
+        }
+      }).catch((err) => {
+          this.$refs.loaderAnimModal.hide();
+          this.$refs.errorModal.show();
+          this.errorMsg = this.$t("unverified_account_error");
+          this.accountID = "";
       });
-      if (verified != null) {
-        this.accountID = verified;
-        this.step = 3;
-      } else {
-        return;
-      }
     },
     verifyAndCreate: async function() {
       if (this.password != this.confirmpassword || this.password == "") {
