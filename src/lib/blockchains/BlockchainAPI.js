@@ -23,8 +23,12 @@ export default class BlockchainAPI {
         return this._config.nodeList;
     }
 
-    getAccount() {
+    getAccount(accountName) {
         throw "Needs implementation";
+    }
+
+    getBalances(accountName) {
+        throw "Needs implmenetation";
     }
 
     getPublicKey(privateKey) {

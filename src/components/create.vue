@@ -259,7 +259,6 @@ export default {
       }
       this.$refs.loaderAnimModal.show();
 
-      console.log(this.selectedChain);
       blockchain.getAccount(this.accountname).then((account) => {
         if (
           account.active.public_key == apkey &&
