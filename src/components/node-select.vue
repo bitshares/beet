@@ -38,8 +38,8 @@ export default {
   i18nOptions: { namespaces: "common" },
   data() {
     return {
-      blockchain: getBlockchain("BTS"),
-      nodes: getBlockchain("BTS").getNodes(),
+      blockchain: getBlockchain(this.$store.state.WalletStore.wallet.chain),
+      nodes: getBlockchain(this.$store.state.WalletStore.wallet.chain).getNodes(),
       isConnected: false,
       api: null,
       selectedNode: this.$store.state.SettingsStore.settings.selected_node
