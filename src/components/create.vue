@@ -262,9 +262,9 @@ export default {
       console.log(this.selectedChain);
       blockchain.getAccount(this.accountname).then((account) => {
         if (
-          account.active.key_auths[0][0] == apkey &&
-          (account.owner.key_auths[0][0] == opkey || this.includeOwner == 0) &&
-          account.options.memo_key == mpkey
+          account.active.public_key == apkey &&
+          (account.owner.public_key == opkey || this.includeOwner == 0) &&
+          account.memo.public_key == mpkey
         ) {
           this.$refs.loaderAnimModal.hide();
           this.accountID = account.id;

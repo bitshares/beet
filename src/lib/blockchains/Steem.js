@@ -1,11 +1,7 @@
+import BlockchainAPI from "./BlockchainAPI";
 import steem from "steem";
 
 export default class Steem extends BlockchainAPI {
-
-    _onCloseWrapper(onClose) {
-        this._isConnected = false;
-        if (onClose) onClose();
-    }
 
     isConnected() {
         return this._isConnected;
@@ -13,39 +9,25 @@ export default class Steem extends BlockchainAPI {
 
     connect(nodeToConnect, onClose = null) {
         return new Promise((resolve, reject) => {
-            if (this._isConnected) {
-                Apis.close().then(() => {
-                    this._isConnected = false;
-                    Apis.instance(
-                        nodeToConnect,
-                        true,
-                        10000,
-                        {enableCrypto: false, enableOrders: false},
-                        this._onCloseWrapper.bind(this, onClose)
-                    ).init_promise.then(() => {
-                        this._isConnected = true;
-                        resolve();
-                    }).catch((err) => {
-                        this._isConnected = false;
-                        reject(err);
-                    });
-                });
-            } else {
-                Apis.instance(
-                    nodeToConnect,
-                    true,
-                    10000,
-                    { enableCrypto: false, enableOrders: false },
-                    this._onCloseWrapper.bind(this, onClose)
-                ).init_promise.then(() => {
-                    this._isConnected = true;
-                    resolve();
-                }).catch((err) => {
-                    this._isConnected = false;
-                    reject(err);
-                });
-            }
-
+            // steem library handles connection internally, just set node
+            //steem.api.setOptions({ url: nodeToConnect });
+            resolve();
         });
+    }
+
+    getAccount(accountname) {
+        return new Promise((resolve, reject) => {
+            steem.api.getAccounts([accountname], function(err, result) {
+                console.log(err, result);
+                result[0].active.public_key = result[0].active.key_auths[0][0];
+                result[0].owner.public_key = result[0].owner.key_auths[0][0];
+                result[0].memo = {public_key: result[0].memo_key};
+                resolve(result[0]);
+            });
+        });
+    }
+
+    getPublicKey(privateKey) {
+        return steem.auth.wifToPublic(privateKey);
     }
 }

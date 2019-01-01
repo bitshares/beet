@@ -1,5 +1,4 @@
 import BlockchainAPI from "./BlockchainAPI";
-
 import { Apis } from "bitsharesjs-ws";
 import { PrivateKey } from "bitsharesjs";
 
@@ -63,6 +62,9 @@ export default class BitShares extends BlockchainAPI {
                 Apis.instance().db_api()
                     .exec("get_full_accounts", [[accountname], false])
                     .then(res => {
+                        res[0][1].account.active.public_key = res[0][1].account.active.key_auths[0][0];
+                        res[0][1].account.owner.public_key = res[0][1].account.owner.key_auths[0][0];
+                        res[0][1].account.memo.public_key = res[0][1].account.options.memo_key;
                         resolve(res[0][1].account);
                     })
                     .catch((err) => {
