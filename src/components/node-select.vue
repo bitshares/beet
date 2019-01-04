@@ -8,7 +8,7 @@
                 <select 
                     id="node-select" 
                     v-model="selectedNode" 
-                    class="form-control small"
+                    class="form-control "
                 >
                     <option 
                         v-for="node in nodes" 
@@ -21,7 +21,7 @@
         <div class="col-2 p-0 text-center d-flex  justify-content-center">
             <span 
                 class="status align-self-center" 
-                :class="{connected: isConnected,disconnected: !isConnected}"
+                :class="{'icon-connected': isConnected,'icon-disconnected': !isConnected}"
             />
         </div>
     </div>

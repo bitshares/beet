@@ -30,13 +30,16 @@ const createWindow = async () => {
     minWidth: 500,
     minHeight: 660,
     maxWidth: 500,
+    maximizable: false,
     maxHeight: 660,
-    useContentSize: true,
+    useContentSize: true, 
+    frame:false,
+    transparent: true
   });
 
   // and load the index.html of the app.
   mainWindow.loadURL(`file://${__dirname}/index.html`);
-  tray = new Tray(__dirname + '/img/bitshares.png');
+  tray = new Tray(__dirname + '/img/beet-tray.png');
   const contextMenu = Menu.buildFromTemplate([{
       label: 'Show App',
       click: function () {
@@ -47,12 +50,16 @@ const createWindow = async () => {
       label: 'Quit',
       click: function () {
         app.isQuiting = true;
+        tray = null;
         app.quit();
       }
     }
   ]);
   tray.setToolTip('Beet')
-  tray.setContextMenu(contextMenu)
+  tray.on('right-click', (event, bounds) => {
+    tray.popUpContextMenu(contextMenu);
+  });
+
   // Open the DevTools.
   if (isDevMode) {
     //await installExtension(VUEJS_DEVTOOLS);
@@ -67,12 +74,12 @@ const createWindow = async () => {
     // when you should delete the corresponding element.
     mainWindow = null;
   });
-
+/*
   mainWindow.on('minimize', function (event) {
     event.preventDefault();
     if (first) {
       tray.displayBalloon({
-        icon: __dirname + '/img/bitshares.png',
+        icon: __dirname + '/img/beet-tray.png',
         title: "Beet is minimised.",
         content: "It will run in the background until you quit."
       });
@@ -81,19 +88,19 @@ const createWindow = async () => {
     minimised = true;
     mainWindow.hide();
   });
-
+*/
   mainWindow.on('show', function () {
     minimised = false;
     tray.setHighlightMode('always')
   });
-
+/*
   mainWindow.on('close', function (event) {
     if (!app.isQuiting) {
       event.preventDefault();
 
       if (first) {
         tray.displayBalloon({
-          icon: __dirname + '/img/bitshares.png',
+          icon: __dirname + '/img/beet-tray.png',
           title: "Beet is minimised.",
           content: "It will run in the background until you quit."
         });
@@ -106,17 +113,37 @@ const createWindow = async () => {
 
     return false;
   });
+  */
+  ipcMain.on('minimise',(event, arg) => {    
+    minimised = true;
+    mainWindow.minimize();
+  });
+  ipcMain.on('close',(event, arg) => {
+    if (first) {
+      tray.displayBalloon({
+        icon: __dirname + '/img/beet-notification.png',
+        title: "Beet is minimised.",
+        content: "It will run in the background until you quit."
+      });
+      if (arg==true) {
+        first = false;
+      }
+    }
+
+    minimised = true;
+    mainWindow.hide();
+  });
   ipcMain.on('notify', (event, arg) => {
     if (minimised) {
       if (arg == 'request') {
         tray.displayBalloon({
-          icon: __dirname + '/img/bitshares.png',
+          icon: __dirname + '/img/beet-tray.png',
           title: "Beet has received a new request.",
           content: "Click here to view"
         });
       } else {
         tray.displayBalloon({
-          icon: __dirname + '/img/bitshares.png',
+          icon: __dirname + '/img/beet-tray.png',
           title: arg,
           content: "Click here to view"
         });
@@ -128,8 +155,8 @@ const createWindow = async () => {
 
     logger[arg.level](arg.data);
   });
-  tray.on('click', () => {
-
+  tray.on('click', (event) => {
+    console.log(event);
     mainWindow.setAlwaysOnTop(true);
     mainWindow.show();
     mainWindow.focus();

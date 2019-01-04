@@ -1,14 +1,20 @@
 <template>
     <div class="top">
-        <img
-            class="mb-4"
-            src="img/bitshares.png"
-            alt=""
-            width="150"
-            height="150"
-        >
-        <h3 class="h3 mb-3 font-weight-normal">{{ $t("welcome" ) }}</h3>
-        <LangSelect ref="langswitch" />
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12 largeHeader">
+                    <img            
+                        src="img/beet.png"
+                        alt=""
+                        width="150"
+                        height="150"
+                    >
+                    <div class="beet-typo mb-3">beet</div>
+                    <h3 class="h3 mb-3 font-weight-normal">{{ $t("welcome" ) }}</h3>
+                    <LangSelect ref="langswitch" />
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 

@@ -6,14 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>Beet - The BitShares companion</title>
-    <link rel="stylesheet" href="./css/bootstrap.min.css">
-    <!-- Custom styles for this template -->
-    <link href="./css/main.css" rel="stylesheet">
+    <title>Beet Blockchain Companion</title>
+    <link href="./scss/beet.scss" rel="stylesheet">
+    
 </head>
 
 <body class="text-center">
     <div class="main" id="app">
+        <Beetframe ref="windowFrame"></Beetframe>
         <router-view name="header"></router-view>
         <router-view></router-view>
         <Popups ref="popupComp"></Popups>
@@ -22,6 +22,7 @@
         import Vue from 'vue/dist/vue.js';
         import BootstrapVue from 'bootstrap-vue';
         import Popups from './components/popups';
+        import Beetframe from './components/beetframe';
         import VueRouter from 'vue-router';
         import store from './store/index.js';
         import router from './router/index.js';
@@ -36,7 +37,8 @@
         Vue.use(VueI18Next);
         Vue.use(BootstrapVue);
         Vue.use(VueRouter);
-        Vue.component('Popups', Popups);
+        Vue.component('Popups', Popups); 
+        Vue.component('Beetframe', Beetframe);
         const logger = new RendererLogger;
         store.dispatch("SettingsStore/loadSettings");
         store.dispatch("OriginStore/loadApps");

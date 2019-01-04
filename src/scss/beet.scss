@@ -1,0 +1,17 @@
+
+
+$primary:       #C7088E;
+$alternate:     #960069;
+$secondary:     #707070;
+$success:       #4CAF50;
+$info:          #00BCD4;
+$warning:       #FF9800;
+$danger:        #F44336;
+$light:         #E5EAED;
+$dark:          #29324A;
+$white:         #F4F8FB;
+@import '../../node_modules/typeface-roboto/index.css';
+@import '../../node_modules/typeface-rajdhani/index.css'; 
+@import "../css/style.css";
+@import "./bootstrap";
+@import "./styles";

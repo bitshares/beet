@@ -1,6 +1,6 @@
 {
-    "appName": "Beet",
-    "slogan": "The BitShares companion",
+    "appName": "beet",
+    "slogan": "Your blockchain companion",
     "welcome": "Welcome to Beet!",
     "no_wallet": "There is no wallet stored in this computer.",
     "start_cta": "Get Started",

@@ -1,16 +1,16 @@
 <template>
     <div class="top">
-        <div class="row">
-            <div class="col-12 d-flex smallHeader">
-                <img
-                    class=""
-                    src="img/bitshares.png"
-                    alt=""
-                    width="56"
-                    height="56"
-                >
-                <h4 class="h4 font-weight-normal align-self-center">{{ $t('appName') }}</h4>
-                <LangSelect ref="langswitch" />
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12 d-flex smallHeader">
+                    <img
+                        class="logo-small"
+                        src="img/beet.png"
+                        alt=""
+                    >
+                    <h4 class="h4 beet-typo-small">{{ $t('appName') }}</h4>
+                    <LangSelect ref="langswitch" />
+                </div>
             </div>
         </div>
     </div>

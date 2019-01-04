@@ -120,7 +120,7 @@
             <div class="lds-roller"><div /><div /><div /><div /><div /><div /><div /><div /></div>
         </b-modal>
         <div class="alerts">
-            <b-alert variant="warning" v-bind:key="alert.id" v-for="alert in alerts" show fade dismissible v-on:dismissed="hideAlert(alert.id)">{{alert.msg}}</b-alert>            
+            <b-alert variant="info" v-bind:key="alert.id" v-for="alert in alerts" show fade dismissible v-on:dismissed="hideAlert(alert.id)">{{alert.msg}}</b-alert>            
         </div>
     </div>
 </template>
@@ -129,7 +129,7 @@
         position:absolute;
         left:5%;
         right:5%;
-        top:2%;
+        top:3rem;
         width:90%;
     }
 </style>
