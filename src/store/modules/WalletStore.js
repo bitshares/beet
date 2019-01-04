@@ -55,7 +55,7 @@ const actions = {
     }, payload) {
         return new Promise((resolve, reject) => {
             console.log(payload.wallet_pass);
-            BeetDB.wallet.get({id: payload.wallet_id}).then((wallet)=> {
+            BeetDB.wallets_encrypted.get({id: payload.wallet_id}).then((wallet)=> {
                 try {                    
                     let bytes  = CryptoJS.AES.decrypt(wallet.data, payload.wallet_pass);
                     let decrypted_wallet = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
@@ -87,8 +87,8 @@ const actions = {
                     chain: payload.walletdata.chain,
                     accounts: [payload.walletdata.accountID]
                 };
-                BeetDB.wallets.put(newwallet).then(()=> {
-                    BeetDB.wallets.toArray().then((wallets) => {
+                BeetDB.wallets_public.put(newwallet).then(()=> {
+                    BeetDB.wallets_public.toArray().then((wallets) => {
                         let unlock;
                         let unlocked = new Promise(function (resolve) {
                             unlock = resolve
@@ -100,7 +100,7 @@ const actions = {
                         commit(SET_WALLET_STATUS, true);
                         commit(SET_WALLETLIST, wallets);
                         let walletdata=CryptoJS.AES.encrypt(JSON.stringify(payload.walletdata), payload.password).toString();
-                        BeetDB.wallet.put({id: walletid, data: walletdata});                        
+                        BeetDB.wallets_encrypted.put({id: walletid, data: walletdata});                        
                         commit(GET_WALLET, payload.walletdata);
                         resolve();
                     }).catch((e) => {
@@ -116,7 +116,7 @@ const actions = {
     }) {
 
         return new Promise((resolve, reject) => {
-            BeetDB.wallets.toArray().then((wallets) => {
+            BeetDB.wallets_public.toArray().then((wallets) => {
                 if (wallets && wallets.length > 0) {
                     let unlock;
                     let unlocked = new Promise(function (resolve) {
