@@ -260,6 +260,7 @@ export default {
         this.$refs.errorModal.show();
         return;
       }
+      console.log('account: '+this.accountname);
       this.$refs.loaderAnimModal.show();
       let verified = await Apis.instance(
         this.$store.state.SettingsStore.settings.selected_node,

@@ -1,4 +1,3 @@
-import SecureLS from "secure-ls";
 import Vue from 'vue/dist/vue.js';
 import {
     ipcRenderer,
@@ -6,6 +5,8 @@ import {
 import {
     v4 as uuid
 } from "uuid";
+import CryptoJS from 'crypto-js';
+import BeetDB from '../../lib/BeetDB.js';
 const GET_WALLET = 'GET_WALLET';
 const CREATE_WALLET = 'CREATE_WALLET';
 const CONFIRM_UNLOCK = 'CONFIRM_UNLOCK';
@@ -54,27 +55,18 @@ const actions = {
     }, payload) {
         return new Promise((resolve, reject) => {
             console.log(payload.wallet_pass);
-            let ls = new SecureLS({
-                encodingType: "aes",
-                isCompression: true,
-                encryptionSecret: payload.wallet_pass
-            });
-            let ls2 = new SecureLS({
-                encodingType: "aes",
-                isCompression: true,
-                encryptionSecret: ''
-            });
-            try {
-                let wallet = ls.get(payload.wallet_id);
-                let wallet2 = ls2.get(payload.wallet_id);
-                console.log(wallet);
-                console.log(wallet2);
-                commit(GET_WALLET, wallet);
-                resolve();
-            } catch (e) {
-                console.log(e);
+            BeetDB.wallet.get({id: payload.wallet_id}).then((wallet)=> {
+                try {                    
+                    let bytes  = CryptoJS.AES.decrypt(wallet.data, payload.wallet_pass);
+                    let decrypted_wallet = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+                    commit(GET_WALLET, decrypted_wallet);
+                    resolve();
+                } catch(e) {
+                    throw(e);
+                }
+            }).catch((e)=>{
                 reject(e);
-            }
+            });
         });
     },
     confirmUnlock({
@@ -86,8 +78,8 @@ const actions = {
         commit
     }, payload) {
         return new Promise((resolve, reject) => {
-            try {
-                let wallets = localStorage.getItem("wallets");
+            
+                //let wallets = localStorage.getItem("wallets");
                 let walletid = uuid();
                 let newwallet = {
                     id: walletid,
@@ -95,35 +87,28 @@ const actions = {
                     chain: payload.walletdata.chain,
                     accounts: [payload.walletdata.accountID]
                 };
-                if (!wallets) {
-                    wallets = [];
-                } else {
-                    wallets = JSON.parse(wallets);
-                }
-                wallets.push(newwallet);
-                localStorage.setItem("wallets", JSON.stringify(wallets));
-                let unlock;
-                let unlocked = new Promise(function (resolve) {
-                    unlock = resolve
+                BeetDB.wallets.put(newwallet).then(()=> {
+                    BeetDB.wallets.toArray().then((wallets) => {
+                        let unlock;
+                        let unlocked = new Promise(function (resolve) {
+                            unlock = resolve
+                        });
+                        commit(SET_WALLET_UNLOCKED, {
+                            promise: unlocked,
+                            resolve: unlock
+                        });
+                        commit(SET_WALLET_STATUS, true);
+                        commit(SET_WALLETLIST, wallets);
+                        let walletdata=CryptoJS.AES.encrypt(JSON.stringify(payload.walletdata), payload.password).toString();
+                        BeetDB.wallet.put({id: walletid, data: walletdata});                        
+                        commit(GET_WALLET, payload.walletdata);
+                        resolve();
+                    }).catch((e) => {
+                        throw(e);
+                    });
+                }).catch((e) => {
+                    reject(e);
                 });
-                commit(SET_WALLET_UNLOCKED, {
-                    promise: unlocked,
-                    resolve: unlock
-                });
-                commit(SET_WALLET_STATUS, true);
-                commit(SET_WALLETLIST, wallets);
-                let ls = new SecureLS({
-                    encodingType: "aes",
-                    isCompression: true,
-                    encryptionSecret: payload.password
-                });
-                console.log(payload.password);
-                ls.set(walletid, payload.walletdata);
-                commit(GET_WALLET, payload.walletdata);
-                resolve();
-            } catch (e) {
-                reject();
-            }
         });
     },
     loadWallets({
@@ -131,8 +116,7 @@ const actions = {
     }) {
 
         return new Promise((resolve, reject) => {
-            try {
-                let wallets = JSON.parse(localStorage.getItem("wallets"));
+            BeetDB.wallets.toArray().then((wallets) => {
                 if (wallets && wallets.length > 0) {
                     let unlock;
                     let unlocked = new Promise(function (resolve) {
@@ -148,9 +132,10 @@ const actions = {
                 } else {
                     resolve('Wallets not found');
                 }
-            } catch (e) {
-                reject('Wallets not found');
-            }
+                resolve();
+            }).catch(() => {
+                reject();
+            });
         });
     },
     notifyUser({
