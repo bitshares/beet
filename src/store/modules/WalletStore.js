@@ -54,7 +54,6 @@ const actions = {
         commit
     }, payload) {
         return new Promise((resolve, reject) => {
-            console.log(payload.wallet_pass);
             BeetDB.wallet.get({id: payload.wallet_id}).then((wallet)=> {
                 try {                    
                     let bytes  = CryptoJS.AES.decrypt(wallet.data, payload.wallet_pass);
