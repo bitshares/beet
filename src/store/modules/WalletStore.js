@@ -51,10 +51,9 @@ const mutations = {
 
 const actions = {
     getWallet({
-        commit
+        commit 
     }, payload) {
         return new Promise((resolve, reject) => {
-            console.log(payload.wallet_pass);
             BeetDB.wallets_encrypted.get({id: payload.wallet_id}).then((wallet)=> {
                 try {                    
                     let bytes  = CryptoJS.AES.decrypt(wallet.data, payload.wallet_pass);

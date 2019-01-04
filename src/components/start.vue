@@ -13,8 +13,11 @@
                 replace
             >{{ $t('start_cta') }}</router-link>
             
-                <span v-if="hasWallet" class="icon-account"></span>
-                <select
+            <span
+                    v-if="hasWallet"
+                    class="icon-account"
+            />
+            <select
                 v-if="hasWallet"
                 id="wallet-select"
                 v-model="selectedWallet"
@@ -32,7 +35,10 @@
                     :value="wallet.id"
                 >{{ wallet.name }} ({{ wallet.chain }})</option>
             </select><br/>
-            <span v-if="hasWallet" class="icon-lock1"></span>
+            <span
+                    v-if="hasWallet"
+                    class="icon-lock1"
+            />
             <input
                 v-if="hasWallet"
                 id="inputPassword"
@@ -100,7 +106,6 @@
         },
         methods: {
             unlockWallet() {
-                console.log(this.walletpass);
                 this.$store
                     .dispatch("WalletStore/getWallet", {
                         wallet_id: this.selectedWallet,
