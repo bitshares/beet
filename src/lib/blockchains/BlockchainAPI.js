@@ -35,4 +35,8 @@ export default class BlockchainAPI {
         throw "Needs implementation";
     }
 
+    getOperation(data, account_id) {
+        throw "Needs implementation";
+    }
+
 }

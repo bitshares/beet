@@ -1,6 +1,6 @@
 import BlockchainAPI from "./BlockchainAPI";
-import { Apis } from "bitsharesjs-ws";
-import { PrivateKey } from "bitsharesjs";
+import {Apis} from "bitsharesjs-ws";
+import {PrivateKey} from "bitsharesjs";
 
 export default class BitShares extends BlockchainAPI {
 
@@ -35,7 +35,7 @@ export default class BitShares extends BlockchainAPI {
                     nodeToConnect,
                     true,
                     10000,
-                    { enableCrypto: false, enableOrders: false },
+                    {enableCrypto: false, enableOrders: false},
                     this._onCloseWrapper.bind(this, onClose)
                 ).init_promise.then(() => {
                     this._connectionEstablished(resolve, nodeToConnect);
@@ -58,7 +58,7 @@ export default class BitShares extends BlockchainAPI {
 
     getAccount(accountName) {
         return new Promise((resolve, reject) => {
-            this._ensureAPI().then(()=>{
+            this._ensureAPI().then(() => {
                 Apis.instance().db_api()
                     .exec("get_full_accounts", [[accountName], false])
                     .then(res => {
@@ -118,5 +118,46 @@ export default class BitShares extends BlockchainAPI {
         return PrivateKey.fromWif(privateKey)
             .toPublicKey()
             .toString("BTS");
+    }
+
+    getOperation(data, account_id) {
+        return new Promise((resolve, reject) => {
+            let operation = {
+                type: null,
+                data: null
+            };
+            let api = Apis.instance();
+            switch (data.action) {
+                case 'vote': {
+                    operation.type = 'account_update';
+                    api.db_api().exec(
+                        "get_objects",
+                        [[account_id]]
+                    ).then((accounts) => {
+                        let updateObject = {
+                            account: account_id
+                        };
+
+                        let account = accounts[0];
+
+                        let new_options = account.options;
+                        new_options.votes.push(data.vote_id);
+                        new_options.votes = new_options.votes.sort((a, b) => {
+                            let a_split = a.split(":");
+                            let b_split = b.split(":");
+                            return (
+                                parseInt(a_split[1], 10) - parseInt(b_split[1], 10)
+                            );
+                        });
+                        updateObject.new_options = new_options;
+                        operation.data = updateObject;
+                        resolve(resolve);
+                    }).catch(err => {
+                        reject(err);
+                    });
+
+                }
+            }
+        });
     }
 }
