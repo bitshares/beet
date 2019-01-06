@@ -120,6 +120,77 @@ export default class BitShares extends BlockchainAPI {
             .toString("BTS");
     }
 
+    mapOperationData(incoming) {
+        return new Promise((resolve,reject) => {
+            if (incoming.action == "vote") {
+                let entity_id = incoming.params.id.split(".");
+                if (entity_id[0] != "1") {
+                    reject("ID format unknown");
+                }
+                if (entity_id[1] != "5" && entity_id[1] != "6" && entity_id[1] != "14") {
+                    reject("Given object does not support voting");
+                }
+                Apis.instance().db_api().exec(
+                    "get_objects", [[this.incoming.params.id]]
+                ).then(objdata => {
+                    switch (entity_id[1]) {
+                        case "5":
+                            Apis.instance().db_api().exec(
+                                "get_objects", [[objdata[0].committee_member_account]]
+                            ).then(objextradata => {
+                                resolve({
+                                    entity: "committee member",
+                                    description:
+                                        "Commitee member: " +
+                                        objextradata[0].name +
+                                        "\nCommittee Member ID: " +
+                                        this.incoming.params.id,
+                                    vote_id: objdata[0].vote_id
+                                });
+                            });
+                            break;
+                        case "6":
+                            Apis.instance().db_api().exec(
+                                "get_objects", [[objdata[0].witness_account]]
+                            ).then(objextradata => {
+                                resolve({
+                                    entity: "witness",
+                                    description:
+                                        "Witness: " +
+                                        objextradata[0].name +
+                                        "\nWitness ID: " +
+                                        this.incoming.params.id,
+                                    vote_id: objdata[0].vote_id
+                                });
+                            });
+                            break;
+                        case "14":
+                            Apis.instance().db_api().exec(
+                                "get_objects", [[objdata[0].worker_account]]
+                            ).then(objextradata => {
+                                let dailyPay = objdata[0].daily_pay / Math.pow(10, 5);
+                                resolve({
+                                    entity: "worker proposal",
+                                    description:
+                                        "Proposal: " +
+                                        objdata[0].name +
+                                        "\nProposal ID: " +
+                                        this.incoming.params.id +
+                                        "\nDaily Pay: " +
+                                        dailyPay +
+                                        "BTS\nWorker Account: " +
+                                        objextradata[0].name,
+                                    vote_id: objdata[0].vote_for
+                                });
+                            });
+                            break;
+                    }
+                });
+            }
+        });
+
+    }
+
     getOperation(data, account_id) {
         return new Promise((resolve, reject) => {
             let operation = {
