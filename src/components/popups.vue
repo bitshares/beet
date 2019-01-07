@@ -1,6 +1,6 @@
 <template>
-<div>
-    <b-modal
+    <div>
+        <b-modal
             id="linkRequest"
             ref="linkReqModal"
             centered
@@ -9,13 +9,13 @@
             hide-header-close
             hide-footer
             :title="$t('link_request')"
-    >
-        {{ this.genericmsg }}:
-        <br>
-        <br>
-    </b-modal>
+        >
+            {{ genericmsg }}:
+            <br>
+            <br>
+        </b-modal>
 
-    <b-modal
+        <b-modal
             id="accountRequest"
             ref="accountReqModal"
             centered
@@ -24,27 +24,29 @@
             hide-header-close
             hide-footer
             :title="$t('operations:account_id.title')"
-    >
-        {{ $t('operations:account_id.request',{origin: this.incoming.origin }) }}
-        <br>
-        <br>
-        {{ $t('operations:account_id.request_cta') }}
-        <b-btn
+        >
+            {{ $t('operations:account_id.request',{origin: incoming.origin }) }}
+            <br>
+            <br>
+            {{ $t('operations:account_id.request_cta') }}
+            <b-btn
                 class="mt-3"
                 variant="success"
                 block
                 @click="allowAccess"
-        >{{ $t('operations:account_id.accept_btn') }}
-        </b-btn>
-        <b-btn
+            >
+                {{ $t('operations:account_id.accept_btn') }}
+            </b-btn>
+            <b-btn
                 class="mt-1"
                 variant="danger"
                 block
                 @click="denyAccess"
-        >{{ $t('operations:account_id.reject_btn') }}
-        </b-btn>
-    </b-modal>
-    <b-modal
+            >
+                {{ $t('operations:account_id.reject_btn') }}
+            </b-btn>
+        </b-modal>
+        <b-modal
             id="transactionRequest"
             ref="transactionReqModal"
             centered
@@ -53,36 +55,37 @@
             hide-header-close
             hide-footer
             :title="$t('operations:rawsig.title')"
-    >
-        {{ $t('operations:rawsig.request',{origin: this.incoming.origin }) }}
-        <br>
-        <br>
-        <pre class="text-left custom-content"><code>
-{
-op_type: {{ this.incoming.op_type }},
-op_data: {{ this.incoming.op_data }}
-}
-        </code></pre>
-
-        {{ $t('operations:rawsig.request_cta') }}
-        <b-btn
+        >
+            {{ $t('operations:rawsig.request',{origin: incoming.origin }) }}
+            <br>
+            <br>
+            <pre class="text-left custom-content">
+                <code>
+    {
+    op_type: {{ incoming.op_type }},
+    op_data: {{ incoming.op_data }}
+    }
+                </code>
+            </pre>
+            {{ $t('operations:rawsig.request_cta') }}
+            <b-btn
                 class="mt-3"
                 variant="success"
                 block
                 @click="acceptTx"
-        >
-            {{ $t('operations:rawsig.accept_btn') }}
-        </b-btn>
-        <b-btn
+            >
+                {{ $t('operations:rawsig.accept_btn') }}
+            </b-btn>
+            <b-btn
                 class="mt-1"
                 variant="danger"
                 block
                 @click="rejectTx"
-        >
-            {{ $t('operations:rawsig.reject_btn') }}
-        </b-btn>
-    </b-modal>
-    <b-modal
+            >
+                {{ $t('operations:rawsig.reject_btn') }}
+            </b-btn>
+        </b-modal>
+        <b-modal
             id="genericRequest"
             ref="genericReqModal"
             centered
@@ -90,30 +93,34 @@ op_data: {{ this.incoming.op_data }}
             no-close-on-backdrop
             hide-header-close
             hide-footer
-            :title="this.generictitle "
-    >
-        {{ this.genericmsg }}:
-        <br>
-        <br>
-        <pre class="text-left custom-content"><code>
-{{ this.specifics }}
-        </code></pre>
-        <b-btn
+            :title="generictitle "
+        >
+            {{ genericmsg }}:
+            <br>
+            <br>
+            <pre class="text-left custom-content">
+                <code>
+    {{ specifics }}
+                </code>
+            </pre>
+            <b-btn
                 class="mt-3"
                 variant="success"
                 block
                 @click="acceptGeneric"
-        >{{ this.genericaccept }}
-        </b-btn>
-        <b-btn
+            >
+                {{ genericaccept }}
+            </b-btn>
+            <b-btn
                 class="mt-1"
                 variant="danger"
                 block
                 @click="rejectGeneric"
-        >{{ this.genericreject }}
-        </b-btn>
-    </b-modal>
-    <b-modal
+            >
+                {{ genericreject }}
+            </b-btn>
+        </b-modal>
+        <b-modal
             id="loaderAnim"
             ref="loaderAnimModal"
             centered
@@ -122,24 +129,32 @@ op_data: {{ this.incoming.op_data }}
             hide-header
             hide-header-close
             hide-footer
-    >
-        <div class="lds-roller">
-            <div/>
-            <div/>
-            <div/>
-            <div/>
-            <div/>
-            <div/>
-            <div/>
-            <div/>
+        >
+            <div class="lds-roller">
+                <div />
+                <div />
+                <div />
+                <div />
+                <div />
+                <div />
+                <div />
+                <div />
+            </div>
+        </b-modal>
+        <div class="alerts">
+            <b-alert
+                v-for="alert in alerts"
+                :key="alert.id"
+                variant="info"
+                show
+                fade
+                dismissible
+                @dismissed="hideAlert(alert.id)"
+            >
+                {{ alert.msg }}
+            </b-alert>
         </div>
-    </b-modal>
-    <div class="alerts">
-        <b-alert variant="info" v-bind:key="alert.id" v-for="alert in alerts" show fade dismissible
-                 v-on:dismissed="hideAlert(alert.id)">{{alert.msg}}
-        </b-alert>
     </div>
-</div>
 </template>
 <style>
 .alerts {
@@ -156,11 +171,6 @@ op_data: {{ this.incoming.op_data }}
     } from "uuid";
     import {EventBus} from '../lib/event-bus.js';
     import Operations from "../lib/Operations";
-    import {Apis} from "bitsharesjs-ws";
-    import {
-        PrivateKey,
-        TransactionBuilder
-    } from "bitsharesjs";
 
     import getBlockchain from "../lib/blockchains/blockchainFactory"
 
@@ -292,48 +302,38 @@ op_data: {{ this.incoming.op_data }}
                 this.incoming.reject({});
             },
             acceptTx: async function () {
-                let tr = new TransactionBuilder();
-                Apis.instance().init_promise.then(() => {
-                    tr.add_type_operation(
-                        this.incoming.params.op_type,
-                        this.incoming.params.op_data
-                    );
-                    tr.set_required_fees().then(async () => {
-                        this.$refs.loaderAnimModal.show();
-                        let pKey = PrivateKey.fromWif(
-                            this.$store.state.WalletStore.wallet.keys.active
-                        );
-                        tr.add_signer(pKey, pKey.toPublicKey().toPublicKeyString());
-                        let id = await tr.broadcast();
-                        this.incoming.accepttx({id: id});
-                        this.$refs.transactionReqModal.hide();
-                        this.$refs.loaderAnimModal.hide();
-                    });
-                });
+                this.$refs.loaderAnimModal.show();
+                let transaction = await this.blockchain.sign(
+                    this.incoming.params,
+                    this.$store.state.WalletStore.wallet.keys.active
+                );
+                let id = await this.blockchain.broadcast(
+                    transaction
+                );
+                this.incoming.accepttx({id: id});
+                this.$refs.transactionReqModal.hide();
+                this.$refs.loaderAnimModal.hide();
             },
             rejectTx: function () {
                 this.$refs.transactionReqModal.hide();
                 this.incoming.rejecttx({});
             },
             acceptGeneric: async function () {
-                let tr = new TransactionBuilder();
                 let operation = await Operations.generate(
                     this.incoming,
                     this.$store.state.WalletStore.wallet.accountID
                 );
-
-                tr.add_type_operation(operation.op_type, operation.op_data);
-                tr.set_required_fees().then(async () => {
-                    this.$refs.loaderAnimModal.show();
-                    let pKey = PrivateKey.fromWif(
-                        this.$store.state.WalletStore.wallet.keys.active
-                    );
-                    tr.add_signer(pKey, pKey.toPublicKey().toPublicKeyString());
-                    let resp = await tr.broadcast();
-                    this.incoming.acceptgen(resp);
-                    this.$refs.genericReqModal.hide();
-                    this.$refs.loaderAnimModal.hide();
-                });
+                this.$refs.loaderAnimModal.show();
+                let transaction = await this.blockchain.sign(
+                    operation,
+                    this.$store.state.WalletStore.wallet.keys.active
+                );
+                let id = await this.blockchain.broadcast(
+                    transaction
+                );
+                this.incoming.acceptgen(id);
+                this.$refs.genericReqModal.hide();
+                this.$refs.loaderAnimModal.hide();
             },
             rejectGeneric: function () {
                 this.$refs.genericReqModal.hide();

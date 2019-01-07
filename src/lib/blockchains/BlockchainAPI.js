@@ -39,4 +39,12 @@ export default class BlockchainAPI {
         throw "Needs implementation";
     }
 
+    sign(incoming, key) {
+        throw "Needs implementation";
+    }
+
+    broadcast(transaction) {
+        throw "Needs implementation";
+    }
+
 }
