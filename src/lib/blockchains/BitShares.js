@@ -1,6 +1,5 @@
 import BlockchainAPI from "./BlockchainAPI";
 import {Apis} from "bitsharesjs-ws";
-import {PrivateKey} from "bitsharesjs";
 import {
     PrivateKey,
     TransactionBuilder
