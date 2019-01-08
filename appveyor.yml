@@ -18,7 +18,7 @@ install:
     - npm --version
     # install modules
     - npm install
-build: on
+build: off
 platform:
     - x64
 before_package: echo Before package
