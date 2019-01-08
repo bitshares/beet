@@ -1,7 +1,4 @@
-<<<<<<< HEAD
-=======
 version: 0.2.{build}
->>>>>>> 0.2.2
 environment:
     nodejs_version: 10
     GITHUB_TOKEN:
