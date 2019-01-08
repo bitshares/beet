@@ -1,58 +1,57 @@
-
-  {
-    "name": "beet",
-    "productName": "Beet",
-    "version": "0.3.0",
-    "description": "Beet is a stand-alone key-manager and signing app for BitShares.",
-    "main": "src/index.js",
-    "scripts": {
-      "start": "electron-forge start",
-      "buildcss": "node-sass --include-path src/scss src/scss/beet.scss src/css/beet.css",
-      "package": "electron-forge package",
-      "make": "electron-forge make",
-      "publish": "electron-forge publish",
-      "lint": "echo \"No linting configured\"",
-      "postpackage": "node write_digest.js"
-    },
-    "keywords": [],
-    "author": "clockworkgr",
-    "license": "MIT",
-    "config": {
-      "forge": {
-        "make_targets": {
-          "win32": [
-            "nsis"
-          ],
-          "darwin": [
-            "zip",
-            "dmg"
-          ],
-          "linux": [
-            "deb"
-          ]
-        },
-        "electronPackagerConfig": {
-          "packageManager": "npm"
-        },
-        "electronWinstallerConfig": {
-          "name": "beet"
-        },
-        "electronInstallerDebian": {},
-        "github_repository": {
-          "owner": "bitshares",
-          "name": "beet",
-          "draft": true
-        }
+{
+  "name": "beet",
+  "productName": "Beet",
+  "version": "0.3.0",
+  "description": "Beet is a stand-alone key-manager and signing app for BitShares.",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "electron-forge start",
+    "buildcss": "node-sass --include-path src/scss src/scss/beet.scss src/css/beet.css",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "publish": "electron-forge publish",
+    "lint": "echo \"No linting configured\"",
+    "postpackage": "node write_digest.js"
+  },
+  "keywords": [],
+  "author": "clockworkgr",
+  "license": "MIT",
+  "config": {
+    "forge": {
+      "make_targets": {
+        "win32": [
+          "nsis"
+        ],
+        "darwin": [
+          "zip",
+          "dmg"
+        ],
+        "linux": [
+          "deb"
+        ]
+      },
+      "electronPackagerConfig": {
+        "packageManager": "npm"
+      },
+      "electronWinstallerConfig": {
+        "name": "beet"
+      },
+      "electronInstallerDebian": {},
+      "github_repository": {
+        "owner": "bitshares",
+        "name": "beet",
+        "draft": true
       }
-    },
-    "build": {
-      "nsis": {
-        "allowElevation": true,
-        "allowToChangeInstallationDirectory": true,
-        "oneClick": false,
-        "perMachine": false
-      }
-    },
+    }
+  },
+  "build": {
+    "nsis": {
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true,
+      "oneClick": false,
+      "perMachine": false
+    }
+  },
   "dependencies": {
     "@panter/vue-i18next": "^0.13.0",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
@@ -83,6 +82,7 @@
     "babel-preset-env": "^1.7.0",
     "babel-preset-react": "^6.24.1",
     "electron-forge": "^5.2.3",
+    "electron-forge-maker-nsis": "^20.37.0",
     "electron-prebuilt-compile": "4.0.0",
     "eslint": "^5.12.0",
     "eslint-plugin-vue": "^5.1.0",
