@@ -7,9 +7,14 @@ branches:
   only:
     - master
     - develop
+before_build:
 install:
     # Get the latest stable version of Node.js or io.js
     - ps: Install-Product node $env:nodejs_version
+    - npm -g install npm@6
+    - npm -g install node-gyp
+    - node --version
+    - npm --version
     # install modules
     - npm ci
 build: off
