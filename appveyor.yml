@@ -17,7 +17,7 @@ install:
     - node --version
     - npm --version
     # install modules
-    - npm install
+    - npm ci
 build: off
 platform:
     - x64
