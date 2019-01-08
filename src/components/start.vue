@@ -102,7 +102,9 @@
             }
         },
         mounted() {
-            this.$store.dispatch("WalletStore/loadWallets", {});
+            this.$store.dispatch("WalletStore/loadWallets", {}).catch( ()=> {
+                
+            });
         },
         methods: {
             unlockWallet() {

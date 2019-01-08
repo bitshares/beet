@@ -1,4 +1,4 @@
-import Vue from 'vue/dist/vue.js';
+import Vue from 'vue/dist/vue.min.js';
 import Vuex from 'vuex';
 import WalletStore from './modules/WalletStore.js';
 import OriginStore from './modules/OriginStore.js';
