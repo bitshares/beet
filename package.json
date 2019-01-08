@@ -62,7 +62,6 @@
     "dexie": "^2.0.4",
     "electron-compile": "^6.4.4",
     "electron-devtools-installer": "^2.2.4",
-    "electron-squirrel-startup": "^1.0.0",
     "elliptic": "^6.4.1",
     "i18next": "^13.1.0",
     "i18next-node-fs-backend": "^2.1.1",
