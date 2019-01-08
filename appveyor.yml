@@ -18,11 +18,12 @@ install:
     - npm --version
     # install modules
     - npm install
-build: off
+build: on
 platform:
     - x64
 before_package: echo Before package
 test_script:
+    - npm run buildcss
     - npm run publish
 skip_non_tags: true
 artifacts:
