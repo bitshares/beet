@@ -34,7 +34,10 @@ const createWindow = async () => {
     maxHeight: 660,
     useContentSize: true, 
     frame:false,
-    transparent: true
+    transparent: true,
+    webPreferences: {
+      nodeIntegration: true,
+    }
   });
 
   // and load the index.html of the app.
