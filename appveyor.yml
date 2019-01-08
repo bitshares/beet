@@ -1,7 +1,4 @@
-<<<<<<< HEAD
 version: 0.2.{build}
-=======
->>>>>>> Updated Appveyor
 environment:
     nodejs_version: 10
     GITHUB_TOKEN:
@@ -14,8 +11,6 @@ before_build:
 install:
     # Get the latest stable version of Node.js or io.js
     - ps: Install-Product node $env:nodejs_version
-    - ps: $env:package_version = (Get-Content -Raw -Path package.json | ConvertFrom-Json).version 
-    - ps: Update-AppveyorBuild -Version "$env:package_version-build-$env:APPVEYOR_BUILD_NUMBER"
     - npm -g install npm@6
     - npm -g install node-gyp
     - node --version
