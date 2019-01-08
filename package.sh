@@ -12,4 +12,5 @@ then
 fi
 
 ## Test packaging
+npm run buildcss
 npm run make

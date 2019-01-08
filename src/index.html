@@ -7,7 +7,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <title>Beet Blockchain Companion</title>
-    <link href="./scss/beet.scss" rel="stylesheet">
+    <link href="./css/beet.css" rel="stylesheet">
     
 </head>
 
@@ -19,12 +19,12 @@
         <Popups ref="popupComp"></Popups>
     </div>
     <script>
-        import Vue from 'vue/dist/vue.js';
+        import store from './store/index';
+        import Vue from 'vue/dist/vue.min.js';
         import BootstrapVue from 'bootstrap-vue';
         import Popups from './components/popups';
         import Beetframe from './components/beetframe';
         import VueRouter from 'vue-router';
-        import store from './store/index.js';
         import router from './router/index.js';
         import i18next from 'i18next';
         import Backend from "i18next-node-fs-backend";

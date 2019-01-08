@@ -17,14 +17,27 @@ install:
     - node --version
     - npm --version
     # install modules
-    - npm install
+    - npm ci
 build: off
 platform:
     - x64
 before_package: echo Before package
 test_script:
+    - npm run buildcss
     - npm run publish
 skip_non_tags: true
 artifacts:
     - path: out/make/*.exe
       name: BeetSetup
+deploy:
+    - provider: GitHub
+    tag: v$(appveyor_build_version)
+    release: Beet Installer v$(appveyor_build_version)
+    auth_token:
+        secure: jr08/oNuLLnJAth0P0/KslT6bJPfGGA/QkkPWo83z82i0R+U6jJMZxWVrqDBMXKL
+    repository: bitshares/beet
+    artifact: BeetSetup
+    prerelease: true
+    force_update: true
+    on:
+        branch: master
