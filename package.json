@@ -31,7 +31,8 @@
         ]
       },
       "electronPackagerConfig": {
-        "packageManager": "npm"
+        "packageManager": "npm",
+        "executableName": "BeetSetup"
       },
       "electronWinstallerConfig": {
         "name": "beet"
