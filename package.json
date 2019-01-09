@@ -1,7 +1,7 @@
 {
   "name": "beet",
   "productName": "beet",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Beet is a stand-alone key-manager and signing app for BitShares.",
   "main": "src/index.js",
   "scripts": {
@@ -35,7 +35,7 @@
         "packageManager": "npm"
       },
       "electronWinstallerConfig": {
-        "name": "beet"
+        "name": "Beet"
       },
       "electronInstallerDebian": {},
       "github_repository": {

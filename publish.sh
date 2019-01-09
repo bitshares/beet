@@ -14,7 +14,7 @@ fi
 ## Publish the binaries if on release
 if [ $TRAVIS_TAG ]
 then
-    npm run publish
+    echo "Tag found, release published"
 else
     echo "No tag found, skipping publish"
 fi
