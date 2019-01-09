@@ -24,7 +24,7 @@ platform:
 before_package: echo Before package
 test_script:
     - npm run buildcss
-    - npm run publish
+    - npm run make
 skip_non_tags: true
 artifacts:
     - path: out/make/*.exe
