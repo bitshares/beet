@@ -2,7 +2,6 @@ environment:
     nodejs_version: 10
     GITHUB_TOKEN:
         secure: jr08/oNuLLnJAth0P0/KslT6bJPfGGA/QkkPWo83z82i0R+U6jJMZxWVrqDBMXKL
-    NODE_ENV: production
 branches:
   only:
     - master
