@@ -124,15 +124,6 @@
         </div>
     </div>
 </template>
-<style>
-    .alerts {
-        position:absolute;
-        left:5%;
-        right:5%;
-        top:3rem;
-        width:90%;
-    }
-</style>
 <script>
 import {
     v4 as uuidv4
