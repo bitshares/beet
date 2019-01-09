@@ -31,8 +31,7 @@ artifacts:
       name: BeetSetup
 deploy:
     - provider: GitHub
-      tag: v$(appveyor_build_version)
-      release: Beet Installer v$(appveyor_build_version)
+      release: Beet Installer v$env:package_version
       auth_token:
         secure: jr08/oNuLLnJAth0P0/KslT6bJPfGGA/QkkPWo83z82i0R+U6jJMZxWVrqDBMXKL
       repository: bitshares/beet
