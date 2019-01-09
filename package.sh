@@ -13,4 +13,10 @@ fi
 
 ## Test packaging
 npm run buildcss
-npm run make
+
+if [ $TRAVIS_TAG ]
+then
+    npm run publish
+else
+    npm run make
+fi

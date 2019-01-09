@@ -26,17 +26,3 @@ test_script:
     - npm run buildcss
     - npm run make
 skip_non_tags: true
-artifacts:
-    - path: out/make/*.exe
-      name: BeetSetup
-deploy:
-    - provider: GitHub
-      release: Beet Installer v$env:package_version
-      auth_token:
-        secure: jr08/oNuLLnJAth0P0/KslT6bJPfGGA/QkkPWo83z82i0R+U6jJMZxWVrqDBMXKL
-      repository: bitshares/beet
-      artifact: BeetSetup
-      prerelease: true
-      force_update: true
-      on:
-        branch: master
