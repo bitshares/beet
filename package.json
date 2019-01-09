@@ -37,7 +37,12 @@
       "electronWinstallerConfig": {
         "name": "beet"
       },
-      "electronInstallerDebian": {},
+      "electronInstallerDebian": {
+        "options": {
+          "name": "beet-setup",
+          "productName": "beet-setup"
+        }
+      },
       "github_repository": {
         "owner": "bitshares",
         "name": "beet",
