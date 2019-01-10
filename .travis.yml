@@ -21,6 +21,7 @@ addons:
     - graphicsmagick
     - xz-utils
     - fakeroot
+    - rpm
 install:
   - npm ci
 script: "./package.sh"

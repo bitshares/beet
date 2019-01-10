@@ -12,4 +12,11 @@ then
 fi
 
 ## Test packaging
-npm run make
+npm run buildcss
+
+if [ $TRAVIS_TAG ]
+then
+    npm run publish
+else
+    npm run make
+fi
