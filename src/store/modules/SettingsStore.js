@@ -4,7 +4,6 @@ import {
 } from '../../config/i18n.js'
 const LOAD_SETTINGS = 'LOAD_SETTINGS';
 
-
 const mutations = {
     [LOAD_SETTINGS](state, settings) {
         Vue.set(state, 'settings', settings);
@@ -43,7 +42,7 @@ const actions = {
                 } else {
                     settings = initialState.settings;
                 }
-                settings.selected_node = payload.node;
+                settings.selected_node[payload.chain] = payload.node;
                 localStorage.setItem("settings", JSON.stringify(settings));
                 commit(LOAD_SETTINGS, settings);
                 resolve();
@@ -80,7 +79,7 @@ const getters = {};
 const initialState = {
     'settings': {
         'locale': defaultLocale,
-        'selected_node': 'wss://bts-seoul.clockwork.gr'
+        'selected_node': {}
     }
 };
 

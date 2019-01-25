@@ -73,7 +73,7 @@
             <input
                 id="inputActive"
                 v-model="activepk"
-                type="text"
+                type="password"
                 class="form-control mb-3 small"
                 :placeholder="$t('active_authority_placeholder')"
                 required=""
@@ -83,7 +83,7 @@
             <input
                 id="inputMemo"
                 v-model="memopk"
-                type="text"
+                type="password"
                 class="form-control mb-3 small"
                 :placeholder="$t('memo_authority_placeholder')"
                 required=""
@@ -101,7 +101,7 @@
                 <input
                     id="inputOwner"
                     v-model="ownerpk"
-                    type="text"
+                    type="password"
                     class="form-control mb-3 small"
                     :placeholder="$t('owner_authority_placeholder')"
                     required=""
@@ -253,6 +253,7 @@ export default {
           opkey =blockchain.getPublicKey(this.ownerpk);
         }
       } catch (e) {
+        console.log(e);
         this.errorMsg = this.$t("invalid_key_error");
         this.$refs.errorModal.show();
         return;
@@ -260,11 +261,21 @@ export default {
       this.$refs.loaderAnimModal.show();
 
       blockchain.getAccount(this.accountname).then((account) => {
-        if (
-          account.active.public_key == apkey &&
-          (account.owner.public_key == opkey || this.includeOwner == 0) &&
-          account.memo.public_key == mpkey
-        ) {
+          console.log(account);
+        let active_check = false;
+        account.active.public_keys.forEach((key) => {
+          if (key[0] == apkey) {
+            active_check = true;
+          }
+        });
+        let owner_check = !this.includeOwner;
+        account.owner.public_keys.forEach((key) => {
+          if (key[0] == opkey) {
+              owner_check = true;
+          }
+        });
+        let memo_check = account.memo.public_key == mpkey;
+        if (active_check && owner_check && memo_check) {
           this.$refs.loaderAnimModal.hide();
           this.accountID = account.id;
           this.step = 3;
@@ -305,7 +316,9 @@ export default {
             }
           }
         });
-        this.$router.replace("/dashboard");
+        setTimeout(() => {
+            this.$router.replace("/dashboard");
+        }, 50);
       }
     }
   }

@@ -38,11 +38,11 @@ export default {
   i18nOptions: { namespaces: "common" },
   data() {
     return {
-      blockchain: getBlockchain(this.$store.state.WalletStore.wallet.chain),
-      nodes: getBlockchain(this.$store.state.WalletStore.wallet.chain).getNodes(),
+      blockchain: null,
+      nodes: [],
       isConnected: false,
       api: null,
-      selectedNode: this.$store.state.SettingsStore.settings.selected_node
+      selectedNode: ""
     };
   },
   watch: {
@@ -50,12 +50,16 @@ export default {
       this.blockchain.connect(this.selectedNode).then(() => {
         this._updateConnectionStatus();
         this.$store.dispatch("SettingsStore/setNode", {
+          chain: this.$store.state.WalletStore.wallet.chain,
           node: this.selectedNode
         });
       });
     }
   },
   mounted() {
+    this.selectedNode = this.$store.state.SettingsStore.settings.selected_node[this.$store.state.WalletStore.wallet.chain];
+    this.blockchain = getBlockchain(this.$store.state.WalletStore.wallet.chain);
+    this.nodes = this.blockchain.getNodes();
     this.blockchain.connect(this.selectedNode).then(() => {
       this._updateConnectionStatus();
       this.$emit("first-connect");

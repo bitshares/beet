@@ -14,9 +14,9 @@ export default class BitShares extends BlockchainAPI {
 
     connect(nodeToConnect = null, onClose = null) {
         return new Promise((resolve, reject) => {
-            //if (nodeToConnect == null) {
-            nodeToConnect = this.getNodes()[1].url;
-            //}
+            if (nodeToConnect == null) {
+                nodeToConnect = this.getNodes()[0].url;
+            }
             if (this._isConnected) {
                 Apis.close().then(() => {
                     this._isConnected = false;
@@ -65,8 +65,8 @@ export default class BitShares extends BlockchainAPI {
                 Apis.instance().db_api()
                     .exec("get_full_accounts", [[accountName], false])
                     .then(res => {
-                        res[0][1].account.active.public_key = res[0][1].account.active.key_auths[0][0];
-                        res[0][1].account.owner.public_key = res[0][1].account.owner.key_auths[0][0];
+                        res[0][1].account.active.public_keys = res[0][1].account.active.key_auths;
+                        res[0][1].account.owner.public_keys = res[0][1].account.owner.key_auths;
                         res[0][1].account.memo = {public_key: res[0][1].account.options.memo_key};
                         res[0][1].account.balances = res[0][1].balances;
                         resolve(res[0][1].account);
@@ -102,11 +102,8 @@ export default class BitShares extends BlockchainAPI {
                                     asset_type: account.balances[i].asset_type,
                                     asset_name: assets[i].symbol,
                                     rawbalance: assets[i].balance,
-                                    balance: this.formatMoney(
-                                        assets[i].balance /
+                                    balance: assets[i].balance /
                                         Math.pow(10, assets[i].precision),
-                                        assets[i].precision
-                                    ),
                                     owner: assets[i].issuer,
                                     prefix: ""
                                 };

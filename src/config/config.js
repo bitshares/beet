@@ -8,10 +8,20 @@ export const blockchains = {
         name: 'BitShares',
         chainId: '4018d7844c78f6a6c41c6a552b898022310fc5dec06da467ee7905a8dad512c8',
         nodeList: [
-
             {
-                url: "ws://127.0.0.1:8090",
-                location: "Locally hosted"
+                url: "wss://eu.nodes.bitshares.ws",
+                region: "Western Europe",
+                country: "Germany",
+                operator: "Infrastructure Worker",
+                contact: "email:info@blockchainprojectsbv.com"
+            },
+            {
+                url: "wss://bts-seoul.clockwork.gr",
+                region: "Southeastern Asia",
+                country: "Korea",
+                location: "Seoul",
+                operator: "Witness: clockwork",
+                contact: "telegram:clockworkgr"
             },
             {
                 url: "wss://bitshares.openledger.info/ws",
@@ -163,13 +173,6 @@ export const blockchains = {
                 contact: "telegram:lzmlam;wechat:lzmlam"
             },
             {
-                url: "wss://eu.nodes.bitshares.ws",
-                region: "Western Europe",
-                country: "Germany",
-                operator: "Infrastructure Worker",
-                contact: "email:info@blockchainprojectsbv.com"
-            },
-            {
                 url: "wss://us.nodes.bitshares.ws",
                 region: "North America",
                 country: "U.S.A.",
@@ -309,14 +312,6 @@ export const blockchains = {
                 location: "Hong Kong",
                 operator: "Witness: witness.still",
                 contact: "telegram:gordoor;wechat:overyard"
-            },
-            {
-                url: "wss://bts-seoul.clockwork.gr",
-                region: "Southeastern Asia",
-                country: "Korea",
-                location: "Seoul",
-                operator: "Witness: clockwork",
-                contact: "telegram:clockworkgr"
             },
             {
                 url: "wss://bts.to0l.cn:4443/ws",
