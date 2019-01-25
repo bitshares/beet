@@ -3,6 +3,7 @@ export default class BlockchainAPI {
     constructor(config) {
         this._config = config;
         this._isConnected = false;
+        this._isConnectingInProgress = false;
     }
 
     isConnected() {
@@ -15,6 +16,7 @@ export default class BlockchainAPI {
 
     _connectionEstablished(resolveCallback, node) {
         this._isConnected = true;
+        this._isConnectingInProgress = false;
         console.log("connected to ", node)
         resolveCallback();
     }

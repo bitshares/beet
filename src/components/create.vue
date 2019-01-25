@@ -253,7 +253,7 @@ export default {
           opkey =blockchain.getPublicKey(this.ownerpk);
         }
       } catch (e) {
-        console.log(e);
+        console.error(e);
         this.errorMsg = this.$t("invalid_key_error");
         this.$refs.errorModal.show();
         return;

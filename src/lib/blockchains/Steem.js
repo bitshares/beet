@@ -45,8 +45,22 @@ export default class Steem extends BlockchainAPI {
                 });
                 balances.push({
                     asset_type: "UIA",
+                    asset_name: "VESTS",
+                    balance: parseFloat(account.vesting_shares),
+                    owner: "-",
+                    prefix: ""
+                });
+                balances.push({
+                    asset_type: "UIA",
                     asset_name: "SDB",
-                    balance: parseFloat(account.savings_sbd_balance),
+                    balance: parseFloat(account.sbd_balance),
+                    owner: "-",
+                    prefix: ""
+                });
+                balances.push({
+                    asset_type: "UIA",
+                    asset_name: "SP",
+                    balance: parseFloat(account.reward_vesting_steem),
                     owner: "-",
                     prefix: ""
                 });

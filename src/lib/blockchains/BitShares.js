@@ -17,6 +17,18 @@ export default class BitShares extends BlockchainAPI {
             if (nodeToConnect == null) {
                 nodeToConnect = this.getNodes()[0].url;
             }
+            if (this._isConnectingInProgress) {
+                // there should be a promise queue for pending connects, this is the lazy way
+                setTimeout(() => {
+                    if (this._isConnected) {
+                        resolve();
+                    } else {
+                        reject("multiple connects, did not resolve in time");
+                    }
+                }, 250);
+                return;
+            }
+            this._isConnectingInProgress = true;
             if (this._isConnected) {
                 Apis.close().then(() => {
                     this._isConnected = false;
@@ -30,6 +42,7 @@ export default class BitShares extends BlockchainAPI {
                         this._connectionEstablished(resolve, nodeToConnect);
                     }).catch((err) => {
                         this._isConnected = false;
+                        this._isConnectingInProgress = false;
                         reject(err);
                     });
                 });
@@ -44,6 +57,7 @@ export default class BitShares extends BlockchainAPI {
                     this._connectionEstablished(resolve, nodeToConnect);
                 }).catch((err) => {
                     this._isConnected = false;
+                    this._isConnectingInProgress = false;
                     reject(err);
                 });
             }
@@ -101,8 +115,8 @@ export default class BitShares extends BlockchainAPI {
                                 balances[i] = {
                                     asset_type: account.balances[i].asset_type,
                                     asset_name: assets[i].symbol,
-                                    rawbalance: assets[i].balance,
-                                    balance: assets[i].balance /
+                                    rawbalance: account.balances[i].balance,
+                                    balance: account.balances[i].balance /
                                         Math.pow(10, assets[i].precision),
                                     owner: assets[i].issuer,
                                     prefix: ""
