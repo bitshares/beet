@@ -90,6 +90,7 @@ export default class BeetServer {
             server.respondAuth(data.client, status);
         });
         server.on('api', async (data) => {
+            console.log("event type api", data);
             store.dispatch('OriginStore/newRequest', {
                 apphash: data.payload.apphash,
                 next_hash: data.payload.next_hash

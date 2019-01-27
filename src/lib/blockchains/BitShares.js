@@ -137,6 +137,7 @@ export default class BitShares extends BlockchainAPI {
     }
 
     mapOperationData(incoming) {
+        console.log("mapOperationData", incoming);
         return new Promise((resolve,reject) => {
             this._ensureAPI().then(() => {
                 if (incoming.action == "vote") {
@@ -209,6 +210,7 @@ export default class BitShares extends BlockchainAPI {
     }
 
     sign(operation, key) {
+        console.log("sign", operation, key);
         return new Promise((resolve, reject) => {
             this._ensureAPI().then(() => {
                 let tr = new TransactionBuilder();
@@ -228,6 +230,7 @@ export default class BitShares extends BlockchainAPI {
     }
 
     broadcast(transaction) {
+        console.log("broadcast", transaction);
         return new Promise((resolve, reject) => {
             this._ensureAPI().then(() => {
                 transaction.broadcast().then(id => {
@@ -238,6 +241,7 @@ export default class BitShares extends BlockchainAPI {
     }
 
     getOperation(data, account_id) {
+        console.log("getOperation", data, account_id);
         return new Promise((resolve, reject) => {
             this._ensureAPI().then(() => {
                 let operation = {

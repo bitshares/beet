@@ -56,7 +56,7 @@ export default class BeetWS extends EventEmitter {
     this.isAlive = true;
   }
   _handleMessage(client, data) {
-
+    console.log("_handleMessage", client, data);
     if (data.type == 'version') {
       client.send('{ "type": "version", "error": false, "result": { "version": ' + JSON.stringify(version) + '}}');
     } else {
@@ -83,10 +83,10 @@ export default class BeetWS extends EventEmitter {
                   "payload": msg
                 });
               } catch (e) {
-                client.send('{ "id": "' + data.id + '", "error": true, "payload": { "code": 3, message": "Could not decrypt message"}}');
+                client.send('{ "id": "' + data.id + '", "error": true, "payload": { "code": 3, "message": "Could not decrypt message"}}');
               }
             } else {
-              client.send('{ "id": "' + data.id + '", "error": true, "payload": { "code":2,"message": "Unexpected request id. Please relink"}}');
+              client.send('{ "id": "' + data.id + '", "error": true, "payload": { "code":2,"message": "Unexpected request hash. Please relink"}}');
             }
           } else {
             client.send('{ "id": "' + data.id + '", "error": true, "payload": { "code":1, "message": "Beet could not understand your request"}}');
