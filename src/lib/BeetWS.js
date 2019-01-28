@@ -67,6 +67,7 @@ export default class BeetWS extends EventEmitter {
             if (hash == client.next_hash) {
               client.otp.counter = data.id;
               var key = client.otp.generate();
+              console.log("otp key generated", key, client.otp.counter);
               try {
                 var msg = JSON.parse(CryptoJS.AES.decrypt(data.payload, key).toString(CryptoJS.enc.Utf8));
 
@@ -170,6 +171,7 @@ export default class BeetWS extends EventEmitter {
           counter: 0,
           secret: OTPAuth.Secret.fromHex(result.app.secret)
         });
+        console.log("init otp", 0, otp.secret);
         this._clients[client].otp = otp;
         this._clients[client].send('{"id": ' + result.id + ', "error": false, "payload": { "authenticate": true, "link": true, "account_id": "' + result.app.account_id + '"}}');
       } else {

@@ -87,6 +87,7 @@ export default class BeetAPI {
         }
     }
     static async [Actions.VOTE_FOR](request, vue) {
+        console.log("BeetAPI.voteFor", request);
         try {
             let response = await vue.requestVote(request.payload);
             return {
