@@ -49,12 +49,27 @@ const actions = {
         commit
     }, payload) {
         return new Promise((resolve, reject) => {
-            BeetDB.apps.add(payload).then((id) => {
-                payload.id = id;
-                commit(ADD_APP, payload);
-                resolve();
-            }).catch(() => {
-                reject();
+            let db = BeetDB.apps;
+            db.where("apphash").equals(payload.apphash).toArray().then((res) => {
+                if (res.length == 0) {
+                    db.add(payload).then((id) => {
+                        payload.id = id;
+                        commit(ADD_APP, payload);
+                        console.log("app added", payload);
+                        resolve(payload);
+                    }).catch((err) => {
+                        reject(err);
+                    });
+                } else {
+                    console.log("app retrieved", res[0]);
+                    db.update(res[0].id, payload).then(()=>{
+                        resolve(payload);
+                    }).catch((err) => {
+                        reject(err);
+                    });
+                }
+            }).catch((err) => {
+                reject(err);
             });
         });
     }
