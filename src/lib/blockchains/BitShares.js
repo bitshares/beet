@@ -17,11 +17,12 @@ export default class BitShares extends BlockchainAPI {
             if (nodeToConnect == null) {
                 nodeToConnect = this.getNodes()[0].url;
             }
+            console.log("attempting to connect to ", nodeToConnect);
             if (this._isConnectingInProgress) {
                 // there should be a promise queue for pending connects, this is the lazy way
                 setTimeout(() => {
                     if (this._isConnected) {
-                        resolve();
+                        resolve(nodeToConnect);
                     } else {
                         reject("multiple connects, did not resolve in time");
                     }
@@ -138,7 +139,7 @@ export default class BitShares extends BlockchainAPI {
 
     mapOperationData(incoming) {
         console.log("mapOperationData", incoming);
-        return new Promise((resolve,reject) => {
+        return new Promise((resolve, reject) => {
             this._ensureAPI().then(() => {
                 if (incoming.action == "vote") {
                     let entity_id = incoming.params.id.split(".");
@@ -149,7 +150,7 @@ export default class BitShares extends BlockchainAPI {
                         reject("Given object does not support voting");
                     }
                     Apis.instance().db_api().exec(
-                        "get_objects", [[this.incoming.params.id]]
+                        "get_objects", [[incoming.params.id]]
                     ).then(objdata => {
                         switch (entity_id[1]) {
                             case "5":
@@ -162,7 +163,7 @@ export default class BitShares extends BlockchainAPI {
                                             "Commitee member: " +
                                             objextradata[0].name +
                                             "\nCommittee Member ID: " +
-                                            this.incoming.params.id,
+                                            incoming.params.id,
                                         vote_id: objdata[0].vote_id
                                     });
                                 }).catch(err => reject(err));
@@ -177,7 +178,7 @@ export default class BitShares extends BlockchainAPI {
                                             "Witness: " +
                                             objextradata[0].name +
                                             "\nWitness ID: " +
-                                            this.incoming.params.id,
+                                            incoming.params.id,
                                         vote_id: objdata[0].vote_id
                                     });
                                 }).catch(err => reject(err));
@@ -193,7 +194,7 @@ export default class BitShares extends BlockchainAPI {
                                             "Proposal: " +
                                             objdata[0].name +
                                             "\nProposal ID: " +
-                                            this.incoming.params.id +
+                                            incoming.params.id +
                                             "\nDaily Pay: " +
                                             dailyPay +
                                             "BTS\nWorker Account: " +
@@ -214,18 +215,16 @@ export default class BitShares extends BlockchainAPI {
         return new Promise((resolve, reject) => {
             this._ensureAPI().then(() => {
                 let tr = new TransactionBuilder();
-                Apis.instance().init_promise.then(() => {
-                    tr.add_type_operation(
-                        incoming.op_type,
-                        incoming.op_data
-                    );
-                    tr.set_required_fees().then(() => {
-                        let privateKey = PrivateKey.fromWif(key);
-                        tr.add_signer(privateKey, privateKey.toPublicKey().toPublicKeyString());
-                        resolve(tr);
-                    }).catch(err => reject(err));
+                tr.add_type_operation(
+                    operation.type,
+                    operation.data
+                );
+                tr.set_required_fees().then(() => {
+                    let privateKey = PrivateKey.fromWif(key);
+                    tr.add_signer(privateKey, privateKey.toPublicKey().toPublicKeyString());
+                    resolve(tr);
                 }).catch(err => reject(err));
-            });
+            }).catch(err => reject(err));;
         });
     }
 
@@ -273,7 +272,7 @@ export default class BitShares extends BlockchainAPI {
                             });
                             updateObject.new_options = new_options;
                             operation.data = updateObject;
-                            resolve(resolve);
+                            resolve(operation);
                         }).catch(err => {
                             reject(err);
                         });
