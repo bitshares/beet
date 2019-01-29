@@ -239,7 +239,8 @@ export default class BitShares extends BlockchainAPI {
         });
     }
 
-    getOperation(data, account_id) {
+    getOperation(data, account) {
+        let account_id = account.id;
         console.log("getOperation", data, account_id);
         return new Promise((resolve, reject) => {
             this._ensureAPI().then(() => {

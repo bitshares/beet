@@ -5,7 +5,7 @@ import store from '../store/index.js';
 //import eccrypto from 'eccrypto';
 import { ec as EC } from "elliptic"; 
 var ec = new EC('curve25519');
-import RendererLogger from "./RendererLogger"; 
+import RendererLogger from "./RendererLogger";
 
 const logger = new RendererLogger();
 
@@ -60,13 +60,12 @@ const linkHandler = async (req) => {
     }
 };
 
-const authHandler = async (req) => {
-
-    // TODO: Check against blacklist;    
+const authHandler = function (req) {
+    // TODO: Check against blacklist;
     if (req.payload.apphash != null & req.payload.apphash != undefined) {
         let apps = store.state.OriginStore.apps;
         const app = apps.find(x => x.apphash === req.payload.apphash);
-        console.log(app);
+        console.log("authHandler", app);
         if (!app) {
             return Object.assign(req.payload, {
                 authenticate: false,
@@ -105,6 +104,7 @@ export default class BeetServer {
             server.respondLink(data.client, status);
         });
         server.on('authenticate', async (data) => {
+            console.log("event type api", data);
             let status = await authHandler(data);
             status.id = data.id;
             server.respondAuth(data.client, status);

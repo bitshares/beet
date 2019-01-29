@@ -1,5 +1,6 @@
 import BlockchainAPI from "./BlockchainAPI";
 import steem from "steem";
+import {PrivateKey, TransactionBuilder} from "bitsharesjs";
 
 export default class Steem extends BlockchainAPI {
 
@@ -68,4 +69,81 @@ export default class Steem extends BlockchainAPI {
             });
         });
     }
+
+    _ensureAPI() {
+        // nothing to do for steem yet
+        return new Promise(resolve => {
+            resolve();
+        });
+    }
+
+    sign(operation, key) {
+        console.log("sign", operation, key);
+        return new Promise((resolve, reject) => {
+            this._ensureAPI().then(() => {
+                // this is a hack until I know how to sign offline
+                operation.wif = key;
+                resolve(operation);
+            }).catch(err => reject(err));;
+        });
+    }
+
+    broadcast(transaction) {
+        console.log("broadcast", transaction);
+        return new Promise((resolve, reject) => {
+            this._ensureAPI().then(() => {
+                steem.broadcast.vote(
+                    transaction.wif,
+                    transaction.data.username,
+                    transaction.data.author,
+                    transaction.data.permlink,
+                    transaction.data.weight,
+                    (err, result) => {
+                     console.log(err);
+                     resolve(result);
+                    }
+                );
+            }).catch(err => reject(err));
+        });
+    }
+
+    getOperation(data, account) {
+        console.log("getOperation", data, account);
+        return new Promise((resolve, reject) => {
+            this._ensureAPI().then(() => {
+                switch (data.action) {
+                    case 'vote': {
+                        resolve({
+                            type: "vote",
+                            data: {
+                                username: account.name,
+                                author: data.params.author,
+                                permlink: data.params.permlink,
+                                weight: data.params.weight
+                            }
+                        })
+                    }
+                }
+            });
+        });
+    }
+
+    mapOperationData(incoming) {
+        console.log("mapOperationData", incoming);
+        return new Promise((resolve, reject) => {
+            this._ensureAPI().then(() => {
+                if (incoming.action == "vote") {
+                    resolve({
+                        entity: "Post",
+                        description:
+                            "Author: " + incoming.params.author +
+                            "\nPost: " + incoming.params.permlink +
+                            "\nWeight: " + incoming.params.weight,
+                        vote: incoming.params
+                    });
+                }
+            });
+        });
+    }
+
 }

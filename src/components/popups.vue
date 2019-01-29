@@ -318,7 +318,10 @@
                 let blockchain = getBlockchain(this.$store.state.WalletStore.wallet.chain);
                 let operation = await blockchain.getOperation(
                     this.incoming,
-                    this.$store.state.WalletStore.wallet.accountID
+                    {
+                        id: this.$store.state.WalletStore.wallet.accountID,
+                        name: this.$store.state.WalletStore.wallet.accountName
+                    }
                 );
                 this.$refs.loaderAnimModal.show();
                 let transaction = await blockchain.sign(
