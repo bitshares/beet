@@ -38,31 +38,42 @@ export default {
   i18nOptions: { namespaces: "common" },
   data() {
     return {
-      blockchain: null,
+      blockchain: getBlockchain(this.$store.state.WalletStore.wallet.chain),
+      selectedNode: this.$store.state.SettingsStore.settings.selected_node[this.$store.state.WalletStore.wallet.chain],
       nodes: [],
       isConnected: false,
-      api: null,
-      selectedNode: ""
+      api: null
     };
   },
   watch: {
-    selectedNode: function() {
-      this.blockchain.connect(this.selectedNode).then(() => {
-        this._updateConnectionStatus();
-        this.$store.dispatch("SettingsStore/setNode", {
-          chain: this.$store.state.WalletStore.wallet.chain,
-          node: this.selectedNode
-        });
-      });
+    selectedNode: function(newVal, oldVal) {
+      if (!!oldVal && oldVal !== newVal) {
+          // this means user has actively changed the value
+          this.blockchain.connect(this.selectedNode).then(() => {
+              this._updateConnectionStatus();
+              this.$store.dispatch("SettingsStore/setNode", {
+                  chain: this.$store.state.WalletStore.wallet.chain,
+                  node: this.selectedNode
+              });
+          }).catch((err) => {
+              logger.error(err);
+          });
+      } else {
+          // do nothing, as the value displayed is the already connected default node
+      }
+
     }
   },
   mounted() {
-    this.selectedNode = this.$store.state.SettingsStore.settings.selected_node[this.$store.state.WalletStore.wallet.chain];
-    this.blockchain = getBlockchain(this.$store.state.WalletStore.wallet.chain);
     this.nodes = this.blockchain.getNodes();
-    this.blockchain.connect(this.selectedNode).then(() => {
+    this.blockchain.connect(this.selectedNode).then((connectedNode) => {
+      if (!this.selectedNode) {
+        this.selectedNode = connectedNode;
+      }
       this._updateConnectionStatus();
       this.$emit("first-connect");
+    }).catch((err) => {
+        logger.error(err);
     });
   },
   methods: {
