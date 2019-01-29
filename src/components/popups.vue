@@ -174,8 +174,7 @@
                 alerts: [],
                 api: null,
                 incoming: {},
-                specifics: "",
-                blockchain: getBlockchain(this.$store.state.WalletStore.wallet.chain)
+                specifics: ""
             };
         },
         watch: {
@@ -253,9 +252,9 @@
                 });
                 this.incoming = request;
                 this.incoming.action = "vote";
-
-                let mappedData = await this.blockchain.mapOperationData(this.incoming);
-                this.specifics = mappedData.specifics;
+                let blockchain = getBlockchain(this.$store.state.WalletStore.wallet.chain);
+                let mappedData = await blockchain.mapOperationData(this.incoming);
+                this.specifics = mappedData.description;
                 this.incoming.vote_id = mappedData.vote_id;
 
                 this.genericmsg = this.$t(
@@ -299,11 +298,12 @@
             },
             acceptTx: async function () {
                 this.$refs.loaderAnimModal.show();
-                let transaction = await this.blockchain.sign(
+                let blockchain = getBlockchain(this.$store.state.WalletStore.wallet.chain);
+                let transaction = await blockchain.sign(
                     this.incoming.params,
                     this.$store.state.WalletStore.wallet.keys.active
                 );
-                let id = await this.blockchain.broadcast(
+                let id = await blockchain.broadcast(
                     transaction
                 );
                 this.incoming.accepttx({id: id});
@@ -315,16 +315,17 @@
                 this.incoming.rejecttx({});
             },
             acceptGeneric: async function () {
-                let operation = await Operations.generate(
+                let blockchain = getBlockchain(this.$store.state.WalletStore.wallet.chain);
+                let operation = await blockchain.getOperation(
                     this.incoming,
                     this.$store.state.WalletStore.wallet.accountID
                 );
                 this.$refs.loaderAnimModal.show();
-                let transaction = await this.blockchain.sign(
+                let transaction = await blockchain.sign(
                     operation,
                     this.$store.state.WalletStore.wallet.keys.active
                 );
-                let id = await this.blockchain.broadcast(
+                let id = await blockchain.broadcast(
                     transaction
                 );
                 this.incoming.acceptgen(id);
