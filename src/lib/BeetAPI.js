@@ -113,6 +113,7 @@ export default class BeetAPI {
     }
     static async [Actions.REQUEST_SIGNATURE](request, vue) {
         try {
+            console.log("BeetAPI.requestSignature", request);
             let response = await vue.requestTx(request.payload);
             return {
                 id: request.id,

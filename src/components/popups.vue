@@ -62,8 +62,8 @@
             <pre class="text-left custom-content">
                 <code>
     {
-    op_type: {{ incoming.op_type }},
-    op_data: {{ incoming.op_data }}
+    type: {{ incoming.params.type }},
+    data: {{ incoming.params.data }}
     }
                 </code>
             </pre>

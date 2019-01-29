@@ -6,8 +6,8 @@ export default class operations {
         const blockchain = getBlockchain();
         let operation = await blockchain.getOperation(data, account_id);
         return {
-            op_type: operation.type,
-            op_data: operation.data
+            type: operation.type,
+            data: operation.data
         };
     }
 }

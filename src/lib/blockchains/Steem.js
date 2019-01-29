@@ -1,6 +1,5 @@
 import BlockchainAPI from "./BlockchainAPI";
 import steem from "steem";
-import {PrivateKey, TransactionBuilder} from "bitsharesjs";
 
 export default class Steem extends BlockchainAPI {
 
@@ -78,36 +77,71 @@ export default class Steem extends BlockchainAPI {
     }
 
     sign(operation, key) {
+        let steeem = steem;
         console.log("sign", operation, key);
         return new Promise((resolve, reject) => {
             this._ensureAPI().then(() => {
-                // this is a hack until I know how to sign offline
-                operation.wif = key;
-                resolve(operation);
+                switch (operation.type) {
+                    case 'vote': {
+                        // do actual transaction building
+                        operation.wif = key;
+                        resolve(operation);
+                        break;
+                    }
+                    default:
+                        operation.wif = key;
+                        resolve(operation);
+                }
+
             }).catch(err => reject(err));;
         });
     }
 
     broadcast(transaction) {
+        let steeem = steem;
         console.log("broadcast", transaction);
         return new Promise((resolve, reject) => {
             this._ensureAPI().then(() => {
-                steem.broadcast.vote(
-                    transaction.wif,
-                    transaction.data.username,
-                    transaction.data.author,
-                    transaction.data.permlink,
-                    transaction.data.weight,
-                    (err, result) => {
-                     console.log(err);
-                     resolve(result);
+                switch (transaction.action) {
+                    case 'vote': {
+                        steem.broadcast.vote(
+                            transaction.wif,
+                            transaction.data.username,
+                            transaction.data.author,
+                            transaction.data.permlink,
+                            transaction.data.weight,
+                            (err, result) => {
+                                console.log("vote result", err, result);
+                                resolve(result);
+                            }
+                        );
+                        break;
                     }
-                );
+                    case "customJSON": {
+                        steem.broadcast.customJson(
+                            transaction.wif,
+                            transaction.requiredAuths,
+                            transaction.requiredPostingAuths,
+                            transaction.id,
+                            transaction.json,
+                            (err, result) => {
+                                console.log("customJson result", err, result);
+                                resolve(result);
+                            }
+                         );
+                        break;
+                    }
+                    default: {
+                        reject("not broadcast")
+                    }
+                }
+
             }).catch(err => reject(err));
         });
     }
 
     getOperation(data, account) {
+        let steeem = steem;
         console.log("getOperation", data, account);
         return new Promise((resolve, reject) => {
             this._ensureAPI().then(() => {
