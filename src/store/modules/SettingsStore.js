@@ -35,6 +35,7 @@ const actions = {
         commit
     }, payload) {
         return new Promise((resolve, reject) => {
+            console.log("SettingsStore.setNode", payload);
             try {
                 let settings = localStorage.getItem("settings");
                 if (settings && settings.length > 0) {
@@ -42,12 +43,17 @@ const actions = {
                 } else {
                     settings = initialState.settings;
                 }
+                // backwards compatibility
+                if (typeof settings.selected_node === "string")
+                {
+                    settings.selected_node = {}
+                }
                 settings.selected_node[payload.chain] = payload.node;
                 localStorage.setItem("settings", JSON.stringify(settings));
                 commit(LOAD_SETTINGS, settings);
                 resolve();
             } catch (e) {
-                reject();
+                reject(e);
             }
         });
     },

@@ -12,32 +12,51 @@ const logger = new RendererLogger();
 let vueInst = null;
 
 const linkHandler = async (req) => {
-    let userResponse;
     try {
-        userResponse = await BeetAPI.handler(Object.assign(req, {}), vueInst);
-        let apphash = CryptoJS.SHA256(req.browser + ' ' + req.origin + ' ' + req.appName + ' ' + req.payload.chain + ' ' + userResponse.identity.id).toString();
-        //let secret = await eccrypto.derive(req.key, Buffer.from(req.payload.pubkey, 'hex'));
-        let secret =req.key.derive(ec.keyFromPublic(req.payload.pubkey, 'hex').getPublic());
-        store.dispatch('OriginStore/addApp', {
-            appName: req.appName,
-            apphash: apphash,
-            origin: req.origin,
-            account_id: userResponse.identity.id,
-            chain: req.payload.chain,
-            secret: secret.toString(16),
-            next_hash: req.payload.next_hash
-        });
-        let response = Object.assign(req, {
-            isLinked: true,
-            apphash: apphash,
-            chain: req.payload.chain,
-            next_hash: req.payload.next_hash,
-            account_id: userResponse.identity.id,
-            secret: secret.toString(16)
-        });
-        return response;
-    } catch (e) {
-        logger.log(e);
+        let userResponse = await BeetAPI.handler(Object.assign(req, {}), vueInst);
+        if (!!userResponse.response && !userResponse.response.isLinked) {
+            console.log("User rejected request, id=" + req.id);
+            return {
+                id: req.id,
+                result: {
+                    isError: true,
+                    error: 'User rejected request'
+                }
+            };;
+        } else {
+            let apphash = CryptoJS.SHA256(req.browser + ' ' + req.origin + ' ' + req.appName + ' ' + req.payload.chain + ' ' + userResponse.identity.id).toString();
+            //let secret = await eccrypto.derive(req.key, Buffer.from(req.payload.pubkey, 'hex'));
+            console.log("linkHandler key=", req.key);
+            let secret = req.key.derive(ec.keyFromPublic(req.payload.pubkey, 'hex').getPublic());
+            let app = await store.dispatch('OriginStore/addApp', {
+                appName: req.appName,
+                apphash: apphash,
+                origin: req.origin,
+                account_id: userResponse.identity.id,
+                chain: req.payload.chain,
+                secret: secret.toString(16),
+                next_hash: req.payload.next_hash
+            });
+            console.log("app added, id=" + app.id);
+            let response = Object.assign(req, {
+                isLinked: true,
+                apphash: apphash,
+                chain: req.payload.chain,
+                next_hash: req.payload.next_hash,
+                account_id: userResponse.identity.id,
+                secret: secret.toString(16)
+            });
+            return response;
+        }
+    } catch (err) {
+        console.error(err);
+        return {
+            id: req.id,
+            result: {
+                isError: true,
+                error: 'Error occurred: ' + err
+            }
+        };
     }
 };
 
@@ -47,6 +66,7 @@ const authHandler = async (req) => {
     if (req.payload.apphash != null & req.payload.apphash != undefined) {
         let apps = store.state.OriginStore.apps;
         const app = apps.find(x => x.apphash === req.payload.apphash);
+        console.log(app);
         if (!app) {
             return Object.assign(req.payload, {
                 authenticate: false,

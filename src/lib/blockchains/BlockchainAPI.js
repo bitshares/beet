@@ -18,7 +18,7 @@ export default class BlockchainAPI {
         this._isConnected = true;
         this._isConnectingInProgress = false;
         console.log("connected to ", node)
-        resolveCallback();
+        resolveCallback(node);
     }
 
     getNodes() {

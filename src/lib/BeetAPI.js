@@ -9,7 +9,15 @@ var popupQ = new Queue();
 export default class BeetAPI {
 
     static async handler(request, vueInst) {
-        if (!Object.keys(Actions).map(key => Actions[key]).includes(request.type)) return;
+        if (!Object.keys(Actions).map(key => Actions[key]).includes(request.type)) {
+            return {
+                id: request.id,
+                result: {
+                    isError: true,
+                    error: 'Request type not supported.'
+                }
+            }
+        }
         let result;
         if (popupQ.isEmpty()) {
             let qresolve;
@@ -21,7 +29,6 @@ export default class BeetAPI {
                 resolve: qresolve
             });
             if (store.state.WalletStore.isUnlocked == false) {
-
                 vueInst.$refs.popupComp.showAlert(request);
             }
             await store.state.WalletStore.unlocked.promise;
@@ -87,15 +94,21 @@ export default class BeetAPI {
         }
     }
     static async [Actions.VOTE_FOR](request, vue) {
-        console.log("BeetAPI.voteFor", request);
         try {
+            console.log("BeetAPI.voteFor", request);
             let response = await vue.requestVote(request.payload);
             return {
                 id: request.id,
                 result: response
             };
-        } catch (e) {
-            return e;
+        } catch (err) {
+            return {
+                id: request.id,
+                result: {
+                    isError: true,
+                    error: "User rejected"
+                }
+            };
         }
     }
     static async [Actions.REQUEST_SIGNATURE](request, vue) {
@@ -105,9 +118,14 @@ export default class BeetAPI {
                 id: request.id,
                 result: response
             };
-        } catch (e) {
-
-            return e;
+        } catch (err) {
+            return {
+                id: request.id,
+                result: {
+                    isError: true,
+                    error: "User rejected"
+                }
+            };
         }
     }
 }
