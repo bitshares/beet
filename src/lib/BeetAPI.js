@@ -129,4 +129,23 @@ export default class BeetAPI {
             };
         }
     }
+    static async [Actions.INJECTED_CALL](request, vue) {
+        try {
+            console.log("BeetAPI.injectedCall", request);
+            let response = await vue.requestTx(request.payload);
+            return {
+                id: request.id,
+                result: response
+            };
+        } catch (err) {
+            return {
+                id: request.id,
+                result: {
+                    isError: true,
+                    error: "User rejected"
+                }
+            };
+        }
+    }
+
 }

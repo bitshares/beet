@@ -77,20 +77,30 @@ export default class Steem extends BlockchainAPI {
     }
 
     sign(operation, key) {
-        let steeem = steem;
         console.log("sign", operation, key);
         return new Promise((resolve, reject) => {
             this._ensureAPI().then(() => {
-                switch (operation.type) {
-                    case 'vote': {
-                        // do actual transaction building
-                        operation.wif = key;
-                        resolve(operation);
-                        break;
+                if (!!operation.type) {
+                    switch (operation.type) {
+                        case 'vote': {
+                            // do actual transaction building
+                            operation.wif = key;
+                            resolve(operation);
+                            break;
+                        }
+                        default:
+                            operation.wif = key;
+                            resolve(operation);
                     }
-                    default:
-                        operation.wif = key;
+                } else {
+                    if (typeof operation == "object"
+                        && operation.length > 2
+                        && operation[1] == "inject_wif") {
+                        operation[1] = key;
                         resolve(operation);
+                    } else {
+                        reject("Unknown sign request");
+                    }
                 }
 
             }).catch(err => reject(err));;
@@ -98,42 +108,62 @@ export default class Steem extends BlockchainAPI {
     }
 
     broadcast(transaction) {
-        let steeem = steem;
         console.log("broadcast", transaction);
         return new Promise((resolve, reject) => {
             this._ensureAPI().then(() => {
-                switch (transaction.action) {
-                    case 'vote': {
-                        steem.broadcast.vote(
-                            transaction.wif,
-                            transaction.data.username,
-                            transaction.data.author,
-                            transaction.data.permlink,
-                            transaction.data.weight,
+                if (!!transaction.type) {
+                    switch (transaction.type) {
+                        case 'vote': {
+                            steem.broadcast.vote(
+                                transaction.wif,
+                                transaction.data.username,
+                                transaction.data.author,
+                                transaction.data.permlink,
+                                transaction.data.weight,
+                                (err, result) => {
+                                    console.log("vote result", err, result);
+                                    resolve(result);
+                                }
+                            );
+                            break;
+                        }
+                        case "customJSON": {
+                            steem.broadcast.customJson(
+                                transaction.wif, //transaction.wif,
+                                transaction.data.requiredAuths,
+                                transaction.data.requiredPostingAuths,
+                                transaction.data.id,
+                                transaction.data.json,
+                                (err, result) => {
+                                    console.log("customJson result", err, result);
+                                    resolve(result);
+                                }
+                            );
+                            break;
+                        }
+                        default: {
+                            reject("not broadcast")
+                        }
+                    }
+                } else {
+                    if (typeof transaction == "object"
+                        && transaction.length > 3
+                        && typeof transaction[0] == "string") {
+                        let operationName = transaction.shift();
+                        steem.broadcast[operationName](
+                            ...transaction,
                             (err, result) => {
-                                console.log("vote result", err, result);
+                                console.log("injectedCall result", err, result);
+                                if (!!err) {
+                                    reject(err);
+                                }
                                 resolve(result);
                             }
                         );
-                        break;
+                    } else {
+                        reject("Unknown broadcast request");
                     }
-                    case "customJSON": {
-                        steem.broadcast.customJson(
-                            transaction.wif,
-                            transaction.requiredAuths,
-                            transaction.requiredPostingAuths,
-                            transaction.id,
-                            transaction.json,
-                            (err, result) => {
-                                console.log("customJson result", err, result);
-                                resolve(result);
-                            }
-                         );
-                        break;
-                    }
-                    default: {
-                        reject("not broadcast")
-                    }
+
                 }
 
             }).catch(err => reject(err));

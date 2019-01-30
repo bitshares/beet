@@ -59,11 +59,10 @@
             {{ $t('operations:rawsig.request',{origin: incoming.origin }) }}
             <br>
             <br>
-            <pre class="text-left custom-content">
+            <pre v-if="!!incoming.params" class="text-left custom-content">
                 <code>
     {
-    type: {{ incoming.params.type }},
-    data: {{ incoming.params.data }}
+    {{ incoming.params }}
     }
                 </code>
             </pre>
@@ -273,12 +272,11 @@
                     this.incoming.rejectgen = rej;
                 });
             },
-            requestTx: function (request) {
+            requestTx: function (payload) {
                 this.$store.dispatch("WalletStore/notifyUser", {
                     notify: "request", message: "request"
                 });
-                this.incoming = {};
-                this.incoming = request;
+                this.incoming = payload;
                 this.$refs.transactionReqModal.show();
                 return new Promise((res, rej) => {
                     this.incoming.accepttx = res;
