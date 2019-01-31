@@ -233,7 +233,6 @@
                 if (index !== -1) this.alerts.splice(index, 1);
             },
             requestAccess: function (request) {
-
                 this.$store.dispatch("WalletStore/notifyUser", {
                     notify: "request", message: "request"
                 });
@@ -283,10 +282,22 @@
                     this.incoming.rejecttx = rej;
                 });
             },
+            signMessage: function (payload) {
+                let blockchain = getBlockchain(this.$store.state.WalletStore.wallet.chain);
+                return new Promise((resolve, rej) => {
+                    blockchain.signMessage(
+                        this.$store.state.WalletStore.wallet.keys.active,
+                        this.$store.state.WalletStore.wallet.accountName,
+                        payload.params
+                    ).then((res) => {
+                        resolve(res);
+                    });
+                });
+            },
             allowAccess: function () {
                 this.$refs.accountReqModal.hide();
                 this.incoming.accept({
-                    account: this.$store.state.WalletStore.wallet.accountName,
+                    name: this.$store.state.WalletStore.wallet.accountName,
                     id: this.$store.state.WalletStore.wallet.accountID
                 });
             },

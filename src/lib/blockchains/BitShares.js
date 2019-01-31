@@ -2,7 +2,8 @@ import BlockchainAPI from "./BlockchainAPI";
 import {Apis} from "bitsharesjs-ws";
 import {
     PrivateKey,
-    TransactionBuilder
+    TransactionBuilder,
+    Signature
 } from "bitsharesjs";
 
 export default class BitShares extends BlockchainAPI {
@@ -281,6 +282,33 @@ export default class BitShares extends BlockchainAPI {
                     }
                 }
             });
+        });
+    }
+
+    signMessage(key, accountName, randomString) {
+        return new Promise((resolve,reject) => {
+            // do as a list, to preserve order
+            let message = JSON.stringify([
+                "from",
+                accountName,
+                this.getPublicKey(key),
+                "time",
+                new Date().toUTCString(),
+                "text",
+                randomString
+            ]);
+            try {
+                let signature = Signature.signBuffer(
+                    message,
+                    PrivateKey.fromWif(key)
+                );
+                resolve({
+                    message: message,
+                    signature: signature.toHex()
+                });
+            } catch (err) {
+                reject(err);
+            }
         });
     }
 }

@@ -49,4 +49,8 @@ export default class BlockchainAPI {
         throw "Needs implementation";
     }
 
+    signMessage(key, message) {
+        throw "Needs implementation";
+    }
+
 }

@@ -1,5 +1,6 @@
 import BlockchainAPI from "./BlockchainAPI";
 import steem from "steem";
+import {Signature} from "bitsharesjs";
 
 export default class Steem extends BlockchainAPI {
 
@@ -207,6 +208,12 @@ export default class Steem extends BlockchainAPI {
                     });
                 }
             });
+        });
+    }
+
+    signMessage(key, randomString) {
+        return new Promise((resolve,reject) => {
+            reject("not implemented yet");
         });
     }
 
