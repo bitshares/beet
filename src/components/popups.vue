@@ -284,13 +284,31 @@
             },
             signMessage: function (payload) {
                 let blockchain = getBlockchain(this.$store.state.WalletStore.wallet.chain);
-                return new Promise((resolve, rej) => {
+                return new Promise((resolve, reject) => {
                     blockchain.signMessage(
                         this.$store.state.WalletStore.wallet.keys.active,
                         this.$store.state.WalletStore.wallet.accountName,
                         payload.params
-                    ).then((res) => {
-                        resolve(res);
+                    ).then((signedMessage) => {
+                        blockchain.verifyMessage(signedMessage).then(res => {
+                            resolve(signedMessage);
+                        }).catch(err => {
+                            reject(err);
+                        });
+                    }).catch(err => {
+                        reject(err);
+                    });
+                });
+            },
+            verifyMessage: function (payload) {
+                let blockchain = getBlockchain(this.$store.state.WalletStore.wallet.chain);
+                return new Promise((resolve, reject) => {
+                    blockchain.verifyMessage(
+                        payload.params
+                    ).then((result) => {
+                        resolve(result);
+                    }).catch(err => {
+                        reject(err);
                     });
                 });
             },

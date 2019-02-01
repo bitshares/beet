@@ -165,4 +165,24 @@ export default class BeetAPI {
             };
         }
     }
+    static async [Actions.VERIFY_MESSAGE](request, vue) {
+        try {
+            console.log("BeetAPI.verifyMessage", request);
+            let response = await vue.verifyMessage(request.payload);
+            return {
+                id: request.id,
+                result: response
+            };
+        } catch (err) {
+            return {
+                id: request.id,
+                result: {
+                    isError: true,
+                    error: "User rejected"
+                }
+            };
+        }
+    }
+
+
 }

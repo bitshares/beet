@@ -53,4 +53,8 @@ export default class BlockchainAPI {
         throw "Needs implementation";
     }
 
+    verifyMessage(message) {
+        throw "Needs implementation";
+    }
+
 }

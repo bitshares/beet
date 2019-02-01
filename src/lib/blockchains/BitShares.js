@@ -2,8 +2,10 @@ import BlockchainAPI from "./BlockchainAPI";
 import {Apis} from "bitsharesjs-ws";
 import {
     PrivateKey,
+    PublicKey,
     TransactionBuilder,
-    Signature
+    Signature,
+    ChainStore
 } from "bitsharesjs";
 
 export default class BitShares extends BlockchainAPI {
@@ -303,7 +305,7 @@ export default class BitShares extends BlockchainAPI {
                     PrivateKey.fromWif(key)
                 );
                 resolve({
-                    message: message,
+                    payload: message,
                     signature: signature.toHex()
                 });
             } catch (err) {
@@ -311,4 +313,77 @@ export default class BitShares extends BlockchainAPI {
             }
         });
     }
+
+    _verifyAccountAndKey(accountName, publicKey, permission = null) {
+        return new Promise((resolve, reject) => {
+            this.getAccount(accountName).then(account => {
+                account.active.public_keys.forEach((key) => {
+                    if (key[0] == publicKey) {
+                        resolve({
+                            account: account,
+                            permission: "active",
+                            weight: key[1]
+                        });
+                        return;
+                    }
+                });
+                account.owner.public_keys.forEach((key) => {
+                    if (key[0] == publicKey) {
+                        resolve({
+                            account: account,
+                            permission: "owner",
+                            weight: key[1]
+                        });
+                        return;
+                    }
+                });
+                if (account.memo.public_key == publicKey) {
+                    resolve({
+                        account: account,
+                        permission: "memo",
+                        weight: 1
+                    });
+                    return;
+                }
+            }).catch((err) => {
+                reject(err)
+            });
+        });
+    }
+
+    verifyMessage(signedMessage) {
+        return new Promise((resolve, reject) => {
+            if (typeof signedMessage.payload === "string" || signedMessage.payload instanceof String) {
+                signedMessage.signed = signedMessage.payload;
+                signedMessage.payload = JSON.parse(signedMessage.payload);
+            }
+
+            // validate account and key
+            this._verifyAccountAndKey(signedMessage.payload[1], signedMessage.payload[2]).then(
+                found => {
+                    if (found.account == null) {
+                        reject("invalid user");
+                    }
+                    // verify message signed
+                    let verified = false;
+                    try {
+                        verified = Signature.fromHex(signedMessage.signature).verifyBuffer(
+                            signedMessage.signed,
+                            PublicKey.fromPublicKeyString(signedMessage.payload[2])
+                        );
+                    } catch (err) {
+                        // wrap message that could be raised from Signature
+                        reject("Error verifying signature");
+                    }
+                    if (!verified) {
+                        reject("Invalid signature");
+                    }
+                    return resolve(signedMessage);
+                }
+            ).catch(err => {
+                reject(err);
+            });
+        });
+    }
+
 }
