@@ -345,6 +345,7 @@ export default class BitShares extends BlockchainAPI {
                     });
                     return;
                 }
+                reject("Key and account do not match!")
             }).catch((err) => {
                 reject(err)
             });
