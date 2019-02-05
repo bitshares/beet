@@ -316,10 +316,9 @@ export default {
               memo: this.memopk
             }
           }
-        });
-        setTimeout(() => {
+        }).then(() => {
             this.$router.replace("/dashboard");
-        }, 50);
+        });
       }
     }
   }
