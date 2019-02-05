@@ -57,4 +57,42 @@ export default class BlockchainAPI {
         throw "Needs implementation";
     }
 
+    _verifyAccountAndKey(accountName, publicKey, permission = null) {
+        return new Promise((resolve, reject) => {
+            this.getAccount(accountName).then(account => {
+                account.active.public_keys.forEach((key) => {
+                    if (key[0] == publicKey) {
+                        resolve({
+                            account: account,
+                            permission: "active",
+                            weight: key[1]
+                        });
+                        return;
+                    }
+                });
+                account.owner.public_keys.forEach((key) => {
+                    if (key[0] == publicKey) {
+                        resolve({
+                            account: account,
+                            permission: "owner",
+                            weight: key[1]
+                        });
+                        return;
+                    }
+                });
+                if (account.memo.public_key == publicKey) {
+                    resolve({
+                        account: account,
+                        permission: "memo",
+                        weight: 1
+                    });
+                    return;
+                }
+                reject("Key and account do not match!")
+            }).catch((err) => {
+                reject(err)
+            });
+        });
+    }
+
 }

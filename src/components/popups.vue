@@ -301,7 +301,13 @@
                 });
             },
             verifyMessage: function (payload) {
-                let blockchain = getBlockchain(this.$store.state.WalletStore.wallet.chain);
+                console.log("verify", payload);
+                let blockchain = null;
+                if (payload.params.payload[2].substring(0,3) == "BTS") {
+                    blockchain = getBlockchain("BTS");
+                } else {
+                    blockchain = getBlockchain("STEEM");
+                }
                 return new Promise((resolve, reject) => {
                     blockchain.verifyMessage(
                         payload.params

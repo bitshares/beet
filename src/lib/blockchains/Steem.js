@@ -1,6 +1,9 @@
 import BlockchainAPI from "./BlockchainAPI";
 import steem from "steem";
-import {Signature} from "bitsharesjs";
+import Signature from "steem/lib/auth/ecc/src/signature";
+import KeyPrivate from "steem/lib/auth/ecc/src/key_private";
+import PublicKey from "steem/lib/auth/ecc/src/key_public";
+
 
 export default class Steem extends BlockchainAPI {
 
@@ -21,6 +24,10 @@ export default class Steem extends BlockchainAPI {
     getAccount(accountname) {
         return new Promise((resolve, reject) => {
             steem.api.getAccounts([accountname], function(err, result) {
+                if (result.length == 0) {
+                    reject("Account " + accountname + " not found!");
+                    return;
+                }
                 result[0].active.public_keys = result[0].active.key_auths;
                 result[0].owner.public_keys = result[0].owner.key_auths;
                 result[0].memo = {public_key: result[0].memo_key};
@@ -211,9 +218,65 @@ export default class Steem extends BlockchainAPI {
         });
     }
 
-    signMessage(key, randomString) {
+    signMessage(key, accountName, randomString) {
         return new Promise((resolve,reject) => {
-            reject("not implemented yet");
+            // do as a list, to preserve order
+            let message = JSON.stringify([
+                "from",
+                accountName,
+                this.getPublicKey(key),
+                "time",
+                new Date().toUTCString(),
+                "text",
+                randomString
+            ]);
+            try {
+                let signature = Signature.signBuffer(
+                    message,
+                    KeyPrivate.fromWif(key)
+                );
+                resolve({
+                    payload: message,
+                    signature: signature.toHex()
+                });
+            } catch (err) {
+                reject(err);
+            }
+        });
+    }
+
+    verifyMessage(signedMessage) {
+        return new Promise((resolve, reject) => {
+            if (typeof signedMessage.payload === "string" || signedMessage.payload instanceof String) {
+                signedMessage.signed = signedMessage.payload;
+                signedMessage.payload = JSON.parse(signedMessage.payload);
+            }
+
+            // validate account and key
+            this._verifyAccountAndKey(signedMessage.payload[1], signedMessage.payload[2]).then(
+                found => {
+                    if (found.account == null) {
+                        reject("invalid user");
+                    }
+                    // verify message signed
+                    let verified = false;
+                    try {
+                        verified = Signature.fromHex(signedMessage.signature).verifyBuffer(
+                            signedMessage.signed,
+                            PublicKey.fromStringOrThrow(signedMessage.payload[2])
+                        );
+                    } catch (err) {
+                        // wrap message that could be raised from Signature
+                        reject("Error verifying signature");
+                    }
+                    if (!verified) {
+                        reject("Invalid signature");
+                    }
+                    return resolve(signedMessage);
+                }
+            ).catch(err => {
+                reject(err);
+            });
         });
     }
 
