@@ -361,5 +361,43 @@ export const blockchains = {
                 contact: "https://steem.com"
             }
         ]
+    },
+    WLS: {
+        short: 'WLS',
+        name: 'WhaleShares',
+        chainId: '0',
+        nodeList: [
+            {
+                url: "whaleshares.io/ws",
+                location: "Unknown",
+                region: "Unknown",
+                country: "Unknown",
+                operator: "Beyond Bitcoin",
+                contact: "Discord Channel"
+            }
+        ]
+    },
+    SMOKE: {
+        short: 'SMOKE',
+        name: 'Smoke',
+        chainID: '1ce08345e61cd3bf91673a47fc507e7ed01550dab841fd9cdb0ab66ef576aaf0',
+        nodeList: [
+            {
+                url: 'rpc.smoke.io',
+                location: 'Unknown',
+                region: 'Unkown',
+                country: 'Unkown',
+                operator: 'Smoke Holdings Ltd',
+                contact: 'hello@smoke.network',
+            },
+            {
+                url: 'pubrpc.smoke.io',
+                location: 'Unknown',
+                region: 'Unkown',
+                country: 'Unkown',
+                operator: 'Smoke Holdings Ltd',
+                contact: 'hello@smoke.network',
+            },
+        ]
     }
 };
