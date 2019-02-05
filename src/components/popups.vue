@@ -46,6 +46,7 @@
                 {{ $t('operations:account_id.reject_btn') }}
             </b-btn>
         </b-modal>
+
         <b-modal
             id="transactionRequest"
             ref="transactionReqModal"
@@ -84,6 +85,7 @@
                 {{ $t('operations:rawsig.reject_btn') }}
             </b-btn>
         </b-modal>
+
         <b-modal
             id="genericRequest"
             ref="genericReqModal"
@@ -92,7 +94,7 @@
             no-close-on-backdrop
             hide-header-close
             hide-footer
-            :title="generictitle "
+            :title="generictitle"
         >
             {{ genericmsg }}:
             <br>
@@ -108,7 +110,7 @@
                 block
                 @click="acceptGeneric"
             >
-                {{ genericaccept }}
+                {{ genericaccept || $t('operations:rawsig.accept_btn') }}
             </b-btn>
             <b-btn
                 class="mt-1"
@@ -116,7 +118,7 @@
                 block
                 @click="rejectGeneric"
             >
-                {{ genericreject }}
+                {{ genericreject || $t('operations:rawsig.reject_btn') }}
             </b-btn>
         </b-modal>
         <b-modal
@@ -283,7 +285,27 @@
                 });
             },
             requestSignedMessage: function (payload) {
-                return this.requestTx(payload);
+                this.$store.dispatch("WalletStore/notifyUser", {
+                    notify: "request", message: "request"
+                });
+                this.incoming = payload;
+
+                this.specifics = payload.params;
+
+                this.genericmsg = this.$t(
+                    'operations:message.request',
+                    {
+                        origin: this.incoming.origin
+                    }
+                );
+                this.generictitle = this.$t('operations:message.title');
+                this.genericaccept = this.$t('operations:message.accept_btn');
+                this.genericreject = this.$t('operations:message.reject_btn');
+                this.$refs.genericReqModal.show();
+                return new Promise((res, rej) => {
+                    this.incoming.acceptgen = res;
+                    this.incoming.rejectgen = rej;
+                });
             },
             verifyMessage: function (payload) {
                 console.log("verify", payload);
@@ -310,29 +332,17 @@
                 this.incoming.reject({});
             },
             acceptTx: async function () {
-                // doesnt disappear and don't know why atm
-                //this.$refs.loaderAnimModal.show();
+                this.$refs.loaderAnimModal.show();
                 this.$refs.transactionReqModal.hide();
                 let blockchain = getBlockchain(this.$store.state.WalletStore.wallet.chain);
-                console.log(this.incoming);
-                if (this.incoming.method == "signMessage") {
-                    let signedMessage = await blockchain.signMessage(
-                        this.$store.state.WalletStore.wallet.keys.active,
-                        this.$store.state.WalletStore.wallet.accountName,
-                        this.incoming.params
-                    );
-                    this.incoming.accepttx(signedMessage);
-                } else {
-                    let transaction = await blockchain.sign(
-                        this.incoming.params,
-                        this.$store.state.WalletStore.wallet.keys.active
-                    );
-                    let id = await blockchain.broadcast(
-                        transaction
-                    );
-                    this.incoming.accepttx({id: id});
-                }
-                console.log("hiding loader now");
+                let transaction = await blockchain.sign(
+                    this.incoming.params,
+                    this.$store.state.WalletStore.wallet.keys.active
+                );
+                let id = await blockchain.broadcast(
+                    transaction
+                );
+                this.incoming.accepttx({id: id});
                 this.$refs.loaderAnimModal.hide();
             },
             rejectTx: function () {
@@ -340,23 +350,33 @@
                 this.incoming.rejecttx({});
             },
             acceptGeneric: async function () {
-                this.$refs.loaderAnimModal.show();
+                // doesnt disappear afterwards, huh?
+                //this.$refs.loaderAnimModal.show();
                 let blockchain = getBlockchain(this.$store.state.WalletStore.wallet.chain);
-                let operation = await blockchain.getOperation(
-                    this.incoming,
-                    {
-                        id: this.$store.state.WalletStore.wallet.accountID,
-                        name: this.$store.state.WalletStore.wallet.accountName
-                    }
-                );
-                let transaction = await blockchain.sign(
-                    operation,
-                    this.$store.state.WalletStore.wallet.keys.active
-                );
-                let id = await blockchain.broadcast(
-                    transaction
-                );
-                this.incoming.acceptgen(id);
+                if (this.incoming.method == "signMessage") {
+                    let signedMessage = await blockchain.signMessage(
+                        this.$store.state.WalletStore.wallet.keys.active,
+                        this.$store.state.WalletStore.wallet.accountName,
+                        this.incoming.params
+                    );
+                    this.incoming.acceptgen(signedMessage);
+                } else {
+                    let operation = await blockchain.getOperation(
+                        this.incoming,
+                        {
+                            id: this.$store.state.WalletStore.wallet.accountID,
+                            name: this.$store.state.WalletStore.wallet.accountName
+                        }
+                    );
+                    let transaction = await blockchain.sign(
+                        operation,
+                        this.$store.state.WalletStore.wallet.keys.active
+                    );
+                    let id = await blockchain.broadcast(
+                        transaction
+                    );
+                    this.incoming.acceptgen(id);
+                }
                 this.$refs.genericReqModal.hide();
                 this.$refs.loaderAnimModal.hide();
             },
