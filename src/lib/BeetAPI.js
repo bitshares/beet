@@ -150,7 +150,7 @@ export default class BeetAPI {
     static async [Actions.SIGN_MESSAGE](request, vue) {
         try {
             console.log("BeetAPI.signMessage", request);
-            let response = await vue.signMessage(request.payload);
+            let response = await vue.requestSignedMessage(request.payload);
             return {
                 id: request.id,
                 result: response

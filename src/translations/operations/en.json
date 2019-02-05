@@ -10,7 +10,7 @@
         "title": "Transaction Request",
         "request": "The page/app {{- origin}} has submitted the following transaction.",
         "request_cta": "Do you want to execute it?",
-        "accept_btn": "Sign &amp; Broadcast",
+        "accept_btn": "Sign & Broadcast",
         "reject_btn": "Ignore"
     },
     "vote": {

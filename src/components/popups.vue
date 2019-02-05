@@ -282,28 +282,13 @@
                     this.incoming.rejecttx = rej;
                 });
             },
-            signMessage: function (payload) {
-                let blockchain = getBlockchain(this.$store.state.WalletStore.wallet.chain);
-                return new Promise((resolve, reject) => {
-                    blockchain.signMessage(
-                        this.$store.state.WalletStore.wallet.keys.active,
-                        this.$store.state.WalletStore.wallet.accountName,
-                        payload.params
-                    ).then((signedMessage) => {
-                        blockchain.verifyMessage(signedMessage).then(res => {
-                            resolve(signedMessage);
-                        }).catch(err => {
-                            reject(err);
-                        });
-                    }).catch(err => {
-                        reject(err);
-                    });
-                });
+            requestSignedMessage: function (payload) {
+                return this.requestTx(payload);
             },
             verifyMessage: function (payload) {
                 console.log("verify", payload);
-                let blockchain = getBlockchain(payload.params.payload[2].substring(0,3));
                 return new Promise((resolve, reject) => {
+                    let blockchain = getBlockchain(payload.params.payload[2].substring(0,3));
                     blockchain.verifyMessage(
                         payload.params
                     ).then((result) => {
@@ -325,17 +310,29 @@
                 this.incoming.reject({});
             },
             acceptTx: async function () {
-                this.$refs.loaderAnimModal.show();
-                let blockchain = getBlockchain(this.$store.state.WalletStore.wallet.chain);
-                let transaction = await blockchain.sign(
-                    this.incoming.params,
-                    this.$store.state.WalletStore.wallet.keys.active
-                );
-                let id = await blockchain.broadcast(
-                    transaction
-                );
-                this.incoming.accepttx({id: id});
+                // doesnt disappear and don't know why atm
+                //this.$refs.loaderAnimModal.show();
                 this.$refs.transactionReqModal.hide();
+                let blockchain = getBlockchain(this.$store.state.WalletStore.wallet.chain);
+                console.log(this.incoming);
+                if (this.incoming.method == "signMessage") {
+                    let signedMessage = await blockchain.signMessage(
+                        this.$store.state.WalletStore.wallet.keys.active,
+                        this.$store.state.WalletStore.wallet.accountName,
+                        this.incoming.params
+                    );
+                    this.incoming.accepttx(signedMessage);
+                } else {
+                    let transaction = await blockchain.sign(
+                        this.incoming.params,
+                        this.$store.state.WalletStore.wallet.keys.active
+                    );
+                    let id = await blockchain.broadcast(
+                        transaction
+                    );
+                    this.incoming.accepttx({id: id});
+                }
+                console.log("hiding loader now");
                 this.$refs.loaderAnimModal.hide();
             },
             rejectTx: function () {
@@ -343,6 +340,7 @@
                 this.incoming.rejecttx({});
             },
             acceptGeneric: async function () {
+                this.$refs.loaderAnimModal.show();
                 let blockchain = getBlockchain(this.$store.state.WalletStore.wallet.chain);
                 let operation = await blockchain.getOperation(
                     this.incoming,
@@ -351,7 +349,6 @@
                         name: this.$store.state.WalletStore.wallet.accountName
                     }
                 );
-                this.$refs.loaderAnimModal.show();
                 let transaction = await blockchain.sign(
                     operation,
                     this.$store.state.WalletStore.wallet.keys.active

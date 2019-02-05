@@ -319,7 +319,8 @@ export default class BitShares extends BlockchainAPI {
                     PrivateKey.fromWif(key)
                 );
                 resolve({
-                    payload: message,
+                    signed: message,
+                    payload: JSON.parse(message),
                     signature: signature.toHex()
                 });
             } catch (err) {
