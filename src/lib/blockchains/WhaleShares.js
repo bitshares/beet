@@ -13,14 +13,14 @@ export default class WhaleShares extends BlockchainAPI {
 
     connect(nodeToConnect, onClose = null) {
         return new Promise((resolve, reject) => {
-            // steem library handles connection internally, just set node
-            //wlsjs.api.setOptions({ url: nodeToConnect });
+            wlsjs.api.setOptions({ url: "https://wls.kennybll.com/" });
             resolve();
         });
     }
 
     getAccount(accountname) {
         return new Promise((resolve, reject) => {
+            wlsjs.api.setOptions({ url: "https://wls.kennybll.com/" });
             wlsjs.api.getAccounts([accountname], function(err, result) {
                 if (result.length == 0) {
                     reject("Account " + accountname + " not found!");
@@ -30,10 +30,6 @@ export default class WhaleShares extends BlockchainAPI {
                 result[0].owner.public_keys = result[0].owner.key_auths;
                 result[0].memo = {public_key: result[0].memo_key};
                 resolve(result[0]);
-            }).then(err => {
-                console.log(err);
-            }).catch(err => {
-                console.log("c", err);
             });
         });
     }

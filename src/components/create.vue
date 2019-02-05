@@ -261,7 +261,7 @@ export default {
       this.$refs.loaderAnimModal.show();
 
       blockchain.getAccount(this.accountname).then((account) => {
-          console.log(account);
+        console.log(account);
         let active_check = false;
         account.active.public_keys.forEach((key) => {
           if (key[0] == apkey) {
@@ -286,6 +286,7 @@ export default {
           this.accountID = "";
         }
       }).catch((err) => {
+          console.log(err);
           this.$refs.loaderAnimModal.hide();
           this.$refs.errorModal.show();
           this.errorMsg = this.$t("unverified_account_error");

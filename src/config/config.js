@@ -368,7 +368,7 @@ export const blockchains = {
         chainId: '0',
         nodeList: [
             {
-                url: "whaleshares.io/ws",
+                url: "https://wls.kennybll.com/",
                 location: "Unknown",
                 region: "Unknown",
                 country: "Unknown",
