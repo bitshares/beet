@@ -2,6 +2,11 @@ let localelist = [{
         iso: 'en',
         name: 'English',
         dir: 'ltr',
+    },
+    {
+        iso: 'ru',
+        name: 'Russian',
+        dir: 'ltr',
     }
     //,
     // {
