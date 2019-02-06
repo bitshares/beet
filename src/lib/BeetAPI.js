@@ -75,6 +75,7 @@ export default class BeetAPI {
                 result: response
             };
         } catch (e) {
+            console.error("BeetAPI.getAccount", e);
             return e;
         }
     }
@@ -85,6 +86,7 @@ export default class BeetAPI {
                 identity: response
             });
         } catch (e) {
+            console.error("BeetAPI.link", e);
             return {
                 id: request.id,
                 response: {
@@ -102,6 +104,7 @@ export default class BeetAPI {
                 result: response
             };
         } catch (err) {
+            console.error("BeetAPI.voteFor", err);
             return {
                 id: request.id,
                 result: {
@@ -120,6 +123,7 @@ export default class BeetAPI {
                 result: response
             };
         } catch (err) {
+            console.error("BeetAPI.requestSignature", err);
             return {
                 id: request.id,
                 result: {
@@ -138,6 +142,7 @@ export default class BeetAPI {
                 result: response
             };
         } catch (err) {
+            console.error("BeetAPI.injectedCall", err);
             return {
                 id: request.id,
                 result: {
@@ -156,6 +161,7 @@ export default class BeetAPI {
                 result: response
             };
         } catch (err) {
+            console.error("BeetAPI.signMessage", err);
             return {
                 id: request.id,
                 result: {
@@ -174,6 +180,7 @@ export default class BeetAPI {
                 result: response
             };
         } catch (err) {
+            console.error("BeetAPI.verifyMessage", err);
             return {
                 id: request.id,
                 result: {

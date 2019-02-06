@@ -301,67 +301,19 @@ export default class BitShares extends BlockchainAPI {
         });
     }
 
-    signMessage(key, accountName, randomString) {
-        return new Promise((resolve,reject) => {
-            // do as a list, to preserve order
-            let message = JSON.stringify([
-                "from",
-                accountName,
-                this.getPublicKey(key),
-                "time",
-                new Date().toUTCString(),
-                "text",
-                randomString
-            ]);
-            try {
-                let signature = Signature.signBuffer(
-                    message,
-                    PrivateKey.fromWif(key)
-                );
-                resolve({
-                    signed: message,
-                    payload: JSON.parse(message),
-                    signature: signature.toHex()
-                });
-            } catch (err) {
-                reject(err);
-            }
-        });
+    _signString(key, string) {
+        let signature = Signature.signBuffer(
+            string,
+            PrivateKey.fromWif(key)
+        );
+        return signature.toHex();
     }
 
-    verifyMessage(signedMessage) {
-        return new Promise((resolve, reject) => {
-            if (typeof signedMessage.payload === "string" || signedMessage.payload instanceof String) {
-                signedMessage.signed = signedMessage.payload;
-                signedMessage.payload = JSON.parse(signedMessage.payload);
-            }
-
-            // validate account and key
-            this._verifyAccountAndKey(signedMessage.payload[1], signedMessage.payload[2]).then(
-                found => {
-                    if (found.account == null) {
-                        reject("invalid user");
-                    }
-                    // verify message signed
-                    let verified = false;
-                    try {
-                        verified = Signature.fromHex(signedMessage.signature).verifyBuffer(
-                            signedMessage.signed,
-                            PublicKey.fromPublicKeyString(signedMessage.payload[2])
-                        );
-                    } catch (err) {
-                        // wrap message that could be raised from Signature
-                        reject("Error verifying signature");
-                    }
-                    if (!verified) {
-                        reject("Invalid signature");
-                    }
-                    return resolve(signedMessage);
-                }
-            ).catch(err => {
-                reject(err);
-            });
-        });
+    _verifyString(signature, publicKey, string) {
+        return Signature.fromHex(signature).verifyBuffer(
+            string,
+            PublicKey.fromPublicKeyString(publicKey)
+        );
     }
 
 }

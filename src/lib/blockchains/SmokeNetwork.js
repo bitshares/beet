@@ -4,7 +4,6 @@ import Signature from "@smokenetwork/smoke-js/lib/auth/ecc/src/signature";
 import KeyPrivate from "@smokenetwork/smoke-js/lib/auth/ecc/src/key_private";
 import PublicKey from "@smokenetwork/smoke-js/lib/auth/ecc/src/key_public";
 
-
 export default class Steem extends BlockchainAPI {
 
     // https://github.com/steemit/steem-js/tree/master/doc#broadcast-api
@@ -218,66 +217,19 @@ export default class Steem extends BlockchainAPI {
         });
     }
 
-    signMessage(key, accountName, randomString) {
-        return new Promise((resolve,reject) => {
-            // do as a list, to preserve order
-            let message = JSON.stringify([
-                "from",
-                accountName,
-                this.getPublicKey(key),
-                "time",
-                new Date().toUTCString(),
-                "text",
-                randomString
-            ]);
-            try {
-                let signature = Signature.signBuffer(
-                    message,
-                    KeyPrivate.fromWif(key)
-                );
-                resolve({
-                    payload: message,
-                    signature: signature.toHex()
-                });
-            } catch (err) {
-                reject(err);
-            }
-        });
+    _signString(key, string) {
+        let signature = Signature.signBuffer(
+            string,
+            KeyPrivate.fromWif(key)
+        );
+        return signature.toHex();
     }
 
-    verifyMessage(signedMessage) {
-        return new Promise((resolve, reject) => {
-            if (typeof signedMessage.payload === "string" || signedMessage.payload instanceof String) {
-                signedMessage.signed = signedMessage.payload;
-                signedMessage.payload = JSON.parse(signedMessage.payload);
-            }
-
-            // validate account and key
-            this._verifyAccountAndKey(signedMessage.payload[1], signedMessage.payload[2]).then(
-                found => {
-                    if (found.account == null) {
-                        reject("invalid user");
-                    }
-                    // verify message signed
-                    let verified = false;
-                    try {
-                        verified = Signature.fromHex(signedMessage.signature).verifyBuffer(
-                            signedMessage.signed,
-                            PublicKey.fromStringOrThrow(signedMessage.payload[2])
-                        );
-                    } catch (err) {
-                        // wrap message that could be raised from Signature
-                        reject("Error verifying signature");
-                    }
-                    if (!verified) {
-                        reject("Invalid signature");
-                    }
-                    return resolve(signedMessage);
-                }
-            ).catch(err => {
-                reject(err);
-            });
-        });
+    _verifyString(signature, publicKey, string) {
+        return Signature.fromHex(signature).verifyBuffer(
+            string,
+            PublicKey.fromStringOrThrow(publicKey)
+        );
     }
 
 }

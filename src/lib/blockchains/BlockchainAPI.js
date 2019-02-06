@@ -49,11 +49,69 @@ export default class BlockchainAPI {
         throw "Needs implementation";
     }
 
-    signMessage(key, message) {
+    _signString(key, string) {
         throw "Needs implementation";
     }
 
-    verifyMessage(message) {
+    signMessage(key, accountName, randomString) {
+        return new Promise((resolve,reject) => {
+            // do as a list, to preserve order
+            let message = JSON.stringify([
+                "from",
+                accountName,
+                this.getPublicKey(key),
+                "time",
+                new Date().toUTCString(),
+                "text",
+                randomString
+            ]);
+            try {
+
+                resolve({
+                    signed: message,
+                    payload: JSON.parse(message),
+                    signature: this._signString(key, message)
+                });
+            } catch (err) {
+                reject(err);
+            }
+        });
+    }
+
+
+    verifyMessage(signedMessage) {
+        return new Promise((resolve, reject) => {
+            if (typeof signedMessage.payload === "string" || signedMessage.payload instanceof String) {
+                signedMessage.signed = signedMessage.payload;
+                signedMessage.payload = JSON.parse(signedMessage.payload);
+            }
+
+            // validate account and key
+            this._verifyAccountAndKey(signedMessage.payload[1], signedMessage.payload[2]).then(
+                found => {
+                    if (found.account == null) {
+                        reject("invalid user");
+                    }
+                    // verify message signed
+                    let verified = false;
+                    try {
+                        verified = this._verifyString(signedMessage.signature, signedMessage.payload[2], signedMessage.signed);
+                    } catch (err) {
+                        // wrap message that could be raised from Signature
+                        reject("Error verifying signature");
+                    }
+                    if (!verified) {
+                        reject("Invalid signature");
+                    }
+                    return resolve(signedMessage);
+                }
+            ).catch(err => {
+                reject(err);
+            });
+        });
+    }
+
+    _verifyString(signature, publicKey, string) {
         throw "Needs implementation";
     }
 
