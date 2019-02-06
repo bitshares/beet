@@ -12,9 +12,7 @@
     </div>
 </template>
 <script>
-
 import { EventBus } from '../lib/event-bus.js';
-
 import {
     ipcRenderer,
 } from 'electron';

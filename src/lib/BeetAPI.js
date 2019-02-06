@@ -9,7 +9,15 @@ var popupQ = new Queue();
 export default class BeetAPI {
 
     static async handler(request, vueInst) {
-        if (!Object.keys(Actions).map(key => Actions[key]).includes(request.type)) return;
+        if (!Object.keys(Actions).map(key => Actions[key]).includes(request.type)) {
+            return {
+                id: request.id,
+                result: {
+                    isError: true,
+                    error: 'Request type not supported.'
+                }
+            }
+        }
         let result;
         if (popupQ.isEmpty()) {
             let qresolve;
@@ -21,7 +29,6 @@ export default class BeetAPI {
                 resolve: qresolve
             });
             if (store.state.WalletStore.isUnlocked == false) {
-
                 vueInst.$refs.popupComp.showAlert(request);
             }
             await store.state.WalletStore.unlocked.promise;
@@ -68,6 +75,7 @@ export default class BeetAPI {
                 result: response
             };
         } catch (e) {
+            console.error("BeetAPI.getAccount", e);
             return e;
         }
     }
@@ -78,6 +86,7 @@ export default class BeetAPI {
                 identity: response
             });
         } catch (e) {
+            console.error("BeetAPI.link", e);
             return {
                 id: request.id,
                 response: {
@@ -88,25 +97,99 @@ export default class BeetAPI {
     }
     static async [Actions.VOTE_FOR](request, vue) {
         try {
+            console.log("BeetAPI.voteFor", request);
             let response = await vue.requestVote(request.payload);
             return {
                 id: request.id,
                 result: response
             };
-        } catch (e) {
-            return e;
+        } catch (err) {
+            console.error("BeetAPI.voteFor", err);
+            return {
+                id: request.id,
+                result: {
+                    isError: true,
+                    error: "User rejected"
+                }
+            };
         }
     }
     static async [Actions.REQUEST_SIGNATURE](request, vue) {
         try {
+            console.log("BeetAPI.requestSignature", request);
             let response = await vue.requestTx(request.payload);
             return {
                 id: request.id,
                 result: response
             };
-        } catch (e) {
-
-            return e;
+        } catch (err) {
+            console.error("BeetAPI.requestSignature", err);
+            return {
+                id: request.id,
+                result: {
+                    isError: true,
+                    error: "User rejected"
+                }
+            };
         }
     }
+    static async [Actions.INJECTED_CALL](request, vue) {
+        try {
+            console.log("BeetAPI.injectedCall", request);
+            let response = await vue.requestTx(request.payload);
+            return {
+                id: request.id,
+                result: response
+            };
+        } catch (err) {
+            console.error("BeetAPI.injectedCall", err);
+            return {
+                id: request.id,
+                result: {
+                    isError: true,
+                    error: "User rejected"
+                }
+            };
+        }
+    }
+    static async [Actions.SIGN_MESSAGE](request, vue) {
+        try {
+            console.log("BeetAPI.signMessage", request);
+            let response = await vue.requestSignedMessage(request.payload);
+            return {
+                id: request.id,
+                result: response
+            };
+        } catch (err) {
+            console.error("BeetAPI.signMessage", err);
+            return {
+                id: request.id,
+                result: {
+                    isError: true,
+                    error: "User rejected"
+                }
+            };
+        }
+    }
+    static async [Actions.VERIFY_MESSAGE](request, vue) {
+        try {
+            console.log("BeetAPI.verifyMessage", request);
+            let response = await vue.verifyMessage(request.payload);
+            return {
+                id: request.id,
+                result: response
+            };
+        } catch (err) {
+            console.error("BeetAPI.verifyMessage", err);
+            return {
+                id: request.id,
+                result: {
+                    isError: true,
+                    error: "User rejected"
+                }
+            };
+        }
+    }
+
+
 }

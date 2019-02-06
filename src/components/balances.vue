@@ -2,7 +2,7 @@
     <div class="balances mt-3">
         <p class="mb-1 font-weight-bold small">{{ $t('balances_lbl') }}</p>
         <table class="table small table-striped table-sm">
-            <tbody>
+            <tbody v-if="balances != null">
                 <tr
                     v-for="balance in balances"
                     :key="balance.id"
@@ -10,67 +10,32 @@
                     <td class="text-left"><span class="small">{{ balance.prefix }}</span>{{ balance.asset_name }}</td>
                     <td class="text-right">{{ balance.balance }}</td>
                 </tr>
+                <tr v-if="balances.length == 0">
+                    <td class="text-left"><span class="small" />No balances</td>
+                    <td class="text-right">-</td>
+                </tr>
             </tbody>
         </table>
     </div>
 </template>
 <script>
-    import { Apis } from "bitsharesjs-ws";
+    import getBlockchain from "../lib/blockchains/blockchainFactory"
 
     export default {
         name: "Balances",
         i18nOptions: { namespaces: "common" },
         data() {
             return {
-                rawbalances: [],
-                balances: []
+                balances: null
             };
         },
         mounted() {},
         methods: {
-            getBalances: async function() {
-                let result = await Apis.instance()
-                    .db_api()
-                    .exec("get_full_accounts", [
-                        [this.$store.state.WalletStore.wallet.accountID],
-                        false
-                    ])
-                    .then(res => {
-                        this.rawbalances = res[0][1].balances;
-                        let neededassets = [];
-                        for (var i = 0; i < res[0][1].balances.length; i++) {
-                            neededassets.push(res[0][1].balances[i].asset_type);
-                        }
-                        return Apis.instance()
-                            .db_api()
-                            .exec("get_objects", [neededassets]);
-                    });
-                this.balances = [];
-                for (var i = 0; i < this.rawbalances.length; i++) {
-                    if (result[i].issuer == "1.2.0") {
-                        this.balances[i] = {
-                            asset_type: this.rawbalances[i].asset_type,
-                            asset_name: result[i].symbol,
-                            balance: this.rawbalances[i].balance,
-                            owner: result[i].issuer,
-                            prefix: "BIT"
-                        };
-                    } else {
-                        this.balances[i] = {
-                            asset_type: this.rawbalances[i].asset_type,
-                            asset_name: result[i].symbol,
-                            rawbalance: this.rawbalances[i].balance,
-                            balance: this.formatMoney(
-                                this.rawbalances[i].balance /
-                                    Math.pow(10, result[i].precision),
-                                result[i].precision
-                            ),
-                            owner: result[i].issuer,
-                            prefix: ""
-                        };
-                    }
-                }
-                return;
+            getBalances: function() {
+                let blockchain = getBlockchain(this.$store.state.WalletStore.wallet.chain);
+                blockchain.getBalances(this.$store.state.WalletStore.wallet.accountName).then((balances) => {
+                    this.balances = balances;
+                });
             },
             formatMoney: function(n, decimals, decimal_sep, thousands_sep) {
                 var c = isNaN(decimals) ? 2 : Math.abs(decimals),
