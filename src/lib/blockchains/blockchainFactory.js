@@ -7,6 +7,8 @@ import Steem from "./Steem"
 import store from "../../store";
 import WhaleShares from "./WhaleShares";
 import SmokeNetwork from "./SmokeNetwork";
+import EOSmainnet from "./EOSmainnet";
+import TLOS from "./TLOS";
 
 export default function getBlockchainAPI(chain = null) {
     if (chain == null) {
@@ -33,5 +35,15 @@ export default function getBlockchainAPI(chain = null) {
             apiCache.SMOKE = new SmokeNetwork(blockchains[chain]);
         }
         return apiCache.SMOKE;
+    } else if (chain == "EOS") {
+        if (!apiCache.EOS) {
+            apiCache.EOS = new EOSmainnet(blockchains[chain]);
+        }
+        return apiCache.EOS;
+    } else if (chain == "TLOS") {
+        if (!apiCache.TLOS) {
+            apiCache.TLOS = new TLOS(blockchains[chain]);
+        }
+        return apiCache.TLOS;
     }
 }
