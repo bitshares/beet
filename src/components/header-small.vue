@@ -18,6 +18,7 @@
 
 <script>
     import LangSelect from "./lang-select";
+
     export default {
         name: "HeaderSmall",
         i18nOptions: { namespaces: "common" },

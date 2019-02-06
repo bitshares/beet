@@ -10,12 +10,19 @@
         "title": "Transaction Request",
         "request": "The page/app {{- origin}} has submitted the following transaction.",
         "request_cta": "Do you want to execute it?",
-        "accept_btn": "Sign &amp; Broadcast",
+        "accept_btn": "Sign & Broadcast",
         "reject_btn": "Ignore"
     },
     "vote": {
         "title": "Vote Request",
         "request": "The page/app {{- origin}} wants you to vote for the following {{entity}}",
+        "request_cta": "",
+        "accept_btn": "Approve",
+        "reject_btn": "Ignore"
+    },
+    "message": {
+        "title": "Sign Message Request",
+        "request": "The page/app {{- origin}} wants you to sign the following text",
         "request_cta": "",
         "accept_btn": "Approve",
         "reject_btn": "Ignore"

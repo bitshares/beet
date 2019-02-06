@@ -30,8 +30,6 @@
     import { locales } from "../config/i18n.js";
     import Multiselect from 'vue-multiselect'
     import i18next from 'i18next';
-    
-
 
     export default {
         name: "LangSelect",

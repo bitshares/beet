@@ -4,7 +4,6 @@ import {
 } from '../../config/i18n.js'
 const LOAD_SETTINGS = 'LOAD_SETTINGS';
 
-
 const mutations = {
     [LOAD_SETTINGS](state, settings) {
         Vue.set(state, 'settings', settings);
@@ -36,6 +35,7 @@ const actions = {
         commit
     }, payload) {
         return new Promise((resolve, reject) => {
+            console.log("SettingsStore.setNode", payload);
             try {
                 let settings = localStorage.getItem("settings");
                 if (settings && settings.length > 0) {
@@ -43,12 +43,17 @@ const actions = {
                 } else {
                     settings = initialState.settings;
                 }
-                settings.selected_node = payload.node;
+                // backwards compatibility
+                if (typeof settings.selected_node === "string")
+                {
+                    settings.selected_node = {}
+                }
+                settings.selected_node[payload.chain] = payload.node;
                 localStorage.setItem("settings", JSON.stringify(settings));
                 commit(LOAD_SETTINGS, settings);
                 resolve();
             } catch (e) {
-                reject();
+                reject(e);
             }
         });
     },
@@ -80,7 +85,7 @@ const getters = {};
 const initialState = {
     'settings': {
         'locale': defaultLocale,
-        'selected_node': 'wss://bts-seoul.clockwork.gr'
+        'selected_node': {}
     }
 };
 

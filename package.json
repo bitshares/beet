@@ -1,7 +1,7 @@
 {
   "name": "beet",
   "productName": "beet",
-  "version": "0.3.4",
+  "version": "0.4.2",
   "description": "Beet is a stand-alone key-manager and signing app for BitShares.",
   "main": "src/index.js",
   "scripts": {
@@ -55,6 +55,8 @@
   },
   "dependencies": {
     "@panter/vue-i18next": "^0.15.0",
+    "@smokenetwork/smoke-js": "^0.1.2",
+    "@whaleshares/wlsjs": "^0.1.1",
     "bitsharesjs": "^1.8.3",
     "bootstrap-vue": "^2.0.0-rc.11",
     "chalk": "^2.4.2",
@@ -68,6 +70,7 @@
     "i18next-node-fs-backend": "^2.1.1",
     "otpauth": "^3.2.2",
     "readline": "^1.3.0",
+    "steem": "^0.7.4",
     "typeface-rajdhani": "0.0.54",
     "typeface-roboto": "0.0.54",
     "uuid": "^3.3.2",

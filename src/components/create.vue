@@ -73,7 +73,7 @@
             <input
                 id="inputActive"
                 v-model="activepk"
-                type="text"
+                type="password"
                 class="form-control mb-3 small"
                 :placeholder="$t('active_authority_placeholder')"
                 required=""
@@ -83,7 +83,7 @@
             <input
                 id="inputMemo"
                 v-model="memopk"
-                type="text"
+                type="password"
                 class="form-control mb-3 small"
                 :placeholder="$t('memo_authority_placeholder')"
                 required=""
@@ -101,7 +101,7 @@
                 <input
                     id="inputOwner"
                     v-model="ownerpk"
-                    type="text"
+                    type="password"
                     class="form-control mb-3 small"
                     :placeholder="$t('owner_authority_placeholder')"
                     required=""
@@ -180,10 +180,10 @@
 </template>
 
 <script>
-import { PrivateKey } from "bitsharesjs";
-import { Apis } from "bitsharesjs-ws";
-import { chainList } from "../config/config.js";
+import { blockchains } from "../config/config.js";
 import RendererLogger from "../lib/RendererLogger";
+
+import getBlockchain from "../lib/blockchains/blockchainFactory"
 
 const logger = new RendererLogger();
 
@@ -205,7 +205,7 @@ export default {
       includeOwner: 0,
       errorMsg: "",
       selectedChain: 0,
-      chainList: chainList
+      chainList: Object.values(blockchains)
     };
   },
   methods: {
@@ -243,55 +243,55 @@ export default {
         this.$refs.errorModal.show();
         return;
       }
+
+      let blockchain = getBlockchain(this.selectedChain);
+
       try {
-        apkey = PrivateKey.fromWif(this.activepk)
-          .toPublicKey()
-          .toString(this.selectedChain);
-        mpkey = PrivateKey.fromWif(this.memopk)
-          .toPublicKey()
-          .toString(this.selectedChain);
+        apkey = blockchain.getPublicKey(this.activepk);
+        mpkey = blockchain.getPublicKey(this.memopk);
         if (this.includeOwner == 1) {
-          opkey = PrivateKey.fromWif(this.ownerpk)
-            .toPublicKey()
-            .toString(this.selectedChain);
+          opkey =blockchain.getPublicKey(this.ownerpk);
         }
       } catch (e) {
+        console.error(e);
         this.errorMsg = this.$t("invalid_key_error");
         this.$refs.errorModal.show();
         return;
       }
       this.$refs.loaderAnimModal.show();
-      let verified = await Apis.instance(
-        this.$store.state.SettingsStore.settings.selected_node,
-        true
-      ).init_promise.then(() => {
-        return Apis.instance()
-          .db_api()
-          .exec("get_full_accounts", [[this.accountname], false])
-          .then(res => {
-            // TODO: Better verification
-            if (
-              res[0][1].account.active.key_auths[0][0] == apkey &&
-              (res[0][1].account.owner.key_auths[0][0] == opkey ||
-                this.includeOwner == 0) &&
-              res[0][1].account.options.memo_key == mpkey
-            ) {
-              this.$refs.loaderAnimModal.hide();
-              return res[0][1].account.id;
-            } else {
-              this.$refs.loaderAnimModal.hide();
-              this.$refs.errorModal.show();
-              this.errorMsg = this.$t("unverified_account_error");
-              return null;
-            }
-          });
+
+      blockchain.getAccount(this.accountname).then((account) => {
+        console.log(account);
+        let active_check = false;
+        account.active.public_keys.forEach((key) => {
+          if (key[0] == apkey) {
+            active_check = true;
+          }
+        });
+        let owner_check = !this.includeOwner;
+        account.owner.public_keys.forEach((key) => {
+          if (key[0] == opkey) {
+              owner_check = true;
+          }
+        });
+        let memo_check = account.memo.public_key == mpkey;
+        if (active_check && owner_check && memo_check) {
+          this.$refs.loaderAnimModal.hide();
+          this.accountID = account.id;
+          this.step = 3;
+        } else {
+          this.$refs.loaderAnimModal.hide();
+          this.$refs.errorModal.show();
+          this.errorMsg = this.$t("unverified_account_error");
+          this.accountID = "";
+        }
+      }).catch((err) => {
+          console.log(err);
+          this.$refs.loaderAnimModal.hide();
+          this.$refs.errorModal.show();
+          this.errorMsg = this.$t("unverified_account_error");
+          this.accountID = "";
       });
-      if (verified != null) {
-        this.accountID = verified;
-        this.step = 3;
-      } else {
-        return;
-      }
     },
     verifyAndCreate: async function() {
       if (this.password != this.confirmpassword || this.password == "") {
@@ -316,8 +316,9 @@ export default {
               memo: this.memopk
             }
           }
+        }).then(() => {
+            this.$router.replace("/dashboard");
         });
-        this.$router.replace("/dashboard");
       }
     }
   }
