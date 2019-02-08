@@ -310,7 +310,19 @@
             verifyMessage: function (payload) {
                 console.log("verify", payload);
                 return new Promise((resolve, reject) => {
-                    let blockchain = getBlockchain(payload.params.payload[2].substring(0,3));
+                    let payload_dict = {};
+                    payload_dict[payload.params.payload[0]] = [payload_dict[payload.params.payload[1]], payload_dict[payload.params.payload[2]]];
+                    let i;
+                    for (i = 3; i < payload.params.payload.length-1; i++) {
+                        payload_dict[payload.params.payload[i]] = payload.params.payload[i+1];
+                    }
+                    let messageChain = null;
+                    if (!!payload_dict.chain) {
+                        messageChain = payload_dict.chain;
+                    } else {
+                        messageChain = payload.params.payload[2].substr(0,3);
+                    }
+                    let blockchain = getBlockchain(messageChain);
                     blockchain.verifyMessage(
                         payload.params
                     ).then((result) => {

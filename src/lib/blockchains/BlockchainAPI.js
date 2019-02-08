@@ -56,7 +56,7 @@ export default class BlockchainAPI {
     signMessage(key, accountName, randomString) {
         return new Promise((resolve,reject) => {
             // do as a list, to preserve order
-            let message = JSON.stringify([
+            let message = [
                 "from",
                 accountName,
                 this.getPublicKey(key),
@@ -64,7 +64,12 @@ export default class BlockchainAPI {
                 new Date().toUTCString(),
                 "text",
                 randomString
-            ]);
+            ];
+            if (this._config.short !== message[2].substring(0, 3)) {
+                message.push("chain");
+                message.push(this._config.short);
+            }
+            message = JSON.stringify(message);
             try {
 
                 resolve({
