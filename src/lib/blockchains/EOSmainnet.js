@@ -120,7 +120,7 @@ export default class EOS extends BlockchainAPI {
 
     _verifyString(signature, publicKey, string) {
         console.log(ecc.Signature);
-        return ecc.Signature.fromStringOrThrow(signature).verify(
+        return ecc.Signature.fromHex(signature).verify(
             string,
             ecc.PublicKey.fromString(publicKey)
         );
