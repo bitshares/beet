@@ -25,4 +25,8 @@ export default class SmokeNetwork extends SteemBasedChain {
         return smokejs;
     }
 
+    _getCoreToken() {
+        return "SMK";
+    }
+
 }

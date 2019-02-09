@@ -25,4 +25,8 @@ export default class WhaleShares extends SteemBasedChain {
         return wlsjs;
     }
 
+    _getCoreToken() {
+        return "SMK";
+    }
+
 }
