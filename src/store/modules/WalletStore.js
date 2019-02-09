@@ -51,19 +51,36 @@ const mutations = {
 
 const actions = {
     getWallet({
-        commit 
+        dispatch,
+        commit,
+        state
     }, payload) {
         return new Promise((resolve, reject) => {
-            BeetDB.wallets_encrypted.get({id: payload.wallet_id}).then((wallet)=> {
-                try {                    
-                    let bytes  = CryptoJS.AES.decrypt(wallet.data, payload.wallet_pass);
+            BeetDB.wallets_encrypted.get({
+                id: payload.wallet_id
+            }).then((wallet) => {
+                try {
+                    let bytes = CryptoJS.AES.decrypt(wallet.data, payload.wallet_pass);
                     let decrypted_wallet = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-                    commit(GET_WALLET, decrypted_wallet);
+                    let public_wallets = state.walletlist.filter((x) => {
+                        return x.id == payload.wallet_id
+                    });
+                    commit(GET_WALLET, public_wallets[0]);
+                    let accountlist;
+                    if (Array.isArray(decrypted_wallet)) {
+                        accountlist = decrypted_wallet;
+                    } else {
+                        accountlist = [];
+                        accountlist.push(decrypted_wallet);
+                    }
+                    dispatch('AccountStore/loadAccounts', accountlist, {
+                        root: true
+                    });
                     resolve();
-                } catch(e) {
-                    throw(e);
+                } catch (e) {
+                    throw (e);
                 }
-            }).catch((e)=>{
+            }).catch((e) => {
                 reject(e);
             });
         });
@@ -74,40 +91,74 @@ const actions = {
         commit(CONFIRM_UNLOCK);
     },
     saveWallet({
-        commit
+        commit,
+        dispatch
     }, payload) {
         return new Promise((resolve, reject) => {
-            
-                //let wallets = localStorage.getItem("wallets");
-                let walletid = uuid();
-                let newwallet = {
-                    id: walletid,
-                    name: payload.walletname,
-                    chain: payload.walletdata.chain,
-                    accounts: [payload.walletdata.accountID]
-                };
-                BeetDB.wallets_public.put(newwallet).then(()=> {
-                    BeetDB.wallets_public.toArray().then((wallets) => {
-                        let unlock;
-                        let unlocked = new Promise(function (resolve) {
-                            unlock = resolve
-                        });
-                        commit(SET_WALLET_UNLOCKED, {
-                            promise: unlocked,
-                            resolve: unlock
-                        });
-                        commit(SET_WALLET_STATUS, true);
-                        commit(SET_WALLETLIST, wallets);
-                        let walletdata=CryptoJS.AES.encrypt(JSON.stringify(payload.walletdata), payload.password).toString();
-                        BeetDB.wallets_encrypted.put({id: walletid, data: walletdata});                        
-                        commit(GET_WALLET, payload.walletdata);
-                        resolve();
-                    }).catch((e) => {
-                        throw(e);
+
+            //let wallets = localStorage.getItem("wallets");
+            let walletid = uuid();
+            let newwallet = {
+                id: walletid,
+                name: payload.walletname,
+                chain: payload.walletdata.chain,
+                accounts: [payload.walletdata.accountID]
+            };
+            BeetDB.wallets_public.put(newwallet).then(() => {
+                BeetDB.wallets_public.toArray().then((wallets) => {
+                    let unlock;
+                    let unlocked = new Promise(function (resolve) {
+                        unlock = resolve
                     });
+                    commit(SET_WALLET_UNLOCKED, {
+                        promise: unlocked,
+                        resolve: unlock
+                    });
+                    commit(SET_WALLET_STATUS, true);
+                    commit(SET_WALLETLIST, wallets);
+                    let walletdata = CryptoJS.AES.encrypt(JSON.stringify(payload.walletdata), payload.password).toString();
+                    BeetDB.wallets_encrypted.put({
+                        id: walletid,
+                        data: walletdata
+                    });
+                    commit(GET_WALLET, newwallet);
+                    dispatch('AccountStore/loadAccounts', walletdata, {
+                        root: true
+                    });
+                    resolve();
                 }).catch((e) => {
-                    reject(e);
+                    throw (e);
                 });
+            }).catch((e) => {
+                reject(e);
+            });
+        });
+    },
+    saveAccountToWallet({
+        commit,
+        state
+    }, payload) {
+        return new Promise((resolve, reject) => {
+            let walletdata = state.wallet;
+            walletdata.push(payload.account);
+            let encwalletdata = CryptoJS.AES.encrypt(JSON.stringify(walletdata), payload.password).toString();
+            let updatedWallet = state.wallet;
+            updatedWallet.accounts.push(payload.account.accountID);
+
+            BeetDB.wallets_encrypted.update(walletdata.wallet_id, {
+                data: encwalletdata
+            }).then(() => {
+                BeetDB.wallets_public.update(state.wallet.wallet_id, {
+                    accounts: updatedWallet.accounts
+                }).then(() => {
+                    commit(GET_WALLET, updatedWallet);
+                    resolve('Account saved');
+                }).catch(() => {
+                    reject('Could not update public wallet data');
+                });
+            }).catch(() => {
+                reject('Could not save wallet data');
+            });
         });
     },
     loadWallets({

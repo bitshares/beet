@@ -29,13 +29,37 @@
                 balances: null
             };
         },
+        computed:  {
+            selectedAccount() {
+                return this.$store.state.AccountStore.accountlist[this.$store.state.AccountStore.selectedIndex];
+            },
+            selectedChain() {
+                return this.selectedAccount.chain;
+            },
+            accountName() {
+                return this.selectedAccount.accountName;
+            },
+            accountID() {
+                return this.selectedAccount.accountID;
+            },
+            accountlist() {
+                return this.$store.state.AccountStore.accountlist
+            }
+        },
+        watch: {
+            selectedAccount: async function(newAcc,oldAcc) {
+                if (newAcc.chain!=oldAcc.chain || newAcc.accountID!=oldAcc.accountID) {
+                    await this.getBalances();
+                    EventBus.$emit('balances', 'loaded');
+                }
+            }
+        },
         mounted() {},
         methods: {
-            getBalances: function() {
-                let blockchain = getBlockchain(this.$store.state.WalletStore.wallet.chain);
-                blockchain.getBalances(this.$store.state.WalletStore.wallet.accountName).then((balances) => {
-                    this.balances = balances;
-                });
+            getBalances: async function() {
+                let blockchain = getBlockchain(this.selectedChain);
+                let balances = await blockchain.getBalances(this.accountName);
+                this.balances = balances;
             },
             formatMoney: function(n, decimals, decimal_sep, thousands_sep) {
                 var c = isNaN(decimals) ? 2 : Math.abs(decimals),

@@ -13,7 +13,7 @@ import TLOS from "./TLOS";
 export default function getBlockchainAPI(chain = null) {
     if (chain == null) {
         // ask store
-        chain = store.state.WalletStore.wallet.chain
+        chain = store.state.AccountStore.accountlist[store.state.AccountStore.selectedIndex].chain
     }
     if (chain == "BTS") {
         if (!apiCache.BTS) {

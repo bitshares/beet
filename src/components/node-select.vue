@@ -38,22 +38,43 @@ export default {
   i18nOptions: { namespaces: "common" },
   data() {
     return {
-      blockchain: getBlockchain(this.$store.state.WalletStore.wallet.chain),
-      selectedNode: this.$store.state.SettingsStore.settings.selected_node[this.$store.state.WalletStore.wallet.chain],
       nodes: [],
       isConnected: false,
       api: null
     };
   },
+  computed: {
+      blockchain() {
+        return getBlockchain(this.selectedAccount.chain);
+      },
+      selectedNode() {
+        return this.$store.state.SettingsStore.settings.selected_node[this.selectedAccount.chain];
+      },
+      selectedAccount() {
+          return this.$store.state.AccountStore.accountlist[this.$store.state.AccountStore.selectedIndex];
+      },
+      selectedChain() {
+          return this.selectedAccount.chain;
+      },
+      accountName() {
+          return this.selectedAccount.accountName;
+      },
+      accountID() {
+          return this.selectedAccount.accountID;
+      },
+      accountlist() {
+          return this.$store.state.AccountStore.accountlist
+      }
+  },
   watch: {
     selectedNode: function(newVal, oldVal) {
       if (!!oldVal && oldVal !== newVal) {
           // this means user has actively changed the value
-          this.blockchain.connect(this.selectedNode).then(() => {
+          this.blockchain.connect(newVal).then(() => {
               this._updateConnectionStatus();
               this.$store.dispatch("SettingsStore/setNode", {
-                  chain: this.$store.state.WalletStore.wallet.chain,
-                  node: this.selectedNode
+                  chain: this.selectedChain,
+                  node: this.newVal
               });
           }).catch((err) => {
               logger.error(err);

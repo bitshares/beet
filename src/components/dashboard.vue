@@ -34,11 +34,24 @@
             };
         },
         computed: {
+            selectedAccount() {
+                return this.$store.state.AccountStore.accountlist[this.$store.state.AccountStore.selectedIndex];
+            },
             accountName() {
-                return this.$store.state.WalletStore.wallet.accountName;
+                return this.selectedAccount.accountName;
             },
             accountID() {
-                return this.$store.state.WalletStore.wallet.accountID;
+                return this.selectedAccount.accountID;
+            },
+            accountlist() {
+                return this.$store.state.AccountStore.accountlist
+            }
+        },
+        watch: {
+            selectedAccount: async function(newAcc,oldAcc) {
+                if (newAcc.chain!=oldAcc.chain || newAcc.accountID!=oldAcc.accountID) {                    
+                    EventBus.$emit('popup', 'load-start');
+                }
             }
         },
         mounted() {
