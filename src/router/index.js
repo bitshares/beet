@@ -4,6 +4,7 @@ import HeaderSmall from "../components/header-small";
 import Start from "../components/start";
 import Create from "../components/create";
 import Dashboard from "../components/dashboard";
+import AddAccount from "../components/add-account";
 
 const router = new VueRouter({
   routes: [{
@@ -17,6 +18,13 @@ const router = new VueRouter({
       path: '/create',
       components: {
         default: Create,
+        header: HeaderSmall
+      }
+    },
+    {
+      path: '/add-account',
+      components: {
+        default: AddAccount,
         header: HeaderSmall
       }
     },

@@ -89,7 +89,10 @@ export default {
     this.nodes = this.blockchain.getNodes();
     this.blockchain.connect(this.selectedNode).then((connectedNode) => {
       if (!this.selectedNode) {
-        this.selectedNode = connectedNode;
+       this.$store.dispatch("SettingsStore/setNode", {
+                  chain: this.selectedChain,
+                  node: connectedNode
+              });
       }
       this._updateConnectionStatus();
       this.$emit("first-connect");

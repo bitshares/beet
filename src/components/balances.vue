@@ -20,6 +20,7 @@
 </template>
 <script>
     import getBlockchain from "../lib/blockchains/blockchainFactory"
+    import { EventBus } from '../lib/event-bus.js';
 
     export default {
         name: "Balances",

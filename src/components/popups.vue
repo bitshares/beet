@@ -175,12 +175,21 @@
                 alerts: [],
                 api: null,
                 incoming: {},
-                specifics: ""
+                specifics: "",
+                signingAccount: {}
             };
         },
         watch: {
             $route(to, from) {
                 this.alerts = [];
+            },
+            incoming(to, from) {
+                if (to!={}) {
+                    let signing=this.$store.state.AccountStore.accountlist.filter( x => { return (x.accountID==this.incoming.account_id && x.chain==this.incoming.chain);})
+                    this.signingAccount=signing[0];
+                }else{
+                    this.signingAccount={};
+                }
             }
         },
         created() {
@@ -194,12 +203,7 @@
                         break;
                 }
             });
-        },
-        watch:{
-            $route (to, from){
-                this.alerts = [];
-            }
-        },      
+        },  
         methods: {
             link: async function () {
                 await this.$refs.linkReqModal.show();
@@ -252,7 +256,8 @@
                 });
                 this.incoming = request;
                 this.incoming.action = "vote";
-                let blockchain = getBlockchain(this.$store.state.WalletStore.wallet.chain);
+                //let blockchain = getBlockchain(this.$store.state.WalletStore.wallet.chain);
+                let blockchain = getBlockchain(this.incoming.chain);
                 let mappedData = await blockchain.mapOperationData(this.incoming);
                 this.specifics = mappedData.description;
                 this.incoming.vote_id = mappedData.vote_id;
@@ -346,10 +351,10 @@
             acceptTx: async function () {
                 this.$refs.loaderAnimModal.show();
                 this.$refs.transactionReqModal.hide();
-                let blockchain = getBlockchain(this.$store.state.WalletStore.wallet.chain);
+                let blockchain = getBlockchain(this.incoming.chain);
                 let transaction = await blockchain.sign(
                     this.incoming.params,
-                    this.$store.state.WalletStore.wallet.keys.active
+                    this.signingAccount.keys.active
                 );
                 let id = await blockchain.broadcast(
                     transaction
@@ -364,11 +369,11 @@
             acceptGeneric: async function () {
                 // doesnt disappear afterwards, huh?
                 //this.$refs.loaderAnimModal.show();
-                let blockchain = getBlockchain(this.$store.state.WalletStore.wallet.chain);
+                let blockchain = getBlockchain(this.incoming.chain);
                 if (this.incoming.method == "signMessage") {
                     let signedMessage = await blockchain.signMessage(
-                        this.$store.state.WalletStore.wallet.keys.active,
-                        this.$store.state.WalletStore.wallet.accountName,
+                        this.signingAccount.keys.active,
+                        this.signingAccount.accountName,
                         this.incoming.params
                     );
                     this.incoming.acceptgen(signedMessage);
@@ -376,13 +381,13 @@
                     let operation = await blockchain.getOperation(
                         this.incoming,
                         {
-                            id: this.$store.state.WalletStore.wallet.accountID,
-                            name: this.$store.state.WalletStore.wallet.accountName
+                            id: this.signingAccount.accountID,
+                            name: this.signingAccount.accountName
                         }
                     );
                     let transaction = await blockchain.sign(
                         operation,
-                        this.$store.state.WalletStore.wallet.keys.active
+                        this.signingAccount.keys.active
                     );
                     let id = await blockchain.broadcast(
                         transaction

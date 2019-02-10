@@ -136,19 +136,29 @@ const actions = {
     },
     saveAccountToWallet({
         commit,
-        state
+        state,
+        rootState
     }, payload) {
         return new Promise((resolve, reject) => {
-            let walletdata = state.wallet;
-            walletdata.push(payload.account);
-            let encwalletdata = CryptoJS.AES.encrypt(JSON.stringify(walletdata), payload.password).toString();
+            let walletdata = rootState.AccountStore.accountlist;
+            let newwalletdata=[];
+            // Backwards compatibility
+            if (Array.isArray(walletdata)) {
+                newwalletdata=walletdata;
+                newwalletdata.push(payload.account);
+            } else {
+                newwalletdata.push(walletdata);
+                newwalletdata.push(payload.account);
+            }
+            
+            let encwalletdata = CryptoJS.AES.encrypt(JSON.stringify(newwalletdata), payload.password).toString();
             let updatedWallet = state.wallet;
             updatedWallet.accounts.push(payload.account.accountID);
-
-            BeetDB.wallets_encrypted.update(walletdata.wallet_id, {
+            console.log(updatedWallet);
+            BeetDB.wallets_encrypted.update(updatedWallet.id, {
                 data: encwalletdata
             }).then(() => {
-                BeetDB.wallets_public.update(state.wallet.wallet_id, {
+                BeetDB.wallets_public.update(updatedWallet.id, {
                     accounts: updatedWallet.accounts
                 }).then(() => {
                     commit(GET_WALLET, updatedWallet);
@@ -156,8 +166,8 @@ const actions = {
                 }).catch(() => {
                     reject('Could not update public wallet data');
                 });
-            }).catch(() => {
-                reject('Could not save wallet data');
+            }).catch((e) => {
+                reject('Could not save wallet data: '+e);
             });
         });
     },

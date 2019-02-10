@@ -33,7 +33,7 @@
                     v-for="wallet in walletlist"
                     :key="wallet.id"
                     :value="wallet.id"
-                >{{ wallet.name }} ({{ wallet.chain }})</option>
+                >{{ wallet.name }}</option>
             </select><br/>
             <span
                     v-if="hasWallet"

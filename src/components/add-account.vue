@@ -5,17 +5,7 @@
             id="step1"
         >
             <h4 class="h4 mt-3 font-weight-bold">{{ $t('step_counter',{ 'step_no' : 1}) }}</h4>
-            <p class="my-3 font-weight-bold">{{ $t('friendly_cta') }}</p>
-            <input
-                id="inputWallet"
-                v-model="walletname"
-                type="text"
-                class="form-control mb-3"
-                :class="s1c"
-                :placeholder="$t('walletname_placeholder')"
-                required=""
-                @focus="s1c=''"
-            >
+           
             <p class="my-3 font-weight-bold">{{ $t('chain_cta') }}</p>
             <select                
                 id="chain-select"
@@ -129,7 +119,7 @@
             id="step3"
         >
             <h4 class="h4 mt-3 font-weight-bold">{{ $t('step_counter',{ 'step_no' : 3}) }}</h4>
-            <p class="mb-2 font-weight-bold">{{ $t('password_cta') }}</p>
+            <p class="mb-2 font-weight-bold">{{ $t('password_req_cta') }}</p>
             <input
                 id="inputPass"
                 v-model="password"
@@ -138,15 +128,7 @@
                 :placeholder="$t('password_placeholder')"
                 required=""
             >
-            <p class="mb-2 font-weight-bold">{{ $t('confirm_cta') }}</p>
-            <input
-                id="inputConfirmPass"
-                v-model="confirmpassword"
-                type="password"
-                class="form-control mb-3"
-                :placeholder="$t('confirm_placeholder')"
-                required=""
-            >
+          
             <button
                 class="btn btn-lg btn-primary btn-block"
                 type="submit"
@@ -188,18 +170,16 @@ import getBlockchain from "../lib/blockchains/blockchainFactory"
 const logger = new RendererLogger();
 
 export default {
-  name: "Create",
+  name: "AddAccount",
   i18nOptions: { namespaces: "common" },
   data() {
     return {
-      walletname: "",
       accountname: "",
       accountID: "",
       activepk: "",
       ownerpk: "",
       memopk: "",
       password: "",
-      confirmpassword: "",
       step: 1,
       s1c: "",
       includeOwner: 0,
@@ -213,26 +193,9 @@ export default {
       this.step = 1;
     },
     step2: function() {
-      if (this.walletname.trim() == "") {
-        this.errorMsg = this.$t("empty_wallet_error");
-        this.$refs.errorModal.show();
-        this.s1c = "is-invalid";
-      } else {
-        let wallets = JSON.parse(localStorage.getItem("wallets"));
-
-        if (
-          wallets &&
-          wallets.filter(wallet => wallet.name === this.walletname.trim())
-            .length > 0
-        ) {
-          this.errorMsg = this.$t("duplicate_wallet_error");
-          this.$refs.errorModal.show();
-          this.s1c = "is-invalid";
-        } else {
-          this.walletname = this.walletname.trim();
+      
           this.step = 2;
-        }
-      }
+      
     },
     step3: async function() {
       let apkey, mpkey, opkey;
@@ -294,19 +257,18 @@ export default {
       });
     },
     verifyAndCreate: async function() {
-      if (this.password != this.confirmpassword || this.password == "") {
+      if (this.password == "") {
         this.$refs.errorModal.show();
-        this.errorMsg = this.$t("confirm_pass_error");
+        this.errorMsg = this.$t("empty_pass_error");
         return;
       }
 
       this.$refs.loaderAnimModal.show();
 
       if (this.accountID !== null) {
-        this.$store.dispatch("WalletStore/saveWallet", {
-          walletname: this.walletname,
+        this.$store.dispatch("AccountStore/addAccount", {
           password: this.password,
-          walletdata: {
+          account: {
             accountName: this.accountname,
             accountID: this.accountID,
             chain: this.selectedChain,

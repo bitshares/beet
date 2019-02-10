@@ -4,6 +4,14 @@
             <div class="row mb-2">
                 <div class="col-12 text-center account py-2">
                     {{ accountName }} ({{ accountID }})
+                    <AccountSelect v-model="selectedAccount"></AccountSelect>
+                     <router-link
+                
+                to="/add-account"
+                tag="button"
+                class="btn btn-lg btn-primary btn-block"
+                replace
+            >+</router-link>
                 </div>
             </div>
             <Balances ref="balancetable" />
@@ -18,13 +26,14 @@
 
 <script>
     import NodeSelect from "./node-select";
+    import AccountSelect from "./account-select";
     import Balances from "./balances";
     import { EventBus } from '../lib/event-bus.js';
 
     export default {
         name: "Dashboard",
         i18nOptions: { namespaces: ["common"] },
-        components: { NodeSelect, Balances },
+        components: { NodeSelect, Balances, AccountSelect },
         data() {
             return {
                 api: null,
@@ -34,8 +43,13 @@
             };
         },
         computed: {
-            selectedAccount() {
+            selectedAccount: {
+                get: function() {
                 return this.$store.state.AccountStore.accountlist[this.$store.state.AccountStore.selectedIndex];
+                },
+                set: function(newValue) {
+                    this.$store.dispatch("AccountStore/selectAccount",newValue);
+                }
             },
             accountName() {
                 return this.selectedAccount.accountName;
@@ -54,10 +68,20 @@
                 }
             }
         },
+        created() {
+            
+            EventBus.$on('balances', what => {
+                switch (what) {
+                    case 'loaded':
+                        EventBus.$emit('popup', 'load-end');                   
+                        break;
+                }
+            });
+        },
         mounted() {
             EventBus.$emit('popup', 'load-start');
             //this.$refs.loaderAnimModal.show();
-        },
+        },        
         methods: {
             getBalances: async function() {
                 await this.$refs.balancetable.getBalances();
