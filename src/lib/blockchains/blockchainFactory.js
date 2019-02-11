@@ -22,7 +22,7 @@ export default function getBlockchainAPI(chain = null) {
         return apiCache.BTS;
     } else if (chain == "STEEM" || chain == "STM") {
         if (!apiCache.STEEM) {
-            apiCache.STEEM = new Steem(blockchains[chain]);
+            apiCache.STEEM = new Steem(blockchains["STEEM"]);
         }
         return apiCache.STEEM;
     } else if (chain == "WLS") {
@@ -32,7 +32,7 @@ export default function getBlockchainAPI(chain = null) {
         return apiCache.WLS;
     } else if (chain == "SMOKE" || chain == "SMK") {
         if (!apiCache.SMOKE) {
-            apiCache.SMOKE = new SmokeNetwork(blockchains[chain]);
+            apiCache.SMOKE = new SmokeNetwork(blockchains["SMOKE"]);
         }
         return apiCache.SMOKE;
     } else if (chain == "EOS") {

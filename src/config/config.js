@@ -353,7 +353,7 @@ export const blockchains = {
         chainId: '0',
         nodeList: [
             {
-                url: "api.steemit.com",
+                url: "https://api.steemit.com/",
                 location: "Unknown",
                 region: "Unknown",
                 country: "Unknown",
@@ -383,7 +383,7 @@ export const blockchains = {
         chainID: '1ce08345e61cd3bf91673a47fc507e7ed01550dab841fd9cdb0ab66ef576aaf0',
         nodeList: [
             {
-                url: 'rpc.smoke.io',
+                url: 'https://rpc.smoke.io/',
                 location: 'Unknown',
                 region: 'Unkown',
                 country: 'Unkown',
@@ -391,7 +391,7 @@ export const blockchains = {
                 contact: 'hello@smoke.network',
             },
             {
-                url: 'pubrpc.smoke.io',
+                url: 'http://pubrpc.smoke.io/',
                 location: 'Unknown',
                 region: 'Unkown',
                 country: 'Unkown',

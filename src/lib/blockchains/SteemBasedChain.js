@@ -18,30 +18,39 @@ export default class SteemBasedChain extends BlockchainAPI {
         throw "Needs implementation";
     }
 
+    _getCoreToken() {
+        throw "Needs implementation";
+    }
+
     isConnected() {
         return this._isConnected;
     }
 
     connect(nodeToConnect, onClose = null) {
         return new Promise((resolve, reject) => {
+            if (nodeToConnect == null) {
+                nodeToConnect = this.getNodes()[0].url;
+            }
             // steem library handles connection internally, just set node
-            //this._getLibrary().api.setOptions({ url: nodeToConnect });
+            this._getLibrary().api.setOptions({ url: nodeToConnect });
             resolve();
         });
     }
 
     getAccount(accountname) {
         return new Promise((resolve, reject) => {
-            this._getLibrary().api.getAccounts([accountname], function(err, result) {
-                if (result.length == 0) {
-                    reject("Account " + accountname + " not found!");
-                    return;
-                }
-                result[0].active.public_keys = result[0].active.key_auths;
-                result[0].owner.public_keys = result[0].owner.key_auths;
-                result[0].memo = {public_key: result[0].memo_key};
-                resolve(result[0]);
-            });
+            this._ensureAPI().then(() => {
+                this._getLibrary().api.getAccounts([accountname], function(err, result) {
+                    if (result.length == 0) {
+                        reject("Account " + accountname + " not found!");
+                        return;
+                    }
+                    result[0].active.public_keys = result[0].active.key_auths;
+                    result[0].owner.public_keys = result[0].owner.key_auths;
+                    result[0].memo = {public_key: result[0].memo_key};
+                    resolve(result[0]);
+                });
+            }).catch(reject);
         });
     }
 
@@ -51,45 +60,47 @@ export default class SteemBasedChain extends BlockchainAPI {
 
     getBalances(accountName) {
         return new Promise((resolve, reject) => {
-            this.getAccount(accountName).then((account) => {
-                let balances = [];
-                balances.push({
-                    asset_type: "UIA",
-                    asset_name: "STEEM",
-                    balance: parseFloat(account.balance),
-                    owner: "-",
-                    prefix: ""
+            this._ensureAPI().then(() => {
+                this.getAccount(accountName).then((account) => {
+                    let balances = [];
+                    balances.push({
+                        asset_type: "UIA",
+                        asset_name: this._getCoreToken(),
+                        balance: parseFloat(account.balance),
+                        owner: "-",
+                        prefix: ""
+                    });
+                    balances.push({
+                        asset_type: "UIA",
+                        asset_name: "VESTS",
+                        balance: parseFloat(account.vesting_shares),
+                        owner: "-",
+                        prefix: ""
+                    });
+                    balances.push({
+                        asset_type: "UIA",
+                        asset_name: "SDB",
+                        balance: parseFloat(account.sbd_balance),
+                        owner: "-",
+                        prefix: ""
+                    });
+                    balances.push({
+                        asset_type: "UIA",
+                        asset_name: "SP",
+                        balance: parseFloat(account.reward_vesting_steem),
+                        owner: "-",
+                        prefix: ""
+                    });
+                    resolve(balances);
                 });
-                balances.push({
-                    asset_type: "UIA",
-                    asset_name: "VESTS",
-                    balance: parseFloat(account.vesting_shares),
-                    owner: "-",
-                    prefix: ""
-                });
-                balances.push({
-                    asset_type: "UIA",
-                    asset_name: "SDB",
-                    balance: parseFloat(account.sbd_balance),
-                    owner: "-",
-                    prefix: ""
-                });
-                balances.push({
-                    asset_type: "UIA",
-                    asset_name: "SP",
-                    balance: parseFloat(account.reward_vesting_steem),
-                    owner: "-",
-                    prefix: ""
-                });
-                resolve(balances);
-            });
+            }).catch(reject);
         });
     }
 
     _ensureAPI() {
         // nothing to do for steem yet
-        return new Promise(resolve => {
-            resolve();
+        return new Promise((resolve, reject) => {
+            this.connect().then(resolve).catch(reject);
         });
     }
 
@@ -235,6 +246,7 @@ export default class SteemBasedChain extends BlockchainAPI {
     }
 
     _verifyString(signature, publicKey, string) {
+        console.log("verify SteemBased");
         return this._getSignature().fromHex(signature).verifyBuffer(
             string,
             this._getPublicKey().fromStringOrThrow(publicKey)
