@@ -210,7 +210,6 @@
 
     import getBlockchain from "../lib/blockchains/blockchainFactory";
 
-    const logger = new RendererLogger();
 
     export default {
         name: "AddAccount",

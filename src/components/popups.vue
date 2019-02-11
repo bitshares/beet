@@ -25,10 +25,12 @@
             hide-footer
             :title="$t('operations:account_id.title')"
         >
-            {{ $t('operations:account_id.request',{origin: incoming.origin }) }}
+            {{ $t('operations:any_account_id.request',{origin: incoming.origin }) }}
             <br>
             <br>
-            {{ $t('operations:account_id.request_cta') }}
+            {{ $t('operations:any_account_id.request_cta') }}
+            <AccountSelect v-model="chosenAccount" />
+            
             <b-btn
                 class="mt-3"
                 variant="success"
@@ -60,8 +62,10 @@
             {{ $t('operations:rawsig.request',{origin: incoming.origin , chain: signingAccount.chain, accountName: signingAccount.accountName}) }}
             <br>
             <br>
-            <pre v-if="!!incoming.params"
-class="text-left custom-content">
+            <pre
+                v-if="!!incoming.params"
+                class="text-left custom-content"
+            >
                 <code>
     {
     {{ incoming.params }}
@@ -163,13 +167,14 @@ class="text-left custom-content">
         v4 as uuidv4
     } from "uuid";
     import {EventBus} from '../lib/event-bus.js';
-    import Operations from "../lib/Operations";
+    import AccountSelect from "./account-select";
 
     import getBlockchain from "../lib/blockchains/blockchainFactory"
 
     export default {
         name: "Popups",
         i18nOptions: {namespaces: ["common", "operations"]},
+        components: {AccountSelect },
         data() {
             return {
                 genericmsg: '',
@@ -177,7 +182,8 @@ class="text-left custom-content">
                 api: null,
                 incoming: {},
                 specifics: "",
-                signingAccount: {}
+                signingAccount: {},
+                chosenAccount: this.$store.state.AccountStore.accountlist[0]
             };
         },
         watch: {
@@ -343,10 +349,11 @@ class="text-left custom-content">
                 });
             },
             allowAccess: function () {
+                console.log(this.chosenAccount);
                 this.$refs.accountReqModal.hide();
                 this.incoming.accept({
-                    name: this.$store.state.WalletStore.wallet.accountName,
-                    id: this.$store.state.WalletStore.wallet.accountID
+                    name: this.chosenAccount.accountName,
+                    id: this.chosenAccount.accountID
                 });
             },
             denyAccess: function () {

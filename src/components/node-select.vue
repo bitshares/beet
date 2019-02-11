@@ -87,6 +87,7 @@
         watch: {
             selectedChain: function(newVal, oldVal) {
                 if (oldVal !== newVal) {
+                    this.isConnected=false;
                     this.nodes = this.blockchain.getNodes();                    
                     if (!this.selectedNode) {
                         this.selectedNode= this.nodes[0].url;
@@ -95,12 +96,9 @@
             }
         },
         created() {
-            EventBus.$on("blockchainStatus", what => {
-                console.log(what);
-                console.log(this.selectedChain);
+            EventBus.$on("blockchainStatus", what => {                
                 if (what.chain==this.selectedChain) {
-                    this.isConnected=what.status;
-                    console.log('setstatus');
+                    this.isConnected=what.status;                
                 }
             });
         },
