@@ -25,8 +25,8 @@ export default class EOS extends BlockchainAPI {
             }
             if (!this.rpc) {
                 this.rpc = new JsonRpc(nodeToConnect, {fetch});
-            }
-            resolve();
+            }            
+            this._connectionEstablished(resolve, nodeToConnect);
         });
     }
 

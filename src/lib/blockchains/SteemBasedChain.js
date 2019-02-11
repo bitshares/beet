@@ -33,7 +33,8 @@ export default class SteemBasedChain extends BlockchainAPI {
             }
             // steem library handles connection internally, just set node
             this._getLibrary().api.setOptions({ url: nodeToConnect });
-            resolve();
+            
+            this._connectionEstablished(resolve, nodeToConnect);
         });
     }
 

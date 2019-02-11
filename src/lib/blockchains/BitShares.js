@@ -58,6 +58,7 @@ export default class BitShares extends BlockchainAPI {
                     {enableCrypto: false, enableOrders: false},
                     this._onCloseWrapper.bind(this, onClose)
                 ).init_promise.then(() => {
+                    console.log('here');
                     this._connectionEstablished(resolve, nodeToConnect);
                 }).catch((err) => {
                     this._isConnected = false;

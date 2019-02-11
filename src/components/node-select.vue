@@ -34,8 +34,7 @@
 <script>
     import getBlockchain from "../lib/blockchains/blockchainFactory"
     import RendererLogger from "../lib/RendererLogger";
-
-    const logger = new RendererLogger();
+    import { EventBus } from "../lib/event-bus.js";    const logger = new RendererLogger();
 
     export default {
         name: "NodeSelect",
@@ -43,8 +42,8 @@
         data() {
             return {
                 nodes: [],
-                isConnected: false,
-                api: null
+                api: null,
+                isConnected: false
             };
         },
         computed: {
@@ -54,8 +53,23 @@
             selectedChain() {
                 return this.selectedAccount.chain;
             },
-            selectedNode() {
-                return this.$store.state.SettingsStore.settings.selected_node[this.selectedAccount.chain];
+            selectedNode: {
+                get: function() {
+                    return this.$store.state.SettingsStore.settings.selected_node[this.selectedAccount.chain];
+                },
+                set: function(newVal) {
+                    if (!this.selectedNode || this.selectedNode != newVal) {
+                        this.blockchain.connect(newVal).then((connectedNode) => {
+                            
+                            this.$store.dispatch("SettingsStore/setNode", {
+                                chain: this.selectedChain,
+                                node: connectedNode
+                            });
+                        }).catch((err) => {
+                            logger.error(err);
+                        });
+                    }
+                }
             },
             selectedAccount() {
                 return this.$store.state.AccountStore.accountlist[this.$store.state.AccountStore.selectedIndex];
@@ -71,48 +85,39 @@
             }
         },
         watch: {
-            selectedNode: function(newVal, oldVal) {
-                if (!!oldVal && oldVal !== newVal) {
-                    // this means user has actively changed the value
-                    this.blockchain.connect(newVal).then(() => {
-                        this._updateConnectionStatus();
-                        this.$store.dispatch("SettingsStore/setNode", {
-                            chain: this.selectedChain,
-                            node: this.newVal
-                        });
-                    }).catch((err) => {
-                        logger.error(err);
-                    });
-                } else {
-                    // do nothing, as the value displayed is the already connected default node
-                }
-
-            },
             selectedChain: function(newVal, oldVal) {
-                if (!!oldVal && oldVal !== newVal) {
-                    this.nodes = this.blockchain.getNodes();
+                if (oldVal !== newVal) {
+                    this.nodes = this.blockchain.getNodes();                    
+                    if (!this.selectedNode) {
+                        this.selectedNode= this.nodes[0].url;
+                    }
                 }
             }
         },
+        created() {
+            EventBus.$on("blockchainStatus", what => {
+                console.log(what);
+                console.log(this.selectedChain);
+                if (what.chain==this.selectedChain) {
+                    this.isConnected=what.status;
+                    console.log('setstatus');
+                }
+            });
+        },
         mounted() {
             this.nodes = this.blockchain.getNodes();
-            this.blockchain.connect(this.selectedNode).then((connectedNode) => {
+            this.blockchain.connect(this.selectedNode.url).then((connectedNode) => {
                 if (!this.selectedNode) {
                     this.$store.dispatch("SettingsStore/setNode", {
                         chain: this.selectedChain,
                         node: connectedNode
                     });
                 }
-                this._updateConnectionStatus();
+                
                 this.$emit("first-connect");
             }).catch((err) => {
                 logger.error(err);
             });
-        },
-        methods: {
-            _updateConnectionStatus() {
-                this.isConnected = this.blockchain.isConnected();
-            },
         }
     };
 </script>
