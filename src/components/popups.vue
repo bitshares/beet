@@ -57,10 +57,11 @@
             hide-footer
             :title="$t('operations:rawsig.title')"
         >
-            {{ $t('operations:rawsig.request',{origin: incoming.origin }) }}
+            {{ $t('operations:rawsig.request',{origin: incoming.origin , chain: signingAccount.chain, accountName: signingAccount.accountName}) }}
             <br>
             <br>
-            <pre v-if="!!incoming.params" class="text-left custom-content">
+            <pre v-if="!!incoming.params"
+class="text-left custom-content">
                 <code>
     {
     {{ incoming.params }}
@@ -195,12 +196,12 @@
         created() {
             EventBus.$on('popup', what => {
                 switch (what) {
-                    case 'load-start':
-                        this.$refs.loaderAnimModal.show();
-                        break;
-                    case 'load-end':
-                        this.$refs.loaderAnimModal.hide();
-                        break;
+                case 'load-start':
+                    this.$refs.loaderAnimModal.show();
+                    break;
+                case 'load-end':
+                    this.$refs.loaderAnimModal.hide();
+                    break;
                 }
             });
         },  
@@ -212,22 +213,22 @@
                 let alert;
                 let alertmsg;
                 switch (request.type) {
-                    case 'link':
-                        alertmsg = this.$t('link_alert', request);
-                        alert = {msg: alertmsg, id: uuidv4()};
+                case 'link':
+                    alertmsg = this.$t('link_alert', request);
+                    alert = {msg: alertmsg, id: uuidv4()};
 
-                        this.$store.dispatch("WalletStore/notifyUser", {
-                            notify: "request", message: alertmsg
-                        });
-                        break;
-                    default:
-                        alertmsg = this.$t('access_alert', request.payload);
+                    this.$store.dispatch("WalletStore/notifyUser", {
+                        notify: "request", message: alertmsg
+                    });
+                    break;
+                default:
+                    alertmsg = this.$t('access_alert', request.payload);
 
-                        this.$store.dispatch("WalletStore/notifyUser", {
-                            notify: "request", message: alertmsg
-                        });
-                        alert = {msg: alertmsg, id: uuidv4()};
-                        break;
+                    this.$store.dispatch("WalletStore/notifyUser", {
+                        notify: "request", message: alertmsg
+                    });
+                    alert = {msg: alertmsg, id: uuidv4()};
+                    break;
                 }
                 //let alert={msg:msg, id: uuidv4()};
                 this.alerts.push(alert);
@@ -266,7 +267,9 @@
                     'operations:vote.request',
                     {
                         origin: this.incoming.origin,
-                        entity: mappedData.entity
+                        entity: mappedData.entity,
+                        chain: this.signingAccount.chain,
+                        accountName: this.signingAccount.accountName
                     }
                 );
                 this.generictitle = this.$t('operations:vote.title');
@@ -300,7 +303,9 @@
                 this.genericmsg = this.$t(
                     'operations:message.request',
                     {
-                        origin: this.incoming.origin
+                        origin: this.incoming.origin,                        
+                        chain: this.signingAccount.chain,
+                        accountName: this.signingAccount.accountName
                     }
                 );
                 this.generictitle = this.$t('operations:message.title');
@@ -322,7 +327,7 @@
                         payload_dict[payload.params.payload[i]] = payload.params.payload[i+1];
                     }
                     let messageChain = null;
-                    if (!!payload_dict.chain) {
+                    if (payload_dict.chain) {
                         messageChain = payload_dict.chain;
                     } else {
                         messageChain = payload.params.payload[2].substr(0,3);
@@ -414,9 +419,9 @@
                     i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) +
                     (c
                         ? d +
-                        Math.abs(n - i)
-                            .toFixed(c)
-                            .slice(2)
+                            Math.abs(n - i)
+                                .toFixed(c)
+                                .slice(2)
                         : "")
                 );
             }

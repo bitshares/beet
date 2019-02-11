@@ -1,28 +1,35 @@
 {
     "account_id": {
         "title": "Account Details Request",
-        "request": "The page/app {{- origin}} is requesting to access your account ID.",
-        "request_cta": "Do you want to allow access?",
+        "request": "The page/app {{- origin}} is requesting access to a {{chain}} account.",
+        "request_cta": "Select account to provide.",
+        "accept_btn": "Allow",
+        "reject_btn": "Deny"
+    },
+    "any_account_id": {
+        "title": "Account Details Request",
+        "request": "The page/app {{- origin}} is requesting access to an account.",
+        "request_cta": "Select account to provide.",
         "accept_btn": "Allow",
         "reject_btn": "Deny"
     },
     "rawsig": {
         "title": "Transaction Request",
-        "request": "The page/app {{- origin}} has submitted the following transaction.",
+        "request": "The page/app {{- origin}} has submitted the following transaction for account {{ chain }}:{{ accountName }}.",
         "request_cta": "Do you want to execute it?",
         "accept_btn": "Sign & Broadcast",
         "reject_btn": "Ignore"
     },
     "vote": {
         "title": "Vote Request",
-        "request": "The page/app {{- origin}} wants you to vote for the following {{entity}}",
+        "request": "The page/app {{- origin}} wants you to vote for the following {{entity}} with account {{ chain }}:{{ accountName }}",
         "request_cta": "",
         "accept_btn": "Approve",
         "reject_btn": "Ignore"
     },
     "message": {
         "title": "Sign Message Request",
-        "request": "The page/app {{- origin}} wants you to sign the following text",
+        "request": "The page/app {{- origin}} wants you to sign the following text with account {{ chain }}:{{ accountName }}",
         "request_cta": "",
         "accept_btn": "Approve",
         "reject_btn": "Ignore"

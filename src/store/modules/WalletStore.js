@@ -85,6 +85,7 @@ const actions = {
             });
         });
     },
+    
     confirmUnlock({
         commit
     }) {
@@ -140,9 +141,9 @@ const actions = {
         rootState
     }, payload) {
         return new Promise((resolve, reject) => {
-            let walletdata = rootState.AccountStore.accountlist;
+            let walletdata =  Object.assign({}, rootState.AccountStore.accountlist);
             let newwalletdata=[];
-            // Backwards compatibility
+            // Backwards compatibility            
             if (Array.isArray(walletdata)) {
                 newwalletdata=walletdata;
                 newwalletdata.push(payload.account);
