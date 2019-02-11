@@ -29,7 +29,7 @@
             <div class="row">
                 <div class="col-6">
                     <router-link
-                        to="/"
+                        to="/dashboard"
                         tag="button"
                         class="btn btn-lg btn-primary btn-block"
                         replace
