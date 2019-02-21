@@ -25,4 +25,8 @@ export default class Steem extends SteemBasedChain {
         return steem;
     }
 
+    _getCoreToken() {
+        return "STEEM";
+    }
+
 }
