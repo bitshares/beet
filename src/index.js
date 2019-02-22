@@ -10,7 +10,13 @@ import {
   enableLiveReload
 } from 'electron-compile';
 import Logger from './lib/Logger';
+import context_menu from './lib/electron_context_menu';
 
+context_menu({
+  prepend: (params, browserWindow) => [{
+      label: 'Beet',
+  }]
+});
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
@@ -33,7 +39,7 @@ const createWindow = async () => {
     maximizable: false,
     maxHeight: 660,
     useContentSize: true, 
-    frame: true,
+    frame: false,
     transparent: true,
     webPreferences: {
       nodeIntegration: true,
