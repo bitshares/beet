@@ -19,7 +19,8 @@
         name: "AccountSelect",
         i18nOptions: { namespaces: "common" },
         props: {
-            value: Object
+            value: Object,
+            chain: String
         },
         data() {
             return {                
@@ -28,7 +29,11 @@
         },
         computed: {
             accounts() {
-                return this.$store.state.AccountStore.accountlist;
+                if (this.chain=='ANY' || this.chain==null) {
+                    return this.$store.state.AccountStore.accountlist;
+                }else{
+                    return this.$store.state.AccountStore.accountlist.filter ( x => x.chain==this.chain);
+                }
             }
         },
         watch: {

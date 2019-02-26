@@ -14,7 +14,6 @@
             <br>
             <br>
         </b-modal>
-
         <b-modal
             id="accountRequest"
             ref="accountReqModal"
@@ -25,11 +24,11 @@
             hide-footer
             :title="$t('operations:account_id.title')"
         >
-            {{ $t('operations:any_account_id.request',{origin: incoming.origin }) }}
+            {{ $t('operations:account_id.request',{appName: this.incoming.appName,origin: incoming.origin, chain: incoming.chain }) }}
             <br>
             <br>
-            {{ $t('operations:any_account_id.request_cta') }}
-            <AccountSelect v-model="chosenAccount" />
+            {{ $t('operations:account_id.request_cta') }}
+            <AccountSelect v-model="chosenAccount" :chain="incoming.chain"/>
             
             <b-btn
                 class="mt-3"
@@ -48,6 +47,39 @@
                 {{ $t('operations:account_id.reject_btn') }}
             </b-btn>
         </b-modal>
+        <b-modal
+            id="anyAccountRequest"
+            ref="anyAccountReqModal"
+            centered
+            no-close-on-esc
+            no-close-on-backdrop
+            hide-header-close
+            hide-footer
+            :title="$t('operations:account_id.title')"
+        >
+            {{ $t('operations:any_account_id.request',{appName: incoming.appName,origin: incoming.origin }) }}
+            <br>
+            <br>
+            {{ $t('operations:any_account_id.request_cta') }}
+            <AccountSelect v-model="chosenAccount" />
+            
+            <b-btn
+                class="mt-3"
+                variant="success"
+                block
+                @click="allowAnyAccess"
+            >
+                {{ $t('operations:account_id.accept_btn') }}
+            </b-btn>
+            <b-btn
+                class="mt-1"
+                variant="danger"
+                block
+                @click="denyAnyAccess"
+            >
+                {{ $t('operations:account_id.reject_btn') }}
+            </b-btn>
+        </b-modal>
 
         <b-modal
             id="transactionRequest"
@@ -59,7 +91,7 @@
             hide-footer
             :title="$t('operations:rawsig.title')"
         >
-            {{ $t('operations:rawsig.request',{origin: incoming.origin , chain: signingAccount.chain, accountName: signingAccount.accountName}) }}
+            {{ $t('operations:rawsig.request',{appName: incoming.appName,origin: incoming.origin , chain: signingAccount.chain, accountName: signingAccount.accountName}) }}
             <br>
             <br>
             <pre
@@ -189,14 +221,6 @@
         watch: {
             $route(to, from) {
                 this.alerts = [];
-            },
-            incoming(to, from) {
-                if (to!={}) {
-                    let signing=this.$store.state.AccountStore.accountlist.filter( x => { return (x.accountID==this.incoming.account_id && x.chain==this.incoming.chain);})
-                    this.signingAccount=signing[0];
-                }else{
-                    this.signingAccount={};
-                }
             }
         },
         created() {
@@ -245,13 +269,31 @@
                 })
                 if (index !== -1) this.alerts.splice(index, 1);
             },
-            requestAccess: function (request) {
+            requestAccess: async function (request) {
+                console.log(request);
                 this.$store.dispatch("WalletStore/notifyUser", {
                     notify: "request", message: "request"
                 });
                 this.incoming = {};
                 this.incoming = request;
-                this.$refs.accountReqModal.show();
+                //let signing=this.$store.state.AccountStore.accountlist.filter( x => { return (x.accountID==this.incoming.account_id && x.chain==this.incoming.chain);})
+                //this.signingAccount=signing[0];
+                this.$refs.accountReqModal.show();                
+                return new Promise((res, rej) => {
+                    this.incoming.accept = res;
+                    this.incoming.reject = rej;
+                });
+            },
+            requestAnyAccess: async function (request) {
+                this.$store.dispatch("WalletStore/notifyUser", {
+                    notify: "request", message: "request"
+                });
+                this.incoming = {};
+                this.incoming = request;
+                //let signing=this.$store.state.AccountStore.accountlist.filter( x => { return (x.accountID==this.incoming.account_id && x.chain==this.incoming.chain);})
+                //this.signingAccount=signing[0];
+               
+                this.$refs.anyAccountReqModal.show();
                 return new Promise((res, rej) => {
                     this.incoming.accept = res;
                     this.incoming.reject = rej;
@@ -262,6 +304,9 @@
                     notify: "request", message: "request"
                 });
                 this.incoming = request;
+                let signing=this.$store.state.AccountStore.accountlist.filter( x => { return (x.accountID==this.incoming.account_id && x.chain==this.incoming.chain);})
+                this.signingAccount=signing[0];
+               
                 this.incoming.action = "vote";
                 //let blockchain = getBlockchain(this.$store.state.WalletStore.wallet.chain);
                 let blockchain = getBlockchain(this.incoming.chain);
@@ -272,6 +317,7 @@
                 this.genericmsg = this.$t(
                     'operations:vote.request',
                     {
+                        appName: this.incoming.appName,
                         origin: this.incoming.origin,
                         entity: mappedData.entity,
                         chain: this.signingAccount.chain,
@@ -287,28 +333,34 @@
                     this.incoming.rejectgen = rej;
                 });
             },
-            requestTx: function (payload) {
+            requestTx: async function (payload) {
                 this.$store.dispatch("WalletStore/notifyUser", {
                     notify: "request", message: "request"
                 });
                 this.incoming = payload;
+                let signing=this.$store.state.AccountStore.accountlist.filter( x => { return (x.accountID==this.incoming.account_id && x.chain==this.incoming.chain);})
+                this.signingAccount=signing[0];
+               
                 this.$refs.transactionReqModal.show();
                 return new Promise((res, rej) => {
                     this.incoming.accepttx = res;
                     this.incoming.rejecttx = rej;
                 });
             },
-            requestSignedMessage: function (payload) {
+            requestSignedMessage: async function (payload) {
                 this.$store.dispatch("WalletStore/notifyUser", {
                     notify: "request", message: "request"
                 });
                 this.incoming = payload;
-
+                let signing=this.$store.state.AccountStore.accountlist.filter( x => { return (x.accountID==this.incoming.account_id && x.chain==this.incoming.chain);})
+                this.signingAccount=signing[0];
+               
                 this.specifics = payload.params;
 
                 this.genericmsg = this.$t(
                     'operations:message.request',
                     {
+                        appName: incoming.appName,
                         origin: this.incoming.origin,                        
                         chain: this.signingAccount.chain,
                         accountName: this.signingAccount.accountName
@@ -353,10 +405,24 @@
                 this.$refs.accountReqModal.hide();
                 this.incoming.accept({
                     name: this.chosenAccount.accountName,
+                    chain: this.chosenAccount.chain,
                     id: this.chosenAccount.accountID
                 });
             },
             denyAccess: function () {
+                this.$refs.accountReqModal.hide();
+                this.incoming.reject({});
+            },
+            allowAnyAccess: function () {
+                console.log(this.chosenAccount);
+                this.$refs.accountReqModal.hide();
+                this.incoming.accept({
+                    name: this.chosenAccount.accountName,
+                    chain: this.chosenAccount.chain,
+                    id: this.chosenAccount.accountID
+                });
+            },
+            denyAnyAccess: function () {
                 this.$refs.accountReqModal.hide();
                 this.incoming.reject({});
             },

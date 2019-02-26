@@ -22,26 +22,26 @@ const linkHandler = async (req) => {
                     isError: true,
                     error: 'User rejected request'
                 }
-            };;
+            };
         } else {
-            let apphash = CryptoJS.SHA256(req.browser + ' ' + req.origin + ' ' + req.appName + ' ' + req.payload.chain + ' ' + userResponse.identity.id).toString();
+            let identityhash = CryptoJS.SHA256(req.browser + ' ' + req.origin + ' ' + req.appName + ' ' + userResponse.identity.chain + ' ' + userResponse.identity.id).toString();
             //let secret = await eccrypto.derive(req.key, Buffer.from(req.payload.pubkey, 'hex'));
             console.log("linkHandler key=", req.key);
             let secret = req.key.derive(ec.keyFromPublic(req.payload.pubkey, 'hex').getPublic());
             let app = await store.dispatch('OriginStore/addApp', {
                 appName: req.appName,
-                apphash: apphash,
+                identityhash: identityhash,
                 origin: req.origin,
                 account_id: userResponse.identity.id,
-                chain: req.payload.chain,
+                chain: userResponse.identity.chain,
                 secret: secret.toString(16),
                 next_hash: req.payload.next_hash
             });
             console.log("app added, id=" + app.id);
             let response = Object.assign(req, {
                 isLinked: true,
-                apphash: apphash,
-                chain: req.payload.chain,
+                identityhash: identityhash,
+                chain: userResponse.identity.chain,
                 next_hash: req.payload.next_hash,
                 account_id: userResponse.identity.id,
                 secret: secret.toString(16)
@@ -62,9 +62,9 @@ const linkHandler = async (req) => {
 
 const authHandler = function (req) {
     // TODO: Check against blacklist;
-    if (req.payload.apphash != null & req.payload.apphash != undefined) {
+    if (req.payload.identityhash != null & req.payload.identityhash != undefined) {
         let apps = store.state.OriginStore.apps;
-        const app = apps.find(x => x.apphash === req.payload.apphash);
+        const app = apps.find(x => x.identityhash === req.payload.identityhash);
         console.log("authHandler", app);
         if (!app) {
             return Object.assign(req.payload, {
@@ -112,7 +112,7 @@ export default class BeetServer {
         server.on('api', async (data) => {
             console.log("event type api", data);
             store.dispatch('OriginStore/newRequest', {
-                apphash: data.payload.apphash,
+                identityhash: data.payload.identityhash,
                 next_hash: data.payload.next_hash
             });
             let status = await BeetAPI.handler(data, vueInst);

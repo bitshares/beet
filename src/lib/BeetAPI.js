@@ -81,7 +81,13 @@ export default class BeetAPI {
     }
     static async [Actions.REQUEST_LINK](request, vue) {
         try {
-            let response = await vue.requestAccess(request);
+            let response;
+            console.log(request);
+            if (request.chain=='ANY') {
+                response = await vue.requestAnyAccess(request);
+            }else{
+                response = await vue.requestAccess(request);
+            }
             return Object.assign(request, {
                 identity: response
             });

@@ -66,13 +66,8 @@ const actions = {
                         return x.id == payload.wallet_id
                     });
                     commit(GET_WALLET, public_wallets[0]);
-                    let accountlist;
-                    if (Array.isArray(decrypted_wallet)) {
-                        accountlist = decrypted_wallet;
-                    } else {
-                        accountlist = [];
-                        accountlist.push(decrypted_wallet);
-                    }
+                    let accountlist = decrypted_wallet;
+                    
                     dispatch('AccountStore/loadAccounts', accountlist, {
                         root: true
                     });
@@ -117,13 +112,13 @@ const actions = {
                     });
                     commit(SET_WALLET_STATUS, true);
                     commit(SET_WALLETLIST, wallets);
-                    let walletdata = CryptoJS.AES.encrypt(JSON.stringify(payload.walletdata), payload.password).toString();
+                    let walletdata = CryptoJS.AES.encrypt(JSON.stringify([payload.walletdata]), payload.password).toString();
                     BeetDB.wallets_encrypted.put({
                         id: walletid,
                         data: walletdata
                     });
                     commit(GET_WALLET, newwallet);
-                    dispatch('AccountStore/loadAccounts', walletdata, {
+                    dispatch('AccountStore/loadAccounts', [payload.walletdata], {
                         root: true
                     });
                     resolve();
@@ -141,17 +136,9 @@ const actions = {
         rootState
     }, payload) {
         return new Promise((resolve, reject) => {
-            let walletdata =  Object.assign({}, rootState.AccountStore.accountlist);
-            let newwalletdata=[];
-            // Backwards compatibility            
-            if (Array.isArray(walletdata)) {
-                newwalletdata=walletdata;
-                newwalletdata.push(payload.account);
-            } else {
-                newwalletdata.push(walletdata);
-                newwalletdata.push(payload.account);
-            }
-            
+            let walletdata =  rootState.AccountStore.accountlist.slice();
+            let newwalletdata=walletdata;
+            newwalletdata.push(payload.account);
             let encwalletdata = CryptoJS.AES.encrypt(JSON.stringify(newwalletdata), payload.password).toString();
             let updatedWallet = state.wallet;
             updatedWallet.accounts.push(payload.account.accountID);

@@ -78,7 +78,7 @@ export default class BeetWS extends EventEmitter {
 
                                 msg.origin = client.origin;
                                 msg.appName = client.appName;
-                                msg.apphash = client.apphash;
+                                msg.identityhash = client.identityhash;
                                 msg.chain = client.chain;
                                 msg.account_id = client.account_id;
                                 client.next_hash = msg.next_hash;
@@ -110,6 +110,7 @@ export default class BeetWS extends EventEmitter {
                             "key": client.keypair,
                             "type": 'link'
                         };
+                        
                         this.emit('link', linkobj);
                     } else {
                         client.send('{ "id": "' + data.id + '", "error": true, "payload": { "code":4, "message": "This app is not yet linked"}}');
@@ -132,7 +133,7 @@ export default class BeetWS extends EventEmitter {
     async respondLink(client, result) {
         if (result.isLinked == true) {
             this._clients[client].isLinked = true;
-            this._clients[client].apphash = result.apphash;
+            this._clients[client].identityhash = result.identityhash;
             this._clients[client].account_id = result.account_id;
             this._clients[client].chain = result.chain;
             this._clients[client].next_hash = result.next_hash;
@@ -167,7 +168,7 @@ export default class BeetWS extends EventEmitter {
             this._clients[client].browser = result.browser;
             if (result.link) {
                 this._clients[client].isLinked = true;
-                this._clients[client].apphash = result.apphash;
+                this._clients[client].identityhash = result.identityhash;
                 this._clients[client].chain = result.app.chain;
                 this._clients[client].account_id = result.app.account_id;
                 this._clients[client].next_hash = result.app.next_hash;

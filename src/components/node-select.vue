@@ -104,7 +104,13 @@
         },
         mounted() {
             this.nodes = this.blockchain.getNodes();
-            this.blockchain.connect(this.selectedNode.url).then((connectedNode) => {
+            let url;
+            if (this.selectedNode!=undefined) {
+                url=this.selectedNode.url
+            }else{
+                url=null;
+            }
+            this.blockchain.connect(url).then((connectedNode) => {
                 if (!this.selectedNode) {
                     this.$store.dispatch("SettingsStore/setNode", {
                         chain: this.selectedChain,

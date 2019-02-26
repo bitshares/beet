@@ -16,7 +16,7 @@ const mutations = {
     [UPDATE_APP](state, app) {
         console.log("OriginStore.update_app");
         state.apps.forEach(function(item, i) {
-            if (item.apphash == app.apphash) {
+            if (item.identityhash == app.identityhash) {
                 console.log("OriginStore.update_app replace", state.apps[i], app);
                 state.apps[i] = app;
             }
@@ -45,7 +45,7 @@ const actions = {
         commit
     }, payload) {
         return new Promise((resolve, reject) => {
-            BeetDB.apps.where('apphash').equals(payload.apphash).modify({
+            BeetDB.apps.where('identityhash').equals(payload.identityhash).modify({
                 next_hash: payload.next_hash
             }).then(() => {
                 dispatch('loadApps');
@@ -61,7 +61,7 @@ const actions = {
     }, payload) {
         return new Promise((resolve, reject) => {
             let db = BeetDB.apps;
-            db.where("apphash").equals(payload.apphash).toArray().then((res) => {
+            db.where("identityhash").equals(payload.identityhash).toArray().then((res) => {
                 if (res.length == 0) {
                     db.add(payload).then((id) => {
                         payload.id = id;
