@@ -147,7 +147,7 @@ export default class BeetWS extends EventEmitter {
             });
             console.log("otp instantiated", result.secret);
             this._clients[client].otp = otp;
-            this._clients[client].send('{"id": ' + result.id + ', "error": false, "payload": { "authenticate": true, "link": true, "account_id": "' + result.account_id + '"}}');
+            this._clients[client].send('{"id": ' + result.id + ', "error": false, "payload": { "authenticate": true, "link": true, "chain": "'+result.chain+'" , "account_id": "' + result.account_id + '"}}');
         } else {
             this._clients[client].send('{ "id": "' + result.id + '", "error": true, "payload": { "code":6, "message": "Could not link to Beet"}}');
         }

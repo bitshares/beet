@@ -3,7 +3,9 @@
         id="account-select"
         v-model="selectedAccount"
         class="form-control"
+
     >
+        <option :value="{}" Selected v-if="cta!=''">{{cta}}</option>
         <option
             v-for="(account,index) in accounts"
             :key="`account-${index}`"
@@ -20,7 +22,8 @@
         i18nOptions: { namespaces: "common" },
         props: {
             value: Object,
-            chain: String
+            chain: String,
+            cta: String
         },
         data() {
             return {                
@@ -38,7 +41,14 @@
         },
         watch: {
             selectedAccount: function() {
-                this.$emit("input", this.selectedAccount);
+                if (this.selectedAccount!={}) {
+                    this.$emit("input", this.selectedAccount);
+                }
+            },
+            accounts: function() {
+                if (this.accounts.length==1) {
+                    this.selectedAccount=this.accounts[0];
+                }
             }
         },
         mounted() {

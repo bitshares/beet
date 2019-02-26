@@ -14,6 +14,7 @@ let vueInst = null;
 const linkHandler = async (req) => {
     try {
         let userResponse = await BeetAPI.handler(Object.assign(req, {}), vueInst);
+        
         if (!!userResponse.response && !userResponse.response.isLinked) {
             console.log("User rejected request, id=" + req.id);
             return {

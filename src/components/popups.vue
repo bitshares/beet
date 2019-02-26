@@ -27,8 +27,8 @@
       {{ $t('operations:account_id.request',{appName: this.incoming.appName,origin: incoming.origin, chain: incoming.chain }) }}
       <br>
       <br>
-      {{ $t('operations:account_id.request_cta') }}
-      <AccountSelect v-model="chosenAccount" :chain="incoming.chain"/>
+      
+      <AccountSelect v-model="chosenAccount" :chain="incoming.chain" :cta="$t('operations:account_id.request_cta')"/>
 
       <b-btn
         class="mt-3"
@@ -56,8 +56,8 @@
       {{ $t('operations:any_account_id.request',{appName: incoming.appName,origin: incoming.origin }) }}
       <br>
       <br>
-      {{ $t('operations:any_account_id.request_cta') }}
-      <AccountSelect v-model="chosenAccount"/>
+      
+      <AccountSelect v-model="chosenAccount" :cta="$t('operations:any_account_id.request_cta')"/>
 
       <b-btn
         class="mt-3"
@@ -192,7 +192,7 @@ export default {
       incoming: {},
       specifics: "",
       signingAccount: {},
-      chosenAccount: this.$store.state.AccountStore.accountlist[0]
+      chosenAccount: {}
     };
   },
   watch: {
@@ -406,8 +406,7 @@ export default {
       this.incoming.reject({});
     },
     allowAnyAccess: function() {
-      console.log(this.chosenAccount);
-      this.$refs.accountReqModal.hide();
+      this.$refs.anyAccountReqModal.hide();
       this.incoming.accept({
         name: this.chosenAccount.accountName,
         chain: this.chosenAccount.chain,
@@ -415,7 +414,7 @@ export default {
       });
     },
     denyAnyAccess: function() {
-      this.$refs.accountReqModal.hide();
+      this.$refs.anyAccountReqModal.hide();
       this.incoming.reject({});
     },
     acceptTx: async function() {
