@@ -98,7 +98,7 @@ export default class BeetServer {
 
     static initialize(vue) {
         vueInst = vue;
-        const server = new BeetWS(60556, 10000);
+        const server = new BeetWS(60555,60556, 10000);
         server.on('link', async (data) => {
 
             let status = await linkHandler(data);

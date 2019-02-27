@@ -21,7 +21,7 @@ import RendererLogger from "./RendererLogger";
 const logger = new RendererLogger();
 */
 export default class BeetWS extends EventEmitter {
-    constructor(port, timeout) {
+    constructor(port,sslport, timeout) {
         super() // required
         var self = this;
         const httpsServer = Https.createServer({
@@ -30,8 +30,11 @@ export default class BeetWS extends EventEmitter {
         });
         const server = new WebSocket.Server({
             server: httpsServer
+        });        
+        const plainserver = new WebSocket.Server({
+           port: port
         });
-        httpsServer.listen(port);
+        httpsServer.listen(sslport);
         this._clients = [];
         this._monitor = setInterval(function () {
             for (var clientid in self._clients) {
@@ -48,6 +51,9 @@ export default class BeetWS extends EventEmitter {
             }
         }, timeout);
         server.on("connection", (client) => {
+            self._handleConnection(client);
+        });
+        plainserver.on("connection", (client) => {
             self._handleConnection(client);
         });
     }
