@@ -9,7 +9,7 @@
             </h4>
 
             <p class="my-3 font-weight-bold">
-                {{ $t('chain_cta') }}
+                {{ $t('chain_new_cta') }}
             </p>
             <select
                 id="chain-select"
