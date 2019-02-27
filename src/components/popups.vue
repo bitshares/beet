@@ -348,7 +348,7 @@ export default {
       this.specifics = payload.params;
 
       this.genericmsg = this.$t("operations:message.request", {
-        appName: incoming.appName,
+        appName: this.incoming.appName,
         origin: this.incoming.origin,
         chain: this.signingAccount.chain,
         accountName: this.signingAccount.accountName
