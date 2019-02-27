@@ -24,7 +24,7 @@
       hide-footer
       :title="$t('operations:account_id.title')"
     >
-      {{ $t('operations:account_id.request',{appName: this.incoming.appName,origin: incoming.origin, chain: incoming.chain }) }}
+      {{ $t('operations:account_id.request',{appName: incoming.appName,origin: incoming.origin, chain: incoming.chain }) }}
       <br>
       <br>
       
