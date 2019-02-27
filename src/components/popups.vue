@@ -250,7 +250,7 @@ export default {
     },
     mounted() {
         this.$root.$on("bv::modal::shown", bvEvent => {
-        if (modalId == "loaderAnim") {
+        if (bvEvent.target.id == "loaderAnim") {
             this.loaderpromise.resolve();
         }
         });
