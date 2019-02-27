@@ -403,7 +403,7 @@ export default {
     },
     denyAccess: function() {
       this.$refs.accountReqModal.hide();
-      this.incoming.reject({});
+      this.incoming.reject({canceled: true});
     },
     allowAnyAccess: function() {
       this.$refs.anyAccountReqModal.hide();
@@ -415,49 +415,64 @@ export default {
     },
     denyAnyAccess: function() {
       this.$refs.anyAccountReqModal.hide();
-      this.incoming.reject({});
+      this.incoming.reject({canceled: true});
     },
     acceptTx: async function() {
-      this.$refs.loaderAnimModal.show();
-      this.$refs.transactionReqModal.hide();
-      let blockchain = getBlockchain(this.incoming.chain);
-      let transaction = await blockchain.sign(
-        this.incoming.params,
-        this.signingAccount.keys.active
-      );
-      let id = await blockchain.broadcast(transaction);
-      this.incoming.accepttx({ id: id });
-      this.$refs.loaderAnimModal.hide();
+      try {
+        this.$refs.loaderAnimModal.show();
+        this.$refs.transactionReqModal.hide();
+        let blockchain = getBlockchain(this.incoming.chain);
+        let transaction = await blockchain.sign(
+                this.incoming.params,
+                this.signingAccount.keys.active
+        );
+        let id = await blockchain.broadcast(transaction);
+        this.incoming.accepttx({id: id});
+        this.$refs.loaderAnimModal.hide();
+      } catch (err) {
+        console.log("acceptTX", err);
+        this.incoming.rejecttx({error: err});
+        setTimeout(()=>{
+          this.$refs.loaderAnimModal.hide();
+        },1000);
+        this.$refs.loaderAnimModal.hide();
+      }
     },
     rejectTx: function() {
       this.$refs.transactionReqModal.hide();
-      this.incoming.rejecttx({});
+      this.incoming.rejecttx({canceled: true});
     },
     acceptGeneric: async function() {
-      // doesnt disappear afterwards, huh?
-      //this.$refs.loaderAnimModal.show();
-      let blockchain = getBlockchain(this.incoming.chain);
-      if (this.incoming.method == "signMessage") {
-        let signedMessage = await blockchain.signMessage(
-          this.signingAccount.keys.active,
-          this.signingAccount.accountName,
-          this.incoming.params
-        );
-        this.incoming.acceptgen(signedMessage);
-      } else {
-        let operation = await blockchain.getOperation(this.incoming, {
-          id: this.signingAccount.accountID,
-          name: this.signingAccount.accountName
-        });
-        let transaction = await blockchain.sign(
-          operation,
-          this.signingAccount.keys.active
-        );
-        let id = await blockchain.broadcast(transaction);
-        this.incoming.acceptgen(id);
+      try {
+        // doesnt disappear afterwards, huh?
+        //this.$refs.loaderAnimModal.show();
+        let blockchain = getBlockchain(this.incoming.chain);
+        if (this.incoming.method == "signMessage") {
+          let signedMessage = await blockchain.signMessage(
+                  this.signingAccount.keys.active,
+                  this.signingAccount.accountName,
+                  this.incoming.params
+          );
+          this.incoming.acceptgen(signedMessage);
+        } else {
+          let operation = await blockchain.getOperation(this.incoming, {
+            id: this.signingAccount.accountID,
+            name: this.signingAccount.accountName
+          });
+          let transaction = await blockchain.sign(
+                  operation,
+                  this.signingAccount.keys.active
+          );
+          let id = await blockchain.broadcast(transaction);
+          this.incoming.acceptgen(id);
+        }
+        this.$refs.genericReqModal.hide();
+        this.$refs.loaderAnimModal.hide();
+      } catch (err) {
+        this.incoming.rejectgen({error: err});
+        this.$refs.genericReqModal.hide();
+        this.$refs.loaderAnimModal.hide();
       }
-      this.$refs.genericReqModal.hide();
-      this.$refs.loaderAnimModal.hide();
     },
     rejectGeneric: function() {
       this.$refs.genericReqModal.hide();

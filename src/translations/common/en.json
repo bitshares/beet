@@ -27,7 +27,7 @@
     "memo_authority_placeholder": "Memo Private Key",
     "include_owner_check": "Include Owner Key?",
     "password_cta": "Set a password for this wallet:",
-    "password_req_cta": "Enter your password for this wallet:",
+    "password_req_cta": "Unlock the wallet to add the account:",
     "confirm_cta": "Confirm password:",
     "confirm_placeholder": "Confirm password",
     "empty_wallet_error": "Can not create a wallet with an empty name.",

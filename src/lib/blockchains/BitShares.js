@@ -234,10 +234,23 @@ export default class BitShares extends BlockchainAPI {
                         && operation.length > 2
                         && operation[0] == "signAndBroadcast") {
                         let tr = new TransactionBuilder();
-                        tr.tr_buffer = operation.tr_buffer;
+                        tr.ref_block_num = operation[1];
+                        tr.ref_block_prefix = operation[2];
+                        tr.expiration = operation[3];
+                        operation[4].forEach(op => {
+                            tr.add_operation(tr.get_type_operation(op[0], op[1]));
+                        });
                         let privateKey = PrivateKey.fromWif(key);
-                        tr.add_signer(privateKey, privateKey.toPublicKey().toPublicKeyString());
-                        resolve(tr);
+                        Promise.all([
+                            tr.set_required_fees(),
+                            tr.update_head_block()
+                        ]).then(() => {
+                            tr.add_signer(privateKey, privateKey.toPublicKey().toPublicKeyString());
+                            tr.finalize().then(() => {
+                                tr.sign();
+                                resolve(tr);
+                            }).catch(reject);
+                        });
                     } else {
                         reject("Unknown sign request");
                     }
