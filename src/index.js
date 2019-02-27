@@ -43,7 +43,8 @@ const createWindow = async () => {
     transparent: true,
     webPreferences: {
       nodeIntegration: true,
-    }
+    },
+    icon: __dirname + '/img/beet-taskbar.png'
   });
 
   // and load the index.html of the app.

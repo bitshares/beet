@@ -468,7 +468,7 @@ export default {
           let id = await blockchain.broadcast(transaction);
           this.incoming.acceptgen(id);
         }
-        this.$refs.loaderAnimModal.hide();
+          this._hideLoaderAfterTransition();
       } catch (err) {
         this.incoming.rejectgen({error: err});
         this._hideLoaderAfterTransition();

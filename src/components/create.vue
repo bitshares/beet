@@ -5,7 +5,7 @@
             id="step1"
         >
             <h4 class="h4 mt-3 font-weight-bold">{{ $t('step_counter',{ 'step_no' : 1}) }}</h4>
-            <p class="my-3 font-weight-bold">{{ $t('friendly_cta') }}</p>
+            <p v-b-tooltip.hover :title="$t('tooltip_friendly_cta')" class="my-3 font-weight-bold">{{ $t('friendly_cta') }} &#10068;</p>
             <input
                 id="inputWallet"
                 v-model="walletname"
@@ -16,7 +16,7 @@
                 required=""
                 @focus="s1c=''"
             >
-            <p class="my-3 font-weight-bold">{{ $t('chain_cta') }}</p>
+            <p v-b-tooltip.hover :title="$t('tooltip_chain_cta')" class="my-3 font-weight-bold">{{ $t('chain_cta') }} &#10068;</p>
             <select                
                 id="chain-select"
                 v-model="selectedChain"
@@ -129,7 +129,7 @@
             id="step3"
         >
             <h4 class="h4 mt-3 font-weight-bold">{{ $t('step_counter',{ 'step_no' : 3}) }}</h4>
-            <p class="mb-2 font-weight-bold">{{ $t('password_cta') }}</p>
+            <p v-b-tooltip.hover :title="$t('tooltip_password_cta')" class="mb-2 font-weight-bold">{{ $t('password_cta') }} &#10068;</p>
             <input
                 id="inputPass"
                 v-model="password"
@@ -138,6 +138,7 @@
                 :placeholder="$t('password_placeholder')"
                 required=""
             >
+            <password v-model="password" secureLength="12" :strength-meter-only="true"/>
             <p class="mb-2 font-weight-bold">{{ $t('confirm_cta') }}</p>
             <input
                 id="inputConfirmPass"
@@ -180,9 +181,9 @@
 </template>
 
 <script>
+import Password from 'vue-password-strength-meter'
 import { blockchains } from "../config/config.js";
 import RendererLogger from "../lib/RendererLogger";
-
 import getBlockchain from "../lib/blockchains/blockchainFactory"
 
 const logger = new RendererLogger();
@@ -190,6 +191,7 @@ const logger = new RendererLogger();
 export default {
   name: "Create",
   i18nOptions: { namespaces: "common" },
+  components: { Password },
   data() {
     return {
       walletname: "",
