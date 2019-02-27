@@ -109,7 +109,7 @@ export default class SteemBasedChain extends BlockchainAPI {
         console.log("sign", operation, key);
         return new Promise((resolve, reject) => {
             this._ensureAPI().then(() => {
-                if (!!operation.type) {
+                if (operation.type) {
                     switch (operation.type) {
                         case 'vote': {
                             // do actual transaction building
@@ -132,7 +132,7 @@ export default class SteemBasedChain extends BlockchainAPI {
                     }
                 }
 
-            }).catch(err => reject(err));;
+            }).catch(err => reject(err));
         });
     }
 
@@ -140,7 +140,7 @@ export default class SteemBasedChain extends BlockchainAPI {
         console.log("broadcast", transaction);
         return new Promise((resolve, reject) => {
             this._ensureAPI().then(() => {
-                if (!!transaction.type) {
+                if (transaction.type) {
                     switch (transaction.type) {
                         case 'vote': {
                             this._getLibrary().broadcast.vote(
@@ -183,7 +183,7 @@ export default class SteemBasedChain extends BlockchainAPI {
                             ...transaction,
                             (err, result) => {
                                 console.log("injectedCall result", err, result);
-                                if (!!err) {
+                                if (err) {
                                     reject(err);
                                 }
                                 resolve(result);

@@ -13,14 +13,12 @@
             slot="singleLabel" 
             slot-scope="props"
         >
-            
             <span class="option__desc"><span class="option__title singleLabel">{{ props.option.iso }}</span></span>
         </template>
-        <template 
+        <template  
             slot="option" 
             slot-scope="props"
         >
-            
             <span class="option__desc"><span class="option__title options"><span class="isoCode">{{ props.option.iso }}</span> - {{ props.option.name }}</span></span>
         </template>
     </multiselect>

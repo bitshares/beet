@@ -1,18 +1,28 @@
 <template>
     <div class="balances mt-3">
-        <p class="mb-1 font-weight-bold small">{{ $t('balances_lbl') }}</p>
+        <p class="mb-1 font-weight-bold small">
+            {{ $t('balances_lbl') }}
+        </p>
         <table class="table small table-striped table-sm">
             <tbody v-if="balances != null">
                 <tr
                     v-for="balance in balances"
                     :key="balance.id"
                 >
-                    <td class="text-left"><span class="small">{{ balance.prefix }}</span>{{ balance.asset_name }}</td>
-                    <td class="text-right">{{ balance.balance }}</td>
+                    <td class="text-left">
+                        <span class="small">{{ balance.prefix }}</span>{{ balance.asset_name }}
+                    </td>
+                    <td class="text-right">
+                        {{ balance.balance }}
+                    </td>
                 </tr>
                 <tr v-if="balances.length == 0">
-                    <td class="text-left"><span class="small" />No balances</td>
-                    <td class="text-right">-</td>
+                    <td class="text-left">
+                        <span class="small" />No balances
+                    </td>
+                    <td class="text-right">
+                        -
+                    </td>
                 </tr>
             </tbody>
         </table>

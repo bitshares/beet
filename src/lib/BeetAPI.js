@@ -72,7 +72,7 @@ export default class BeetAPI {
             id: request.id,
             result: {
                 isError: true,
-                error: err.canceled ? "User rejected" : (!!err.error ? err.error : err)
+                error: err.canceled ? "User rejected" : (err.error ? err.error : err)
             }
         };
     }

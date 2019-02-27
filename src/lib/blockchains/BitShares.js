@@ -218,7 +218,7 @@ export default class BitShares extends BlockchainAPI {
         console.log("sign", operation, key);
         return new Promise((resolve, reject) => {
             this._ensureAPI().then(() => {
-                if (!!operation.type) {
+                if (operation.type) {
                     let tr = new TransactionBuilder();
                     tr.add_type_operation(
                         operation.type,
@@ -255,7 +255,7 @@ export default class BitShares extends BlockchainAPI {
                         reject("Unknown sign request");
                     }
                 }
-            }).catch(err => reject(err));;
+            }).catch(err => reject(err));
         });
     }
 

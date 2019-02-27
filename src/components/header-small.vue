@@ -8,7 +8,9 @@
                         src="img/beet.png"
                         alt=""
                     >
-                    <h4 class="h4 beet-typo-small">{{ $t('appName') }}</h4>
+                    <h4 class="h4 beet-typo-small">
+                        {{ $t('appName') }}
+                    </h4>
                     <LangSelect ref="langswitch" />
                 </div>
             </div>

@@ -206,8 +206,6 @@
 
 <script>
     import { blockchains } from "../config/config.js";
-    import RendererLogger from "../lib/RendererLogger";
-
     import getBlockchain from "../lib/blockchains/blockchainFactory";
 
 

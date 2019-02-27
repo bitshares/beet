@@ -84,6 +84,7 @@
     "zxcvbn": "^4.4.2"
   },
   "devDependencies": {
+    "babel-eslint": "^10.0.1",
     "babel-plugin-transform-async-to-generator": "^6.24.1",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.7.0",
