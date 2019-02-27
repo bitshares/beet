@@ -26,27 +26,46 @@ const linkHandler = async (req) => {
             };
         } else {
             let identityhash = CryptoJS.SHA256(req.browser + ' ' + req.origin + ' ' + req.appName + ' ' + userResponse.identity.chain + ' ' + userResponse.identity.id).toString();
-            //let secret = await eccrypto.derive(req.key, Buffer.from(req.payload.pubkey, 'hex'));
-            console.log("linkHandler key=", req.key);
-            let secret = req.key.derive(ec.keyFromPublic(req.payload.pubkey, 'hex').getPublic());
-            let app = await store.dispatch('OriginStore/addApp', {
-                appName: req.appName,
-                identityhash: identityhash,
-                origin: req.origin,
-                account_id: userResponse.identity.id,
-                chain: userResponse.identity.chain,
-                secret: secret.toString(16),
-                next_hash: req.payload.next_hash
-            });
-            console.log("app added, id=" + app.id);
-            let response = Object.assign(req, {
-                isLinked: true,
-                identityhash: identityhash,
-                chain: userResponse.identity.chain,
-                next_hash: req.payload.next_hash,
-                account_id: userResponse.identity.id,
-                secret: secret.toString(16)
-            });
+            let appcheck=store.state.OriginStore.apps.filter(x => x.identityhash==identityhash);
+            let existing;
+            let response;
+            if (appcheck.length==0) {
+                //let secret = await eccrypto.derive(req.key, Buffer.from(req.payload.pubkey, 'hex'));
+                console.log("linkHandler key=", req.key);
+                let secret = req.key.derive(ec.keyFromPublic(req.payload.pubkey, 'hex').getPublic());
+                let app = await store.dispatch('OriginStore/addApp', {
+                    appName: req.appName,
+                    identityhash: identityhash,
+                    origin: req.origin,
+                    account_id: userResponse.identity.id,
+                    chain: userResponse.identity.chain,
+                    secret: secret.toString(16),
+                    next_hash: req.payload.next_hash
+                });
+                console.log("app added, id=" + app.id);
+                existing=false;
+                response = Object.assign(req, {
+                    isLinked: true,
+                    identityhash: identityhash,
+                    chain: userResponse.identity.chain,
+                    next_hash: req.payload.next_hash,
+                    account_id: userResponse.identity.id,
+                    secret: secret.toString(16),
+                    existing: existing
+                });
+            }else{
+                existing=true;
+                response = Object.assign(req, {
+                    isLinked: true,
+                    identityhash: identityhash,
+                    chain: userResponse.identity.chain,
+                    next_hash: appcheck.next_hash,
+                    account_id: userResponse.identity.id,
+                    secret: appcheck.secret,
+                    existing: existing
+                });
+            }
+            
             return response;
         }
     } catch (err) {
