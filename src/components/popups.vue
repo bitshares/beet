@@ -247,6 +247,12 @@ export default {
       });
       if (index !== -1) this.alerts.splice(index, 1);
     },
+    _hideLoaderAfterTransition() {
+      // todo: use eventbus
+      setTimeout(()=>{
+        this.$refs.loaderAnimModal.hide();
+      },1000);
+    },
     requestAccess: async function(request) {
       console.log(request);
       this.$store.dispatch("WalletStore/notifyUser", {
@@ -430,12 +436,8 @@ export default {
         this.incoming.accepttx({id: id});
         this.$refs.loaderAnimModal.hide();
       } catch (err) {
-        console.log("acceptTX", err);
         this.incoming.rejecttx({error: err});
-        setTimeout(()=>{
-          this.$refs.loaderAnimModal.hide();
-        },1000);
-        this.$refs.loaderAnimModal.hide();
+        this._hideLoaderAfterTransition();
       }
     },
     rejectTx: function() {
@@ -444,8 +446,8 @@ export default {
     },
     acceptGeneric: async function() {
       try {
-        // doesnt disappear afterwards, huh?
-        //this.$refs.loaderAnimModal.show();
+        this.$refs.loaderAnimModal.show();
+        this.$refs.genericReqModal.hide();
         let blockchain = getBlockchain(this.incoming.chain);
         if (this.incoming.method == "signMessage") {
           let signedMessage = await blockchain.signMessage(
@@ -466,12 +468,10 @@ export default {
           let id = await blockchain.broadcast(transaction);
           this.incoming.acceptgen(id);
         }
-        this.$refs.genericReqModal.hide();
         this.$refs.loaderAnimModal.hide();
       } catch (err) {
         this.incoming.rejectgen({error: err});
-        this.$refs.genericReqModal.hide();
-        this.$refs.loaderAnimModal.hide();
+        this._hideLoaderAfterTransition();
       }
     },
     rejectGeneric: function() {
