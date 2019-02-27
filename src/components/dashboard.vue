@@ -2,7 +2,7 @@
     <div class="bottom p-0">
         <div class="content">
             <div class="row mb-2 account no-gutters">
-                <div class="col-8 offset-2 text-center  py-1">
+                <div class="col-9 offset-1 text-center  py-1">
                     <AccountSelect v-model="selectedAccount" chain="ANY" />
                 </div>  
                 <div class="col-2 text-left py-1">
