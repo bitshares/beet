@@ -55,9 +55,9 @@ const linkHandler = async (req) => {
                     isLinked: true,
                     identityhash: identityhash,
                     chain: userResponse.identity.chain,
-                    next_hash: appcheck.next_hash,
+                    next_hash: appcheck[0].next_hash,
                     account_id: userResponse.identity.id,
-                    secret: appcheck.secret,
+                    secret: appcheck[0].secret,
                     existing: existing
                 });
             }
