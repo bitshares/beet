@@ -21,7 +21,7 @@
         "reject_btn": "Ignore"
     },
     "whitelist": {
-        "prompt": "Whitelist subsequent requests from this app?"
+        "prompt": "Whitelist subsequent `{{method}}` requests from this app?"
     },
     "vote": {
         "title": "Vote Request",

@@ -148,7 +148,7 @@
                     {{ specifics }}
                 </code>
             </pre>
-            <b-form-checkbox v-model="allowWhitelist" v-if="askWhitelist">  {{ $t('operations:whitelist.prompt') }}</b-form-checkbox>
+            <b-form-checkbox v-model="allowWhitelist" v-if="askWhitelist">  {{ $t('operations:whitelist.prompt', { method: incoming.method }) }}</b-form-checkbox>
             <b-btn
                 class="mt-3"
                 variant="success"
