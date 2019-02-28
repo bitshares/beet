@@ -184,7 +184,7 @@
             >
             <password
                 v-model="password"
-                secure-length="12"
+                :secure-length="12"
                 :strength-meter-only="true"
             />
             <p class="mb-2 font-weight-bold">
