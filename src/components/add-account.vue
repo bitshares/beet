@@ -186,6 +186,8 @@
     import { blockchains } from "../config/config.js";
     import getBlockchain from "../lib/blockchains/blockchainFactory";
     import { EventBus } from "../lib/event-bus.js";
+    import RendererLogger from "../lib/RendererLogger";
+    const logger = new RendererLogger();
 
     export default {
         name: "AddAccount",
@@ -232,7 +234,6 @@
                         opkey = blockchain.getPublicKey(this.ownerpk);
                     }
                 } catch (e) {
-                    console.error(e);
                     this.errorMsg = this.$t("invalid_key_error");
                     this.$refs.errorModal.show();
                     return;
@@ -241,8 +242,7 @@
 
                 blockchain
                     .getAccount(this.accountname)
-                    .then(account => {
-                        console.log(account);
+                    .then(account => {                        
                         let active_check = false;
                         account.active.public_keys.forEach(key => {
                             if (key[0] == apkey) {
@@ -268,7 +268,6 @@
                         }
                     })
                     .catch(err => {
-                        console.log(err);
                         EventBus.$emit("popup", "load-end");
                         this.$refs.errorModal.show();
                         this.errorMsg = this.$t("unverified_account_error");
@@ -303,7 +302,6 @@
                             this.$router.replace("/dashboard");
                         }).catch((e) => {
                             EventBus.$emit("popup", "load-end");
-                            console.log(e);
                             if (e=='invalid') {
                                 this.$refs.errorModal.show();
                                 this.errorMsg = this.$t("invalid_password");

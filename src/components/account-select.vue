@@ -17,6 +17,8 @@
 </template>
 
 <script>
+    import RendererLogger from "../lib/RendererLogger";
+    const logger = new RendererLogger();
     export default {
         name: "AccountSelect",
         i18nOptions: { namespaces: "common" },
@@ -52,7 +54,7 @@
             }
         },
         mounted() {
-            console.log(this.$store.state.AccountStore.accountlist);
+            
         }
     };
 </script>

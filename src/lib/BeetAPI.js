@@ -1,10 +1,9 @@
 import * as Actions from './Actions';
 import Queue from './Queue';
 import store from '../store/index.js';
-/*
 import RendererLogger from "./RendererLogger";
 const logger = new RendererLogger();
-*/
+
 var popupQ = new Queue();
 export default class BeetAPI {
 
@@ -67,7 +66,6 @@ export default class BeetAPI {
         return result;
     }
     static _parseReject(method, request, err) {
-        console.error(method, err);
         return {
             id: request.id,
             result: {
@@ -99,7 +97,6 @@ export default class BeetAPI {
                 identity: response
             });
         } catch (e) {
-            console.error("BeetAPI.link", e);
             return {
                 id: request.id,
                 response: {
@@ -110,7 +107,6 @@ export default class BeetAPI {
     }
     static async [Actions.VOTE_FOR](request, vue) {
         try {
-            console.log("BeetAPI.voteFor", request);
             let response = await vue.requestVote(request.payload);
             return {
                 id: request.id,
@@ -122,7 +118,6 @@ export default class BeetAPI {
     }
     static async [Actions.REQUEST_SIGNATURE](request, vue) {
         try {
-            console.log("BeetAPI.requestSignature", request);
             let response = await vue.requestTx(request.payload);
             return {
                 id: request.id,
@@ -134,7 +129,6 @@ export default class BeetAPI {
     }
     static async [Actions.INJECTED_CALL](request, vue) {
         try {
-            console.log("BeetAPI.injectedCall", request);
             let response = await vue.requestTx(request.payload);
             return {
                 id: request.id,
@@ -146,7 +140,6 @@ export default class BeetAPI {
     }
     static async [Actions.SIGN_MESSAGE](request, vue) {
         try {
-            console.log("BeetAPI.signMessage", request);
             let response = await vue.requestSignedMessage(request.payload);
             return {
                 id: request.id,
@@ -158,7 +151,6 @@ export default class BeetAPI {
     }
     static async [Actions.VERIFY_MESSAGE](request, vue) {
         try {
-            console.log("BeetAPI.verifyMessage", request);
             let response = await vue.verifyMessage(request.payload);
             return {
                 id: request.id,

@@ -1,4 +1,6 @@
 import {EventBus} from '../event-bus.js';
+import RendererLogger from "../RendererLogger";
+const logger = new RendererLogger();
 
 export default class BlockchainAPI {
 
@@ -20,7 +22,6 @@ export default class BlockchainAPI {
         this._isConnected = true;
         EventBus.$emit('blockchainStatus', { chain: this._config.short , status:true});
         this._isConnectingInProgress = false;
-        console.log("connected to ", node)
         resolveCallback(node);
     }
 

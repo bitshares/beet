@@ -2,6 +2,9 @@ import Vue from 'vue/dist/vue.js';
 import {
     defaultLocale
 } from '../../config/i18n.js'
+
+import RendererLogger from "../../lib/RendererLogger";
+const logger = new RendererLogger();
 const LOAD_SETTINGS = 'LOAD_SETTINGS';
 
 const mutations = {
@@ -35,7 +38,6 @@ const actions = {
         commit
     }, payload) {
         return new Promise((resolve, reject) => {
-            console.log("SettingsStore.setNode", payload);
             try {
                 let settings = localStorage.getItem("settings");
                 if (settings && settings.length > 0) {

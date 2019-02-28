@@ -4,9 +4,11 @@ import {
     PrivateKey,
     PublicKey,
     TransactionBuilder,
-    Signature,
-    ChainStore
+    Signature
+    
 } from "bitsharesjs";
+import RendererLogger from "../RendererLogger";
+const logger = new RendererLogger();
 
 export default class BitShares extends BlockchainAPI {
 
@@ -20,7 +22,6 @@ export default class BitShares extends BlockchainAPI {
             if (nodeToConnect == null) {
                 nodeToConnect = this.getNodes()[0].url;
             }
-            console.log("attempting to connect to ", nodeToConnect);
             if (this._isConnectingInProgress) {
                 // there should be a promise queue for pending connects, this is the lazy way
                 setTimeout(() => {
@@ -58,7 +59,6 @@ export default class BitShares extends BlockchainAPI {
                     {enableCrypto: false, enableOrders: false},
                     this._onCloseWrapper.bind(this, onClose)
                 ).init_promise.then(() => {
-                    console.log('here');
                     this._connectionEstablished(resolve, nodeToConnect);
                 }).catch((err) => {
                     this._isConnected = false;
@@ -142,7 +142,6 @@ export default class BitShares extends BlockchainAPI {
     }
 
     mapOperationData(incoming) {
-        console.log("mapOperationData", incoming);
         return new Promise((resolve, reject) => {
             this._ensureAPI().then(() => {
                 if (incoming.action == "vote") {
@@ -215,7 +214,6 @@ export default class BitShares extends BlockchainAPI {
     }
 
     sign(operation, key) {
-        console.log("sign", operation, key);
         return new Promise((resolve, reject) => {
             this._ensureAPI().then(() => {
                 if (operation.type) {
@@ -260,7 +258,6 @@ export default class BitShares extends BlockchainAPI {
     }
 
     broadcast(transaction) {
-        console.log("broadcast", transaction);
         return new Promise((resolve, reject) => {
             this._ensureAPI().then(() => {
                 transaction.broadcast().then(id => {
@@ -272,7 +269,6 @@ export default class BitShares extends BlockchainAPI {
 
     getOperation(data, account) {
         let account_id = account.id;
-        console.log("getOperation", data, account_id);
         return new Promise((resolve, reject) => {
             this._ensureAPI().then(() => {
                 let operation = {

@@ -1,4 +1,6 @@
 import Vue from 'vue/dist/vue.js';
+import RendererLogger from "../../lib/RendererLogger";
+const logger = new RendererLogger();
 const LOAD_ACCOUNTS = 'LOAD_ACCOUNTS';
 const CHOOSE_ACCOUNT = 'CHOOSE_ACCOUNT';
 const ADD_ACCOUNT = 'ADD_ACCOUNT';
@@ -52,7 +54,6 @@ const actions = {
     },payload) {
 
         return new Promise((resolve, reject) => {
-                console.log(payload);
                 if (payload.length>0) {
                     commit(LOAD_ACCOUNTS, payload);
                     resolve('Accounts Loaded');

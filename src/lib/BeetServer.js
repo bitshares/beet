@@ -16,7 +16,6 @@ const linkHandler = async (req) => {
         let userResponse = await BeetAPI.handler(Object.assign(req, {}), vueInst);
         
         if (!!userResponse.response && !userResponse.response.isLinked) {
-            console.log("User rejected request, id=" + req.id);
             return {
                 id: req.id,
                 result: {
@@ -30,8 +29,6 @@ const linkHandler = async (req) => {
             let existing;
             let response;
             if (appcheck.length==0) {
-                //let secret = await eccrypto.derive(req.key, Buffer.from(req.payload.pubkey, 'hex'));
-                console.log("linkHandler key=", req.key);
                 let secret = req.key.derive(ec.keyFromPublic(req.payload.pubkey, 'hex').getPublic());
                 let app = await store.dispatch('OriginStore/addApp', {
                     appName: req.appName,
@@ -42,7 +39,6 @@ const linkHandler = async (req) => {
                     secret: secret.toString(16),
                     next_hash: req.payload.next_hash
                 });
-                console.log("app added, id=" + app.id);
                 existing=false;
                 response = Object.assign(req, {
                     isLinked: true,
@@ -69,7 +65,6 @@ const linkHandler = async (req) => {
             return response;
         }
     } catch (err) {
-        console.error(err);
         return {
             id: req.id,
             result: {
@@ -85,7 +80,6 @@ const authHandler = function (req) {
     if (req.payload.identityhash != null & req.payload.identityhash != undefined) {
         let apps = store.state.OriginStore.apps;
         const app = apps.find(x => x.identityhash === req.payload.identityhash);
-        console.log("authHandler", app);
         if (!app) {
             return Object.assign(req.payload, {
                 authenticate: false,
@@ -124,13 +118,11 @@ export default class BeetServer {
             server.respondLink(data.client, status);
         });
         server.on('authenticate', async (data) => {
-            console.log("event type api", data);
             let status = await authHandler(data);
             status.id = data.id;
             server.respondAuth(data.client, status);
         });
         server.on('api', async (data) => {
-            console.log("event type api", data);
             store.dispatch('OriginStore/newRequest', {
                 identityhash: data.payload.identityhash,
                 next_hash: data.payload.next_hash

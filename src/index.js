@@ -162,11 +162,9 @@ const createWindow = async () => {
     });
 
     ipcMain.on('log', (event, arg) => {
-
         logger[arg.level](arg.data);
     });
-    tray.on('click', (event) => {
-        console.log(event);
+    tray.on('click', () => {
         mainWindow.setAlwaysOnTop(true);
         mainWindow.show();
         mainWindow.focus();

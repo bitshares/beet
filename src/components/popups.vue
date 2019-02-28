@@ -205,8 +205,9 @@
     import { v4 as uuidv4 } from "uuid";
     import { EventBus } from "../lib/event-bus.js";
     import AccountSelect from "./account-select";
-
     import getBlockchain from "../lib/blockchains/blockchainFactory";
+    import RendererLogger from "../lib/RendererLogger";
+    const logger = new RendererLogger();
 
     export default {
         name: "Popups",
@@ -288,7 +289,6 @@
                 if (index !== -1) this.alerts.splice(index, 1);
             },
             requestAccess: async function(request) {
-                console.log(request);
                 this.$store.dispatch("WalletStore/notifyUser", {
                     notify: "request",
                     message: "request"
@@ -403,7 +403,6 @@
                 });
             },
             verifyMessage: function(payload) {
-                console.log("verify", payload);
                 return new Promise((resolve, reject) => {
                     let payload_dict = {};
                     payload_dict[payload.params.payload[0]] = [
@@ -433,7 +432,6 @@
                 });
             },
             allowAccess: function() {
-                console.log(this.chosenAccount);
                 this.$refs.accountReqModal.hide();
                 this.incoming.accept({
                     name: this.chosenAccount.accountName,

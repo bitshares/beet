@@ -7,6 +7,8 @@ import {
 } from "uuid";
 import CryptoJS from 'crypto-js';
 import BeetDB from '../../lib/BeetDB.js';
+import RendererLogger from "../../lib/RendererLogger";
+const logger = new RendererLogger();
 const GET_WALLET = 'GET_WALLET';
 const CREATE_WALLET = 'CREATE_WALLET';
 const CONFIRM_UNLOCK = 'CONFIRM_UNLOCK';
@@ -151,7 +153,6 @@ const actions = {
                 let encwalletdata = CryptoJS.AES.encrypt(JSON.stringify(newwalletdata), payload.password).toString();
                 let updatedWallet = state.wallet;
                 updatedWallet.accounts.push(payload.account.accountID);
-                console.log(updatedWallet);
                 BeetDB.wallets_encrypted.update(updatedWallet.id, {
                     data: encwalletdata
                 }).then(() => {

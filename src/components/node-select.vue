@@ -65,8 +65,7 @@
                                 chain: this.selectedChain,
                                 node: connectedNode
                             });
-                        }).catch((err) => {
-                            logger.error(err);
+                        }).catch(() => {
                         });
                     }
                 }
@@ -119,8 +118,7 @@
                 }
                 
                 this.$emit("first-connect");
-            }).catch((err) => {
-                logger.error(err);
+            }).catch(() => {
             });
         }
     };

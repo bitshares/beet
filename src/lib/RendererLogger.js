@@ -45,15 +45,13 @@ class RendererLogger {
         })
     }
     serialize(obj) {
-        if (typeof obj == 'object') {
+            
             return util.inspect(obj, {
                 compact: true,
                 breakLength: 80,
                 depth: 3
             })
-        } else {
-            return obj;
-        }
+        
     }
 }
 module.exports = RendererLogger;

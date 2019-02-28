@@ -14,6 +14,8 @@ import crypto from 'crypto';
 import Https from 'https';
 import Fs from 'fs';
 import {ec as EC} from "elliptic";
+import RendererLogger from "./RendererLogger";
+const logger = new RendererLogger();
 
 var ec = new EC('curve25519');
 /*
@@ -67,7 +69,6 @@ export default class BeetWS extends EventEmitter {
     }
 
     _handleMessage(client, data) {
-        console.log("_handleMessage", client, data);
         if (data.type == 'version') {
             client.send('{ "type": "version", "error": false, "result": { "version": ' + JSON.stringify(version) + '}}');
         } else {
@@ -78,7 +79,6 @@ export default class BeetWS extends EventEmitter {
                         if (hash == client.next_hash) {
                             client.otp.counter = data.id;
                             var key = client.otp.generate();
-                            console.log("otp key generated", key, client.otp.counter);
                             try {
                                 var msg = JSON.parse(CryptoJS.AES.decrypt(data.payload, key).toString(CryptoJS.enc.Utf8));
 
@@ -151,7 +151,6 @@ export default class BeetWS extends EventEmitter {
                 counter: 0,
                 secret: OTPAuth.Secret.fromHex(result.secret)
             });
-            console.log("otp instantiated", result.secret);
             this._clients[client].otp = otp;
             this._clients[client].send('{"id": ' + result.id + ', "error": false, "payload": { "authenticate": true, "link": true, "chain": "'+result.chain+'" , "account_id": "' + result.account_id + '"}}');
         } else {
@@ -186,7 +185,6 @@ export default class BeetWS extends EventEmitter {
                     counter: 0,
                     secret: OTPAuth.Secret.fromHex(result.app.secret)
                 });
-                console.log("otp instantiated", result.app, result.app.secret.toString());
                 this._clients[client].otp = otp;
                 this._clients[client].send('{"id": ' + result.id + ', "error": false, "payload": { "authenticate": true, "link": true, "account_id": "' + result.app.account_id + '"}}');
             } else {
