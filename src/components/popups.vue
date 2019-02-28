@@ -247,6 +247,7 @@
             });
         },
         mounted() {
+            logger.debug('Popup Service panel mounted');
             this.$root.$on("bv::modal::shown", bvEvent => {
                 if (bvEvent.target.id == "loaderAnim") {
                     this.loaderpromise.resolve();

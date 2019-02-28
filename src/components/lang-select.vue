@@ -28,6 +28,8 @@
     import { locales } from "../config/i18n.js";
     import Multiselect from 'vue-multiselect'
     import i18next from 'i18next';
+    import RendererLogger from "../lib/RendererLogger";
+    const logger = new RendererLogger();
 
     export default {
         name: "LangSelect",
@@ -46,6 +48,7 @@
             }
         },
         mounted() {
+            logger.debug('Language Selector mounted');
         }
     };
 </script>

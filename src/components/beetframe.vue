@@ -24,21 +24,18 @@
     import {
         ipcRenderer,
     } from 'electron';
+    import RendererLogger from "../lib/RendererLogger";
+    const logger = new RendererLogger();
 
     export default {
         name: "Beetframe",
         i18nOptions: { namespaces: ["common", "operations"] },
         data() {
-            return {
-                
-            };
+            return {};
         },
-        watch:{
-            
-        },  
-        created() {
-            
-        },      
+        mounted() {
+            logger.debug('Main Beet frame mounted');
+        },
         methods: {
             minimise: ()=> {
                 ipcRenderer.send("minimise", true);

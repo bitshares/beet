@@ -251,6 +251,9 @@
                 chainList: Object.values(blockchains)
             };
         },
+        mounted() {
+            logger.debug('Create Wallet Wizard mounted');
+        },
         methods: {
             step1: function() {
                 this.step = 1;

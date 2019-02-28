@@ -54,7 +54,7 @@
             }
         },
         mounted() {
-            
+            logger.debug('Account-Selector Mounted');            
         }
     };
 </script>

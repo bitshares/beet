@@ -97,6 +97,8 @@
     </div>
 </template>
 <script>
+    import RendererLogger from "../lib/RendererLogger";
+    const logger = new RendererLogger();
 
     export default {
         name: "Start",
@@ -118,6 +120,7 @@
             }
         },
         mounted() {
+            logger.debug('Start screen mounted');
             this.$store.dispatch("WalletStore/loadWallets", {}).catch( ()=> {
                 
             });

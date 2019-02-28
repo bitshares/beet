@@ -31,6 +31,8 @@
 <script>
     import getBlockchain from "../lib/blockchains/blockchainFactory"
     import { EventBus } from '../lib/event-bus.js';
+    import RendererLogger from "../lib/RendererLogger";
+    const logger = new RendererLogger();
 
     export default {
         name: "Balances",
@@ -65,7 +67,9 @@
                 }
             }
         },
-        mounted() {},
+        mounted() {            
+            logger.debug('Balances Table Mounted');
+        },
         methods: {
             getBalances: async function() {
                 let blockchain = getBlockchain(this.selectedChain);

@@ -34,6 +34,8 @@
     import AccountSelect from "./account-select";
     import Balances from "./balances";
     import { EventBus } from "../lib/event-bus.js";
+    import RendererLogger from "../lib/RendererLogger";
+    const logger = new RendererLogger();
 
     export default {
         name: "Dashboard",
@@ -89,15 +91,13 @@
         },
         mounted() {
             EventBus.$emit("popup", "load-start");
-            //this.$refs.loaderAnimModal.show();
+            logger.debug('Dashboard Mounted');
         },
         methods: {
             getBalances: async function() {
                 await this.$refs.balancetable.getBalances();
                 this.$store.dispatch("WalletStore/confirmUnlock");
-                EventBus.$emit("popup", "load-end");
-                //this.$emit("load-end");
-                //this.$refs.loaderAnimModal.hide();
+                EventBus.$emit("popup", "load-end");            
             }
         }
     };

@@ -24,12 +24,18 @@
  
 <script>
     import LangSelect from "./lang-select";
+    import RendererLogger from "../lib/RendererLogger";
+    const logger = new RendererLogger();
+
     export default {
         name: "HeaderGuest",
         i18nOptions: { namespaces: "common" },
         components: { LangSelect },
         data() {
             return {};
+        },
+        mounted() {
+            logger.debug('Standard Header mounted');
         }
     };
 </script>

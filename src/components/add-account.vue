@@ -208,6 +208,9 @@
                 chainList: Object.values(blockchains)
             };
         },
+        mounted() {
+            logger.debug('Account-Add wizard Mounted');
+        },
         methods: {
             step1: function() {
                 this.step = 1;

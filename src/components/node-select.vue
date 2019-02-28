@@ -102,6 +102,7 @@
             });
         },
         mounted() {
+            logger.debug('Node Selector mounted');
             this.nodes = this.blockchain.getNodes();
             let url;
             if (this.selectedNode!=undefined) {

@@ -20,6 +20,8 @@
 
 <script>
     import LangSelect from "./lang-select";
+    import RendererLogger from "../lib/RendererLogger";
+    const logger = new RendererLogger();
 
     export default {
         name: "HeaderSmall",
@@ -27,6 +29,9 @@
         components: { LangSelect },
         data() {
             return {};
+        },
+        mounted() {
+            logger.debug('Small Header mounted');
         }
     };
 </script>
