@@ -207,21 +207,6 @@
             </button>
         </div>
         <b-modal
-            id="loaderAnim"
-            ref="loaderAnimModal"
-            centered
-            no-close-on-esc
-            no-close-on-backdrop
-            hide-header
-            hide-header-close
-            hide-footer
-            title="Loading..."
-        >
-            <div class="lds-roller">
-                <div /><div /><div /><div /><div /><div /><div /><div />
-            </div>
-        </b-modal>
-        <b-modal
             id="error"
             ref="errorModal"
             centered
@@ -240,7 +225,8 @@
     import Password from 'vue-password-strength-meter'
     import { blockchains } from "../config/config.js";
     import RendererLogger from "../lib/RendererLogger";
-    import getBlockchain from "../lib/blockchains/blockchainFactory"
+    import getBlockchain from "../lib/blockchains/blockchainFactory";
+    import { EventBus } from "../lib/event-bus.js";
 
     const logger = new RendererLogger();
 
@@ -316,7 +302,7 @@
                     this.$refs.errorModal.show();
                     return;
                 }
-                this.$refs.loaderAnimModal.show();
+                EventBus.$emit("popup", "load-start");
 
                 blockchain.getAccount(this.accountname).then((account) => {
                     console.log(account);
@@ -334,18 +320,18 @@
                     });
                     let memo_check = account.memo.public_key == mpkey;
                     if (active_check && owner_check && memo_check) {
-                        this.$refs.loaderAnimModal.hide();
+                        EventBus.$emit("popup", "load-end");
                         this.accountID = account.id;
                         this.step = 3;
                     } else {
-                        this.$refs.loaderAnimModal.hide();
+                        EventBus.$emit("popup", "load-end");
                         this.$refs.errorModal.show();
                         this.errorMsg = this.$t("unverified_account_error");
                         this.accountID = "";
                     }
                 }).catch((err) => {
                     console.log(err);
-                    this.$refs.loaderAnimModal.hide();
+                    EventBus.$emit("popup", "load-end");
                     this.$refs.errorModal.show();
                     this.errorMsg = this.$t("unverified_account_error");
                     this.accountID = "";
@@ -358,7 +344,7 @@
                     return;
                 }
 
-                this.$refs.loaderAnimModal.show();
+                EventBus.$emit("popup", "load-start");
 
                 if (this.accountID !== null) {
                     this.$store.dispatch("WalletStore/saveWallet", {

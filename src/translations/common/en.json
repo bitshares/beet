@@ -6,6 +6,8 @@
     "start_cta": "Get Started",
     "select_wallet": "Select Wallet:",
     "password_placeholder": "Password",
+    "invalid_password": "Password is incorrect. Please try again.",
+    "update_failed": "Could not save new account.",
     "unlock_cta": "Unlock",
     "create_cta": "Create a new Wallet",
     "step_counter": "Step {{step_no}}",

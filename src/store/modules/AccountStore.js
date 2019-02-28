@@ -42,7 +42,7 @@ const actions = {
                     commit(ADD_ACCOUNT, payload.account);
                     resolve('Account added');
                 }).catch((e)=> {
-                    reject('Could not save account: '+e);
+                    reject(e);
                 });
             }
         });

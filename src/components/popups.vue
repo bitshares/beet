@@ -235,10 +235,7 @@
                 case "load-start":
                     this.loaderpromise.show = new Promise((resolve) => {
                         this.$refs.loaderAnimModal.show();
-                        this.loaderpromise.resolve = resolve;
-                        this.$root.$on("bv::modal::show", (bvEvent, modalId) => {
-                            console.log("Modal is about to be shown", bvEvent, modalId);
-                        });
+                        this.loaderpromise.resolve = resolve;                      
                     });
                     break;
                 case "load-end":

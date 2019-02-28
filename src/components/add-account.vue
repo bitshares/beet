@@ -168,28 +168,6 @@
             </button>
         </div>
         <b-modal
-            id="loaderAnim"
-            ref="loaderAnimModal"
-            centered
-            no-close-on-esc
-            no-close-on-backdrop
-            hide-header
-            hide-header-close
-            hide-footer
-            title="Loading..."
-        >
-            <div class="lds-roller">
-                <div />
-                <div />
-                <div />
-                <div />
-                <div />
-                <div />
-                <div />
-                <div />
-            </div>
-        </b-modal>
-        <b-modal
             id="error"
             ref="errorModal"
             centered
@@ -207,7 +185,7 @@
 <script>
     import { blockchains } from "../config/config.js";
     import getBlockchain from "../lib/blockchains/blockchainFactory";
-
+    import { EventBus } from "../lib/event-bus.js";
 
     export default {
         name: "AddAccount",
@@ -259,7 +237,7 @@
                     this.$refs.errorModal.show();
                     return;
                 }
-                this.$refs.loaderAnimModal.show();
+                EventBus.$emit("popup", "load-start");
 
                 blockchain
                     .getAccount(this.accountname)
@@ -279,11 +257,11 @@
                         });
                         let memo_check = account.memo.public_key == mpkey;
                         if (active_check && owner_check && memo_check) {
-                            this.$refs.loaderAnimModal.hide();
+                            EventBus.$emit("popup", "load-end");
                             this.accountID = account.id;
                             this.step = 3;
                         } else {
-                            this.$refs.loaderAnimModal.hide();
+                            EventBus.$emit("popup", "load-end");
                             this.$refs.errorModal.show();
                             this.errorMsg = this.$t("unverified_account_error");
                             this.accountID = "";
@@ -291,7 +269,7 @@
                     })
                     .catch(err => {
                         console.log(err);
-                        this.$refs.loaderAnimModal.hide();
+                        EventBus.$emit("popup", "load-end");
                         this.$refs.errorModal.show();
                         this.errorMsg = this.$t("unverified_account_error");
                         this.accountID = "";
@@ -304,7 +282,7 @@
                     return;
                 }
 
-                this.$refs.loaderAnimModal.show();
+                EventBus.$emit("popup", "load-start");
 
                 if (this.accountID !== null) {
                     this.$store
@@ -323,6 +301,17 @@
                         })
                         .then(() => {
                             this.$router.replace("/dashboard");
+                        }).catch((e) => {
+                            EventBus.$emit("popup", "load-end");
+                            console.log(e);
+                            if (e=='invalid') {
+                                this.$refs.errorModal.show();
+                                this.errorMsg = this.$t("invalid_password");
+                            }
+                            if (e=='update_failed') {
+                                this.$refs.errorModal.show();
+                                this.errorMsg = this.$t("update_failed");
+                            }
                         });
                 }
             }

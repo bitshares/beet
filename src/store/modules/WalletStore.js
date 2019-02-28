@@ -135,28 +135,41 @@ const actions = {
         state,
         rootState
     }, payload) {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             let walletdata =  rootState.AccountStore.accountlist.slice();
             let newwalletdata=walletdata;
             newwalletdata.push(payload.account);
-            let encwalletdata = CryptoJS.AES.encrypt(JSON.stringify(newwalletdata), payload.password).toString();
-            let updatedWallet = state.wallet;
-            updatedWallet.accounts.push(payload.account.accountID);
-            console.log(updatedWallet);
-            BeetDB.wallets_encrypted.update(updatedWallet.id, {
-                data: encwalletdata
-            }).then(() => {
-                BeetDB.wallets_public.update(updatedWallet.id, {
-                    accounts: updatedWallet.accounts
+            await BeetDB.wallets_encrypted.get({
+                id: state.wallet.id
+            }).then((wallet) => {
+                try {
+                    let bytes = CryptoJS.AES.decrypt(wallet.data, payload.password);
+                    JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+                } catch (e) {
+                    throw ('invalid');
+                }
+                let encwalletdata = CryptoJS.AES.encrypt(JSON.stringify(newwalletdata), payload.password).toString();
+                let updatedWallet = state.wallet;
+                updatedWallet.accounts.push(payload.account.accountID);
+                console.log(updatedWallet);
+                BeetDB.wallets_encrypted.update(updatedWallet.id, {
+                    data: encwalletdata
                 }).then(() => {
-                    commit(GET_WALLET, updatedWallet);
-                    resolve('Account saved');
-                }).catch(() => {
-                    reject('Could not update public wallet data');
+                    BeetDB.wallets_public.update(updatedWallet.id, {
+                        accounts: updatedWallet.accounts
+                    }).then(() => {
+                        commit(GET_WALLET, updatedWallet);
+                        resolve('Account saved');
+                    }).catch(() => {
+                        reject('update_failed');
+                    });
+                }).catch((e) => {
+                    reject(e);
                 });
             }).catch((e) => {
-                reject('Could not save wallet data: '+e);
+                reject(e);
             });
+            
         });
     },
     loadWallets({
