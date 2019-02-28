@@ -11,32 +11,57 @@ const LOAD_AVAILABLE = 'LOAD_AVAILABLE';
 const ADD_WHITELIST = 'ADD_WHITELIST';
 
 const mutations = {
-    [LOAD_SETTINGS](state, settings) {
-        Vue.set(state, 'settings', settings);
-    }
+    [LOAD_WHITELIST](state, whitelist) {
+        Vue.set(state, 'whitelist', whitelist);
+    },
+    [LOAD_AVAILABLE](state, whitelistable) {
+        Vue.set(state, 'available', whitelistable);
+    },
+    [ADD_WHITELIST](state, whitelisted) {
+        state.whitelist.push(whitelisted);
+    },
 };
 
 const actions = {
-    loadSettings({
+    loadWhitelist({
         commit
     }) {
         return new Promise((resolve, reject) => {
-            try {
-                let settings = localStorage.getItem("settings");
-                if (settings && settings.length > 0) {
-
-                    commit(LOAD_SETTINGS, JSON.parse(settings));
-                } else {
-
-                    localStorage.setItem("settings", JSON.stringify(initialState.settings));
-                    commit(LOAD_SETTINGS, JSON.parse(initialState.settings));
-                }
+            BeetDB.whitelist.toArray().then((whitelist) => {
+                commit(LOAD_WHITELIST, whitelist);
                 resolve();
-            } catch (e) {
+            }).catch(() => {
                 reject();
-            }
+            });
         });
     },
+    loadAvailable({
+        commit
+    }) {
+        return new Promise((resolve, reject) => {
+            BeetDB.whitelistable.toArray().then((whitelistable) => {
+                commit(LOAD_AVAILABLE, whitelistable);
+                resolve();
+            }).catch(() => {
+                reject();
+            });
+        });
+    },
+    addWhitelist({
+        commit
+    }, payload) {
+        return new Promise((resolve, reject) => {
+            let db = BeetDB.whitelist;
+            db.add(payload).then((id) => {
+                payload.id = id;
+                commit(ADD_WHITELIST, payload);
+                resolve(payload);
+            }).catch((err) => {
+                reject(err);
+            });
+
+        });
+    }
 }
 
 

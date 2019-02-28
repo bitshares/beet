@@ -20,6 +20,9 @@
         "accept_btn": "Sign & Broadcast",
         "reject_btn": "Ignore"
     },
+    "whitelist": {
+        "prompt": "Whitelist subsequent requests from this app?"
+    },
     "vote": {
         "title": "Vote Request",
         "request": "App: `{{appName}}` from `{{origin}}`  wants you to vote for the following {{entity}} with account {{ chain }}:{{ accountName }}",

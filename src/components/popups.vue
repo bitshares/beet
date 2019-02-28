@@ -148,6 +148,7 @@
                     {{ specifics }}
                 </code>
             </pre>
+            <b-form-checkbox v-model="allowWhitelist" v-if="askWhitelist">  {{ $t('operations:whitelist.prompt') }}</b-form-checkbox>
             <b-btn
                 class="mt-3"
                 variant="success"
@@ -222,7 +223,9 @@
                 specifics: "",
                 signingAccount: {},
                 chosenAccount: {},
-                loaderpromise: {}
+                loaderpromise: {},
+                askWhitelist: false,
+                allowWhitelist:false
             };
         },
         watch: {
@@ -290,6 +293,7 @@
                 if (index !== -1) this.alerts.splice(index, 1);
             },
             requestAccess: async function(request) {
+                this.askWhitelist=false;
                 this.$store.dispatch("WalletStore/notifyUser", {
                     notify: "request",
                     message: "request"
@@ -303,6 +307,7 @@
                 });
             },
             requestAnyAccess: async function(request) {
+                this.askWhitelist=false;
                 this.$store.dispatch("WalletStore/notifyUser", {
                     notify: "request",
                     message: "request"
@@ -317,6 +322,7 @@
                 });
             },
             requestVote: async function(request) {
+                this.askWhitelist=false;
                 this.$store.dispatch("WalletStore/notifyUser", {
                     notify: "request",
                     message: "request"
@@ -353,6 +359,7 @@
                 });
             },
             requestTx: async function(payload) {
+                this.askWhitelist=false;
                 this.$store.dispatch("WalletStore/notifyUser", {
                     notify: "request",
                     message: "request"
@@ -372,36 +379,64 @@
                     this.incoming.rejecttx = rej;
                 });
             },
-            requestSignedMessage: async function(payload) {
-                this.$store.dispatch("WalletStore/notifyUser", {
-                    notify: "request",
-                    message: "request"
-                });
-                this.incoming = payload;
-                let signing = this.$store.state.AccountStore.accountlist.filter(x => {
-                    return (
-                        x.accountID == this.incoming.account_id &&
-                        x.chain == this.incoming.chain
-                    );
-                });
-                this.signingAccount = signing[0];
+            isWhitelisted: function (identity,method) {
+                if (this.$store.state.WhitelistStore.whitelist.filter( x=> (x.identityhash==identity && x.method==method) ).length>0) {
+                    return true;
+                }else{
+                    return false;
+                }
+            },
+            requestSignedMessage: async function(payload) {                
+                this.askWhitelist=true;
+                if (this.isWhitelisted(payload.identityhash,'signMessage')) {
 
-                this.specifics = payload.params;
+                    this.incoming = payload;
+                    let signing = this.$store.state.AccountStore.accountlist.filter(x => {
+                        return (
+                            x.accountID == this.incoming.account_id &&
+                            x.chain == this.incoming.chain
+                        );
+                    });
+                    this.signingAccount = signing[0];
 
-                this.genericmsg = this.$t("operations:message.request", {
-                    appName: this.incoming.appName,
-                    origin: this.incoming.origin,
-                    chain: this.signingAccount.chain,
-                    accountName: this.signingAccount.accountName
-                });
-                this.generictitle = this.$t("operations:message.title");
-                this.genericaccept = this.$t("operations:message.accept_btn");
-                this.genericreject = this.$t("operations:message.reject_btn");
-                this.$refs.genericReqModal.show();
-                return new Promise((res, rej) => {
-                    this.incoming.acceptgen = res;
-                    this.incoming.rejectgen = rej;
-                });
+                    this.specifics = payload.params;
+                    let resp=new Promise((res, rej) => {
+                        this.incoming.acceptgen = res;
+                        this.incoming.rejectgen = rej;
+                    });
+                    this.acceptGenericBG();
+                    return resp;
+                }else{
+                    this.$store.dispatch("WalletStore/notifyUser", {
+                        notify: "request",
+                        message: "request"
+                    });
+                    this.incoming = payload;
+                    let signing = this.$store.state.AccountStore.accountlist.filter(x => {
+                        return (
+                            x.accountID == this.incoming.account_id &&
+                            x.chain == this.incoming.chain
+                        );
+                    });
+                    this.signingAccount = signing[0];
+
+                    this.specifics = payload.params;
+
+                    this.genericmsg = this.$t("operations:message.request", {
+                        appName: this.incoming.appName,
+                        origin: this.incoming.origin,
+                        chain: this.signingAccount.chain,
+                        accountName: this.signingAccount.accountName
+                    });
+                    this.generictitle = this.$t("operations:message.title");
+                    this.genericaccept = this.$t("operations:message.accept_btn");
+                    this.genericreject = this.$t("operations:message.reject_btn");
+                    this.$refs.genericReqModal.show();
+                    return new Promise((res, rej) => {
+                        this.incoming.acceptgen = res;
+                        this.incoming.rejectgen = rej;
+                    });
+                }
             },
             verifyMessage: function(payload) {
                 return new Promise((resolve, reject) => {
@@ -478,12 +513,43 @@
                 this.$refs.transactionReqModal.hide();
                 this.incoming.rejecttx({ canceled: true });
             },
+            acceptGenericBG: async function() {
+                try {
+                    let blockchain = getBlockchain(this.incoming.chain);
+                    if (this.incoming.method == "signMessage") {
+                        let signedMessage = await blockchain.signMessage(
+                            this.signingAccount.keys.active,
+                            this.signingAccount.accountName,
+                            this.incoming.params
+                        );
+                        this.incoming.acceptgen(signedMessage);
+                    } else {
+                        let operation = await blockchain.getOperation(this.incoming, {
+                            id: this.signingAccount.accountID,
+                            name: this.signingAccount.accountName
+                        });
+                        let transaction = await blockchain.sign(
+                            operation,
+                            this.signingAccount.keys.active
+                        );
+                        let id = await blockchain.broadcast(transaction);
+                        this.incoming.acceptgen(id);
+                    }
+                    
+                } catch (err) {
+                    this.incoming.rejectgen({ error: err });
+                    
+                }
+            },
             acceptGeneric: async function() {
                 try {
                     EventBus.$emit("popup", "load-start");
                     this.$refs.genericReqModal.hide();
                     let blockchain = getBlockchain(this.incoming.chain);
                     if (this.incoming.method == "signMessage") {
+                        if (this.allowWhitelist) {
+                            this.$store.dispatch("WhitelistStore/addWhitelist",{ identityhash: this.incoming.identityhash, method: 'signMessage'});
+                        }
                         let signedMessage = await blockchain.signMessage(
                             this.signingAccount.keys.active,
                             this.signingAccount.accountName,
