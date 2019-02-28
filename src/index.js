@@ -22,9 +22,13 @@ context_menu({
 let mainWindow;
 
 const isDevMode = process.execPath.match(/[\\/]electron/);
-const logger = new Logger(3);
+let logLevel=0;
 
-if (isDevMode) enableLiveReload();
+if (isDevMode) {
+    enableLiveReload();
+    logLevel=3;
+}
+const logger = new Logger(logLevel);
 let first = true;
 let tray = null;
 let minimised = false;
