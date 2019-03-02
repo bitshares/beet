@@ -38,8 +38,8 @@
 <script>
     // operations:any_account_id.request
     import AbstractPopup from "./abstractpopup";
-    import RendererLogger from "../lib/RendererLogger";
-    import AccountSelect from "./account-select";
+    import RendererLogger from "../../lib/RendererLogger";
+    import AccountSelect from "../account-select";
     const logger = new RendererLogger();
 
     export default {
@@ -53,7 +53,7 @@
             };
         },
         methods: {
-            _getResponse: function () {
+            _execute: function () {
                 return {
                     name: this.chosenAccount.accountName,
                     chain: this.chosenAccount.chain,

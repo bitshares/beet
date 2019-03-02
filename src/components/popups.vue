@@ -2,6 +2,7 @@
     <div>
         <LinkRequestPopup ref="accountReqModal"></LinkRequestPopup>
         <LinkRequestPopup ref="anyAccountReqModal"></LinkRequestPopup>
+        <SignMessageRequestPopup ref="signMessageModal"></SignMessageRequestPopup>
         <TransactionRequestPopup ref="transactionReqModal"></TransactionRequestPopup>
         <GenericRequestPopup ref="genericReqModal"></GenericRequestPopup>
 
@@ -44,30 +45,23 @@
 <script>
     import { v4 as uuidv4 } from "uuid";
     import { EventBus } from "../lib/event-bus.js";
-    import AccountSelect from "./account-select";
     import getBlockchain from "../lib/blockchains/blockchainFactory";
+    import LinkRequestPopup from "./popups/linkrequestpopup";
+    import GenericRequestPopup from "./popups/genericrequestpopup";
+    import TransactionRequestPopup from "./popups/transactionrequestpopup";
+
     import RendererLogger from "../lib/RendererLogger";
+    import SignMessageRequestPopup from "./popups/signedmessagepopup";
     const logger = new RendererLogger();
-    import LinkRequestPopup from "./linkrequestpopup";
-    import GenericRequestPopup from "./genericrequestpopup";
-    import TransactionRequestPopup from "./transactionrequestpopup";
 
     export default {
         name: "Popups",
         i18nOptions: { namespaces: ["common", "operations"] },
-        components: {TransactionRequestPopup, AccountSelect, LinkRequestPopup, GenericRequestPopup },
+        components: {SignMessageRequestPopup, TransactionRequestPopup, LinkRequestPopup, GenericRequestPopup },
         data() {
             return {
-                genericmsg: "",
                 alerts: [],
-                api: null,
-                incoming: {},
-                specifics: "",
-                signingAccount: {},
-                chosenAccount: {},
-                loaderpromise: {},
-                askWhitelist: false,
-                allowWhitelist:false
+                loaderpromise: {}
             };
         },
         watch: {
@@ -193,42 +187,13 @@
                 }
             },
             requestSignedMessage: async function(payload) {
-                let _acceptCall = async (incoming) => {
-                    let blockchain = getBlockchain(incoming.chain);
-                    if (incoming.method == "signMessage") {
-                        let signedMessage = await blockchain.signMessage(
-                            incoming.signingAccount.keys.active,
-                            incoming.signingAccount.accountName,
-                            incoming.incoming.params
-                        );
-                        return signedMessage;
-                    }
-                };
                 payload.signingAccount = this._getSigningAccount(payload);
-                if (this.isWhitelisted(payload.identityhash,'signMessage')) {
-                    return new Promise((resolve,reject) => {
-                        try {
-                            resolve(_acceptCall());
-                        } catch (err) {
-                            reject(err);
-                        }
-                    });
+                if (this.isWhitelisted(payload.identityhash, 'SignMessageRequestPopup')) {
+                    return this.$refs.signMessageModal.execute(
+                        payload
+                    );
                 } else {
-                    let generic = {
-                        title: this.$t("operations:message.title"),
-                        message: this.$t("operations:message.request", {
-                            appName: payload.appName,
-                            origin: payload.origin,
-                            chain: payload.signingAccount.chain,
-                            accountName: payload.signingAccount.accountName
-                        }),
-                        details: payload.params,
-                        acceptText: this.$t("operations:message.accept_btn"),
-                        rejectText: this.$t("operations:message.reject_btn"),
-                        acceptCall: _acceptCall.bind(this)
-                    };
-                    payload.generic = generic;
-                    return this.$refs.genericReqModal.show(
+                    return this.$refs.signMessageModal.show(
                         payload,
                         true
                     );

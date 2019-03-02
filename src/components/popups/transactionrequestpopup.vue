@@ -43,8 +43,8 @@
 </template>
 <script>
     import AbstractPopup from "./abstractpopup";
-    import RendererLogger from "../lib/RendererLogger";
-    import getBlockchain from "../lib/blockchains/blockchainFactory";
+    import RendererLogger from "../../lib/RendererLogger";
+    import getBlockchain from "../../lib/blockchains/blockchainFactory";
     const logger = new RendererLogger();
 
     export default {
@@ -59,7 +59,7 @@
             };
         },
         methods: {
-            _getResponse: async function () {
+            _execute: async function () {
                 let blockchain = getBlockchain(this.incoming.chain);
                 let transaction = await blockchain.sign(
                     this.incoming.params,

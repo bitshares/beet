@@ -1,7 +1,7 @@
 <template>
 </template>
 <script>
-    import RendererLogger from "../lib/RendererLogger";
+    import RendererLogger from "../../lib/RendererLogger";
     const logger = new RendererLogger();
 
     export default {
@@ -18,18 +18,24 @@
             };
         },
         methods: {
-            show: async function(incoming, askWhitelist = false) {
+            show: async function(incoming, askWhitelist = null) {
                 this.$store.dispatch("WalletStore/notifyUser", {
                     notify: "request",
                     message: "request"
                 });
                 this.incoming = incoming;
-                this.askWhitelist = askWhitelist;
+                if (askWhitelist !== null) {
+                    this.askWhitelist = askWhitelist;
+                }
+                this._onShow();
                 this.$refs.modalComponent.show();
                 return new Promise((resolve, reject) => {
                     this._accept = resolve;
                     this._reject = reject;
                 });
+            },
+            _onShow: function() {
+                // to overwrite, do nothing in default
             },
             _clickedAllow: function() {
                 // EventBus.$emit("popup", "load-start");
@@ -39,18 +45,38 @@
                     // todo allowWhitelist move whitelisting to BeetAPI, thus return flag here
                     this._accept(
                         {
-                            response: this._getResponse(),
+                            response: this._execute(),
                             whitelisted: this.allowWhitelist
                         }
                     );
+                    if (this.allowWhitelist) {
+                        // todo: allowWhitelist move whitelisting into BeetAPI
+                        this.$store.dispatch(
+                            "WhitelistStore/addWhitelist",
+                            {
+                                identityhash: this.incoming.identityhash,
+                                method: this.type
+                            }
+                        );
+                    }
                 } catch (err) {
                     console.log(err);
                     this._reject({ error: err });
                 }
             },
-            _getResponse: function() {
+            _execute: function() {
                 // to overwrite
-                throw Error("Needs implementation")
+                throw "Needs implementation"
+            },
+            execute: function(payload) {
+                this.incoming = payload;
+                return new Promise((resolve,reject) => {
+                    try {
+                        resolve(this._execute());
+                    } catch (err) {
+                        reject(err);
+                    }
+                });
             },
             _clickedDeny: function() {
                 this.$refs.modalComponent.hide();
