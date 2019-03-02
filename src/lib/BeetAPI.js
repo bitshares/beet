@@ -79,7 +79,7 @@ export default class BeetAPI {
             let response = await vue.requestAccess(request.payload);
             return {
                 id: request.id,
-                result: response
+                result: response.response
             };
         } catch (err) {
             return this._parseReject("BeetAPI.getAccount", request, err);
@@ -94,7 +94,7 @@ export default class BeetAPI {
                 response = await vue.requestAccess(request);
             }
             return Object.assign(request, {
-                identity: response
+                identity: response.response
             });
         } catch (e) {
             return {
@@ -110,7 +110,7 @@ export default class BeetAPI {
             let response = await vue.requestVote(request.payload);
             return {
                 id: request.id,
-                result: response
+                result: response.response
             };
         } catch (err) {
             return this._parseReject("BeetAPI.voteFor", request, err);
@@ -121,7 +121,7 @@ export default class BeetAPI {
             let response = await vue.requestTx(request.payload);
             return {
                 id: request.id,
-                result: response
+                result: response.response
             };
         } catch (err) {
             return this._parseReject("BeetAPI.requestSignature", request, err);
@@ -132,7 +132,7 @@ export default class BeetAPI {
             let response = await vue.requestTx(request.payload);
             return {
                 id: request.id,
-                result: response
+                result: response.response
             };
         } catch (err) {
             return this._parseReject("BeetAPI.injectedCall", request, err);
@@ -143,7 +143,7 @@ export default class BeetAPI {
             let response = await vue.requestSignedMessage(request.payload);
             return {
                 id: request.id,
-                result: response
+                result: response.response
             };
         } catch (err) {
             return this._parseReject("BeetAPI.signMessage", request, err);
@@ -154,7 +154,7 @@ export default class BeetAPI {
             let response = await vue.verifyMessage(request.payload);
             return {
                 id: request.id,
-                result: response
+                result: response.response
             };
         } catch (err) {
             return this._parseReject("BeetAPI.verifyMessage", request, err);

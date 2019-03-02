@@ -1,65 +1,9 @@
 <template>
     <div>
-        <b-modal
-            id="linkRequest"
-            ref="linkReqModal"
-            centered
-            no-close-on-esc
-            no-close-on-backdrop
-            hide-header-close
-            hide-footer
-            :title="$t('link_request')"
-        >
-            {{ genericmsg }}:
-            <br> 
-            <br>
-        </b-modal>
         <LinkRequestPopup ref="accountReqModal"></LinkRequestPopup>
         <LinkRequestPopup ref="anyAccountReqModal"></LinkRequestPopup>
-
-        <b-modal
-            id="transactionRequest"
-            ref="transactionReqModal"
-            centered
-            no-close-on-esc
-            no-close-on-backdrop
-            hide-header-close
-            hide-footer
-            :title="$t('operations:rawsig.title')"
-        >
-            {{ $t('operations:rawsig.request',{appName: incoming.appName,origin: incoming.origin , chain: signingAccount.chain, accountName: signingAccount.accountName}) }}
-            <br>
-            <br>
-            <pre
-                v-if="!!incoming.params"
-                class="text-left custom-content"
-            >
-                <code>
-                    {
-                    {{ incoming.params }}
-                    }
-                </code>
-            </pre>
-            {{ $t('operations:rawsig.request_cta') }}
-            <b-btn
-                class="mt-3"
-                variant="success"
-                block
-                @click="acceptTx"
-            >
-                {{ $t('operations:rawsig.accept_btn') }}
-            </b-btn>
-            <b-btn
-                class="mt-1"
-                variant="danger"
-                block
-                @click="rejectTx"
-            >
-                {{ $t('operations:rawsig.reject_btn') }}
-            </b-btn>
-        </b-modal>
-
-        <GenericRequestPopup ref="anyAccountReqModal"></GenericRequestPopup>
+        <TransactionRequestPopup ref="transactionReqModal"></TransactionRequestPopup>
+        <GenericRequestPopup ref="genericReqModal"></GenericRequestPopup>
 
         <b-modal
             id="loaderAnim"
@@ -105,12 +49,13 @@
     import RendererLogger from "../lib/RendererLogger";
     const logger = new RendererLogger();
     import LinkRequestPopup from "./linkrequestpopup";
-    import GenericRequestPopup from "./genericpopup";
+    import GenericRequestPopup from "./genericrequestpopup";
+    import TransactionRequestPopup from "./transactionrequestpopup";
 
     export default {
         name: "Popups",
         i18nOptions: { namespaces: ["common", "operations"] },
-        components: { AccountSelect, LinkRequestPopup, GenericRequestPopup },
+        components: {TransactionRequestPopup, AccountSelect, LinkRequestPopup, GenericRequestPopup },
         data() {
             return {
                 genericmsg: "",
@@ -155,9 +100,6 @@
             });
         },
         methods: {
-            link: async function() {
-                await this.$refs.linkReqModal.show();
-            },
             showAlert: function(request) {
                 let alert;
                 let alertmsg;
@@ -189,6 +131,9 @@
                 });
                 if (index !== -1) this.alerts.splice(index, 1);
             },
+            requestLink: async function() {
+                throw "Needs implementing";
+            },
             requestAccess: async function(request) {
                 return this.$refs.accountReqModal.show(
                     request
@@ -199,63 +144,46 @@
                     request
                 );
             },
-            requestVote: async function(request) {
-                this.askWhitelist=false;
-                this.$store.dispatch("WalletStore/notifyUser", {
-                    notify: "request",
-                    message: "request"
-                });
-                this.incoming = request;
+            _getSigningAccount(request) {
                 let signing = this.$store.state.AccountStore.accountlist.filter(x => {
                     return (
-                        x.accountID == this.incoming.account_id &&
-                        x.chain == this.incoming.chain
+                        x.accountID == request.account_id &&
+                        x.chain == request.chain
                     );
                 });
-                this.signingAccount = signing[0];
+                if (signing.length !== 1) {
+                    throw "Invalid signing accounts count";
+                }
+                return signing[0];
+            },
+            requestVote: async function(payload) {
+                payload.signingAccount = this._getSigningAccount(payload);
+                payload.action = "vote";
+                let blockchain = getBlockchain(payload.chain);
+                let mappedData = await blockchain.mapOperationData(payload);
 
-                this.incoming.action = "vote";
-                let blockchain = getBlockchain(this.incoming.chain);
-                let mappedData = await blockchain.mapOperationData(this.incoming);
-                this.specifics = mappedData.description;
-                this.incoming.vote_id = mappedData.vote_id;
-
-                this.genericmsg = this.$t("operations:vote.request", {
-                    appName: this.incoming.appName,
-                    origin: this.incoming.origin,
-                    entity: mappedData.entity,
-                    chain: this.signingAccount.chain,
-                    accountName: this.signingAccount.accountName
-                });
-                this.generictitle = this.$t("operations:vote.title");
-                this.genericaccept = this.$t("operations:vote.accept_btn");
-                this.genericreject = this.$t("operations:vote.reject_btn");
-                this.$refs.genericReqModal.show();
-                return new Promise((res, rej) => {
-                    this.incoming.acceptgen = res;
-                    this.incoming.rejectgen = rej;
-                });
+                let generic = {
+                    title: this.$t("operations:vote.title"),
+                    message: this.$t("operations:vote.request", {
+                        appName: payload.appName,
+                        origin: payload.origin,
+                        entity: mappedData.entity,
+                        chain: payload.signingAccount.chain,
+                        accountName: payload.signingAccount.accountName
+                    }),
+                    details: mappedData.description,
+                    acceptText: this.$t("operations:vote.accept_btn"),
+                    rejectText: this.$t("operations:vote.reject_btn")
+                };
+                payload.generic = generic;
+                return this.$refs.genericReqModal.show(
+                    payload,
+                    false
+                );
             },
             requestTx: async function(payload) {
-                this.askWhitelist=false;
-                this.$store.dispatch("WalletStore/notifyUser", {
-                    notify: "request",
-                    message: "request"
-                });
-                this.incoming = payload;
-                let signing = this.$store.state.AccountStore.accountlist.filter(x => {
-                    return (
-                        x.accountID == this.incoming.account_id &&
-                        x.chain == this.incoming.chain
-                    );
-                });
-                this.signingAccount = signing[0];
-
-                this.$refs.transactionReqModal.show();
-                return new Promise((res, rej) => {
-                    this.incoming.accepttx = res;
-                    this.incoming.rejecttx = rej;
-                });
+                payload.signingAccount = this._getSigningAccount(payload);
+                return this.$refs.transactionReqModal.show(payload);
             },
             isWhitelisted: function (identity,method) {
                 if (this.$store.state.WhitelistStore.whitelist.filter( x=> (x.identityhash==identity && x.method==method) ).length>0) {
@@ -265,45 +193,18 @@
                 }
             },
             requestSignedMessage: async function(payload) {
-                console.log("meh");
                 let _acceptCall = async (incoming) => {
                     let blockchain = getBlockchain(incoming.chain);
                     if (incoming.method == "signMessage") {
                         let signedMessage = await blockchain.signMessage(
-                            this.signingAccount.keys.active,
-                            this.signingAccount.accountName,
-                            this.incoming.params
+                            incoming.signingAccount.keys.active,
+                            incoming.signingAccount.accountName,
+                            incoming.incoming.params
                         );
                         return signedMessage;
-                    } else {
-                        let operation = await blockchain.getOperation(
-                            incoming,
-                            {
-                                id: incoming.accountID,
-                                name: incoming.accountName
-                            }
-                        );
-                        let transaction = await blockchain.sign(
-                            operation,
-                            incoming.signingAccount.keys.active
-                        );
-                        let id = await blockchain.broadcast(transaction);
-                        return id;
                     }
                 };
-                console.log("meh");
-                let signing = this.$store.state.AccountStore.accountlist.filter(x => {
-                    return (
-                        x.accountID == payload.account_id &&
-                        x.chain == payload.chain
-                    );
-                });
-                console.log("meh");
-                payload.signingAccount = signing[0];
-                if (signing.length !== 1) {
-                    throw "Invalid signing accounts count";
-                }
-                console.log("meh");
+                payload.signingAccount = this._getSigningAccount(payload);
                 if (this.isWhitelisted(payload.identityhash,'signMessage')) {
                     return new Promise((resolve,reject) => {
                         try {
@@ -313,7 +214,6 @@
                         }
                     });
                 } else {
-                    console.log("generic");
                     let generic = {
                         title: this.$t("operations:message.title"),
                         message: this.$t("operations:message.request", {
@@ -362,47 +262,6 @@
                             reject(err);
                         });
                 });
-            },
-            acceptTx: async function() {
-                try {
-                    EventBus.$emit("popup", "load-start");
-                    this.$refs.transactionReqModal.hide();
-                    let blockchain = getBlockchain(this.incoming.chain);
-                    let transaction = await blockchain.sign(
-                        this.incoming.params,
-                        this.signingAccount.keys.active
-                    );
-                    let id = await blockchain.broadcast(transaction);
-                    this.incoming.accepttx({ id: id });
-
-                    EventBus.$emit("popup", "load-end");
-                } catch (err) {
-                    this.incoming.rejecttx({ error: err });
-                    EventBus.$emit("popup", "load-end");
-                }
-            },
-            rejectTx: function() {
-                this.$refs.transactionReqModal.hide();
-                this.incoming.rejecttx({ canceled: true });
-            },
-            formatMoney: function(n, decimals, decimal_sep, thousands_sep) {
-                var c = isNaN(decimals) ? 2 : Math.abs(decimals),
-                    d = decimal_sep || ".",
-                    t = typeof thousands_sep === "undefined" ? "," : thousands_sep,
-                    sign = n < 0 ? "-" : "",
-                    i = parseInt((n = Math.abs(n).toFixed(c))) + "",
-                    j = (j = i.length) > 3 ? j % 3 : 0;
-                return (
-                    sign +
-                    (j ? i.substr(0, j) + t : "") +
-                    i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) +
-                    (c
-                        ? d +
-                            Math.abs(n - i)
-                                .toFixed(c)
-                                .slice(2)
-                        : "")
-                );
             }
         }
     };

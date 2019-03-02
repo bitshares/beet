@@ -32,8 +32,11 @@
                 });
             },
             _clickedAllow: function() {
+                // EventBus.$emit("popup", "load-start");
+                // EventBus.$emit("popup", "load-end");
                 this.$refs.modalComponent.hide();
                 try {
+                    // todo allowWhitelist move whitelisting to BeetAPI, thus return flag here
                     this._accept(
                         {
                             response: this._getResponse(),
