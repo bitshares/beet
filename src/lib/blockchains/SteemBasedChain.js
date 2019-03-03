@@ -1,6 +1,4 @@
 import BlockchainAPI from "./BlockchainAPI";
-import RendererLogger from "../RendererLogger";
-const logger = new RendererLogger();
 
 export default class SteemBasedChain extends BlockchainAPI {
 
@@ -143,16 +141,28 @@ export default class SteemBasedChain extends BlockchainAPI {
                 if (transaction.type) {
                     switch (transaction.type) {
                         case 'vote': {
-                            this._getLibrary().broadcast.vote(
-                                transaction.wif,
-                                transaction.data.username,
-                                transaction.data.author,
-                                transaction.data.permlink,
-                                transaction.data.weight,
-                                (err, result) => {
-                                    resolve(result);
-                                }
-                            );
+                            if (!!transaction.data.author) {
+                                this._getLibrary().broadcast.vote(
+                                    transaction.wif,
+                                    transaction.data.username,
+                                    transaction.data.author,
+                                    transaction.data.permlink,
+                                    transaction.data.weight,
+                                    (err, result) => {
+                                        resolve(result);
+                                    }
+                                );
+                            } else {
+                                this._getLibrary().broadcast.accountWitnessVote(
+                                    transaction.wif,
+                                    transaction.data.username,
+                                    transaction.data.witness,
+                                    transaction.data.approve,
+                                    (err, result) => {
+                                        resolve(result);
+                                    }
+                                );
+                            }
                             break;
                         }
                         case "customJSON": {
@@ -201,15 +211,26 @@ export default class SteemBasedChain extends BlockchainAPI {
             this._ensureAPI().then(() => {
                 switch (data.action) {
                     case 'vote': {
-                        resolve({
-                            type: "vote",
-                            data: {
-                                username: account.name,
-                                author: data.params.author,
-                                permlink: data.params.permlink,
-                                weight: data.params.weight
-                            }
-                        })
+                        if (!!data.params.author) {
+                            resolve({
+                                type: "vote",
+                                data: {
+                                    username: account.name,
+                                    author: data.params.author,
+                                    permlink: data.params.permlink,
+                                    weight: data.params.weight
+                                }
+                            });
+                        } else {
+                            resolve({
+                                type: "vote",
+                                data: {
+                                    username: account.name,
+                                    witness: data.params.witness,
+                                    approve: data.params.approve
+                                }
+                            });
+                        }
                     }
                 }
             });
@@ -220,14 +241,24 @@ export default class SteemBasedChain extends BlockchainAPI {
         return new Promise((resolve, reject) => {
             this._ensureAPI().then(() => {
                 if (incoming.action == "vote") {
-                    resolve({
-                        entity: "Post",
-                        description:
-                            "Author: " + incoming.params.author +
-                            "\nPost: " + incoming.params.permlink +
-                            "\nWeight: " + incoming.params.weight,
-                        vote: incoming.params
-                    });
+                    if (!!incoming.params.author) {
+                        resolve({
+                            entity: "Post",
+                            description:
+                                "Author: " + incoming.params.author +
+                                "\nPost: " + incoming.params.permlink +
+                                "\nWeight: " + incoming.params.weight,
+                            vote: incoming.params
+                        });
+                    } else {
+                        resolve({
+                            entity: "Witness",
+                            description:
+                                "Account Name: " + incoming.params.witness +
+                                "\nApprove: " + incoming.params.approve,
+                            vote: incoming.params
+                        });
+                    }
                 }
             });
         });
