@@ -9,6 +9,7 @@ import WhaleShares from "./WhaleShares";
 import SmokeNetwork from "./SmokeNetwork";
 import EOSmainnet from "./EOSmainnet";
 import TLOS from "./TLOS";
+import Bitcoin from "./Bitcoin";
 
 export default function getBlockchainAPI(chain = null) {
     if (chain == null) {
@@ -45,5 +46,10 @@ export default function getBlockchainAPI(chain = null) {
             apiCache.TLOS = new TLOS(blockchains[chain]);
         }
         return apiCache.TLOS;
+    } else if (chain == "BTC") {
+        if (!apiCache.BTC) {
+            apiCache.BTC = new Bitcoin(blockchains[chain]);
+        }
+        return apiCache.BTC;
     }
 }

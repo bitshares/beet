@@ -4,16 +4,14 @@ const logger = new RendererLogger();
 
 const fetch = require('node-fetch');
 
-const { Api, JsonRpc, RpcError } = require('eosjs');
-import * as ecc from "eosjs-ecc";
-import { convertLegacyPublicKey } from "eosjs/dist/eosjs-numeric";
+import bitcoin from "bitcoinjs-lib";
 
-export default class EOS extends BlockchainAPI {
+export default class Bitcoin extends BlockchainAPI {
 
     // https://github.com/steemit/steem-js/tree/master/doc#broadcast-api
 
     _getCoreToken() {
-        return "EOS";
+        return "BTC";
     }
 
     isConnected() {
@@ -25,9 +23,6 @@ export default class EOS extends BlockchainAPI {
             if (nodeToConnect == null) {
                 nodeToConnect = this.getNodes()[0].url;
             }
-            if (!this.rpc) {
-                this.rpc = new JsonRpc(nodeToConnect, {fetch});
-            }            
             this._connectionEstablished(resolve, nodeToConnect);
         });
     }
@@ -35,23 +30,32 @@ export default class EOS extends BlockchainAPI {
     getAccount(accountname) {
         return new Promise((resolve, reject) => {
             this._ensureAPI().then(result => {
-                this.rpc.get_account(accountname).then(account => {
+                fetch({
+                    method: 'GET',
+                    url: 'https://blockchain.info/rawaddr/' + accountname
+                }, function (err, result) {
+                    if (err) reject(err);
+
                     account.active = {}
                     account.owner = {}
-                    account.active.public_keys = account.permissions.find(
-                        res => { return res.perm_name == "active" }).required_auth.keys.map(item => [item.key, item.weight]);
-                    account.owner.public_keys = account.permissions.find(
-                        res => { return res.perm_name == "owner" }).required_auth.keys.map(item => [item.key, item.weight]);
-                    account.memo = {public_key: account.active.public_keys[0][0]};
-                    account.id = account.account_name;
+                    account.active.public_keys = [[accountname, 1]];
+                    account.owner.public_keys = [];
+                    account.memo = {public_key: ""};
+                    account.id = accountname;
+
+                    account.n_tx = result.n_tx;
+                    account.total_received = result.total_received;
+                    account.total_sent = result.total_sent;
+
                     resolve(account);
-                }).catch(reject);
+                })
             }).catch(reject);
         });
     }
 
-    getPublicKey(privateKey) { // convertLegacyPublicKey
-        return ecc.PrivateKey.fromString(privateKey).toPublic().toString();
+    getPublicKey(privateKey) {
+        const keyPair = bitcoin.ECPair.fromWIF(privateKey);
+        return keyPair.publicKey;
     }
 
     getBalances(accountName) {
@@ -61,21 +65,7 @@ export default class EOS extends BlockchainAPI {
                 balances.push({
                     asset_type: "UIA",
                     asset_name: this._getCoreToken(),
-                    balance: parseFloat(account.core_liquid_balance),
-                    owner: "-",
-                    prefix: ""
-                });
-                balances.push({
-                    asset_type: "UIA",
-                    asset_name: "CPU Stake",
-                    balance: parseFloat(account.total_resources.cpu_weight),
-                    owner: "-",
-                    prefix: ""
-                });
-                balances.push({
-                    asset_type: "UIA",
-                    asset_name: "Bandwith Stake",
-                    balance: parseFloat(account.total_resources.net_weight),
+                    balance: parseFloat(account.total_received - account.total_sent),
                     owner: "-",
                     prefix: ""
                 });
@@ -106,7 +96,6 @@ export default class EOS extends BlockchainAPI {
     }
 
     getOperation(data, account) {
-        // https://eosio.stackexchange.com/questions/212/where-is-the-api-for-block-producer-voting-in-eosjs
         return new Promise((resolve, reject) => {
             reject("Not supported");
         });
@@ -119,14 +108,16 @@ export default class EOS extends BlockchainAPI {
     }
 
     _signString(key, string) {
-        return ecc.Signature.sign(new Buffer(string), key).toHex();
+        const keyPair = bitcoin.ECPair.fromWIF(key);
+        console.log(keyPair);
+        let signature = keyPair.sign(string);
+        console.log(signature);
+        return signature.toString();
     }
 
     _verifyString(signature, publicKey, string) {
-        return ecc.Signature.fromHex(signature).verify(
-            string,
-            ecc.PublicKey.fromString(publicKey)
-        );
+        const keyPair = bitcoin.ECPair.fromPublicKey(Buffer.from(publicKey, 'hex'));
+        return keyPair.verify(string, signature);
     }
 
 }
