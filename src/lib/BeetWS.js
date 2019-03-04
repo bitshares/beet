@@ -14,6 +14,8 @@ import crypto from 'crypto';
 import Https from 'https';
 import Fs from 'fs';
 import {ec as EC} from "elliptic";
+import RendererLogger from "./RendererLogger";
+const logger = new RendererLogger();
 
 var ec = new EC('curve25519');
 /*
@@ -21,7 +23,7 @@ import RendererLogger from "./RendererLogger";
 const logger = new RendererLogger();
 */
 export default class BeetWS extends EventEmitter {
-    constructor(port, timeout) {
+    constructor(port,sslport, timeout) {
         super() // required
         var self = this;
         const httpsServer = Https.createServer({
@@ -30,8 +32,11 @@ export default class BeetWS extends EventEmitter {
         });
         const server = new WebSocket.Server({
             server: httpsServer
+        });        
+        const plainserver = new WebSocket.Server({
+           port: port
         });
-        httpsServer.listen(port);
+        httpsServer.listen(sslport);
         this._clients = [];
         this._monitor = setInterval(function () {
             for (var clientid in self._clients) {
@@ -50,6 +55,9 @@ export default class BeetWS extends EventEmitter {
         server.on("connection", (client) => {
             self._handleConnection(client);
         });
+        plainserver.on("connection", (client) => {
+            self._handleConnection(client);
+        });
     }
 
     noop() {
@@ -61,7 +69,6 @@ export default class BeetWS extends EventEmitter {
     }
 
     _handleMessage(client, data) {
-        console.log("_handleMessage", client, data);
         if (data.type == 'version') {
             client.send('{ "type": "version", "error": false, "result": { "version": ' + JSON.stringify(version) + '}}');
         } else {
@@ -72,13 +79,12 @@ export default class BeetWS extends EventEmitter {
                         if (hash == client.next_hash) {
                             client.otp.counter = data.id;
                             var key = client.otp.generate();
-                            console.log("otp key generated", key, client.otp.counter);
                             try {
                                 var msg = JSON.parse(CryptoJS.AES.decrypt(data.payload, key).toString(CryptoJS.enc.Utf8));
 
                                 msg.origin = client.origin;
                                 msg.appName = client.appName;
-                                msg.apphash = client.apphash;
+                                msg.identityhash = client.identityhash;
                                 msg.chain = client.chain;
                                 msg.account_id = client.account_id;
                                 client.next_hash = msg.next_hash;
@@ -110,6 +116,7 @@ export default class BeetWS extends EventEmitter {
                             "key": client.keypair,
                             "type": 'link'
                         };
+                        
                         this.emit('link', linkobj);
                     } else {
                         client.send('{ "id": "' + data.id + '", "error": true, "payload": { "code":4, "message": "This app is not yet linked"}}');
@@ -132,7 +139,7 @@ export default class BeetWS extends EventEmitter {
     async respondLink(client, result) {
         if (result.isLinked == true) {
             this._clients[client].isLinked = true;
-            this._clients[client].apphash = result.apphash;
+            this._clients[client].identityhash = result.identityhash;
             this._clients[client].account_id = result.account_id;
             this._clients[client].chain = result.chain;
             this._clients[client].next_hash = result.next_hash;
@@ -144,9 +151,9 @@ export default class BeetWS extends EventEmitter {
                 counter: 0,
                 secret: OTPAuth.Secret.fromHex(result.secret)
             });
-            console.log("otp instantiated", result.secret);
             this._clients[client].otp = otp;
-            this._clients[client].send('{"id": ' + result.id + ', "error": false, "payload": { "authenticate": true, "link": true, "account_id": "' + result.account_id + '"}}');
+            
+                this._clients[client].send('{"id": ' + result.id + ', "error": false, "payload": { "authenticate": true, "link": true, "chain": "'+result.chain+'" , "existing": '+result.existing+',"identityhash": "'+result.identityhash+'"}}');
         } else {
             this._clients[client].send('{ "id": "' + result.id + '", "error": true, "payload": { "code":6, "message": "Could not link to Beet"}}');
         }
@@ -167,7 +174,7 @@ export default class BeetWS extends EventEmitter {
             this._clients[client].browser = result.browser;
             if (result.link) {
                 this._clients[client].isLinked = true;
-                this._clients[client].apphash = result.apphash;
+                this._clients[client].identityhash = result.identityhash;
                 this._clients[client].chain = result.app.chain;
                 this._clients[client].account_id = result.app.account_id;
                 this._clients[client].next_hash = result.app.next_hash;
@@ -179,7 +186,6 @@ export default class BeetWS extends EventEmitter {
                     counter: 0,
                     secret: OTPAuth.Secret.fromHex(result.app.secret)
                 });
-                console.log("otp instantiated", result.app, result.app.secret.toString());
                 this._clients[client].otp = otp;
                 this._clients[client].send('{"id": ' + result.id + ', "error": false, "payload": { "authenticate": true, "link": true, "account_id": "' + result.app.account_id + '"}}');
             } else {

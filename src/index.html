@@ -20,7 +20,7 @@
     </div>
     <script>
         import store from './store/index';
-        import Vue from 'vue/dist/vue.min.js';
+        import Vue from 'vue/dist/vue.js';
         import BootstrapVue from 'bootstrap-vue';
         import Popups from './components/popups';
         import Beetframe from './components/beetframe';
@@ -41,6 +41,7 @@
         Vue.component('Beetframe', Beetframe);
         const logger = new RendererLogger;
         store.dispatch("SettingsStore/loadSettings");
+        store.dispatch("WhitelistStore/loadWhitelist");
         store.dispatch("OriginStore/loadApps");
         i18next.use(Backend).init({
             lng: store.state.SettingsStore.settings.locale.iso,

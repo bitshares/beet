@@ -70,6 +70,13 @@ class Logger {
             process.stdout.write(chalk.white(this.timestamp()) + ' - ' + chalk.blue('[VERBOSE]') + ' ' + msg + '\n');
         }
     }
+    debug(msg) {
+        if (this.log_level > 1) {
+            readline.clearLine(process.stdout, 0);
+            readline.cursorTo(process.stdout, 0, null);
+            process.stdout.write(chalk.white(this.timestamp()) + ' - ' + chalk.green('[DEBUG]') + ' ' + msg + '\n');
+        }
+    }
     transient(msg) {
         if (this.log_level > 2) {
             readline.clearLine(process.stdout, 0);

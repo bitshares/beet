@@ -11,24 +11,29 @@
             :title="$t('link_request')"
         >
             {{ genericmsg }}:
-            <br>
+            <br> 
             <br>
         </b-modal>
-
         <b-modal
             id="accountRequest"
             ref="accountReqModal"
-            centered
+            centered 
             no-close-on-esc
             no-close-on-backdrop
             hide-header-close
             hide-footer
             :title="$t('operations:account_id.title')"
         >
-            {{ $t('operations:account_id.request',{origin: incoming.origin }) }}
+            {{ $t('operations:account_id.request',{appName: incoming.appName,origin: incoming.origin, chain: incoming.chain }) }}
             <br>
             <br>
-            {{ $t('operations:account_id.request_cta') }}
+
+            <AccountSelect
+                v-model="chosenAccount"
+                :chain="incoming.chain"
+                :cta="$t('operations:account_id.request_cta')"
+            />
+
             <b-btn
                 class="mt-3"
                 variant="success"
@@ -46,6 +51,42 @@
                 {{ $t('operations:account_id.reject_btn') }}
             </b-btn>
         </b-modal>
+        <b-modal
+            id="anyAccountRequest"
+            ref="anyAccountReqModal"
+            centered
+            no-close-on-esc
+            no-close-on-backdrop
+            hide-header-close
+            hide-footer
+            :title="$t('operations:account_id.title')"
+        >
+            {{ $t('operations:any_account_id.request',{appName: incoming.appName,origin: incoming.origin }) }}
+            <br>
+            <br>
+
+            <AccountSelect
+                v-model="chosenAccount"
+                :cta="$t('operations:any_account_id.request_cta')"
+            />
+
+            <b-btn
+                class="mt-3"
+                variant="success"
+                block
+                @click="allowAnyAccess"
+            >
+                {{ $t('operations:account_id.accept_btn') }}
+            </b-btn>
+            <b-btn
+                class="mt-1"
+                variant="danger"
+                block
+                @click="denyAnyAccess"
+            >
+                {{ $t('operations:account_id.reject_btn') }}
+            </b-btn>
+        </b-modal>
 
         <b-modal
             id="transactionRequest"
@@ -57,14 +98,17 @@
             hide-footer
             :title="$t('operations:rawsig.title')"
         >
-            {{ $t('operations:rawsig.request',{origin: incoming.origin }) }}
+            {{ $t('operations:rawsig.request',{appName: incoming.appName,origin: incoming.origin , chain: signingAccount.chain, accountName: signingAccount.accountName}) }}
             <br>
             <br>
-            <pre v-if="!!incoming.params" class="text-left custom-content">
+            <pre
+                v-if="!!incoming.params"
+                class="text-left custom-content"
+            >
                 <code>
-    {
-    {{ incoming.params }}
-    }
+                    {
+                    {{ incoming.params }}
+                    }
                 </code>
             </pre>
             {{ $t('operations:rawsig.request_cta') }}
@@ -101,9 +145,10 @@
             <br>
             <pre class="text-left custom-content">
                 <code>
-    {{ specifics }}
+                    {{ specifics }}
                 </code>
             </pre>
+            <b-form-checkbox v-model="allowWhitelist" v-if="askWhitelist">  {{ $t('operations:whitelist.prompt', { method: incoming.method }) }}</b-form-checkbox>
             <b-btn
                 class="mt-3"
                 variant="success"
@@ -158,85 +203,100 @@
     </div>
 </template>
 <script>
-    import {
-        v4 as uuidv4
-    } from "uuid";
-    import {EventBus} from '../lib/event-bus.js';
-    import Operations from "../lib/Operations";
-
-    import getBlockchain from "../lib/blockchains/blockchainFactory"
+    import { v4 as uuidv4 } from "uuid";
+    import { EventBus } from "../lib/event-bus.js";
+    import AccountSelect from "./account-select";
+    import getBlockchain from "../lib/blockchains/blockchainFactory";
+    import RendererLogger from "../lib/RendererLogger";
+    const logger = new RendererLogger();
 
     export default {
         name: "Popups",
-        i18nOptions: {namespaces: ["common", "operations"]},
+        i18nOptions: { namespaces: ["common", "operations"] },
+        components: { AccountSelect },
         data() {
             return {
-                genericmsg: '',
+                genericmsg: "",
                 alerts: [],
                 api: null,
                 incoming: {},
-                specifics: ""
+                specifics: "",
+                signingAccount: {},
+                chosenAccount: {},
+                loaderpromise: {},
+                askWhitelist: false,
+                allowWhitelist:false
             };
         },
         watch: {
-            $route(to, from) {
+            $route() {
                 this.alerts = [];
             }
         },
         created() {
-            EventBus.$on('popup', what => {
+            EventBus.$on("popup", async what => {
                 switch (what) {
-                    case 'load-start':
+                case "load-start":
+                    this.loaderpromise.show = new Promise((resolve) => {
                         this.$refs.loaderAnimModal.show();
-                        break;
-                    case 'load-end':
-                        this.$refs.loaderAnimModal.hide();
-                        break;
+                        this.loaderpromise.resolve = resolve;                      
+                    });
+                    break;
+                case "load-end":
+                    await this.loaderpromise.show;
+                    this.$refs.loaderAnimModal.hide();
+                    break;
                 }
             });
         },
-        watch:{
-            $route (to, from){
-                this.alerts = [];
-            }
-        },      
+        mounted() {
+            logger.debug('Popup Service panel mounted');
+            this.$root.$on("bv::modal::shown", bvEvent => {
+                if (bvEvent.target.id == "loaderAnim") {
+                    this.loaderpromise.resolve();
+                }
+            });
+        },
         methods: {
-            link: async function () {
+            link: async function() {
                 await this.$refs.linkReqModal.show();
             },
-            showAlert: function (request) {
+            showAlert: function(request) {
                 let alert;
                 let alertmsg;
                 switch (request.type) {
-                    case 'link':
-                        alertmsg = this.$t('link_alert', request);
-                        alert = {msg: alertmsg, id: uuidv4()};
+                case "link":
+                    alertmsg = this.$t("link_alert", request);
+                    alert = { msg: alertmsg, id: uuidv4() };
 
-                        this.$store.dispatch("WalletStore/notifyUser", {
-                            notify: "request", message: alertmsg
-                        });
-                        break;
-                    default:
-                        alertmsg = this.$t('access_alert', request.payload);
+                    this.$store.dispatch("WalletStore/notifyUser", {
+                        notify: "request",
+                        message: alertmsg
+                    });
+                    break;
+                default:
+                    alertmsg = this.$t("access_alert", request.payload);
 
-                        this.$store.dispatch("WalletStore/notifyUser", {
-                            notify: "request", message: alertmsg
-                        });
-                        alert = {msg: alertmsg, id: uuidv4()};
-                        break;
+                    this.$store.dispatch("WalletStore/notifyUser", {
+                        notify: "request",
+                        message: alertmsg
+                    });
+                    alert = { msg: alertmsg, id: uuidv4() };
+                    break;
                 }
-                //let alert={msg:msg, id: uuidv4()};
                 this.alerts.push(alert);
             },
-            hideAlert: function (id) {
-                let index = this.alerts.findIndex(function (o) {
+            hideAlert: function(id) {
+                let index = this.alerts.findIndex(function(o) {
                     return o.id === id;
-                })
+                });
                 if (index !== -1) this.alerts.splice(index, 1);
             },
-            requestAccess: function (request) {
+            requestAccess: async function(request) {
+                this.askWhitelist=false;
                 this.$store.dispatch("WalletStore/notifyUser", {
-                    notify: "request", message: "request"
+                    notify: "request",
+                    message: "request"
                 });
                 this.incoming = {};
                 this.incoming = request;
@@ -246,157 +306,279 @@
                     this.incoming.reject = rej;
                 });
             },
-            requestVote: async function (request) {
+            requestAnyAccess: async function(request) {
+                this.askWhitelist=false;
                 this.$store.dispatch("WalletStore/notifyUser", {
-                    notify: "request", message: "request"
+                    notify: "request",
+                    message: "request"
+                });
+                this.incoming = {};
+                this.incoming = request;
+
+                this.$refs.anyAccountReqModal.show();
+                return new Promise((res, rej) => {
+                    this.incoming.accept = res;
+                    this.incoming.reject = rej;
+                });
+            },
+            requestVote: async function(request) {
+                this.askWhitelist=false;
+                this.$store.dispatch("WalletStore/notifyUser", {
+                    notify: "request",
+                    message: "request"
                 });
                 this.incoming = request;
+                let signing = this.$store.state.AccountStore.accountlist.filter(x => {
+                    return (
+                        x.accountID == this.incoming.account_id &&
+                        x.chain == this.incoming.chain
+                    );
+                });
+                this.signingAccount = signing[0];
+
                 this.incoming.action = "vote";
-                let blockchain = getBlockchain(this.$store.state.WalletStore.wallet.chain);
+                let blockchain = getBlockchain(this.incoming.chain);
                 let mappedData = await blockchain.mapOperationData(this.incoming);
                 this.specifics = mappedData.description;
                 this.incoming.vote_id = mappedData.vote_id;
 
-                this.genericmsg = this.$t(
-                    'operations:vote.request',
-                    {
-                        origin: this.incoming.origin,
-                        entity: mappedData.entity
-                    }
-                );
-                this.generictitle = this.$t('operations:vote.title');
-                this.genericaccept = this.$t('operations:vote.accept_btn');
-                this.genericreject = this.$t('operations:vote.reject_btn');
+                this.genericmsg = this.$t("operations:vote.request", {
+                    appName: this.incoming.appName,
+                    origin: this.incoming.origin,
+                    entity: mappedData.entity,
+                    chain: this.signingAccount.chain,
+                    accountName: this.signingAccount.accountName
+                });
+                this.generictitle = this.$t("operations:vote.title");
+                this.genericaccept = this.$t("operations:vote.accept_btn");
+                this.genericreject = this.$t("operations:vote.reject_btn");
                 this.$refs.genericReqModal.show();
                 return new Promise((res, rej) => {
                     this.incoming.acceptgen = res;
                     this.incoming.rejectgen = rej;
                 });
             },
-            requestTx: function (payload) {
+            requestTx: async function(payload) {
+                this.askWhitelist=false;
                 this.$store.dispatch("WalletStore/notifyUser", {
-                    notify: "request", message: "request"
+                    notify: "request",
+                    message: "request"
                 });
                 this.incoming = payload;
+                let signing = this.$store.state.AccountStore.accountlist.filter(x => {
+                    return (
+                        x.accountID == this.incoming.account_id &&
+                        x.chain == this.incoming.chain
+                    );
+                });
+                this.signingAccount = signing[0];
+
                 this.$refs.transactionReqModal.show();
                 return new Promise((res, rej) => {
                     this.incoming.accepttx = res;
                     this.incoming.rejecttx = rej;
                 });
             },
-            requestSignedMessage: function (payload) {
-                this.$store.dispatch("WalletStore/notifyUser", {
-                    notify: "request", message: "request"
-                });
-                this.incoming = payload;
-
-                this.specifics = payload.params;
-
-                this.genericmsg = this.$t(
-                    'operations:message.request',
-                    {
-                        origin: this.incoming.origin
-                    }
-                );
-                this.generictitle = this.$t('operations:message.title');
-                this.genericaccept = this.$t('operations:message.accept_btn');
-                this.genericreject = this.$t('operations:message.reject_btn');
-                this.$refs.genericReqModal.show();
-                return new Promise((res, rej) => {
-                    this.incoming.acceptgen = res;
-                    this.incoming.rejectgen = rej;
-                });
+            isWhitelisted: function (identity,method) {
+                if (this.$store.state.WhitelistStore.whitelist.filter( x=> (x.identityhash==identity && x.method==method) ).length>0) {
+                    return true;
+                }else{
+                    return false;
+                }
             },
-            verifyMessage: function (payload) {
-                console.log("verify", payload);
+            requestSignedMessage: async function(payload) {                
+                this.askWhitelist=true;
+                if (this.isWhitelisted(payload.identityhash,'signMessage')) {
+
+                    this.incoming = payload;
+                    let signing = this.$store.state.AccountStore.accountlist.filter(x => {
+                        return (
+                            x.accountID == this.incoming.account_id &&
+                            x.chain == this.incoming.chain
+                        );
+                    });
+                    this.signingAccount = signing[0];
+
+                    this.specifics = payload.params;
+                    let resp=new Promise((res, rej) => {
+                        this.incoming.acceptgen = res;
+                        this.incoming.rejectgen = rej;
+                    });
+                    this.acceptGenericBG();
+                    return resp;
+                }else{
+                    this.$store.dispatch("WalletStore/notifyUser", {
+                        notify: "request",
+                        message: "request"
+                    });
+                    this.incoming = payload;
+                    let signing = this.$store.state.AccountStore.accountlist.filter(x => {
+                        return (
+                            x.accountID == this.incoming.account_id &&
+                            x.chain == this.incoming.chain
+                        );
+                    });
+                    this.signingAccount = signing[0];
+
+                    this.specifics = payload.params;
+
+                    this.genericmsg = this.$t("operations:message.request", {
+                        appName: this.incoming.appName,
+                        origin: this.incoming.origin,
+                        chain: this.signingAccount.chain,
+                        accountName: this.signingAccount.accountName
+                    });
+                    this.generictitle = this.$t("operations:message.title");
+                    this.genericaccept = this.$t("operations:message.accept_btn");
+                    this.genericreject = this.$t("operations:message.reject_btn");
+                    this.$refs.genericReqModal.show();
+                    return new Promise((res, rej) => {
+                        this.incoming.acceptgen = res;
+                        this.incoming.rejectgen = rej;
+                    });
+                }
+            },
+            verifyMessage: function(payload) {
                 return new Promise((resolve, reject) => {
                     let payload_dict = {};
-                    payload_dict[payload.params.payload[0]] = [payload_dict[payload.params.payload[1]], payload_dict[payload.params.payload[2]]];
+                    payload_dict[payload.params.payload[0]] = [
+                        payload_dict[payload.params.payload[1]],
+                        payload_dict[payload.params.payload[2]]
+                    ];
                     let i;
-                    for (i = 3; i < payload.params.payload.length-1; i++) {
-                        payload_dict[payload.params.payload[i]] = payload.params.payload[i+1];
+                    for (i = 3; i < payload.params.payload.length - 1; i++) {
+                        payload_dict[payload.params.payload[i]] =
+                            payload.params.payload[i + 1];
                     }
                     let messageChain = null;
-                    if (!!payload_dict.chain) {
+                    if (payload_dict.chain) {
                         messageChain = payload_dict.chain;
                     } else {
-                        messageChain = payload.params.payload[2].substr(0,3);
+                        messageChain = payload.params.payload[2].substr(0, 3);
                     }
                     let blockchain = getBlockchain(messageChain);
-                    blockchain.verifyMessage(
-                        payload.params
-                    ).then((result) => {
-                        resolve(result);
-                    }).catch(err => {
-                        reject(err);
-                    });
+                    blockchain
+                        .verifyMessage(payload.params)
+                        .then(result => {
+                            resolve(result);
+                        })
+                        .catch(err => {
+                            reject(err);
+                        });
                 });
             },
-            allowAccess: function () {
+            allowAccess: function() {
                 this.$refs.accountReqModal.hide();
                 this.incoming.accept({
-                    name: this.$store.state.WalletStore.wallet.accountName,
-                    id: this.$store.state.WalletStore.wallet.accountID
+                    name: this.chosenAccount.accountName,
+                    chain: this.chosenAccount.chain,
+                    id: this.chosenAccount.accountID
                 });
             },
-            denyAccess: function () {
+            denyAccess: function() {
                 this.$refs.accountReqModal.hide();
-                this.incoming.reject({});
+                this.incoming.reject({ canceled: true });
             },
-            acceptTx: async function () {
-                this.$refs.loaderAnimModal.show();
-                this.$refs.transactionReqModal.hide();
-                let blockchain = getBlockchain(this.$store.state.WalletStore.wallet.chain);
-                let transaction = await blockchain.sign(
-                    this.incoming.params,
-                    this.$store.state.WalletStore.wallet.keys.active
-                );
-                let id = await blockchain.broadcast(
-                    transaction
-                );
-                this.incoming.accepttx({id: id});
-                this.$refs.loaderAnimModal.hide();
+            allowAnyAccess: function() {
+                this.$refs.anyAccountReqModal.hide();
+                this.incoming.accept({
+                    name: this.chosenAccount.accountName,
+                    chain: this.chosenAccount.chain,
+                    id: this.chosenAccount.accountID
+                });
             },
-            rejectTx: function () {
-                this.$refs.transactionReqModal.hide();
-                this.incoming.rejecttx({});
+            denyAnyAccess: function() {
+                this.$refs.anyAccountReqModal.hide();
+                this.incoming.reject({ canceled: true });
             },
-            acceptGeneric: async function () {
-                // doesnt disappear afterwards, huh?
-                //this.$refs.loaderAnimModal.show();
-                let blockchain = getBlockchain(this.$store.state.WalletStore.wallet.chain);
-                if (this.incoming.method == "signMessage") {
-                    let signedMessage = await blockchain.signMessage(
-                        this.$store.state.WalletStore.wallet.keys.active,
-                        this.$store.state.WalletStore.wallet.accountName,
-                        this.incoming.params
-                    );
-                    this.incoming.acceptgen(signedMessage);
-                } else {
-                    let operation = await blockchain.getOperation(
-                        this.incoming,
-                        {
-                            id: this.$store.state.WalletStore.wallet.accountID,
-                            name: this.$store.state.WalletStore.wallet.accountName
-                        }
-                    );
+            acceptTx: async function() {
+                try {
+                    EventBus.$emit("popup", "load-start");
+                    this.$refs.transactionReqModal.hide();
+                    let blockchain = getBlockchain(this.incoming.chain);
                     let transaction = await blockchain.sign(
-                        operation,
-                        this.$store.state.WalletStore.wallet.keys.active
+                        this.incoming.params,
+                        this.signingAccount.keys.active
                     );
-                    let id = await blockchain.broadcast(
-                        transaction
-                    );
-                    this.incoming.acceptgen(id);
+                    let id = await blockchain.broadcast(transaction);
+                    this.incoming.accepttx({ id: id });
+
+                    EventBus.$emit("popup", "load-end");
+                } catch (err) {
+                    this.incoming.rejecttx({ error: err });
+                    EventBus.$emit("popup", "load-end");
                 }
-                this.$refs.genericReqModal.hide();
-                this.$refs.loaderAnimModal.hide();
             },
-            rejectGeneric: function () {
+            rejectTx: function() {
+                this.$refs.transactionReqModal.hide();
+                this.incoming.rejecttx({ canceled: true });
+            },
+            acceptGenericBG: async function() {
+                try {
+                    let blockchain = getBlockchain(this.incoming.chain);
+                    if (this.incoming.method == "signMessage") {
+                        let signedMessage = await blockchain.signMessage(
+                            this.signingAccount.keys.active,
+                            this.signingAccount.accountName,
+                            this.incoming.params
+                        );
+                        this.incoming.acceptgen(signedMessage);
+                    } else {
+                        let operation = await blockchain.getOperation(this.incoming, {
+                            id: this.signingAccount.accountID,
+                            name: this.signingAccount.accountName
+                        });
+                        let transaction = await blockchain.sign(
+                            operation,
+                            this.signingAccount.keys.active
+                        );
+                        let id = await blockchain.broadcast(transaction);
+                        this.incoming.acceptgen(id);
+                    }
+                    
+                } catch (err) {
+                    this.incoming.rejectgen({ error: err });
+                    
+                }
+            },
+            acceptGeneric: async function() {
+                try {
+                    EventBus.$emit("popup", "load-start");
+                    this.$refs.genericReqModal.hide();
+                    let blockchain = getBlockchain(this.incoming.chain);
+                    if (this.incoming.method == "signMessage") {
+                        if (this.allowWhitelist) {
+                            this.$store.dispatch("WhitelistStore/addWhitelist",{ identityhash: this.incoming.identityhash, method: 'signMessage'});
+                        }
+                        let signedMessage = await blockchain.signMessage(
+                            this.signingAccount.keys.active,
+                            this.signingAccount.accountName,
+                            this.incoming.params
+                        );
+                        this.incoming.acceptgen(signedMessage);
+                    } else {
+                        let operation = await blockchain.getOperation(this.incoming, {
+                            id: this.signingAccount.accountID,
+                            name: this.signingAccount.accountName
+                        });
+                        let transaction = await blockchain.sign(
+                            operation,
+                            this.signingAccount.keys.active
+                        );
+                        let id = await blockchain.broadcast(transaction);
+                        this.incoming.acceptgen(id);
+                    }
+                    EventBus.$emit("popup", "load-end");
+                } catch (err) {
+                    this.incoming.rejectgen({ error: err });
+                    EventBus.$emit("popup", "load-end");
+                }
+            },
+            rejectGeneric: function() {
                 this.$refs.genericReqModal.hide();
                 this.incoming.rejectgen({});
             },
-            formatMoney: function (n, decimals, decimal_sep, thousands_sep) {
+            formatMoney: function(n, decimals, decimal_sep, thousands_sep) {
                 var c = isNaN(decimals) ? 2 : Math.abs(decimals),
                     d = decimal_sep || ".",
                     t = typeof thousands_sep === "undefined" ? "," : thousands_sep,
@@ -409,12 +591,12 @@
                     i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) +
                     (c
                         ? d +
-                        Math.abs(n - i)
-                            .toFixed(c)
-                            .slice(2)
+                            Math.abs(n - i)
+                                .toFixed(c)
+                                .slice(2)
                         : "")
                 );
             }
         }
     };
-</script>
+</script> 

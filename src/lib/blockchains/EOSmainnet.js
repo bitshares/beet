@@ -1,4 +1,6 @@
 import BlockchainAPI from "./BlockchainAPI";
+import RendererLogger from "../RendererLogger";
+const logger = new RendererLogger();
 
 const fetch = require('node-fetch');
 
@@ -25,8 +27,8 @@ export default class EOS extends BlockchainAPI {
             }
             if (!this.rpc) {
                 this.rpc = new JsonRpc(nodeToConnect, {fetch});
-            }
-            resolve();
+            }            
+            this._connectionEstablished(resolve, nodeToConnect);
         });
     }
 
@@ -34,7 +36,6 @@ export default class EOS extends BlockchainAPI {
         return new Promise((resolve, reject) => {
             this._ensureAPI().then(result => {
                 this.rpc.get_account(accountname).then(account => {
-                    console.log("account", account);
                     account.active = {}
                     account.owner = {}
                     account.active.public_keys = account.permissions.find(
@@ -56,7 +57,6 @@ export default class EOS extends BlockchainAPI {
     getBalances(accountName) {
         return new Promise((resolve, reject) => {
             this.getAccount(accountName).then((account) => {
-                console.log(account);
                 let balances = [];
                 balances.push({
                     asset_type: "UIA",
@@ -112,7 +112,6 @@ export default class EOS extends BlockchainAPI {
     }
 
     mapOperationData(incoming) {
-        console.log("mapOperationData", incoming);
         return new Promise((resolve, reject) => {
             reject("Not supported");
         });
@@ -123,7 +122,6 @@ export default class EOS extends BlockchainAPI {
     }
 
     _verifyString(signature, publicKey, string) {
-        console.log(ecc.Signature);
         return ecc.Signature.fromHex(signature).verify(
             string,
             ecc.PublicKey.fromString(publicKey)
