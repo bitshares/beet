@@ -66,6 +66,9 @@ export default class BeetAPI {
         return result;
     }
     static _parseReject(method, request, err) {
+        if (!err.canceled) {
+            console.error(err);
+        }
         return {
             id: request.id,
             result: {
@@ -141,6 +144,8 @@ export default class BeetAPI {
     static async [Actions.SIGN_MESSAGE](request, vue) {
         try {
             let response = await vue.requestSignedMessage(request.payload);
+            // make sure an invalid message never leaves the house
+            await vue.verifyMessage({params: response.response});
             return {
                 id: request.id,
                 result: response.response
@@ -154,7 +159,7 @@ export default class BeetAPI {
             let response = await vue.verifyMessage(request.payload);
             return {
                 id: request.id,
-                result: response.response
+                result: response
             };
         } catch (err) {
             return this._parseReject("BeetAPI.verifyMessage", request, err);
