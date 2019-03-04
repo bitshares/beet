@@ -37,15 +37,16 @@
             _onShow: function() {
                 // to overwrite, do nothing in default
             },
-            _clickedAllow: function() {
+            _clickedAllow: async function() {
                 // EventBus.$emit("popup", "load-start");
                 // EventBus.$emit("popup", "load-end");
                 this.$refs.modalComponent.hide();
                 try {
+                    let result = await this._execute();
                     // todo allowWhitelist move whitelisting to BeetAPI, thus return flag here
                     this._accept(
                         {
-                            response: this._execute(),
+                            response: result,
                             whitelisted: this.allowWhitelist
                         }
                     );
@@ -60,7 +61,7 @@
                         );
                     }
                 } catch (err) {
-                    console.log(err);
+                    console.error(err);
                     this._reject({ error: err });
                 }
             },

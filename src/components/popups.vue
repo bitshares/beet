@@ -180,9 +180,13 @@
                 return this.$refs.transactionReqModal.show(payload);
             },
             isWhitelisted: function (identity,method) {
-                if (this.$store.state.WhitelistStore.whitelist.filter( x=> (x.identityhash==identity && x.method==method) ).length>0) {
-                    return true;
-                }else{
+                if (!!this.$store.state.WhitelistStore && !!this.$store.state.WhitelistStore.whitelist && !!this.$store.state.WhitelistStore.whitelist.filter) {
+                    if (this.$store.state.WhitelistStore.whitelist.filter(x => (x.identityhash == identity && x.method == method)).length > 0) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                } else {
                     return false;
                 }
             },

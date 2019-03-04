@@ -83,8 +83,11 @@
             <h4 class="h4 mt-3 font-weight-bold">
                 {{ $t('step_counter',{ 'step_no' : 2}) }}
             </h4>
-            <p class="mb-2 font-weight-bold">
+            <p v-if="accessType=='account'" class="mb-2 font-weight-bold">
                 {{ $t('account_name',{ 'chain' : selectedChain}) }}
+            </p>
+            <p v-else class="mb-2 font-weight-bold">
+                {{ $t('address_name',{ 'chain' : selectedChain}) }}
             </p>
             <input
                 id="inputAccount"
@@ -279,6 +282,9 @@
                         this.step = 2;
                     }
                 }
+                let blockchain = getBlockchain(this.selectedChain);
+                this.accessType = blockchain.getAccessType();
+                console.log(this.accessType);
             },
             step3: async function() {
                 let apkey, mpkey, opkey;

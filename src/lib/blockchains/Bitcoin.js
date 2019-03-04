@@ -29,33 +29,47 @@ export default class Bitcoin extends BlockchainAPI {
 
     getAccount(accountname) {
         return new Promise((resolve, reject) => {
-            this._ensureAPI().then(result => {
-                fetch({
-                    method: 'GET',
-                    url: 'https://blockchain.info/rawaddr/' + accountname
-                }, function (err, result) {
-                    if (err) reject(err);
+            this._ensureAPI().then(() => {
+                fetch("https://blockchain.info/rawaddr/" + accountname).then(result => {
+                    result.json().then(result => {
+                        let account = {};
+                        account.active = {};
+                        account.owner = {};
+                        //if (!!this._lastPublicKey) {
+                            account.active.public_keys = [[accountname, 1]];
+                        //    if (this._publicKeyToAddress(this._lastPublicKey) !== accountname) {
+                        //        reject("Public key not matching");
+                        //    }
+                        //} else {
+                        //    reject("No public key found!");
+                        //}
+                        account.owner.public_keys = [];
+                        account.memo = {public_key: null};
+                        account.id = accountname;
 
-                    account.active = {}
-                    account.owner = {}
-                    account.active.public_keys = [[accountname, 1]];
-                    account.owner.public_keys = [];
-                    account.memo = {public_key: ""};
-                    account.id = accountname;
+                        account.n_tx = result.n_tx;
+                        account.total_received = result.total_received;
+                        account.total_sent = result.total_sent;
 
-                    account.n_tx = result.n_tx;
-                    account.total_received = result.total_received;
-                    account.total_sent = result.total_sent;
-
-                    resolve(account);
-                })
+                        resolve(account);
+                    }).catch(reject);
+                }).catch(reject);
             }).catch(reject);
         });
     }
 
+    _publicKeyToAddress(publicKey) {
+        let _bitcoin = bitcoin;
+        let publicKeyBuffer = new Buffer(publicKey, 'hex')
+        let keyPair = bitcoin.ECPair.fromPublicKey(publicKeyBuffer)
+        const { address } = bitcoin.payments.p2pkh({ pubkey: keyPair.publicKey });
+        return address;
+    }
+
     getPublicKey(privateKey) {
         const keyPair = bitcoin.ECPair.fromWIF(privateKey);
-        return keyPair.publicKey;
+        this._lastPublicKey = keyPair.publicKey.toString("hex");
+        return keyPair.publicKey.toString("hex");
     }
 
     getBalances(accountName) {
@@ -81,6 +95,18 @@ export default class Bitcoin extends BlockchainAPI {
         return new Promise(resolve => {
             resolve();
         });
+    }
+
+    getAccessType() {
+        return "address";
+    }
+
+    getSignUpInput() {
+        return {
+            active: true,
+            memo: null,
+            owner: null
+        }
     }
 
     sign(operation, key) {
@@ -109,15 +135,20 @@ export default class Bitcoin extends BlockchainAPI {
 
     _signString(key, string) {
         const keyPair = bitcoin.ECPair.fromWIF(key);
-        console.log(keyPair);
-        let signature = keyPair.sign(string);
-        console.log(signature);
-        return signature.toString();
+        let hash = bitcoin.crypto.sha256(string);
+        let signature = keyPair.sign(hash);
+        return signature.toString("hex");
     }
 
     _verifyString(signature, publicKey, string) {
-        const keyPair = bitcoin.ECPair.fromPublicKey(Buffer.from(publicKey, 'hex'));
-        return keyPair.verify(string, signature);
+        let publicKeyBuffer = new Buffer(publicKey, 'hex')
+        let keyPair = bitcoin.ECPair.fromPublicKey(publicKeyBuffer)
+        let hash = bitcoin.crypto.sha256(string);
+        return keyPair.verify(hash, new Buffer(signature, 'hex'));
+    }
+
+    _verifyAccountAndKey(accountName, publicKey, permission = null) {
+        return super._verifyAccountAndKey(accountName, this._publicKeyToAddress(publicKey), permission = null);
     }
 
 }

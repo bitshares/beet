@@ -57,6 +57,18 @@ export default class BlockchainAPI {
         throw "Needs implementation";
     }
 
+    getAccessType() {
+        return "account";
+    }
+
+    getSignUpInput() {
+        return {
+            active: true,
+            memo: true,
+            owner: false
+        }
+    }
+
     signMessage(key, accountName, randomString) {
         return new Promise((resolve,reject) => {
             // do as a list, to preserve order
