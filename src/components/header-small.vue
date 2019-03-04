@@ -8,7 +8,9 @@
                         src="img/beet.png"
                         alt=""
                     >
-                    <h4 class="h4 beet-typo-small">{{ $t('appName') }}</h4>
+                    <h4 class="h4 beet-typo-small">
+                        {{ $t('appName') }}
+                    </h4>
                     <LangSelect ref="langswitch" />
                 </div>
             </div>
@@ -18,6 +20,8 @@
 
 <script>
     import LangSelect from "./lang-select";
+    import RendererLogger from "../lib/RendererLogger";
+    const logger = new RendererLogger();
 
     export default {
         name: "HeaderSmall",
@@ -25,6 +29,9 @@
         components: { LangSelect },
         data() {
             return {};
+        },
+        mounted() {
+            logger.debug('Small Header mounted');
         }
     };
 </script>

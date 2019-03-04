@@ -1,5 +1,5 @@
 <template>
-    <div class="bottom ">
+    <div class="bottom">
         <div
             v-if="step==1"
             id="step1"
@@ -7,37 +7,17 @@
             <h4 class="h4 mt-3 font-weight-bold">
                 {{ $t('step_counter',{ 'step_no' : 1}) }}
             </h4>
-            <p
-                v-b-tooltip.hover
-                :title="$t('tooltip_friendly_cta')"
-                class="my-3 font-weight-bold"
-            >
-                {{ $t('friendly_cta') }} &#10068;
+
+            <p class="my-3 font-weight-bold">
+                {{ $t('chain_new_cta') }}
             </p>
-            <input
-                id="inputWallet"
-                v-model="walletname"
-                type="text"
-                class="form-control mb-3"
-                :class="s1c"
-                :placeholder="$t('walletname_placeholder')"
-                required=""
-                @focus="s1c=''"
-            >
-            <p
-                v-b-tooltip.hover
-                :title="$t('tooltip_chain_cta')"
-                class="my-3 font-weight-bold"
-            >
-                {{ $t('chain_cta') }} &#10068;
-            </p>
-            <select                
+            <select
                 id="chain-select"
                 v-model="selectedChain"
                 class="form-control mb-3"
                 :class="s1c"
                 :placeholder="$t('chain_placeholder')"
-                required=""
+                required
             >
                 <option
                     selected
@@ -57,7 +37,7 @@
             <div class="row">
                 <div class="col-6">
                     <router-link
-                        to="/"
+                        to="/dashboard"
                         tag="button"
                         class="btn btn-lg btn-primary btn-block"
                         replace
@@ -92,7 +72,7 @@
                 type="text"
                 class="form-control mb-3"
                 :placeholder="$t('account_name',{ 'chain' : selectedChain})"
-                required=""
+                required
             >
             <p class="my-3 font-weight-normal">
                 {{ $t('keys_cta') }}
@@ -106,7 +86,7 @@
                 type="password"
                 class="form-control mb-3 small"
                 :placeholder="$t('active_authority_placeholder')"
-                required=""
+                required
             >
 
             <p class="mb-2 font-weight-bold">
@@ -118,7 +98,7 @@
                 type="password"
                 class="form-control mb-3 small"
                 :placeholder="$t('memo_authority_placeholder')"
-                required=""
+                required
             >
             <b-form-checkbox
                 id="incOwnerCB"
@@ -136,7 +116,7 @@
                     type="password"
                     class="form-control mb-3 small"
                     :placeholder="$t('owner_authority_placeholder')"
-                    required=""
+                    required
                 >
             </div>
             <div class="row">
@@ -167,12 +147,8 @@
             <h4 class="h4 mt-3 font-weight-bold">
                 {{ $t('step_counter',{ 'step_no' : 3}) }}
             </h4>
-            <p
-                v-b-tooltip.hover
-                :title="$t('tooltip_password_cta')"
-                class="mb-2 font-weight-bold"
-            >
-                {{ $t('password_cta') }} &#10068;
+            <p class="mb-2 font-weight-bold">
+                {{ $t('password_req_cta') }}
             </p>
             <input
                 id="inputPass"
@@ -180,24 +156,9 @@
                 type="password"
                 class="form-control mb-3"
                 :placeholder="$t('password_placeholder')"
-                required=""
+                required
             >
-            <password
-                v-model="password"
-                :secure-length="12"
-                :strength-meter-only="true"
-            />
-            <p class="mb-2 font-weight-bold">
-                {{ $t('confirm_cta') }}
-            </p>
-            <input
-                id="inputConfirmPass"
-                v-model="confirmpassword"
-                type="password"
-                class="form-control mb-3"
-                :placeholder="$t('confirm_placeholder')"
-                required=""
-            >
+      
             <button
                 class="btn btn-lg btn-primary btn-block"
                 type="submit"
@@ -222,7 +183,6 @@
 </template>
 
 <script>
-    import Password from 'vue-password-strength-meter'
     import { blockchains } from "../config/config.js";
     import getBlockchain from "../lib/blockchains/blockchainFactory";
     import { EventBus } from "../lib/event-bus.js";
@@ -230,19 +190,16 @@
     const logger = new RendererLogger();
 
     export default {
-        name: "Create",
+        name: "AddAccount",
         i18nOptions: { namespaces: "common" },
-        components: { Password },
         data() {
             return {
-                walletname: "",
                 accountname: "",
                 accountID: "",
                 activepk: "",
                 ownerpk: "",
                 memopk: "",
                 password: "",
-                confirmpassword: "",
                 step: 1,
                 s1c: "",
                 includeOwner: 0,
@@ -252,33 +209,14 @@
             };
         },
         mounted() {
-            logger.debug('Create Wallet Wizard mounted');
+            logger.debug('Account-Add wizard Mounted');
         },
         methods: {
             step1: function() {
                 this.step = 1;
             },
             step2: function() {
-                if (this.walletname.trim() == "") {
-                    this.errorMsg = this.$t("empty_wallet_error");
-                    this.$refs.errorModal.show();
-                    this.s1c = "is-invalid";
-                } else {
-                    let wallets = JSON.parse(localStorage.getItem("wallets"));
-
-                    if (
-                        wallets &&
-                        wallets.filter(wallet => wallet.name === this.walletname.trim())
-                            .length > 0
-                    ) {
-                        this.errorMsg = this.$t("duplicate_wallet_error");
-                        this.$refs.errorModal.show();
-                        this.s1c = "is-invalid";
-                    } else {
-                        this.walletname = this.walletname.trim();
-                        this.step = 2;
-                    }
-                }
+                this.step = 2;
             },
             step3: async function() {
                 let apkey, mpkey, opkey;
@@ -296,7 +234,7 @@
                     apkey = blockchain.getPublicKey(this.activepk);
                     mpkey = blockchain.getPublicKey(this.memopk);
                     if (this.includeOwner == 1) {
-                        opkey =blockchain.getPublicKey(this.ownerpk);
+                        opkey = blockchain.getPublicKey(this.ownerpk);
                     }
                 } catch (e) {
                     this.errorMsg = this.$t("invalid_key_error");
@@ -305,63 +243,77 @@
                 }
                 EventBus.$emit("popup", "load-start");
 
-                blockchain.getAccount(this.accountname).then((account) => {
-                    let active_check = false;
-                    account.active.public_keys.forEach((key) => {
-                        if (key[0] == apkey) {
-                            active_check = true;
+                blockchain
+                    .getAccount(this.accountname)
+                    .then(account => {                        
+                        let active_check = false;
+                        account.active.public_keys.forEach(key => {
+                            if (key[0] == apkey) {
+                                active_check = true;
+                            }
+                        });
+                        let owner_check = !this.includeOwner;
+                        account.owner.public_keys.forEach(key => {
+                            if (key[0] == opkey) {
+                                owner_check = true;
+                            }
+                        });
+                        let memo_check = account.memo.public_key == mpkey;
+                        if (active_check && owner_check && memo_check) {
+                            EventBus.$emit("popup", "load-end");
+                            this.accountID = account.id;
+                            this.step = 3;
+                        } else {
+                            EventBus.$emit("popup", "load-end");
+                            this.$refs.errorModal.show();
+                            this.errorMsg = this.$t("unverified_account_error");
+                            this.accountID = "";
                         }
-                    });
-                    let owner_check = !this.includeOwner;
-                    account.owner.public_keys.forEach((key) => {
-                        if (key[0] == opkey) {
-                            owner_check = true;
-                        }
-                    });
-                    let memo_check = account.memo.public_key == mpkey;
-                    if (active_check && owner_check && memo_check) {
-                        EventBus.$emit("popup", "load-end");
-                        this.accountID = account.id;
-                        this.step = 3;
-                    } else {
+                    })
+                    .catch(err => {
                         EventBus.$emit("popup", "load-end");
                         this.$refs.errorModal.show();
                         this.errorMsg = this.$t("unverified_account_error");
                         this.accountID = "";
-                    }
-                }).catch((err) => {
-                    EventBus.$emit("popup", "load-end");
-                    this.$refs.errorModal.show();
-                    this.errorMsg = this.$t("unverified_account_error");
-                    this.accountID = "";
-                });
+                    });
             },
             verifyAndCreate: async function() {
-                if (this.password != this.confirmpassword || this.password == "") {
+                if (this.password == "") {
                     this.$refs.errorModal.show();
-                    this.errorMsg = this.$t("confirm_pass_error");
+                    this.errorMsg = this.$t("empty_pass_error");
                     return;
                 }
 
                 EventBus.$emit("popup", "load-start");
 
                 if (this.accountID !== null) {
-                    this.$store.dispatch("WalletStore/saveWallet", {
-                        walletname: this.walletname,
-                        password: this.password,
-                        walletdata: {
-                            accountName: this.accountname,
-                            accountID: this.accountID,
-                            chain: this.selectedChain,
-                            keys: {
-                                active: this.activepk,
-                                owner: this.ownerpk,
-                                memo: this.memopk
+                    this.$store
+                        .dispatch("AccountStore/addAccount", {
+                            password: this.password,
+                            account: {
+                                accountName: this.accountname,
+                                accountID: this.accountID,
+                                chain: this.selectedChain,
+                                keys: {
+                                    active: this.activepk,
+                                    owner: this.ownerpk,
+                                    memo: this.memopk
+                                }
                             }
-                        }
-                    }).then(() => {
-                        this.$router.replace("/dashboard");
-                    });
+                        })
+                        .then(() => {
+                            this.$router.replace("/dashboard");
+                        }).catch((e) => {
+                            EventBus.$emit("popup", "load-end");
+                            if (e=='invalid') {
+                                this.$refs.errorModal.show();
+                                this.errorMsg = this.$t("invalid_password");
+                            }
+                            if (e=='update_failed') {
+                                this.$refs.errorModal.show();
+                                this.errorMsg = this.$t("update_failed");
+                            }
+                        });
                 }
             }
         }

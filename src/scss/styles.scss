@@ -151,7 +151,30 @@ body {
     border-radius: 1.5rem;
     padding: 0rem 1rem;
 }
+.btn-inverse:hover,
+.btn-inverse:active,
+.btn-inverse:focus,
+.btn-inverse:not(:disabled):not(.disabled).active,
+.btn-inverse:not(:disabled):not(.disabled):active {
+    background: $primary;
+    border: 1px solid $primary;
+    outline: none !important;
+    box-shadow: none !important;
+    color:white;
+}
 
+.btn-inverse {
+    background: $alternate;
+    border: 1px solid $alternate;
+    outline: none;
+    height: 2rem;
+    min-width:2rem;
+    color:white;
+    display:inline-block;
+    line-height: 2rem;
+    border-radius: 1rem;
+    padding: 0rem 0rem;
+}
 .form-control {
     position: relative;
     box-sizing: border-box;
@@ -170,11 +193,26 @@ p {
 .account {
     background: $alternate;
     color: $white;
+    line-height:2rem;
+    select {        
+        padding: 0;
+        height: 2rem;
+        line-height: 2rem;
+        vertical-align: middle;
+        border-radius: 0;
+        width: 100%;
+        margin:0;
+    }
+    .btn-inverse {
+        margin-lefT:0.4rem;
+    }
 }
 
 .balances {
     height: 26rem;
     overflow-y: auto;
+    margin-left:15px;
+    margin-right:15px;
 }
 
 pre {

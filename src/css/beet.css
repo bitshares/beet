@@ -7044,6 +7044,28 @@ body {
   border-radius: 1.5rem;
   padding: 0rem 1rem; }
 
+.btn-inverse:hover,
+.btn-inverse:active,
+.btn-inverse:focus,
+.btn-inverse:not(:disabled):not(.disabled).active,
+.btn-inverse:not(:disabled):not(.disabled):active {
+  background: #C7088E;
+  border: 1px solid #C7088E;
+  outline: none !important;
+  box-shadow: none !important; }
+
+.btn-inverse {
+  background: #960069;
+  border: 1px solid #960069;
+  outline: none;
+  height: 2rem;
+  min-width: 2rem;
+  color: white;
+  display: inline-block;
+  line-height: 2rem;
+  border-radius: 1rem;
+  padding: 0rem 0rem; }
+
 .form-control {
   position: relative;
   box-sizing: border-box;
@@ -7059,11 +7081,24 @@ p {
 
 .account {
   background: #960069;
-  color: #F4F8FB; }
+  color: #F4F8FB;
+  line-height: 2rem; }
+  .account select {
+    padding: 0;
+    height: 2rem;
+    line-height: 2rem;
+    vertical-align: middle;
+    border-radius: 0;
+    width: 100%;
+    margin: 0; }
+  .account .btn-inverse {
+    margin-lefT: 0.4rem; }
 
 .balances {
   height: 26rem;
-  overflow-y: auto; }
+  overflow-y: auto;
+  margin-left: 15px;
+  margin-right: 15px; }
 
 pre {
   border: 1px solid lightgray;
@@ -7234,3 +7269,10 @@ pre {
 .lang-select ul li:hover {
   background: #77c5ec;
   cursor: pointer; }
+
+.alerts {
+  position: absolute;
+  left: 5%;
+  right: 5%;
+  top: 3rem;
+  width: 90%; }

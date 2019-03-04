@@ -13,14 +13,12 @@
             slot="singleLabel" 
             slot-scope="props"
         >
-            
             <span class="option__desc"><span class="option__title singleLabel">{{ props.option.iso }}</span></span>
         </template>
-        <template 
+        <template  
             slot="option" 
             slot-scope="props"
         >
-            
             <span class="option__desc"><span class="option__title options"><span class="isoCode">{{ props.option.iso }}</span> - {{ props.option.name }}</span></span>
         </template>
     </multiselect>
@@ -30,6 +28,8 @@
     import { locales } from "../config/i18n.js";
     import Multiselect from 'vue-multiselect'
     import i18next from 'i18next';
+    import RendererLogger from "../lib/RendererLogger";
+    const logger = new RendererLogger();
 
     export default {
         name: "LangSelect",
@@ -48,6 +48,7 @@
             }
         },
         mounted() {
+            logger.debug('Language Selector mounted');
         }
     };
 </script>

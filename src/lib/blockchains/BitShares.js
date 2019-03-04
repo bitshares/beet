@@ -4,9 +4,11 @@ import {
     PrivateKey,
     PublicKey,
     TransactionBuilder,
-    Signature,
-    ChainStore
+    Signature
+    
 } from "bitsharesjs";
+import RendererLogger from "../RendererLogger";
+const logger = new RendererLogger();
 
 export default class BitShares extends BlockchainAPI {
 
@@ -20,7 +22,6 @@ export default class BitShares extends BlockchainAPI {
             if (nodeToConnect == null) {
                 nodeToConnect = this.getNodes()[0].url;
             }
-            console.log("attempting to connect to ", nodeToConnect);
             if (this._isConnectingInProgress) {
                 // there should be a promise queue for pending connects, this is the lazy way
                 setTimeout(() => {
@@ -141,7 +142,6 @@ export default class BitShares extends BlockchainAPI {
     }
 
     mapOperationData(incoming) {
-        console.log("mapOperationData", incoming);
         return new Promise((resolve, reject) => {
             this._ensureAPI().then(() => {
                 if (incoming.action == "vote") {
@@ -214,10 +214,9 @@ export default class BitShares extends BlockchainAPI {
     }
 
     sign(operation, key) {
-        console.log("sign", operation, key);
         return new Promise((resolve, reject) => {
             this._ensureAPI().then(() => {
-                if (!!operation.type) {
+                if (operation.type) {
                     let tr = new TransactionBuilder();
                     tr.add_type_operation(
                         operation.type,
@@ -233,20 +232,32 @@ export default class BitShares extends BlockchainAPI {
                         && operation.length > 2
                         && operation[0] == "signAndBroadcast") {
                         let tr = new TransactionBuilder();
-                        tr.tr_buffer = operation.tr_buffer;
+                        tr.ref_block_num = operation[1];
+                        tr.ref_block_prefix = operation[2];
+                        tr.expiration = operation[3];
+                        operation[4].forEach(op => {
+                            tr.add_operation(tr.get_type_operation(op[0], op[1]));
+                        });
                         let privateKey = PrivateKey.fromWif(key);
-                        tr.add_signer(privateKey, privateKey.toPublicKey().toPublicKeyString());
-                        resolve(tr);
+                        Promise.all([
+                            tr.set_required_fees(),
+                            tr.update_head_block()
+                        ]).then(() => {
+                            tr.add_signer(privateKey, privateKey.toPublicKey().toPublicKeyString());
+                            tr.finalize().then(() => {
+                                tr.sign();
+                                resolve(tr);
+                            }).catch(reject);
+                        });
                     } else {
                         reject("Unknown sign request");
                     }
                 }
-            }).catch(err => reject(err));;
+            }).catch(err => reject(err));
         });
     }
 
     broadcast(transaction) {
-        console.log("broadcast", transaction);
         return new Promise((resolve, reject) => {
             this._ensureAPI().then(() => {
                 transaction.broadcast().then(id => {
@@ -258,7 +269,6 @@ export default class BitShares extends BlockchainAPI {
 
     getOperation(data, account) {
         let account_id = account.id;
-        console.log("getOperation", data, account_id);
         return new Promise((resolve, reject) => {
             this._ensureAPI().then(() => {
                 let operation = {
