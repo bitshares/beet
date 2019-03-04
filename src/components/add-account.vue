@@ -85,14 +85,14 @@
                     {{ $t('active_authority') }}
                 </p>
                 <p v-else class="mb-2 font-weight-bold">
-                    {{ $t('general_authority') }}
+                    {{ $t('public_authority') }}
                 </p>
                 <input
                     id="inputActive"
                     v-model="activepk"
                     type="password"
                     class="form-control mb-3 small"
-                    :placeholder="accessType=='account' ? $t('active_authority_placeholder') : $t('general_authority_placeholder')"
+                    :placeholder="accessType=='account' ? $t('active_authority_placeholder') : $t('public_authority_placeholder')"
                     required
                 >
             </template>
@@ -234,7 +234,6 @@
                 this.step = 2;
             },
             step3: async function() {
-                let apkey, mpkey, opkey;
                 if (this.accountname == "") {
                     this.errorMsg = this.$t("missing_account_error", {
                         chain: this.selectedChain
@@ -243,62 +242,37 @@
                     return;
                 }
 
-                let blockchain = getBlockchain(this.selectedChain);
-
-                try {
-                    if (this.requiredFields.active !== null) {
-                        apkey = blockchain.getPublicKey(this.activepk);
-                    }
-                    if (this.requiredFields.memo !== null) {
-                        mpkey = blockchain.getPublicKey(this.memopk);
-                    }
-                    if (this.requiredFields.owner !== null) {
-                        if (this.includeOwner == 1) {
-                            opkey = blockchain.getPublicKey(this.ownerpk);
-                        }
-                    }
-                } catch (e) {
-                    this.errorMsg = this.$t("invalid_key_error");
-                    this.$refs.errorModal.show();
-                    return;
-                }
                 EventBus.$emit("popup", "load-start");
-
-                blockchain
-                    .getAccount(this.accountname)
-                    .then(account => {
-                        let active_check = this.requiredFields.owner == null || false;
-                        account.active.public_keys.forEach(key => {
-                            if (key[0] == apkey) {
-                                active_check = true;
-                            }
-                        });
-                        let owner_check = this.requiredFields.owner == null || !this.includeOwner;
-                        account.owner.public_keys.forEach(key => {
-                            if (key[0] == opkey) {
-                                owner_check = true;
-                            }
-                        });
-                        let memo_check = this.requiredFields.memo == null || account.memo.public_key == mpkey;
-                        if (active_check && owner_check && memo_check) {
-                            EventBus.$emit("popup", "load-end");
-                            this.accountID = account.id;
-                            this.step = 3;
-                        } else {
-                            console.log("asdasdasdasdasdas");
-                            EventBus.$emit("popup", "load-end");
-                            this.$refs.errorModal.show();
-                            this.errorMsg = this.$t("unverified_account_error");
-                            this.accountID = "";
-                        }
-                    })
-                    .catch(err => {
-                        console.log("asdasdasdasdasdas");
-                        EventBus.$emit("popup", "load-end");
-                        this.$refs.errorModal.show();
-                        this.errorMsg = this.$t("unverified_account_error");
-                        this.accountID = "";
-                    });
+                try {
+                    let blockchain = getBlockchain(this.selectedChain);
+                    // abstract UI concept more
+                    let authorities = null;
+                    if (blockchain.getAccessType() == "account") {
+                        authorities = {
+                            active: this.activepk,
+                            memo: this.memopk,
+                            owner: this.includeOwner == 1 ? this.ownerpk : null
+                        };
+                    } else {
+                        authorities = {
+                            active: this.activepk
+                        };
+                    }
+                    let account = await blockchain.verifyAccount(this.accountname, authorities);
+                    EventBus.$emit("popup", "load-end");
+                    this.accountID = account.id;
+                    this.step = 3;
+                } catch (err) {
+                    this.accountID = "";
+                    if (!!err.key) {
+                        this.errorMsg = this.$t(err.key);
+                    } else {
+                        this.errorMsg = err.toString();
+                    }
+                    this.$refs.errorModal.show();
+                } finally {
+                    EventBus.$emit("popup", "load-end");
+                }
             },
             verifyAndCreate: async function() {
                 if (this.password == "") {

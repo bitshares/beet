@@ -147,6 +147,10 @@ export default class Bitcoin extends BlockchainAPI {
         return keyPair.verify(hash, new Buffer(signature, 'hex'));
     }
 
+    _compareKeys(key1, key2) {
+        return key1 === this._publicKeyToAddress(key2);
+    }
+
     _verifyAccountAndKey(accountName, publicKey, permission = null) {
         return super._verifyAccountAndKey(accountName, this._publicKeyToAddress(publicKey), permission = null);
     }
