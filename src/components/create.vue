@@ -37,7 +37,7 @@
                 class="form-control mb-3"
                 :class="s1c"
                 :placeholder="$t('chain_placeholder')"
-                required=""
+                required
             >
                 <option
                     selected
@@ -83,8 +83,11 @@
             <h4 class="h4 mt-3 font-weight-bold">
                 {{ $t('step_counter',{ 'step_no' : 2}) }}
             </h4>
-            <p class="mb-2 font-weight-bold">
+            <p v-if="accessType=='account'" class="mb-2 font-weight-bold">
                 {{ $t('account_name',{ 'chain' : selectedChain}) }}
+            </p>
+            <p v-else class="mb-2 font-weight-bold">
+                {{ $t('address_name',{ 'chain' : selectedChain}) }}
             </p>
             <input
                 id="inputAccount"
@@ -92,34 +95,41 @@
                 type="text"
                 class="form-control mb-3"
                 :placeholder="$t('account_name',{ 'chain' : selectedChain})"
-                required=""
+                required
             >
             <p class="my-3 font-weight-normal">
                 {{ $t('keys_cta') }}
             </p>
-            <p class="mb-2 font-weight-bold">
-                {{ $t('active_authority') }}
-            </p>
-            <input
-                id="inputActive"
-                v-model="activepk"
-                type="password"
-                class="form-control mb-3 small"
-                :placeholder="$t('active_authority_placeholder')"
-                required=""
-            >
-
-            <p class="mb-2 font-weight-bold">
-                {{ $t('memo_authority') }}
-            </p>
+            <template v-if="requiredFields.active !== null">
+                <p v-if="accessType=='account'" class="mb-2 font-weight-bold">
+                    {{ $t('active_authority') }}
+                </p>
+                <p v-else class="mb-2 font-weight-bold">
+                    {{ $t('public_authority') }}
+                </p>
+                <input
+                    id="inputActive"
+                    v-model="activepk"
+                    type="password"
+                    class="form-control mb-3 small"
+                    :placeholder="accessType=='account' ? $t('active_authority_placeholder') : $t('public_authority_placeholder')"
+                    required
+                >
+            </template>
+            <template v-if="requiredFields.memo !== null">
+                <p class="mb-2 font-weight-bold">
+                    {{ $t('memo_authority') }}
+                </p>
             <input
                 id="inputMemo"
                 v-model="memopk"
                 type="password"
                 class="form-control mb-3 small"
                 :placeholder="$t('memo_authority_placeholder')"
-                required=""
+                    required
             >
+            </template>
+            <template v-if="requiredFields.owner !== null">
             <b-form-checkbox
                 id="incOwnerCB"
                 v-model="includeOwner"
@@ -136,9 +146,10 @@
                     type="password"
                     class="form-control mb-3 small"
                     :placeholder="$t('owner_authority_placeholder')"
-                    required=""
+                        required
                 >
             </div>
+            </template>
             <div class="row">
                 <div class="col-6">
                     <button
@@ -180,7 +191,7 @@
                 type="password"
                 class="form-control mb-3"
                 :placeholder="$t('password_placeholder')"
-                required=""
+                required
             >
             <password
                 v-model="password"
@@ -279,9 +290,12 @@
                         this.step = 2;
                     }
                 }
+                let blockchain = getBlockchain(this.selectedChain);
+                this.accessType = blockchain.getAccessType();
+                this.requiredFields = blockchain.getSignUpInput();
+                console.log(this.accessType);
             },
             step3: async function() {
-                let apkey, mpkey, opkey;
                 if (this.accountname == "") {
                     this.errorMsg = this.$t("missing_account_error", {
                         chain: this.selectedChain
@@ -290,51 +304,34 @@
                     return;
                 }
 
-                let blockchain = getBlockchain(this.selectedChain);
-
-                try {
-                    apkey = blockchain.getPublicKey(this.activepk);
-                    mpkey = blockchain.getPublicKey(this.memopk);
-                    if (this.includeOwner == 1) {
-                        opkey =blockchain.getPublicKey(this.ownerpk);
-                    }
-                } catch (e) {
-                    this.errorMsg = this.$t("invalid_key_error");
-                    this.$refs.errorModal.show();
-                    return;
-                }
                 EventBus.$emit("popup", "load-start");
-
-                blockchain.getAccount(this.accountname).then((account) => {
-                    let active_check = false;
-                    account.active.public_keys.forEach((key) => {
-                        if (key[0] == apkey) {
-                            active_check = true;
-                        }
-                    });
-                    let owner_check = !this.includeOwner;
-                    account.owner.public_keys.forEach((key) => {
-                        if (key[0] == opkey) {
-                            owner_check = true;
-                        }
-                    });
-                    let memo_check = account.memo.public_key == mpkey;
-                    if (active_check && owner_check && memo_check) {
-                        EventBus.$emit("popup", "load-end");
-                        this.accountID = account.id;
-                        this.step = 3;
+                try {
+                let blockchain = getBlockchain(this.selectedChain);
+                    // abstract UI concept more
+                    let authorities = null;
+                    if (blockchain.getAccessType() == "account") {
+                        authorities = {
+                            active: this.activepk,
+                            memo: this.memopk,
+                            owner: this.includeOwner == 1 ? this.ownerpk : null
+                        };
                     } else {
-                        EventBus.$emit("popup", "load-end");
-                        this.$refs.errorModal.show();
-                        this.errorMsg = this.$t("unverified_account_error");
-                        this.accountID = "";
+                        authorities = {
+                            active: this.activepk
+                        };
                     }
-                }).catch((err) => {
-                    EventBus.$emit("popup", "load-end");
-                    this.$refs.errorModal.show();
-                    this.errorMsg = this.$t("unverified_account_error");
+                    blockchain.verifyAccount(this.accountname, authorities);
+                } catch (err) {
                     this.accountID = "";
-                });
+                    if (!!err.key) {
+                        this.errorMsg = this.$t(err.key);
+                    } else {
+                        this.errorMsg = err.toString();
+                    }
+                        this.$refs.errorModal.show();
+                } finally {
+                    EventBus.$emit("popup", "load-end");
+                }
             },
             verifyAndCreate: async function() {
                 if (this.password != this.confirmpassword || this.password == "") {

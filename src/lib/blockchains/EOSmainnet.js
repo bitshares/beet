@@ -106,6 +106,7 @@ export default class EOS extends BlockchainAPI {
     }
 
     getOperation(data, account) {
+        // https://eosio.stackexchange.com/questions/212/where-is-the-api-for-block-producer-voting-in-eosjs
         return new Promise((resolve, reject) => {
             reject("Not supported");
         });

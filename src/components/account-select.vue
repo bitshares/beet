@@ -11,7 +11,7 @@
             :key="`account-${index}`"
             :value="account"
         >
-            {{ account.chain+": "+account.accountName+" ("+account.accountID+")" }}
+            {{ account.chain + ": " + account.accountName + (account.accountName !== account.accountID ? " (" + account.accountID + ")" : "")}}
         </option>
     </select>
 </template>

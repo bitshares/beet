@@ -429,5 +429,20 @@ export const blockchains = {
                 contact: "Greymass"
             }
         ]
+    },
+    BTC: {
+        short: 'BTC',
+        name: 'BTC',
+        chainId: null,
+        nodeList: [
+            {
+                url: "https://blockchain.info/rawaddr/",
+                location: "Unknown",
+                region: "Unknown",
+                country: "Luxembourg",
+                operator: "Blockchain Luxembourg S.A.",
+                contact: "https://www.blockchain.com"
+            }
+        ]
     }
 };

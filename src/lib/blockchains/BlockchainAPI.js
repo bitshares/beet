@@ -57,6 +57,18 @@ export default class BlockchainAPI {
         throw "Needs implementation";
     }
 
+    getAccessType() {
+        return "account";
+    }
+
+    getSignUpInput() {
+        return {
+            active: true,
+            memo: true,
+            owner: false
+        }
+    }
+
     signMessage(key, accountName, randomString) {
         return new Promise((resolve,reject) => {
             // do as a list, to preserve order
@@ -160,6 +172,45 @@ export default class BlockchainAPI {
                 reject(err)
             });
         });
+    }
+
+    _compareKeys(key1, key2) {
+        return key1 === key2;
+    }
+
+    async verifyAccount(accountName, credentials) {
+        let account = await this.getAccount(accountName);
+        let required = this.getSignUpInput();
+        Object.keys(required).forEach(key => {
+            let given = credentials[key];
+            let mandatory = required[key];
+            if (mandatory !== null) {
+                // mandatory == null means this authority is not used in this blockchain
+                if (!given && mandatory) {
+                    throw "Authority (" + key + ") is mandatory, but not given by user";
+                }
+                let publicKey = null;
+                try {
+                    publicKey = this.getPublicKey(given);
+                } catch (err) {
+                    throw {key: "invalid_key_error"};
+                }
+                let found = false;
+                if (!!account[key].public_keys) {
+                    account[key].public_keys.forEach(key => {
+                        if (this._compareKeys(key[0], publicKey)) {
+                            found = true;
+                        }
+                    });
+                } else {
+                    found = this._compareKeys(account[key].public_key, publicKey);
+                }
+                if (!found) {
+                    throw {key: "unverified_account_error"};
+                }
+            }
+        });
+        return account;
     }
 
 }
