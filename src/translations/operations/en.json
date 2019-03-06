@@ -1,4 +1,12 @@
 {
+    "link": {
+        "title": "Access Link Request",
+        "request": "The application `{{appName}}` from `{{origin}}` is requesting access to a {{chain}} account.",
+        "request_tooltip": "The application will receive your account details (name and id) and link to Beet.",
+        "request_cta": "Select account to provide.",
+        "accept_btn": "Allow",
+        "reject_btn": "Deny"
+    },
     "account_id": {
         "title": "Account Details Request",
         "request": "App: `{{appName}}` from `{{origin}}` is requesting access to a {{chain}} account.",

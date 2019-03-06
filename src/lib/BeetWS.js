@@ -152,11 +152,53 @@ export default class BeetWS extends EventEmitter {
                 secret: OTPAuth.Secret.fromHex(result.secret)
             });
             this._clients[client].otp = otp;
-            
-                this._clients[client].send('{"id": ' + result.id + ', "error": false, "payload": { "authenticate": true, "link": true, "chain": "'+result.chain+'" , "existing": '+result.existing+',"identityhash": "'+result.identityhash+'"}}');
+            this._clients[client].send(this._getLinkResponse(result));
         } else {
             this._clients[client].send('{ "id": "' + result.id + '", "error": true, "payload": { "code":6, "message": "Could not link to Beet"}}');
         }
+    }
+
+    _getLinkResponse(result) {
+        console.info("_getLinkResponse", result);
+        let response = null;
+        if (result.app) {
+            response = {
+                id: result.id,
+                error: false,
+                payload: {
+                    authenticate: true,
+                    link: true,
+                    chain: result.chain,
+                    existing: result.existing,
+                    identityhash: result.identityhash,
+                    requested: {
+                        account: {
+                            name: result.app.account_name,
+                            id: result.app.account_id
+                        }
+                    }
+                }
+            };
+        } else {
+            response = {
+                id: result.id,
+                error: false,
+                payload: {
+                    authenticate: true,
+                    link: true,
+                    chain: result.identity.chain,
+                    existing: result.existing,
+                    identityhash: result.identityhash,
+                    requested: {
+                        account: {
+                            name: result.identity.name,
+                            id: result.identity.id
+                        }
+                    }
+                }
+            };
+        }
+        return JSON.stringify(response);
     }
 
     respondAPI(client, response) {
@@ -187,7 +229,7 @@ export default class BeetWS extends EventEmitter {
                     secret: OTPAuth.Secret.fromHex(result.app.secret)
                 });
                 this._clients[client].otp = otp;
-                this._clients[client].send('{"id": ' + result.id + ', "error": false, "payload": { "authenticate": true, "link": true, "account_id": "' + result.app.account_id + '"}}');
+                this._clients[client].send(this._getLinkResponse(result));
             } else {
                 let keypair = ec.genKeyPair();
                 this._clients[client].keypair = keypair;
