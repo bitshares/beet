@@ -34,6 +34,42 @@
                     {{ chain.name }} ({{ chain.short }})
                 </option>
             </select>
+            <div v-if="selectedChain=='BTS'">
+                <p class="my-3 font-weight-bold">
+                    {{ $t('bts_importtype_cta') }}
+                </p>
+                <select
+                    id="import-select"
+                    v-model="BTSImportType"
+                    class="form-control mb-3"
+                    :class="s1c"
+                    :placeholder="$t('import_placeholder')"
+                    required
+                >
+                    <option
+                        selected
+                        disabled
+                        value="0"
+                    >
+                        {{ $t('import_placeholder') }}
+                    </option>
+                    <option
+                        value="1"
+                    >
+                        {{ $t('import_keys') }}
+                    </option>
+                    <option
+                        value="2"
+                    >
+                        {{ $t('import_pass') }}
+                    </option>                
+                    <option
+                        value="3"
+                    >
+                        {{ $t('import_bin') }}
+                    </option>
+                </select>
+            </div>
             <div class="row">
                 <div class="col-6">
                     <router-link
@@ -57,16 +93,22 @@
             </div>
         </div>
         <div
-            v-if="step==2"
+            v-if="step==2 && (selectedChain!='BTS' || BTSImportType=='1')"
             id="step2"
         >
             <h4 class="h4 mt-3 font-weight-bold">
                 {{ $t('step_counter',{ 'step_no' : 2}) }}
             </h4>
-            <p v-if="accessType=='account'" class="mb-2 font-weight-bold">
+            <p
+                v-if="accessType=='account'"
+                class="mb-2 font-weight-bold"
+            >
                 {{ $t('account_name',{ 'chain' : selectedChain}) }}
             </p>
-            <p v-else class="mb-2 font-weight-bold">
+            <p
+                v-else
+                class="mb-2 font-weight-bold"
+            >
                 {{ $t('address_name',{ 'chain' : selectedChain}) }}
             </p>
             <input
@@ -81,10 +123,16 @@
                 {{ $t('keys_cta') }}
             </p>
             <template v-if="requiredFields.active !== null">
-                <p v-if="accessType=='account'" class="mb-2 font-weight-bold">
+                <p
+                    v-if="accessType=='account'"
+                    class="mb-2 font-weight-bold"
+                >
                     {{ $t('active_authority') }}
                 </p>
-                <p v-else class="mb-2 font-weight-bold">
+                <p
+                    v-else
+                    class="mb-2 font-weight-bold"
+                >
                     {{ $t('public_authority') }}
                 </p>
                 <input
@@ -152,6 +200,65 @@
             </div>
         </div>
         <div
+            v-if="step==2 && selectedChain=='BTS' && BTSImportType=='2'"
+            id="step2"
+        >
+            <h4 class="h4 mt-3 font-weight-bold">
+                {{ $t('step_counter',{ 'step_no' : 2}) }}
+            </h4>
+            <p
+                v-if="accessType=='account'"
+                class="mb-2 font-weight-bold"
+            >
+                {{ $t('account_name',{ 'chain' : selectedChain}) }}
+            </p>
+            <p
+                v-else
+                class="mb-2 font-weight-bold"
+            >
+                {{ $t('address_name',{ 'chain' : selectedChain}) }}
+            </p>
+            <input
+                id="inputAccount"
+                v-model="accountname"
+                type="text"
+                class="form-control mb-3"
+                :placeholder="$t('account_name',{ 'chain' : selectedChain})"
+                required
+            >
+            <p class="my-3 font-weight-normal">
+                {{ $t('btspass_cta') }}
+            </p>
+            <input
+                id="inputActive"
+                v-model="btspass"
+                type="password"
+                class="form-control mb-3 small"
+                :placeholder="$t('btspass_placeholder')"
+                required
+            >
+            <div class="row">
+                <div class="col-6">
+                    <button
+                        class="btn btn-lg btn-primary btn-block"
+                        type="submit"
+                        @click="step1"
+                    >
+                        {{ $t('back_btn') }}
+                    </button>
+                </div>
+                <div class="col-6">
+                    <button
+                        class="btn btn-lg btn-primary btn-block"
+                        type="submit"
+                        @click="step3"
+                    >
+                        {{ $t('next_btn') }}
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div
             v-if="step==3"
             id="step3"
         >
@@ -184,6 +291,7 @@
             centered
             hide-footer
             :title="$t('error_lbl')"
+            e
         >
             {{ errorMsg }}
         </b-modal>
@@ -198,6 +306,8 @@
     import getBlockchain from "../lib/blockchains/blockchainFactory";
     import { EventBus } from "../lib/event-bus.js";
     import RendererLogger from "../lib/RendererLogger";
+    import { PrivateKey } from "bitsharesjs";
+
     const logger = new RendererLogger();
 
     export default {
@@ -213,9 +323,11 @@
                 password: "",
                 step: 1,
                 s1c: "",
+                btspass: "",
                 includeOwner: 0,
                 errorMsg: "",
                 selectedChain: 0,
+                BTSImportType: 0,
                 chainList: Object.values(blockchains)
             };
         },
@@ -227,11 +339,14 @@
                 this.step = 1;
             },
             step2: function() {
-                let blockchain = getBlockchain(this.selectedChain);
-                this.accessType = blockchain.getAccessType();
-                this.requiredFields = blockchain.getSignUpInput();
-                console.log(this.accessType);
-                this.step = 2;
+                if (this.selectedChain!=0) {
+                    if (this.selectedChain!='BTS' || this.BTSImportType!=0) {
+                        let blockchain = getBlockchain(this.selectedChain);
+                        this.accessType = blockchain.getAccessType();
+                        this.requiredFields = blockchain.getSignUpInput();
+                        this.step = 2;
+                    }
+                }
             },
             step3: async function() {
                 if (this.accountname == "") {
@@ -247,24 +362,38 @@
                     let blockchain = getBlockchain(this.selectedChain);
                     // abstract UI concept more
                     let authorities = null;
+                    let account=null;
                     if (blockchain.getAccessType() == "account") {
-                        authorities = {
-                            active: this.activepk,
-                            memo: this.memopk,
-                            owner: this.includeOwner == 1 ? this.ownerpk : null
-                        };
+                        if (this.BTSImportType==2){
+                            authorities = this.getAuthoritiesFromPass(this.btspass);
+                            try {
+                                account = await blockchain.verifyAccount(this.accountname, authorities);
+                            }catch(e)  {
+                                authorities = this.getAuthoritiesFromPass(this.btspass,true);
+                                account = await blockchain.verifyAccount(this.accountname, authorities);
+                                //TODO: Should notify user of legacy/dangerous permissions (active==memo)
+                            }
+                        }else{ 
+                            authorities = {
+                                active: this.activepk,
+                                memo: this.memopk,
+                                owner: this.includeOwner == 1 ? this.ownerpk : null
+                            };
+                            account = await blockchain.verifyAccount(this.accountname, authorities);
+                        }
                     } else {
                         authorities = {
                             active: this.activepk
                         };
+                        account = await blockchain.verifyAccount(this.accountname, authorities);
                     }
-                    let account = await blockchain.verifyAccount(this.accountname, authorities);
+                    
                     EventBus.$emit("popup", "load-end");
                     this.accountID = account.id;
                     this.step = 3;
                 } catch (err) {
                     this.accountID = "";
-                    if (!!err.key) {
+                    if (err.key) {
                         this.errorMsg = this.$t(err.key);
                     } else {
                         this.errorMsg = err.toString();
@@ -272,6 +401,24 @@
                     this.$refs.errorModal.show();
                 } finally {
                     EventBus.$emit("popup", "load-end");
+                }
+            },
+            getAuthoritiesFromPass: function(password,legacy=false) {
+                let active_seed = this.accountname + 'active' + password;
+                let owner_seed = this.accountname + 'owner' + password;
+                let memo_seed = this.accountname + 'memo' + password;
+                if (legacy) {
+                    return {
+                        active: PrivateKey.fromSeed(active_seed).toWif(),
+                        memo: PrivateKey.fromSeed(active_seed).toWif(),
+                        owner: PrivateKey.fromSeed(owner_seed).toWif()
+                    };
+                }else{
+                    return {
+                        active: PrivateKey.fromSeed(active_seed).toWif(),
+                        memo: PrivateKey.fromSeed(memo_seed).toWif(),
+                        owner: PrivateKey.fromSeed(owner_seed).toWif()
+                    };
                 }
             },
             verifyAndCreate: async function() {
