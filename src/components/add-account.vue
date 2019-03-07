@@ -259,6 +259,150 @@
             </div>
         </div>
         <div
+            v-if="step==2 && selectedChain=='BTS' && BTSImportType=='3'"
+            id="step2"
+        >
+            <h4 class="h4 mt-3 font-weight-bold">
+                {{ $t('step_counter',{ 'step_no' : 2}) }}
+            </h4>
+            <template v-if="substep1">
+                <p                
+                    class="mb-2 font-weight-bold"
+                >
+                    {{ $t('Select your .bin backup file.') }}
+                </p>
+                <input
+                    v-if="step1"
+                    type="file"
+                    class="form-control mb-3 small" 
+                    @change="handleWalletSelect"
+                >
+                <p                
+                    class="mb-2 font-weight-bold"
+                >
+                    {{ $t('Enter your .bin file password.') }}
+                </p>
+                <input
+                    v-model="wallet_pass"
+                    type="password"
+                    class="form-control mb-3 small"
+                >
+                <div class="row">
+                    <div class="col-6">
+                        <button
+                            class="btn btn-lg btn-primary btn-block"
+                            type="submit"
+                            @click="step1"
+                        >
+                            {{ $t('back_btn') }}
+                        </button>
+                    </div>
+                    <div class="col-6">
+                        <button
+                            class="btn btn-lg btn-primary btn-block"
+                            type="submit"
+                            @click="decryptBackup"
+                        >
+                            {{ $t('next_btn') }}
+                        </button>
+                    </div>
+                </div>
+            </template>
+            <template v-if="substep2">
+                <div class="import-accounts mt-3">
+                    <table class="table small table-striped table-sm">
+                        <thead>
+                            <tr>                    
+                                <th
+                                    rowspan="2"
+                                    class="align-middle"
+                                >
+                                    Account Name
+                                </th>
+                                <th
+                                    colspan="2"
+                                    class="align-middle"
+                                >
+                                    Active Authority
+                                </th>
+                                <th
+                                    colspan="2"
+                                    class="align-middle"
+                                >
+                                    Owner Authority
+                                </th>
+                                <th
+                                    rowspan="2"
+                                    class="align-middle"
+                                >
+                                    Memo
+                                </th>
+                                <th
+                                    rowspan="2"
+                                    class="align-middle"
+                                >
+                                    Import?
+                                </th>
+                            </tr>                
+                            <tr>
+                                <th class="align-middle">
+                                    Propose
+                                </th>
+                                <th class="align-middle">
+                                    Transact
+                                </th>
+                                <th class="align-middle">
+                                    Propose
+                                </th>
+                                <th class="align-middle">
+                                    Transact
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr
+                                v-for="account in accounts" 
+                                :key="account.id"
+                            >                    
+                                <td class="text-center align-middle">
+                                    {{ account.name }}<br>({{ account.id }})
+                                </td>
+                                <td class="text-center align-middle">
+                                    {{ account.active.canPropose ? 'Y' : 'N' }}
+                                </td>
+                                <td class="text-center align-middle">
+                                    {{ account.active.canTransact ? 'Y' : 'N' }}
+                                </td>
+                                <td class="text-center align-middle">
+                                    {{ account.owner.canPropose ? 'Y' : 'N' }}
+                                </td>
+                                <td class="text-center align-middle">
+                                    {{ account.owner.canTransact ? 'Y' : 'N' }}
+                                </td>
+                                <td class="text-center align-middle">
+                                    {{ account.memo.canSend ? 'Y' : 'N' }}
+                                </td>
+                                <td class="text-center align-middle">
+                                    <input
+                                        :id="account.name"
+                                        v-model="picked"
+                                        type="checkbox"
+                                        :value="account.id"
+                                    >
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <button
+                    v-if="picked.length>0"
+                    class="btn btn-lg btn-primary btn-block mt-3"
+                >
+                    Import Selected
+                </button>
+            </template>
+        </div>
+        <div
             v-if="step==3"
             id="step3"
         >
@@ -305,8 +449,11 @@
     import { blockchains } from "../config/config.js";
     import getBlockchain from "../lib/blockchains/blockchainFactory";
     import { EventBus } from "../lib/event-bus.js";
-    import RendererLogger from "../lib/RendererLogger";
-    import { PrivateKey } from "bitsharesjs";
+    import RendererLogger from "../lib/RendererLogger";    
+    import {PrivateKey,PublicKey,Aes} from "bitsharesjs";
+    import {compress, decompress} from "lzma";    
+    import { Apis } from "bitsharesjs-ws";
+    import BTSWalletHandler from "../lib/BTSWalletHandler";
 
     const logger = new RendererLogger();
 
@@ -322,13 +469,19 @@
                 memopk: "",
                 password: "",
                 step: 1,
+                substep1: true,
+                substep2:false,
                 s1c: "",
                 btspass: "",
                 includeOwner: 0,
                 errorMsg: "",
                 selectedChain: 0,
                 BTSImportType: 0,
-                chainList: Object.values(blockchains)
+                chainList: Object.values(blockchains),
+                wallet_file: null,
+                wallet_pass: null,
+                accounts:[],
+                picked:[]
             };
         },
         mounted() {
@@ -420,6 +573,37 @@
                         owner: PrivateKey.fromSeed(owner_seed).toWif()
                     };
                 }
+            },            
+            handleWalletSelect: function(e) {
+                this.wallet_file=e.target.files[0];
+            },
+            decryptBackup: function() {
+                EventBus.$emit("popup", "load-start");
+                let reader = new FileReader();
+                reader.onload = async evt => {
+                    let backup_buffer = new Buffer.from(evt.target.result, "binary");                
+                    let wh=new BTSWalletHandler(evt.target.result);
+                    try {
+                        let unlocked=await wh.unlock(this.wallet_pass);
+                        if (unlocked) {
+                            this.accounts=await wh.lookupAccounts();
+                            console.log(this.accounts);
+                            this.substep1=false;
+                            this.substep2=true;
+                            EventBus.$emit("popup", "load-end");
+                        }
+                    }catch(err) {
+                        if (err.key) {
+                            this.errorMsg = this.$t(err.key);
+                        } else {
+                            this.errorMsg = err.toString();
+                        }
+                        this.$refs.errorModal.show();
+                    }finally {
+                        EventBus.$emit("popup", "load-end");
+                    }
+                };
+                reader.readAsBinaryString(this.wallet_file);
             },
             verifyAndCreate: async function() {
                 if (this.password == "") {
