@@ -7052,7 +7052,8 @@ body {
   background: #C7088E;
   border: 1px solid #C7088E;
   outline: none !important;
-  box-shadow: none !important; }
+  box-shadow: none !important;
+  color: white; }
 
 .btn-inverse {
   background: #960069;
@@ -7099,6 +7100,10 @@ p {
   overflow-y: auto;
   margin-left: 15px;
   margin-right: 15px; }
+
+.import-accounts {
+  max-height: 22rem;
+  overflow-y: auto; }
 
 pre {
   border: 1px solid lightgray;

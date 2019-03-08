@@ -397,6 +397,7 @@
                 <button
                     v-if="picked.length>0"
                     class="btn btn-lg btn-primary btn-block mt-3"
+                    @click="importAccounts"
                 >
                     Import Selected
                 </button>
@@ -604,6 +605,26 @@
                     }
                 };
                 reader.readAsBinaryString(this.wallet_file);
+            },
+            importAccounts: async function() {
+                let toimport=this.accounts.filter(x => this.picked.includes(x.id));
+                for (let i in toimport) {
+                    let account=toimport[i];
+                    await  this.$store
+                        .dispatch("AccountStore/addAccount", {
+                            password: this.password,
+                            account: {
+                                accountName: this.accountname,
+                                accountID: this.accountID,
+                                chain: this.selectedChain,
+                                keys: {
+                                    active: this.activepk,
+                                    owner: this.ownerpk,
+                                    memo: this.memopk
+                                }
+                            }
+                        })
+                }
             },
             verifyAndCreate: async function() {
                 if (this.password == "") {
