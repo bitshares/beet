@@ -57,12 +57,9 @@ const linkHandler = async (req) => {
         }
         // todo: why copy content of request?
         return Object.assign(req, {
-            isLinked: true,
+            isLinked: true, // todo: can this also be called link?
             identityhash: identityhash,
-            chain: userResponse.identity.chain,
-            next_hash: app.next_hash,
-            account_id: userResponse.identity.id,
-            secret: app.secret,
+            app: app,
             existing: existing
         });
     } catch (err) {
@@ -112,15 +109,18 @@ export default class BeetServer {
         vueInst = vue;
         const server = new BeetWS(60555, 60556, 10000);
         server.on('link', async (data) => {
+            logger.debug("incoming link request", data);
             let status = await linkHandler(data);
             server.respondLink(data.client, status);
         });
         server.on('authenticate', async (data) => {
+            logger.debug("incoming authenticate request", data);
             let status = await authHandler(data);
             status.id = data.id;
             server.respondAuth(data.client, status);
         });
         server.on('api', async (data) => {
+            logger.debug("incoming api request", data);
             store.dispatch('OriginStore/newRequest', {
                 identityhash: data.payload.identityhash,
                 next_hash: data.payload.next_hash
