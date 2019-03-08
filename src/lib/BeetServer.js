@@ -77,9 +77,15 @@ const linkHandler = async (req) => {
 };
 
 const authHandler = function (req) {
+    let linked = req.payload.identityhash != null & req.payload.identityhash != undefined;
     // TODO: Check against blacklist;
     const app = _findApp(req.payload.identityhash);
-    if (!app) {
+    if (!linked) {
+        return Object.assign(req.payload, {
+            authenticate: true,
+            link: false
+        });
+    } else if (!app) {
         return Object.assign(req.payload, {
             authenticate: false,
             link: false
@@ -124,4 +130,5 @@ export default class BeetServer {
             server.respondAPI(data.client, status);
         });
     }
+
 }
