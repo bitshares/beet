@@ -80,6 +80,7 @@ export default class BeetAPI {
     static async [Actions.GET_ACCOUNT](request, vue) {
         try {
             let response = await vue.requestAccess(request.payload);
+
             return {
                 id: request.id,
                 result: response.response
@@ -90,7 +91,6 @@ export default class BeetAPI {
     }
     static async [Actions.REQUEST_LINK](request, vue) {
         try {
-            console.log("Incoming request: " + request.type, request);
             let response;
             if (request.chain == 'ANY') {
                 response = await vue.requestAnyAccess(request);
