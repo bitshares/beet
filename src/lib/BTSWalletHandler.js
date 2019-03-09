@@ -10,6 +10,7 @@ import {
     Apis
 } from "bitsharesjs-ws";
 
+import getBlockchain from "../lib/blockchains/blockchainFactory";
 import store from '../store/index.js';
 
 class BTSWalletHandler {
@@ -56,6 +57,14 @@ class BTSWalletHandler {
     }
 
     async lookupAccounts() {
+        
+        let blockchain = getBlockchain('BTS');
+        await blockchain.connect().then((connectedNode) => {
+                store.dispatch("SettingsStore/setNode", {
+                    chain: 'BTS',
+                    node: connectedNode
+                });
+        });
         let account_ids = await Apis.instance(
             store.state.SettingsStore.settings.selected_node['BTS'],
             true

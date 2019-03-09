@@ -462,9 +462,7 @@
     import getBlockchain from "../lib/blockchains/blockchainFactory";
     import { EventBus } from "../lib/event-bus.js";
     import RendererLogger from "../lib/RendererLogger";    
-    import {PrivateKey,PublicKey,Aes} from "bitsharesjs";
-    import {compress, decompress} from "lzma";    
-    import { Apis } from "bitsharesjs-ws";
+    import {PrivateKey} from "bitsharesjs";
     import BTSWalletHandler from "../lib/BTSWalletHandler";
 
     const logger = new RendererLogger();
@@ -596,7 +594,6 @@
                 EventBus.$emit("popup", "load-start");
                 let reader = new FileReader();
                 reader.onload = async evt => {
-                    let backup_buffer = new Buffer.from(evt.target.result, "binary");                
                     let wh=new BTSWalletHandler(evt.target.result);
                     try {
                         let unlocked=await wh.unlock(this.wallet_pass);
