@@ -363,6 +363,7 @@
                             <tr
                                 v-for="account in accounts" 
                                 :key="account.id"
+                                :class="{ disabledImport : !account.importable}"
                             >                    
                                 <td class="text-center align-middle">
                                     {{ account.name }}<br>({{ account.id }})
@@ -384,6 +385,7 @@
                                 </td>
                                 <td class="text-center align-middle">
                                     <input
+                                        v-if="account.importable"
                                         :id="account.name"
                                         v-model="picked"
                                         type="checkbox"
@@ -397,9 +399,9 @@
                 <button
                     v-if="picked.length>0"
                     class="btn btn-lg btn-primary btn-block mt-3"
-                    @click="importAccounts"
+                    @click="simpleStep3"
                 >
-                    Import Selected
+                    {{ $t('import_btn') }}
                 </button>
             </template>
         </div>
@@ -423,9 +425,18 @@
             >
       
             <button
+                v-if="BTSImportType!='3'"
                 class="btn btn-lg btn-primary btn-block"
                 type="submit"
                 @click="verifyAndCreate"
+            >
+                {{ $t('next_btn') }}
+            </button>
+            <button
+                v-if="BTSImportType=='3'"
+                class="btn btn-lg btn-primary btn-block"
+                type="submit"
+                @click="importAccounts"
             >
                 {{ $t('next_btn') }}
             </button>
@@ -557,6 +568,9 @@
                     EventBus.$emit("popup", "load-end");
                 }
             },
+            simpleStep3: function () {
+                this.step=3;
+            },
             getAuthoritiesFromPass: function(password,legacy=false) {
                 let active_seed = this.accountname + 'active' + password;
                 let owner_seed = this.accountname + 'owner' + password;
@@ -614,17 +628,19 @@
                         .dispatch("AccountStore/addAccount", {
                             password: this.password,
                             account: {
-                                accountName: this.accountname,
-                                accountID: this.accountID,
+                                accountName: account.name,
+                                accountID: account.id,
                                 chain: this.selectedChain,
                                 keys: {
-                                    active: this.activepk,
-                                    owner: this.ownerpk,
-                                    memo: this.memopk
+                                    active: account.active.key,
+                                    owner: account.owner.key,
+                                    memo: account.memo.key
                                 }
                             }
-                        })
+                        });
+
                 }
+                this.$router.replace("/dashboard");
             },
             verifyAndCreate: async function() {
                 if (this.password == "") {

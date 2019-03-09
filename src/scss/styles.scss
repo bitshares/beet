@@ -218,6 +218,10 @@ p {
     max-height: 22rem;
     overflow-y: auto;
 }
+.disabledImport {
+    font-style:italic;
+    color:gray;
+}
 pre {
     border: 1px solid lightgray;
     background: #f3f3f3;

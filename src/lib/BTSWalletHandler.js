@@ -105,21 +105,19 @@ class BTSWalletHandler {
         let owner_controlled_accounts=[];
         for (let i=0;i<account_data.length;i++) {
             let account_details={'id':account_data[i].id,'name':account_data[i].name};
+            let active={};
             let importable=false;
-            let active={}
             //Check active
             active.availWeight=0;
             active.canPropose=false;
             for (let j=0;j<account_data[i].active.key_auths.length;j++) {
                 if (this.public.includes(account_data[i].active.key_auths[j][0])) {
                     active.canPropose=true;
-                    console.log(this.public)
-                    console.log().includes(account_data[i].active.key_auths[j][0]))
+                    active.availWeight=active.availWeight+account_data[i].active.key_auths[j][1];
                     if (account_data[i].active.key_auths[j][1]>=account_data[i].active.weight_threshold) {
                         importable=true;
-                        active.key=this.keypairs.filter( x=> x.pub==account_data[i].active.key_auths[j][0])[0].priv;
+                        active.key=this.keypairs.filter( x => x.pub==account_data[i].active.key_auths[j][0])[0].priv;
                     }
-                    active.availWeight=active.availWeight+account_data[i].active.key_auths[j][1];
                 }
             }
             if (active.availWeight>=account_data[i].active.weight_threshold){
@@ -137,10 +135,10 @@ class BTSWalletHandler {
             for (let j=0;j<account_data[i].owner.key_auths.length;j++) {
                 if (this.public.includes(account_data[i].owner.key_auths[j][0])) {
                     owner.canPropose=true;
-                    if (account_data[i].owner.key_auths[j][1]>=account_data[i].owner.weight_threshold) {
-                        owner.key=this.keypairs.filter( x=> x.pub==account_data[i].owner.key_auths[j][0])[0].priv;
-                    }
                     owner.availWeight=owner.availWeight+account_data[i].owner.key_auths[j][1];
+                    if (account_data[i].owner.key_auths[j][1]>=account_data[i].owner.weight_threshold) {                        
+                        owner.key=this.keypairs.filter( x => x.pub==account_data[i].owner.key_auths[j][0])[0].priv;
+                    }
                 }
             }
             if (owner.availWeight>=account_data[i].owner.weight_threshold){
@@ -150,71 +148,14 @@ class BTSWalletHandler {
                 owner.canTransact=false;
             }
             account_details.owner =owner;
-            account_details.importable=importable;
-            let memo={};
-            memo.canSend=false;
-            if (this.public.includes(account_data[i].options.memo_key)) {
-                memo.canSend=true;
-                memo.key=this.keypairs.filter( x=> x.pub==account_data[i].options.memo_key)[0].priv;
-            }
-            
-            account_details.memo=memo;
-            account_matrix[i]=account_details;
-        }
-        for (let i=0;i<account_data.length;i++) {
-            let account_details={'id':account_data[i].id,'name':account_data[i].name};
-            let active={}
-            //Check active
-            active.availWeight=0;
-            active.canPropose=false;
-            for (let j=0;j<account_data[i].active.account_auths.length;j++) {
-                if (active_controlled_accounts.includes(account_data[i].active.account_auths[j][0])) {
-                    active.canPropose=true;
-                    active.availWeight=active.availWeight+account_data[i].active.account_auths[j][1];
-                }
-            }
-            for (let j=0;j<account_data[i].active.key_auths.length;j++) {
-                if (this.public.includes(account_data[i].active.key_auths[j][0])) {
-                    active.canPropose=true;
-                    active.availWeight=active.availWeight+account_data[i].active.key_auths[j][1];
-                }
-            }
-            if (active.availWeight>=account_data[i].active.weight_threshold){
-                active.canTransact=true;
-            }else{
-                active.canTransact=false;
-            }
-            account_details.active =active;
-            
-            let owner={}
-            //Check owner
-            owner.availWeight=0;
-            owner.canPropose=false;
-            for (let j=0;j<account_data[i].owner.account_auths.length;j++) {
-                if (owner_controlled_accounts.includes(account_data[i].owner.account_auths[j][0])) {
-                    owner.canPropose=true;
-                    owner.availWeight=owner.availWeight+account_data[i].owner.account_auths[j][1];
-                }
-            }
-            for (let j=0;j<account_data[i].owner.key_auths.length;j++) {
-                if (this.public.includes(account_data[i].owner.key_auths[j][0])) {
-                    owner.canPropose=true;
-                    owner.availWeight=owner.availWeight+account_data[i].owner.key_auths[j][1];
-                }
-            }
-            if (owner.availWeight>=account_data[i].owner.weight_threshold){
-                owner.canTransact=true;
-            }else{
-                owner.canTransact=false;
-            }
-            account_details.owner =owner;
 
             let memo={};
             memo.canSend=false;
-            if (this.public.includes(account_data[i].options.memo_key)) {
+            if (this.public.includes(account_data[i].options.memo_key)) {            
+                memo.key=this.keypairs.filter( x => x.pub==account_data[i].options.memo_key)[0].priv;
                 memo.canSend=true;
             }
-            
+            account_details.importable=importable;
             account_details.memo=memo;
             account_matrix[i]=account_details;
         }
