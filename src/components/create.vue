@@ -589,12 +589,25 @@
                     let blockchain = getBlockchain(this.selectedChain);
                     // abstract UI concept more
                     let authorities = null;
+                    let account=null;
                     if (blockchain.getAccessType() == "account") {
-                        authorities = {
-                            active: this.activepk,
-                            memo: this.memopk,
-                            owner: this.includeOwner == 1 ? this.ownerpk : null
-                        };
+                        if (this.BTSImportType==2){
+                            authorities = this.getAuthoritiesFromPass(this.btspass);
+                            try {
+                                account = await blockchain.verifyAccount(this.accountname, authorities);
+                            }catch(e)  {
+                                authorities = this.getAuthoritiesFromPass(this.btspass,true);
+                                account = await blockchain.verifyAccount(this.accountname, authorities);
+                                //TODO: Should notify user of legacy/dangerous permissions (active==memo)
+                            }
+                        }else{ 
+                            authorities = {
+                                active: this.activepk,
+                                memo: this.memopk,
+                                owner: this.includeOwner == 1 ? this.ownerpk : null
+                            };
+                            account = await blockchain.verifyAccount(this.accountname, authorities);
+                        }
                     } else {
                         authorities = {
                             active: this.activepk
