@@ -611,9 +611,12 @@
                     } else {
                         authorities = {
                             active: this.activepk
-                        };
+                        };                    
+                        blockchain.verifyAccount(this.accountname, authorities);
                     }
-                    blockchain.verifyAccount(this.accountname, authorities);
+                    EventBus.$emit("popup", "load-end");
+                    this.accountID = account.id;
+                    this.step = 3;
                 } catch (err) {
                     this.accountID = "";
                     if (err.key) {
