@@ -569,7 +569,6 @@
                         let blockchain = getBlockchain(this.selectedChain);
                         this.accessType = blockchain.getAccessType();
                         this.requiredFields = blockchain.getSignUpInput();
-                        this.step = 2;
                     }
                 }
             },
