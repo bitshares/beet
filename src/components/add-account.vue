@@ -463,7 +463,7 @@
     import { EventBus } from "../lib/event-bus.js";
     import RendererLogger from "../lib/RendererLogger";    
     import {PrivateKey} from "bitsharesjs";
-    import BTSWalletHandler from "../lib/BTSWalletHandler";
+    import BTSWalletHandler from "../lib/blockchains/BitShares/BTSWalletHandler";
 
     const logger = new RendererLogger();
 

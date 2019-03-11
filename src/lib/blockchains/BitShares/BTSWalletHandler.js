@@ -5,13 +5,13 @@ import {
 } from "bitsharesjs";
 import {
     decompress
-} from "lzma";
+} from "lzmalzma";
 import {
     Apis
 } from "bitsharesjs-ws";
 
-import getBlockchain from "../lib/blockchains/blockchainFactory";
-import store from '../store/index.js';
+import getBlockchain from "../blockchainFactory";
+import store from '../../../store/index.js';
 
 class BTSWalletHandler {
 
