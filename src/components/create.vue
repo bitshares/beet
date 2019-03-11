@@ -502,7 +502,7 @@
     import { EventBus } from "../lib/event-bus.js";
     import RendererLogger from "../lib/RendererLogger";
     import {PrivateKey} from "bitsharesjs";
-    import BTSWalletHandler from "../lib/blockchains/BitShares/BTSWalletHandler";
+    import BTSWalletHandler from "../lib/blockchains/bitshares/BTSWalletHandler";
 
     const logger = new RendererLogger();
 
@@ -524,7 +524,7 @@
                 substep1: true,
                 substep2:false,
                 s1c: "",
-                btspass: "",
+                bitshares_cloud_login_password: "",
                 includeOwner: 0,
                 errorMsg: "",
                 selectedChain: 0,
@@ -592,11 +592,11 @@
                     let account=null;
                     if (blockchain.getAccessType() == "account") {
                         if (this.BTSImportType==2){
-                            authorities = this.getAuthoritiesFromPass(this.btspass);
+                            authorities = this.getAuthoritiesFromPass(this.bitshares_cloud_login_password);
                             try {
                                 account = await blockchain.verifyAccount(this.accountname, authorities);
                             }catch(e)  {
-                                authorities = this.getAuthoritiesFromPass(this.btspass,true);
+                                authorities = this.getAuthoritiesFromPass(this.bitshares_cloud_login_password,true);
                                 account = await blockchain.verifyAccount(this.accountname, authorities);
                                 //TODO: Should notify user of legacy/dangerous permissions (active==memo)
                             }

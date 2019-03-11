@@ -5,7 +5,7 @@ import {
 } from "bitsharesjs";
 import {
     decompress
-} from "lzmalzma";
+} from "lzma";
 import {
     Apis
 } from "bitsharesjs-ws";

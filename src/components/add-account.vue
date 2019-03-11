@@ -93,7 +93,7 @@
             </div>
         </div>
         <div
-            v-if="step==2 && (selectedChain!='BTS' || BTSImportType=='1')"
+            v-else-if="step==2 && (selectedChain!='BTS' || BTSImportType=='1')"
             id="step2"
         >
             <h4 class="h4 mt-3 font-weight-bold">
@@ -203,40 +203,10 @@
             v-if="step==2 && selectedChain=='BTS' && BTSImportType=='2'"
             id="step2"
         >
-            <h4 class="h4 mt-3 font-weight-bold">
-                {{ $t('step_counter',{ 'step_no' : 2}) }}
-            </h4>
-            <p
-                v-if="accessType=='account'"
-                class="mb-2 font-weight-bold"
-            >
-                {{ $t('account_name',{ 'chain' : selectedChain}) }}
-            </p>
-            <p
-                v-else
-                class="mb-2 font-weight-bold"
-            >
-                {{ $t('address_name',{ 'chain' : selectedChain}) }}
-            </p>
-            <input
-                id="inputAccount"
-                v-model="accountname"
-                type="text"
-                class="form-control mb-3"
-                :placeholder="$t('account_name',{ 'chain' : selectedChain})"
-                required
-            >
-            <p class="my-3 font-weight-normal">
-                {{ $t('btspass_cta') }}
-            </p>
-            <input
-                id="inputActive"
-                v-model="btspass"
-                type="password"
-                class="form-control mb-3 small"
-                :placeholder="$t('btspass_placeholder')"
-                required
-            >
+            <ImportCloudPass
+                    ref="import_bitshares_cloud"
+                    :selectedChain="selectedChain"
+            />
             <div class="row">
                 <div class="col-6">
                     <button
@@ -463,12 +433,14 @@
     import { EventBus } from "../lib/event-bus.js";
     import RendererLogger from "../lib/RendererLogger";    
     import {PrivateKey} from "bitsharesjs";
-    import BTSWalletHandler from "../lib/blockchains/BitShares/BTSWalletHandler";
+    import BTSWalletHandler from "../lib/blockchains/bitshares/BTSWalletHandler";
+    import ImportCloudPass from "./blockchains/bitshares/ImportBinFile";
 
     const logger = new RendererLogger();
 
     export default {
         name: "AddAccount",
+        components: {ImportCloudPass},
         i18nOptions: { namespaces: "common" },
         data() {
             return {
@@ -482,7 +454,7 @@
                 substep1: true,
                 substep2:false,
                 s1c: "",
-                btspass: "",
+                bitshares_cloud_login_password: "",
                 includeOwner: 0,
                 errorMsg: "",
                 selectedChain: 0,
@@ -528,15 +500,15 @@
                     let account=null;
                     if (blockchain.getAccessType() == "account") {
                         if (this.BTSImportType==2){
-                            authorities = this.getAuthoritiesFromPass(this.btspass);
-                            try {
-                                account = await blockchain.verifyAccount(this.accountname, authorities);
-                            }catch(e)  {
-                                authorities = this.getAuthoritiesFromPass(this.btspass,true);
-                                account = await blockchain.verifyAccount(this.accountname, authorities);
-                                //TODO: Should notify user of legacy/dangerous permissions (active==memo)
-                            }
-                        }else{ 
+                            let account = this.$refs.import_bitshares_cloud.getAccountEvent();
+
+                            this.password = account.password;
+                            this.accountname = account.accountName;
+                            this.accountID = account.accountID;
+                            this.activepk = account.keys.active;
+                            this.ownerpk = account.keys.owner;
+                            this.memopk = account.keys.active;
+                        }else{
                             authorities = {
                                 active: this.activepk,
                                 memo: this.memopk,
