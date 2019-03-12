@@ -115,13 +115,13 @@
                     </tbody>
                 </table>
             </div>
-            <button
-                v-if="picked.length>0"
-                class="btn btn-lg btn-primary btn-block mt-3"
-                @click="simpleStep3"
-            >
-                {{ $t('import_btn') }}
-            </button>
+            <!--<button-->
+                <!--v-if="picked.length>10"-->
+                <!--class="btn btn-lg btn-primary btn-block mt-3"-->
+                <!--@click="simpleStep3"-->
+            <!--&gt;-->
+                <!--{{ $t('import_btn') }}-->
+            <!--</button>-->
         </template>
     </div>
 </template>
