@@ -48,7 +48,7 @@
                 bitshares_cloud_login_password: ""
             };
         },
-        mounted() {
+        created() {
             if (this.selectedChain != "BTS") {
                 throw "Unsupported chain!";
             }

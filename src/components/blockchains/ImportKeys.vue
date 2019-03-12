@@ -92,7 +92,7 @@
                 requiredFields: null
             };
         },
-        mounted() {
+        created() {
             if (this.selectedChain == "BTC") {
                 throw "Unsupported chain!";
             }
@@ -115,6 +115,7 @@
                     memo: this.memopk,
                     owner: this.includeOwner == 1 ? this.ownerpk : null
                 };
+                let blockchain = getBlockchain(this.selectedChain);
                 let account = await blockchain.verifyAccount(this.accountname, authorities);
                 return {
                     account: {

@@ -146,7 +146,7 @@
                 picked: []
             };
         },
-        mounted() {
+        created() {
             if (this.selectedChain != "BTS") {
                 throw "Unsupported chain!";
             }

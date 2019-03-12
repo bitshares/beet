@@ -220,7 +220,7 @@
                     let blockchain = getBlockchain(this.selectedChain);
                     // abstract UI concept more
                     if (blockchain.getAccessType() == "account") {
-                        this.accounts_to_import = await this.$refs.import_bitshares_bin.getAccountEvent();
+                        this.accounts_to_import = await this.$refs.import_bitshares_accounts.getAccountEvent();
                     } else {
                         let authorities = {
                             active: this.activepk
