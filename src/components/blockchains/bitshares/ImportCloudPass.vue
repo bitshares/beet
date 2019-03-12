@@ -11,35 +11,36 @@
             {{ $t('account_name', { 'chain' : selectedChain}) }}
         </p>
         <input
-                id="inputAccount"
-                v-model="accountname"
-                type="text"
-                class="form-control mb-3"
-                :placeholder="$t('account_name',{ 'chain' : selectedChain})"
-                required
+            id="inputAccount"
+            v-model="accountname"
+            type="text"
+            class="form-control mb-3"
+            :placeholder="$t('account_name',{ 'chain' : selectedChain})"
+            required
         >
         <p class="my-3 font-weight-normal">
             {{ $t('btspass_cta') }}
         </p>
         <input
-                id="inputActive"
-                v-model="bitshares_cloud_login_password"
-                type="password"
-                class="form-control mb-3 small"
-                :placeholder="$t('btspass_placeholder')"
-                required
+            id="inputActive"
+            v-model="bitshares_cloud_login_password"
+            type="password"
+            class="form-control mb-3 small"
+            :placeholder="$t('btspass_placeholder')"
+            required
         >
     </div>
 </template>
 
 <script>
+
     import {PrivateKey} from "bitsharesjs";
     import getBlockchain from "../../../lib/blockchains/blockchainFactory";
 
     export default {
-        name: "AddAccount",
+        name: "ImportCloudPass",
         i18nOptions: { namespaces: "common" },
-        props: [ "selectedChain"],
+        props: [ "selectedChain" ],
         data() {
             return {
                 accountname: "",
@@ -53,13 +54,18 @@
             }
         },
         methods: {
-            step3: async function() {
+            _verifyAccount: async function() {
                 if (this.accountname == "") {
                     throw {
                         key: "missing_account_error",
                         args: {
                             chain: this.selectedChain
                         }
+                    };
+                }
+                if (this.bitshares_cloud_login_password == "") {
+                    throw {
+                        key: "empty_pass_error"
                     };
                 }
                 let blockchain = getBlockchain(this.selectedChain);
@@ -73,7 +79,14 @@
                     account = await blockchain.verifyAccount(this.accountname, authorities);
                     //TODO: Should notify user of legacy/dangerous permissions (active==memo)
                 }
-                this.accountID = account.id;
+                return {
+                    account: {
+                        accountName: this.accountname,
+                        accountID: account.id,
+                        chain: this.selectedChain,
+                        keys: authorities
+                    }
+                };
             },
             getAuthoritiesFromPass: function(password, legacy=false) {
                 let active_seed = this.accountname + 'active' + password;
@@ -94,24 +107,9 @@
                 }
             },
             getAccountEvent: async function() {
-                if (this.password == "") {
-                    this.$refs.errorModal.show();
-                    throw {key: "empty_pass_error"};
-                }
+                let account = await this._verifyAccount();
                 if (this.accountID !== null) {
-                    return {
-                        password: this.password,
-                        account: {
-                            accountName: this.accountname,
-                            accountID: this.accountID,
-                            chain: this.selectedChain,
-                            keys: {
-                                active: this.activepk,
-                                owner: this.ownerpk,
-                                memo: this.memopk
-                            }
-                        }
-                    };
+                    return [account];
                 } else {
                     throw "This shouldn't happen!"
                 }
