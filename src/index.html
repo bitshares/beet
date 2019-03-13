@@ -8,7 +8,6 @@
     <meta name="author" content="">
     <title>Beet Blockchain Companion</title>
     <link href="./css/beet.css" rel="stylesheet">
-    
 </head>
 
 <body class="text-center">
@@ -32,14 +31,30 @@
         import BeetServer from "./lib/BeetServer";
         import RendererLogger from "./lib/RendererLogger";
 
+        const logger = new RendererLogger;
 
+        Vue.config.errorHandler = function (err, vm, info) {
+            logger.error(err, vm, info);
+            console.log("error");
+        };
+
+        window.onerror = function (msg, url, lineNo, columnNo, error) {
+            logger.error(error);
+            console.log(error);
+            return false;
+        };
+
+        process.on('unhandledRejection', (reason, p) => {
+            console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
+            // application specific logging, throwing an error, or other logic here
+        });
 
         Vue.use(VueI18Next);
         Vue.use(BootstrapVue);
         Vue.use(VueRouter);
         Vue.component('Popups', Popups); 
         Vue.component('Beetframe', Beetframe);
-        const logger = new RendererLogger;
+
         store.dispatch("SettingsStore/loadSettings");
         store.dispatch("WhitelistStore/loadWhitelist");
         store.dispatch("OriginStore/loadApps");
@@ -52,6 +67,7 @@
             }
         });
         const i18n = new VueI18Next(i18next);
+
         const app = new Vue({
             router,
             store,
@@ -59,12 +75,6 @@
         }).$mount('#app');
 
         BeetServer.initialize(app);
-        
-
-        window.onerror = function (msg, url, lineNo, columnNo, error) {
-            logger.error(error);
-            return false;
-        }
     </script>
 </body>
 
