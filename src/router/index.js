@@ -17,7 +17,7 @@ const router = new VueRouter({
     {
       path: '/create',
       components: {
-        default: Create,
+        default: AddAccount,
         header: HeaderSmall
       }
     },

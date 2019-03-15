@@ -7,9 +7,31 @@
             <h4 class="h4 mt-3 font-weight-bold">
                 {{ $t('step_counter',{ 'step_no' : 1}) }}
             </h4>
-
-            <p class="my-3 font-weight-bold">
-                {{ $t('chain_new_cta') }}
+            <template v-if="createNewWallet">
+                <p
+                    v-b-tooltip.hover
+                    :title="$t('tooltip_friendly_cta')"
+                    class="my-3 font-weight-bold"
+                >
+                    {{ $t('friendly_cta') }} &#10068;
+                </p>
+                <input
+                    id="inputWallet"
+                    v-model="walletname"
+                    type="text"
+                    class="form-control mb-3"
+                    :class="s1c"
+                    :placeholder="$t('walletname_placeholder')"
+                    required=""
+                    @focus="s1c=''"
+                >
+            </template>
+            <p
+                v-b-tooltip.hover
+                :title="$t('tooltip_chain_cta')"
+                class="my-3 font-weight-bold"
+            >
+                {{ $t('chain_new_cta') }} &#10068;
             </p>
             <select
                 id="chain-select"
@@ -73,7 +95,7 @@
             <div class="row">
                 <div class="col-6">
                     <router-link
-                        to="/dashboard"
+                        :to="createNewWallet ? '/' : '/dashboard'"
                         tag="button"
                         class="btn btn-lg btn-primary btn-block"
                         replace
@@ -193,6 +215,7 @@
         i18nOptions: { namespaces: "common" },
         data() {
             return {
+                walletname: "",
                 accountname: "",
                 password: "",
                 step: 1,
@@ -204,6 +227,11 @@
                 chainList: Object.values(blockchains),
             };
         },
+        computed: {
+            createNewWallet() {
+                return !this.$store.state.WalletStore.isUnlocked;
+            }
+        },
         mounted() {
             logger.debug('Account-Add wizard Mounted');
         },
@@ -212,6 +240,29 @@
                 this.step = 1;
             },
             step2: function() {
+                if (this.walletname.trim() == "") {
+                    this.errorMsg = this.$t("empty_wallet_error");
+                    this.$refs.errorModal.show();
+                    this.s1c = "is-invalid";
+                } else {
+                    let wallets = JSON.parse(localStorage.getItem("wallets"));
+
+                    if (
+                        wallets &&
+                        wallets.filter(wallet => wallet.name === this.walletname.trim())
+                            .length > 0
+                    ) {
+                        this.errorMsg = this.$t("duplicate_wallet_error");
+                        this.$refs.errorModal.show();
+                        this.s1c = "is-invalid";
+                    } else {
+                        this.walletname = this.walletname.trim();
+                        this.step = 2;
+                    }
+                }
+
+
+
                 this.step = 2;
             },
             step3: async function() {
