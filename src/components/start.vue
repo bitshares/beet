@@ -121,9 +121,7 @@
         },
         mounted() {
             logger.debug('Start screen mounted');
-            this.$store.dispatch("WalletStore/loadWallets", {}).catch( ()=> {
-                
-            });
+            this.$store.dispatch("WalletStore/loadWallets", {}).catch(()=> {});
         },
         methods: {
             unlockWallet() {

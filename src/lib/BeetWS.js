@@ -69,6 +69,8 @@ export default class BeetWS extends EventEmitter {
     }
 
     _handleMessage(client, data) {
+        console.groupCollapsed("incoming request: " + data.type);
+        console.log("payload", data);
         if (data.type == 'version') {
             client.send('{ "type": "version", "error": false, "result": { "version": ' + JSON.stringify(version) + '}}');
         } else {
@@ -88,12 +90,14 @@ export default class BeetWS extends EventEmitter {
                                 msg.chain = client.chain;
                                 msg.account_id = client.account_id;
                                 client.next_hash = msg.next_hash;
-                                this.emit('api', {
+                                let event = {
                                     "client": client.id,
                                     "id": data.id,
                                     "type": msg.method,
                                     "payload": msg
-                                });
+                                };
+                                console.log("requesting user response", event);
+                                this.emit('api', event);
                             } catch (e) {
                                 client.send('{ "id": "' + data.id + '", "error": true, "payload": { "code": 3, "message": "Could not decrypt message"}}');
                             }
@@ -116,7 +120,7 @@ export default class BeetWS extends EventEmitter {
                             "key": client.keypair,
                             "type": 'link'
                         };
-                        
+                        console.log("requesting user response", linkobj);
                         this.emit('link', linkobj);
                     } else {
                         client.send('{ "id": "' + data.id + '", "error": true, "payload": { "code":4, "message": "This app is not yet linked"}}');
@@ -124,39 +128,101 @@ export default class BeetWS extends EventEmitter {
                 }
             } else {
                 if (data.type == 'authenticate') {
-                    this.emit('authenticate', {
+                    let event = {
                         "id": data.id,
                         "client": client.id,
                         "payload": data.payload
-                    });
+                    };
+                    console.log("requesting user response", event);
+                    this.emit('authenticate', event);
                 } else {
                     client.send('{ "id": "' + data.id + '", "error": true, "payload": { "code":5, "message": "Must authenticate first"}}');
                 }
             }
         }
+        console.groupEnd();
     }
 
-    async respondLink(client, result) {
-        if (result.isLinked == true) {
-            this._clients[client].isLinked = true;
-            this._clients[client].identityhash = result.identityhash;
-            this._clients[client].account_id = result.account_id;
-            this._clients[client].chain = result.chain;
-            this._clients[client].next_hash = result.next_hash;
-            let otp = new OTPAuth.HOTP({
-                issuer: "Beet",
-                label: "BeetAuth",
-                algorithm: "SHA1",
-                digits: 32,
-                counter: 0,
-                secret: OTPAuth.Secret.fromHex(result.secret)
-            });
-            this._clients[client].otp = otp;
-            
-                this._clients[client].send('{"id": ' + result.id + ', "error": false, "payload": { "authenticate": true, "link": true, "chain": "'+result.chain+'" , "existing": '+result.existing+',"identityhash": "'+result.identityhash+'"}}');
-        } else {
-            this._clients[client].send('{ "id": "' + result.id + '", "error": true, "payload": { "code":6, "message": "Could not link to Beet"}}');
+    respondLink(client, result) {
+        if (result.isLinked == true || result.link == true) {
+            // link has successfully established
+            this._establishLink(
+                client,
+                result
+            );
         }
+        this._clients[client].send(this._getLinkResponse(result));
+    }
+
+    _establishLink(client, target) {
+        this._clients[client].isLinked = true;
+        this._clients[client].identityhash = target.identityhash;
+        this._clients[client].account_id = target.app.account_id;
+        this._clients[client].chain = target.app.chain;
+        this._clients[client].next_hash = target.app.next_hash;
+        this._clients[client].otp = new OTPAuth.HOTP({
+            issuer: "Beet",
+            label: "BeetAuth",
+            algorithm: "SHA1",
+            digits: 32,
+            counter: 0,
+            secret: OTPAuth.Secret.fromHex(target.app.secret)
+        });
+    }
+
+    _getLinkResponse(result) {
+        let response = null;
+        // todo: unify! isLinked comes from linkHandler, link from authHandler.
+
+        if (result.isLinked == true || result.link == true) {
+            if (result.app) {
+                response = {
+                    id: result.id,
+                    error: false,
+                    payload: {
+                        authenticate: true,
+                        link: true,
+                        chain: result.chain,
+                        existing: result.existing,
+                        identityhash: result.identityhash,
+                        requested: {
+                            account: {
+                                name: result.app.account_name,
+                                id: result.app.account_id
+                            }
+                        }
+                    }
+                };
+            } else {
+                response = {
+                    id: result.id,
+                    error: false,
+                    payload: {
+                        authenticate: true,
+                        link: true,
+                        chain: result.identity.chain,
+                        existing: result.existing,
+                        identityhash: result.identityhash,
+                        requested: {
+                            account: {
+                                name: result.identity.name,
+                                id: result.identity.id
+                            }
+                        }
+                    }
+                };
+            }
+        } else {
+            response = {
+                id: result.id,
+                error: true,
+                payload: {
+                    code: 6,
+                    message: "Could not link to Beet"
+                }
+            };
+        }
+        return JSON.stringify(response);
     }
 
     respondAPI(client, response) {
@@ -173,21 +239,7 @@ export default class BeetWS extends EventEmitter {
             this._clients[client].appName = result.appName;
             this._clients[client].browser = result.browser;
             if (result.link) {
-                this._clients[client].isLinked = true;
-                this._clients[client].identityhash = result.identityhash;
-                this._clients[client].chain = result.app.chain;
-                this._clients[client].account_id = result.app.account_id;
-                this._clients[client].next_hash = result.app.next_hash;
-                let otp = new OTPAuth.HOTP({
-                    issuer: "Beet",
-                    label: "BeetAuth",
-                    algorithm: "SHA1",
-                    digits: 32,
-                    counter: 0,
-                    secret: OTPAuth.Secret.fromHex(result.app.secret)
-                });
-                this._clients[client].otp = otp;
-                this._clients[client].send('{"id": ' + result.id + ', "error": false, "payload": { "authenticate": true, "link": true, "account_id": "' + result.app.account_id + '"}}');
+                this.respondLink(client, result);
             } else {
                 let keypair = ec.genKeyPair();
                 this._clients[client].keypair = keypair;
