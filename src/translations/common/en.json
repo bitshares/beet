@@ -14,7 +14,6 @@
     "friendly_cta": "Set a friendly name for your new wallet:",
     "tooltip_friendly_cta": "Under this name a new encrypted digital wallet will be stored locally on your computer. It will contain the private keys of all accounts that you add to it. One wallet can contain multiple blockchains.",
     "chain_cta": "Select the blockchain of your account:",
-    "chain_new_cta": "Select the blockchain for your new account:", // deprecated
     "bts_importtype_cta": "Please select the way you would like to import this account",
     "import_placeholder": "Select import method",
     "import_keys": "Using private keys",

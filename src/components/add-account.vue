@@ -233,13 +233,15 @@
                 this.step = 1;
             },
             step2: function() {
-                if (this.walletname.trim() == "") {
-                    this.errorMsg = this.$t("empty_wallet_error");
-                    this.$refs.errorModal.show();
-                    this.s1c = "is-invalid";
-                } else {
+                if (this.createNewWallet) {
+                    if (this.walletname.trim() == "") {
+                        this.errorMsg = this.$t("empty_wallet_error");
+                        this.$refs.errorModal.show();
+                        this.s1c = "is-invalid";
+                        return;
+                    }
+                    // todo use WalletStore
                     let wallets = JSON.parse(localStorage.getItem("wallets"));
-
                     if (
                         wallets &&
                         wallets.filter(wallet => wallet.name === this.walletname.trim())
@@ -248,15 +250,14 @@
                         this.errorMsg = this.$t("duplicate_wallet_error");
                         this.$refs.errorModal.show();
                         this.s1c = "is-invalid";
+                        return;
                     } else {
                         this.walletname = this.walletname.trim();
                         this.step = 2;
                     }
+                } else {
+                    this.step = 2;
                 }
-
-
-
-                this.step = 2;
             },
             step3: async function() {
                 EventBus.$emit("popup", "load-start");
@@ -296,29 +297,24 @@
                 }
                 this.$refs.errorModal.show();
             },
-            createWallet: async function(account) {
-                await this.$store.dispatch("WalletStore/saveWallet", {
-                    walletname: this.walletname,
-                    password: this.password,
-                    walletdata: {
-                        account
-                    }
-                });
-            },
             addAccounts: async function() {
                 try {
-                    let password = this.enterPassword.getPassword();
+                    let password = this.$refs.enterPassword.getPassword();
                     EventBus.$emit("popup", "load-start");
                     if (!!this.accounts_to_import) {
                         for (let i in this.accounts_to_import) {
                             let account = this.accounts_to_import[i];
-                            account.password = password;
-                            account.walletname = this.walletname;
                             if (i == 0 && this.createNewWallet) {
-                                this.createWallet(account);
+                                await this.$store.dispatch("WalletStore/saveWallet", {
+                                    walletname: this.walletname,
+                                    password: password,
+                                    walletdata: account.account
+                                });
+                            } else {
+                                account.password = password;
+                                account.walletname = this.walletname;
+                                await this.$store.dispatch("AccountStore/addAccount", account);
                             }
-                            await this.$store.dispatch("AccountStore/addAccount", account);
-
                         }
                         this.$router.replace("/dashboard");
                     } else {
