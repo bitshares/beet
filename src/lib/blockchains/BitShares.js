@@ -4,8 +4,8 @@ import {
     PrivateKey,
     PublicKey,
     TransactionBuilder,
-    Signature
-    
+    Signature,
+    FetchChain
 } from "bitsharesjs";
 import RendererLogger from "../RendererLogger";
 const logger = new RendererLogger();
@@ -94,6 +94,18 @@ export default class BitShares extends BlockchainAPI {
                         reject(err);
                     });
             });
+        });
+    }
+
+    getAsset(assetName) {
+        return new Promise((resolve, reject) => {
+            this._ensureAPI().then(() => {
+                Apis.instance().db_api().exec("lookup_asset_symbols", [[assetName]]).then((asset_objects) => {
+                    if (asset_objects.length && asset_objects[0]) {
+                        resolve(asset_objects[0]);
+                    }
+                }).catch(reject);
+            }).catch(reject);
         });
     }
 
@@ -306,6 +318,12 @@ export default class BitShares extends BlockchainAPI {
                         });
 
                     }
+                    break;
+                    case default: {
+                        operation.type = 'transfer';
+                        operation.data = data;
+                        resolve(operation);
+                    }
                 }
             });
         });
@@ -324,6 +342,29 @@ export default class BitShares extends BlockchainAPI {
             string,
             PublicKey.fromPublicKeyString(publicKey)
         );
+    }
+
+    async transfer(key, from, to, amount, memo = null) {
+        if (!amount.amount || !amount.asset_id) {
+            throw "Amount must be a dict with amount and asset_id as keys"
+        }
+        from = await this.getAccount(from);
+        to = await this.getAccount(to);
+        let operation = {
+            type: "transfer",
+            data: {
+                fee: {
+                    amount: 0,
+                    asset_id: "1.3.0"
+                },
+                from: from.get("id"),
+                to: to.get("id"),
+                amount: amount,
+                memo: memo == null ? undefined : memo
+            }
+        }
+        let transaction = await this.sign(operation, key);
+        return await this.broadcast(transaction);
     }
 
 }

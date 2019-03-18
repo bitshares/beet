@@ -192,8 +192,9 @@ export default class SteemBasedChain extends BlockchainAPI {
                             (err, result) => {
                                 if (err) {
                                     reject(err);
+                                } else {
+                                    resolve(result);
                                 }
-                                resolve(result);
                             }
                         );
                     } else {
@@ -278,5 +279,27 @@ export default class SteemBasedChain extends BlockchainAPI {
             this._getPublicKey().fromStringOrThrow(publicKey)
         );
     }
+
+    transfer(key, from, to, amount, memo = null) {
+        return new Promise((resolve, reject) => {
+            this._ensureAPI().then(() => {
+                this._getLibrary().broadcast.transfer(
+                    key,
+                    from,
+                    to,
+                    amount,
+                    memo,
+                    (err, result) => {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            resolve(result);
+                        }
+                    }
+                );
+            });
+        });
+    }
+
 
 }

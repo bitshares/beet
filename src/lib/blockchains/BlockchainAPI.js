@@ -99,7 +99,6 @@ export default class BlockchainAPI {
         });
     }
 
-
     verifyMessage(signedMessage) {
         return new Promise((resolve, reject) => {
             if (typeof signedMessage.payload === "string" || signedMessage.payload instanceof String) {
@@ -211,6 +210,10 @@ export default class BlockchainAPI {
             }
         });
         return account;
+    }
+
+    transfer(key, from, to, amount, asset, memo = null) {
+        throw "Needs implementation!"
     }
 
 }
