@@ -31,7 +31,7 @@
                 :title="$t('tooltip_chain_cta')"
                 class="my-3 font-weight-bold"
             >
-                {{ $t('chain_new_cta') }} &#10068;
+                {{ $t('chain_cta') }} &#10068;
             </p>
             <select
                 id="chain-select"
@@ -155,23 +155,16 @@
             </div>
         </div>
         <div
-            v-if="step==3"
+            v-else-if="step==3"
             id="step3"
         >
             <h4 class="h4 mt-3 font-weight-bold">
                 {{ $t('step_counter',{ 'step_no' : 3}) }}
             </h4>
-            <p class="mb-2 font-weight-bold">
-                {{ $t('password_req_cta') }}
-            </p>
-            <input
-                id="inputPass"
-                v-model="password"
-                type="password"
-                class="form-control mb-3"
-                :placeholder="$t('password_placeholder')"
-                required
-            >
+            <EnterPassword
+                ref="enterPassword"
+                :getNew="createNewWallet"
+            />
             <button
                 class="btn btn-lg btn-primary btn-block"
                 type="submit"
@@ -203,6 +196,7 @@
     import ImportCloudPass from "./blockchains/bitshares/ImportCloudPass";
     import ImportBinFile from "./blockchains/bitshares/ImportBinFile";
     import ImportKeys from "./blockchains/ImportKeys";
+    import EnterPassword from "./EnterPassword";
 
     import { EventBus } from "../lib/event-bus.js";
 
@@ -211,13 +205,12 @@
 
     export default {
         name: "AddAccount",
-        components: {ImportKeys, ImportCloudPass, ImportBinFile},
+        components: {ImportKeys, ImportCloudPass, ImportBinFile, EnterPassword},
         i18nOptions: { namespaces: "common" },
         data() {
             return {
                 walletname: "",
                 accountname: "",
-                password: "",
                 step: 1,
                 s1c: "",
                 includeOwner: 0,
@@ -303,19 +296,27 @@
                 }
                 this.$refs.errorModal.show();
             },
+            createWallet: async function(account) {
+                await this.$store.dispatch("WalletStore/saveWallet", {
+                    walletname: this.walletname,
+                    password: this.password,
+                    walletdata: {
+                        account
+                    }
+                });
+            },
             addAccounts: async function() {
-                if (this.password == "") {
-                    this.$refs.errorModal.show();
-                    this.errorMsg = this.$t("empty_pass_error");
-                    return;
-                }
-                EventBus.$emit("popup", "load-start");
                 try {
+                    let password = this.enterPassword.getPassword();
+                    EventBus.$emit("popup", "load-start");
                     if (!!this.accounts_to_import) {
                         for (let i in this.accounts_to_import) {
                             let account = this.accounts_to_import[i];
-                            account.password = this.password;
+                            account.password = password;
                             account.walletname = this.walletname;
+                            if (i == 0 && this.createNewWallet) {
+                                this.createWallet(account);
+                            }
                             await this.$store.dispatch("AccountStore/addAccount", account);
 
                         }
