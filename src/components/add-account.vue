@@ -120,17 +120,17 @@
         >
             <ImportKeys
                 v-if="selectedChain != 'BTS' || BTSImportType=='1'"
-                ref="import_bitshares_accounts"
+                ref="import_accounts"
                 :selectedChain="selectedChain"
             />
             <ImportCloudPass
                 v-else-if="selectedChain=='BTS' && BTSImportType=='2'"
-                ref="import_bitshares_accounts"
+                ref="import_accounts"
                 :selectedChain="selectedChain"
             />
             <ImportBinFile
                 v-else="selectedChain=='BTS' && BTSImportType=='3'"
-                ref="import_bitshares_accounts"
+                ref="import_accounts"
                 :selectedChain="selectedChain"
             />
             <div class="row">
@@ -264,15 +264,7 @@
                 try {
                     let blockchain = getBlockchain(this.selectedChain);
                     // abstract UI concept more
-                    if (blockchain.getAccessType() == "account") {
-                        this.accounts_to_import = await this.$refs.import_bitshares_accounts.getAccountEvent();
-                    } else {
-                        let authorities = {
-                            active: this.activepk
-                        };
-                        let account = await blockchain.verifyAccount(this.accountname, authorities);
-                        this.accounts_to_import = [ account ];
-                    }
+                    this.accounts_to_import = await this.$refs.import_accounts.getAccountEvent();
                     EventBus.$emit("popup", "load-end");
                     if (this.accounts_to_import != null) {
                         // if import accounts are filled, advance to next step. If not, it is a substep in the

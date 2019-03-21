@@ -10,6 +10,7 @@ import SmokeNetwork from "./SmokeNetwork";
 import EOSmainnet from "./EOSmainnet";
 import TLOS from "./TLOS";
 import Bitcoin from "./Bitcoin";
+import Binance from "./Binance";
 
 export default function getBlockchainAPI(chain = null) {
     if (chain == null) {
@@ -51,5 +52,11 @@ export default function getBlockchainAPI(chain = null) {
             apiCache.BTC = new Bitcoin(blockchains[chain]);
         }
         return apiCache.BTC;
+    } else if (chain == "BNB") {
+        if (!apiCache.BNB) {
+            apiCache.BNB = new Binance(blockchains[chain]);
+        }
+        return apiCache.BNB;
     }
+
 }

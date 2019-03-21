@@ -444,5 +444,20 @@ export const blockchains = {
                 contact: "https://www.blockchain.com"
             }
         ]
+    },
+    BNB: {
+        short: 'BNB',
+        name: 'BNB',
+        chainId: 'Binance-Chain-Nile',
+        nodeList: [
+            {
+                url: "https://testnet-dex.binance.org/",
+                location: "Unknown",
+                region: "Unknown",
+                country: "Unknown",
+                operator: "Binance",
+                contact: "Binance.org"
+            }
+        ]
     }
 };

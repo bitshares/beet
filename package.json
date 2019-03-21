@@ -54,6 +54,7 @@
     }
   },
   "dependencies": {
+    "@binance-chain/javascript-sdk": "^2.6.1",
     "@panter/vue-i18next": "^0.15.0",
     "@smokenetwork/smoke-js": "^0.1.2",
     "@whaleshares/wlsjs": "^0.1.1",
