@@ -29,8 +29,22 @@ export default class Bitcoin extends BlockchainAPI {
         return new Promise((resolve, reject) => {
             this._ensureAPI().then(() => {
                 this.client.getAccount(accountname).then(result => {
-                    console.log(result);
-                    resolve(result);
+                    let account = {};
+                    account.active = {};
+                    account.owner = {};
+                    //if (!!this._lastPublicKey) {
+                    account.active.public_keys = [[accountname, 1]];
+                    //    if (this._publicKeyToAddress(this._lastPublicKey) !== accountname) {
+                    //        reject("Public key not matching");
+                    //    }
+                    //} else {
+                    //    reject("No public key found!");
+                    //}
+                    account.owner.public_keys = [];
+                    account.memo = {public_key: null};
+                    account.id = result.account_number;
+                    account.balances = result.balances;
+                    resolve(account);
                 }).catch(reject);
             }).catch(reject);
         });
@@ -41,14 +55,26 @@ export default class Bitcoin extends BlockchainAPI {
     }
 
     getPublicKey(privateKey) {
-        return binancejs.crypto.getAddressFromPrivateKey(privateKey);
+        return binancejs.crypto.getPublicKeyFromPrivateKey(privateKey);
     }
 
     getBalances(accountName) {
         return new Promise((resolve, reject) => {
-            this.client.getBalance(accountName).then((result) => {
-                console.log(result);
-                resolve(result);
+            this._ensureAPI().then(() => {
+                this.client.getBalance(accountName).then((result) => {
+                    console.log(result);
+                    let balances = [];
+                    result.forEach(balance => {
+                        balances.push({
+                            asset_type: "UIA",
+                            asset_name: balance.symbol,
+                            balance: parseFloat(balance.free),
+                            owner: "-",
+                            prefix: ""
+                        });
+                    });
+                    resolve(balances);
+                });
             });
         });
     }
@@ -76,13 +102,50 @@ export default class Bitcoin extends BlockchainAPI {
 
     sign(operation, key) {
         return new Promise((resolve, reject) => {
-            reject("Not supported yet");
+            this._ensureAPI().then(() => {
+                if (typeof operation == "object"
+                    && operation.length > 2
+                    && operation[1] == "inject_wif") {
+                    this.client.setPrivateKey(key).then(() => {
+                        resolve(operation)
+                    });
+                } else {
+                    reject("Unknown sign request");
+                }
+            }).catch(err => reject(err));
         });
     }
 
     broadcast(transaction) {
         return new Promise((resolve, reject) => {
-            reject("Not supported yet");
+            this._ensureAPI().then(() => {
+                switch (transaction[0]) {
+                    case "transfer":
+                        this.client.transfer(operation[2], operation[3], operation[4], operation[5], operation[6], operation[7])
+                            .then(resolve)
+                            .catch(reject)
+                            .finally(()=>{
+                                this.client.privateKey = undefined;
+                            });
+                        break;
+                    case "cancelOrder":
+                        this.client.cancelOrder(operation[2], operation[3], operation[4], operation[5])
+                            .then(resolve)
+                            .catch(reject)
+                            .finally(()=>{
+                                this.client.privateKey = undefined;
+                            });
+                        break;
+                    case "placeOrder":
+                        this.client.placeOrder(operation[2], operation[3], operation[4], operation[5], operation[6], operation[7], operation[8])
+                            .then(resolve)
+                            .catch(reject)
+                            .finally(()=>{
+                                this.client.privateKey = undefined;
+                            });
+                        break;
+                }
+            }).catch(reject);
         });
     }
 

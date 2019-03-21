@@ -52,7 +52,7 @@ export default function getBlockchainAPI(chain = null) {
             apiCache.BTC = new Bitcoin(blockchains[chain]);
         }
         return apiCache.BTC;
-    } else if (chain == "BNB") {
+    } else if (chain == "BNB" || chain == "BNB_TEST") {
         if (!apiCache.BNB) {
             apiCache.BNB = new Binance(blockchains[chain]);
         }

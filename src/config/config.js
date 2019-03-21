@@ -417,7 +417,7 @@ export const blockchains = {
     },
     TLOS: {
         short: 'TLOS',
-        name: 'TLOS',
+        name: 'Telos',
         chainId: '4667b205c6838ef70ff7988f6e8257e8be0e1284a2f59699054a018f743b1d11',
         nodeList: [
             {
@@ -432,7 +432,7 @@ export const blockchains = {
     },
     BTC: {
         short: 'BTC',
-        name: 'BTC',
+        name: 'Bitcoin',
         chainId: null,
         nodeList: [
             {
@@ -447,7 +447,8 @@ export const blockchains = {
     },
     BNB: {
         short: 'BNB',
-        name: 'BNB',
+        name: 'BinanceChain',
+        testnet: true,
         chainId: 'Binance-Chain-Nile',
         nodeList: [
             {

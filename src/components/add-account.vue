@@ -53,7 +53,7 @@
                     :key="chain.short"
                     :value="chain.short"
                 >
-                    {{ chain.name }} ({{ chain.short }})
+                    {{(chain.testnet ? "Testnet: " : '')}} {{ chain.name }} ({{ chain.short }})
                 </option>
             </select>
             <div v-if="selectedChain=='BTS'">
@@ -216,13 +216,20 @@
                 includeOwner: 0,
                 errorMsg: "",
                 selectedChain: 0,
-                BTSImportType: 0,
-                chainList: Object.values(blockchains),
+                BTSImportType: 0
             };
         },
         computed: {
             createNewWallet() {
                 return !this.$store.state.WalletStore.isUnlocked;
+            },
+            chainList() {
+                return Object.values(blockchains).sort((a,b) => {
+                    if (!!a.testnet != !!b.testnet) {
+                        return !!a.testnet ? 1 : -1;
+                    }
+                    return a.name > b.name
+                });
             }
         },
         mounted() {
