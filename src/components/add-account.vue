@@ -53,7 +53,7 @@
                     :key="chain.short"
                     :value="chain.short"
                 >
-                    {{ chain.name }} ({{ chain.short }})
+                    {{(chain.testnet ? "Testnet: " : '')}} {{ chain.name }} ({{ chain.short }})
                 </option>
             </select>
             <div v-if="selectedChain=='BTS'">
@@ -120,17 +120,17 @@
         >
             <ImportKeys
                 v-if="selectedChain != 'BTS' || BTSImportType=='1'"
-                ref="import_bitshares_accounts"
+                ref="import_accounts"
                 :selectedChain="selectedChain"
             />
             <ImportCloudPass
                 v-else-if="selectedChain=='BTS' && BTSImportType=='2'"
-                ref="import_bitshares_accounts"
+                ref="import_accounts"
                 :selectedChain="selectedChain"
             />
             <ImportBinFile
                 v-else="selectedChain=='BTS' && BTSImportType=='3'"
-                ref="import_bitshares_accounts"
+                ref="import_accounts"
                 :selectedChain="selectedChain"
             />
             <div class="row">
@@ -216,13 +216,20 @@
                 includeOwner: 0,
                 errorMsg: "",
                 selectedChain: 0,
-                BTSImportType: 0,
-                chainList: Object.values(blockchains),
+                BTSImportType: 0
             };
         },
         computed: {
             createNewWallet() {
                 return !this.$store.state.WalletStore.isUnlocked;
+            },
+            chainList() {
+                return Object.values(blockchains).sort((a,b) => {
+                    if (!!a.testnet != !!b.testnet) {
+                        return !!a.testnet ? 1 : -1;
+                    }
+                    return a.name > b.name
+                });
             }
         },
         mounted() {
@@ -264,15 +271,7 @@
                 try {
                     let blockchain = getBlockchain(this.selectedChain);
                     // abstract UI concept more
-                    if (blockchain.getAccessType() == "account") {
-                        this.accounts_to_import = await this.$refs.import_bitshares_accounts.getAccountEvent();
-                    } else {
-                        let authorities = {
-                            active: this.activepk
-                        };
-                        let account = await blockchain.verifyAccount(this.accountname, authorities);
-                        this.accounts_to_import = [ account ];
-                    }
+                    this.accounts_to_import = await this.$refs.import_accounts.getAccountEvent();
                     EventBus.$emit("popup", "load-end");
                     if (this.accounts_to_import != null) {
                         // if import accounts are filled, advance to next step. If not, it is a substep in the
