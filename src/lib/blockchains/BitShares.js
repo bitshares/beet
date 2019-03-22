@@ -319,7 +319,7 @@ export default class BitShares extends BlockchainAPI {
 
                     }
                     break;
-                    case default: {
+                    default: {
                         operation.type = 'transfer';
                         operation.data = data;
                         resolve(operation);
@@ -362,7 +362,7 @@ export default class BitShares extends BlockchainAPI {
                 amount: amount,
                 memo: memo == null ? undefined : memo
             }
-        }
+        };
         let transaction = await this.sign(operation, key);
         return await this.broadcast(transaction);
     }

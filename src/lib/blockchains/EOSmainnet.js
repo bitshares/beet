@@ -5,8 +5,10 @@ const logger = new RendererLogger();
 const fetch = require('node-fetch');
 
 const { Api, JsonRpc, RpcError } = require('eosjs');
+import JsSignatureProvider from "eosjs/dist/eosjs-jssig";
+
 import * as ecc from "eosjs-ecc";
-import { convertLegacyPublicKey } from "eosjs/dist/eosjs-numeric";
+import { TextEncoder, TextDecoder } from "util";
 
 export default class EOS extends BlockchainAPI {
 
@@ -95,13 +97,31 @@ export default class EOS extends BlockchainAPI {
 
     sign(operation, key) {
         return new Promise((resolve, reject) => {
-            reject("Not supported yet");
+            operation.signatureProvider = new JsSignatureProvider([key]);
+            resolve(operation);
         });
     }
 
     broadcast(transaction) {
         return new Promise((resolve, reject) => {
-            reject("Not supported yet");
+            const api = new Api({
+                rpc: this.rpc,
+                signatureProvider: transaction.signatureProvider,
+                textDecoder: new TextDecoder(),
+                textEncoder: new TextEncoder()
+            });
+            api.transact(
+                {
+                    actions: transaction.actions
+                },
+                {
+                    blocksBehind: 3,
+                    expireSeconds: 30
+
+                }
+            ).then(result => {
+                  resolve(result);
+            }).catch(reject);
         });
     }
 
@@ -127,6 +147,40 @@ export default class EOS extends BlockchainAPI {
             string,
             ecc.PublicKey.fromString(publicKey)
         );
+    }
+
+    async transfer(key, from, to, amount, memo = null) {
+        if (!amount.amount || !amount.asset_id) {
+            throw "Amount must be a dict with amount and asset_id as keys"
+        }
+        from = await this.getAccount(from);
+        to = await this.getAccount(to);
+
+        if (memo == null) {
+            memo = "";
+        }
+
+        let actions = [{
+            account: 'eosio.token',
+            name: 'transfer',
+            authorization: [{
+                actor: from.id,
+                permission: 'active',
+            }],
+            data: {
+                from: to.id,
+                to: to.id,
+                quantity: amount.amount + " " + amount.asset_id,
+                memo: memo,
+            },
+        }];
+
+        let operation = {
+            actions
+        };
+
+        let transaction = await this.sign(operation, key);
+        return await this.broadcast(transaction);
     }
 
 }
