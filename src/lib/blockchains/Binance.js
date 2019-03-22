@@ -29,6 +29,10 @@ export default class Bitcoin extends BlockchainAPI {
         return new Promise((resolve, reject) => {
             this._ensureAPI().then(() => {
                 this.client.getAccount(accountname).then(result => {
+                    if (result.status != 200) {
+                        reject("HTTP status not ok");
+                    }
+                    result = result.result;
                     let account = {};
                     account.active = {};
                     account.owner = {};
@@ -62,7 +66,6 @@ export default class Bitcoin extends BlockchainAPI {
         return new Promise((resolve, reject) => {
             this._ensureAPI().then(() => {
                 this.client.getBalance(accountName).then((result) => {
-                    console.log(result);
                     let balances = [];
                     result.forEach(balance => {
                         balances.push({
@@ -162,12 +165,12 @@ export default class Bitcoin extends BlockchainAPI {
     }
 
     _signString(key, string) {
-        let signature = binancejs.crypto.generateSignature(hash, key);
+        let signature = binancejs.crypto.generateSignature(new Buffer(string).toString("hex"), key);
         return signature.toString("hex");
     }
 
     _verifyString(signature, publicKey, string) {
-        return binancejs.crypto.verifySignature(signature, hash, publicKey).toString("hex") == signature;
+        return binancejs.crypto.verifySignature(signature, new Buffer(string).toString("hex"), publicKey);
     }
 
     _compareKeys(key1, key2) {
