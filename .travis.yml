@@ -23,7 +23,7 @@ addons:
     - fakeroot
     - rpm
     - libusb-dev
-    - libudev0
+    - libudev-dev
 install:
   - npm ci
 script: "./package.sh"
