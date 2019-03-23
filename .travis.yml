@@ -22,6 +22,7 @@ addons:
     - xz-utils
     - fakeroot
     - rpm
+    - libusb-dev
 install:
   - npm ci
 script: "./package.sh"
