@@ -146,10 +146,10 @@ export default class BeetAPI {
         try {
             let response = await vue.requestSignedMessage(request.payload);
             // make sure an invalid message never leaves the house
-            await vue.verifyMessage({params: response.response});
+            await vue.verifyMessage({params: response});
             return {
                 id: request.id,
-                result: response.response
+                result: response
             };
         } catch (err) {
             return this._parseReject("BeetAPI.signMessage", request, err);

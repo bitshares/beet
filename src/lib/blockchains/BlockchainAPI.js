@@ -184,9 +184,9 @@ export default class BlockchainAPI {
         Object.keys(required).forEach(key => {
             let given = credentials[key];
             let mandatory = required[key];
-            if (mandatory !== null) {
+            if (!!mandatory) {
                 // mandatory == null means this authority is not used in this blockchain
-                if (!given && mandatory) {
+                if (!given) {
                     throw "Authority (" + key + ") is mandatory, but not given by user";
                 }
                 let publicKey = null;

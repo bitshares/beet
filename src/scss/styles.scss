@@ -214,7 +214,14 @@ p {
     margin-left:15px;
     margin-right:15px;
 }
-
+.import-accounts {
+    max-height: 22rem;
+    overflow-y: auto;
+}
+.disabledImport {
+    font-style:italic;
+    color:gray;
+}
 pre {
     border: 1px solid lightgray;
     background: #f3f3f3;

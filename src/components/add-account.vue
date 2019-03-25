@@ -7,9 +7,31 @@
             <h4 class="h4 mt-3 font-weight-bold">
                 {{ $t('step_counter',{ 'step_no' : 1}) }}
             </h4>
-
-            <p class="my-3 font-weight-bold">
-                {{ $t('chain_new_cta') }}
+            <template v-if="createNewWallet">
+                <p
+                    v-b-tooltip.hover
+                    :title="$t('tooltip_friendly_cta')"
+                    class="my-3 font-weight-bold"
+                >
+                    {{ $t('friendly_cta') }} &#10068;
+                </p>
+                <input
+                    id="inputWallet"
+                    v-model="walletname"
+                    type="text"
+                    class="form-control mb-3"
+                    :class="s1c"
+                    :placeholder="$t('walletname_placeholder')"
+                    required=""
+                    @focus="s1c=''"
+                >
+            </template>
+            <p
+                v-b-tooltip.hover
+                :title="$t('tooltip_chain_cta')"
+                class="my-3 font-weight-bold"
+            >
+                {{ $t('chain_cta') }} &#10068;
             </p>
             <select
                 id="chain-select"
@@ -34,10 +56,46 @@
                     {{ chain.name }} ({{ chain.short }})
                 </option>
             </select>
+            <div v-if="selectedChain=='BTS'">
+                <p class="my-3 font-weight-bold">
+                    {{ $t('bts_importtype_cta') }}
+                </p>
+                <select
+                    id="import-select"
+                    v-model="BTSImportType"
+                    class="form-control mb-3"
+                    :class="s1c"
+                    :placeholder="$t('import_placeholder')"
+                    required
+                >
+                    <option
+                        selected
+                        disabled
+                        value="0"
+                    >
+                        {{ $t('import_placeholder') }}
+                    </option>
+                    <option
+                        value="1"
+                    >
+                        {{ $t('import_keys') }}
+                    </option>
+                    <option
+                        value="2"
+                    >
+                        {{ $t('import_pass') }}
+                    </option>                
+                    <option
+                        value="3"
+                    >
+                        {{ $t('import_bin') }}
+                    </option>
+                </select>
+            </div>
             <div class="row">
                 <div class="col-6">
                     <router-link
-                        to="/dashboard"
+                        :to="createNewWallet ? '/' : '/dashboard'"
                         tag="button"
                         class="btn btn-lg btn-primary btn-block"
                         replace
@@ -57,79 +115,24 @@
             </div>
         </div>
         <div
-            v-if="step==2"
+            v-else-if="step==2"
             id="step2"
         >
-            <h4 class="h4 mt-3 font-weight-bold">
-                {{ $t('step_counter',{ 'step_no' : 2}) }}
-            </h4>
-            <p v-if="accessType=='account'" class="mb-2 font-weight-bold">
-                {{ $t('account_name',{ 'chain' : selectedChain}) }}
-            </p>
-            <p v-else class="mb-2 font-weight-bold">
-                {{ $t('address_name',{ 'chain' : selectedChain}) }}
-            </p>
-            <input
-                id="inputAccount"
-                v-model="accountname"
-                type="text"
-                class="form-control mb-3"
-                :placeholder="$t('account_name',{ 'chain' : selectedChain})"
-                required
-            >
-            <p class="my-3 font-weight-normal">
-                {{ $t('keys_cta') }}
-            </p>
-            <template v-if="requiredFields.active !== null">
-                <p v-if="accessType=='account'" class="mb-2 font-weight-bold">
-                    {{ $t('active_authority') }}
-                </p>
-                <p v-else class="mb-2 font-weight-bold">
-                    {{ $t('public_authority') }}
-                </p>
-                <input
-                    id="inputActive"
-                    v-model="activepk"
-                    type="password"
-                    class="form-control mb-3 small"
-                    :placeholder="accessType=='account' ? $t('active_authority_placeholder') : $t('public_authority_placeholder')"
-                    required
-                >
-            </template>
-            <template v-if="requiredFields.memo !== null">
-                <p class="mb-2 font-weight-bold">
-                    {{ $t('memo_authority') }}
-                </p>
-                <input
-                    id="inputMemo"
-                    v-model="memopk"
-                    type="password"
-                    class="form-control mb-3 small"
-                    :placeholder="$t('memo_authority_placeholder')"
-                    required
-                >
-            </template>
-            <template v-if="requiredFields.owner !== null">
-                <b-form-checkbox
-                    id="incOwnerCB"
-                    v-model="includeOwner"
-                    value="1"
-                    unchecked-value="0"
-                    class="mb-3"
-                >
-                    {{ $t('include_owner_check') }}
-                </b-form-checkbox>
-                <div v-if="includeOwner==1">
-                    <input
-                        id="inputOwner"
-                        v-model="ownerpk"
-                        type="password"
-                        class="form-control mb-3 small"
-                        :placeholder="$t('owner_authority_placeholder')"
-                        required
-                    >
-                </div>
-            </template>
+            <ImportKeys
+                v-if="selectedChain != 'BTS' || BTSImportType=='1'"
+                ref="import_bitshares_accounts"
+                :selectedChain="selectedChain"
+            />
+            <ImportCloudPass
+                v-else-if="selectedChain=='BTS' && BTSImportType=='2'"
+                ref="import_bitshares_accounts"
+                :selectedChain="selectedChain"
+            />
+            <ImportBinFile
+                v-else="selectedChain=='BTS' && BTSImportType=='3'"
+                ref="import_bitshares_accounts"
+                :selectedChain="selectedChain"
+            />
             <div class="row">
                 <div class="col-6">
                     <button
@@ -152,28 +155,20 @@
             </div>
         </div>
         <div
-            v-if="step==3"
+            v-else-if="step==3"
             id="step3"
         >
             <h4 class="h4 mt-3 font-weight-bold">
                 {{ $t('step_counter',{ 'step_no' : 3}) }}
             </h4>
-            <p class="mb-2 font-weight-bold">
-                {{ $t('password_req_cta') }}
-            </p>
-            <input
-                id="inputPass"
-                v-model="password"
-                type="password"
-                class="form-control mb-3"
-                :placeholder="$t('password_placeholder')"
-                required
-            >
-      
+            <EnterPassword
+                ref="enterPassword"
+                :getNew="createNewWallet"
+            />
             <button
                 class="btn btn-lg btn-primary btn-block"
                 type="submit"
-                @click="verifyAndCreate"
+                @click="addAccounts"
             >
                 {{ $t('next_btn') }}
             </button>
@@ -184,6 +179,7 @@
             centered
             hide-footer
             :title="$t('error_lbl')"
+            e
         >
             {{ errorMsg }}
         </b-modal>
@@ -196,28 +192,38 @@
 <script>
     import { blockchains } from "../config/config.js";
     import getBlockchain from "../lib/blockchains/blockchainFactory";
+
+    import ImportCloudPass from "./blockchains/bitshares/ImportCloudPass";
+    import ImportBinFile from "./blockchains/bitshares/ImportBinFile";
+    import ImportKeys from "./blockchains/ImportKeys";
+    import EnterPassword from "./EnterPassword";
+
     import { EventBus } from "../lib/event-bus.js";
+
     import RendererLogger from "../lib/RendererLogger";
     const logger = new RendererLogger();
 
     export default {
         name: "AddAccount",
+        components: {ImportKeys, ImportCloudPass, ImportBinFile, EnterPassword},
         i18nOptions: { namespaces: "common" },
         data() {
             return {
+                walletname: "",
                 accountname: "",
-                accountID: "",
-                activepk: "",
-                ownerpk: "",
-                memopk: "",
-                password: "",
                 step: 1,
                 s1c: "",
                 includeOwner: 0,
                 errorMsg: "",
                 selectedChain: 0,
-                chainList: Object.values(blockchains)
+                BTSImportType: 0,
+                chainList: Object.values(blockchains),
             };
+        },
+        computed: {
+            createNewWallet() {
+                return !this.$store.state.WalletStore.isUnlocked;
+            }
         },
         mounted() {
             logger.debug('Account-Add wizard Mounted');
@@ -227,90 +233,97 @@
                 this.step = 1;
             },
             step2: function() {
-                let blockchain = getBlockchain(this.selectedChain);
-                this.accessType = blockchain.getAccessType();
-                this.requiredFields = blockchain.getSignUpInput();
-                console.log(this.accessType);
-                this.step = 2;
+                if (this.createNewWallet) {
+                    if (this.walletname.trim() == "") {
+                        this.errorMsg = this.$t("empty_wallet_error");
+                        this.$refs.errorModal.show();
+                        this.s1c = "is-invalid";
+                        return;
+                    }
+                    // todo use WalletStore
+                    let wallets = JSON.parse(localStorage.getItem("wallets"));
+                    if (
+                        wallets &&
+                        wallets.filter(wallet => wallet.name === this.walletname.trim())
+                            .length > 0
+                    ) {
+                        this.errorMsg = this.$t("duplicate_wallet_error");
+                        this.$refs.errorModal.show();
+                        this.s1c = "is-invalid";
+                        return;
+                    } else {
+                        this.walletname = this.walletname.trim();
+                        this.step = 2;
+                    }
+                } else {
+                    this.step = 2;
+                }
             },
             step3: async function() {
-                if (this.accountname == "") {
-                    this.errorMsg = this.$t("missing_account_error", {
-                        chain: this.selectedChain
-                    });
-                    this.$refs.errorModal.show();
-                    return;
-                }
-
                 EventBus.$emit("popup", "load-start");
                 try {
                     let blockchain = getBlockchain(this.selectedChain);
                     // abstract UI concept more
-                    let authorities = null;
                     if (blockchain.getAccessType() == "account") {
-                        authorities = {
-                            active: this.activepk,
-                            memo: this.memopk,
-                            owner: this.includeOwner == 1 ? this.ownerpk : null
-                        };
+                        this.accounts_to_import = await this.$refs.import_bitshares_accounts.getAccountEvent();
                     } else {
-                        authorities = {
+                        let authorities = {
                             active: this.activepk
                         };
+                        let account = await blockchain.verifyAccount(this.accountname, authorities);
+                        this.accounts_to_import = [ account ];
                     }
-                    let account = await blockchain.verifyAccount(this.accountname, authorities);
                     EventBus.$emit("popup", "load-end");
-                    this.accountID = account.id;
-                    this.step = 3;
-                } catch (err) {
-                    this.accountID = "";
-                    if (!!err.key) {
-                        this.errorMsg = this.$t(err.key);
-                    } else {
-                        this.errorMsg = err.toString();
+                    if (this.accounts_to_import != null) {
+                        // if import accounts are filled, advance to next step. If not, it is a substep in the
+                        // import component
+                        this.step = 3;
                     }
-                    this.$refs.errorModal.show();
+                } catch (err) {
+                    this._handleError(err);
                 } finally {
                     EventBus.$emit("popup", "load-end");
                 }
             },
-            verifyAndCreate: async function() {
-                if (this.password == "") {
-                    this.$refs.errorModal.show();
-                    this.errorMsg = this.$t("empty_pass_error");
-                    return;
+            _handleError(err) {
+                if (err == 'invalid') {
+                    this.errorMsg = this.$t("invalid_password");
+                } else if (err == 'update_failed') {
+                    this.errorMsg = this.$t("update_failed");
+                } else if (err.key) {
+                    this.errorMsg = this.$t(err.key);
+                } else {
+                    this.errorMsg = err.toString();
                 }
-
-                EventBus.$emit("popup", "load-start");
-
-                if (this.accountID !== null) {
-                    this.$store
-                        .dispatch("AccountStore/addAccount", {
-                            password: this.password,
-                            account: {
-                                accountName: this.accountname,
-                                accountID: this.accountID,
-                                chain: this.selectedChain,
-                                keys: {
-                                    active: this.activepk,
-                                    owner: this.ownerpk,
-                                    memo: this.memopk
-                                }
+                this.$refs.errorModal.show();
+            },
+            addAccounts: async function() {
+                try {
+                    let password = this.$refs.enterPassword.getPassword();
+                    EventBus.$emit("popup", "load-start");
+                    if (!!this.accounts_to_import) {
+                        for (let i in this.accounts_to_import) {
+                            let account = this.accounts_to_import[i];
+                            if (i == 0 && this.createNewWallet) {
+                                await this.$store.dispatch("WalletStore/saveWallet", {
+                                    walletname: this.walletname,
+                                    password: password,
+                                    walletdata: account.account
+                                });
+                            } else {
+                                account.password = password;
+                                account.walletname = this.walletname;
+                                await this.$store.dispatch("AccountStore/addAccount", account);
                             }
-                        })
-                        .then(() => {
-                            this.$router.replace("/dashboard");
-                        }).catch((e) => {
-                            EventBus.$emit("popup", "load-end");
-                            if (e=='invalid') {
-                                this.$refs.errorModal.show();
-                                this.errorMsg = this.$t("invalid_password");
-                            }
-                            if (e=='update_failed') {
-                                this.$refs.errorModal.show();
-                                this.errorMsg = this.$t("update_failed");
-                            }
-                        });
+                        }
+                        this.$router.replace("/dashboard");
+                    } else {
+                        throw "No account selected!";
+                    }
+                } catch (err) {
+                    this._handleError(err);
+                } finally {
+                    EventBus.$emit("popup", "load-end");
                 }
             }
         }
