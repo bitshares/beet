@@ -15,9 +15,11 @@ addons:
     sources:
     - ubuntu-toolchain-r-test
     packages:
-    - gcc-4.8
-    - g++-4.8
+    - gcc-4.9
+    - g++-4.9
     - icnsutils
+    - build-essential
+    - libstdc++6
     - graphicsmagick
     - xz-utils
     - fakeroot
