@@ -8,14 +8,14 @@
         <p
             class="mb-2 font-weight-bold"
         >
-            {{ $t('account_name',{ 'chain' : selectedChain}) }}
+            {{ $t(accessType == 'account' ? 'account_name' : 'address_name', { 'chain' : selectedChain}) }}
         </p>
         <input
             id="inputAccount"
             v-model="accountname"
             type="text"
             class="form-control mb-3"
-            :placeholder="$t('account_name',{ 'chain' : selectedChain})"
+            :placeholder="$t(accessType == 'account' ? 'account_name' : 'address_name', { 'chain' : selectedChain})"
             required
         >
         <p class="my-3 font-weight-normal">
@@ -25,14 +25,14 @@
             <p
                 class="mb-2 font-weight-bold"
             >
-                {{ $t('active_authority') }}
+                {{ $t(accessType == 'account' ? 'active_authority' : 'public_authority') }}
             </p>
             <input
                 id="inputActive"
                 v-model="activepk"
                 type="password"
                 class="form-control mb-3 small"
-                :placeholder="$t('active_authority_placeholder')"
+                :placeholder="$t(accessType == 'account' ? 'active_authority_placeholder' : 'public_authority_placeholder')"
                 required
             >
         </template>
@@ -110,12 +110,17 @@
                         }
                     };
                 }
-                let authorities = {
-                    active: this.activepk,
-                    memo: this.memopk,
-                    owner: this.includeOwner == 1 ? this.ownerpk : null
-                };
                 let blockchain = getBlockchain(this.selectedChain);
+                let authorities = {};
+                if (this.requiredFields.active != null) {
+                    authorities.active = this.activepk;
+                }
+                if (this.requiredFields.memo != null) {
+                    authorities.memo = this.memopk;
+                }
+                if (this.includeOwner == 1 && this.requiredFields.owner != null) {
+                    authorities.owner = this.ownerpk;
+                }
                 let account = await blockchain.verifyAccount(this.accountname, authorities);
                 return {
                     account: {

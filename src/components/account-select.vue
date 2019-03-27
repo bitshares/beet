@@ -11,7 +11,7 @@
             :key="`account-${index}`"
             :value="account"
         >
-            {{ account.chain + ": " + account.accountName + (account.accountName !== account.accountID ? " (" + account.accountID + ")" : "")}}
+            {{ blockchains[account.chain].name + (!!blockchains[account.chain].testnet ? " (Testnet)" : "") + ": " + account.accountName + (account.accountName !== account.accountID ? " (" + account.accountID + ")" : "")}}
         </option>
     </select>
 </template>
@@ -19,6 +19,8 @@
 <script>
     import RendererLogger from "../lib/RendererLogger";
     const logger = new RendererLogger();
+    import {blockchains} from "../config/config";
+
     export default {
         name: "AccountSelect",
         i18nOptions: { namespaces: "common" },
@@ -29,7 +31,8 @@
         },
         data() {
             return {                
-                selectedAccount: this.value
+                selectedAccount: this.value,
+                blockchains: blockchains,
             };
         },
         computed: {
