@@ -47,9 +47,7 @@ export default class Bitcoin extends BlockchainAPI {
                         account.memo = {public_key: null};
                         account.id = accountname;
 
-                        account.n_tx = result.n_tx;
-                        account.total_received = result.total_received;
-                        account.total_sent = result.total_sent;
+                        account.raw = result;
 
                         resolve(account);
                     }).catch(reject);
@@ -79,7 +77,7 @@ export default class Bitcoin extends BlockchainAPI {
                 balances.push({
                     asset_type: "UIA",
                     asset_name: this._getCoreToken(),
-                    balance: parseFloat(account.total_received - account.total_sent),
+                    balance: parseFloat(account.raw.total_received - account.raw.total_sent),
                     owner: "-",
                     prefix: ""
                 });
@@ -153,6 +151,54 @@ export default class Bitcoin extends BlockchainAPI {
 
     _verifyAccountAndKey(accountName, publicKey, permission = null) {
         return super._verifyAccountAndKey(accountName, this._publicKeyToAddress(publicKey), permission = null);
+    }
+
+    async transfer(key, from, to, amount, memo = null) {
+        let account = await this.getAccount(from);
+
+        let unspent = [];
+        account.raw.txs.forEach(_item => {
+            _item.out.forEach(_tmp => {
+                if (!_tmp.spent) {
+                    unspent.push(_tmp);
+                }
+            });
+        });
+
+        let fee = 100;
+
+        const txb = new bitcoin.TransactionBuilder();
+        txb.setVersion(1);
+
+        let total_unspent = 0;
+
+        unspent.forEach(out => {
+            if (total_unspent >= amount + fee) {
+                return;
+            }
+            txb.addInput(out.script, out.n);
+            total_unspent = total_unspent + out.value;
+        });
+
+        let overspent = total_unspent - amount - fee;
+        txb.addOutput(to, amount);
+        if (overspent > 0) {
+            txb.addOutput(to, amount);
+        }
+
+        const keyPair = bitcoin.ECPair.fromWIF(key);
+        unspent.forEach((item, index) => {
+            txb.sign(index, keyPair);
+        });
+
+        let hex = txb.build().toHex();
+
+        return await fetch("https://blockchain.info/pt/pushtx",
+            {
+                method: 'POST',
+                form: {tx: hex}
+            }
+        );
     }
 
 }
