@@ -34,7 +34,8 @@
 <script>
     import getBlockchain from "../lib/blockchains/blockchainFactory"
     import RendererLogger from "../lib/RendererLogger";
-    import { EventBus } from "../lib/event-bus.js";    const logger = new RendererLogger();
+    import { EventBus } from "../lib/event-bus.js";
+    const logger = new RendererLogger();
 
     export default {
         name: "NodeSelect",

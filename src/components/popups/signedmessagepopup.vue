@@ -65,8 +65,8 @@
             _execute: async function () {
                 let blockchain = getBlockchain(this.incoming.chain);
                 return await blockchain.signMessage(
-                    this.incoming.signingAccount.keys.active,
-                    this.incoming.signingAccount.accountName,
+                    this.$store.getters['AccountStore/getSigningKey'](this.incoming).keys.unencrypted.active,
+                    this.$store.getters['AccountStore/getSigningKey'](this.incoming).accountName,
                     this.incoming.params
                 );
             }

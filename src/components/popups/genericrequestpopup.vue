@@ -14,18 +14,18 @@
         <br>
         <pre class="text-left custom-content"><code>{{ incoming.generic.details }}</code></pre>
         <b-btn
-                class="mt-3"
-                variant="success"
-                block
-                @click="_clickedAllow"
+            class="mt-3"
+            variant="success"
+            block
+            @click="_clickedAllow"
         >
             {{ incoming.generic.acceptText || $t('operations:rawsig.accept_btn') }}
         </b-btn>
         <b-btn
-                class="mt-1"
-                variant="danger"
-                block
-                @click="_clickedDeny"
+            class="mt-1"
+            variant="danger"
+            block
+            @click="_clickedDeny"
         >
             {{ incoming.generic.rejectText || $t('operations:rawsig.reject_btn') }}
         </b-btn>
@@ -51,7 +51,7 @@
         methods: {
             _execute: async function () {
                 let returnValue = null;
-                if (!!this.incoming.acceptCall) {
+                if (this.incoming.acceptCall) {
                     returnValue = this.incoming.acceptCall();
                 } else {
                     let blockchain = getBlockchain(this.incoming.chain);
@@ -64,7 +64,7 @@
                     );
                     let transaction = await blockchain.sign(
                         operation,
-                        this.incoming.signingAccount.keys.active
+                        this.$store.getters['AccountStore/getSigningKey'](this.incoming).keys.unencrypted.active
                     );
                     returnValue = await blockchain.broadcast(transaction);
                 }

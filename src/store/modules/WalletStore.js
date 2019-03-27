@@ -69,10 +69,14 @@ const actions = {
                     });
                     commit(GET_WALLET, public_wallets[0]);
                     let accountlist = decrypted_wallet;
-                    
-                    dispatch('AccountStore/loadAccounts', accountlist, {
+
+                    dispatch('AccountStore/loadAccounts', {
+                        accountlist: accountlist,
+                        pass: payload.wallet_pass
+                    }, {
                         root: true
                     });
+                    logger.debug(JSON.stringify(accountlist));
                     resolve();
                 } catch (e) {
                     throw (e);
@@ -82,7 +86,7 @@ const actions = {
             });
         });
     },
-    
+
     confirmUnlock({
         commit
     }) {
@@ -114,13 +118,26 @@ const actions = {
                     });
                     commit(SET_WALLET_STATUS, true);
                     commit(SET_WALLETLIST, wallets);
+
+
+                    for (let keytype in payload.walletdata.keys) {
+                        try {
+                            payload.walletdata.keys[keytype] = CryptoJS.AES.encrypt(payload.walletdata.keys[keytype], payload.password).toString();
+                        } catch (e) {
+                            reject('Wrong Password');
+                        }
+                    }
+
                     let walletdata = CryptoJS.AES.encrypt(JSON.stringify([payload.walletdata]), payload.password).toString();
                     BeetDB.wallets_encrypted.put({
                         id: walletid,
                         data: walletdata
                     });
                     commit(GET_WALLET, newwallet);
-                    dispatch('AccountStore/loadAccounts', [payload.walletdata], {
+                    dispatch('AccountStore/loadAccounts', {
+                        accountlist: [payload.walletdata],
+                        pass: payload.password
+                    }, {
                         root: true
                     });
                     resolve();
@@ -138,8 +155,13 @@ const actions = {
         rootState
     }, payload) {
         return new Promise(async (resolve, reject) => {
-            let walletdata =  rootState.AccountStore.accountlist.slice();
-            let newwalletdata=walletdata;
+            let walletdata = rootState.AccountStore.accountlist.slice();
+            let newwalletdata = walletdata;
+
+            for (let keytype in payload.account.keys) {
+                payload.account.unencrypted[keytype] = payload.account.keys[keytype];
+                payload.account.keys[keytype] = CryptoJS.AES.encrypt(payload.account.keys[keytype], payload.password).toString();
+            }
             newwalletdata.push(payload.account);
             await BeetDB.wallets_encrypted.get({
                 id: state.wallet.id
@@ -170,7 +192,7 @@ const actions = {
             }).catch((e) => {
                 reject(e);
             });
-            
+
         });
     },
     loadWallets({
