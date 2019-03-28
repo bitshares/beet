@@ -69,14 +69,10 @@ const actions = {
                     });
                     commit(GET_WALLET, public_wallets[0]);
                     let accountlist = decrypted_wallet;
-
-                    dispatch('AccountStore/loadAccounts', {
-                        accountlist: accountlist,
-                        pass: payload.wallet_pass
-                    }, {
+                    ipcRenderer.send('seeding',  payload.wallet_pass);                    
+                    dispatch('AccountStore/loadAccounts', accountlist, {
                         root: true
                     });
-                    logger.debug(JSON.stringify(accountlist));
                     resolve();
                 } catch (e) {
                     throw (e);
@@ -86,7 +82,7 @@ const actions = {
             });
         });
     },
-
+    
     confirmUnlock({
         commit
     }) {
@@ -118,8 +114,7 @@ const actions = {
                     });
                     commit(SET_WALLET_STATUS, true);
                     commit(SET_WALLETLIST, wallets);
-
-
+                    
                     for (let keytype in payload.walletdata.keys) {
                         try {
                             payload.walletdata.keys[keytype] = CryptoJS.AES.encrypt(payload.walletdata.keys[keytype], payload.password).toString();
@@ -127,17 +122,13 @@ const actions = {
                             reject('Wrong Password');
                         }
                     }
-
                     let walletdata = CryptoJS.AES.encrypt(JSON.stringify([payload.walletdata]), payload.password).toString();
                     BeetDB.wallets_encrypted.put({
                         id: walletid,
                         data: walletdata
                     });
                     commit(GET_WALLET, newwallet);
-                    dispatch('AccountStore/loadAccounts', {
-                        accountlist: [payload.walletdata],
-                        pass: payload.password
-                    }, {
+                    dispatch('AccountStore/loadAccounts', [payload.walletdata], {
                         root: true
                     });
                     resolve();
@@ -155,11 +146,10 @@ const actions = {
         rootState
     }, payload) {
         return new Promise(async (resolve, reject) => {
-            let walletdata = rootState.AccountStore.accountlist.slice();
-            let newwalletdata = walletdata;
-
-            for (let keytype in payload.account.keys) {
-                payload.account.unencrypted[keytype] = payload.account.keys[keytype];
+            let walletdata =  rootState.AccountStore.accountlist.slice();
+            let newwalletdata=walletdata;
+            
+            for (let keytype in payload.account.keys) {                
                 payload.account.keys[keytype] = CryptoJS.AES.encrypt(payload.account.keys[keytype], payload.password).toString();
             }
             newwalletdata.push(payload.account);
@@ -192,7 +182,7 @@ const actions = {
             }).catch((e) => {
                 reject(e);
             });
-
+            
         });
     },
     loadWallets({

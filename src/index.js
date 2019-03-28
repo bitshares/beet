@@ -11,6 +11,8 @@ import {
 } from 'electron-compile';
 import Logger from './lib/Logger';
 import context_menu from './lib/electron_context_menu';
+import ecc from "eosjs-ecc";
+import CryptoJS from 'crypto-js';
 
 context_menu({
     prepend: (params, browserWindow) => [{
@@ -26,13 +28,14 @@ let logLevel = 0;
 
 if (isDevMode) {
     enableLiveReload();
-    logLevel=3;
+    logLevel = 3;
 }
 
 const logger = new Logger(logLevel);
 let first = true;
 let tray = null;
 let minimised = false;
+
 const createWindow = async () => {
     // Create the browser window.
     mainWindow = new BrowserWindow({
@@ -165,7 +168,24 @@ const createWindow = async () => {
             }
         }
     });
-
+    let seed, key;
+    ipcMain.on('key', (event, arg) => {
+        if (key) return;
+        key = arg;
+        logger.log(key);
+    });
+    ipcMain.on('seeding', (event, arg) => {
+        seed = arg;
+        logger.log(seed);
+    });
+    ipcMain.on('decrypt', (event, arg) => {
+        const {
+            data,
+            sig
+        } = arg;
+        if (ecc.recover(sig, 'decrypt') !== key) return event.sender.send('decrypt', null);
+        event.sender.send('decrypt', CryptoJS.AES.decrypt(data, seed).toString(CryptoJS.enc.Utf8));
+    });
     ipcMain.on('log', (event, arg) => {
         logger[arg.level](arg.data);
     });
@@ -205,6 +225,3 @@ app.on('activate', () => {
         createWindow();
     }
 });
-
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and import them here.

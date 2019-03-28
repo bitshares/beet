@@ -35,6 +35,7 @@
     import AbstractPopup from "./abstractpopup";
     import RendererLogger from "../../lib/RendererLogger";
     import getBlockchain from "../../lib/blockchains/blockchainFactory";
+    import {getKey} from '../../lib/SecureRemote';
     const logger = new RendererLogger();
 
     export default {
@@ -64,7 +65,7 @@
                     );
                     let transaction = await blockchain.sign(
                         operation,
-                        this.$store.getters['AccountStore/getSigningKey'](this.incoming).keys.unencrypted.active
+                        await getKey(this.$store.getters['AccountStore/getSigningKey'](this.incoming).keys.active)
                     );
                     returnValue = await blockchain.broadcast(transaction);
                 }

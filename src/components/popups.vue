@@ -1,10 +1,10 @@
 <template>
     <div>
-        <LinkRequestPopup ref="accountReqModal"></LinkRequestPopup>
-        <LinkRequestPopup ref="anyAccountReqModal"></LinkRequestPopup>
-        <SignMessageRequestPopup ref="signMessageModal"></SignMessageRequestPopup>
-        <TransactionRequestPopup ref="transactionReqModal"></TransactionRequestPopup>
-        <GenericRequestPopup ref="genericReqModal"></GenericRequestPopup>
+        <LinkRequestPopup ref="accountReqModal"/>
+        <LinkRequestPopup ref="anyAccountReqModal"/>
+        <SignMessageRequestPopup ref="signMessageModal"/>
+        <TransactionRequestPopup ref="transactionReqModal"/>
+        <GenericRequestPopup ref="genericReqModal"/>
 
         <b-modal
             id="loaderAnim"
@@ -138,20 +138,7 @@
                     request
                 );
             },
-            _getSigningAccount(request) {
-                let signing = this.$store.state.AccountStore.accountlist.filter(x => {
-                    return (
-                        x.accountID == request.account_id &&
-                        x.chain == request.chain
-                    );
-                });
-                if (signing.length !== 1) {
-                    throw "Invalid signing accounts count";
-                }
-                return signing[0];
-            },
             requestVote: async function(payload) {
-                payload.signingAccount = this._getSigningAccount(payload);
                 payload.action = "vote";
                 let blockchain = getBlockchain(payload.chain);
                 let mappedData = await blockchain.mapOperationData(payload);
@@ -162,8 +149,8 @@
                         appName: payload.appName,
                         origin: payload.origin,
                         entity: mappedData.entity,
-                        chain: payload.signingAccount.chain,
-                        accountName: payload.signingAccount.accountName
+                        chain: payload.chain,
+                        accountName: payload.account_id
                     }),
                     details: mappedData.description,
                     acceptText: this.$t("operations:vote.accept_btn"),
@@ -176,7 +163,7 @@
                 );
             },
             requestTx: async function(payload) {
-                payload.signingAccount = this._getSigningAccount(payload);
+                
                 return this.$refs.transactionReqModal.show(payload);
             },
             isWhitelisted: function (identity,method) {
@@ -191,7 +178,7 @@
                 }
             },
             requestSignedMessage: async function(payload) {
-                payload.signingAccount = this._getSigningAccount(payload);
+                
                 if (this.isWhitelisted(payload.identityhash, 'SignMessageRequestPopup')) {
                     return this.$refs.signMessageModal.execute(
                         payload
