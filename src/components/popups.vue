@@ -2,6 +2,7 @@
     <div>
         <LinkRequestPopup ref="linkReqModal" />
         <ReLinkRequestPopup ref="reLinkReqModal" />
+        <IdentityRequestPopup ref="identityReqModal" />
         <SignMessageRequestPopup ref="signMessageModal" />
         <TransactionRequestPopup ref="transactionReqModal" />
         <GenericRequestPopup ref="genericReqModal" />
@@ -47,6 +48,7 @@
     import { EventBus } from "../lib/event-bus.js";
     import getBlockchain from "../lib/blockchains/blockchainFactory";
     import LinkRequestPopup from "./popups/linkrequestpopup";
+    import IdentityRequestPopup from "./popups/identityrequestpopup";
     import ReLinkRequestPopup from "./popups/relinkrequestpopup";
     import GenericRequestPopup from "./popups/genericrequestpopup";
     import TransactionRequestPopup from "./popups/transactionrequestpopup";
@@ -61,6 +63,7 @@
         components: {
             SignMessageRequestPopup,
             TransactionRequestPopup,
+            IdentityRequestPopup,
             ReLinkRequestPopup,
             LinkRequestPopup,
             GenericRequestPopup
@@ -132,8 +135,8 @@
                 });
                 if (index !== -1) this.alerts.splice(index, 1);
             },
-            requestAccess: async function() {
-                throw "Needs implementing";
+            requestAccess: async function(request) {
+                return this.$refs.identityReqModal.show(request);
             },
             requestLink: async function(request) {
                 return this.$refs.linkReqModal.show(request);

@@ -72,7 +72,6 @@ export default class BlockchainAPI {
     signMessage(key, accountName, randomString) {
         return new Promise((resolve,reject) => {
             // do as a list, to preserve order
-            console.log(key);
             let message = [
                 "from",
                 accountName,
