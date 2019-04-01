@@ -65,7 +65,7 @@
                     accounts = [{}].concat(accounts);
                 }
                 return accounts.map((acc, i) => {
-                    acc.trackId = `account-${i}`;
+                    acc.trackId = i;
                     let match = this.existing.filter(
                         x => x.account_id == acc.accountID && x.chain == acc.chain
                     );

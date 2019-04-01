@@ -13,7 +13,7 @@
             v-b-tooltip.hover
             :title="$t('operations:relink.request_tooltip')"
         >
-            {{ $t('operations:relink.request', {appName: incoming.appName, origin: incoming.origin, chain: incoming.chain, accountId: incoming.account_id }) }} &#10068;
+            {{ $t('operations:relink.request', {appName: incoming.appName, origin: incoming.origin, chain: incoming.chain, accountId: app.account_id }) }} &#10068;
         </div>
         <br>
         <b-btn
@@ -46,7 +46,8 @@
         data() {
             return {
                 type: "ReLinkRequestPopup",
-                chosenAccount: { trackId: 0 }
+                chosenAccount: { trackId: 0 },
+                app: {}
             };
         },
         mounted() {
@@ -56,23 +57,20 @@
             _onShow: function() {
                 this.error = false;
                 console.log(this.incoming);
+                this.app = this.$store.state.OriginStore.apps.filter(
+                    x => x.identityhash == this.incoming.payload.identityhash
+                )[0];
             },
             _execute: function() {
-                let apps = this.$store.state.OriginStore.apps.filter(
-                    x => x.identityhash == this.incoming.payload.identityhash
+                let account = this.$store.state.AccountStore.accountlist.filter(
+                    x => x.accountId == this.app.account_id && x.chain == this.app.chain
                 );
-                if (apps.length == 1) {
-                    let app = apps[0];
-                    let account = this.$store.state.AccountStore.accountlist.filter(
-                        x => x.accountId == app.account_id && x.chain == app.chain
-                    );
-                    return {
-                        identityhash: this.incoming.payload.identityhash,
-                        name: account.accountName,
-                        chain: app.chain,
-                        id: app.account_id
-                    };
-                }
+                return {
+                    identityhash: this.incoming.payload.identityhash,
+                    name: account.accountName,
+                    chain: this.app.chain,
+                    id: this.app.account_id
+                };
             }
         }
     };
