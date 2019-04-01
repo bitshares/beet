@@ -7200,7 +7200,7 @@ p {
             width: 100%;
             color: #4CAF50; }
             .linkStyle .multiselect.form-control .multiselect__content-wrapper ul li .multiselect__option .prevLink:after {
-              content: ' - linked'; }
+              content: attr(data-linked); }
         .linkStyle .multiselect.form-control .multiselect__content-wrapper ul li .multiselect__option--selected {
           font-weight: bold; }
 

@@ -9,6 +9,7 @@
     "invalid_password": "Password is incorrect. Please try again.",
     "update_failed": "Could not save new account.",
     "unlock_cta": "Unlock",
+    "previously_linked": " - LINKED",
     "create_cta": "Create a new Wallet",
     "step_counter": "Step {{step_no}}",
     "friendly_cta": "Set a friendly name for your new wallet:",

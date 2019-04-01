@@ -16,6 +16,7 @@
             <span
                 class="option__desc"
                 :class="{ prevLink: props.option.linked }"
+                :data-linked="$t('previously_linked')"
             >
                 <span class="option__title options">
                     {{ accountLabel(props.option) }}
