@@ -2,7 +2,7 @@
     "link": {
         "title": "Access Link Request",
         "request": "The application `{{appName}}` from `{{origin}}` is requesting access to a {{chain}} account.",
-        "request_fresh": "The application has already linked a {{chain}} account before.",
+        "request_fresh": "The application has already linked a {{chain}} account before as marked in the list below.",
         "request_tooltip": "The application will receive your account details (name and id) and link to Beet.",
         "request_cta": "Select account to provide.",
         "accept_btn": "Allow",
@@ -10,9 +10,8 @@
     },
     "relink": {
         "title": "Access ReLink Request",
-        "request": "The application `{{appName}}` from `{{origin}}` is requesting access AGAIN to a {{chain}} account.",
-        "request_tooltip": "CarefulThe application will receive your account details (name and id) and link to Beet.",
-        "request_cta": "Select account to provide."
+        "request": "The application `{{appName}}` from `{{origin}}` is requesting to relink the previously linked {{chain}} account: {{accountId}}. This is usually due to having deleted your browser's cache. On rare ocassions, this may be a phishing attempt so please double check the site you are visiting.",
+        "request_tooltip": "The previous link between the appplication and the account referencec will be reset."
     },
     "account_id": {
         "title": "Account Details Request",
