@@ -89,14 +89,26 @@ export default class BeetAPI {
             return this._parseReject("BeetAPI.getAccount", request, err);
         }
     }
+    static async [Actions.REQUEST_RELINK](request, vue) {
+        try {
+            let response;
+            response = await vue.requestReLink(request);
+            return Object.assign(request, {
+                identity: response.response
+            });
+        } catch (e) {
+            return {
+                id: request.id,
+                response: {
+                    isLinked: false
+                }
+            };
+        }
+    }
     static async [Actions.REQUEST_LINK](request, vue) {
         try {
             let response;
-            if (request.chain == 'ANY') {
-                response = await vue.requestAnyAccess(request);
-            }else{
-                response = await vue.requestAccess(request);
-            }
+            response = await vue.requestLink(request);
             return Object.assign(request, {
                 identity: response.response
             });

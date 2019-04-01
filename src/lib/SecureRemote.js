@@ -1,8 +1,9 @@
 import {
     ipcRenderer,
 } from 'electron';
-import ecc from "eosjs-ecc";
-import IdGenerator from "./IdGenerator";
+import { ec as EC } from "elliptic";
+import CryptoJS from 'crypto-js';
+const ec = new EC('secp256k1');
 
 class proover {
     constructor() {
@@ -10,13 +11,13 @@ class proover {
     }
 
     async regen() {
-        const key = await ecc.PrivateKey.fromSeed(IdGenerator.text(64));
-        this.wif = key.toWif();
-        ipcRenderer.send('key', key.toPublic().toString());
+        this.key = ec.genKeyPair();
+        let publicKey = this.key.getPublic().encode('hex');
+        ipcRenderer.send('key', publicKey);
     }
 
     sign(data) {
-        return ecc.sign(data, this.wif);
+        return this.key.sign(CryptoJS.SHA256(data).toString()).toDER();
     }
 }
 

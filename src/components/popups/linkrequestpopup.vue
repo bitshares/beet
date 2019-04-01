@@ -16,16 +16,22 @@
             {{ $t('operations:link.request', {appName: incoming.appName, origin: incoming.origin, chain: incoming.chain }) }} &#10068;
         </div>
         <br>
+        <div v-if="existing.length>0">
+            {{ $t('operations:link.request_fresh', {chain: incoming.chain }) }}
+        </div>
+        <br>
         <AccountSelect
+            v-if="incoming.chain"
             v-model="chosenAccount"
             :chain="incoming.chain"
+            :existing="existing"
             :cta="$t('operations:link.request_cta')"
         />
         <b-btn
             class="mt-3"
             variant="success"
             block
-            @click="_clickedAllow"
+            @click="clickedAllow"
         >
             {{ $t('operations:link.accept_btn') }}
         </b-btn>
@@ -47,21 +53,45 @@
 
     export default {
         name: "LinkRequestPopup",
-        extends: AbstractPopup,
         components: { AccountSelect },
+        extends: AbstractPopup,
         data() {
             return {
                 type: "LinkRequestPopup",
-                chosenAccount: {},
+                chosenAccount: {trackId: 0},
             };
         },
+        computed: {
+            existing() {
+                if (this.incoming.chain=="ANY") {
+                    return this.$store.state.OriginStore.apps.filter( (x) => { return x.appName==this.incoming.appName && x.origin==this.incoming.origin});
+                }else{
+                    return this.$store.state.OriginStore.apps.filter( (x) => { return x.appName==this.incoming.appName && x.origin==this.incoming.origin && x.chain==this.incoming.chain});
+                }
+            }
+        },
+        mounted() {
+            logger.debug("Link Popup initialised");
+        },
         methods: {
+            _onShow: function () {
+                this.error=false;                
+                this.chosenAccount={trackId: 0};
+            },
             _execute: function () {
                 return {
                     name: this.chosenAccount.accountName,
                     chain: this.chosenAccount.chain,
                     id: this.chosenAccount.accountID
                 };
+            },
+            clickedAllow: function() {
+                if (this.chosenAccount.trackId==0) {
+                    this.error=true;
+                }else{
+                    this.error=false;
+                    this._clickedAllow();
+                }
             }
         }
     };

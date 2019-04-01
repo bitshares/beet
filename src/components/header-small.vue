@@ -6,7 +6,7 @@
                     <img
                         class="logo-small"
                         src="img/beet.png"
-                        alt=""
+                        alt
                     >
                     <h4 class="h4 beet-typo-small">
                         {{ $t('appName') }}
@@ -31,7 +31,7 @@
             return {};
         },
         mounted() {
-            logger.debug('Small Header mounted');
+            logger.debug("Small Header mounted");
         }
     };
 </script>

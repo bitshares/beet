@@ -59,6 +59,9 @@
                 }
             };
         },
+        mounted() {
+            logger.debug("Tx Popup initialised");
+        },
         methods: {
             _execute: async function () {
                 let blockchain = getBlockchain(this.incoming.chain);

@@ -49,6 +49,9 @@
                 }
             };
         },
+        mounted() {
+            logger.debug("Req Popup initialised");
+        },
         methods: {
             _execute: async function () {
                 let returnValue = null;

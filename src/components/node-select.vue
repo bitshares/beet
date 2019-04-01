@@ -27,6 +27,22 @@
                 class="status align-self-center"
                 :class="{'icon-connected': isConnected,'icon-disconnected': !isConnected}"
             />
+            <a
+                href="#"
+                class="status align-self-center"
+                @click="logout()"
+            > Log</a>
+
+            <router-link
+                to="/settings"
+                tag="a"
+                class="status align-self-center"
+                replace
+            >
+                <span
+                    class="icon-settings"
+                />
+            </router-link>            
         </div>
     </div>
 </template>
@@ -122,6 +138,12 @@
                 this.$emit("first-connect");
             }).catch(() => {
             });
+        },
+        methods: {
+            logout: async function () {
+                await this.$store.dispatch("WalletStore/logout");                 
+                this.$router.replace("/");
+            }
         }
     };
 </script>

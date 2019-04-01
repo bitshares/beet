@@ -4,6 +4,7 @@ import HeaderSmall from "../components/header-small";
 import Start from "../components/start";
 import Dashboard from "../components/dashboard";
 import AddAccount from "../components/add-account";
+import Settings from "../components/settings";
 
 const router = new VueRouter({
   routes: [{
@@ -11,6 +12,13 @@ const router = new VueRouter({
       components: {
         default: Start,
         header: HeaderGuest
+      }
+    },
+    {
+      path: '/settings',
+      components: {
+        default: Settings,
+        header: HeaderSmall
       }
     },
     {

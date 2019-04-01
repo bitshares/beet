@@ -72,6 +72,7 @@ export default class BlockchainAPI {
     signMessage(key, accountName, randomString) {
         return new Promise((resolve,reject) => {
             // do as a list, to preserve order
+            console.log(key);
             let message = [
                 "from",
                 accountName,
@@ -184,7 +185,7 @@ export default class BlockchainAPI {
         Object.keys(required).forEach(key => {
             let given = credentials[key];
             let mandatory = required[key];
-            if (!!mandatory) {
+            if (mandatory) {
                 // mandatory == null means this authority is not used in this blockchain
                 if (!given) {
                     throw "Authority (" + key + ") is mandatory, but not given by user";
@@ -196,7 +197,7 @@ export default class BlockchainAPI {
                     throw {key: "invalid_key_error"};
                 }
                 let found = false;
-                if (!!account[key].public_keys) {
+                if (account[key].public_keys) {
                     account[key].public_keys.forEach(key => {
                         if (this._compareKeys(key[0], publicKey)) {
                             found = true;

@@ -20,10 +20,7 @@
     </div>
 </template>
 <script>
-    import { EventBus } from '../lib/event-bus.js';
-    import {
-        ipcRenderer,
-    } from 'electron';
+    import { ipcRenderer } from "electron";
     import RendererLogger from "../lib/RendererLogger";
     const logger = new RendererLogger();
 
@@ -34,13 +31,13 @@
             return {};
         },
         mounted() {
-            logger.debug('Main Beet frame mounted');
+            logger.debug("Main Beet frame mounted");
         },
         methods: {
-            minimise: ()=> {
+            minimise: () => {
                 ipcRenderer.send("minimise", true);
             },
-            close:()=> {
+            close: () => {
                 ipcRenderer.send("close", false);
             }
         }

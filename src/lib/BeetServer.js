@@ -36,15 +36,18 @@ const linkHandler = async (req) => {
                 }
             };
         }
+        
         let identityhash = _calculateIdentityHash(req, userResponse.chain, userResponse.identity.id);
         let app = _findApp(identityhash);
         let existing = !!app;
-        if (!existing) {
-            // link this new application
+        console.log('relink: ');
+        console.log(userResponse);
+        if (userResponse.identity.identityhash==identityhash){
+            existing=false;
             let secret = req.key.derive(ec.keyFromPublic(req.payload.pubkey, 'hex').getPublic());
             app = await store.dispatch('OriginStore/addApp', {
                 appName: req.appName,
-                identityhash: identityhash,
+                identityhash: userResponse.identity.identityhash,
                 origin: req.origin,
                 account_id: userResponse.identity.id,
                 chain: userResponse.identity.chain,
@@ -54,6 +57,23 @@ const linkHandler = async (req) => {
             // todo: check if setting the next two is necessary
             app.secret = secret.toString(16);
             app.next_hash = req.payload.next_hash;
+        }else{
+            if (!existing) {
+                // link this new application
+                let secret = req.key.derive(ec.keyFromPublic(req.payload.pubkey, 'hex').getPublic());
+                app = await store.dispatch('OriginStore/addApp', {
+                    appName: req.appName,
+                    identityhash: identityhash,
+                    origin: req.origin,
+                    account_id: userResponse.identity.id,
+                    chain: userResponse.identity.chain,
+                    secret: secret.toString(16),
+                    next_hash: req.payload.next_hash
+                });
+                // todo: check if setting the next two is necessary
+                app.secret = secret.toString(16);
+                app.next_hash = req.payload.next_hash;
+            }
         }
         // todo: why copy content of request?
         return Object.assign(req, {
@@ -112,6 +132,11 @@ export default class BeetServer {
             logger.debug("incoming link request", data);
             let status = await linkHandler(data);
             server.respondLink(data.client, status);
+        }); 
+        server.on('relink', async (data) => {
+            logger.debug("incoming relink request", data);
+            let status = await linkHandler(data);
+            server.respondReLink(data.client, status);
         });
         server.on('authenticate', async (data) => {
             logger.debug("incoming authenticate request", data);

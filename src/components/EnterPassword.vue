@@ -30,14 +30,16 @@
                 type="password"
                 class="form-control mb-3"
                 :placeholder="$t('confirm_placeholder')"
-                required=""
+                required
             >
         </template>
     </div>
 </template>
 
 <script>
-    import Password from 'vue-password-strength-meter'
+    import Password from "vue-password-strength-meter";
+    import RendererLogger from "../lib/RendererLogger";
+    const logger = new RendererLogger();
 
     export default {
         name: "EnterPassword",
@@ -57,12 +59,15 @@
             };
         },
         mounted() {
-            logger.debug('Account-Add wizard Mounted');
+            logger.debug("Account-Add wizard Mounted");
         },
         methods: {
             getPassword: function() {
-                if (this.password == "" || (this.password != this.confirmPassword && this.new)) {
-                    throw {key: "confirm_pass_error"};
+                if (
+                    this.password == "" ||
+                    (this.password != this.confirmPassword && this.new)
+                ) {
+                    throw { key: "confirm_pass_error" };
                 }
                 return this.password;
             }

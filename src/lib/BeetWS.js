@@ -13,7 +13,9 @@ import crypto from 'crypto';
 //import eccrypto from 'eccrypto';
 import Https from 'https';
 import Fs from 'fs';
-import {ec as EC} from "elliptic";
+import {
+    ec as EC
+} from "elliptic";
 import RendererLogger from "./RendererLogger";
 const logger = new RendererLogger();
 
@@ -23,7 +25,7 @@ import RendererLogger from "./RendererLogger";
 const logger = new RendererLogger();
 */
 export default class BeetWS extends EventEmitter {
-    constructor(port,sslport, timeout) {
+    constructor(port, sslport, timeout) {
         super() // required
         var self = this;
         const httpsServer = Https.createServer({
@@ -32,9 +34,9 @@ export default class BeetWS extends EventEmitter {
         });
         const server = new WebSocket.Server({
             server: httpsServer
-        });        
+        });
         const plainserver = new WebSocket.Server({
-           port: port
+            port: port
         });
         httpsServer.listen(sslport);
         this._clients = [];
@@ -44,7 +46,7 @@ export default class BeetWS extends EventEmitter {
                 let client = self._clients[clientid];
                 if (client.isAlive === false || client.readyState != 1) {
                     self.emit("disconnected", client.id);
-                    delete (self._clients[client.id]);
+                    delete(self._clients[client.id]);
                     return client.terminate();
                 } else {
                     client.isAlive = false;
@@ -71,13 +73,13 @@ export default class BeetWS extends EventEmitter {
     _handleMessage(client, data) {
         console.groupCollapsed("incoming request: " + data.type);
         console.log("payload", data);
-        if (data.type == 'version') {
-            client.send('{ "type": "version", "error": false, "result": { "version": ' + JSON.stringify(version) + '}}');
-        } else {
-            if (client.isAuthenticated) {
-                if (client.isLinked) {
-                    if (data.type == 'api') {
-                        let hash = CryptoJS.SHA256('' + data.id).toString();
+        switch(data.type) {
+            case 'version':
+                client.send('{ "type": "version", "error": false, "result": { "version": ' + JSON.stringify(version) + '}}');
+                break;
+            case 'api':
+                if (client.isAuthenticated) {
+                    if (client.isLinked) {
                         if (hash == client.next_hash) {
                             client.otp.counter = data.id;
                             var key = client.otp.generate();
@@ -104,41 +106,66 @@ export default class BeetWS extends EventEmitter {
                         } else {
                             client.send('{ "id": "' + data.id + '", "error": true, "payload": { "code":2,"message": "Unexpected request hash. Please relink"}}');
                         }
-                    } else {
-                        client.send('{ "id": "' + data.id + '", "error": true, "payload": { "code":1, "message": "Beet could not understand your request"}}');
+                    }else{                        
+                        client.send('{ "id": "' + data.id + '", "error": true, "payload": { "code":4, "message": "This app is not yet linked"}}')
                     }
-                } else {
-                    if (data.type == 'link') {
-                        let linkobj = {
-                            "id": data.id,
-                            "client": client.id,
-                            "payload": data.payload,
-                            "chain": data.payload.chain,
-                            "origin": client.origin,
-                            "appName": client.appName,
-                            "browser": client.browser,
-                            "key": client.keypair,
-                            "type": 'link'
-                        };
-                        console.log("requesting user response", linkobj);
-                        this.emit('link', linkobj);
-                    } else {
-                        client.send('{ "id": "' + data.id + '", "error": true, "payload": { "code":4, "message": "This app is not yet linked"}}');
-                    }
-                }
-            } else {
-                if (data.type == 'authenticate') {
-                    let event = {
-                        "id": data.id,
-                        "client": client.id,
-                        "payload": data.payload
-                    };
-                    console.log("requesting user response", event);
-                    this.emit('authenticate', event);
-                } else {
+                }else{                    
                     client.send('{ "id": "' + data.id + '", "error": true, "payload": { "code":5, "message": "Must authenticate first"}}');
                 }
-            }
+                break;
+            case 'link':
+                if (client.isAuthenticated) {
+                    let linkobj = {
+                        "id": data.id,
+                        "client": client.id,
+                        "payload": data.payload,
+                        "chain": data.payload.chain,
+                        "origin": client.origin,
+                        "appName": client.appName,
+                        "browser": client.browser,
+                        "key": client.keypair,
+                        "type": 'link'
+                    };
+                    console.log("requesting user response", linkobj);
+                    this.emit('link', linkobj);
+                }else{                    
+                    client.send('{ "id": "' + data.id + '", "error": true, "payload": { "code":5, "message": "Must authenticate first"}}');
+                }
+                break;
+            case 'relink':
+                if (client.isAuthenticated) {
+                   
+                    client.isLinked = false;
+                    let linkobj = {
+                        "id": data.id,
+                        "client": client.id,
+                        "payload": data.payload,
+                        "chain": data.payload.chain,
+                        "origin": client.origin,
+                        "appName": client.appName,
+                        "browser": client.browser,
+                        "key": client.keypair,
+                        "type": 'relink'
+                    };
+                    console.log("requesting user response", linkobj);
+                    this.emit('relink', linkobj);
+                }else{                    
+                    client.send('{ "id": "' + data.id + '", "error": true, "payload": { "code":5, "message": "Must authenticate first"}}');
+                }
+                break;
+            case 'authenticate':
+                let event = {
+                    "id": data.id,
+                    "client": client.id,
+                    "payload": data.payload
+                };
+                console.log("requesting user response", event);
+                this.emit('authenticate', event);
+            
+                break;
+            default:               
+                client.send('{ "id": "' + data.id + '", "error": true, "payload": { "code":1, "message": "Beet could not understand your request"}}');               
+                break;
         }
         console.groupEnd();
     }
@@ -154,6 +181,16 @@ export default class BeetWS extends EventEmitter {
         this._clients[client].send(this._getLinkResponse(result));
     }
 
+    respondReLink(client, result) {
+        if (result.isLinked == true || result.link == true) {
+            // link has successfully established
+            this._establishLink(
+                client,
+                result
+            );
+        }
+        this._clients[client].send(this._getLinkResponse(result));
+    }
     _establishLink(client, target) {
         this._clients[client].isLinked = true;
         this._clients[client].identityhash = target.identityhash;

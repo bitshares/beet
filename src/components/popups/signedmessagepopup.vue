@@ -59,8 +59,8 @@
                 this.message = this.$t("operations:message.request", {
                     appName: this.incoming.appName,
                     origin: this.incoming.origin,
-                    chain: this.incoming.signingAccount.chain,
-                    accountName: this.incoming.signingAccount.accountName
+                    chain:   this.$store.getters['AccountStore/getSigningKey'](this.incoming).chain,
+                    accountName:   this.$store.getters['AccountStore/getSigningKey'](this.incoming).accountName
                 });
             },
             _execute: async function () {

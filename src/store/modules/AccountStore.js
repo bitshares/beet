@@ -5,6 +5,7 @@ const logger = new RendererLogger();
 const LOAD_ACCOUNTS = 'LOAD_ACCOUNTS';
 const CHOOSE_ACCOUNT = 'CHOOSE_ACCOUNT';
 const ADD_ACCOUNT = 'ADD_ACCOUNT';
+const CLEAR_ACCOUNTS = 'CLEAR_ACCOUNTS';
 
 const accountlist = [];
 
@@ -21,6 +22,10 @@ const mutations = {
 
         state.accountlist.push(account);
         Vue.set(state, 'selectedIndex', state.accountlist.length - 1);
+    },
+    [CLEAR_ACCOUNTS](state) {
+        state.selectedIndex = null;
+        state.accountlist = [];
     }
 };
 
@@ -42,13 +47,14 @@ const actions = {
             if (index >= 0) {
                 reject('Account already exists');
             } else {
+
+                for (let keytype in payload.account.keys) {
+                    payload.account.keys[keytype] = CryptoJS.AES.encrypt(payload.account.keys[keytype], payload.password).toString();
+                }
                 dispatch('WalletStore/saveAccountToWallet', payload, {
                     root: true
                 }).then(() => {
 
-                    for (let keytype in payload.account.keys) {
-                        payload.account.keys[keytype] = CryptoJS.AES.encrypt(payload.account.keys[keytype], payload.password).toString();
-                    }
                     commit(ADD_ACCOUNT, payload.account);
                     resolve('Account added');
                 }).catch((e) => {
@@ -62,12 +68,23 @@ const actions = {
     }, payload) {
 
         return new Promise((resolve, reject) => {
-            if (payload.length > 0) {               
+            if (payload.length > 0) {
                 commit(LOAD_ACCOUNTS, payload);
                 resolve('Accounts Loaded');
             } else {
                 reject('Empty Account list');
             }
+        });
+
+    },
+    logout({
+        commit
+    }) {
+
+        return new Promise((resolve, reject) => {
+
+            commit(CLEAR_ACCOUNTS);
+            resolve();
         });
 
     },
@@ -113,8 +130,7 @@ const getters = {
 
 const initialState = {
     selectedIndex: null,
-    accountlist: accountlist,
-    expired: false
+    accountlist: accountlist
 };
 
 export default {

@@ -3,9 +3,9 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12 largeHeader">
-                    <img            
+                    <img
                         src="img/beet.png"
-                        alt=""
+                        alt
                         width="150"
                         height="150"
                     >
@@ -35,7 +35,7 @@
             return {};
         },
         mounted() {
-            logger.debug('Standard Header mounted');
+            logger.debug("Standard Header mounted");
         }
     };
 </script>

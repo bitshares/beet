@@ -1,5 +1,4 @@
-<template>
-</template>
+<template />
 <script>
     import RendererLogger from "../../lib/RendererLogger";
     const logger = new RendererLogger();
@@ -11,6 +10,7 @@
         data() {
             return {
                 type: null,
+                error: false,
                 incoming: {},
                 api: null,
                 askWhitelist: false,

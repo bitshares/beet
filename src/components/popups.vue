@@ -1,10 +1,10 @@
 <template>
     <div>
-        <LinkRequestPopup ref="accountReqModal"/>
-        <LinkRequestPopup ref="anyAccountReqModal"/>
-        <SignMessageRequestPopup ref="signMessageModal"/>
-        <TransactionRequestPopup ref="transactionReqModal"/>
-        <GenericRequestPopup ref="genericReqModal"/>
+        <LinkRequestPopup ref="linkReqModal" />
+        <ReLinkRequestPopup ref="reLinkReqModal" />
+        <SignMessageRequestPopup ref="signMessageModal" />
+        <TransactionRequestPopup ref="transactionReqModal" />
+        <GenericRequestPopup ref="genericReqModal" />
 
         <b-modal
             id="loaderAnim"
@@ -47,6 +47,7 @@
     import { EventBus } from "../lib/event-bus.js";
     import getBlockchain from "../lib/blockchains/blockchainFactory";
     import LinkRequestPopup from "./popups/linkrequestpopup";
+    import ReLinkRequestPopup from "./popups/relinkrequestpopup";
     import GenericRequestPopup from "./popups/genericrequestpopup";
     import TransactionRequestPopup from "./popups/transactionrequestpopup";
 
@@ -57,7 +58,13 @@
     export default {
         name: "Popups",
         i18nOptions: { namespaces: ["common", "operations"] },
-        components: {SignMessageRequestPopup, TransactionRequestPopup, LinkRequestPopup, GenericRequestPopup },
+        components: {
+            SignMessageRequestPopup,
+            TransactionRequestPopup,
+            ReLinkRequestPopup,
+            LinkRequestPopup,
+            GenericRequestPopup
+        },
         data() {
             return {
                 alerts: [],
@@ -73,9 +80,9 @@
             EventBus.$on("popup", async what => {
                 switch (what) {
                 case "load-start":
-                    this.loaderpromise.show = new Promise((resolve) => {
+                    this.loaderpromise.show = new Promise(resolve => {
                         this.$refs.loaderAnimModal.show();
-                        this.loaderpromise.resolve = resolve;                      
+                        this.loaderpromise.resolve = resolve;
                     });
                     break;
                 case "load-end":
@@ -86,7 +93,7 @@
             });
         },
         mounted() {
-            logger.debug('Popup Service panel mounted');
+            logger.debug("Popup Service panel mounted");
             this.$root.$on("bv::modal::shown", bvEvent => {
                 if (bvEvent.target.id == "loaderAnim") {
                     this.loaderpromise.resolve();
@@ -125,18 +132,14 @@
                 });
                 if (index !== -1) this.alerts.splice(index, 1);
             },
-            requestLink: async function() {
+            requestAccess: async function() {
                 throw "Needs implementing";
             },
-            requestAccess: async function(request) {
-                return this.$refs.accountReqModal.show(
-                    request
-                );
+            requestLink: async function(request) {
+                return this.$refs.linkReqModal.show(request);
             },
-            requestAnyAccess: async function(request) {
-                return this.$refs.anyAccountReqModal.show(
-                    request
-                );
+            requestReLink: async function(request) {
+                return this.$refs.reLinkReqModal.show(request);
             },
             requestVote: async function(payload) {
                 payload.action = "vote";
@@ -157,18 +160,22 @@
                     rejectText: this.$t("operations:vote.reject_btn")
                 };
                 payload.generic = generic;
-                return this.$refs.genericReqModal.show(
-                    payload,
-                    false
-                );
+                return this.$refs.genericReqModal.show(payload, false);
             },
             requestTx: async function(payload) {
-                
                 return this.$refs.transactionReqModal.show(payload);
             },
-            isWhitelisted: function (identity,method) {
-                if (!!this.$store.state.WhitelistStore && !!this.$store.state.WhitelistStore.whitelist && !!this.$store.state.WhitelistStore.whitelist.filter) {
-                    if (this.$store.state.WhitelistStore.whitelist.filter(x => (x.identityhash == identity && x.method == method)).length > 0) {
+            isWhitelisted: function(identity, method) {
+                if (
+                    !!this.$store.state.WhitelistStore &&
+                    !!this.$store.state.WhitelistStore.whitelist &&
+                    !!this.$store.state.WhitelistStore.whitelist.filter
+                ) {
+                    if (
+                        this.$store.state.WhitelistStore.whitelist.filter(
+                            x => x.identityhash == identity && x.method == method
+                        ).length > 0
+                    ) {
                         return true;
                     } else {
                         return false;
@@ -178,16 +185,13 @@
                 }
             },
             requestSignedMessage: async function(payload) {
-                
-                if (this.isWhitelisted(payload.identityhash, 'SignMessageRequestPopup')) {
-                    return this.$refs.signMessageModal.execute(
-                        payload
-                    );
+                if (this.isWhitelisted(payload.identityhash, "SignMessageRequestPopup")) {
+                    return {
+                        response: await this.$refs.signMessageModal.execute(payload),
+                        whitelisted: true
+                    };
                 } else {
-                    return this.$refs.signMessageModal.show(
-                        payload,
-                        true
-                    );
+                    return this.$refs.signMessageModal.show(payload, true);
                 }
             },
             verifyMessage: function(payload) {

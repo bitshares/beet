@@ -16,6 +16,7 @@ const SET_WALLET_STATUS = 'SET_WALLET_STATUS';
 const SET_WALLET_UNLOCKED = 'SET_WALLET_UNLOCKED';
 const SET_WALLETLIST = 'SET_WALLETLIST';
 const REQ_NOTIFY = 'REQ_NOTIFY';
+const CLOSE_WALLET = 'CLOSE_WALLET';
 
 const wallet = {};
 
@@ -29,6 +30,14 @@ const mutations = {
     [CONFIRM_UNLOCK](state) {
         state.unlocked.resolve();
         Vue.set(state, 'isUnlocked', true);
+    },
+    [CLOSE_WALLET](state) {
+        state.wallet={};
+        state.hasWallet=false;
+        state.walletlist=[];
+        state.unlocked={};
+        state.isUnlocked=false;
+        ipcRenderer.send('seeding',  '');
     },
     [SET_WALLET_STATUS](state, status) {
 
@@ -126,7 +135,8 @@ const actions = {
                     BeetDB.wallets_encrypted.put({
                         id: walletid,
                         data: walletdata
-                    });
+                    });                    
+                    ipcRenderer.send('seeding',  payload.wallet_pass);   
                     commit(GET_WALLET, newwallet);
                     dispatch('AccountStore/loadAccounts', [payload.walletdata], {
                         root: true
@@ -147,11 +157,7 @@ const actions = {
     }, payload) {
         return new Promise(async (resolve, reject) => {
             let walletdata =  rootState.AccountStore.accountlist.slice();
-            let newwalletdata=walletdata;
-            
-            for (let keytype in payload.account.keys) {                
-                payload.account.keys[keytype] = CryptoJS.AES.encrypt(payload.account.keys[keytype], payload.password).toString();
-            }
+            let newwalletdata=walletdata;            
             newwalletdata.push(payload.account);
             await BeetDB.wallets_encrypted.get({
                 id: state.wallet.id
@@ -222,6 +228,18 @@ const actions = {
             } else {
                 reject();
             }
+        });
+    },
+    logout({
+        commit,
+        dispatch
+    }) {
+        return new Promise((resolve,reject)=> {
+            commit(CLOSE_WALLET);
+            dispatch('AccountStore/logout', {}, {
+                root: true
+            });
+            resolve();
         });
     }
 }
