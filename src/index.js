@@ -11,7 +11,9 @@ import {
 } from 'electron-compile';
 import Logger from './lib/Logger';
 import context_menu from './lib/electron_context_menu';
-import { ec as EC } from "elliptic";
+import {
+    ec as EC
+} from "elliptic";
 import CryptoJS from 'crypto-js';
 
 const ec = new EC('secp256k1');
@@ -176,7 +178,7 @@ const createWindow = async () => {
         key = arg;
     });
     ipcMain.on('seeding', (event, arg) => {
-        seed=arg;
+        seed = arg;
     });
     ipcMain.on('decrypt', (event, arg) => {
         const {
@@ -185,11 +187,11 @@ const createWindow = async () => {
         } = arg;
         let keypair = ec.keyFromPublic(key, 'hex');
         let msgHash = CryptoJS.SHA256('decrypt').toString();
-        console.log(data);
-        if (keypair.verify(msgHash,sig)) {
-            console.log(CryptoJS.AES.decrypt(data, seed).toString(CryptoJS.enc.Utf8));
+
+        if (keypair.verify(msgHash, sig)) {
+
             event.sender.send('decrypt', CryptoJS.AES.decrypt(data, seed).toString(CryptoJS.enc.Utf8));
-        }else{
+        } else {
             event.sender.send('decrypt', null);
         }
     });

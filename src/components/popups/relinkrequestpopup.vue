@@ -41,27 +41,31 @@
 
     export default {
         name: "ReLinkRequestPopup",
-        components: { },
+        components: {},
         extends: AbstractPopup,
         data() {
             return {
                 type: "ReLinkRequestPopup",
-                chosenAccount: {trackId: 0},
+                chosenAccount: { trackId: 0 }
             };
         },
         mounted() {
             logger.debug("Relink Popup initialised");
         },
         methods: {
-            _onShow: function () {
-                this.error=false;                
+            _onShow: function() {
+                this.error = false;
                 console.log(this.incoming);
             },
-            _execute: function () {
-                let apps=this.$store.state.OriginStore.apps.filter(x => x.identityhash == this.incoming.payload.identityhash);
-                if (apps.length==1) {    
-                    let app=apps[0];
-                    let account=this.$store.state.AccountStore.accountlist.filter(x => x.accountId==app.account_id && x.chain==app.chain);
+            _execute: function() {
+                let apps = this.$store.state.OriginStore.apps.filter(
+                    x => x.identityhash == this.incoming.payload.identityhash
+                );
+                if (apps.length == 1) {
+                    let app = apps[0];
+                    let account = this.$store.state.AccountStore.accountlist.filter(
+                        x => x.accountId == app.account_id && x.chain == app.chain
+                    );
                     return {
                         identityhash: this.incoming.payload.identityhash,
                         name: account.accountName,

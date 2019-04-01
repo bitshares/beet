@@ -6,5 +6,7 @@
         "javascript",
         "javascriptreact",
         {"language": "vue", "autoFix": true}
-    ]
+    ],
+    "eslint.provideLintTask": true,
+    "eslint.run": "onSave"
 }

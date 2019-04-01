@@ -7148,6 +7148,62 @@ p {
 .modal-content {
   align-self: stretch; }
 
+.linkStyle .multiselect.form-control {
+  display: block;
+  padding: 0;
+  height: 2.5rem;
+  line-height: 2.5rem;
+  border: 1px solid #222222;
+  border-radius: 0.3rem;
+  width: 100%;
+  margin: 0;
+  font-size: 0.8rem;
+  color: #222222;
+  background: white;
+  outline: none;
+  text-align: left;
+  background-image: linear-gradient(45deg, transparent 50%, #222222 50%), linear-gradient(135deg, #222222 50%, transparent 50%), linear-gradient(to right, #222222, #222222);
+  background-position: calc(100% - 15px) 1.25em, calc(100% - 10px) 1.25em, calc(100% - 2em) 0.625em;
+  background-size: 5px 5px, 5px 5px, 1px 1.5em;
+  background-repeat: no-repeat; }
+  .linkStyle .multiselect.form-control:focus {
+    background-image: linear-gradient(45deg, #222222 50%, transparent 50%), linear-gradient(135deg, transparent 50%, #222222 50%), linear-gradient(to right, #222222, #222222);
+    background-position: calc(100% - 10px) 1.25em, calc(100% - 15px) 1.25em, calc(100% - 2em) 0.625em;
+    background-size: 5px 5px, 5px 5px, 1px 1.5em;
+    background-repeat: no-repeat;
+    outline: 0; }
+  .linkStyle .multiselect.form-control .multiselect__tags {
+    padding-left: 0.5rem; }
+  .linkStyle .multiselect.form-control .multiselect__content-wrapper {
+    background: white;
+    color: #222222;
+    border: 1px solid #222222;
+    border-radius: 0.3rem;
+    overflow-y: scroll; }
+    .linkStyle .multiselect.form-control .multiselect__content-wrapper ul {
+      padding: 0;
+      margin-bottom: 0;
+      list-style: none;
+      width: 100%; }
+      .linkStyle .multiselect.form-control .multiselect__content-wrapper ul li {
+        padding: 0;
+        padding-left: 0.5rem;
+        padding-top: 0.1rem;
+        padding-bottom: 0.1rem; }
+        .linkStyle .multiselect.form-control .multiselect__content-wrapper ul li:hover {
+          background: #E5EAED; }
+        .linkStyle .multiselect.form-control .multiselect__content-wrapper ul li .multiselect__option {
+          display: inline-block;
+          width: 100%; }
+          .linkStyle .multiselect.form-control .multiselect__content-wrapper ul li .multiselect__option .prevLink {
+            display: inline-block;
+            width: 100%;
+            color: #4CAF50; }
+            .linkStyle .multiselect.form-control .multiselect__content-wrapper ul li .multiselect__option .prevLink:after {
+              content: ' - linked'; }
+        .linkStyle .multiselect.form-control .multiselect__content-wrapper ul li .multiselect__option--selected {
+          font-weight: bold; }
+
 #loaderAnim .modal-content {
   background: none;
   border: 0;

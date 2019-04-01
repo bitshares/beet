@@ -8,7 +8,21 @@
         :custom-label="accountLabel"
         :options="accounts"
         track-by="trackId"
-    />
+    >    
+        <template
+            slot="option"
+            slot-scope="props"
+        >
+            <span
+                class="option__desc"
+                :class="{ prevLink: props.option.linked }"
+            >
+                <span class="option__title options">
+                    {{ accountLabel(props.option) }}
+                </span>
+            </span>
+        </template>
+    </multiselect>
 </template>
 
 <script>

@@ -2,6 +2,7 @@
     <b-modal
         id="type"
         ref="modalComponent"
+        class="linkStyle"
         centered
         no-close-on-esc
         no-close-on-backdrop
