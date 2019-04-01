@@ -80,6 +80,7 @@ export default class BeetWS extends EventEmitter {
             case 'api':
                 if (client.isAuthenticated) {
                     if (client.isLinked) {
+                        let hash = CryptoJS.SHA256('' + data.id).toString();
                         if (hash == client.next_hash) {
                             client.otp.counter = data.id;
                             var key = client.otp.generate();

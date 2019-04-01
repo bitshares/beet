@@ -58,9 +58,10 @@
                 console.log(this.incoming);
             },
             _execute: function () {
-                let app=this.$store.state.OriginStore.apps.filter(x => x.identityhash == this.incoming.payload.identityhash);
-                let account=this.$store.state.AccountStore.accountlist.filter(x => x.accountId==app.account_id && x.chain==app.chain);
-                if (app.length==1) {                    
+                let apps=this.$store.state.OriginStore.apps.filter(x => x.identityhash == this.incoming.payload.identityhash);
+                if (apps.length==1) {    
+                    let app=apps[0];
+                    let account=this.$store.state.AccountStore.accountlist.filter(x => x.accountId==app.account_id && x.chain==app.chain);
                     return {
                         identityhash: this.incoming.payload.identityhash,
                         name: account.accountName,
