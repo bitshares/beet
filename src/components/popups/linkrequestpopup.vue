@@ -22,7 +22,6 @@
         </div>
         <br>
         <AccountSelect
-            v-if="incoming.chain"
             v-model="chosenAccount"
             :chain="incoming.chain"
             :existing="existing"

@@ -59,7 +59,7 @@
             };
         },
         mounted() {
-            logger.debug("Account-Add wizard Mounted");
+            logger.debug("Enter Password Mounted");
         },
         methods: {
             getPassword: function() {

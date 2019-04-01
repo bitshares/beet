@@ -8,7 +8,7 @@
         :custom-label="accountLabel"
         :options="accounts"
         track-by="trackId"
-    >    
+    >
         <template
             slot="option"
             slot-scope="props"
@@ -18,9 +18,7 @@
                 :class="{ prevLink: props.option.linked }"
                 :data-linked="$t('previously_linked')"
             >
-                <span class="option__title options">
-                    {{ accountLabel(props.option) }}
-                </span>
+                <span class="option__title options">{{ accountLabel(props.option) }}</span>
             </span>
         </template>
     </multiselect>
@@ -55,73 +53,29 @@
         },
         computed: {
             accounts() {
+                let accounts;
                 if (this.chain == "ANY" || this.chain == null) {
-                    if (this.cta != "") {
-                        return [{}]
-                            .concat(this.$store.state.AccountStore.accountlist.slice())
-                            .map((acc, i) => {
-                                acc.trackId = `account-${i}`;
-                                let match = this.existing.filter(
-                                    x => x.account_id == acc.accountID && x.chain == acc.chain
-                                );
-                                if (match.length > 0) {
-                                    acc.linked = true;
-                                } else {
-                                    acc.linked = false;
-                                }
-                                return acc;
-                            });
-                    } else {
-                        return this.$store.state.AccountStore.accountlist.map((acc, i) => {
-                            acc.trackId = `account-${i}`;
-                            let match = this.existing.filter(
-                                x => x.account_id == acc.accountID && x.chain == acc.chain
-                            );
-                            if (match.length > 0) {
-                                acc.linked = true;
-                            } else {
-                                acc.linked = false;
-                            }
-                            return acc;
-                        });
-                    }
+                    accounts = this.$store.state.AccountStore.accountlist;
                 } else {
-                    if (this.cta != "") {
-                        return [{}]
-                            .concat(
-                                this.$store.state.AccountStore.accountlist.filter(
-                                    x => x.chain == this.chain
-                                )
-                            )
-                            .map((acc, i) => {
-                                acc.trackId = i;
-                                let match = this.existing.filter(
-                                    x => x.account_id == acc.accountID && x.chain == acc.chain
-                                );
-                                if (match.length > 0) {
-                                    acc.linked = true;
-                                } else {
-                                    acc.linked = false;
-                                }
-                                return acc;
-                            });
-                    } else {
-                        return this.$store.state.AccountStore.accountlist
-                            .filter(x => x.chain == this.chain)
-                            .map((acc, i) => {
-                                acc.trackId = i;
-                                let match = this.existing.filter(
-                                    x => x.account_id == acc.accountID && x.chain == acc.chain
-                                );
-                                if (match.length > 0) {
-                                    acc.linked = true;
-                                } else {
-                                    acc.linked = false;
-                                }
-                                return acc;
-                            });
-                    }
+                    accounts = this.$store.state.AccountStore.accountlist.filter(
+                        x => x.chain == this.chain
+                    );
                 }
+                if (this.cta != "") {
+                    accounts = [{}].concat(accounts);
+                }
+                return accounts.map((acc, i) => {
+                    acc.trackId = `account-${i}`;
+                    let match = this.existing.filter(
+                        x => x.account_id == acc.accountID && x.chain == acc.chain
+                    );
+                    if (match.length > 0) {
+                        acc.linked = true;
+                    } else {
+                        acc.linked = false;
+                    }
+                    return acc;
+                });
             }
         },
         watch: {

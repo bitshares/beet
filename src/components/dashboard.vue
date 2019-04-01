@@ -81,7 +81,9 @@
                                     node: connectedNode
                                 });
                             })
-                            .catch(() => {});
+                            .catch(() => {
+                                this.isConnected=false;
+                            });
                     }
                 }
             },
@@ -151,7 +153,9 @@
 
                     this.getBalances();
                 })
-                .catch(() => {});
+                .catch(() => {                    
+                    this.isConnected=false;
+                });
         },
         methods: {
             getBalances: async function() {
