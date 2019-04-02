@@ -75,6 +75,7 @@ export default class BlockchainAPI {
             let message = [
                 "from",
                 accountName,
+                "key",
                 this.getPublicKey(key),
                 "time",
                 new Date().toUTCString(),
