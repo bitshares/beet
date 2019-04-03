@@ -5,17 +5,6 @@
                 <p class="mb-1 font-weight-bold small">
                     {{ $t('settings_lbl') }}
                 </p>
-                <div class="row">
-                    <div class="col-10 offset-1">
-                        <a
-                            href="#"
-                            class="btn btn-primary btn-block"
-                            @click="downloadBackup"
-                        >
-                            Download Backup
-                        </a>
-                    </div>
-                </div>
             </div>
         </div>
         <Actionbar />
