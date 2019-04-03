@@ -136,7 +136,7 @@ const actions = {
                         id: walletid,
                         data: walletdata
                     });                    
-                    ipcRenderer.send('seeding',  payload.wallet_pass);   
+                    ipcRenderer.send('seeding',  payload.password);   
                     commit(GET_WALLET, newwallet);
                     dispatch('AccountStore/loadAccounts', [payload.walletdata], {
                         root: true
