@@ -91,9 +91,13 @@
                 if (this.accounts.length == 2) {
                     this.selectedAccount = this.accounts[1];
                 }
+            },
+            value: function() {
+                this.selectedAccount = this.value;
             }
         },
         mounted() {
+
             logger.debug("Account-Selector Mounted");
         },
         methods: {

@@ -17,7 +17,7 @@
             {{ $t('operations:link.request', {appName: incoming.appName, origin: incoming.origin, chain: incoming.chain }) }} &#10068;
         </div>
         <br>
-        <div v-if="existing.length>0">
+        <div v-if="existingLinks.length>0">
             {{ $t('operations:link.request_fresh', {chain: incoming.chain }) }}
         </div>
         <br>
@@ -25,7 +25,7 @@
             v-if="incoming.chain"
             v-model="chosenAccount"
             :chain="incoming.chain"
-            :existing="existing"
+            :existing="existingLinks"
             :cta="$t('operations:link.request_cta')"
         />
         <b-btn
@@ -63,12 +63,17 @@
             };
         },
         computed: {
-            existing() {
-                if (this.incoming.chain=="ANY") {
-                    return this.$store.state.OriginStore.apps.filter( (x) => { return x.appName==this.incoming.appName && x.origin==this.incoming.origin});
-                }else{
-                    return this.$store.state.OriginStore.apps.filter( (x) => { return x.appName==this.incoming.appName && x.origin==this.incoming.origin && x.chain==this.incoming.chain});
-                }
+            existingLinks() {
+                return this.$store.state.OriginStore.apps.filter(
+                    (x) => {
+                        return x.appName == this.incoming.appName
+                            && x.origin==this.incoming.origin
+                            && (
+                                this.incoming.chain == "ANY"
+                                || x.chain==this.incoming.chain
+                            )
+                    }
+                );
             }
         },
         mounted() {
