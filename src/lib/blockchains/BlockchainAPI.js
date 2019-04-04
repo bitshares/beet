@@ -75,6 +75,7 @@ export default class BlockchainAPI {
             let message = [
                 "from",
                 accountName,
+                "key",
                 this.getPublicKey(key),
                 "time",
                 new Date().toUTCString(),
@@ -108,7 +109,7 @@ export default class BlockchainAPI {
             }
 
             // validate account and key
-            this._verifyAccountAndKey(signedMessage.payload[1], signedMessage.payload[2]).then(
+            this._verifyAccountAndKey(signedMessage.payload[1], signedMessage.payload[3]).then(
                 found => {
                     if (found.account == null) {
                         reject("invalid user");
@@ -116,7 +117,7 @@ export default class BlockchainAPI {
                     // verify message signed
                     let verified = false;
                     try {
-                        verified = this._verifyString(signedMessage.signature, signedMessage.payload[2], signedMessage.signed);
+                        verified = this._verifyString(signedMessage.signature, signedMessage.payload[3], signedMessage.signed);
                     } catch (err) {
                         // wrap message that could be raised from Signature
                         reject("Error verifying signature");
