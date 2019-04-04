@@ -10,7 +10,8 @@
                     :key="balance.id"
                 >
                     <td class="text-left">
-                        <span class="small">{{ balance.prefix }}</span>{{ balance.asset_name }}
+                        <span class="small">{{ balance.prefix }}</span>
+                        {{ balance.asset_name }}
                     </td>
                     <td class="text-right">
                         {{ balance.balance }}
@@ -29,8 +30,8 @@
     </div>
 </template>
 <script>
-    import getBlockchain from "../lib/blockchains/blockchainFactory"
-    import { EventBus } from '../lib/event-bus.js';
+    import getBlockchain from "../lib/blockchains/blockchainFactory";
+    import { EventBus } from "../lib/event-bus.js";
     import RendererLogger from "../lib/RendererLogger";
     const logger = new RendererLogger();
 
@@ -42,9 +43,11 @@
                 balances: null
             };
         },
-        computed:  {
+        computed: {
             selectedAccount() {
-                return this.$store.state.AccountStore.accountlist[this.$store.state.AccountStore.selectedIndex];
+                return this.$store.state.AccountStore.accountlist[
+                    this.$store.state.AccountStore.selectedIndex
+                ];
             },
             selectedChain() {
                 return this.selectedAccount.chain;
@@ -56,19 +59,22 @@
                 return this.selectedAccount.accountID;
             },
             accountlist() {
-                return this.$store.state.AccountStore.accountlist
+                return this.$store.state.AccountStore.accountlist;
             }
         },
         watch: {
-            selectedAccount: async function(newAcc,oldAcc) {
-                if (newAcc.chain!=oldAcc.chain || newAcc.accountID!=oldAcc.accountID) {
+            selectedAccount: async function(newAcc, oldAcc) {
+                if (
+                    newAcc.chain != oldAcc.chain ||
+                    newAcc.accountID != oldAcc.accountID
+                ) {
                     await this.getBalances();
-                    EventBus.$emit('balances', 'loaded');
+                    EventBus.$emit("balances", "loaded");
                 }
             }
         },
-        mounted() {            
-            logger.debug('Balances Table Mounted');
+        mounted() {
+            logger.debug("Balances Table Mounted");
         },
         methods: {
             getBalances: async function() {

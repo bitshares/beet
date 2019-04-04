@@ -16,6 +16,7 @@ const SET_WALLET_STATUS = 'SET_WALLET_STATUS';
 const SET_WALLET_UNLOCKED = 'SET_WALLET_UNLOCKED';
 const SET_WALLETLIST = 'SET_WALLETLIST';
 const REQ_NOTIFY = 'REQ_NOTIFY';
+const CLOSE_WALLET = 'CLOSE_WALLET';
 
 const wallet = {};
 
@@ -29,6 +30,14 @@ const mutations = {
     [CONFIRM_UNLOCK](state) {
         state.unlocked.resolve();
         Vue.set(state, 'isUnlocked', true);
+    },
+    [CLOSE_WALLET](state) {
+        state.wallet={};
+        state.hasWallet=false;
+        state.walletlist=[];
+        state.unlocked={};
+        state.isUnlocked=false;
+        ipcRenderer.send('seeding',  '');
     },
     [SET_WALLET_STATUS](state, status) {
 
@@ -69,7 +78,7 @@ const actions = {
                     });
                     commit(GET_WALLET, public_wallets[0]);
                     let accountlist = decrypted_wallet;
-                    
+                    ipcRenderer.send('seeding',  payload.wallet_pass);                    
                     dispatch('AccountStore/loadAccounts', accountlist, {
                         root: true
                     });
@@ -114,11 +123,20 @@ const actions = {
                     });
                     commit(SET_WALLET_STATUS, true);
                     commit(SET_WALLETLIST, wallets);
+                    
+                    for (let keytype in payload.walletdata.keys) {
+                        try {
+                            payload.walletdata.keys[keytype] = CryptoJS.AES.encrypt(payload.walletdata.keys[keytype], payload.password).toString();
+                        } catch (e) {
+                            reject('Wrong Password');
+                        }
+                    }
                     let walletdata = CryptoJS.AES.encrypt(JSON.stringify([payload.walletdata]), payload.password).toString();
                     BeetDB.wallets_encrypted.put({
                         id: walletid,
                         data: walletdata
-                    });
+                    });                    
+                    ipcRenderer.send('seeding',  payload.password);   
                     commit(GET_WALLET, newwallet);
                     dispatch('AccountStore/loadAccounts', [payload.walletdata], {
                         root: true
@@ -139,7 +157,7 @@ const actions = {
     }, payload) {
         return new Promise(async (resolve, reject) => {
             let walletdata =  rootState.AccountStore.accountlist.slice();
-            let newwalletdata=walletdata;
+            let newwalletdata=walletdata;            
             newwalletdata.push(payload.account);
             await BeetDB.wallets_encrypted.get({
                 id: state.wallet.id
@@ -210,6 +228,18 @@ const actions = {
             } else {
                 reject();
             }
+        });
+    },
+    logout({
+        commit,
+        dispatch
+    }) {
+        return new Promise((resolve,reject)=> {
+            commit(CLOSE_WALLET);
+            dispatch('AccountStore/logout', {}, {
+                root: true
+            });
+            resolve();
         });
     }
 }

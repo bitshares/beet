@@ -75,6 +75,7 @@ export default class BlockchainAPI {
             let message = [
                 "from",
                 accountName,
+                "key",
                 this.getPublicKey(key),
                 "time",
                 new Date().toUTCString(),
@@ -107,7 +108,7 @@ export default class BlockchainAPI {
             }
 
             // validate account and key
-            this._verifyAccountAndKey(signedMessage.payload[1], signedMessage.payload[2]).then(
+            this._verifyAccountAndKey(signedMessage.payload[1], signedMessage.payload[3]).then(
                 found => {
                     if (found.account == null) {
                         reject("invalid user");
@@ -115,7 +116,7 @@ export default class BlockchainAPI {
                     // verify message signed
                     let verified = false;
                     try {
-                        verified = this._verifyString(signedMessage.signature, signedMessage.payload[2], signedMessage.signed);
+                        verified = this._verifyString(signedMessage.signature, signedMessage.payload[3], signedMessage.signed);
                     } catch (err) {
                         // wrap message that could be raised from Signature
                         reject("Error verifying signature");
@@ -183,7 +184,7 @@ export default class BlockchainAPI {
         Object.keys(required).forEach(key => {
             let given = credentials[key];
             let mandatory = required[key];
-            if (!!mandatory) {
+            if (mandatory) {
                 // mandatory == null means this authority is not used in this blockchain
                 if (!given) {
                     throw "Authority (" + key + ") is mandatory, but not given by user";
@@ -195,7 +196,7 @@ export default class BlockchainAPI {
                     throw {key: "invalid_key_error"};
                 }
                 let found = false;
-                if (!!account[key].public_keys) {
+                if (account[key].public_keys) {
                     account[key].public_keys.forEach(key => {
                         if (this._compareKeys(key[0], publicKey)) {
                             found = true;

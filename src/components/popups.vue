@@ -1,10 +1,11 @@
 <template>
     <div>
-        <LinkRequestPopup ref="accountReqModal"></LinkRequestPopup>
-        <LinkRequestPopup ref="anyAccountReqModal"></LinkRequestPopup>
-        <SignMessageRequestPopup ref="signMessageModal"></SignMessageRequestPopup>
-        <TransactionRequestPopup ref="transactionReqModal"></TransactionRequestPopup>
-        <GenericRequestPopup ref="genericReqModal"></GenericRequestPopup>
+        <LinkRequestPopup ref="linkReqModal" />
+        <ReLinkRequestPopup ref="reLinkReqModal" />
+        <IdentityRequestPopup ref="identityReqModal" />
+        <SignMessageRequestPopup ref="signMessageModal" />
+        <TransactionRequestPopup ref="transactionReqModal" />
+        <GenericRequestPopup ref="genericReqModal" />
 
         <b-modal
             id="loaderAnim"
@@ -47,6 +48,8 @@
     import { EventBus } from "../lib/event-bus.js";
     import getBlockchain from "../lib/blockchains/blockchainFactory";
     import LinkRequestPopup from "./popups/linkrequestpopup";
+    import IdentityRequestPopup from "./popups/identityrequestpopup";
+    import ReLinkRequestPopup from "./popups/relinkrequestpopup";
     import GenericRequestPopup from "./popups/genericrequestpopup";
     import TransactionRequestPopup from "./popups/transactionrequestpopup";
 
@@ -57,7 +60,14 @@
     export default {
         name: "Popups",
         i18nOptions: { namespaces: ["common", "operations"] },
-        components: {SignMessageRequestPopup, TransactionRequestPopup, LinkRequestPopup, GenericRequestPopup },
+        components: {
+            SignMessageRequestPopup,
+            TransactionRequestPopup,
+            IdentityRequestPopup,
+            ReLinkRequestPopup,
+            LinkRequestPopup,
+            GenericRequestPopup
+        },
         data() {
             return {
                 alerts: [],
@@ -73,9 +83,9 @@
             EventBus.$on("popup", async what => {
                 switch (what) {
                 case "load-start":
-                    this.loaderpromise.show = new Promise((resolve) => {
+                    this.loaderpromise.show = new Promise(resolve => {
                         this.$refs.loaderAnimModal.show();
-                        this.loaderpromise.resolve = resolve;                      
+                        this.loaderpromise.resolve = resolve;
                     });
                     break;
                 case "load-end":
@@ -86,7 +96,7 @@
             });
         },
         mounted() {
-            logger.debug('Popup Service panel mounted');
+            logger.debug("Popup Service panel mounted");
             this.$root.$on("bv::modal::shown", bvEvent => {
                 if (bvEvent.target.id == "loaderAnim") {
                     this.loaderpromise.resolve();
@@ -125,33 +135,16 @@
                 });
                 if (index !== -1) this.alerts.splice(index, 1);
             },
-            requestLink: async function() {
-                throw "Needs implementing";
-            },
             requestAccess: async function(request) {
-                return this.$refs.accountReqModal.show(
-                    request
-                );
+                return this.$refs.identityReqModal.show(request);
             },
-            requestAnyAccess: async function(request) {
-                return this.$refs.anyAccountReqModal.show(
-                    request
-                );
+            requestLink: async function(request) {
+                return this.$refs.linkReqModal.show(request);
             },
-            _getSigningAccount(request) {
-                let signing = this.$store.state.AccountStore.accountlist.filter(x => {
-                    return (
-                        x.accountID == request.account_id &&
-                        x.chain == request.chain
-                    );
-                });
-                if (signing.length !== 1) {
-                    throw "Invalid signing accounts count";
-                }
-                return signing[0];
+            requestReLink: async function(request) {
+                return this.$refs.reLinkReqModal.show(request);
             },
             requestVote: async function(payload) {
-                payload.signingAccount = this._getSigningAccount(payload);
                 payload.action = "vote";
                 let blockchain = getBlockchain(payload.chain);
                 let mappedData = await blockchain.mapOperationData(payload);
@@ -162,26 +155,30 @@
                         appName: payload.appName,
                         origin: payload.origin,
                         entity: mappedData.entity,
-                        chain: payload.signingAccount.chain,
-                        accountName: payload.signingAccount.accountName
+                        chain: payload.chain,
+                        accountName: payload.account_id
                     }),
                     details: mappedData.description,
                     acceptText: this.$t("operations:vote.accept_btn"),
                     rejectText: this.$t("operations:vote.reject_btn")
                 };
                 payload.generic = generic;
-                return this.$refs.genericReqModal.show(
-                    payload,
-                    false
-                );
+                return this.$refs.genericReqModal.show(payload, false);
             },
             requestTx: async function(payload) {
-                payload.signingAccount = this._getSigningAccount(payload);
                 return this.$refs.transactionReqModal.show(payload);
             },
-            isWhitelisted: function (identity,method) {
-                if (!!this.$store.state.WhitelistStore && !!this.$store.state.WhitelistStore.whitelist && !!this.$store.state.WhitelistStore.whitelist.filter) {
-                    if (this.$store.state.WhitelistStore.whitelist.filter(x => (x.identityhash == identity && x.method == method)).length > 0) {
+            isWhitelisted: function(identity, method) {
+                if (
+                    !!this.$store.state.WhitelistStore &&
+                    !!this.$store.state.WhitelistStore.whitelist &&
+                    !!this.$store.state.WhitelistStore.whitelist.filter
+                ) {
+                    if (
+                        this.$store.state.WhitelistStore.whitelist.filter(
+                            x => x.identityhash == identity && x.method == method
+                        ).length > 0
+                    ) {
                         return true;
                     } else {
                         return false;
@@ -191,16 +188,13 @@
                 }
             },
             requestSignedMessage: async function(payload) {
-                payload.signingAccount = this._getSigningAccount(payload);
-                if (this.isWhitelisted(payload.identityhash, 'SignMessageRequestPopup')) {
-                    return this.$refs.signMessageModal.execute(
-                        payload
-                    );
+                if (this.isWhitelisted(payload.identityhash, "SignMessageRequestPopup")) {
+                    return {
+                        response: await this.$refs.signMessageModal.execute(payload),
+                        whitelisted: true
+                    };
                 } else {
-                    return this.$refs.signMessageModal.show(
-                        payload,
-                        true
-                    );
+                    return this.$refs.signMessageModal.show(payload, true);
                 }
             },
             verifyMessage: function(payload) {

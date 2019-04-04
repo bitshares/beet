@@ -42,6 +42,7 @@
     import RendererLogger from "../../lib/RendererLogger";
     import getBlockchain from "../../lib/blockchains/blockchainFactory";
     const logger = new RendererLogger();
+    import {getKey} from '../../lib/SecureRemote';
 
     export default {
         name: "SignMessageRequestPopup",
@@ -58,15 +59,15 @@
                 this.message = this.$t("operations:message.request", {
                     appName: this.incoming.appName,
                     origin: this.incoming.origin,
-                    chain: this.incoming.signingAccount.chain,
-                    accountName: this.incoming.signingAccount.accountName
+                    chain:   this.$store.getters['AccountStore/getSigningKey'](this.incoming).chain,
+                    accountName:   this.$store.getters['AccountStore/getSigningKey'](this.incoming).accountName
                 });
             },
             _execute: async function () {
                 let blockchain = getBlockchain(this.incoming.chain);
                 return await blockchain.signMessage(
-                    this.incoming.signingAccount.keys.active,
-                    this.incoming.signingAccount.accountName,
+                    await getKey(this.$store.getters['AccountStore/getSigningKey'](this.incoming).keys.active),
+                    this.$store.getters['AccountStore/getSigningKey'](this.incoming).accountName,
                     this.incoming.params
                 );
             }
