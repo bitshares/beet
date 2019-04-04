@@ -95,10 +95,10 @@ export default class EOS extends BlockchainAPI {
         });
     }
 
-    sign(operation, key) {
+    sign(transaction, key) {
         return new Promise((resolve, reject) => {
-            operation.signatureProvider = new JsSignatureProvider([key]);
-            resolve(operation);
+            transaction.signatureProvider = new JsSignatureProvider([key]);
+            resolve(transaction);
         });
     }
 
@@ -160,6 +160,10 @@ export default class EOS extends BlockchainAPI {
             memo = "";
         }
 
+        if (amount.asset_id !== "EOS") {
+            throw "Only EOS supported at the moment."
+        }
+
         let actions = [{
             account: 'eosio.token',
             name: 'transfer',
@@ -168,19 +172,19 @@ export default class EOS extends BlockchainAPI {
                 permission: 'active',
             }],
             data: {
-                from: to.id,
+                from: from.id,
                 to: to.id,
-                quantity: amount.amount + " " + amount.asset_id,
+                quantity: (amount.amount/10000).toFixed(4) + " " + amount.asset_id,
                 memo: memo,
             },
         }];
 
-        let operation = {
+        let transaction = {
             actions
         };
-
-        let transaction = await this.sign(operation, key);
-        return await this.broadcast(transaction);
+        let signedTransaction = await this.sign(transaction, key);
+        let result = await this.broadcast(signedTransaction);
+        return result;
     }
 
 }

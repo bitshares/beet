@@ -357,8 +357,8 @@ export default class BitShares extends BlockchainAPI {
                     amount: 0,
                     asset_id: "1.3.0"
                 },
-                from: from.get("id"),
-                to: to.get("id"),
+                from: from.id,
+                to: to.id,
                 amount: amount,
                 memo: memo == null ? undefined : memo
             }

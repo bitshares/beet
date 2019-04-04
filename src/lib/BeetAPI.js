@@ -178,6 +178,15 @@ export default class BeetAPI {
             return this._parseReject("BeetAPI.verifyMessage", request, err);
         }
     }
-
-
+    static async [Actions.TRANSFER](request, vue) {
+        try {
+            let response = await vue.requestTransfer(request.payload);
+            return {
+                id: request.id,
+                result: response.response
+            };
+        } catch (err) {
+            return this._parseReject("BeetAPI.transfer", request, err);
+        }
+    }
 }

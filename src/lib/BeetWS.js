@@ -26,7 +26,7 @@ const logger = new RendererLogger();
 */
 export default class BeetWS extends EventEmitter {
     constructor(port, sslport, timeout) {
-        super() // required
+        super(); // required
         var self = this;
         const httpsServer = Https.createServer({
             key: Fs.readFileSync(__dirname + '/ssl/beet.key'),
@@ -42,7 +42,6 @@ export default class BeetWS extends EventEmitter {
         this._clients = [];
         this._monitor = setInterval(function () {
             for (var clientid in self._clients) {
-
                 let client = self._clients[clientid];
                 if (client.isAlive === false || client.readyState != 1) {
                     self.emit("disconnected", client.id);
