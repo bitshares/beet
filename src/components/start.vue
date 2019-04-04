@@ -16,7 +16,7 @@
             >
                 {{ $t('start_cta') }}
             </router-link>
-            
+
             <span
                 v-if="hasWallet"
                 class="icon-account"
@@ -42,7 +42,8 @@
                 >
                     {{ wallet.name }}
                 </option>
-            </select><br>
+            </select>
+            <br>
             <span
                 v-if="hasWallet"
                 class="icon-lock1"
@@ -54,7 +55,7 @@
                 type="password"
                 class="form-control mb-4"
                 :placeholder=" $t('password_placeholder')"
-                required=""
+                required
                 :class="passincorrect"
                 @focus="passincorrect=''"
             >
@@ -120,8 +121,8 @@
             }
         },
         mounted() {
-            logger.debug('Start screen mounted');
-            this.$store.dispatch("WalletStore/loadWallets", {}).catch(()=> {});
+            logger.debug("Start screen mounted");
+            this.$store.dispatch("WalletStore/loadWallets", {}).catch(() => {});
         },
         methods: {
             unlockWallet() {
