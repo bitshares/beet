@@ -62,7 +62,6 @@
                     chain:   this.$store.getters['AccountStore/getSigningKey'](this.incoming).chain,
                     accountName:   this.$store.getters['AccountStore/getSigningKey'](this.incoming).accountName
                 });
-                console.log("asdasda");
                 this.to = this.incoming.params.to;
                 this.satoshis = this.incoming.params.amount.satoshis;
                 this.asset_id = this.incoming.params.amount.asset_id;
