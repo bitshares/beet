@@ -101,9 +101,7 @@ export default class Bitcoin extends BlockchainAPI {
 
     getSignUpInput() {
         return {
-            active: true,
-            memo: null,
-            owner: null
+            active: true
         }
     }
 

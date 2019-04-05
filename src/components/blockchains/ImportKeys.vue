@@ -93,9 +93,6 @@
             };
         },
         created() {
-            if (this.selectedChain == "BTC") {
-                throw "Unsupported chain!";
-            }
             let blockchain = getBlockchain(this.selectedChain);
             this.accessType = blockchain.getAccessType();
             this.requiredFields = blockchain.getSignUpInput();

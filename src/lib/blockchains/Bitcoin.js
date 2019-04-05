@@ -101,9 +101,7 @@ export default class Bitcoin extends BlockchainAPI {
 
     getSignUpInput() {
         return {
-            active: true,
-            memo: null,
-            owner: null
+            active: true
         }
     }
 
@@ -179,6 +177,10 @@ export default class Bitcoin extends BlockchainAPI {
             txb.addInput(out.script, out.n);
             total_unspent = total_unspent + out.value;
         });
+
+        if (total_unspent < amount.amount) {
+            throw {key: "insufficient_balance"};
+        }
 
         let overspent = total_unspent - amount - fee;
         txb.addOutput(to, amount);
