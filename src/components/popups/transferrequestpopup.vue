@@ -14,7 +14,8 @@
         <br>
         <pre class="text-left custom-content"><code>
     Recipient: {{ to }}
-    Amount: {{ satoshis }} {{ asset_id }}
+    Amount: {{ toSend }}
+    Fee: {{ toSendFee }}
         </code></pre>
         <b-btn
             class="mt-3"
@@ -51,7 +52,10 @@
                 message: null,
                 recipient: null,
                 satoshis: null,
-                asset_id: null
+                feeInSatoshis: null,
+                asset_id: null,
+                toSend: null,
+                toSendFee: null
             };
         },
         methods: {
@@ -62,9 +66,36 @@
                     chain:   this.$store.getters['AccountStore/getSigningKey'](this.incoming).chain,
                     accountName:   this.$store.getters['AccountStore/getSigningKey'](this.incoming).accountName
                 });
+
+                let blockchain = getBlockchain(this.incoming.chain);
+
                 this.to = this.incoming.params.to;
                 this.satoshis = this.incoming.params.amount.satoshis;
                 this.asset_id = this.incoming.params.amount.asset_id;
+
+                this.toSend = blockchain.format(
+                    this.incoming.params.amount
+                );
+
+                this.toSendFee = "Calculating ...";
+                let loadFee = async () => {
+                    this.feeInSatoshis = await blockchain.transfer(
+                        await getKey(this.$store.getters['AccountStore/getSigningKey'](this.incoming).keys.active),
+                        this.$store.getters['AccountStore/getSigningKey'](this.incoming).accountName,
+                        this.incoming.params.to,
+                        {
+                            amount: this.incoming.params.amount.satoshis || this.incoming.params.amount.amount,
+                            asset_id: this.incoming.params.amount.asset_id
+                        },
+                        this.incoming.params.memo,
+                        true
+                    );
+                    this.toSendFee = blockchain.format(
+                        this.feeInSatoshis
+                    );
+                };
+                loadFee().then(()=>{});
+
             },
             _execute: async function () {
                 let blockchain = getBlockchain(this.incoming.chain);

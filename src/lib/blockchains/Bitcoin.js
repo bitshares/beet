@@ -5,6 +5,7 @@ const logger = new RendererLogger();
 const fetch = require('node-fetch');
 
 import bitcoin from "bitcoinjs-lib";
+import {humanReadableFloat} from "../assetUtils";
 
 export default class Bitcoin extends BlockchainAPI {
 
@@ -138,30 +139,30 @@ export default class Bitcoin extends BlockchainAPI {
         return super._verifyAccountAndKey(accountName, this._publicKeyToAddress(publicKey), permission = null);
     }
 
-    async transfer(key, from, to, amount, memo = null) {
+    async transfer(key, from, to, amount, memo = null, onlyReturnFee = false) {
         let account = await this.getAccount(from);
 
         let unspent = [];
         account.raw.txs.forEach(_item => {
             _item.out.forEach(_tmp => {
-                if (!_tmp.spent) {
+                if (!_tmp.spent && _tmp.addr == from) {
+                    _tmp.txhash = _item.hash;
                     unspent.push(_tmp);
                 }
             });
         });
 
-        let fee = 100;
+        let feePerByte = (await (await fetch("https://bitcoinfees.earn.com/api/v1/fees/recommended")).json()).halfHourFee;
 
         const txb = new bitcoin.TransactionBuilder();
-        txb.setVersion(1);
 
         let total_unspent = 0;
 
         unspent.forEach(out => {
-            if (total_unspent >= amount + fee) {
+            if (total_unspent >= amount) {
                 return;
             }
-            txb.addInput(out.script, out.n);
+            txb.addInput(out.txhash, out.n);
             total_unspent = total_unspent + out.value;
         });
 
@@ -169,25 +170,40 @@ export default class Bitcoin extends BlockchainAPI {
             throw {key: "insufficient_balance"};
         }
 
-        let overspent = total_unspent - amount - fee;
-        txb.addOutput(to, amount);
+        txb.addOutput(to, amount.amount);
+
+        let sizeInBytes = txb.buildIncomplete().virtualSize();
+        let fee = feePerByte*sizeInBytes;
+
+        if (onlyReturnFee) {
+            return {
+                satoshis: fee,
+                asset_id: "BTC"
+            };
+        }
+
+        let overspent = total_unspent - amount.amount - fee;
         if (overspent > 0) {
-            txb.addOutput(to, amount);
+            txb.addOutput(from, overspent);
         }
 
         const keyPair = bitcoin.ECPair.fromWIF(key);
         unspent.forEach((item, index) => {
             txb.sign(index, keyPair);
         });
-
         let hex = txb.build().toHex();
-
-        return await fetch("https://blockchain.info/pt/pushtx",
+        let result = await fetch("https://blockchain.info/pushtx",
             {
                 method: 'POST',
-                form: {tx: hex}
+                body: {tx: hex}
             }
         );
+        let json = await result.json();
+        return json;
+    }
+
+    format(amount) {
+        return humanReadableFloat(amount.satoshis, 8).toFixed(8) + " " + amount.asset_id;
     }
 
 }

@@ -277,7 +277,7 @@ export default class BlockchainAPI {
         return account;
     }
 
-    transfer(key, from, to, amount, asset, memo = null) {
+    transfer(key, from, to, amount, asset, memo = null, onlyReturnFee = null) {
         throw "Needs implementation!"
     }
 
