@@ -14,11 +14,7 @@ export default class Bitcoin extends BlockchainAPI {
         return "BTC";
     }
 
-    isConnected() {
-        return this._isConnected;
-    }
-
-    connect(nodeToConnect, onClose = null) {
+    _connect(nodeToConnect) {
         return new Promise((resolve, reject) => {
             if (nodeToConnect == null) {
                 nodeToConnect = this.getNodes()[0].url;
@@ -29,7 +25,7 @@ export default class Bitcoin extends BlockchainAPI {
 
     getAccount(accountname) {
         return new Promise((resolve, reject) => {
-            this._ensureAPI().then(() => {
+            this.ensureConnection().then(() => {
                 fetch("https://blockchain.info/rawaddr/" + accountname).then(result => {
                     result.json().then(result => {
                         let account = {};
@@ -83,15 +79,6 @@ export default class Bitcoin extends BlockchainAPI {
                 });
                 resolve(balances);
             });
-        });
-    }
-
-    _ensureAPI() {
-        if (!this._isConnected) {
-            return this.connect();
-        }
-        return new Promise(resolve => {
-            resolve();
         });
     }
 

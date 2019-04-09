@@ -18,11 +18,7 @@ export default class EOS extends BlockchainAPI {
         return "EOS";
     }
 
-    isConnected() {
-        return this._isConnected;
-    }
-
-    connect(nodeToConnect, onClose = null) {
+    _connect(nodeToConnect) {
         return new Promise((resolve, reject) => {
             if (nodeToConnect == null) {
                 nodeToConnect = this.getNodes()[0].url;
@@ -36,7 +32,7 @@ export default class EOS extends BlockchainAPI {
 
     getAccount(accountname) {
         return new Promise((resolve, reject) => {
-            this._ensureAPI().then(result => {
+            this.ensureConnection().then(result => {
                 this.rpc.get_account(accountname).then(account => {
                     account.active = {}
                     account.owner = {}
@@ -83,15 +79,6 @@ export default class EOS extends BlockchainAPI {
                 });
                 resolve(balances);
             });
-        });
-    }
-
-    _ensureAPI() {
-        if (!this._isConnected) {
-            return this.connect();
-        }
-        return new Promise(resolve => {
-            resolve();
         });
     }
 

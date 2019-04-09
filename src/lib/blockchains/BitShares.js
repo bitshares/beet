@@ -12,28 +12,11 @@ const logger = new RendererLogger();
 
 export default class BitShares extends BlockchainAPI {
 
-    _onCloseWrapper(onClose) {
-        this._isConnected = false;
-        if (onClose) onClose();
-    }
-
-    connect(nodeToConnect = null, onClose = null) {
+    _connect(nodeToConnect = null) {
         return new Promise((resolve, reject) => {
             if (nodeToConnect == null) {
                 nodeToConnect = this.getNodes()[0].url;
             }
-            if (this._isConnectingInProgress) {
-                // there should be a promise queue for pending connects, this is the lazy way
-                setTimeout(() => {
-                    if (this._isConnected) {
-                        resolve(nodeToConnect);
-                    } else {
-                        reject("multiple connects, did not resolve in time");
-                    }
-                }, 250);
-                return;
-            }
-            this._isConnectingInProgress = true;
             if (this._isConnected) {
                 Apis.close().then(() => {
                     this._isConnected = false;
@@ -42,14 +25,10 @@ export default class BitShares extends BlockchainAPI {
                         true,
                         10000,
                         {enableCrypto: false, enableOrders: false},
-                        this._onCloseWrapper.bind(this, onClose)
+                        this._connectionFailed.bind(null, nodeToConnect, "Connection closed")
                     ).init_promise.then(() => {
                         this._connectionEstablished(resolve, nodeToConnect);
-                    }).catch((err) => {
-                        this._isConnected = false;
-                        this._isConnectingInProgress = false;
-                        reject(err);
-                    });
+                    }).catch(this._connectionFailed.bind(this, reject, nodeToConnect));
                 });
             } else {
                 Apis.instance(
@@ -57,30 +36,17 @@ export default class BitShares extends BlockchainAPI {
                     true,
                     10000,
                     {enableCrypto: false, enableOrders: false},
-                    this._onCloseWrapper.bind(this, onClose)
+                    this._connectionFailed.bind(null, nodeToConnect, "Connection closed")
                 ).init_promise.then(() => {
                     this._connectionEstablished(resolve, nodeToConnect);
-                }).catch((err) => {
-                    this._isConnected = false;
-                    this._isConnectingInProgress = false;
-                    reject(err);
-                });
+                }).catch(this._connectionFailed.bind(this, reject, nodeToConnect));
             }
-        });
-    }
-
-    _ensureAPI() {
-        if (!this._isConnected) {
-            return this.connect();
-        }
-        return new Promise(resolve => {
-            resolve();
         });
     }
 
     getAccount(accountName) {
         return new Promise((resolve, reject) => {
-            this._ensureAPI().then(() => {
+            this.ensureConnection().then(() => {
                 Apis.instance().db_api()
                     .exec("get_full_accounts", [[accountName], false])
                     .then(res => {
@@ -99,7 +65,7 @@ export default class BitShares extends BlockchainAPI {
 
     getAsset(assetName) {
         return new Promise((resolve, reject) => {
-            this._ensureAPI().then(() => {
+            this.ensureConnection().then(() => {
                 Apis.instance().db_api().exec("lookup_asset_symbols", [[assetName]]).then((asset_objects) => {
                     if (asset_objects.length && asset_objects[0]) {
                         resolve(asset_objects[0]);
@@ -111,7 +77,7 @@ export default class BitShares extends BlockchainAPI {
 
     getBalances(accountName) {
         return new Promise((resolve, reject) => {
-            this._ensureAPI().then(() => {
+            this.ensureConnection().then(() => {
                 this.getAccount(accountName).then((account) => {
                     let neededAssets = [];
                     for (let i = 0; i < account.balances.length; i++) {
@@ -155,7 +121,7 @@ export default class BitShares extends BlockchainAPI {
 
     mapOperationData(incoming) {
         return new Promise((resolve, reject) => {
-            this._ensureAPI().then(() => {
+            this.ensureConnection().then(() => {
                 if (incoming.action == "vote") {
                     let entity_id = incoming.params.id.split(".");
                     if (entity_id[0] != "1") {
@@ -227,7 +193,7 @@ export default class BitShares extends BlockchainAPI {
 
     sign(operation, key) {
         return new Promise((resolve, reject) => {
-            this._ensureAPI().then(() => {
+            this.ensureConnection().then(() => {
                 if (operation.type) {
                     let tr = new TransactionBuilder();
                     tr.add_type_operation(
@@ -271,7 +237,7 @@ export default class BitShares extends BlockchainAPI {
 
     broadcast(transaction) {
         return new Promise((resolve, reject) => {
-            this._ensureAPI().then(() => {
+            this.ensureConnection().then(() => {
                 transaction.broadcast().then(id => {
                     resolve(id);
                 }).catch(err => reject(err));
@@ -282,7 +248,7 @@ export default class BitShares extends BlockchainAPI {
     getOperation(data, account) {
         let account_id = account.id;
         return new Promise((resolve, reject) => {
-            this._ensureAPI().then(() => {
+            this.ensureConnection().then(() => {
                 let operation = {
                     type: null,
                     data: null

@@ -12,10 +12,21 @@
                         cta
                     />
                 </div>
-                <div class="col-2 text-center icons">
+                <div v-if="isConnecting" class="col-2 text-center icons">
                     <span
-                        class="status align-self-center"
-                        :class="{'icon-connected': isConnected,'icon-disconnected': !isConnected}"
+                        class="status align-self-center icon-connected"
+                    />
+                </div>
+                <div v-else-if="connectionFailed" class="col-2 text-center icons">
+                    <span
+                            class="status align-self-center icon-disconnected"
+                    />
+                </div>
+                <div class="col-2 text-center">
+                    <!-- todo: why doesnt this icon work? -->
+                    <a
+                        @click="loadBalances()"
+                        class="icon-refresh"
                     />
                 </div>
             </div>
@@ -43,12 +54,16 @@
                 nodes: [],
                 api: null,
                 isConnected: false,
+                isConnecting: false,
                 incoming: null,
                 genericmsg: "",
                 specifics: ""
             };
         },
         computed: {
+            connectionFailed() {
+                return !this.isConnecting && !this.isConnected;
+            },
             selectedAccount: {
                 get: function() {
                     return this.$store.state.AccountStore.accountlist[
@@ -74,15 +89,9 @@
                 set: function(newVal) {
                     if (!this.selectedNode || this.selectedNode != newVal) {
                         this.blockchain
-                            .connect(newVal)
-                            .then(connectedNode => {
-                                this.$store.dispatch("SettingsStore/setNode", {
-                                    chain: this.selectedChain,
-                                    node: connectedNode
-                                });
-                            })
-                            .catch(() => {
-                                this.isConnected=false;
+                            .ensureConnection(newVal)
+                            .finally(() => {
+                                this.isConnected = this.blockchain.isConnected();
                             });
                     }
                 }
@@ -110,6 +119,7 @@
                 if (oldVal !== newVal) {
                     this.isConnected = false;
                     this.nodes = this.blockchain.getNodes();
+                    this.isConnected = this.blockchain.isConnected();
                     if (!this.selectedNode) {
                         this.selectedNode = this.nodes[0].url;
                     }
@@ -117,9 +127,12 @@
             }
         },
         created() {
+            // Is EventBus here necessary? Could this be a computed field and listen
+            // to this.blockchain.isConnected?
             EventBus.$on("blockchainStatus", what => {
                 if (what.chain == this.selectedChain) {
                     this.isConnected = what.status;
+                    this.isConnecting = !!what.connecting;
                 }
             });
             EventBus.$on("balances", what => {
@@ -132,33 +145,12 @@
         },
         mounted() {
             EventBus.$emit("popup", "load-start");
-            logger.debug("Dashboard Mounted");
-
             this.nodes = this.blockchain.getNodes();
-            let url;
-            if (this.selectedNode != undefined) {
-                url = this.selectedNode.url;
-            } else {
-                url = null;
-            }
-            this.blockchain
-                .connect(url)
-                .then(connectedNode => {
-                    if (!this.selectedNode) {
-                        this.$store.dispatch("SettingsStore/setNode", {
-                            chain: this.selectedChain,
-                            node: connectedNode
-                        });
-                    }
-
-                    this.getBalances();
-                })
-                .catch(() => {                    
-                    this.isConnected=false;
-                });
+            this.isConnected = this.blockchain.isConnected();
+            this.loadBalances();
         },
         methods: {
-            getBalances: async function() {
+            loadBalances: async function() {
                 await this.$refs.balancetable.getBalances();
                 this.$store.dispatch("WalletStore/confirmUnlock");
                 EventBus.$emit("popup", "load-end");

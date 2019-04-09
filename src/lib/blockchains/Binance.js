@@ -11,11 +11,7 @@ export default class Bitcoin extends BlockchainAPI {
         return "BNB";
     }
 
-    isConnected() {
-        return this._isConnected;
-    }
-
-    connect(nodeToConnect, onClose = null) {
+    _connect(nodeToConnect) {
         return new Promise((resolve, reject) => {
             if (nodeToConnect == null) {
                 nodeToConnect = this.getNodes()[0].url;
@@ -24,13 +20,13 @@ export default class Bitcoin extends BlockchainAPI {
             this.client.initChain().then(() => {
                 console.log("Binance Chain initialized", this.client);
                 this._connectionEstablished(resolve, nodeToConnect);
-            }).catch(reject);
+            }).catch(this._connectionFailed.bind(this, reject, nodeToConnect));
         });
     }
 
     getAccount(accountname) {
         return new Promise((resolve, reject) => {
-            this._ensureAPI().then(() => {
+            this.ensureConnection().then(() => {
                 this.client.getAccount(accountname).then(result => {
                     if (result.status != 200) {
                         reject("HTTP status not ok");
@@ -68,7 +64,7 @@ export default class Bitcoin extends BlockchainAPI {
 
     getBalances(accountName) {
         return new Promise((resolve, reject) => {
-            this._ensureAPI().then(() => {
+            this.ensureConnection().then(() => {
                 this.client.getBalance(accountName).then((result) => {
                     let balances = [];
                     result.forEach(balance => {
@@ -86,15 +82,6 @@ export default class Bitcoin extends BlockchainAPI {
         });
     }
 
-    _ensureAPI() {
-        if (!this._isConnected) {
-            return this.connect();
-        }
-        return new Promise(resolve => {
-            resolve();
-        });
-    }
-
     getAccessType() {
         return "address";
     }
@@ -107,7 +94,7 @@ export default class Bitcoin extends BlockchainAPI {
 
     sign(operation, key) {
         return new Promise((resolve, reject) => {
-            this._ensureAPI().then(() => {
+            this.ensureConnection().then(() => {
                 if (typeof operation == "object"
                     && operation.length > 2
                     && operation[1] == "inject_wif") {
@@ -123,7 +110,7 @@ export default class Bitcoin extends BlockchainAPI {
 
     broadcast(transaction) {
         return new Promise((resolve, reject) => {
-            this._ensureAPI().then(() => {
+            this.ensureConnection().then(() => {
                 switch (transaction[0]) {
                     case "transfer":
                         this.client.transfer(transaction[2], transaction[3], transaction[4], transaction[5], transaction[6], transaction[7])
