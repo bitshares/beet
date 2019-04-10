@@ -1,6 +1,7 @@
 import BlockchainAPI from "./BlockchainAPI";
 
 import binancejs from "@binance-chain/javascript-sdk";
+import {humanReadableFloat} from "../assetUtils";
 const fetch = require('node-fetch');
 
 export default class Bitcoin extends BlockchainAPI {
@@ -174,6 +175,13 @@ export default class Bitcoin extends BlockchainAPI {
         if (!amount.amount || !amount.asset_id) {
             throw "Amount must be a dict with amount and asset_id as keys"
         }
+
+        // convert to floats
+        let newAmount = {
+            amount: humanReadableFloat(amount.amount, 8),
+            asset_id: amount.asset_id
+        }
+
         from = await this.getAccount(from);
         to = await this.getAccount(to);
 
@@ -187,7 +195,7 @@ export default class Bitcoin extends BlockchainAPI {
         let result = await fetch(sequenceURL);
         result = await result.json();
         const sequence = (!!result.data ? result.data.sequence : false) || 0;
-        let transaction = await this.sign(["transfer", "inject_wif", from.name, to.name, amount.amount, amount.asset_id, memo, sequence], key);
+        let transaction = await this.sign(["transfer", "inject_wif", from.name, to.name, newAmount.amount, newAmount.asset_id, memo, sequence], key);
         return await this.broadcast(transaction);
     }
 

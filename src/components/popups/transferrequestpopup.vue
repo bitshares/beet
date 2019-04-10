@@ -13,9 +13,9 @@
         <br>
         <br>
         <pre class="text-left custom-content"><code>
-    Recipient: {{ to }}
-    Amount: {{ toSend }}
-{{toSendFee != null && "    Fee: " + toSendFee}}
+  Recipient: {{ to }}
+  Amount: {{ toSend }}
+{{toSendFee != null ? "    Fee: " + toSendFee : ""}}
         </code></pre>
         <b-btn
             class="mt-3"
@@ -60,7 +60,7 @@
         },
         methods: {
             _onShow() {
-                this.message = this.$t("operations:message.request", {
+                this.message = this.$t("operations:transfer.request", {
                     appName: this.incoming.appName,
                     origin: this.incoming.origin,
                     chain:   this.$store.getters['AccountStore/getSigningKey'](this.incoming).chain,

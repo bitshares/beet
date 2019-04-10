@@ -114,12 +114,12 @@
                 id="step2"
             >
                 <ImportAdressBased
-                    v-if="selectedChain == 'BTC' || selectedChain == 'BNB' || selectedChain == 'BTC_TEST'"
+                    v-if="selectedChain == 'BTC' || selectedChain == 'BNB_TEST' || selectedChain == 'BTC_TEST'"
                     ref="import_accounts"
                     :selected-chain="selectedChain"
                 />
                 <ImportKeys
-                    v-if="(selectedChain != 'BTS' && selectedChain != 'BTC' && selectedChain != 'BNB' && selectedChain != 'BTC_TEST') || BTSImportType=='1'"
+                    v-if="(selectedChain != 'BTS' && selectedChain != 'BTC' && selectedChain != 'BNB_TEST' && selectedChain != 'BTC_TEST') || BTSImportType=='1'"
                     ref="import_accounts"
                     :selected-chain="selectedChain"
                 />
