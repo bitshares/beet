@@ -1,6 +1,7 @@
 import BlockchainAPI from "./BlockchainAPI";
 
 import binancejs from "@binance-chain/javascript-sdk";
+const fetch = require('node-fetch');
 
 export default class Bitcoin extends BlockchainAPI {
 
@@ -10,24 +11,22 @@ export default class Bitcoin extends BlockchainAPI {
         return "BNB";
     }
 
-    isConnected() {
-        return this._isConnected;
-    }
-
-    connect(nodeToConnect, onClose = null) {
+    _connect(nodeToConnect) {
         return new Promise((resolve, reject) => {
             if (nodeToConnect == null) {
                 nodeToConnect = this.getNodes()[0].url;
             }
             this.client = new binancejs(nodeToConnect);
-            this.client.initChain();
-            this._connectionEstablished(resolve, nodeToConnect);
+            this.client.initChain().then(() => {
+                console.log("Binance Chain initialized", this.client);
+                this._connectionEstablished(resolve, nodeToConnect);
+            }).catch(this._connectionFailed.bind(this, reject, nodeToConnect));
         });
     }
 
     getAccount(accountname) {
         return new Promise((resolve, reject) => {
-            this._ensureAPI().then(() => {
+            this.ensureConnection().then(() => {
                 this.client.getAccount(accountname).then(result => {
                     if (result.status != 200) {
                         reject("HTTP status not ok");
@@ -47,6 +46,7 @@ export default class Bitcoin extends BlockchainAPI {
                     account.owner.public_keys = [];
                     account.memo = {public_key: null};
                     account.id = result.account_number;
+                    account.name = accountname;
                     account.balances = result.balances;
                     resolve(account);
                 }).catch(reject);
@@ -64,7 +64,7 @@ export default class Bitcoin extends BlockchainAPI {
 
     getBalances(accountName) {
         return new Promise((resolve, reject) => {
-            this._ensureAPI().then(() => {
+            this.ensureConnection().then(() => {
                 this.client.getBalance(accountName).then((result) => {
                     let balances = [];
                     result.forEach(balance => {
@@ -82,30 +82,19 @@ export default class Bitcoin extends BlockchainAPI {
         });
     }
 
-    _ensureAPI() {
-        if (!this._isConnected) {
-            return this.connect();
-        }
-        return new Promise(resolve => {
-            resolve();
-        });
-    }
-
     getAccessType() {
         return "address";
     }
 
     getSignUpInput() {
         return {
-            active: true,
-            memo: null,
-            owner: null
+            active: true
         }
     }
 
     sign(operation, key) {
         return new Promise((resolve, reject) => {
-            this._ensureAPI().then(() => {
+            this.ensureConnection().then(() => {
                 if (typeof operation == "object"
                     && operation.length > 2
                     && operation[1] == "inject_wif") {
@@ -121,10 +110,10 @@ export default class Bitcoin extends BlockchainAPI {
 
     broadcast(transaction) {
         return new Promise((resolve, reject) => {
-            this._ensureAPI().then(() => {
+            this.ensureConnection().then(() => {
                 switch (transaction[0]) {
                     case "transfer":
-                        this.client.transfer(operation[2], operation[3], operation[4], operation[5], operation[6], operation[7])
+                        this.client.transfer(transaction[2], transaction[3], transaction[4], transaction[5], transaction[6], transaction[7])
                             .then(resolve)
                             .catch(reject)
                             .finally(()=>{
@@ -132,7 +121,7 @@ export default class Bitcoin extends BlockchainAPI {
                             });
                         break;
                     case "cancelOrder":
-                        this.client.cancelOrder(operation[2], operation[3], operation[4], operation[5])
+                        this.client.cancelOrder(transaction[2], transaction[3], transaction[4], transaction[5])
                             .then(resolve)
                             .catch(reject)
                             .finally(()=>{
@@ -140,7 +129,7 @@ export default class Bitcoin extends BlockchainAPI {
                             });
                         break;
                     case "placeOrder":
-                        this.client.placeOrder(operation[2], operation[3], operation[4], operation[5], operation[6], operation[7], operation[8])
+                        this.client.placeOrder(transaction[2], transaction[3], transaction[4], transaction[5], transaction[6], transaction[7], transaction[8])
                             .then(resolve)
                             .catch(reject)
                             .finally(()=>{
@@ -179,6 +168,27 @@ export default class Bitcoin extends BlockchainAPI {
 
     _verifyAccountAndKey(accountName, publicKey, permission = null) {
         return super._verifyAccountAndKey(accountName, this._publicKeyToAddress(publicKey), permission = null);
+    }
+
+    async transfer(key, from, to, amount, memo = null) {
+        if (!amount.amount || !amount.asset_id) {
+            throw "Amount must be a dict with amount and asset_id as keys"
+        }
+        from = await this.getAccount(from);
+        to = await this.getAccount(to);
+
+        const api = 'https://testnet-dex.binance.org/';
+        const sequenceURL = `${api}api/v1/account/${from.name}/sequence`;
+
+        if (memo == null){
+            memo = "";
+        }
+
+        let result = await fetch(sequenceURL);
+        result = await result.json();
+        const sequence = (!!result.data ? result.data.sequence : false) || 0;
+        let transaction = await this.sign(["transfer", "inject_wif", from.name, to.name, amount.amount, amount.asset_id, memo, sequence], key);
+        return await this.broadcast(transaction);
     }
 
 }

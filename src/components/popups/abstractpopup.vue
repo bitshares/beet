@@ -61,7 +61,6 @@
                         );
                     }
                 } catch (err) {
-                    console.error(err);
                     this._reject({ error: err });
                 }
             },

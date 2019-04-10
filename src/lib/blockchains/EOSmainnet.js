@@ -5,8 +5,10 @@ const logger = new RendererLogger();
 const fetch = require('node-fetch');
 
 const { Api, JsonRpc, RpcError } = require('eosjs');
+import { JsSignatureProvider } from "eosjs/dist/eosjs-jssig";
+
 import * as ecc from "eosjs-ecc";
-import { convertLegacyPublicKey } from "eosjs/dist/eosjs-numeric";
+import { TextEncoder, TextDecoder } from "util";
 
 export default class EOS extends BlockchainAPI {
 
@@ -16,11 +18,7 @@ export default class EOS extends BlockchainAPI {
         return "EOS";
     }
 
-    isConnected() {
-        return this._isConnected;
-    }
-
-    connect(nodeToConnect, onClose = null) {
+    _connect(nodeToConnect) {
         return new Promise((resolve, reject) => {
             if (nodeToConnect == null) {
                 nodeToConnect = this.getNodes()[0].url;
@@ -34,7 +32,7 @@ export default class EOS extends BlockchainAPI {
 
     getAccount(accountname) {
         return new Promise((resolve, reject) => {
-            this._ensureAPI().then(result => {
+            this.ensureConnection().then(result => {
                 this.rpc.get_account(accountname).then(account => {
                     account.active = {}
                     account.owner = {}
@@ -84,24 +82,33 @@ export default class EOS extends BlockchainAPI {
         });
     }
 
-    _ensureAPI() {
-        if (!this._isConnected) {
-            return this.connect();
-        }
-        return new Promise(resolve => {
-            resolve();
-        });
-    }
-
-    sign(operation, key) {
+    sign(transaction, key) {
         return new Promise((resolve, reject) => {
-            reject("Not supported yet");
+            transaction.signatureProvider = new JsSignatureProvider([key]);
+            resolve(transaction);
         });
     }
 
     broadcast(transaction) {
         return new Promise((resolve, reject) => {
-            reject("Not supported yet");
+            const api = new Api({
+                rpc: this.rpc,
+                signatureProvider: transaction.signatureProvider,
+                textDecoder: new TextDecoder(),
+                textEncoder: new TextEncoder()
+            });
+            api.transact(
+                {
+                    actions: transaction.actions
+                },
+                {
+                    blocksBehind: 3,
+                    expireSeconds: 30
+
+                }
+            ).then(result => {
+                  resolve(result);
+            }).catch(reject);
         });
     }
 
@@ -127,6 +134,44 @@ export default class EOS extends BlockchainAPI {
             string,
             ecc.PublicKey.fromString(publicKey)
         );
+    }
+
+    async transfer(key, from, to, amount, memo = null) {
+        if (!amount.amount || !amount.asset_id) {
+            throw "Amount must be a dict with amount and asset_id as keys"
+        }
+        from = await this.getAccount(from);
+        to = await this.getAccount(to);
+
+        if (memo == null) {
+            memo = "";
+        }
+
+        if (amount.asset_id !== "EOS") {
+            throw "Only EOS supported at the moment."
+        }
+
+        let actions = [{
+            account: 'eosio.token',
+            name: 'transfer',
+            authorization: [{
+                actor: from.id,
+                permission: 'active',
+            }],
+            data: {
+                from: from.id,
+                to: to.id,
+                quantity: (amount.amount/10000).toFixed(4) + " " + amount.asset_id,
+                memo: memo,
+            },
+        }];
+
+        let transaction = {
+            actions
+        };
+        let signedTransaction = await this.sign(transaction, key);
+        let result = await this.broadcast(signedTransaction);
+        return result;
     }
 
 }

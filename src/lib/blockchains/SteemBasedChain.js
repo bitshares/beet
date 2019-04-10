@@ -2,45 +2,20 @@ import BlockchainAPI from "./BlockchainAPI";
 
 export default class SteemBasedChain extends BlockchainAPI {
 
-    _getSignature() {
-        throw "Needs implementation"
-    }
-
-    _getPrivateKey() {
-        throw "Needs implementation"
-    }
-
-    _getPublicKey() {
-        throw "Needs implementation";
-    }
-
-    _getLibrary() {
-        throw "Needs implementation";
-    }
-
-    _getCoreToken() {
-        throw "Needs implementation";
-    }
-
-    isConnected() {
-        return this._isConnected;
-    }
-
-    connect(nodeToConnect, onClose = null) {
+    _connect(nodeToConnect) {
         return new Promise((resolve, reject) => {
             if (nodeToConnect == null) {
                 nodeToConnect = this.getNodes()[0].url;
             }
             // steem library handles connection internally, just set node
             this._getLibrary().api.setOptions({ url: nodeToConnect });
-            
             this._connectionEstablished(resolve, nodeToConnect);
         });
     }
 
     getAccount(accountname) {
         return new Promise((resolve, reject) => {
-            this._ensureAPI().then(() => {
+            this.ensureConnection().then(() => {
                 this._getLibrary().api.getAccounts([accountname], function(err, result) {
                     if (result.length == 0) {
                         reject("Account " + accountname + " not found!");
@@ -61,7 +36,7 @@ export default class SteemBasedChain extends BlockchainAPI {
 
     getBalances(accountName) {
         return new Promise((resolve, reject) => {
-            this._ensureAPI().then(() => {
+            this.ensureConnection().then(() => {
                 this.getAccount(accountName).then((account) => {
                     let balances = [];
                     balances.push({
@@ -98,16 +73,9 @@ export default class SteemBasedChain extends BlockchainAPI {
         });
     }
 
-    _ensureAPI() {
-        // nothing to do for steem yet
-        return new Promise((resolve, reject) => {
-            this.connect().then(resolve).catch(reject);
-        });
-    }
-
     sign(operation, key) {
         return new Promise((resolve, reject) => {
-            this._ensureAPI().then(() => {
+            this.ensureConnection().then(() => {
                 if (operation.type) {
                     switch (operation.type) {
                         case 'vote': {
@@ -137,7 +105,7 @@ export default class SteemBasedChain extends BlockchainAPI {
 
     broadcast(transaction) {
         return new Promise((resolve, reject) => {
-            this._ensureAPI().then(() => {
+            this.ensureConnection().then(() => {
                 if (transaction.type) {
                     switch (transaction.type) {
                         case 'vote': {
@@ -192,8 +160,9 @@ export default class SteemBasedChain extends BlockchainAPI {
                             (err, result) => {
                                 if (err) {
                                     reject(err);
+                                } else {
+                                    resolve(result);
                                 }
-                                resolve(result);
                             }
                         );
                     } else {
@@ -208,7 +177,7 @@ export default class SteemBasedChain extends BlockchainAPI {
 
     getOperation(data, account) {
         return new Promise((resolve, reject) => {
-            this._ensureAPI().then(() => {
+            this.ensureConnection().then(() => {
                 switch (data.action) {
                     case 'vote': {
                         if (!!data.params.author) {
@@ -239,7 +208,7 @@ export default class SteemBasedChain extends BlockchainAPI {
 
     mapOperationData(incoming) {
         return new Promise((resolve, reject) => {
-            this._ensureAPI().then(() => {
+            this.ensureConnection().then(() => {
                 if (incoming.action == "vote") {
                     if (!!incoming.params.author) {
                         resolve({
@@ -278,5 +247,27 @@ export default class SteemBasedChain extends BlockchainAPI {
             this._getPublicKey().fromStringOrThrow(publicKey)
         );
     }
+
+    transfer(key, from, to, amount, memo = null) {
+        return new Promise((resolve, reject) => {
+            this.ensureConnection().then(() => {
+                this._getLibrary().broadcast.transfer(
+                    key,
+                    from,
+                    to,
+                    amount,
+                    memo,
+                    (err, result) => {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            resolve(result);
+                        }
+                    }
+                );
+            });
+        });
+    }
+
 
 }

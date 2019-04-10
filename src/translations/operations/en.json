@@ -27,6 +27,13 @@
         "accept_btn": "Allow",
         "reject_btn": "Deny"
     },
+    "transfer": {
+        "title": "Transfer Request",
+        "request": "App: `{{appName}}` from `{{origin}}` wants to initiate a transfer from {{ chain }}:{{ accountName }}.",
+        "request_cta": "Do you want to execute it?",
+        "accept_btn": "Sign & Broadcast",
+        "reject_btn": "Ignore"
+    },
     "rawsig": {
         "title": "Transaction Request",
         "request": "App: `{{appName}}` from `{{origin}}` has submitted the following transaction for account {{ chain }}:{{ accountName }}.",

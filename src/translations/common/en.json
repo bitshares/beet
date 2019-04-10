@@ -55,6 +55,7 @@
     "unverified_account_error": "Could not verify keys for account name provided. Please check.",
     "confirm_pass_error": "Passwords do not match.",
     "balances_lbl": "Balances",
+    "balances_error": "Error loading balances",
     "settings_lbl": "Settings",
     "error_lbl": "Error",
     "node_lbl": "Node:",
