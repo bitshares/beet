@@ -51,10 +51,10 @@
                     </option>
                     <option
                         v-for="chain in chainList"
-                        :key="chain.short"
-                        :value="chain.short"
+                        :key="chain.identifier"
+                        :value="chain.identifier"
                     >
-                        {{ (chain.testnet ? "Testnet: " : '') }} {{ chain.name }} ({{ chain.short }})
+                        {{ (chain.testnet ? "Testnet: " : '') }} {{ chain.name }} ({{ chain.identifier }})
                     </option>
                 </select>
                 <div v-if="selectedChain=='BTS'">
@@ -114,12 +114,12 @@
                 id="step2"
             >
                 <ImportAdressBased
-                    v-if="selectedChain == 'BTC' || selectedChain == 'BNB'"
+                    v-if="selectedChain == 'BTC' || selectedChain == 'BNB' || selectedChain == 'BTC_TEST'"
                     ref="import_accounts"
                     :selected-chain="selectedChain"
                 />
                 <ImportKeys
-                    v-if="(selectedChain != 'BTS' && selectedChain != 'BTC' && selectedChain != 'BNB') || BTSImportType=='1'"
+                    v-if="(selectedChain != 'BTS' && selectedChain != 'BTC' && selectedChain != 'BNB' && selectedChain != 'BTC_TEST') || BTSImportType=='1'"
                     ref="import_accounts"
                     :selected-chain="selectedChain"
                 />

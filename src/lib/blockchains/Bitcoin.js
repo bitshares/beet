@@ -24,10 +24,18 @@ export default class Bitcoin extends BlockchainAPI {
         });
     }
 
+    _getAddressURL() {
+        return this.getNodes()[0].url;
+    }
+
+    _getPushURL() {
+        return this.getNodes()[0].push;
+    }
+
     getAccount(accountname) {
         return new Promise((resolve, reject) => {
             this.ensureConnection().then(() => {
-                fetch("https://blockchain.info/rawaddr/" + accountname).then(result => {
+                fetch(this._getAddressURL() + accountname).then(result => {
                     result.json().then(result => {
                         let account = {};
                         account.active = {};
@@ -56,13 +64,18 @@ export default class Bitcoin extends BlockchainAPI {
     _publicKeyToAddress(publicKey) {
         let _bitcoin = bitcoin;
         let publicKeyBuffer = new Buffer(publicKey, 'hex')
-        let keyPair = bitcoin.ECPair.fromPublicKey(publicKeyBuffer)
-        const { address } = bitcoin.payments.p2pkh({ pubkey: keyPair.publicKey });
+        let options = {};
+        if (this._config.testnet) {
+            options.network = bitcoin.networks.testnet;
+        }
+        let keyPair = this._getKeyPairFromPublic(publicKeyBuffer);
+        options.pubkey = keyPair.publicKey;
+        const { address } = bitcoin.payments.p2pkh(options);
         return address;
     }
 
     getPublicKey(privateKey) {
-        const keyPair = bitcoin.ECPair.fromWIF(privateKey);
+        const keyPair = this._getKeyPairFromWif(privateKey);
         this._lastPublicKey = keyPair.publicKey.toString("hex");
         return keyPair.publicKey.toString("hex");
     }
@@ -99,10 +112,37 @@ export default class Bitcoin extends BlockchainAPI {
         });
     }
 
-    broadcast(transaction) {
-        return new Promise((resolve, reject) => {
-            reject("Not supported yet");
-        });
+    async broadcast(transaction) {
+        if (typeof transaction == "object" && !!transaction.build) {
+            let hex = transaction.build().toHex();
+            let payload = null;
+            if (this._config.testnet) {
+                payload = {hex: hex}
+            } else {
+                payload = {tx: hex}
+            }
+            let result = await fetch(this._getPushURL(),
+                {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                }
+            );
+            if (result.status != 200) {
+                throw result
+            }
+            let json = await result.json();
+            if (!!json.success) {
+                return json;
+            } else {
+                throw json;
+            }
+        } else {
+            throw "Not supported";
+        }
     }
 
     getOperation(data, account) {
@@ -118,15 +158,31 @@ export default class Bitcoin extends BlockchainAPI {
     }
 
     _signString(key, string) {
-        const keyPair = bitcoin.ECPair.fromWIF(key);
+        const keyPair = this._getKeyPairFromWif(key);
         let hash = bitcoin.crypto.sha256(string);
         let signature = keyPair.sign(hash);
         return signature.toString("hex");
     }
 
+    _getKeyPairFromWif(key) {
+        let network = undefined;
+        if (this._config.testnet) {
+            network = bitcoin.networks.testnet;
+        }
+        return bitcoin.ECPair.fromWIF(key, network);
+    }
+
+    _getKeyPairFromPublic(publicKeyBuffer) {
+        let options = {};
+        if (this._config.testnet) {
+            options.network = bitcoin.networks.testnet;
+        }
+        return bitcoin.ECPair.fromPublicKey(publicKeyBuffer, options);
+    }
+
     _verifyString(signature, publicKey, string) {
         let publicKeyBuffer = new Buffer(publicKey, 'hex')
-        let keyPair = bitcoin.ECPair.fromPublicKey(publicKeyBuffer)
+        let keyPair = this._getKeyPairFromPublic(publicKeyBuffer);
         let hash = bitcoin.crypto.sha256(string);
         return keyPair.verify(hash, new Buffer(signature, 'hex'));
     }
@@ -139,7 +195,7 @@ export default class Bitcoin extends BlockchainAPI {
         return super._verifyAccountAndKey(accountName, this._publicKeyToAddress(publicKey), permission = null);
     }
 
-    async transfer(key, from, to, amount, memo = null, onlyReturnFee = false) {
+    async transfer(key, from, to, amount, memo = null, broadcast = true) {
         let account = await this.getAccount(from);
 
         let unspent = [];
@@ -154,56 +210,85 @@ export default class Bitcoin extends BlockchainAPI {
 
         let feePerByte = (await (await fetch("https://bitcoinfees.earn.com/api/v1/fees/recommended")).json()).halfHourFee;
 
-        const txb = new bitcoin.TransactionBuilder();
+        let network = undefined;
+        if (this._config.testnet) {
+            network = bitcoin.networks.testnet;
+        }
+        const txb = new bitcoin.TransactionBuilder(network);
 
-        let total_unspent = 0;
+        let total_input = 0;
 
         unspent.forEach(out => {
-            if (total_unspent >= amount) {
+            if (total_input >= amount) {
                 return;
             }
             txb.addInput(out.txhash, out.n);
-            total_unspent = total_unspent + out.value;
+            total_input = total_input + out.value;
         });
 
-        if (total_unspent < amount.amount) {
+        if (total_input < amount.amount) {
             throw {key: "insufficient_balance"};
         }
 
+
+        let total_output = amount.amount;
         txb.addOutput(to, amount.amount);
 
-        let sizeInBytes = txb.buildIncomplete().virtualSize();
-        let fee = feePerByte*sizeInBytes;
-
-        if (onlyReturnFee) {
-            return {
-                satoshis: fee,
-                asset_id: "BTC"
-            };
-        }
-
-        let overspent = total_unspent - amount.amount - fee;
-        if (overspent > 0) {
+        let estimate = await this._estimateFee(txb);
+        let free = total_input - amount.amount;
+        if (free <= estimate.lower + (estimate.upper - estimate.lower)*2.5) {
+            // no sense in adding another output, pay more fee for a quicker transaction rather than
+            // getting this one stuck or creating outputs that are not worth being processed
+        } else {
+            let overspent = free - estimate.upper;
             txb.addOutput(from, overspent);
+            total_output = total_output + overspent;
         }
 
-        const keyPair = bitcoin.ECPair.fromWIF(key);
+        const keyPair = this._getKeyPairFromWif(key);
         unspent.forEach((item, index) => {
             txb.sign(index, keyPair);
         });
-        let hex = txb.build().toHex();
-        let result = await fetch("https://blockchain.info/pushtx",
-            {
-                method: 'POST',
-                body: {tx: hex}
-            }
-        );
-        let json = await result.json();
-        return json;
+
+        txb.total_output = total_output;
+        txb.total_input = total_input;
+
+        let feeInSatoshis = await this._getFee(txb);
+
+        if (!broadcast) {
+            return {
+                transaction: txb,
+                feeInSatoshis: feeInSatoshis
+            };
+        } else {
+            return this.broadcast(txb);
+        }
     }
 
-    format(amount) {
-        return humanReadableFloat(amount.satoshis, 8).toFixed(8) + " " + amount.asset_id;
+    async _estimateFee(transaction) {
+        let feePerByte = (await (await fetch("https://bitcoinfees.earn.com/api/v1/fees/recommended")).json()).halfHourFee;
+        let sizeInBytes = transaction.buildIncomplete().virtualSize();
+        let countInAndOut = transaction.__tx.ins.length + transaction.__tx.outs.length;
+        return {
+            lower: feePerByte*sizeInBytes,
+            upper: feePerByte*sizeInBytes/countInAndOut*(countInAndOut+1),
+        };
+    }
+
+    async _getFee(transaction) {
+        let fee = transaction.total_input - transaction.total_output;
+        let estimated = await this._estimateFee(transaction).lower;
+        if (fee > estimated*1.2) {
+            throw "Fee is too high";
+        }
+        return {
+            satoshis: fee,
+            asset_id: "BTC"
+        };
+    }
+
+    supportsFeeCalculation() {
+        return true;
     }
 
 }

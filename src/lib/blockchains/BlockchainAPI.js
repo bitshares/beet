@@ -3,6 +3,7 @@ import RendererLogger from "../RendererLogger";
 const logger = new RendererLogger();
 
 import store from "../../store";
+import {formatAsset, humanReadableFloat} from "../assetUtils";
 
 export default class BlockchainAPI {
 
@@ -22,31 +23,32 @@ export default class BlockchainAPI {
             // enforce connection to that node
             this._isConnected = false;
         }
-        if (!this._isConnected) {
-            if (this._isConnectingInProgress) {
-                // there should be a promise queue for pending connects, this is the lazy way
-                setTimeout(() => {
-                    if (this._isConnected) {
-                        this._connectionEstablished(resolve, nodeToConnect);
-                    } else {
-                        this._connectionFailed(reject, nodeToConnect, "multiple connects, did not resolve in time");
-                    }
-                }, 2000);
-                return;
-            }
-            this._isConnectingInProgress = true;
-            EventBus.$emit(
-                'blockchainStatus',
-                {
-                    chain: this._config.short,
-                    status: this._isConnected,
-                    connecting: this._isConnectingInProgress
+        return new Promise((resolve,reject) => {
+            if (!this._isConnected) {
+                if (this._isConnectingInProgress) {
+                    // there should be a promise queue for pending connects, this is the lazy way
+                    setTimeout(() => {
+                        if (this._isConnected) {
+                            this._connectionEstablished(resolve, nodeToConnect);
+                        } else {
+                            this._connectionFailed(reject, nodeToConnect, "multiple connects, did not resolve in time");
+                        }
+                    }, 2000);
+                    return;
                 }
-            );
-            return this._connect(nodeToConnect);
-        }
-        return new Promise(resolve => {
-            resolve();
+                this._isConnectingInProgress = true;
+                EventBus.$emit(
+                    'blockchainStatus',
+                    {
+                        chain: this._config.identifier,
+                        status: this._isConnected,
+                        connecting: this._isConnectingInProgress
+                    }
+                );
+                this._connect(nodeToConnect).then(resolve).catch(reject);
+            } else {
+                resolve();
+            }
         });
     }
 
@@ -61,26 +63,26 @@ export default class BlockchainAPI {
         EventBus.$emit(
             'blockchainStatus',
             {
-                chain: this._config.short,
+                chain: this._config.identifier,
                 status: this._isConnected,
                 connecting: this._isConnectingInProgress
             }
         );
         store.dispatch("SettingsStore/setNode", {
-            chain: this._config.short,
+            chain: this._config.identifier,
             node: node
         });
         resolveCallback(node);
     }
 
     _connectionFailed(resolveCallback, node, error) {
-        logger.debug(this._config.short + "._connectionFailed", error);
+        logger.debug(this._config.identifier + "._connectionFailed", error);
         this._isConnected = false;
         this._isConnectingInProgress = false;
         EventBus.$emit(
             'blockchainStatus',
             {
-                chain: this._config.short,
+                chain: this._config.identifier,
                 status: this._isConnected,
                 connecting: this._isConnectingInProgress,
                 error: error
@@ -146,9 +148,9 @@ export default class BlockchainAPI {
                 "text",
                 randomString
             ];
-            if (this._config.short !== message[2].substring(0, 3)) {
+            if (this._config.identifier !== message[2].substring(0, 3)) {
                 message.push("chain");
-                message.push(this._config.short);
+                message.push(this._config.identifier);
             }
             message = JSON.stringify(message);
             try {
@@ -277,8 +279,30 @@ export default class BlockchainAPI {
         return account;
     }
 
-    transfer(key, from, to, amount, asset, memo = null, onlyReturnFee = null) {
+    transfer(key, from, to, amount, asset, memo = null, broadcast = true) {
         throw "Needs implementation!"
+    }
+
+    supportsFeeCalculation() {
+        return false;
+    }
+
+    getAsset(assetSymbolOrId) {
+        throw "Needs implementation!";
+    }
+
+    format(amount) {
+        let asset = null;
+        if (typeof amount.asset_id == "string" && amount.asset_id.substring(0,1) == "1") {
+            asset = this.getAsset(amount.asset_id);
+        } else if (Number.isInteger(amount.asset_id)) {
+            asset = this.getAsset(amount.asset_id);
+        }
+        if (asset == null) {
+            return formatAsset(amount.satoshis, amount.asset_id);
+        } else {
+            return formatAsset(amount.satoshis, asset.symbol, asset.precision);
+        }
     }
 
 }

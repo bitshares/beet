@@ -5,7 +5,7 @@ const logger = new RendererLogger();
 const fetch = require('node-fetch');
 
 const { Api, JsonRpc, RpcError } = require('eosjs');
-import JsSignatureProvider from "eosjs/dist/eosjs-jssig";
+import { JsSignatureProvider } from "eosjs/dist/eosjs-jssig";
 
 import * as ecc from "eosjs-ecc";
 import { TextEncoder, TextDecoder } from "util";

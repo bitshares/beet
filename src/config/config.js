@@ -2,9 +2,9 @@ export const version = {
     release: 2,
     name: '0.5.0'
 };
-export const blockchains = {
+let _blockchains = {
     BTS: {
-        short: 'BTS',
+        coreSymbol: 'BTS',
         name: 'BitShares',
         chainId: '4018d7844c78f6a6c41c6a552b898022310fc5dec06da467ee7905a8dad512c8',
         nodeList: [
@@ -348,7 +348,7 @@ export const blockchains = {
         ]
     },
     STEEM: {
-        short: 'STEEM',
+        coreSymbol: 'STM',
         name: 'Steem',
         chainId: '0',
         nodeList: [
@@ -363,7 +363,7 @@ export const blockchains = {
         ]
     },
     WLS: {
-        short: 'WLS',
+        coreSymbol: 'WLS',
         name: 'WhaleShares',
         chainId: '0',
         nodeList: [
@@ -378,7 +378,7 @@ export const blockchains = {
         ]
     },
     SMOKE: {
-        short: 'SMOKE',
+        coreSymbol: 'SMK',
         name: 'Smoke',
         chainID: '1ce08345e61cd3bf91673a47fc507e7ed01550dab841fd9cdb0ab66ef576aaf0',
         nodeList: [
@@ -401,7 +401,7 @@ export const blockchains = {
         ]
     },
     EOS: {
-        short: 'EOS',
+        coreSymbol: 'EOS',
         name: 'EOSmainnet',
         chainId: 'aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906',
         nodeList: [
@@ -416,7 +416,7 @@ export const blockchains = {
         ]
     },
     TLOS: {
-        short: 'TLOS',
+        coreSymbol: 'TLOS',
         name: 'Telos',
         chainId: '4667b205c6838ef70ff7988f6e8257e8be0e1284a2f59699054a018f743b1d11',
         nodeList: [
@@ -431,12 +431,13 @@ export const blockchains = {
         ]
     },
     BTC: {
-        short: 'BTC',
+        coreSymbol: 'BTC',
         name: 'Bitcoin',
         chainId: null,
         nodeList: [
             {
                 url: "https://blockchain.info/rawaddr/",
+                push: "https://blockchain.info/pushtx",
                 location: "Unknown",
                 region: "Unknown",
                 country: "Luxembourg",
@@ -445,8 +446,25 @@ export const blockchains = {
             }
         ]
     },
-    BNB: {
-        short: 'BNB',
+    BTC_TEST: {
+        coreSymbol: 'BTC',
+        name: 'Bitcoin',
+        chainId: null,
+        testnet: true,
+        nodeList: [
+            {
+                url: "https://testnet.blockchain.info/rawaddr/",
+                push: "https://testnet-api.smartbit.com.au/v1/blockchain/pushtx",
+                location: "Unknown",
+                region: "Unknown",
+                country: "Luxembourg",
+                operator: "Blockchain Luxembourg S.A.",
+                contact: "https://www.blockchain.com"
+            }
+        ]
+    },
+    BNB_TEST: {
+        coreSymbol: 'BNB',
         name: 'BinanceChain',
         testnet: true,
         chainId: 'Binance-Chain-Nile',
@@ -462,3 +480,11 @@ export const blockchains = {
         ]
     }
 };
+
+Object.keys(_blockchains).forEach(key => {
+    _blockchains[key].identifier = key;
+});
+
+export const blockchains = _blockchains;
+
+console.log(blockchains);

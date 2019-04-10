@@ -63,8 +63,33 @@ export default class BitShares extends BlockchainAPI {
         });
     }
 
-    getAsset(assetName) {
+    getAsset(assetSymbolOrId) {
         return new Promise((resolve, reject) => {
+            if (assetSymbolOrId == "1.3.0") {
+                resolve({
+                    asset_id: "1.3.0",
+                    symbol: "BTS",
+                    precision: 8
+                });
+            } else if (assetSymbolOrId == "1.3.121") {
+                resolve({
+                    asset_id: "1.3.121",
+                    symbol: "bitUSD",
+                    precision: 4
+                });
+            } else if (assetSymbolOrId == "1.3.113") {
+                resolve({
+                    asset_id: "1.3.113",
+                    symbol: "bitCNY",
+                    precision: 4
+                });
+            } else if (assetSymbolOrId == "1.3.120") {
+                resolve({
+                    asset_id: "1.3.120",
+                    symbol: "bitEUR",
+                    precision: 4
+                });
+            }
             this.ensureConnection().then(() => {
                 Apis.instance().db_api().exec("lookup_asset_symbols", [[assetName]]).then((asset_objects) => {
                     if (asset_objects.length && asset_objects[0]) {
