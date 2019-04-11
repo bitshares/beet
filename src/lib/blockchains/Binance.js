@@ -194,7 +194,7 @@ export default class Bitcoin extends BlockchainAPI {
 
         let result = await fetch(sequenceURL);
         result = await result.json();
-        const sequence = (!!result.data ? result.data.sequence : false) || 0;
+        const sequence = (!!result.data ? result.data.sequence : 0) || 0;
         let transaction = await this.sign(["transfer", "inject_wif", from.name, to.name, newAmount.amount, newAmount.asset_id, memo, sequence], key);
         return await this.broadcast(transaction);
     }
