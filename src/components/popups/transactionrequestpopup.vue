@@ -9,7 +9,14 @@
         hide-footer
         :title="$t('operations:rawsig.title')"
     >
-        {{ $t('operations:rawsig.request',{appName: incoming.appName,origin: incoming.origin , chain: incoming.signingAccount.chain, accountName: incoming.signingAccount.accountName}) }}
+        {{ $t('operations:rawsig.request',
+              { appName: incoming.appName,
+                origin: incoming.origin,
+                chain: incoming.chain,
+                accountName: incoming.account_id
+              }
+           )
+        }}
         <br>
         <br>
         <pre
