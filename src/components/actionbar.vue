@@ -33,7 +33,7 @@
                 class=" status align-self-center"
                 @click="logout()"
             >
-                <span class="icon-lock1" />
+                <span class="icon-exit" />
             </a>
         </div>
     </div>
