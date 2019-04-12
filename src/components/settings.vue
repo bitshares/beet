@@ -8,7 +8,7 @@
             </div>
             <div class="dapp-list mt-2">
                 <p class="mb-2 font-weight-bold small">
-                    {{ $t('dapps_lbl') }}
+                    <u>{{ $t('dapps_lbl') }}</u>
                 </p>
                 <table class="table small table-striped table-sm">
                     <thead>
@@ -31,6 +31,11 @@
                             <th
                                 class="align-middle"
                             >
+                                {{ $t('account_name_lbl') }}
+                            </th>
+                            <th
+                                class="align-middle"
+                            >
                                 {{ $t('chain_lbl') }}
                             </th>
                             <th
@@ -41,6 +46,14 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <tr v-if="dapps.length==0">
+                            <td
+                                colspan="6"
+                                class="align-center"
+                            >
+                                <em>{{ $t('no_dapps_linked') }}</em>
+                            </td>
+                        </tr>
                         <tr
                             v-for="dapp in dapps"
                             :key="dapp.id"
@@ -63,6 +76,11 @@
                             <td
                                 class="align-middle"
                             >
+                                {{ getAccountName(dapp.account_id,dapp.chain) }}
+                            </td>
+                            <td
+                                class="align-middle"
+                            >
                                 {{ dapp.chain }}
                             </td>
                             <td
@@ -79,6 +97,29 @@
                         </tr>
                     </tbody>
                 </table>
+            </div> 
+            <div class="backup mt-2">
+                <p class="mb-2 font-weight-bold small">
+                    <u>{{ $t('backup_lbl') }}</u>
+                </p>
+                <div class="row px-4">
+                    <div class="col-12">
+                        <p class="small text-justify">
+                            {{ $t('backup_txt') }}
+                        </p>
+                    </div>
+                    <div class="col-3" />
+                    <div class="col-6">
+                        <button
+                            class="btn btn-sm btn-info btn-block"
+                            type="button"
+                            @click="downloadBackup"
+                        >
+                            {{ $t('backup_btn') }}
+                        </button>
+                    </div>
+                    <div class="col-3" />
+                </div>
             </div>
         </div>
         <Actionbar />
@@ -91,6 +132,7 @@
     import {remote} from "electron";
     import RendererLogger from "../lib/RendererLogger";
     import path from 'path';
+    import { getBackup } from "../lib/SecureRemote";
     import fs from 'fs';
 
     const logger = new RendererLogger();
@@ -122,18 +164,24 @@
             logger.debug("Settings Mounted");
         },
         methods: {
-            downloadBackup: function () {
+            downloadBackup: async function () {
                 const dialog=remote.dialog;
                 const app=remote.app;
-                let remoteUrl="backupfile";
-                let toLocalPath = path.resolve(app.getPath("desktop"), path.basename(remoteUrl));
+                let remoteUrl="BeetBackup-"+this.$store.state.WalletStore.wallet.name+'-'+(new Date().toISOString().slice(0,10))+".beet";
+                let toLocalPath = path.resolve(app.getPath("desktop"), remoteUrl);
                 let userChosenPath = dialog.showSaveDialog({ defaultPath: toLocalPath });
-                if(userChosenPath){
-                    download (remoteUrl, userChosenPath, myUrlSaveAsComplete)
+                if(userChosenPath) {
+                    let accounts=JSON.stringify({wallet: this.$store.state.WalletStore.wallet.name, accounts: this.$store.state.AccountStore.accountlist.slice()});
+                    let backup=await getBackup(accounts);
+                    console.log(backup);
+                    fs.writeFileSync(userChosenPath,backup);
                 }
             },
             deleteDapp: async function(dapp_id) {
                 await this.$store.dispatch('OriginStore/removeApp', dapp_id);
+            },
+            getAccountName: function(accountID,chain) {
+                return this.$store.state.AccountStore.accountlist.filter(x => { return (x.accountID==accountID && x.chain==chain);})[0].accountName;
             }
         }
     };

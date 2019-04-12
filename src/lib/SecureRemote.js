@@ -35,3 +35,15 @@ export const getKey = (enc_key) => {
         })
     })
 }
+export const getBackup = (data) => {
+    return new Promise(resolve => {
+        ipcRenderer.removeAllListeners('backup');
+        ipcRenderer.once('backup', (event, arg) => {            
+            resolve(arg);
+        });
+        ipcRenderer.send('backup', {
+            data: data,
+            sig: proof.sign('backup')
+        })
+    })
+}

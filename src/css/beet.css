@@ -7010,7 +7010,7 @@ body {
 
 .main {
   width: 100%;
-  max-width: 500px;
+  max-width: 600px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -7038,6 +7038,15 @@ body {
 .btn-primary {
   background: #C7088E;
   border: 1px solid #C7088E;
+  outline: none;
+  height: 3rem;
+  line-height: 3rem;
+  border-radius: 1.5rem;
+  padding: 0rem 1rem; }
+
+.btn-secondary {
+  background: #707070;
+  border: 1px solid #707070;
   outline: none;
   height: 3rem;
   line-height: 3rem;
