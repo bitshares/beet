@@ -2,9 +2,83 @@
     <div class="bottom p-0">
         <div class="content">
             <div class="settings mt-3">
-                <p class="mb-1 font-weight-bold small">
+                <p class="mb-1 font-weight-bold">
                     {{ $t('settings_lbl') }}
                 </p>
+            </div>
+            <div class="dapp-list mt-2">
+                <p class="mb-2 font-weight-bold small">
+                    {{ $t('dapps_lbl') }}
+                </p>
+                <table class="table small table-striped table-sm">
+                    <thead>
+                        <tr>
+                            <th
+                                class="align-middle"
+                            >
+                                {{ $t('appname_lbl') }}
+                            </th>
+                            <th
+                                class="align-middle"
+                            >
+                                {{ $t('origin_lbl') }}
+                            </th>
+                            <th
+                                class="align-middle"
+                            >
+                                {{ $t('account_id_lbl') }}
+                            </th>
+                            <th
+                                class="align-middle"
+                            >
+                                {{ $t('chain_lbl') }}
+                            </th>
+                            <th
+                                class="align-middle"
+                            >
+                                {{ $t('actions_lbl') }}
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr
+                            v-for="dapp in dapps"
+                            :key="dapp.id"
+                        >
+                            <td
+                                class="align-middle"
+                            >
+                                {{ dapp.appName }}
+                            </td>
+                            <td
+                                class="align-middle"
+                            >
+                                {{ dapp.origin }}
+                            </td>
+                            <td
+                                class="align-middle"
+                            >
+                                {{ dapp.account_id }}
+                            </td>
+                            <td
+                                class="align-middle"
+                            >
+                                {{ dapp.chain }}
+                            </td>
+                            <td
+                                class="align-middle"
+                            >
+                                <button
+                                    class="btn btn-sm btn-danger btn-block"
+                                    type="button"
+                                    @click="deleteDapp(dapp.id)"
+                                >
+                                    {{ $t('delete_btn') }}
+                                </button>
+                            </td>                            
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
         <Actionbar />
@@ -27,20 +101,25 @@
         components: {Actionbar},
         data() {
             return {
-                dapps: []
+                
             };
         },
         computed: {
-
+            dapps() {
+                let dapps=[];
+                for (let i=0;i< this.$store.state.AccountStore.accountlist.length;i++) {
+                    let apps=this.$store.getters['OriginStore/walletAccessibleDapps'](this.$store.state.AccountStore.accountlist[i].accountID,this.$store.state.AccountStore.accountlist[i].chain);
+                    if (typeof apps!='undefined') {
+                        dapps=dapps.concat(apps);
+                    }
+                }
+                return dapps;
+            }
         },
         watch: {},
         created() {},
         mounted() {
             logger.debug("Settings Mounted");
-            for (let i=0;i< this.$store.state.AccountStore.accountlist.length;i++) {
-                this.dapps=this.dapps.concat(this.$store.getters['OriginStore/walletAccessibleDapps'](this.$store.state.AccountStore.accountlist[i].chain,this.$store.state.AccountStore.accountlist[i].accountId));
-            }
-            console.log(this.dapps);
         },
         methods: {
             downloadBackup: function () {
@@ -52,6 +131,9 @@
                 if(userChosenPath){
                     download (remoteUrl, userChosenPath, myUrlSaveAsComplete)
                 }
+            },
+            deleteDapp: async function(dapp_id) {
+                await this.$store.dispatch('OriginStore/removeApp', dapp_id);
             }
         }
     };
