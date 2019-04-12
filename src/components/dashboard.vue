@@ -19,15 +19,23 @@
                 </div>
                 <div v-else-if="connectionFailed" class="col-2 text-center icons">
                     <span
-                            class="status align-self-center icon-disconnected"
+                        class="status align-self-center icon-disconnected"
                     />
                 </div>
                 <div class="col-2 text-center">
                     <!-- todo: why doesnt this icon work? -->
                     <a
+                        href="#"
                         @click="loadBalances()"
-                        class="icon-refresh"
-                    />
+                        class="status align-self-center"
+                    >
+                        <span
+                            v-b-tooltip.hover
+                            v-b-tooltip.d500
+                            :title="$t('common:tooltip_refresh')"
+                            class="icon-spinner11"
+                        />
+                    </a>
                 </div>
             </div>
             <Balances ref="balancetable" />
@@ -151,6 +159,7 @@
         },
         methods: {
             loadBalances: async function() {
+                EventBus.$emit("popup", "load-start");
                 await this.$refs.balancetable.getBalances();
                 this.$store.dispatch("WalletStore/confirmUnlock");
                 EventBus.$emit("popup", "load-end");

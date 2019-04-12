@@ -60,5 +60,7 @@
     "error_lbl": "Error",
     "node_lbl": "Node:",
     "link_alert": "App: `{{appName}}` from `{{origin}}` wants to link to a {{chain}} chain. Please create or unlock the appropriate wallet.",
-    "access_alert": "App: `{{appName}}` from `{{origin}}` wants to interact with linked account {{chain}}:{{account_id}}. Please create or unlock the appropriate wallet."
+    "access_alert": "App: `{{appName}}` from `{{origin}}` wants to interact with linked account {{chain}}:{{account_id}}. Please create or unlock the appropriate wallet.",
+    "tooltip_lock": "Click to lock this wallet / logout and return to the wallet selection screen.",
+    "tooltip_refresh": "Reconnect to the blockchain and refresh the account balance"
 }
