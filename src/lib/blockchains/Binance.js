@@ -1,6 +1,7 @@
 import BlockchainAPI from "./BlockchainAPI";
 
 import binancejs from "@binance-chain/javascript-sdk";
+import Transaction from "@binance-chain/javascript-sdk/lib/tx";
 import {humanReadableFloat} from "../assetUtils";
 const fetch = require('node-fetch');
 
@@ -97,6 +98,12 @@ export default class Bitcoin extends BlockchainAPI {
         return new Promise((resolve, reject) => {
             this.ensureConnection().then(() => {
                 if (typeof operation == "object"
+                    && operation.length == 3
+                    && operation[0] == "signAndBroadcast") {
+                    let tx = this._stringToTx(operation[1]);
+                    tx.sign(key, JSON.parse(operation[2]));
+                    resolve(tx);
+                } else if (typeof operation == "object"
                     && operation.length > 2
                     && operation[1] == "inject_wif") {
                     this.client.setPrivateKey(key).then(() => {
@@ -109,34 +116,57 @@ export default class Bitcoin extends BlockchainAPI {
         });
     }
 
+    _txToString(transaction) {
+        let raw = {};
+        raw.type = transaction.type;
+        raw.sequence = transaction.sequence;
+        raw.account_number = transaction.account_number;
+        raw.chain_id = transaction.chain_id;
+        raw.msgs = transaction.msgs;
+        raw.memo = transaction.memo;
+        raw.signatures = transaction.signatures;
+        return JSON.stringify(raw);
+    };
+
+    _stringToTx(string) {
+        let raw = JSON.parse(string);
+        let tx = new Transaction(raw);
+        tx.signatures = raw.signatures;
+        return tx;
+    };
+
     broadcast(transaction) {
         return new Promise((resolve, reject) => {
             this.ensureConnection().then(() => {
-                switch (transaction[0]) {
-                    case "transfer":
-                        this.client.transfer(transaction[2], transaction[3], transaction[4], transaction[5], transaction[6], transaction[7])
-                            .then(resolve)
-                            .catch(reject)
-                            .finally(()=>{
-                                this.client.privateKey = undefined;
-                            });
-                        break;
-                    case "cancelOrder":
-                        this.client.cancelOrder(transaction[2], transaction[3], transaction[4], transaction[5])
-                            .then(resolve)
-                            .catch(reject)
-                            .finally(()=>{
-                                this.client.privateKey = undefined;
-                            });
-                        break;
-                    case "placeOrder":
-                        this.client.placeOrder(transaction[2], transaction[3], transaction[4], transaction[5], transaction[6], transaction[7], transaction[8])
-                            .then(resolve)
-                            .catch(reject)
-                            .finally(()=>{
-                                this.client.privateKey = undefined;
-                            });
-                        break;
+                if (typeof transaction == "object" && !!transaction.type) {
+                    this.client.sendTransaction(transaction).then(resolve).catch(reject);
+                } else {
+                    switch (transaction[0]) {
+                        case "transfer":
+                            this.client.transfer(transaction[2], transaction[3], transaction[4], transaction[5], transaction[6], transaction[7])
+                                .then(resolve)
+                                .catch(reject)
+                                .finally(() => {
+                                    this.client.privateKey = undefined;
+                                });
+                            break;
+                        case "cancelOrder":
+                            this.client.cancelOrder(transaction[2], transaction[3], transaction[4], transaction[5])
+                                .then(resolve)
+                                .catch(reject)
+                                .finally(() => {
+                                    this.client.privateKey = undefined;
+                                });
+                            break;
+                        case "placeOrder":
+                            this.client.placeOrder(transaction[2], transaction[3], transaction[4], transaction[5], transaction[6], transaction[7], transaction[8])
+                                .then(resolve)
+                                .catch(reject)
+                                .finally(() => {
+                                    this.client.privateKey = undefined;
+                                });
+                            break;
+                    }
                 }
             }).catch(reject);
         });
