@@ -26,13 +26,21 @@
         i18nOptions: { namespaces: ["common"] },
         components: {Actionbar},
         data() {
-            return {};
+            return {
+                dapps: []
+            };
         },
-        computed: {},
+        computed: {
+
+        },
         watch: {},
         created() {},
         mounted() {
             logger.debug("Settings Mounted");
+            for (let i=0;i< this.$store.state.AccountStore.accountlist.length;i++) {
+                this.dapps=this.dapps.concat(this.$store.getters['OriginStore/walletAccessibleDapps'](this.$store.state.AccountStore.accountlist[i].chain,this.$store.state.AccountStore.accountlist[i].accountId));
+            }
+            console.log(this.dapps);
         },
         methods: {
             downloadBackup: function () {

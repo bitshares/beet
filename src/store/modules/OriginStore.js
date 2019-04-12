@@ -86,7 +86,11 @@ const actions = {
 }
 
 
-const getters = {};
+const getters = {
+    walletAccessibleDapps: (state) => (account_id,chain) => {
+        return state.apps.find( x => { return x.chain==chain && x.account_id==account_id});
+    }
+};
 
 const initialState = {
     'apps': []
