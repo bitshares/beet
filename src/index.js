@@ -17,7 +17,7 @@ import {
 import CryptoJS from 'crypto-js';
 
 const ec = new EC('secp256k1');
-
+var timeout;
 context_menu({
     prepend: (params, browserWindow) => [{
         label: 'Beet',
@@ -173,14 +173,33 @@ const createWindow = async () => {
         }
     });
     let seed, key;
+    function timeoutHandler() {
+        seed=null;
+        mainWindow.webContents.send('eventbus', { method: 'timeout', payload: 'logout'});        
+        clearTimeout(timeout);
+    }
     ipcMain.on('key', (event, arg) => {
+        if (timeout) {
+            clearTimeout(timeout);
+        }
+        timeout= setTimeout(timeoutHandler,300000);
         if (key) return;
         key = arg;
     });
     ipcMain.on('seeding', (event, arg) => {
+        if (timeout) {
+            clearTimeout(timeout);
+        }
+        if (arg!='') {
+            timeout= setTimeout(timeoutHandler,300000);
+        }
         seed = arg;
     });
     ipcMain.on('decrypt', (event, arg) => {
+        if (timeout) {
+            clearTimeout(timeout);
+        }
+        timeout= setTimeout(timeoutHandler,300000);
         const {
             data,
             sig

@@ -44,6 +44,7 @@
 
 <script>
     import RendererLogger from "../lib/RendererLogger";
+    import { EventBus } from "../lib/event-bus.js";
     const logger = new RendererLogger();
 
     export default {
@@ -54,13 +55,19 @@
         },
         computed: {},
         watch: {},
-        created() {},
+        created() {
+            EventBus.$on('timeout', (data)=>{
+                if(data=='logout') {
+                    this.logout();
+                }
+            })
+        },
         mounted() {
             logger.debug("Action Bar mounted");
         },
         methods: {
-            logout: async function() {
-                await this.$store.dispatch("WalletStore/logout");
+            logout: function() {
+                this.$store.dispatch("WalletStore/logout");
                 this.$router.replace("/");
             }
         }
