@@ -25,7 +25,7 @@ export default class EOS extends BlockchainAPI {
             }
             if (!this.rpc) {
                 this.rpc = new JsonRpc(nodeToConnect, {fetch});
-            }            
+            }
             this._connectionEstablished(resolve, nodeToConnect);
         });
     }
@@ -172,6 +172,10 @@ export default class EOS extends BlockchainAPI {
         let signedTransaction = await this.sign(transaction, key);
         let result = await this.broadcast(signedTransaction);
         return result;
+    }
+
+    getExplorer(account) {
+        return "https://bloks.io/account/" + account.accountName;
     }
 
 }

@@ -363,4 +363,8 @@ export default class BitShares extends BlockchainAPI {
         return await this.broadcast(transaction);
     }
 
+    getExplorer(account) {
+        return "https://open-explorer.io/#/accounts/" + account.accountID;
+    }
+
 }

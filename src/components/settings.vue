@@ -65,7 +65,7 @@
                             </td>
                             <td
                                 class="align-middle"
-                                v-html="getAccountString(dapp.account_id, dapp.chain)"
+                                v-html="getDisplayString(dapp.account_id, dapp.chain)"
                             >
                             </td>
                             <td
@@ -124,6 +124,7 @@
     import path from 'path';
     import { getBackup } from "../lib/SecureRemote";
     import fs from 'fs';
+    import {formatAccount} from "../lib/formatter";
 
     const logger = new RendererLogger();
 
@@ -176,18 +177,9 @@
             deleteDapp: async function(dapp_id) {
                 await this.$store.dispatch('OriginStore/removeApp', dapp_id);
             },
-            getAccountString: function(accountID,chain) {
+            getDisplayString: function(accountID,chain) {
                 let account = this.$store.state.AccountStore.accountlist.find(x => { return (x.accountID==accountID && x.chain==chain);});
-                let accountString = account.accountName;
-                let displayString = account.accountName;
-                if (accountString.length > 20) {
-                    displayString = displayString.substring(0, 20) + "...";
-                }
-                if (account.accountName != account.accountID) {
-                    accountString = accountString + " (" + account.accountID + ")";
-                    displayString = displayString + " (" + account.accountID + ")";
-                }
-                return `<span v-b-tooltip.hover title="${accountString}">${displayString}</span>`;
+                return formatAccount(account, true);
             }
         }
     };

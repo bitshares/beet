@@ -29,4 +29,8 @@ export default class Steem extends SteemBasedChain {
         return "STEEM";
     }
 
+    getExplorer(account) {
+        return "https://steemblockexplorer.com/@" + account.accountName;
+    }
+
 }
