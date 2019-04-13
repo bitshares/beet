@@ -16,6 +16,21 @@
             >
                 {{ $t('start_cta') }}
             </router-link>
+            <p
+                v-if="!hasWallet"
+                class="my-2 font-weight-normal"
+            >
+                <em>{{ $t('or') }}</em>
+            </p>
+            <router-link
+                v-if="!hasWallet"
+                to="/restore"
+                tag="button"
+                class="btn btn-lg btn-secondary btn-block"
+                replace
+            >
+                {{ $t('restore_cta') }}
+            </router-link>
 
             <span
                 v-if="hasWallet"

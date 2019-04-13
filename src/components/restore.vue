@@ -33,13 +33,27 @@
                 :placeholder="$t('password_placeholder')"
                 required
             >
-            <button
-                class="btn btn-lg btn-primary btn-block mt-3"
-                type="button"
-                @click="restore"
-            >
-                {{ $t('restore_go_cta') }}
-            </button>
+            <div class="row">
+                <div class="col-6">
+                    <router-link
+                        to="/"
+                        tag="button"
+                        class="btn btn-lg btn-secondary btn-block mt-3"
+                        replace
+                    >
+                        {{ $t('cancel_btn') }}
+                    </router-link>
+                </div>
+                <div class="col-6">
+                    <button
+                        class="btn btn-lg btn-primary btn-block mt-3"
+                        type="button"
+                        @click="restore"
+                    >
+                        {{ $t('restore_go_cta') }}
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -89,7 +103,7 @@
                                 let wallet=JSON.parse(CryptoJS.AES.decrypt(data, this.backuppass).toString(CryptoJS.enc.Utf8));
                                 await this.$store.dispatch('WalletStore/restoreWallet', { backup: wallet, password: this.backuppass});
                                 EventBus.$emit("popup", "load-end");
-                                this.$router.replace("/");
+                                this.$router.replace("/dashboard");
                             }catch(e) {
                                 //Wrong  Password
                                 EventBus.$emit("popup", "load-end");

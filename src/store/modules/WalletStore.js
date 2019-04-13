@@ -124,14 +124,14 @@ const actions = {
                     commit(SET_WALLET_STATUS, true);
                     commit(SET_WALLETLIST, wallets);
                     
-                    let walletdata = CryptoJS.AES.encrypt(JSON.stringify([payload.backup.accounts]), payload.password).toString();
+                    let walletdata = CryptoJS.AES.encrypt(JSON.stringify(payload.backup.accounts), payload.password).toString();
                     BeetDB.wallets_encrypted.put({
                         id: walletid,
                         data: walletdata
                     });                    
                     ipcRenderer.send('seeding',  payload.password);   
                     commit(GET_WALLET, newwallet);
-                    dispatch('AccountStore/loadAccounts', [payload.backup.walletdata], {
+                    dispatch('AccountStore/loadAccounts', payload.backup.walletdata, {
                         root: true
                     });
                     resolve();

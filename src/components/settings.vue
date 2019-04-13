@@ -173,7 +173,7 @@
                 let toLocalPath = path.resolve(app.getPath("desktop"), remoteUrl);
                 let userChosenPath = dialog.showSaveDialog({ defaultPath: toLocalPath });
                 if(userChosenPath) {
-                    let accounts=JSON.stringify({wallet: this.$store.state.WalletStore.wallet.name+' Check', accounts: this.$store.state.AccountStore.accountlist.slice()});
+                    let accounts=JSON.stringify({wallet: this.$store.state.WalletStore.wallet.name, accounts: this.$store.state.AccountStore.accountlist.slice()});
                     let backup=await getBackup(accounts);
                     if (backup) {
                         fs.writeFileSync(userChosenPath,backup);
