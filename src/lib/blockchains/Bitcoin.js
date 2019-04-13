@@ -5,7 +5,7 @@ const logger = new RendererLogger();
 const fetch = require('node-fetch');
 
 import bitcoin from "bitcoinjs-lib";
-import {humanReadableFloat} from "../assetUtils";
+import {formatAsset} from "../assetUtils";
 
 export default class Bitcoin extends BlockchainAPI {
 
@@ -87,7 +87,7 @@ export default class Bitcoin extends BlockchainAPI {
                 balances.push({
                     asset_type: "UIA",
                     asset_name: this._getCoreToken(),
-                    balance: parseFloat(account.raw.total_received - account.raw.total_sent),
+                    balance: formatAsset(parseFloat(account.raw.total_received - account.raw.total_sent), "BTC", null, false),
                     owner: "-",
                     prefix: ""
                 });
