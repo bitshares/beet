@@ -3,7 +3,10 @@
         <LinkRequestPopup ref="linkReqModal" />
         <ReLinkRequestPopup ref="reLinkReqModal" />
         <IdentityRequestPopup ref="identityReqModal" />
+
         <SignMessageRequestPopup ref="signMessageModal" />
+        <TransferRequestPopup ref="transferReqModal" />
+
         <TransactionRequestPopup ref="transactionReqModal" />
         <GenericRequestPopup ref="genericReqModal" />
 
@@ -52,6 +55,8 @@
     import ReLinkRequestPopup from "./popups/relinkrequestpopup";
     import GenericRequestPopup from "./popups/genericrequestpopup";
     import TransactionRequestPopup from "./popups/transactionrequestpopup";
+    import TransferRequestPopup from "./popups/transferrequestpopup";
+
 
     import RendererLogger from "../lib/RendererLogger";
     import SignMessageRequestPopup from "./popups/signedmessagepopup";
@@ -66,7 +71,8 @@
             IdentityRequestPopup,
             ReLinkRequestPopup,
             LinkRequestPopup,
-            GenericRequestPopup
+            GenericRequestPopup,
+            TransferRequestPopup
         },
         data() {
             return {
@@ -143,6 +149,9 @@
             },
             requestReLink: async function(request) {
                 return this.$refs.reLinkReqModal.show(request);
+            },
+            requestTransfer: async function(request) {
+                return this.$refs.transferReqModal.show(request);
             },
             requestVote: async function(payload) {
                 payload.action = "vote";

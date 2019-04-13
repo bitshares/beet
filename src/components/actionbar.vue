@@ -29,11 +29,14 @@
                 <span class="icon-settings" />
             </router-link>
             <a
+                v-b-tooltip.hover
+                v-b-tooltip.d500
+                :title="$t('common:tooltip_lock')"
                 href="#"
                 class=" status align-self-center"
                 @click="logout()"
             >
-                <span class="icon-lock1" />
+                <span class="icon-unlock" />
             </a>
         </div>
     </div>

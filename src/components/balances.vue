@@ -4,6 +4,9 @@
             {{ $t('balances_lbl') }}
         </p>
         <table class="table small table-striped table-sm">
+            <span v-if="errored">
+                {{ $t('balances_error') }}
+            </span>
             <tbody v-if="balances != null">
                 <tr
                     v-for="balance in balances"
@@ -40,7 +43,8 @@
         i18nOptions: { namespaces: "common" },
         data() {
             return {
-                balances: null
+                balances: null,
+                errored: false
             };
         },
         computed: {
@@ -78,9 +82,14 @@
         },
         methods: {
             getBalances: async function() {
-                let blockchain = getBlockchain(this.selectedChain);
-                let balances = await blockchain.getBalances(this.accountName);
-                this.balances = balances;
+                try {
+                    let blockchain = getBlockchain(this.selectedChain);
+                    let balances = await blockchain.getBalances(this.accountName);
+                    this.balances = balances;
+                } catch (error) {
+                    console.error(error);
+                    this.errored = true;
+                }
             },
             formatMoney: function(n, decimals, decimal_sep, thousands_sep) {
                 var c = isNaN(decimals) ? 2 : Math.abs(decimals),

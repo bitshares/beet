@@ -62,6 +62,7 @@
     "unverified_account_error": "Could not verify keys for account name provided. Please check.",
     "confirm_pass_error": "Passwords do not match.",
     "balances_lbl": "Balances",
+    "balances_error": "Error loading balances",
     "settings_lbl": "Settings",
     "error_lbl": "Error",
     "node_lbl": "Node:",
@@ -78,5 +79,7 @@
     "delete_btn": "Remove",
     "backup_lbl": "Backup your Beet",
     "backup_btn": "Download Backup",
-    "backup_txt": "Click the 'Download Backup' button below to save an encrypted file with all your Beet Wallet keys. The backup file will be encrypted with your Beet Wallet password and you will need your password to import the backup to a new Beet installation."
+    "backup_txt": "Click the 'Download Backup' button below to save an encrypted file with all your Beet Wallet keys. The backup file will be encrypted with your Beet Wallet password and you will need your password to import the backup to a new Beet installation.",
+    "tooltip_lock": "Click to lock this wallet / logout and return to the wallet selection screen.",
+    "tooltip_refresh": "Reconnect to the blockchain and refresh the account balance"
 }

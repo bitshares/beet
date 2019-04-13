@@ -6,3 +6,4 @@ export const REQUEST_RELINK = 'relink';
 export const VOTE_FOR = 'voteFor';
 export const SIGN_MESSAGE = 'signMessage';
 export const VERIFY_MESSAGE = 'verifyMessage';
+export const TRANSFER = "transfer";

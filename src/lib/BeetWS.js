@@ -6,19 +6,16 @@ import WebSocket from "ws";
 import {
     v4 as uuidv4
 } from "uuid"
-
 const OTPAuth = require("otpauth");
 import CryptoJS from 'crypto-js';
-import crypto from 'crypto';
-//import eccrypto from 'eccrypto';
 import Https from 'https';
 import Fs from 'fs';
 import {
     ec as EC
 } from "elliptic";
 import RendererLogger from "./RendererLogger";
+import store from "../store";
 const logger = new RendererLogger();
-
 var ec = new EC('curve25519');
 /*
 import RendererLogger from "./RendererLogger";
@@ -26,7 +23,7 @@ const logger = new RendererLogger();
 */
 export default class BeetWS extends EventEmitter {
     constructor(port, sslport, timeout) {
-        super() // required
+        super(); // required
         var self = this;
         const httpsServer = Https.createServer({
             key: Fs.readFileSync(__dirname + '/ssl/beet.key'),
@@ -42,7 +39,6 @@ export default class BeetWS extends EventEmitter {
         this._clients = [];
         this._monitor = setInterval(function () {
             for (var clientid in self._clients) {
-
                 let client = self._clients[clientid];
                 if (client.isAlive === false || client.readyState != 1) {
                     self.emit("disconnected", client.id);
@@ -249,6 +245,12 @@ export default class BeetWS extends EventEmitter {
                         }
                     }
                 };
+            }
+            // todo: analyze why the account name is not set and treat the cause not the sympton
+            if (!response.payload.requested.account.name) {
+                response.payload.requested.account.name = store.state.AccountStore.accountlist.find(
+                    x => x.accountID == response.payload.requested.account.id
+                ).accountName;
             }
         } else {
             response = {
