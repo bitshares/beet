@@ -7125,12 +7125,12 @@ p {
     text-align: left;
     background-image: linear-gradient(45deg, transparent 50%, #222222 50%), linear-gradient(135deg, #222222 50%, transparent 50%), linear-gradient(to right, #222222, #222222);
     background-position: calc(100% - 15px) 1em, calc(100% - 10px) 1em, calc(100% - 2em) 0.5em;
-    background-size: 5px 5px, 5px 5px, 1px 1.5em;
+    background-size: 5px 5px, 5px 5px, 1px 1.5em;
     background-repeat: no-repeat; }
     .account .multiselect.form-control:focus {
       background-image: linear-gradient(45deg, #222222 50%, transparent 50%), linear-gradient(135deg, transparent 50%, #222222 50%), linear-gradient(to right, #222222, #222222);
       background-position: calc(100% - 10px) 1em, calc(100% - 15px) 1em, calc(100% - 2em) 0.5em;
-      background-size: 5px 5px, 5px 5px, 1px 1.5em;
+      background-size: 5px 5px, 5px 5px, 1px 1.5em;
       background-repeat: no-repeat;
       border-color: white;
       outline: 0; }
@@ -7176,12 +7176,12 @@ p {
   text-align: left;
   background-image: linear-gradient(45deg, transparent 50%, #222222 50%), linear-gradient(135deg, #222222 50%, transparent 50%), linear-gradient(to right, #222222, #222222);
   background-position: calc(100% - 15px) 1.25em, calc(100% - 10px) 1.25em, calc(100% - 2em) 0.625em;
-  background-size: 5px 5px, 5px 5px, 1px 1.5em;
+  background-size: 5px 5px, 5px 5px, 1px 1.5em;
   background-repeat: no-repeat; }
   .linkStyle .multiselect.form-control:focus {
     background-image: linear-gradient(45deg, #222222 50%, transparent 50%), linear-gradient(135deg, transparent 50%, #222222 50%), linear-gradient(to right, #222222, #222222);
     background-position: calc(100% - 10px) 1.25em, calc(100% - 15px) 1.25em, calc(100% - 2em) 0.625em;
-    background-size: 5px 5px, 5px 5px, 1px 1.5em;
+    background-size: 5px 5px, 5px 5px, 1px 1.5em;
     background-repeat: no-repeat;
     outline: 0; }
   .linkStyle .multiselect.form-control .multiselect__tags {
@@ -7222,7 +7222,7 @@ p {
   align-self: center; }
 
 .balances {
-  height: 20rem;
+  height: 17rem;
   overflow-y: auto;
   margin-left: 15px;
   margin-right: 15px; }
