@@ -43,6 +43,16 @@
             >
                 {{ alert.msg }}
             </b-alert>
+            <b-alert
+                :show="dismissCountDown"
+                dismissible
+                variant="primary"
+                fade
+                @dismissed="dismissCountDown=0"
+                @dismiss-count-down="countDownChanged"
+            >
+                {{ transientMsg }}
+            </b-alert>
         </div>
     </div>
 </template>
@@ -77,7 +87,9 @@
         data() {
             return {
                 alerts: [],
-                loaderpromise: {}
+                loaderpromise: {},
+                dismissCountDown: 0,
+                transientMsg: ''
             };
         },
         watch: {
@@ -100,6 +112,11 @@
                     break;
                 }
             });
+            
+            EventBus.$on("tx-success", (data) => {
+                this.dismissCountDown=4;
+                this.transientMsg=data;
+            });
         },
         mounted() {
             logger.debug("Popup Service panel mounted");
@@ -110,6 +127,9 @@
             });
         },
         methods: {
+            countDownChanged(dismissCountDown) {
+                this.dismissCountDown = dismissCountDown
+            },
             showAlert: function(request) {
                 let alert;
                 let alertmsg;

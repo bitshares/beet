@@ -15,7 +15,7 @@
                 chain: incoming.chain,
                 accountName: incoming.account_id
               }
-           )
+        )
         }}
         <br>
         <br>
@@ -84,7 +84,8 @@
                         this.incoming.params,
                         await getKey(this.$store.getters['AccountStore/getSigningKey'](this.incoming).keys.active)
                     );
-                    return await blockchain.broadcast(transaction);
+                    let returnValue=await blockchain.broadcast(transaction);                    
+                    return returnValue;
                 }
             }
         }

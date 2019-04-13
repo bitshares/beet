@@ -1,6 +1,7 @@
 <template />
 <script>
     import RendererLogger from "../../lib/RendererLogger";
+    import { EventBus } from "../../lib/event-bus.js";
     const logger = new RendererLogger();
 
     export default {
@@ -37,12 +38,19 @@
             _onShow: function() {
                 // to overwrite, do nothing in default
             },
+            getSuccessNotification: function() {
+                return false;
+            },
             _clickedAllow: async function() {
                 // EventBus.$emit("popup", "load-start");
                 // EventBus.$emit("popup", "load-end");
                 this.$refs.modalComponent.hide();
                 try {
                     let result = await this._execute();
+                    let notification = this.getSuccessNotification();
+                    if (notification) {
+                        EventBus.$emit("tx-success", notification);
+                    }
                     // todo allowWhitelist move whitelisting to BeetAPI, thus return flag here
                     this._accept(
                         {
