@@ -72,12 +72,21 @@
         methods: {
             _execute: async function () {
                 let blockchain = getBlockchain(this.incoming.chain);
-                let transaction = await blockchain.sign(
-                    this.incoming.params,
-                    await getKey(this.$store.getters['AccountStore/getSigningKey'](this.incoming).keys.active)
-                );
-                return await blockchain.broadcast(transaction);
+                if (this.incoming.params[0] == "sign") {
+                    return await blockchain.sign(
+                        this.incoming.params,
+                        await getKey(this.$store.getters['AccountStore/getSigningKey'](this.incoming).keys.active)
+                    );
+                } else if (this.incoming.params[0] == "broadcast") {
+                    return await blockchain.broadcast(this.incoming.params);
+                } else {
+                    let transaction = await blockchain.sign(
+                        this.incoming.params,
+                        await getKey(this.$store.getters['AccountStore/getSigningKey'](this.incoming).keys.active)
+                    );
+                    return await blockchain.broadcast(transaction);
+                }
             }
         }
     };
-</script> 
+</script>
