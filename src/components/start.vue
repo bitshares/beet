@@ -16,6 +16,21 @@
             >
                 {{ $t('start_cta') }}
             </router-link>
+            <p
+                v-if="!hasWallet"
+                class="my-2 font-weight-normal"
+            >
+                <em>{{ $t('or') }}</em>
+            </p>
+            <router-link
+                v-if="!hasWallet"
+                to="/restore"
+                tag="button"
+                class="btn btn-lg btn-secondary btn-block"
+                replace
+            >
+                {{ $t('restore_cta') }}
+            </router-link>
 
             <span
                 v-if="hasWallet"
@@ -73,15 +88,30 @@
             >
                 <em>{{ $t('or') }}</em>
             </p>
-            <router-link
-                v-if="hasWallet"
-                to="/create"
-                tag="button"
-                class="btn btn-lg btn-primary btn-block"
-                replace
-            >
-                {{ $t('create_cta') }}
-            </router-link>
+            <div class="row">
+                <div class="col-6">
+                    <router-link
+                        v-if="hasWallet"
+                        to="/create"
+                        tag="button"
+                        class="btn btn-lg btn-primary btn-block"
+                        replace
+                    >
+                        {{ $t('create_cta') }}
+                    </router-link>
+                </div>
+                <div class="col-6">
+                    <router-link
+                        v-if="hasWallet"
+                        to="/restore"
+                        tag="button"
+                        class="btn btn-lg btn-secondary btn-block"
+                        replace
+                    >
+                        {{ $t('restore_cta') }}
+                    </router-link>
+                </div>
+            </div>
         </div>
         <b-modal
             id="error"

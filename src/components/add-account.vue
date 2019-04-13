@@ -92,7 +92,7 @@
                         <router-link
                             :to="createNewWallet ? '/' : '/dashboard'"
                             tag="button"
-                            class="btn btn-lg btn-primary btn-block"
+                            class="btn btn-lg btn-secondary btn-block"
                             replace
                         >
                             {{ $t('cancel_btn') }}
@@ -136,7 +136,7 @@
                 <div class="row">
                     <div class="col-6">
                         <button
-                            class="btn btn-lg btn-primary btn-block"
+                            class="btn btn-lg btn-secondary btn-block"
                             type="submit"
                             @click="step1"
                         >
@@ -321,7 +321,7 @@
                                 await this.$store.dispatch("AccountStore/addAccount", account);
                             }
                         }
-                        this.$router.replace("/dashboard");
+                        this.$router.replace("/");
                     } else {
                         throw "No account selected!";
                     }

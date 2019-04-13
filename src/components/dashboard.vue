@@ -22,8 +22,7 @@
                         class="status align-self-center icon-disconnected"
                     />
                 </div>
-                <div class="col-2 text-center">
-                    <!-- todo: why doesnt this icon work? -->
+                <div v-else class="col-2 text-center">
                     <a
                         href="#"
                         @click="loadBalances()"
@@ -38,6 +37,7 @@
                     </a>
                 </div>
             </div>
+            <AccountDetails :account="selectedAccount"/>
             <Balances ref="balancetable" />
         </div>
         <Actionbar />
@@ -48,6 +48,7 @@
     import AccountSelect from "./account-select";
     import Actionbar from "./actionbar";
     import Balances from "./balances";
+    import AccountDetails from "./accountdetails";
     import getBlockchain from "../lib/blockchains/blockchainFactory";
     import RendererLogger from "../lib/RendererLogger";
     import { EventBus } from "../lib/event-bus.js";
@@ -56,7 +57,7 @@
     export default {
         name: "Dashboard",
         i18nOptions: { namespaces: ["common"] },
-        components: { Actionbar, Balances, AccountSelect },
+        components: { Actionbar, Balances, AccountSelect, AccountDetails },
         data() {
             return {
                 nodes: [],

@@ -3,6 +3,7 @@ import HeaderGuest from "../components/header-guest";
 import HeaderSmall from "../components/header-small";
 import Start from "../components/start";
 import Dashboard from "../components/dashboard";
+import Restore from "../components/restore";
 import AddAccount from "../components/add-account";
 import Settings from "../components/settings";
 
@@ -18,6 +19,13 @@ const router = new VueRouter({
       path: '/settings',
       components: {
         default: Settings,
+        header: HeaderSmall
+      }
+    },
+    {
+      path: '/restore',
+      components: {
+        default: Restore,
         header: HeaderSmall
       }
     },

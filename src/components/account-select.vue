@@ -28,7 +28,7 @@
     import RendererLogger from "../lib/RendererLogger";
     import Multiselect from "vue-multiselect";
     const logger = new RendererLogger();
-    import { blockchains } from "../config/config";
+    import {formatChain, formatAccount} from "../lib/formatter";
 
     export default {
         name: "AccountSelect",
@@ -47,8 +47,7 @@
         },
         data() {
             return {
-                selectedAccount: this.value,
-                blockchains: blockchains
+                selectedAccount: this.value
             };
         },
         computed: {
@@ -106,13 +105,9 @@
                     return this.cta;
                 } else {
                     return (
-                        this.blockchains[account.chain].name +
-                        (this.blockchains[account.chain].testnet ? " (Testnet)" : "") +
+                        formatChain(account.chain) +
                         ": " +
-                        account.accountName +
-                        (account.accountName !== account.accountID
-                            ? " (" + account.accountID + ")"
-                            : "")
+                        formatAccount(account)
                     );
                 }
             }

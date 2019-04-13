@@ -291,4 +291,12 @@ export default class Bitcoin extends BlockchainAPI {
         return true;
     }
 
+    getExplorer(account) {
+        if (this._config.testnet) {
+            return "https://testnet.blockexplorer.com/address/" + account.accountName
+        } else {
+            return "https://www.blockchain.com/btc/address/" + account.accountName
+        }
+    }
+
 }

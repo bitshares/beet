@@ -305,4 +305,8 @@ export default class BlockchainAPI {
         }
     }
 
+    getExplorer(account) {
+        return false;
+    }
+
 }

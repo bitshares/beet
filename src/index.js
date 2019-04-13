@@ -43,11 +43,11 @@ let minimised = false;
 const createWindow = async () => {
     // Create the browser window.
     mainWindow = new BrowserWindow({
-        width: 500,
+        width: 600,
         height: 660,
-        minWidth: 500,
+        minWidth: 600,
         minHeight: 660,
-        maxWidth: 500,
+        maxWidth: 600,
         maximizable: false,
         maxHeight: 660,
         useContentSize: true,
@@ -193,6 +193,19 @@ const createWindow = async () => {
             event.sender.send('decrypt', CryptoJS.AES.decrypt(data, seed).toString(CryptoJS.enc.Utf8));
         } else {
             event.sender.send('decrypt', null);
+        }
+    });
+    ipcMain.on('backup', (event, arg) => {
+        const {
+            data,
+            sig
+        } = arg;
+        let keypair = ec.keyFromPublic(key, 'hex');
+        let msgHash = CryptoJS.SHA256('backup').toString();
+        if (keypair.verify(msgHash, sig)) {            
+            event.sender.send('backup', CryptoJS.AES.encrypt(data, seed).toString());
+        } else {
+            event.sender.send('backup', null);
         }
     });
     ipcMain.on('log', (event, arg) => {

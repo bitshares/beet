@@ -97,6 +97,53 @@ const actions = {
     }) {
         commit(CONFIRM_UNLOCK);
     },
+    restoreWallet({
+        commit,
+        dispatch
+    }, payload) {
+        return new Promise((resolve, reject) => {
+
+            //let wallets = localStorage.getItem("wallets");
+            let walletid = uuid();
+            let newwallet = {
+                id: walletid,
+                name: payload.backup.wallet,
+                chain: '',
+                accounts: payload.backup.accounts.map(x=> x.accountID)
+            };
+            BeetDB.wallets_public.put(newwallet).then(() => {
+                BeetDB.wallets_public.toArray().then((wallets) => {
+                    let unlock;
+                    let unlocked = new Promise(function (resolve) {
+                        unlock = resolve
+                    });
+                    commit(SET_WALLET_UNLOCKED, {
+                        promise: unlocked,
+                        resolve: unlock
+                    });
+                    commit(SET_WALLET_STATUS, true);
+                    commit(SET_WALLETLIST, wallets);
+                    
+                    let walletdata = CryptoJS.AES.encrypt(JSON.stringify(payload.backup.accounts), payload.password).toString();
+                    BeetDB.wallets_encrypted.put({
+                        id: walletid,
+                        data: walletdata
+                    });                    
+                    ipcRenderer.send('seeding',  payload.password);   
+                    commit(GET_WALLET, newwallet);
+                    dispatch('AccountStore/loadAccounts', payload.backup.walletdata, {
+                        root: true
+                    });
+                    resolve();
+                }).catch((e) => {
+                    throw (e);
+                });
+            }).catch((e) => {
+                reject(e);
+            });
+        });
+
+    },
     saveWallet({
         commit,
         dispatch

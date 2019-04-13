@@ -229,4 +229,8 @@ export default class Bitcoin extends BlockchainAPI {
         return await this.broadcast(transaction);
     }
 
+    getExplorer(account) {
+        return "https://testnet-explorer.binance.org/address/" + account.accountName;
+    }
+
 }

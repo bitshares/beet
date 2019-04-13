@@ -55,6 +55,19 @@ const actions = {
             });
         });
     },
+    removeApp({
+        dispatch,
+        commit
+    }, payload) {
+        return new Promise((resolve, reject) => {
+            let db = BeetDB.apps;
+            db.where("id").equals(payload).delete().then((res) => {
+                dispatch('loadApps');
+            }).catch((err) => {
+                reject(err);
+            });
+        });
+    },
     addApp({
         commit
     }, payload) {
@@ -86,7 +99,11 @@ const actions = {
 }
 
 
-const getters = {};
+const getters = {
+    walletAccessibleDapps: (state) => (account_id,chain) => {
+        return state.apps.find( x => { return x.chain==chain && x.account_id==account_id});
+    }
+};
 
 const initialState = {
     'apps': []
