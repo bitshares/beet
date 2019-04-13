@@ -91,7 +91,7 @@
                 if ( document.getElementById('restoreWallet').files[0]) {
                     if (this.backuppass!="") {
                         let file= document.getElementById('restoreWallet').files[0].path;
-                        
+
                         EventBus.$emit("popup", "load-start");
                         fs.readFile(file, 'utf-8', async (err, data) => {
                             if(err){
@@ -103,7 +103,7 @@
                                 let wallet=JSON.parse(CryptoJS.AES.decrypt(data, this.backuppass).toString(CryptoJS.enc.Utf8));
                                 await this.$store.dispatch('WalletStore/restoreWallet', { backup: wallet, password: this.backuppass});
                                 EventBus.$emit("popup", "load-end");
-                                this.$router.replace("/dashboard");
+                                this.$router.replace("/");
                             }catch(e) {
                                 //Wrong  Password
                                 EventBus.$emit("popup", "load-end");
