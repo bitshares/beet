@@ -29,7 +29,7 @@
                         {{ account.accountID }}
                     </td>
                 </tr>
-                <tr>
+                <tr v-if="getExplorer(account)">
                     <td class="text-left">
                         {{ $t('account_details_explorer_lbl') }}
                     </td>

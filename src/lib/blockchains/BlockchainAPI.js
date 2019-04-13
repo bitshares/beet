@@ -309,4 +309,8 @@ export default class BlockchainAPI {
         return false;
     }
 
+    visualize(thing) {
+        return false;
+    }
+
 }

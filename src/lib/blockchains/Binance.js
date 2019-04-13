@@ -2,7 +2,7 @@ import BlockchainAPI from "./BlockchainAPI";
 
 import binancejs from "@binance-chain/javascript-sdk";
 import Transaction from "@binance-chain/javascript-sdk/lib/tx";
-import {humanReadableFloat} from "../assetUtils";
+import {formatAsset, humanReadableFloat} from "../assetUtils";
 const fetch = require('node-fetch');
 
 export default class Bitcoin extends BlockchainAPI {
@@ -231,7 +231,7 @@ export default class Bitcoin extends BlockchainAPI {
         let newAmount = {
             amount: humanReadableFloat(amount.amount, 8),
             asset_id: amount.asset_id
-        }
+        };
 
         from = await this.getAccount(from);
         to = await this.getAccount(to);
@@ -252,6 +252,30 @@ export default class Bitcoin extends BlockchainAPI {
 
     getExplorer(account) {
         return "https://testnet-explorer.binance.org/address/" + account.accountName;
+    }
+
+    visualize(transaction) {
+        if (typeof transaction == "object"
+        && transaction.length == 3
+        && transaction[0] == "signAndBroadcast") {
+            let msg = JSON.parse(transaction[2]);
+
+            if (msg.inputs.length > 1 || msg.outputs.length > 1 || msg.outputs[0].coins.length > 1) {
+                return false;
+            }
+
+            let from = msg.inputs[0].address;
+            let to = msg.outputs[0].address;
+            let toSend = formatAsset(msg.outputs[0].coins[0].amount, msg.outputs[0].coins[0].denom);
+            return `<pre class="text-left custom-content">
+<code>Transfer
+Sender: ${from}
+Recipient: ${to}
+Amount: ${toSend}
+</code></pre>`
+        } else {
+            return false;
+        }
     }
 
 }

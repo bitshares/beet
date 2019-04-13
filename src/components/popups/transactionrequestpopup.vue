@@ -19,8 +19,13 @@
         }}
         <br>
         <br>
+        <div
+            v-if="!!_visualize(incoming.params)"
+            class="text-left custom-content"
+            v-html="_visualize(incoming.params)"
+        ></div>
         <pre
-            v-if="!!incoming.params"
+            v-else-if="!!incoming.params"
             class="text-left custom-content"
         >
 <code>
@@ -28,7 +33,7 @@
 {{ incoming.params }}
 }
 </code>
-            </pre>
+        </pre>
         {{ $t('operations:rawsig.request_cta') }}
         <b-btn
             class="mt-3"
@@ -70,6 +75,12 @@
             logger.debug("Tx Popup initialised");
         },
         methods: {
+            _visualize(params) {
+                if (!params) {
+                    return false;
+                }
+                return getBlockchain(this.incoming.chain).visualize(params);
+            },
             _execute: async function () {
                 let blockchain = getBlockchain(this.incoming.chain);
                 if (this.incoming.params[0] == "sign") {
