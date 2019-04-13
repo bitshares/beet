@@ -26,12 +26,7 @@
                             <th
                                 class="align-middle"
                             >
-                                {{ $t('account_id_lbl') }}
-                            </th>
-                            <th
-                                class="align-middle"
-                            >
-                                {{ $t('account_name_lbl') }}
+                                {{ $t('account_lbl') }}
                             </th>
                             <th
                                 class="align-middle"
@@ -70,13 +65,8 @@
                             </td>
                             <td
                                 class="align-middle"
+                                v-html="getAccountString(dapp.account_id, dapp.chain)"
                             >
-                                {{ dapp.account_id }}
-                            </td>
-                            <td
-                                class="align-middle"
-                            >
-                                {{ getAccountName(dapp.account_id,dapp.chain) }}
                             </td>
                             <td
                                 class="align-middle"
@@ -93,11 +83,11 @@
                                 >
                                     {{ $t('delete_btn') }}
                                 </button>
-                            </td>                            
+                            </td>
                         </tr>
                     </tbody>
                 </table>
-            </div> 
+            </div>
             <div class="backup mt-2">
                 <p class="mb-2 font-weight-bold small">
                     <u>{{ $t('backup_lbl') }}</u>
@@ -143,7 +133,7 @@
         components: {Actionbar},
         data() {
             return {
-                
+
             };
         },
         computed: {
@@ -165,7 +155,7 @@
         },
         methods: {
             downloadBackup: async function () {
-                
+
                 EventBus.$emit("popup", "load-start");
                 const dialog=remote.dialog;
                 const app=remote.app;
@@ -186,8 +176,18 @@
             deleteDapp: async function(dapp_id) {
                 await this.$store.dispatch('OriginStore/removeApp', dapp_id);
             },
-            getAccountName: function(accountID,chain) {
-                return this.$store.state.AccountStore.accountlist.filter(x => { return (x.accountID==accountID && x.chain==chain);})[0].accountName;
+            getAccountString: function(accountID,chain) {
+                let account = this.$store.state.AccountStore.accountlist.find(x => { return (x.accountID==accountID && x.chain==chain);});
+                let accountString = account.accountName;
+                let displayString = account.accountName;
+                if (accountString.length > 20) {
+                    displayString = displayString.substring(0, 20) + "...";
+                }
+                if (account.accountName != account.accountID) {
+                    accountString = accountString + " (" + account.accountID + ")";
+                    displayString = displayString + " (" + account.accountID + ")";
+                }
+                return `<span v-b-tooltip.hover title="${accountString}">${displayString}</span>`;
             }
         }
     };
