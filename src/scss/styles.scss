@@ -141,7 +141,9 @@ body {
     outline: none !important;
     box-shadow: none !important;
 }
-
+.error {
+    border-color: $danger !important;
+}
 .btn-primary {
     background: $primary;
     border: 1px solid $primary;

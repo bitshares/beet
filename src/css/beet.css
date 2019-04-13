@@ -7035,6 +7035,9 @@ body {
   outline: none !important;
   box-shadow: none !important; }
 
+.error {
+  border-color: #F44336 !important; }
+
 .btn-primary {
   background: #C7088E;
   border: 1px solid #C7088E;

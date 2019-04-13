@@ -26,18 +26,16 @@
                 {{ $t('backuppass_cta') }} &#10068;
             </p>
             <input
-                id="inputWallet"
-                v-model="walletname"
-                type="text"
+                id="backupPass"
+                v-model="backuppass"
+                type="password"
                 class="form-control mb-3"
-                :class="s1c"
-                :placeholder="$t('walletname_placeholder')"
+                :placeholder="$t('password_placeholder')"
                 required
-                @focus="s1c=''"
             >
             <button
                 class="btn btn-lg btn-primary btn-block mt-3"
-                type="submit"
+                type="button"
                 @click="restore"
             >
                 {{ $t('restore_go_cta') }}
@@ -50,6 +48,7 @@
 
     import { EventBus } from "../lib/event-bus.js";
     import {remote} from "electron";
+    import CryptoJS from 'crypto-js';
     import RendererLogger from "../lib/RendererLogger";
     import path from 'path';
     import fs from 'fs';
@@ -73,16 +72,35 @@
         },
         methods: {
             restore: function() {
-                let file= document.getElementById('restoreWallet').files[0].path;
-                fs.readFileSync(file, 'utf-8', (err, data) => {
-                    if(err){
-                        alert("An error ocurred reading the file :" + err.message);
-                        return;
+                document.getElementById('restoreWallet').classList.remove("error");
+                document.getElementById('backupPass').classList.remove("error");
+                if ( document.getElementById('restoreWallet').files[0]) {
+                    if (this.backuppass!="") {
+                        let file= document.getElementById('restoreWallet').files[0].path;
+                        
+                        EventBus.$emit("popup", "load-start");
+                        fs.readFile(file, 'utf-8', async (err, data) => {
+                            if(err){
+                                alert("An error ocurred reading the file :" + err.message);
+                                EventBus.$emit("popup", "load-end");
+                                return;
+                            }
+                            try {
+                                let wallet=JSON.parse(CryptoJS.AES.decrypt(data, this.backuppass).toString(CryptoJS.enc.Utf8));
+                                await this.$store.dispatch('WalletStore/restoreWallet', { backup: wallet, password: this.backuppass});
+                                EventBus.$emit("popup", "load-end");
+                                this.$router.replace("/");
+                            }catch(e) {
+                                //Wrong  Password
+                                EventBus.$emit("popup", "load-end");
+                            }
+                        });
+                    }else{
+                        document.getElementById('backupPass').classList.add("error");
                     }
-
-                    // Change how to handle the file content
-                    console.log("The file content is : " + data);
-                });
+                }else{
+                    document.getElementById('restoreWallet').classList.add("error");
+                }
             }
         }
     };

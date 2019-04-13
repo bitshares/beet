@@ -165,16 +165,22 @@
         },
         methods: {
             downloadBackup: async function () {
+                
+                EventBus.$emit("popup", "load-start");
                 const dialog=remote.dialog;
                 const app=remote.app;
                 let remoteUrl="BeetBackup-"+this.$store.state.WalletStore.wallet.name+'-'+(new Date().toISOString().slice(0,10))+".beet";
                 let toLocalPath = path.resolve(app.getPath("desktop"), remoteUrl);
                 let userChosenPath = dialog.showSaveDialog({ defaultPath: toLocalPath });
                 if(userChosenPath) {
-                    let accounts=JSON.stringify({wallet: this.$store.state.WalletStore.wallet.name, accounts: this.$store.state.AccountStore.accountlist.slice()});
+                    let accounts=JSON.stringify({wallet: this.$store.state.WalletStore.wallet.name+' Check', accounts: this.$store.state.AccountStore.accountlist.slice()});
                     let backup=await getBackup(accounts);
-                    console.log(backup);
-                    fs.writeFileSync(userChosenPath,backup);
+                    if (backup) {
+                        fs.writeFileSync(userChosenPath,backup);
+                    }
+                    EventBus.$emit("popup", "load-end");
+                }else{
+                    EventBus.$emit("popup", "load-end");
                 }
             },
             deleteDapp: async function(dapp_id) {
