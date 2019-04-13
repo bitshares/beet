@@ -98,14 +98,20 @@ export default class Bitcoin extends BlockchainAPI {
         return new Promise((resolve, reject) => {
             this.ensureConnection().then(() => {
                 if (typeof operation == "object"
-                    && operation.length == 3
-                    && operation[0] == "signAndBroadcast") {
+                        && operation.length == 3
+                        && operation[0] == "signAndBroadcast") {
                     let tx = this._stringToTx(operation[1]);
                     tx.sign(key, JSON.parse(operation[2]));
                     resolve(tx);
                 } else if (typeof operation == "object"
-                    && operation.length > 2
-                    && operation[1] == "inject_wif") {
+                        && operation.length == 3
+                        && operation[0] == "sign") {
+                    let tx = this._stringToTx(operation[1]);
+                    tx.sign(key, JSON.parse(operation[2]));
+                    resolve(this._txToString(tx));
+                } else if (typeof operation == "object"
+                        && operation.length > 2
+                        && operation[1] == "inject_wif") {
                     this.client.setPrivateKey(key).then(() => {
                         resolve(operation)
                     });
@@ -126,19 +132,34 @@ export default class Bitcoin extends BlockchainAPI {
         raw.memo = transaction.memo;
         raw.signatures = transaction.signatures;
         return JSON.stringify(raw);
-    };
+    }
 
     _stringToTx(string) {
         let raw = JSON.parse(string);
+        raw.msgs.forEach(msg => {
+            msg.inputs.forEach(input => {
+                input.address = new Buffer(input.address);
+            });
+            msg.outputs.forEach(output => {
+                output.address = new Buffer(output.address);
+            });
+        });
         let tx = new Transaction(raw);
-        tx.signatures = raw.signatures;
+        tx.msgs = raw.msgs;
+        if (raw.signatures) {
+            tx.signatures = raw.signatures;
+        }
         return tx;
-    };
+    }
 
     broadcast(transaction) {
         return new Promise((resolve, reject) => {
             this.ensureConnection().then(() => {
-                if (typeof transaction == "object" && !!transaction.type) {
+                if (typeof operation == "object"
+                    && operation.length == 2
+                    && operation[0] == "broadcast") {
+                    this.client.sendTransaction(this._stringToTx(transaction[1])).then(resolve).catch(reject);
+                } else if (typeof transaction == "object" && !!transaction.type) {
                     this.client.sendTransaction(transaction).then(resolve).catch(reject);
                 } else {
                     switch (transaction[0]) {
@@ -224,7 +245,7 @@ export default class Bitcoin extends BlockchainAPI {
 
         let result = await fetch(sequenceURL);
         result = await result.json();
-        const sequence = (!!result.data ? result.data.sequence : 0) || 0;
+        const sequence = (!!result.data ? result.data.sequence : 0) || (!!result.sequence ? result.sequence : 0);
         let transaction = await this.sign(["transfer", "inject_wif", from.name, to.name, newAmount.amount, newAmount.asset_id, memo, sequence], key);
         return await this.broadcast(transaction);
     }
