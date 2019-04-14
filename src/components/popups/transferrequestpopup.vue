@@ -107,7 +107,8 @@
                 }
             },
             getSuccessNotification(result) {
-                return {msg: 'Transaction `transfer` successfully broadcast.', link: getBlockchain(this.incoming.chain).getExplorer({txid: result}) };
+                console.log(result);
+                return {msg: 'Transaction `transfer` successfully broadcast.', link: getBlockchain(this.incoming.chain).getExplorer({txid: result[0].id}) };
             },
             _execute: async function () {
                 let blockchain = getBlockchain(this.incoming.chain);

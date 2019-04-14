@@ -67,7 +67,7 @@
                 return getBlockchain(chain).getAccessType();
             },
             openExplorer: function(account) {
-                shell.openExternal(this.getExplorer({accountName: account}));
+                shell.openExternal(this.getExplorer(account));
             }
         }
     };
