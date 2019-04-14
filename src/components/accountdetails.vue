@@ -36,7 +36,6 @@
                     <td class="text-right">
                         <a
                             href="#"
-                            target="_blank"
                             @click="openExplorer(account)"
                         >
                             Click here
