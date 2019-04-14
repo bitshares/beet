@@ -63,6 +63,10 @@
                     accountName:   this.$store.getters['AccountStore/getSigningKey'](this.incoming).accountName
                 });
             },
+            getSuccessNotification(result) {
+                console.log(result);
+                return {msg: 'Message successfully signed.', link: '' };
+            },
             _execute: async function () {
                 let blockchain = getBlockchain(this.incoming.chain);
                 return await blockchain.signMessage(

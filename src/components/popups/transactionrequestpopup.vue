@@ -23,7 +23,7 @@
             v-if="!!_visualize(incoming.params)"
             class="text-left custom-content"
             v-html="_visualize(incoming.params)"
-        ></div>
+        />
         <pre
             v-else-if="!!incoming.params"
             class="text-left custom-content"
@@ -80,6 +80,10 @@
                     return false;
                 }
                 return getBlockchain(this.incoming.chain).visualize(params);
+            },
+            getSuccessNotification(result) {
+                console.log(result);
+                return {msg: 'Transaction successfully broadcast.', link: '' };
             },
             _execute: async function () {
                 let blockchain = getBlockchain(this.incoming.chain);
