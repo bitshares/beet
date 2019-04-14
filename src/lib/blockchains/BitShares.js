@@ -363,8 +363,18 @@ export default class BitShares extends BlockchainAPI {
         return await this.broadcast(transaction);
     }
 
-    getExplorer(account) {
-        return "https://open-explorer.io/#/accounts/" + account.accountID;
+    getExplorer(object) {
+        if (object.accountName) {
+            return "https://open-explorer.io/#/accounts/" + object.accountID;
+        } else if (object.opid) {
+            // 1.11.833380474
+            return "https://open-explorer.io/#/operations/" + object.opid;
+        } else if (object.txid) {
+            // e94404a94b4bb160601241ffb78ad0e615a9636b
+            return "https://bitsharescan.com/transaction/" + object.txid;
+        } else {
+            return false;
+        }
     }
 
 }

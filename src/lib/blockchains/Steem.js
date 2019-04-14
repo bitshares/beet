@@ -29,8 +29,15 @@ export default class Steem extends SteemBasedChain {
         return "STEEM";
     }
 
-    getExplorer(account) {
-        return "https://steemblockexplorer.com/@" + account.accountName;
+    getExplorer(object) {
+        if (object.accountName) {
+            return "https://steemblockexplorer.com/@" + object.accountName;
+        } else if (object.txid) {
+            // d52a49b9c5a76f95f32099bf387390e78ad02a65
+            return "https://steemblockexplorer.com/tx/" + object.txid;
+        } else {
+            return false;
+        }
     }
 
 }
