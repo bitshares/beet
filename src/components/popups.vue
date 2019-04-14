@@ -52,6 +52,13 @@
                 @dismiss-count-down="countDownChanged"
             >
                 {{ transientMsg }}
+                <a
+                    v-if="transientLink!=''"
+                    href="#"
+                    @click="openExplorer(transientLink)"
+                >
+                    {{ transientLink }}
+                </a>
             </b-alert>
         </div>
     </div>
@@ -65,7 +72,8 @@
     import ReLinkRequestPopup from "./popups/relinkrequestpopup";
     import GenericRequestPopup from "./popups/genericrequestpopup";
     import TransactionRequestPopup from "./popups/transactionrequestpopup";
-    import TransferRequestPopup from "./popups/transferrequestpopup";
+    import TransferRequestPopup from "./popups/transferrequestpopup";    
+    import { shell } from 'electron';
 
 
     import RendererLogger from "../lib/RendererLogger";
@@ -89,7 +97,8 @@
                 alerts: [],
                 loaderpromise: {},
                 dismissCountDown: 0,
-                transientMsg: ''
+                transientMsg: '',
+                transientLink: ''
             };
         },
         watch: {
@@ -114,8 +123,9 @@
             });
             
             EventBus.$on("tx-success", (data) => {
-                this.dismissCountDown=4;
-                this.transientMsg=data;
+                this.dismissCountDown=5;
+                this.transientMsg=data.msg;
+                this.transientLink=data.link;
             });
         },
         mounted() {
@@ -127,8 +137,11 @@
             });
         },
         methods: {
+            openExplorer: function(link) {
+                shell.openExternal(link);
+            },
             countDownChanged(dismissCountDown) {
-                this.dismissCountDown = dismissCountDown
+                this.dismissCountDown = dismissCountDown;
             },
             showAlert: function(request) {
                 let alert;

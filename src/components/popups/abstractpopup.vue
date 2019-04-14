@@ -2,6 +2,7 @@
 <script>
     import RendererLogger from "../../lib/RendererLogger";
     import { EventBus } from "../../lib/event-bus.js";
+    
     const logger = new RendererLogger();
 
     export default {
@@ -38,7 +39,7 @@
             _onShow: function() {
                 // to overwrite, do nothing in default
             },
-            getSuccessNotification: function() {
+            getSuccessNotification: function(res) {
                 return false;
             },
             _clickedAllow: async function() {
@@ -47,7 +48,7 @@
                 this.$refs.modalComponent.hide();
                 try {
                     let result = await this._execute();
-                    let notification = this.getSuccessNotification();
+                    let notification = this.getSuccessNotification(result);
                     if (notification) {
                         EventBus.$emit("tx-success", notification);
                     }
