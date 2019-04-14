@@ -15,7 +15,9 @@ export default class BitShares extends BlockchainAPI {
     _connect(nodeToConnect = null) {
         return new Promise((resolve, reject) => {
             if (nodeToConnect == null) {
+                
                 nodeToConnect = this.getNodes()[0].url;
+                console.log(nodeToConnect);
             }
             if (this._isConnected) {
                 Apis.close().then(() => {

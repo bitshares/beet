@@ -43,11 +43,14 @@ class BTSWalletHandler {
                     this.wallet_object.private_keys[i].encrypted_key
                 );
                 let pkey = PrivateKey.fromBuffer(Buffer.from(private_key_hex, "hex"));
-                let keypair={'priv': pkey.toWif(),'pub': this.wallet_object.private_keys[i].pubkey};                
+                let keypair = {
+                    'priv': pkey.toWif(),
+                    'pub': this.wallet_object.private_keys[i].pubkey
+                };
                 this.keypairs.push(keypair);
             }
-            this.public=[];
-            this.keypairs.forEach(keypair=>{
+            this.public = [];
+            this.keypairs.forEach(keypair => {
                 this.public.push(keypair.pub);
             });
             return true;
@@ -57,40 +60,35 @@ class BTSWalletHandler {
     }
 
     async lookupAccounts() {
-        
+
         let blockchain = getBlockchain('BTS');
-        await blockchain.connect().then((connectedNode) => {
-                store.dispatch("SettingsStore/setNode", {
-                    chain: 'BTS',
-                    node: connectedNode
-                });
+        await blockchain.ensureConnection().then((connectedNode) => {
+            store.dispatch("SettingsStore/setNode", {
+                chain: 'BTS',
+                node: connectedNode
+            });
         });
-        let account_ids = await Apis.instance(
-            store.state.SettingsStore.settings.selected_node['BTS'],
-            true
-        ).init_promise.then(() => {
-            return Apis.instance()
-                .db_api()
-                .exec("get_key_references", [ this.public])
-                .then(res => {
-                    return res;
-                });
-        });
-        this.accounts=new Set();
-        for (let i=0;i<account_ids.length;i++) {
-            for (let j=0;j<account_ids[i].length;j++) {
+        let account_ids = await Apis.instance()
+            .db_api()
+            .exec("get_key_references", [this.public])
+            .then(res => {
+                return res;
+            });
+        this.accounts = new Set();
+        for (let i = 0; i < account_ids.length; i++) {
+            for (let j = 0; j < account_ids[i].length; j++) {
                 this.accounts.add(account_ids[i][j]);
-            }    
+            }
         }
-        let refs=[];
-        this.accounts.forEach((account)=> {
+        let refs = [];
+        this.accounts.forEach((account) => {
             refs.push(
                 Apis.instance()
                 .db_api()
                 .exec("get_account_references", [account])
                 .then(res => {
-                    if (res.length>0) {
-                        res.forEach((ref)=> {
+                    if (res.length > 0) {
+                        res.forEach((ref) => {
                             this.accounts.add(ref);
                         })
                     }
@@ -100,73 +98,76 @@ class BTSWalletHandler {
         await Promise.all(refs);
         let accounts = Array.from(this.accounts);
         let account_matrix = await Apis.instance()
-        .db_api()
-        .exec("get_accounts", [accounts])
-        .then(res => {
-            return this.buildMatrix(res); 
-        });
+            .db_api()
+            .exec("get_accounts", [accounts])
+            .then(res => {
+                return this.buildMatrix(res);
+            });
         console.log(account_matrix);
         return account_matrix;
     }
     buildMatrix(account_data) {
-        let account_matrix=[];                
-        let active_controlled_accounts=[];
-        let owner_controlled_accounts=[];
-        for (let i=0;i<account_data.length;i++) {
-            let account_details={'id':account_data[i].id,'name':account_data[i].name};
-            let active={};
-            let importable=false;
+        let account_matrix = [];
+        let active_controlled_accounts = [];
+        let owner_controlled_accounts = [];
+        for (let i = 0; i < account_data.length; i++) {
+            let account_details = {
+                'id': account_data[i].id,
+                'name': account_data[i].name
+            };
+            let active = {};
+            let importable = false;
             //Check active
-            active.availWeight=0;
-            active.canPropose=false;
-            for (let j=0;j<account_data[i].active.key_auths.length;j++) {
+            active.availWeight = 0;
+            active.canPropose = false;
+            for (let j = 0; j < account_data[i].active.key_auths.length; j++) {
                 if (this.public.includes(account_data[i].active.key_auths[j][0])) {
-                    active.canPropose=true;
-                    active.availWeight=active.availWeight+account_data[i].active.key_auths[j][1];
-                    if (account_data[i].active.key_auths[j][1]>=account_data[i].active.weight_threshold) {
-                        importable=true;
-                        active.key=this.keypairs.filter( x => x.pub==account_data[i].active.key_auths[j][0])[0].priv;
+                    active.canPropose = true;
+                    active.availWeight = active.availWeight + account_data[i].active.key_auths[j][1];
+                    if (account_data[i].active.key_auths[j][1] >= account_data[i].active.weight_threshold) {
+                        importable = true;
+                        active.key = this.keypairs.filter(x => x.pub == account_data[i].active.key_auths[j][0])[0].priv;
                     }
                 }
             }
-            if (active.availWeight>=account_data[i].active.weight_threshold){
-                active.canTransact=true;
+            if (active.availWeight >= account_data[i].active.weight_threshold) {
+                active.canTransact = true;
                 active_controlled_accounts.push(account_data[i].id);
-            }else{
-                active.canTransact=false;
+            } else {
+                active.canTransact = false;
             }
-            account_details.active =active;
-            
-            let owner={}
+            account_details.active = active;
+
+            let owner = {}
             //Check owner
-            owner.availWeight=0;
-            owner.canPropose=false;
-            for (let j=0;j<account_data[i].owner.key_auths.length;j++) {
+            owner.availWeight = 0;
+            owner.canPropose = false;
+            for (let j = 0; j < account_data[i].owner.key_auths.length; j++) {
                 if (this.public.includes(account_data[i].owner.key_auths[j][0])) {
-                    owner.canPropose=true;
-                    owner.availWeight=owner.availWeight+account_data[i].owner.key_auths[j][1];
-                    if (account_data[i].owner.key_auths[j][1]>=account_data[i].owner.weight_threshold) {                        
-                        owner.key=this.keypairs.filter( x => x.pub==account_data[i].owner.key_auths[j][0])[0].priv;
+                    owner.canPropose = true;
+                    owner.availWeight = owner.availWeight + account_data[i].owner.key_auths[j][1];
+                    if (account_data[i].owner.key_auths[j][1] >= account_data[i].owner.weight_threshold) {
+                        owner.key = this.keypairs.filter(x => x.pub == account_data[i].owner.key_auths[j][0])[0].priv;
                     }
                 }
             }
-            if (owner.availWeight>=account_data[i].owner.weight_threshold){
-                owner.canTransact=true;                
+            if (owner.availWeight >= account_data[i].owner.weight_threshold) {
+                owner.canTransact = true;
                 owner_controlled_accounts.push(account_data[i].id);
-            }else{
-                owner.canTransact=false;
+            } else {
+                owner.canTransact = false;
             }
-            account_details.owner =owner;
+            account_details.owner = owner;
 
-            let memo={};
-            memo.canSend=false;
-            if (this.public.includes(account_data[i].options.memo_key)) {            
-                memo.key=this.keypairs.filter( x => x.pub==account_data[i].options.memo_key)[0].priv;
-                memo.canSend=true;
+            let memo = {};
+            memo.canSend = false;
+            if (this.public.includes(account_data[i].options.memo_key)) {
+                memo.key = this.keypairs.filter(x => x.pub == account_data[i].options.memo_key)[0].priv;
+                memo.canSend = true;
             }
-            account_details.importable=importable;
-            account_details.memo=memo;
-            account_matrix[i]=account_details;
+            account_details.importable = importable;
+            account_details.memo = memo;
+            account_matrix[i] = account_details;
         }
         return account_matrix;
     }
