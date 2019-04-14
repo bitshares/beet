@@ -15,7 +15,7 @@
         <pre class="text-left custom-content"><code>
   Recipient: {{ to }}
   Amount: {{ toSend }}
-{{toSendFee != null ? "    Fee: " + toSendFee : ""}}
+{{ toSendFee != null ? "    Fee: " + toSendFee : "" }}
         </code></pre>
         <b-btn
             class="mt-3"
@@ -105,6 +105,9 @@
                 } else {
                     this.toSendFee = null;
                 }
+            },
+            getSuccessNotification(result) {
+                return {msg: 'Transaction `transfer` successfully broadcast.', link: getBlockchain(this.incoming.chain).getExplorer({txid: result}) };
             },
             _execute: async function () {
                 let blockchain = getBlockchain(this.incoming.chain);

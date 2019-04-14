@@ -37,22 +37,20 @@
                         <a
                             href="#"
                             @click="openExplorer(account)"
-                            target="_blank"
                         >
                             Click here
                         </a>
                     </td>
                 </tr>
             </tbody>
-            <tbody v-else>
-            </tbody>
+            <tbody v-else />
         </table>
     </div>
 </template>
 <script>
     import getBlockchain from "../lib/blockchains/blockchainFactory";
-    import {formatChain} from "../lib/formatter";
-    const { shell } = window.require('electron');
+    import {formatChain} from "../lib/formatter";    
+    import { shell } from 'electron';
 
     export default {
         name: "AccountDetails",
@@ -69,7 +67,7 @@
                 return getBlockchain(chain).getAccessType();
             },
             openExplorer: function(account) {
-                shell.openExternal(this.getExplorer(account));
+                shell.openExternal(this.getExplorer({accountName: account}));
             }
         }
     };

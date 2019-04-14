@@ -70,7 +70,7 @@
                         operation,
                         await getKey(this.$store.getters['AccountStore/getSigningKey'](this.incoming).keys.active)
                     );
-                    returnValue = await blockchain.broadcast(transaction);
+                    returnValue = await blockchain.broadcast(transaction);                    
                 }
                 if (this.allowWhitelist) {
                     // todo: allowWhitelist move whitelisting into BeetAPI
