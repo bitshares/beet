@@ -215,15 +215,14 @@ const actions = {
                     throw ('invalid');
                 }
                 let encwalletdata = CryptoJS.AES.encrypt(JSON.stringify(newwalletdata), payload.password).toString();
-                let updatedWallet = state.wallet;
-                updatedWallet.accounts.push(payload.account.accountID);
-                let publicWallet=state.wallet.accounts.slice();
-                publicWallet.push({ accountID: payload.account.accountID, chain: payload.account.chain});
+                let updatedWallet = Object.assign({}, state.wallet);
+                updatedWallet.accounts.push({ accountID: payload.account.accountID, chain: payload.account.chain});
+               
                 BeetDB.wallets_encrypted.update(updatedWallet.id, {
                     data: encwalletdata
                 }).then(() => {
                     BeetDB.wallets_public.update(updatedWallet.id, {
-                        accounts: publicWallet
+                        accounts: updatedWallet.accounts
                     }).then(() => {
                         commit(GET_WALLET, updatedWallet);
                         resolve('Account saved');
