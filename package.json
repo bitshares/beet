@@ -68,7 +68,7 @@
     "electron-devtools-installer": "^2.2.4",
     "electron-squirrel-startup": "^1.0.0",
     "elliptic": "^6.4.1",
-    "eosjs": "^20.0.0-beta3",
+    "eosjs": "^20.0.0",
     "i18next": "^14.0.1",
     "i18next-node-fs-backend": "^2.1.1",
     "lzma": "^2.3.2",
