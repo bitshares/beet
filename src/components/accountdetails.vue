@@ -37,15 +37,13 @@
                         <a
                             href="#"
                             @click="openExplorer(account)"
-                            target="_blank"
                         >
                             Click here
                         </a>
                     </td>
                 </tr>
             </tbody>
-            <tbody v-else>
-            </tbody>
+            <tbody v-else/>
         </table>
     </div>
 </template>
