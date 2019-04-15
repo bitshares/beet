@@ -27,7 +27,10 @@ context_menu({
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 
-const isDevMode = process.execPath.match(/[\\/]electron/);
+var isDevMode = process.execPath.match(/[\\/]electron/);
+if (process.env.BEET_DEBUG==true) {
+    isDevMode=true;
+}
 let logLevel = 0;
 
 if (isDevMode) {
@@ -86,7 +89,7 @@ const createWindow = async () => {
     if (isDevMode) {
         //await installExtension(VUEJS_DEVTOOLS);
         await installExtension('ljjemllljcmogpfapbkkighbhhppjdbg');
-        //mainWindow.webContents.openDevTools();
+        mainWindow.webContents.openDevTools();
     }
 
     // Emitted when the window is closed.
