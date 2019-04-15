@@ -59,8 +59,8 @@
                 this.message = this.$t("operations:message.request", {
                     appName: this.incoming.appName,
                     origin: this.incoming.origin,
-                    chain:   this.$store.getters['AccountStore/getSigningKey'](this.incoming).chain,
-                    accountName:   this.$store.getters['AccountStore/getSigningKey'](this.incoming).accountName
+                    chain: this.$store.getters['AccountStore/getSigningKey'](this.incoming).chain,
+                    accountName: this.$store.getters['AccountStore/getSigningKey'](this.incoming).accountName
                 });
             },
             getSuccessNotification(result) {
@@ -69,12 +69,22 @@
             },
             _execute: async function () {
                 let blockchain = getBlockchain(this.incoming.chain);
+
+                let keys = this.$store.getters['AccountStore/getSigningKey'](this.incoming).keys;
+
+                let signatureKey = null;
+                if (keys.memo) {
+                    signatureKey = keys.memo;
+                } else {
+                    signatureKey = keys.active;
+                }
+
                 return await blockchain.signMessage(
-                    await getKey(this.$store.getters['AccountStore/getSigningKey'](this.incoming).keys.active),
+                    await getKey(signatureKey),
                     this.$store.getters['AccountStore/getSigningKey'](this.incoming).accountName,
                     this.incoming.params
                 );
             }
         }
     };
-</script> 
+</script>

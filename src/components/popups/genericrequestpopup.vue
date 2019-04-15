@@ -61,16 +61,19 @@
                     let blockchain = getBlockchain(this.incoming.chain);
                     let operation = await blockchain.getOperation(
                         this.incoming,
-                        {
-                            id: this.incoming.accountID,
-                            name: this.incoming.accountName
+                        this._getLinkedAccount()
+                    );
+                    if (!operation.notingToDo) {
+                        let transaction = await blockchain.sign(
+                            operation,
+                            await getKey(this.$store.getters['AccountStore/getSigningKey'](this.incoming).keys.active)
+                        );
+                        returnValue = await blockchain.broadcast(transaction);
+                    } else {
+                        returnValue = {
+                            msg: "Already done, no action needed"
                         }
-                    );
-                    let transaction = await blockchain.sign(
-                        operation,
-                        await getKey(this.$store.getters['AccountStore/getSigningKey'](this.incoming).keys.active)
-                    );
-                    returnValue = await blockchain.broadcast(transaction);                    
+                    }
                 }
                 if (this.allowWhitelist) {
                     // todo: allowWhitelist move whitelisting into BeetAPI
@@ -86,4 +89,4 @@
             }
         }
     };
-</script> 
+</script>

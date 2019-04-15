@@ -15,7 +15,7 @@ export default class BitShares extends BlockchainAPI {
     _connect(nodeToConnect = null) {
         return new Promise((resolve, reject) => {
             if (nodeToConnect == null) {
-                
+
                 nodeToConnect = this.getNodes()[0].url;
                 console.log(nodeToConnect);
             }
@@ -300,6 +300,14 @@ export default class BitShares extends BlockchainAPI {
                             let account = accounts[0];
 
                             let new_options = account.options;
+
+                            if (new_options.votes.findIndex(item => item == data.vote_id) !== -1) {
+                                resolve({
+                                   vote_id: data.vote_id,
+                                   notingToDo: true
+                                });
+                            }
+
                             new_options.votes.push(data.vote_id);
                             new_options.votes = new_options.votes.sort((a, b) => {
                                 let a_split = a.split(":");

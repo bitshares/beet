@@ -2,7 +2,7 @@
 <script>
     import RendererLogger from "../../lib/RendererLogger";
     import { EventBus } from "../../lib/event-bus.js";
-    
+
     const logger = new RendererLogger();
 
     export default {
@@ -90,7 +90,15 @@
             _clickedDeny: function() {
                 this.$refs.modalComponent.hide();
                 this._reject({ canceled: true });
+            },
+            _getLinkedAccount() {
+                let account = this.$store.getters['AccountStore/getSigningKey'](this.incoming);
+                return {
+                    id: account.accountID,
+                    name: account.accountName,
+                    chain: account.chain
+                }
             }
         }
     };
-</script> 
+</script>

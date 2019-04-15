@@ -72,7 +72,7 @@
     import ReLinkRequestPopup from "./popups/relinkrequestpopup";
     import GenericRequestPopup from "./popups/genericrequestpopup";
     import TransactionRequestPopup from "./popups/transactionrequestpopup";
-    import TransferRequestPopup from "./popups/transferrequestpopup";    
+    import TransferRequestPopup from "./popups/transferrequestpopup";
     import { shell } from 'electron';
 
 
@@ -121,7 +121,7 @@
                     break;
                 }
             });
-            
+
             EventBus.$on("tx-success", (data) => {
                 this.dismissCountDown=5;
                 this.transientMsg=data.msg;
@@ -205,6 +205,7 @@
                     rejectText: this.$t("operations:vote.reject_btn")
                 };
                 payload.generic = generic;
+                payload.vote_id = mappedData.vote_id;
                 return this.$refs.genericReqModal.show(payload, false);
             },
             requestTx: async function(payload) {
@@ -270,4 +271,4 @@
             }
         }
     };
-</script> 
+</script>
