@@ -125,7 +125,7 @@ by an external and independent party as soon as our budget allows to show that w
 In the meantime we recommend every user to audit and verify any underlying code for its validity and suitability,
 including reviewing any and all of your project's dependencies.
 
-**DISCLAIMER**
+    DISCLAIMER
 
 Beet is in *BETA* stage and there is no guarantee of a bug free product. Beet is delivered as is in accordance to the MIT license.
 There is no fear of your keys being exposed / compromised.
