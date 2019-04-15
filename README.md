@@ -13,9 +13,7 @@ Beet is a stand-alone key and identity manager and signing app for blockchains, 
 Beet is installed locally on your computer. It allows separate account management while being in full control of what data to expose to third parties.
 Private keys are locally stored and encrypted, protected by a wallet master password. All transactions suggested by third parties must be confirmed before being broadcast.
 
-Telegram channel:
-
-https://t.me/beetapp
+Telegram channel: https://t.me/beetapp
 
 ## Features / User Guide
 
@@ -45,7 +43,7 @@ The app lives on your system tray and will only quit if explicitly done via righ
 
 Releases are bundled as installers for OS X, Windows and Linux (Snap included) and are available at https://github.com/bitshares/beet/releases.
 
-**ATTENTION**
+    ATTENTION
 
 Beet binaries will never be hosted anywhere but within GitHub releases. If you find Beet binaries anywhere else, it is likely a phishing attempt.
 
