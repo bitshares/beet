@@ -15,45 +15,49 @@ class RendererLogger {
         })
     }
     info(msg) {
-        ipcRenderer.send('info', {
-            level: 'log',
+        ipcRenderer.send('log', {
+            level: 'info',
             data: this.serialize(msg)
         })
     }
     warning(msg) {
-        ipcRenderer.send('warning', {
-            level: 'log',
+        ipcRenderer.send('log', {
+            level: 'warning',
             data: this.serialize(msg)
         })
     }
     error(msg) {
-        ipcRenderer.send('error', {
-            level: 'log',
+        ipcRenderer.send('log', {
+            level: 'error',
             data: this.serialize(msg)
         })
     }
     verbose(msg) {
-        ipcRenderer.send('verbose', {
-            level: 'log',
+        ipcRenderer.send('log', {
+            level: 'verbose',
+            data: this.serialize(msg)
+        })
+    }
+    debug(msg) {
+        ipcRenderer.send('log', {
+            level: 'debug',
             data: this.serialize(msg)
         })
     }
     transient(msg) {
-        ipcRenderer.send('transient', {
-            level: 'log',
+        ipcRenderer.send('log', {
+            level: 'transient',
             data: this.serialize(msg)
         })
     }
     serialize(obj) {
-        if (typeof obj == 'object') {
+            
             return util.inspect(obj, {
                 compact: true,
                 breakLength: 80,
                 depth: 3
             })
-        } else {
-            return obj;
-        }
+        
     }
 }
 module.exports = RendererLogger;

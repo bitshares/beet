@@ -1,126 +1,15 @@
 <template>
     <div>
-        <b-modal
-            id="linkRequest"
-            ref="linkReqModal"
-            centered
-            no-close-on-esc
-            no-close-on-backdrop
-            hide-header-close
-            hide-footer
-            :title="$t('link_request')"
-        >
-            {{ genericmsg }}:
-            <br>
-            <br>
-        </b-modal>
+        <LinkRequestPopup ref="linkReqModal" />
+        <ReLinkRequestPopup ref="reLinkReqModal" />
+        <IdentityRequestPopup ref="identityReqModal" />
 
-        <b-modal
-            id="accountRequest"
-            ref="accountReqModal"
-            centered
-            no-close-on-esc
-            no-close-on-backdrop
-            hide-header-close
-            hide-footer
-            :title="$t('operations:account_id.title')"
-        >
-            {{ $t('operations:account_id.request',{origin: incoming.origin }) }}
-            <br>
-            <br>
-            {{ $t('operations:account_id.request_cta') }}
-            <b-btn
-                class="mt-3"
-                variant="success"
-                block
-                @click="allowAccess"
-            >
-                {{ $t('operations:account_id.accept_btn') }}
-            </b-btn>
-            <b-btn
-                class="mt-1"
-                variant="danger"
-                block
-                @click="denyAccess"
-            >
-                {{ $t('operations:account_id.reject_btn') }}
-            </b-btn>
-        </b-modal>
+        <SignMessageRequestPopup ref="signMessageModal" />
+        <TransferRequestPopup ref="transferReqModal" />
 
-        <b-modal
-            id="transactionRequest"
-            ref="transactionReqModal"
-            centered
-            no-close-on-esc
-            no-close-on-backdrop
-            hide-header-close
-            hide-footer
-            :title="$t('operations:rawsig.title')"
-        >
-            {{ $t('operations:rawsig.request',{origin: incoming.origin }) }}
-            <br>
-            <br>
-            <pre v-if="!!incoming.params" class="text-left custom-content">
-                <code>
-    {
-    {{ incoming.params }}
-    }
-                </code>
-            </pre>
-            {{ $t('operations:rawsig.request_cta') }}
-            <b-btn
-                class="mt-3"
-                variant="success"
-                block
-                @click="acceptTx"
-            >
-                {{ $t('operations:rawsig.accept_btn') }}
-            </b-btn>
-            <b-btn
-                class="mt-1"
-                variant="danger"
-                block
-                @click="rejectTx"
-            >
-                {{ $t('operations:rawsig.reject_btn') }}
-            </b-btn>
-        </b-modal>
+        <TransactionRequestPopup ref="transactionReqModal" />
+        <GenericRequestPopup ref="genericReqModal" />
 
-        <b-modal
-            id="genericRequest"
-            ref="genericReqModal"
-            centered
-            no-close-on-esc
-            no-close-on-backdrop
-            hide-header-close
-            hide-footer
-            :title="generictitle"
-        >
-            {{ genericmsg }}:
-            <br>
-            <br>
-            <pre class="text-left custom-content">
-                <code>
-    {{ specifics }}
-                </code>
-            </pre>
-            <b-btn
-                class="mt-3"
-                variant="success"
-                block
-                @click="acceptGeneric"
-            >
-                {{ genericaccept || $t('operations:rawsig.accept_btn') }}
-            </b-btn>
-            <b-btn
-                class="mt-1"
-                variant="danger"
-                block
-                @click="rejectGeneric"
-            >
-                {{ genericreject || $t('operations:rawsig.reject_btn') }}
-            </b-btn>
-        </b-modal>
         <b-modal
             id="loaderAnim"
             ref="loaderAnimModal"
@@ -154,254 +43,231 @@
             >
                 {{ alert.msg }}
             </b-alert>
+            <b-alert
+                :show="dismissCountDown"
+                dismissible
+                variant="primary"
+                fade
+                @dismissed="dismissCountDown=0"
+                @dismiss-count-down="countDownChanged"
+            >
+                {{ transientMsg }}
+                <a
+                    v-if="transientLink!=''"
+                    href="#"
+                    @click="openExplorer(transientLink)"
+                >
+                    {{ transientLink }}
+                </a>
+            </b-alert>
         </div>
     </div>
 </template>
 <script>
-    import {
-        v4 as uuidv4
-    } from "uuid";
-    import {EventBus} from '../lib/event-bus.js';
-    import Operations from "../lib/Operations";
+    import { v4 as uuidv4 } from "uuid";
+    import { EventBus } from "../lib/event-bus.js";
+    import getBlockchain from "../lib/blockchains/blockchainFactory";
+    import LinkRequestPopup from "./popups/linkrequestpopup";
+    import IdentityRequestPopup from "./popups/identityrequestpopup";
+    import ReLinkRequestPopup from "./popups/relinkrequestpopup";
+    import GenericRequestPopup from "./popups/genericrequestpopup";
+    import TransactionRequestPopup from "./popups/transactionrequestpopup";
+    import TransferRequestPopup from "./popups/transferrequestpopup";
+    import { shell } from 'electron';
 
-    import getBlockchain from "../lib/blockchains/blockchainFactory"
+
+    import RendererLogger from "../lib/RendererLogger";
+    import SignMessageRequestPopup from "./popups/signedmessagepopup";
+    const logger = new RendererLogger();
 
     export default {
         name: "Popups",
-        i18nOptions: {namespaces: ["common", "operations"]},
+        i18nOptions: { namespaces: ["common", "operations"] },
+        components: {
+            SignMessageRequestPopup,
+            TransactionRequestPopup,
+            IdentityRequestPopup,
+            ReLinkRequestPopup,
+            LinkRequestPopup,
+            GenericRequestPopup,
+            TransferRequestPopup
+        },
         data() {
             return {
-                genericmsg: '',
                 alerts: [],
-                api: null,
-                incoming: {},
-                specifics: ""
+                loaderpromise: {},
+                dismissCountDown: 0,
+                transientMsg: '',
+                transientLink: ''
             };
         },
         watch: {
-            $route(to, from) {
+            $route() {
                 this.alerts = [];
             }
         },
         created() {
-            EventBus.$on('popup', what => {
+            EventBus.$on("popup", async what => {
                 switch (what) {
-                    case 'load-start':
+                case "load-start":
+                    this.loaderpromise.show = new Promise(resolve => {
                         this.$refs.loaderAnimModal.show();
-                        break;
-                    case 'load-end':
-                        this.$refs.loaderAnimModal.hide();
-                        break;
+                        this.loaderpromise.resolve = resolve;
+                    });
+                    break;
+                case "load-end":
+                    await this.loaderpromise.show;
+                    this.$refs.loaderAnimModal.hide();
+                    break;
+                }
+            });
+
+            EventBus.$on("tx-success", (data) => {
+                this.dismissCountDown=5;
+                this.transientMsg=data.msg;
+                this.transientLink=data.link;
+            });
+        },
+        mounted() {
+            logger.debug("Popup Service panel mounted");
+            this.$root.$on("bv::modal::shown", bvEvent => {
+                if (bvEvent.target.id == "loaderAnim") {
+                    this.loaderpromise.resolve();
                 }
             });
         },
-        watch:{
-            $route (to, from){
-                this.alerts = [];
-            }
-        },      
         methods: {
-            link: async function () {
-                await this.$refs.linkReqModal.show();
+            openExplorer: function(link) {
+                shell.openExternal(link);
             },
-            showAlert: function (request) {
+            countDownChanged(dismissCountDown) {
+                this.dismissCountDown = dismissCountDown;
+            },
+            showAlert: function(request) {
                 let alert;
                 let alertmsg;
                 switch (request.type) {
-                    case 'link':
-                        alertmsg = this.$t('link_alert', request);
-                        alert = {msg: alertmsg, id: uuidv4()};
+                case "link":
+                    alertmsg = this.$t("link_alert", request);
+                    alert = { msg: alertmsg, id: uuidv4() };
 
-                        this.$store.dispatch("WalletStore/notifyUser", {
-                            notify: "request", message: alertmsg
-                        });
-                        break;
-                    default:
-                        alertmsg = this.$t('access_alert', request.payload);
+                    this.$store.dispatch("WalletStore/notifyUser", {
+                        notify: "request",
+                        message: alertmsg
+                    });
+                    break;
+                default:
+                    alertmsg = this.$t("access_alert", request.payload);
 
-                        this.$store.dispatch("WalletStore/notifyUser", {
-                            notify: "request", message: alertmsg
-                        });
-                        alert = {msg: alertmsg, id: uuidv4()};
-                        break;
+                    this.$store.dispatch("WalletStore/notifyUser", {
+                        notify: "request",
+                        message: alertmsg
+                    });
+                    alert = { msg: alertmsg, id: uuidv4() };
+                    break;
                 }
-                //let alert={msg:msg, id: uuidv4()};
                 this.alerts.push(alert);
             },
-            hideAlert: function (id) {
-                let index = this.alerts.findIndex(function (o) {
+            hideAlert: function(id) {
+                let index = this.alerts.findIndex(function(o) {
                     return o.id === id;
-                })
+                });
                 if (index !== -1) this.alerts.splice(index, 1);
             },
-            requestAccess: function (request) {
-                this.$store.dispatch("WalletStore/notifyUser", {
-                    notify: "request", message: "request"
-                });
-                this.incoming = {};
-                this.incoming = request;
-                this.$refs.accountReqModal.show();
-                return new Promise((res, rej) => {
-                    this.incoming.accept = res;
-                    this.incoming.reject = rej;
-                });
+            requestAccess: async function(request) {
+                return this.$refs.identityReqModal.show(request);
             },
-            requestVote: async function (request) {
-                this.$store.dispatch("WalletStore/notifyUser", {
-                    notify: "request", message: "request"
-                });
-                this.incoming = request;
-                this.incoming.action = "vote";
-                let blockchain = getBlockchain(this.$store.state.WalletStore.wallet.chain);
-                let mappedData = await blockchain.mapOperationData(this.incoming);
-                this.specifics = mappedData.description;
-                this.incoming.vote_id = mappedData.vote_id;
+            requestLink: async function(request) {
+                return this.$refs.linkReqModal.show(request);
+            },
+            requestReLink: async function(request) {
+                return this.$refs.reLinkReqModal.show(request);
+            },
+            requestTransfer: async function(request) {
+                return this.$refs.transferReqModal.show(request);
+            },
+            requestVote: async function(payload) {
+                payload.action = "vote";
+                let blockchain = getBlockchain(payload.chain);
+                let mappedData = await blockchain.mapOperationData(payload);
 
-                this.genericmsg = this.$t(
-                    'operations:vote.request',
-                    {
-                        origin: this.incoming.origin,
-                        entity: mappedData.entity
+                let generic = {
+                    title: this.$t("operations:vote.title"),
+                    message: this.$t("operations:vote.request", {
+                        appName: payload.appName,
+                        origin: payload.origin,
+                        entity: mappedData.entity,
+                        chain: payload.chain,
+                        accountName: payload.account_id
+                    }),
+                    details: mappedData.description,
+                    acceptText: this.$t("operations:vote.accept_btn"),
+                    rejectText: this.$t("operations:vote.reject_btn")
+                };
+                payload.generic = generic;
+                payload.vote_id = mappedData.vote_id;
+                return this.$refs.genericReqModal.show(payload, false);
+            },
+            requestTx: async function(payload) {
+                return this.$refs.transactionReqModal.show(payload);
+            },
+            isWhitelisted: function(identity, method) {
+                if (
+                    !!this.$store.state.WhitelistStore &&
+                    !!this.$store.state.WhitelistStore.whitelist &&
+                    !!this.$store.state.WhitelistStore.whitelist.filter
+                ) {
+                    if (
+                        this.$store.state.WhitelistStore.whitelist.filter(
+                            x => x.identityhash == identity && x.method == method
+                        ).length > 0
+                    ) {
+                        return true;
+                    } else {
+                        return false;
                     }
-                );
-                this.generictitle = this.$t('operations:vote.title');
-                this.genericaccept = this.$t('operations:vote.accept_btn');
-                this.genericreject = this.$t('operations:vote.reject_btn');
-                this.$refs.genericReqModal.show();
-                return new Promise((res, rej) => {
-                    this.incoming.acceptgen = res;
-                    this.incoming.rejectgen = rej;
-                });
-            },
-            requestTx: function (payload) {
-                this.$store.dispatch("WalletStore/notifyUser", {
-                    notify: "request", message: "request"
-                });
-                this.incoming = payload;
-                this.$refs.transactionReqModal.show();
-                return new Promise((res, rej) => {
-                    this.incoming.accepttx = res;
-                    this.incoming.rejecttx = rej;
-                });
-            },
-            requestSignedMessage: function (payload) {
-                this.$store.dispatch("WalletStore/notifyUser", {
-                    notify: "request", message: "request"
-                });
-                this.incoming = payload;
-
-                this.specifics = payload.params;
-
-                this.genericmsg = this.$t(
-                    'operations:message.request',
-                    {
-                        origin: this.incoming.origin
-                    }
-                );
-                this.generictitle = this.$t('operations:message.title');
-                this.genericaccept = this.$t('operations:message.accept_btn');
-                this.genericreject = this.$t('operations:message.reject_btn');
-                this.$refs.genericReqModal.show();
-                return new Promise((res, rej) => {
-                    this.incoming.acceptgen = res;
-                    this.incoming.rejectgen = rej;
-                });
-            },
-            verifyMessage: function (payload) {
-                console.log("verify", payload);
-                return new Promise((resolve, reject) => {
-                    let blockchain = getBlockchain(payload.params.payload[2].substring(0,3));
-                    blockchain.verifyMessage(
-                        payload.params
-                    ).then((result) => {
-                        resolve(result);
-                    }).catch(err => {
-                        reject(err);
-                    });
-                });
-            },
-            allowAccess: function () {
-                this.$refs.accountReqModal.hide();
-                this.incoming.accept({
-                    name: this.$store.state.WalletStore.wallet.accountName,
-                    id: this.$store.state.WalletStore.wallet.accountID
-                });
-            },
-            denyAccess: function () {
-                this.$refs.accountReqModal.hide();
-                this.incoming.reject({});
-            },
-            acceptTx: async function () {
-                this.$refs.loaderAnimModal.show();
-                this.$refs.transactionReqModal.hide();
-                let blockchain = getBlockchain(this.$store.state.WalletStore.wallet.chain);
-                let transaction = await blockchain.sign(
-                    this.incoming.params,
-                    this.$store.state.WalletStore.wallet.keys.active
-                );
-                let id = await blockchain.broadcast(
-                    transaction
-                );
-                this.incoming.accepttx({id: id});
-                this.$refs.loaderAnimModal.hide();
-            },
-            rejectTx: function () {
-                this.$refs.transactionReqModal.hide();
-                this.incoming.rejecttx({});
-            },
-            acceptGeneric: async function () {
-                // doesnt disappear afterwards, huh?
-                //this.$refs.loaderAnimModal.show();
-                let blockchain = getBlockchain(this.$store.state.WalletStore.wallet.chain);
-                if (this.incoming.method == "signMessage") {
-                    let signedMessage = await blockchain.signMessage(
-                        this.$store.state.WalletStore.wallet.keys.active,
-                        this.$store.state.WalletStore.wallet.accountName,
-                        this.incoming.params
-                    );
-                    this.incoming.acceptgen(signedMessage);
                 } else {
-                    let operation = await blockchain.getOperation(
-                        this.incoming,
-                        {
-                            id: this.$store.state.WalletStore.wallet.accountID,
-                            name: this.$store.state.WalletStore.wallet.accountName
-                        }
-                    );
-                    let transaction = await blockchain.sign(
-                        operation,
-                        this.$store.state.WalletStore.wallet.keys.active
-                    );
-                    let id = await blockchain.broadcast(
-                        transaction
-                    );
-                    this.incoming.acceptgen(id);
+                    return false;
                 }
-                this.$refs.genericReqModal.hide();
-                this.$refs.loaderAnimModal.hide();
             },
-            rejectGeneric: function () {
-                this.$refs.genericReqModal.hide();
-                this.incoming.rejectgen({});
+            requestSignedMessage: async function(payload) {
+                if (this.isWhitelisted(payload.identityhash, "SignMessageRequestPopup")) {
+                    return {
+                        response: await this.$refs.signMessageModal.execute(payload),
+                        whitelisted: true
+                    };
+                } else {
+                    return this.$refs.signMessageModal.show(payload, true);
+                }
             },
-            formatMoney: function (n, decimals, decimal_sep, thousands_sep) {
-                var c = isNaN(decimals) ? 2 : Math.abs(decimals),
-                    d = decimal_sep || ".",
-                    t = typeof thousands_sep === "undefined" ? "," : thousands_sep,
-                    sign = n < 0 ? "-" : "",
-                    i = parseInt((n = Math.abs(n).toFixed(c))) + "",
-                    j = (j = i.length) > 3 ? j % 3 : 0;
-                return (
-                    sign +
-                    (j ? i.substr(0, j) + t : "") +
-                    i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) +
-                    (c
-                        ? d +
-                        Math.abs(n - i)
-                            .toFixed(c)
-                            .slice(2)
-                        : "")
-                );
+            verifyMessage: function(payload) {
+                return new Promise((resolve, reject) => {
+                    let payload_dict = {};
+                    payload_dict[payload.params.payload[0]] = [
+                        payload_dict[payload.params.payload[1]],
+                        payload_dict[payload.params.payload[2]]
+                    ];
+                    let i;
+                    for (i = 3; i < payload.params.payload.length - 1; i++) {
+                        payload_dict[payload.params.payload[i]] =
+                            payload.params.payload[i + 1];
+                    }
+                    let messageChain = null;
+                    if (payload_dict.chain) {
+                        messageChain = payload_dict.chain;
+                    } else {
+                        messageChain = payload.params.payload[2].substr(0, 3);
+                    }
+                    let blockchain = getBlockchain(messageChain);
+                    blockchain
+                        .verifyMessage(payload.params)
+                        .then(result => {
+                            resolve(result);
+                        })
+                        .catch(err => {
+                            reject(err);
+                        });
+                });
             }
         }
     };

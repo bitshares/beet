@@ -1,28 +1,59 @@
 {
-    "account_id": {
-        "title": "Account Details Request",
-        "request": "The page/app {{- origin}} is requesting to access your account ID.",
-        "request_cta": "Do you want to allow access?",
+    "link": {
+        "title": "Account Link Request",
+        "request": "The application `{{appName}}` from `{{origin}}` is requesting access to a {{chain}} account.",
+        "request_fresh": "The application has already linked a {{chain}} account before as marked in the list below.",
+        "request_tooltip": "The application will receive your account details (name and id) and link to Beet.",
+        "request_cta": "Select account to provide.",
         "accept_btn": "Allow",
         "reject_btn": "Deny"
     },
-    "rawsig": {
-        "title": "Transaction Request",
-        "request": "The page/app {{- origin}} has submitted the following transaction.",
+    "relink": {
+        "title": "Account ReLink Request",
+        "request": "The application `{{appName}}` from `{{origin}}` is requesting to relink the previously linked {{chain}} account: {{accountId}}. This is usually due to having deleted your browser's cache. On rare ocassions, this may be a phishing attempt so please double check the site you are visiting.",
+        "request_tooltip": "The previous link between the appplication and the account referencec will be reset."
+    },
+    "account_id": {
+        "title": "Account Details Request",
+        "request": "App: `{{appName}}` from `{{origin}}` is requesting access to the linked identity (account ID & account name) of account: {{chain}}: {{accountName}} ({{accountId}}).",
+        "request_tooltip": "By default Beet provides an anonymous link. Certain apps/websites require access to your account id/name (e.g. for sign-in purposes). If this is the case, it is safe to `Allow` here.",
+        "accept_btn": "Allow",
+        "reject_btn": "Deny"
+    },
+    "any_account_id": {
+        "title": "Account Details Request",
+        "request": "App: `{{appName}}` from `{{origin}}` is requesting access to an account.",
+        "request_cta": "Select account to provide.",
+        "accept_btn": "Allow",
+        "reject_btn": "Deny"
+    },
+    "transfer": {
+        "title": "Transfer Request",
+        "request": "App: `{{appName}}` from `{{origin}}` wants to initiate a transfer from {{ chain }}:{{ accountName }}.",
         "request_cta": "Do you want to execute it?",
         "accept_btn": "Sign & Broadcast",
         "reject_btn": "Ignore"
     },
+    "rawsig": {
+        "title": "Transaction Request",
+        "request": "App: `{{appName}}` from `{{origin}}` has submitted the following transaction for account {{ chain }}:{{ accountName }}.",
+        "request_cta": "Do you want to execute it?",
+        "accept_btn": "Sign & Broadcast",
+        "reject_btn": "Ignore"
+    },
+    "whitelist": {
+        "prompt": "Whitelist subsequent `{{method}}` requests from this app?"
+    },
     "vote": {
         "title": "Vote Request",
-        "request": "The page/app {{- origin}} wants you to vote for the following {{entity}}",
+        "request": "App: `{{appName}}` from `{{origin}}`  wants you to vote for the following {{entity}} with account {{ chain }}:{{ accountName }}",
         "request_cta": "",
         "accept_btn": "Approve",
         "reject_btn": "Ignore"
     },
     "message": {
         "title": "Sign Message Request",
-        "request": "The page/app {{- origin}} wants you to sign the following text",
+        "request": "App: `{{appName}}` from `{{origin}}` wants you to sign the following text with account {{ chain }}:{{ accountName }}",
         "request_cta": "",
         "accept_btn": "Approve",
         "reject_btn": "Ignore"

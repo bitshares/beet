@@ -3,7 +3,7 @@ node_js: 10
 matrix:
   include:
   - os: linux
-    dist: trusty
+    dist: xenial
   - os: osx
     osx_image: xcode8.3
 env:
@@ -15,13 +15,17 @@ addons:
     sources:
     - ubuntu-toolchain-r-test
     packages:
-    - gcc-4.8
-    - g++-4.8
+    - gcc
+    - g++
     - icnsutils
+    - build-essential
+    - libstdc++6
     - graphicsmagick
     - xz-utils
     - fakeroot
     - rpm
+    - libusb-dev
+    - libudev-dev
 install:
   - npm ci
 script: "./package.sh"

@@ -2,54 +2,87 @@ import BeetAPI from './BeetAPI';
 import BeetWS from './BeetWS';
 import CryptoJS from 'crypto-js';
 import store from '../store/index.js';
-//import eccrypto from 'eccrypto';
-import { ec as EC } from "elliptic"; 
-var ec = new EC('curve25519');
+import { ec as EC } from "elliptic";
 import RendererLogger from "./RendererLogger";
 
+let ec = new EC('curve25519');
 const logger = new RendererLogger();
-
 let vueInst = null;
+
+const _calculateIdentityHash = function (request, chain, id) {
+    return CryptoJS.SHA256(request.browser + ' ' + request.origin + ' ' + request.appName + ' ' + chain + ' ' + id).toString();
+};
+
+const _findApp = function (identityhash) {
+    let apps = store.state.OriginStore.apps.filter(x => x.identityhash == identityhash);
+    // must be unique
+    if (apps.length !== 1) {
+        return null;
+    }
+    return apps[0];
+};
 
 const linkHandler = async (req) => {
     try {
+        // todo: only forward fields that are actually used in handler
         let userResponse = await BeetAPI.handler(Object.assign(req, {}), vueInst);
+        
         if (!!userResponse.response && !userResponse.response.isLinked) {
-            console.log("User rejected request, id=" + req.id);
             return {
                 id: req.id,
                 result: {
                     isError: true,
                     error: 'User rejected request'
                 }
-            };;
-        } else {
-            let apphash = CryptoJS.SHA256(req.browser + ' ' + req.origin + ' ' + req.appName + ' ' + req.payload.chain + ' ' + userResponse.identity.id).toString();
-            //let secret = await eccrypto.derive(req.key, Buffer.from(req.payload.pubkey, 'hex'));
-            console.log("linkHandler key=", req.key);
+            };
+        }
+        
+        let identityhash = _calculateIdentityHash(req, userResponse.chain, userResponse.identity.id);
+        let app = _findApp(identityhash);
+        let existing = !!app;
+        console.log('relink: ');
+        console.log(userResponse);
+        if (userResponse.identity.identityhash==identityhash){
+            existing=false;
             let secret = req.key.derive(ec.keyFromPublic(req.payload.pubkey, 'hex').getPublic());
-            let app = await store.dispatch('OriginStore/addApp', {
+            app = await store.dispatch('OriginStore/addApp', {
                 appName: req.appName,
-                apphash: apphash,
+                identityhash: userResponse.identity.identityhash,
                 origin: req.origin,
                 account_id: userResponse.identity.id,
-                chain: req.payload.chain,
+                chain: userResponse.identity.chain,
                 secret: secret.toString(16),
                 next_hash: req.payload.next_hash
             });
-            console.log("app added, id=" + app.id);
-            let response = Object.assign(req, {
-                isLinked: true,
-                apphash: apphash,
-                chain: req.payload.chain,
-                next_hash: req.payload.next_hash,
-                account_id: userResponse.identity.id,
-                secret: secret.toString(16)
-            });
-            return response;
+            // todo: check if setting the next two is necessary
+            app.secret = secret.toString(16);
+            app.next_hash = req.payload.next_hash;
+        }else{
+            if (!existing) {
+                // link this new application
+                let secret = req.key.derive(ec.keyFromPublic(req.payload.pubkey, 'hex').getPublic());
+                app = await store.dispatch('OriginStore/addApp', {
+                    appName: req.appName,
+                    identityhash: identityhash,
+                    origin: req.origin,
+                    account_id: userResponse.identity.id,
+                    chain: userResponse.identity.chain,
+                    secret: secret.toString(16),
+                    next_hash: req.payload.next_hash
+                });
+                // todo: check if setting the next two is necessary
+                app.secret = secret.toString(16);
+                app.next_hash = req.payload.next_hash;
+            }
         }
+        // todo: why copy content of request?
+        return Object.assign(req, {
+            isLinked: true, // todo: can this also be called link?
+            identityhash: identityhash,
+            app: app,
+            existing: existing
+        });
     } catch (err) {
-        console.error(err);
         return {
             id: req.id,
             result: {
@@ -61,35 +94,32 @@ const linkHandler = async (req) => {
 };
 
 const authHandler = function (req) {
+    let linked = req.payload.identityhash != null & req.payload.identityhash != undefined;
     // TODO: Check against blacklist;
-    if (req.payload.apphash != null & req.payload.apphash != undefined) {
-        let apps = store.state.OriginStore.apps;
-        const app = apps.find(x => x.apphash === req.payload.apphash);
-        console.log("authHandler", app);
-        if (!app) {
-            return Object.assign(req.payload, {
-                authenticate: false,
-                link: false
-            });
-        } else {
-            if (req.payload.origin == app.origin && req.payload.appName == app.appName) {
-                return Object.assign(req.payload, {
-                    authenticate: true,
-                    link: true,
-                    app: app
-                });
-            } else {
-                return Object.assign(req.payload, {
-                    authenticate: false,
-                    link: false
-                });
-            }
-        }
-    } else {
+    const app = _findApp(req.payload.identityhash);
+    if (!linked) {
         return Object.assign(req.payload, {
             authenticate: true,
             link: false
         });
+    } else if (!app) {
+        return Object.assign(req.payload, {
+            authenticate: false,
+            link: false
+        });
+    } else {
+        if (req.payload.origin == app.origin && req.payload.appName == app.appName) {
+            return Object.assign(req.payload, {
+                authenticate: true,
+                link: true,
+                app: app
+            });
+        } else {
+            return Object.assign(req.payload, {
+                authenticate: false,
+                link: false
+            });
+        }
     }
 };
 
@@ -97,22 +127,27 @@ export default class BeetServer {
 
     static initialize(vue) {
         vueInst = vue;
-        const server = new BeetWS(60556, 10000);
+        const server = new BeetWS(60555, 60556, 10000);
         server.on('link', async (data) => {
-
+            logger.debug("incoming link request", data);
             let status = await linkHandler(data);
             server.respondLink(data.client, status);
+        }); 
+        server.on('relink', async (data) => {
+            logger.debug("incoming relink request", data);
+            let status = await linkHandler(data);
+            server.respondReLink(data.client, status);
         });
         server.on('authenticate', async (data) => {
-            console.log("event type api", data);
+            logger.debug("incoming authenticate request", data);
             let status = await authHandler(data);
             status.id = data.id;
             server.respondAuth(data.client, status);
         });
         server.on('api', async (data) => {
-            console.log("event type api", data);
+            logger.debug("incoming api request", data);
             store.dispatch('OriginStore/newRequest', {
-                apphash: data.payload.apphash,
+                identityhash: data.payload.identityhash,
                 next_hash: data.payload.next_hash
             });
             let status = await BeetAPI.handler(data, vueInst);
@@ -120,4 +155,5 @@ export default class BeetServer {
             server.respondAPI(data.client, status);
         });
     }
+
 }

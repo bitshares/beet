@@ -7,11 +7,15 @@ import Steem from "./Steem"
 import store from "../../store";
 import WhaleShares from "./WhaleShares";
 import SmokeNetwork from "./SmokeNetwork";
+import EOSmainnet from "./EOSmainnet";
+import TLOS from "./TLOS";
+import Bitcoin from "./Bitcoin";
+import Binance from "./Binance";
 
 export default function getBlockchainAPI(chain = null) {
     if (chain == null) {
         // ask store
-        chain = store.state.WalletStore.wallet.chain
+        chain = store.state.AccountStore.accountlist[store.state.AccountStore.selectedIndex].chain
     }
     if (chain == "BTS") {
         if (!apiCache.BTS) {
@@ -20,7 +24,7 @@ export default function getBlockchainAPI(chain = null) {
         return apiCache.BTS;
     } else if (chain == "STEEM" || chain == "STM") {
         if (!apiCache.STEEM) {
-            apiCache.STEEM = new Steem(blockchains[chain]);
+            apiCache.STEEM = new Steem(blockchains["STEEM"]);
         }
         return apiCache.STEEM;
     } else if (chain == "WLS") {
@@ -30,8 +34,34 @@ export default function getBlockchainAPI(chain = null) {
         return apiCache.WLS;
     } else if (chain == "SMOKE" || chain == "SMK") {
         if (!apiCache.SMOKE) {
-            apiCache.SMOKE = new SmokeNetwork(blockchains[chain]);
+            apiCache.SMOKE = new SmokeNetwork(blockchains["SMOKE"]);
         }
         return apiCache.SMOKE;
+    } else if (chain == "EOS") {
+        if (!apiCache.EOS) {
+            apiCache.EOS = new EOSmainnet(blockchains[chain]);
+        }
+        return apiCache.EOS;
+    } else if (chain == "TLOS") {
+        if (!apiCache.TLOS) {
+            apiCache.TLOS = new TLOS(blockchains[chain]);
+        }
+        return apiCache.TLOS;
+    } else if (chain == "BTC") {
+        if (!apiCache.BTC) {
+            apiCache.BTC = new Bitcoin(blockchains[chain]);
+        }
+        return apiCache.BTC;
+    } else if (chain == "BTC_TEST") {
+        if (!apiCache.BTC_TEST) {
+            apiCache.BTC_TEST = new Bitcoin(blockchains[chain]);
+        }
+        return apiCache.BTC_TEST;
+    } else if (chain == "BNB_TEST") {
+        if (!apiCache.BNB_TEST) {
+            apiCache.BNB_TEST = new Binance(blockchains[chain]);
+        }
+        return apiCache.BNB_TEST;
     }
+
 }

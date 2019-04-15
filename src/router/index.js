@@ -2,8 +2,10 @@ import VueRouter from 'vue-router'
 import HeaderGuest from "../components/header-guest";
 import HeaderSmall from "../components/header-small";
 import Start from "../components/start";
-import Create from "../components/create";
 import Dashboard from "../components/dashboard";
+import Restore from "../components/restore";
+import AddAccount from "../components/add-account";
+import Settings from "../components/settings";
 
 const router = new VueRouter({
   routes: [{
@@ -14,9 +16,30 @@ const router = new VueRouter({
       }
     },
     {
+      path: '/settings',
+      components: {
+        default: Settings,
+        header: HeaderSmall
+      }
+    },
+    {
+      path: '/restore',
+      components: {
+        default: Restore,
+        header: HeaderSmall
+      }
+    },
+    {
       path: '/create',
       components: {
-        default: Create,
+        default: AddAccount,
+        header: HeaderSmall
+      }
+    },
+    {
+      path: '/add-account',
+      components: {
+        default: AddAccount,
         header: HeaderSmall
       }
     },

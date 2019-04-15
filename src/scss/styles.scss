@@ -113,7 +113,7 @@ body {
 
 .main {
     width: 100%;
-    max-width: 500px;
+    max-width: 600px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -141,7 +141,9 @@ body {
     outline: none !important;
     box-shadow: none !important;
 }
-
+.error {
+    border-color: $danger !important;
+}
 .btn-primary {
     background: $primary;
     border: 1px solid $primary;
@@ -151,7 +153,39 @@ body {
     border-radius: 1.5rem;
     padding: 0rem 1rem;
 }
+.btn-secondary {
+    background: $secondary;
+    border: 1px solid $secondary;
+    outline: none;
+    height: 3rem;
+    line-height: 3rem;
+    border-radius: 1.5rem;
+    padding: 0rem 1rem;
+}
+.btn-inverse:hover,
+.btn-inverse:active,
+.btn-inverse:focus,
+.btn-inverse:not(:disabled):not(.disabled).active,
+.btn-inverse:not(:disabled):not(.disabled):active {
+    background: $primary;
+    border: 1px solid $primary;
+    outline: none !important;
+    box-shadow: none !important;
+    color:white;
+}
 
+.btn-inverse {
+    background: $alternate;
+    border: 1px solid $alternate;
+    outline: none;
+    height: 2rem;
+    min-width:2rem;
+    color:white;
+    display:inline-block;
+    line-height: 2rem;
+    border-radius: 1rem;
+    padding: 0rem 0rem;
+}
 .form-control {
     position: relative;
     box-sizing: border-box;
@@ -170,13 +204,228 @@ p {
 .account {
     background: $alternate;
     color: $white;
-}
+    line-height:2rem;
+    border:1px solid $alternate;
+    .icons {
+        background: white;
+        border-left:1px solid $alternate;
+    }
+    .label {
+        font-size:0.8rem;
+        color:white;
+        font-weight:bold;
+        height:2rem;
+        line-height:2rem;
+        padding-right:0.5rem;
+        border-right:1px solid $alternate;
+    }
+    .multiselect {
+        &.form-control {
+            display:block;
+            padding: 0;
+            height: 2rem;
+            line-height: 2rem;
+            border-radius: 0;
+            width: 100%;
+            border-right:1px solid $alternate;
+            margin:0;
+            font-size:0.8rem;
+            color:#222222;
+            border:0;
+            background:white;
+            outline: none;
+            text-align:left;
+            background-image:
+            linear-gradient(45deg, transparent 50%, #222222 50%),
+            linear-gradient(135deg, #222222 50%, transparent 50%),
+            linear-gradient(to right, #222222, #222222);
+          background-position:
+            calc(100% - 15px) 1em,
+            calc(100% - 10px) 1em,
+            calc(100% - 2em) 0.5em;
+          background-size:
+            5px 5px,
+            5px 5px,
+            1px 1.5em;
+          background-repeat: no-repeat;
 
+        &:focus {
+          background-image:
+            linear-gradient(45deg, #222222 50%, transparent 50%),
+            linear-gradient(135deg, transparent 50%, #222222 50%),
+            linear-gradient(to right, #222222, #222222);
+          background-position:
+            calc(100% - 10px) 1em,
+            calc(100% - 15px) 1em,
+            calc(100% - 2em) 0.5em;
+          background-size:
+            5px 5px,
+            5px 5px,
+            1px 1.5em;
+          background-repeat: no-repeat;
+          border-color: white;
+          outline: 0;
+        }
+            .multiselect__tags {
+                padding-left:0.5rem;
+
+
+            }
+            .multiselect__content-wrapper {
+                background:$alternate;
+                color:white;
+                ul {
+                    padding:0;
+                    padding-left:0.5rem;
+                    margin-bottom:0;
+                    list-style: none;
+                    li {
+                        padding:0;
+                        padding-top:0.1rem;
+                        padding-bottom:0.1rem;
+                        .multiselect__option {
+                            display:inline-block;
+                        }
+                        .multiselect__option--highlight {
+                            padding-left:0.5rem;
+
+                        }
+                        .multiselect__option--selected {
+                            font-weight:bold;
+                        }
+                    }
+
+                }
+            }
+        }
+    }
+    .btn-inverse {
+        margin-lefT:0.4rem;
+    }
+}
+.modal-content {
+  align-self: stretch;
+}
+.linkStyle {
+
+    .multiselect {
+        &.form-control {
+            display:block;
+            padding: 0;
+            height: 2.5rem;
+            line-height: 2.5rem;
+            border:1px solid #222222;
+            border-radius: 0.3rem;
+            width: 100%;
+            margin:0;
+            font-size:0.8rem;
+            color:#222222;
+            background:white;
+            outline: none;
+            text-align:left;
+            background-image:
+            linear-gradient(45deg, transparent 50%, #222222 50%),
+            linear-gradient(135deg, #222222 50%, transparent 50%),
+            linear-gradient(to right, #222222, #222222);
+          background-position:
+            calc(100% - 15px) 1.25em,
+            calc(100% - 10px) 1.25em,
+            calc(100% - 2em) 0.625em;
+          background-size:
+            5px 5px,
+            5px 5px,
+            1px 1.5em;
+          background-repeat: no-repeat;
+
+        &:focus {
+          background-image:
+            linear-gradient(45deg, #222222 50%, transparent 50%),
+            linear-gradient(135deg, transparent 50%, #222222 50%),
+            linear-gradient(to right, #222222, #222222);
+          background-position:
+            calc(100% - 10px) 1.25em,
+            calc(100% - 15px) 1.25em,
+            calc(100% - 2em) 0.625em;
+          background-size:
+            5px 5px,
+            5px 5px,
+            1px 1.5em;
+          background-repeat: no-repeat;
+          outline: 0;
+        }
+            .multiselect__tags {
+                padding-left:0.5rem;
+            }
+            .multiselect__content-wrapper {
+                background: white;
+                color: #222222;
+                border: 1px solid #222222;
+                border-radius: 0.3rem;
+                overflow-y: scroll;
+                ul {
+                    padding:0;
+                    margin-bottom:0;
+                    list-style: none;
+                    width:100%;
+                    li {
+                        &:hover {
+                            background: $light;
+                        }
+                        padding:0;
+                        padding-left:0.5rem;
+                        padding-top:0.1rem;
+                        padding-bottom:0.1rem;
+                        .multiselect__option {
+                            display:inline-block;
+                            width:100%;
+                            .prevLink {
+                                display:inline-block;
+                                width:100%;
+                                color:$success;
+                                &:after {
+                                    content: attr(data-linked);
+                                }
+                            }
+                        }
+                        .multiselect__option--highlight {
+                            //padding-left:0.5rem;
+
+                        }
+                        .multiselect__option--selected {
+                            font-weight:bold;
+                        }
+                    }
+
+                }
+            }
+        }
+    }
+}
+#loaderAnim {
+    .modal-content {
+        background: none;
+        border: 0;
+        align-self: center;
+    }
+}
 .balances {
-    height: 26rem;
+    height: 17rem;
+    overflow-y: auto;
+    margin-left:15px;
+    margin-right:15px;
+}
+.account-details {
+    margin-left:15px;
+    margin-right:15px;
+}
+.import-accounts {
+    max-height: 22rem;
     overflow-y: auto;
 }
-
+.disabledImport {
+    font-style:italic;
+    color:gray;
+}
 pre {
     border: 1px solid lightgray;
     background: #f3f3f3;
@@ -194,13 +443,34 @@ pre {
     background: $dark;
     border-top: 1px solid $dark;
     border-bottom: 1px solid $dark;
+    padding: 0.3rem 0rem;
+    padding-top:0.2rem;
+    line-height:1.5;
     color: $white;
     font-size: 0.9rem;
+    a {
+        color:white;
+        font-weight:bold;
+        vertical-align:middle;
+        span {
+            vertical-align:middle;
+        }
+        &.active {
+            color: $primary;
+        }
+        &:hover {
+            color: $primary;
+            font-weight:bold;
+            vertical-align:middle;
+            text-decoration: none;
+        }
+    }
 }
 
 .status {
     display: inline-block;
     margin: auto;
+    vertical-align:baseline;
     font-size: 1rem;
 }
 
@@ -389,10 +659,25 @@ pre {
     background: #77c5ec;
     cursor: pointer;
 }
+
 .alerts {
     position:absolute;
     left:5%;
     right:5%;
     top:3rem;
     width:90%;
+}
+
+.dapp-list {
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.status .icon-spinner11 {
+    color: white;
+    cursor: pointer;
+}
+
+.status .icon-spinner11:hover {
+    color: #29324A;
 }

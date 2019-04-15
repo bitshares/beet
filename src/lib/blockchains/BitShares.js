@@ -5,34 +5,18 @@ import {
     PublicKey,
     TransactionBuilder,
     Signature,
-    ChainStore
+    FetchChain
 } from "bitsharesjs";
+import RendererLogger from "../RendererLogger";
+const logger = new RendererLogger();
 
 export default class BitShares extends BlockchainAPI {
 
-    _onCloseWrapper(onClose) {
-        this._isConnected = false;
-        if (onClose) onClose();
-    }
-
-    connect(nodeToConnect = null, onClose = null) {
+    _connect(nodeToConnect = null) {
         return new Promise((resolve, reject) => {
             if (nodeToConnect == null) {
                 nodeToConnect = this.getNodes()[0].url;
             }
-            console.log("attempting to connect to ", nodeToConnect);
-            if (this._isConnectingInProgress) {
-                // there should be a promise queue for pending connects, this is the lazy way
-                setTimeout(() => {
-                    if (this._isConnected) {
-                        resolve(nodeToConnect);
-                    } else {
-                        reject("multiple connects, did not resolve in time");
-                    }
-                }, 250);
-                return;
-            }
-            this._isConnectingInProgress = true;
             if (this._isConnected) {
                 Apis.close().then(() => {
                     this._isConnected = false;
@@ -41,14 +25,10 @@ export default class BitShares extends BlockchainAPI {
                         true,
                         10000,
                         {enableCrypto: false, enableOrders: false},
-                        this._onCloseWrapper.bind(this, onClose)
+                        this._connectionFailed.bind(null, nodeToConnect, "Connection closed")
                     ).init_promise.then(() => {
                         this._connectionEstablished(resolve, nodeToConnect);
-                    }).catch((err) => {
-                        this._isConnected = false;
-                        this._isConnectingInProgress = false;
-                        reject(err);
-                    });
+                    }).catch(this._connectionFailed.bind(this, reject, nodeToConnect));
                 });
             } else {
                 Apis.instance(
@@ -56,30 +36,17 @@ export default class BitShares extends BlockchainAPI {
                     true,
                     10000,
                     {enableCrypto: false, enableOrders: false},
-                    this._onCloseWrapper.bind(this, onClose)
+                    this._connectionFailed.bind(null, nodeToConnect, "Connection closed")
                 ).init_promise.then(() => {
                     this._connectionEstablished(resolve, nodeToConnect);
-                }).catch((err) => {
-                    this._isConnected = false;
-                    this._isConnectingInProgress = false;
-                    reject(err);
-                });
+                }).catch(this._connectionFailed.bind(this, reject, nodeToConnect));
             }
-        });
-    }
-
-    _ensureAPI() {
-        if (!this._isConnected) {
-            return this.connect();
-        }
-        return new Promise(resolve => {
-            resolve();
         });
     }
 
     getAccount(accountName) {
         return new Promise((resolve, reject) => {
-            this._ensureAPI().then(() => {
+            this.ensureConnection().then(() => {
                 Apis.instance().db_api()
                     .exec("get_full_accounts", [[accountName], false])
                     .then(res => {
@@ -96,9 +63,51 @@ export default class BitShares extends BlockchainAPI {
         });
     }
 
+    resolveAsset(assetSymbolOrId) {
+        return new Promise((resolve, reject) => {
+            this.ensureConnection().then(() => {
+                Apis.instance().db_api().exec("lookup_asset_symbols", [[assetName]]).then((asset_objects) => {
+                    if (asset_objects.length && asset_objects[0]) {
+                        resolve(asset_objects[0]);
+                    }
+                }).catch(reject);
+            }).catch(reject);
+        });
+    }
+
+    getAsset(assetSymbolOrId) {
+        if (assetSymbolOrId == "1.3.0") {
+            return {
+                asset_id: "1.3.0",
+                symbol: "BTS",
+                precision: 8
+            };
+        } else if (assetSymbolOrId == "1.3.121") {
+            return {
+                asset_id: "1.3.121",
+                symbol: "bitUSD",
+                precision: 4
+            };
+        } else if (assetSymbolOrId == "1.3.113") {
+            return {
+                asset_id: "1.3.113",
+                symbol: "bitCNY",
+                precision: 4
+            };
+        } else if (assetSymbolOrId == "1.3.120") {
+            return {
+                asset_id: "1.3.120",
+                symbol: "bitEUR",
+                precision: 4
+            };
+        } else {
+            return null;
+        }
+    }
+
     getBalances(accountName) {
         return new Promise((resolve, reject) => {
-            this._ensureAPI().then(() => {
+            this.ensureConnection().then(() => {
                 this.getAccount(accountName).then((account) => {
                     let neededAssets = [];
                     for (let i = 0; i < account.balances.length; i++) {
@@ -141,9 +150,8 @@ export default class BitShares extends BlockchainAPI {
     }
 
     mapOperationData(incoming) {
-        console.log("mapOperationData", incoming);
         return new Promise((resolve, reject) => {
-            this._ensureAPI().then(() => {
+            this.ensureConnection().then(() => {
                 if (incoming.action == "vote") {
                     let entity_id = incoming.params.id.split(".");
                     if (entity_id[0] != "1") {
@@ -214,10 +222,9 @@ export default class BitShares extends BlockchainAPI {
     }
 
     sign(operation, key) {
-        console.log("sign", operation, key);
         return new Promise((resolve, reject) => {
-            this._ensureAPI().then(() => {
-                if (!!operation.type) {
+            this.ensureConnection().then(() => {
+                if (operation.type) {
                     let tr = new TransactionBuilder();
                     tr.add_type_operation(
                         operation.type,
@@ -233,22 +240,34 @@ export default class BitShares extends BlockchainAPI {
                         && operation.length > 2
                         && operation[0] == "signAndBroadcast") {
                         let tr = new TransactionBuilder();
-                        tr.tr_buffer = operation.tr_buffer;
+                        tr.ref_block_num = operation[1];
+                        tr.ref_block_prefix = operation[2];
+                        tr.expiration = operation[3];
+                        operation[4].forEach(op => {
+                            tr.add_operation(tr.get_type_operation(op[0], op[1]));
+                        });
                         let privateKey = PrivateKey.fromWif(key);
-                        tr.add_signer(privateKey, privateKey.toPublicKey().toPublicKeyString());
-                        resolve(tr);
+                        Promise.all([
+                            tr.set_required_fees(),
+                            tr.update_head_block()
+                        ]).then(() => {
+                            tr.add_signer(privateKey, privateKey.toPublicKey().toPublicKeyString());
+                            tr.finalize().then(() => {
+                                tr.sign();
+                                resolve(tr);
+                            }).catch(reject);
+                        });
                     } else {
                         reject("Unknown sign request");
                     }
                 }
-            }).catch(err => reject(err));;
+            }).catch(err => reject(err));
         });
     }
 
     broadcast(transaction) {
-        console.log("broadcast", transaction);
         return new Promise((resolve, reject) => {
-            this._ensureAPI().then(() => {
+            this.ensureConnection().then(() => {
                 transaction.broadcast().then(id => {
                     resolve(id);
                 }).catch(err => reject(err));
@@ -258,9 +277,8 @@ export default class BitShares extends BlockchainAPI {
 
     getOperation(data, account) {
         let account_id = account.id;
-        console.log("getOperation", data, account_id);
         return new Promise((resolve, reject) => {
-            this._ensureAPI().then(() => {
+            this.ensureConnection().then(() => {
                 let operation = {
                     type: null,
                     data: null
@@ -280,6 +298,14 @@ export default class BitShares extends BlockchainAPI {
                             let account = accounts[0];
 
                             let new_options = account.options;
+
+                            if (new_options.votes.findIndex(item => item == data.vote_id) !== -1) {
+                                resolve({
+                                   vote_id: data.vote_id,
+                                   notingToDo: true
+                                });
+                            }
+
                             new_options.votes.push(data.vote_id);
                             new_options.votes = new_options.votes.sort((a, b) => {
                                 let a_split = a.split(":");
@@ -295,6 +321,12 @@ export default class BitShares extends BlockchainAPI {
                             reject(err);
                         });
 
+                    }
+                    break;
+                    default: {
+                        operation.type = 'transfer';
+                        operation.data = data;
+                        resolve(operation);
                     }
                 }
             });
@@ -314,6 +346,43 @@ export default class BitShares extends BlockchainAPI {
             string,
             PublicKey.fromPublicKeyString(publicKey)
         );
+    }
+
+    async transfer(key, from, to, amount, memo = null) {
+        if (!amount.amount || !amount.asset_id) {
+            throw "Amount must be a dict with amount and asset_id as keys"
+        }
+        from = await this.getAccount(from);
+        to = await this.getAccount(to);
+        let operation = {
+            type: "transfer",
+            data: {
+                fee: {
+                    amount: 0,
+                    asset_id: "1.3.0"
+                },
+                from: from.id,
+                to: to.id,
+                amount: amount,
+                memo: memo == null ? undefined : memo
+            }
+        };
+        let transaction = await this.sign(operation, key);
+        return await this.broadcast(transaction);
+    }
+
+    getExplorer(object) {
+        if (object.accountName) {
+            return "https://open-explorer.io/#/accounts/" + object.accountID;
+        } else if (object.opid) {
+            // 1.11.833380474
+            return "https://open-explorer.io/#/operations/" + object.opid;
+        } else if (object.txid) {
+            // e94404a94b4bb160601241ffb78ad0e615a9636b
+            return "https://bitsharescan.com/transaction/" + object.txid;
+        } else {
+            return false;
+        }
     }
 
 }

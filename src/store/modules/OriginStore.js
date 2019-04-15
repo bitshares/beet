@@ -1,5 +1,7 @@
 import Vue from 'vue/dist/vue.js';
 import BeetDB from '../../lib/BeetDB.js';
+import RendererLogger from "../../lib/RendererLogger";
+const logger = new RendererLogger();
 const LOAD_APPS = 'LOAD_APPS';
 const ADD_APP = 'ADD_APP';
 const UPDATE_APP = 'UPDATE_APP';
@@ -10,14 +12,11 @@ const mutations = {
         Vue.set(state, 'apps', apps);
     },
     [ADD_APP](state, app) {
-        console.log("OriginStore.add_app");
         state.apps.push(app);
     },
     [UPDATE_APP](state, app) {
-        console.log("OriginStore.update_app");
         state.apps.forEach(function(item, i) {
-            if (item.apphash == app.apphash) {
-                console.log("OriginStore.update_app replace", state.apps[i], app);
+            if (item.identityhash == app.identityhash) {
                 state.apps[i] = app;
             }
         });
@@ -45,7 +44,7 @@ const actions = {
         commit
     }, payload) {
         return new Promise((resolve, reject) => {
-            BeetDB.apps.where('apphash').equals(payload.apphash).modify({
+            BeetDB.apps.where('identityhash').equals(payload.identityhash).modify({
                 next_hash: payload.next_hash
             }).then(() => {
                 dispatch('loadApps');
@@ -56,26 +55,36 @@ const actions = {
             });
         });
     },
+    removeApp({
+        dispatch,
+        commit
+    }, payload) {
+        return new Promise((resolve, reject) => {
+            let db = BeetDB.apps;
+            db.where("id").equals(payload).delete().then((res) => {
+                dispatch('loadApps');
+            }).catch((err) => {
+                reject(err);
+            });
+        });
+    },
     addApp({
         commit
     }, payload) {
         return new Promise((resolve, reject) => {
             let db = BeetDB.apps;
-            db.where("apphash").equals(payload.apphash).toArray().then((res) => {
+            db.where("identityhash").equals(payload.identityhash).toArray().then((res) => {
                 if (res.length == 0) {
                     db.add(payload).then((id) => {
                         payload.id = id;
                         commit(ADD_APP, payload);
-                        console.log("app added", payload);
                         resolve(payload);
                     }).catch((err) => {
                         reject(err);
                     });
                 } else {
-                    console.log("app retrieved", res[0]);
                     db.update(res[0].id, payload).then((id)=>{
                         payload.id = id;
-                        console.log("app updated", payload);
                         commit(UPDATE_APP, payload);
                         resolve(payload);
                     }).catch((err) => {
@@ -90,7 +99,11 @@ const actions = {
 }
 
 
-const getters = {};
+const getters = {
+    walletAccessibleDapps: (state) => (account_id,chain) => {
+        return state.apps.find( x => { return x.chain==chain && x.account_id==account_id});
+    }
+};
 
 const initialState = {
     'apps': []
