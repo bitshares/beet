@@ -103,10 +103,10 @@ export default class BeetWS extends EventEmitter {
                         } else {
                             client.send('{ "id": "' + data.id + '", "error": true, "payload": { "code":2,"message": "Unexpected request hash. Please relink"}}');
                         }
-                    }else{                        
+                    }else{
                         client.send('{ "id": "' + data.id + '", "error": true, "payload": { "code":4, "message": "This app is not yet linked"}}')
                     }
-                }else{                    
+                }else{
                     client.send('{ "id": "' + data.id + '", "error": true, "payload": { "code":5, "message": "Must authenticate first"}}');
                 }
                 break;
@@ -125,13 +125,13 @@ export default class BeetWS extends EventEmitter {
                     };
                     console.log("requesting user response", linkobj);
                     this.emit('link', linkobj);
-                }else{                    
+                }else{
                     client.send('{ "id": "' + data.id + '", "error": true, "payload": { "code":5, "message": "Must authenticate first"}}');
                 }
                 break;
             case 'relink':
                 if (client.isAuthenticated) {
-                   
+
                     client.isLinked = false;
                     let linkobj = {
                         "id": data.id,
@@ -146,7 +146,7 @@ export default class BeetWS extends EventEmitter {
                     };
                     console.log("requesting user response", linkobj);
                     this.emit('relink', linkobj);
-                }else{                    
+                }else{
                     client.send('{ "id": "' + data.id + '", "error": true, "payload": { "code":5, "message": "Must authenticate first"}}');
                 }
                 break;
@@ -156,12 +156,12 @@ export default class BeetWS extends EventEmitter {
                     "client": client.id,
                     "payload": data.payload
                 };
-                console.log("requesting user response", event);
+                console.log("constructing authentication response", event);
                 this.emit('authenticate', event);
-            
+
                 break;
-            default:               
-                client.send('{ "id": "' + data.id + '", "error": true, "payload": { "code":1, "message": "Beet could not understand your request"}}');               
+            default:
+                client.send('{ "id": "' + data.id + '", "error": true, "payload": { "code":1, "message": "Beet could not understand your request"}}');
                 break;
         }
         console.groupEnd();
@@ -262,6 +262,7 @@ export default class BeetWS extends EventEmitter {
                 }
             };
         }
+
         return JSON.stringify(response);
     }
 
@@ -273,7 +274,9 @@ export default class BeetWS extends EventEmitter {
     }
 
     respondAuth(client, result) {
+        let response = null;
         if (result.authenticate) {
+            console.log("authentification result", result);
             this._clients[client].isAuthenticated = true;
             this._clients[client].origin = result.origin;
             this._clients[client].appName = result.appName;
@@ -284,10 +287,27 @@ export default class BeetWS extends EventEmitter {
                 let keypair = ec.genKeyPair();
                 this._clients[client].keypair = keypair;
                 let pubkey = keypair.getPublic().encode('hex');
-                this._clients[client].send('{"id": ' + result.id + ', "error": false, "payload": { "authenticate": true, "link": false, "pub_key": "' + pubkey + '"}}');
+                response = {
+                    id: result.id,
+                    error: false,
+                    payload: {
+                        authenticate: true,
+                        link: false,
+                        pub_key: pubkey
+                    }
+                };
+                this._clients[client].send(JSON.stringify(response));
             }
         } else {
-            this._clients[client].send('{"id": ' + result.id + ', "error": true, "payload": { "code":7, "message": "Could not authenticate"}}');
+            response = {
+                id: result.id,
+                error: true,
+                payload: {
+                    code: 7,
+                    message: "Could not authenticate"
+                }
+            };
+            this._clients[client].send(JSON.stringify(response));
         }
     }
 

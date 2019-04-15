@@ -103,7 +103,6 @@ class BTSWalletHandler {
             .then(res => {
                 return this.buildMatrix(res);
             });
-        console.log(account_matrix);
         return account_matrix;
     }
     buildMatrix(account_data) {

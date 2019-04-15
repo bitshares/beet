@@ -63,6 +63,7 @@ export default class BeetAPI {
             let finished = popupQ.dequeue();
             finished.resolve(true);
         }
+        console.log("user response", result);
         return result;
     }
     static _parseReject(method, request, err) {

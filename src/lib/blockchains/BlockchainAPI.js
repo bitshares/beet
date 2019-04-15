@@ -23,7 +23,6 @@ export default class BlockchainAPI {
             // enforce connection to that node
             this._isConnected = false;
         }
-        console.log(this);
         return new Promise((resolve,reject) => {
             if (!this._isConnected) {
                 if (this._isConnectingInProgress) {

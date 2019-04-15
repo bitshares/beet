@@ -56,7 +56,7 @@
         methods: {
             _onShow: function() {
                 this.error = false;
-                console.log(this.incoming);
+                console.log("Popup incoming, payload:", this.incoming);
                 this.beetapp = this.$store.state.OriginStore.apps.filter(
                     x => x.identityhash == this.incoming.payload.identityhash
                 )[0];
@@ -74,4 +74,4 @@
             }
         }
     };
-</script> 
+</script>

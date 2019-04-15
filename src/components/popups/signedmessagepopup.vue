@@ -64,7 +64,6 @@
                 });
             },
             getSuccessNotification(result) {
-                console.log(result);
                 return {msg: 'Message successfully signed.', link: '' };
             },
             _execute: async function () {

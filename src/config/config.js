@@ -486,5 +486,3 @@ Object.keys(_blockchains).forEach(key => {
 });
 
 export const blockchains = _blockchains;
-
-console.log(blockchains);

@@ -107,7 +107,6 @@
                 }
             },
             getSuccessNotification(result) {
-                console.log(result);
                 return {msg: 'Transaction `transfer` successfully broadcast.', link: '' };
             },
             _execute: async function () {
@@ -130,4 +129,4 @@
             }
         }
     };
-</script> 
+</script>

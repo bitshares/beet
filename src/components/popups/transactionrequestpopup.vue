@@ -82,7 +82,6 @@
                 return getBlockchain(this.incoming.chain).visualize(params);
             },
             getSuccessNotification(result) {
-                console.log(result);
                 return {msg: 'Transaction successfully broadcast.', link: '' };
             },
             _execute: async function () {
@@ -99,7 +98,7 @@
                         this.incoming.params,
                         await getKey(this.$store.getters['AccountStore/getSigningKey'](this.incoming).keys.active)
                     );
-                    let returnValue=await blockchain.broadcast(transaction);                    
+                    let returnValue=await blockchain.broadcast(transaction);
                     return returnValue;
                 }
             }
