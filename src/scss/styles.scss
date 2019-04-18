@@ -482,7 +482,10 @@ pre {
     color: $danger;
 }
 
-.content {
+.content {    
+    height: 30rem;
+    overflow-y: scroll;
+    overflow-x: hidden;
     flex-grow: 1;
 }
 
