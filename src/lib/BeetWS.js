@@ -1,7 +1,4 @@
 import EventEmitter from "events";
-import {
-    version
-} from "../config/config";
 import WebSocket from "ws";
 import {
     v4 as uuidv4
@@ -71,6 +68,10 @@ export default class BeetWS extends EventEmitter {
         console.log("payload", data);
         switch(data.type) {
             case 'version':
+                let version = {
+                    api: process.env.npm_package_apiversion,
+                    ui: process.env.npm_package_version
+                };
                 client.send('{ "type": "version", "error": false, "result": { "version": ' + JSON.stringify(version) + '}}');
                 break;
             case 'api':
