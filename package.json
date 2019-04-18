@@ -1,7 +1,8 @@
 {
   "name": "beet",
   "productName": "beet",
-  "version": "0.6.1",
+  "version": "0.6.2",
+  "apiversion": 3,
   "description": "Beet is a stand-alone key-manager and signing app for BitShares.",
   "main": "src/index.js",
   "scripts": {

@@ -1,7 +1,3 @@
-export const version = {
-    release: 2,
-    name: '0.5.0'
-};
 let _blockchains = {
     BTS: {
         coreSymbol: 'BTS',

@@ -80,7 +80,7 @@ export default class BitShares extends BlockchainAPI {
             return {
                 asset_id: "1.3.0",
                 symbol: "BTS",
-                precision: 8
+                precision: 5
             };
         } else if (assetSymbolOrId == "1.3.121") {
             return {
