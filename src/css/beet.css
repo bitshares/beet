@@ -7286,8 +7286,8 @@ pre {
   color: #F44336; }
 
 .content {
-  height: 30rem;
-  overflow-y: scroll;
+  max-height: 30rem;
+  overflow-y: auto;
   overflow-x: hidden;
   flex-grow: 1; }
 

@@ -9,7 +9,7 @@
         hide-footer
         :title="$t('operations:transfer.title')"
     >
-        {{ message }}:
+        {{ message }}
         <br>
         <br>
         <pre class="text-left custom-content"><code>
@@ -64,7 +64,8 @@
                     appName: this.incoming.appName,
                     origin: this.incoming.origin,
                     chain:   this.$store.getters['AccountStore/getSigningKey'](this.incoming).chain,
-                    accountName:   this.$store.getters['AccountStore/getSigningKey'](this.incoming).accountName
+                    accountName:   this.$store.getters['AccountStore/getSigningKey'](this.incoming).accountName,
+                    accountId:   this.$store.getters['AccountStore/getSigningKey'](this.incoming).accountID
                 });
 
                 let blockchain = getBlockchain(this.incoming.chain);

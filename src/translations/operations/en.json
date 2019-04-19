@@ -29,7 +29,7 @@
     },
     "transfer": {
         "title": "Transfer Request",
-        "request": "App: `{{appName}}` from `{{origin}}` wants to initiate a transfer from {{ chain }}:{{ accountName }}.",
+        "request": "App: `{{appName}}` from `{{origin}}` wants to initiate a transfer from {{ chain }}:{{ accountName }} ({{accountId}}).",
         "request_cta": "Do you want to execute it?",
         "accept_btn": "Sign & Broadcast",
         "reject_btn": "Ignore"
