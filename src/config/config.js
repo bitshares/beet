@@ -5,7 +5,7 @@ let _blockchains = {
         chainId: '4018d7844c78f6a6c41c6a552b898022310fc5dec06da467ee7905a8dad512c8',
         nodeList: [
             {
-                url: "wss://eu.nodes.bitshares.ws",
+                url: "wss://bts.proxyhosts.info/wss",
                 region: "Western Europe",
                 country: "Germany",
                 operator: "Infrastructure Worker",
@@ -343,6 +343,21 @@ let _blockchains = {
             }
         ]
     },
+    BTS_TEST: {
+        coreSymbol: 'BTS',
+        name: 'BitShares',
+        testnet: true,
+        chainId: '39f5e2ede1f8bc1a3a54a7914414e3779e33193f1f5693510e73cb7a87617447',
+        nodeList: [
+            {
+                url: "wss://eu.nodes.bitshares.ws",
+                region: "Western Europe",
+                country: "Germany",
+                operator: "Infrastructure Worker",
+                contact: "email:info@blockchainprojectsbv.com"
+            }
+        ]
+    },
     STEEM: {
         coreSymbol: 'STM',
         name: 'Steem',
@@ -417,7 +432,7 @@ let _blockchains = {
         chainId: '4667b205c6838ef70ff7988f6e8257e8be0e1284a2f59699054a018f743b1d11',
         nodeList: [
             {
-                url: "https://api.telos.telosgreen.com",
+                url: "https://api.theteloscope.io",
                 location: "Unknown",
                 region: "Unknown",
                 country: "Unknown",
@@ -467,6 +482,23 @@ let _blockchains = {
         nodeList: [
             {
                 url: "https://testnet-dex.binance.org/",
+                explorer: "https://testnet-explorer.binance.org/",
+                location: "Unknown",
+                region: "Unknown",
+                country: "Unknown",
+                operator: "Binance",
+                contact: "Binance.org"
+            }
+        ]
+    },
+    BNB: {
+        coreSymbol: 'BNB',
+        name: 'BinanceChain',
+        chainId: 'Binance-Chain-Tigris',
+        nodeList: [
+            {
+                url: "https://dex.binance.org/",
+                explorer: "https://explorer.binance.org/",
                 location: "Unknown",
                 region: "Unknown",
                 country: "Unknown",

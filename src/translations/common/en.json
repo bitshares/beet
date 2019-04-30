@@ -65,7 +65,7 @@
     "account_details_chaim_lbl": "Blockchain",
     "account_details_name_lbl": "Account Name",
     "account_details_address_lbl": "Address",
-    "account_details_id_lbl": "Account ID",
+    "account_details_id_lbl": "ID",
     "account_details_explorer_lbl": "Explorer",
     "balances_lbl": "Balances",
     "balances_error": "Error loading balances",

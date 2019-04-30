@@ -57,7 +57,7 @@
                         {{ (chain.testnet ? "Testnet: " : '') }} {{ chain.name }} ({{ chain.identifier }})
                     </option>
                 </select>
-                <div v-if="selectedChain=='BTS'">
+                <div v-if="selectedChain=='BTS' || selectedChain == 'BTS_TEST'">
                     <p class="my-3 font-weight-bold">
                         {{ $t('bts_importtype_cta') }}
                     </p>
@@ -114,22 +114,22 @@
                 id="step2"
             >
                 <ImportAdressBased
-                    v-if="selectedChain == 'BTC' || selectedChain == 'BNB_TEST' || selectedChain == 'BTC_TEST'"
+                    v-if="selectedChain == 'BTC' || selectedChain == 'BNB_TEST' || selectedChain == 'BNB' || selectedChain == 'BTC_TEST'"
                     ref="import_accounts"
                     :selected-chain="selectedChain"
                 />
                 <ImportKeys
-                    v-if="(selectedChain != 'BTS' && selectedChain != 'BTC' && selectedChain != 'BNB_TEST' && selectedChain != 'BTC_TEST') || BTSImportType=='1'"
+                    v-if="(selectedChain != 'BTS' && selectedChain != 'BTS_TEST' && selectedChain != 'BTC' && selectedChain != 'BNB_TEST' && selectedChain != 'BNB' && selectedChain != 'BTC_TEST') || BTSImportType=='1'"
                     ref="import_accounts"
                     :selected-chain="selectedChain"
                 />
                 <ImportCloudPass
-                    v-else-if="selectedChain=='BTS' && BTSImportType=='2'"
+                    v-else-if="(selectedChain=='BTS' || selectedChain=='BTS_TEST') && BTSImportType=='2'"
                     ref="import_accounts"
                     :selected-chain="selectedChain"
                 />
                 <ImportBinFile
-                    v-else-if="selectedChain=='BTS' && BTSImportType=='3'"
+                    v-else-if="(selectedChain=='BTS' || selectedChain=='BTS_TEST') && BTSImportType=='3'"
                     ref="import_accounts"
                     :selected-chain="selectedChain"
                 />
@@ -184,7 +184,7 @@
                 {{ errorMsg }}
             </b-modal>
         </div>
-        <Actionbar v-if="!createNewWallet" />        
+        <Actionbar v-if="!createNewWallet" />
         <p
             v-if="createNewWallet"
             class="mt-2 mb-2 small"

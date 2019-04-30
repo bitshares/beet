@@ -22,6 +22,11 @@ export default function getBlockchainAPI(chain = null) {
             apiCache.BTS = new BitShares(blockchains[chain]);
         }
         return apiCache.BTS;
+    } else if (chain == "BTS_TEST") {
+        if (!apiCache.BTS_TEST) {
+            apiCache.BTS_TEST = new BitShares(blockchains[chain]);
+        }
+        return apiCache.BTS_TEST;
     } else if (chain == "STEEM" || chain == "STM") {
         if (!apiCache.STEEM) {
             apiCache.STEEM = new Steem(blockchains["STEEM"]);
@@ -57,6 +62,11 @@ export default function getBlockchainAPI(chain = null) {
             apiCache.BTC_TEST = new Bitcoin(blockchains[chain]);
         }
         return apiCache.BTC_TEST;
+    } else if (chain == "BNB") {
+        if (!apiCache.BNB) {
+            apiCache.BNB = new Binance(blockchains[chain]);
+        }
+        return apiCache.BNB;
     } else if (chain == "BNB_TEST") {
         if (!apiCache.BNB_TEST) {
             apiCache.BNB_TEST = new Binance(blockchains[chain]);
