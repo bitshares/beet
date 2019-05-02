@@ -23,10 +23,6 @@ export default class WhaleShares extends SteemBasedChain {
         return wlsjs;
     }
 
-    _getCoreToken() {
-        return "WLS";
-    }
-
     getExplorer(object) {
         if (object.accountName) {
             return "https://whaleshares.io/whalesharesexplorer/#account/" + object.accountName;

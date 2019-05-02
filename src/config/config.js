@@ -5,6 +5,13 @@ let _blockchains = {
         chainId: '4018d7844c78f6a6c41c6a552b898022310fc5dec06da467ee7905a8dad512c8',
         nodeList: [
             {
+                url: "wss://eu.nodes.bitshares.ws",
+                region: "Western Europe",
+                country: "Germany",
+                operator: "Infrastructure Worker",
+                contact: "email:info@blockchainprojectsbv.com"
+            },
+            {
                 url: "wss://bts.proxyhosts.info/wss",
                 region: "Western Europe",
                 country: "Germany",
@@ -344,13 +351,13 @@ let _blockchains = {
         ]
     },
     BTS_TEST: {
-        coreSymbol: 'BTS',
+        coreSymbol: 'TEST',
         name: 'BitShares',
         testnet: true,
         chainId: '39f5e2ede1f8bc1a3a54a7914414e3779e33193f1f5693510e73cb7a87617447',
         nodeList: [
             {
-                url: "wss://eu.nodes.bitshares.ws",
+                url: "wss://testnet.nodes.bitshares.ws",
                 region: "Western Europe",
                 country: "Germany",
                 operator: "Infrastructure Worker",

@@ -9,10 +9,6 @@ export default class Bitcoin extends BlockchainAPI {
 
     // https://github.com/steemit/steem-js/tree/master/doc#broadcast-api
 
-    _getCoreToken() {
-        return "BNB";
-    }
-
     _connect(nodeToConnect) {
         return new Promise((resolve, reject) => {
             if (nodeToConnect == null) {

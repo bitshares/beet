@@ -1,9 +1,8 @@
 import {EventBus} from '../event-bus.js';
-import RendererLogger from "../RendererLogger";
-const logger = new RendererLogger();
-
 import store from "../../store";
 import {formatAsset, humanReadableFloat} from "../assetUtils";
+import RendererLogger from "../RendererLogger";
+const logger = new RendererLogger();
 
 export default class BlockchainAPI {
 
@@ -23,7 +22,7 @@ export default class BlockchainAPI {
             // enforce connection to that node
             this._isConnected = false;
         }
-        return new Promise((resolve,reject) => {
+        return new Promise((resolve, reject) => {
             if (!this._isConnected) {
                 if (this._isConnectingInProgress) {
                     // there should be a promise queue for pending connects, this is the lazy way
@@ -47,9 +46,35 @@ export default class BlockchainAPI {
                 );
                 this._connect(nodeToConnect).then(resolve).catch(reject);
             } else {
-                resolve();
+                // check if we need to reconnect
+                if (this._needsReconnecting()) {
+                    this._isConnectingInProgress = true;
+                    EventBus.$emit(
+                        'blockchainStatus',
+                        {
+                            chain: this._config.identifier,
+                            status: this._isConnected,
+                            connecting: this._isConnectingInProgress
+                        }
+                    );
+                    this._connect(nodeToConnect).then(resolve).catch(reject);
+                } else {
+                    resolve();
+                }
             }
         });
+    }
+
+    _needsReconnecting() {
+        return false;
+    }
+
+    _isTestnet() {
+        return !!this._config.testnet;
+    }
+
+    _getCoreSymbol() {
+        return this._config.coreSymbol;
     }
 
     _connect(nodeToConnect) {
@@ -76,7 +101,8 @@ export default class BlockchainAPI {
     }
 
     _connectionFailed(resolveCallback, node, error) {
-        logger.debug(this._config.identifier + "._connectionFailed", error);
+        logger.debug(this._config.name + ": Failed to connect to  + " + error);
+        console.log(this._config.name + ": Failed to connect to  + " + error);
         this._isConnected = false;
         this._isConnectingInProgress = false;
         EventBus.$emit(
