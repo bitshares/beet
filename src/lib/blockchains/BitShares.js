@@ -239,13 +239,8 @@ export default class BitShares extends BlockchainAPI {
                     if (typeof operation == "object"
                         && operation.length > 2
                         && operation[0] == "signAndBroadcast") {
-                        let tr = new TransactionBuilder();
-                        tr.ref_block_num = operation[1];
-                        tr.ref_block_prefix = operation[2];
-                        tr.expiration = operation[3];
-                        operation[4].forEach(op => {
-                            tr.add_operation(tr.get_type_operation(op[0], op[1]));
-                        });
+                        let tr = new TransactionBuilder(JSON.parse(operation[1]));
+                        console.log(tr);
                         let privateKey = PrivateKey.fromWif(key);
                         Promise.all([
                             tr.set_required_fees(),
