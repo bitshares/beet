@@ -281,4 +281,13 @@ Amount: ${toSend}
         }
     }
 
+    getImportOptions() {
+        return [
+            {
+                type: "ImportAdressBased",
+                translate_key: "import_address"
+            }
+        ];
+    }
+
 }

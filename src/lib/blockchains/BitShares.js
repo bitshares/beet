@@ -52,6 +52,23 @@ export default class BitShares extends BlockchainAPI {
         }
     }
 
+    getImportOptions() {
+        return [
+            {
+                type: "ImportKeys",
+                translate_key: "import_keys"
+            },
+            {
+                type: "bitshares/ImportBinFile",
+                translate_key: "import_bin"
+            },
+            {
+                type: "bitshares/ImportCloudPass",
+                translate_key: "import_pass"
+            }
+        ];
+    }
+
     getAccount(accountName) {
         return new Promise((resolve, reject) => {
             this.ensureConnection().then(() => {

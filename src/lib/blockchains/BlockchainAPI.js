@@ -81,6 +81,15 @@ export default class BlockchainAPI {
         throw "Needs implementation";
     }
 
+    getImportOptions() {
+        return [
+            {
+                type: "ImportKeys",
+                translate_key: "import_keys"
+            }
+        ];
+    }
+
     _connectionEstablished(resolveCallback, node) {
         this._isConnectedToNode = node;
         this._isConnected = true;

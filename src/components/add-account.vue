@@ -57,13 +57,13 @@
                         {{ (chain.testnet ? "Testnet: " : '') }} {{ chain.name }} ({{ chain.identifier }})
                     </option>
                 </select>
-                <div v-if="selectedChain=='BTS' || selectedChain == 'BTS_TEST'">
+                <div v-if="selectedImportOptions.length > 1">
                     <p class="my-3 font-weight-bold">
                         {{ $t('bts_importtype_cta') }}
                     </p>
                     <select
                         id="import-select"
-                        v-model="BTSImportType"
+                        v-model="selectedImport"
                         class="form-control mb-3"
                         :class="s1c"
                         :placeholder="$t('import_placeholder')"
@@ -73,17 +73,12 @@
                             selected
                             disabled
                             value="0"
+                            key="0"
                         >
                             {{ $t('import_placeholder') }}
                         </option>
-                        <option value="1">
-                            {{ $t('import_keys') }}
-                        </option>
-                        <option value="2">
-                            {{ $t('import_pass') }}
-                        </option>
-                        <option value="3">
-                            {{ $t('import_bin') }}
+                        <option v-for="option in selectedImportOptions" :value="option" :key="option.type">
+                            {{ $t(option.translate_key) }}
                         </option>
                     </select>
                 </div>
@@ -113,26 +108,13 @@
                 v-else-if="step==2"
                 id="step2"
             >
-                <ImportAdressBased
-                    v-if="selectedChain == 'BTC' || selectedChain == 'BNB_TEST' || selectedChain == 'BNB' || selectedChain == 'BTC_TEST'"
+                <ImportOptions
+                    v-if="selectedImportOption"
                     ref="import_accounts"
-                    :selected-chain="selectedChain"
+                    :chain="selectedChain"
+                    :type="selectedImportOption.type"
                 />
-                <ImportKeys
-                    v-if="(selectedChain != 'BTS' && selectedChain != 'BTS_TEST' && selectedChain != 'BTC' && selectedChain != 'BNB_TEST' && selectedChain != 'BNB' && selectedChain != 'BTC_TEST') || BTSImportType=='1'"
-                    ref="import_accounts"
-                    :selected-chain="selectedChain"
-                />
-                <ImportCloudPass
-                    v-else-if="(selectedChain=='BTS' || selectedChain=='BTS_TEST') && BTSImportType=='2'"
-                    ref="import_accounts"
-                    :selected-chain="selectedChain"
-                />
-                <ImportBinFile
-                    v-else-if="(selectedChain=='BTS' || selectedChain=='BTS_TEST') && BTSImportType=='3'"
-                    ref="import_accounts"
-                    :selected-chain="selectedChain"
-                />
+
                 <div class="row">
                     <div class="col-6">
                         <button
@@ -198,10 +180,7 @@
     import { blockchains } from "../config/config.js";
     import getBlockchain from "../lib/blockchains/blockchainFactory";
     import Actionbar from "./actionbar";
-    import ImportCloudPass from "./blockchains/bitshares/ImportCloudPass";
-    import ImportBinFile from "./blockchains/bitshares/ImportBinFile";
-    import ImportKeys from "./blockchains/ImportKeys";
-    import ImportAdressBased from "./blockchains/address/ImportAdressBased";
+    import ImportOptions from "./blockchains/ImportOptions";
     import EnterPassword from "./EnterPassword";
 
     import { EventBus } from "../lib/event-bus.js";
@@ -211,7 +190,7 @@
 
     export default {
         name: "AddAccount",
-        components: { Actionbar, ImportKeys, ImportCloudPass, ImportBinFile, EnterPassword, ImportAdressBased },
+        components: { Actionbar, ImportOptions, EnterPassword },
         i18nOptions: { namespaces: "common" },
         data() {
             return {
@@ -222,7 +201,7 @@
                 includeOwner: 0,
                 errorMsg: "",
                 selectedChain: 0,
-                BTSImportType: 0
+                selectedImport: 0
             };
         },
         computed: {
@@ -236,7 +215,31 @@
                     }
                     return a.name > b.name;
                 });
-            }
+            },
+            selectedImportOptions() {
+                if (!this.selectedChain) {
+                    return [];
+                } else {
+                    return getBlockchain(this.selectedChain).getImportOptions();
+                }
+            },
+            selectedImportOption() {
+                if (!this.selectedChain) {
+                    return null;
+                } else {
+                    let useImport = null;
+                    if (!this.selectedImport) {
+                        useImport = this.selectedImportOptions[0];
+                    } else {
+                        useImport = this.selectedImport;
+                    }
+                    return getBlockchain(
+                        this.selectedChain
+                    ).getImportOptions().find(
+                        option => { return option.type == useImport.type; }
+                    );
+                }
+            },
         },
         mounted() {
             logger.debug("Account-Add wizard Mounted");
