@@ -19,5 +19,9 @@ export function formatAccount(account, withTooltip=false) {
 }
 
 export function formatChain(chain) {
-    return blockchains[chain].name + (blockchains[chain].testnet ? " (Testnet)" : "");
+    if (!blockchains[chain]) {
+        return "Unknown blockchain";
+    } else {
+        return blockchains[chain].name + (blockchains[chain].testnet ? " (Testnet)" : "");
+    }
 }

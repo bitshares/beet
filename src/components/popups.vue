@@ -243,20 +243,23 @@
             verifyMessage: function(payload) {
                 return new Promise((resolve, reject) => {
                     let payload_dict = {};
-                    payload_dict[payload.params.payload[0]] = [
-                        payload_dict[payload.params.payload[1]],
-                        payload_dict[payload.params.payload[2]]
-                    ];
-                    let i;
-                    for (i = 3; i < payload.params.payload.length - 1; i++) {
-                        payload_dict[payload.params.payload[i]] =
-                            payload.params.payload[i + 1];
+                    let payload_list = payload.params.payload;
+                    if (payload_list[2] == "key") {
+                        for (let i = 0; i < payload_list.length - 1; i = i+2) {
+                            payload_dict[payload_list[i]] = payload_list[i + 1];
+                        }
+                    } else {
+                        for (let i = 3; i < payload_list.length - 1; i = i+2) {
+                            payload_dict[payload_list[i]] = payload_list[i + 1];
+                        }
+                        payload_dict.key = payload_list[2];
+                        payload_dict.from = payload_list[1];
                     }
                     let messageChain = null;
                     if (payload_dict.chain) {
                         messageChain = payload_dict.chain;
                     } else {
-                        messageChain = payload.params.payload[2].substr(0, 3);
+                        messageChain = payload_dict.key.substr(0, 3);
                     }
                     let blockchain = getBlockchain(messageChain);
                     blockchain

@@ -93,13 +93,12 @@
                     );
                 } else if (this.incoming.params[0] == "broadcast") {
                     return await blockchain.broadcast(this.incoming.params);
-                } else {
+                } else if (this.incoming.params[0] == "signAndBroadcast") {
                     let transaction = await blockchain.sign(
                         this.incoming.params,
                         await getKey(this.$store.getters['AccountStore/getSigningKey'](this.incoming).keys.active)
                     );
-                    let returnValue=await blockchain.broadcast(transaction);
-                    return returnValue;
+                    return await blockchain.broadcast(transaction);
                 }
             }
         }
