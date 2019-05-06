@@ -221,41 +221,54 @@ export default class BitShares extends BlockchainAPI {
         });
     }
 
+    _parseTransactionBuilder(incoming) {
+        if (incoming instanceof TransactionBuilder) {
+            return incoming;
+        } else if (typeof incoming == "object"
+            && incoming.length > 1
+            && incoming[0] == "signAndBroadcast"
+            && incoming[0] == "sign"
+            && incoming[0] == "broadcast"
+        ) {
+            if (incoming.length <= 3) {
+                return new TransactionBuilder(JSON.parse(incoming[1]));
+            } else {
+                console.warn("This way of parsing TransactionBuilder is deprecated, use new constructor");
+                let tr = new TransactionBuilder();
+                tr.ref_block_num = incoming[1];
+                tr.ref_block_prefix = incoming[2];
+                tr.expiration = incoming[3];
+                incoming[4].forEach(op => {
+                    tr.add_operation(tr.get_type_operation(op[0], op[1]));
+                });
+                return tr;
+            }
+        } else if (operation.type) {
+            let tr = new TransactionBuilder();
+            tr.add_type_operation(
+                operation.type,
+                operation.data
+            );
+            return tr;
+        }
+        throw "Reconstruction of TransactionBuilder failed";
+    }
+
     sign(operation, key) {
         return new Promise((resolve, reject) => {
             this.ensureConnection().then(() => {
-                if (operation.type) {
-                    let tr = new TransactionBuilder();
-                    tr.add_type_operation(
-                        operation.type,
-                        operation.data
-                    );
-                    tr.set_required_fees().then(() => {
-                        let privateKey = PrivateKey.fromWif(key);
-                        tr.add_signer(privateKey, privateKey.toPublicKey().toPublicKeyString());
+                let tr = this._parseTransactionBuilder(operation);
+                Promise.all([
+                    tr.set_required_fees(),
+                    tr.update_head_block()
+                ]).then(() => {
+                    let privateKey = PrivateKey.fromWif(key);
+                    tr.add_signer(privateKey, privateKey.toPublicKey().toPublicKeyString());
+                    tr.finalize().then(() => {
+                        tr.sign();
                         resolve(tr);
-                    }).catch(err => reject(err));
-                } else {
-                    if (typeof operation == "object"
-                        && operation.length > 2
-                        && operation[0] == "signAndBroadcast") {
-                        let tr = new TransactionBuilder(JSON.parse(operation[1]));
-                        console.log(tr);
-                        let privateKey = PrivateKey.fromWif(key);
-                        Promise.all([
-                            tr.set_required_fees(),
-                            tr.update_head_block()
-                        ]).then(() => {
-                            tr.add_signer(privateKey, privateKey.toPublicKey().toPublicKeyString());
-                            tr.finalize().then(() => {
-                                tr.sign();
-                                resolve(tr);
-                            }).catch(reject);
-                        });
-                    } else {
-                        reject("Unknown sign request");
-                    }
-                }
+                    }).catch(reject);
+                });
             }).catch(err => reject(err));
         });
     }
@@ -263,6 +276,7 @@ export default class BitShares extends BlockchainAPI {
     broadcast(transaction) {
         return new Promise((resolve, reject) => {
             this.ensureConnection().then(() => {
+                transaction = this._parseTransactionBuilder(transaction);
                 transaction.broadcast().then(id => {
                     resolve(id);
                 }).catch(err => reject(err));
@@ -337,9 +351,12 @@ export default class BitShares extends BlockchainAPI {
     }
 
     _verifyString(signature, publicKey, string) {
-        return Signature.fromHex(signature).verifyBuffer(
+        let _PublicKey = PublicKey;
+        let sig = Signature.fromHex(signature);
+        let pkey = PublicKey.fromPublicKeyString(publicKey, "BTS");
+        return sig.verifyBuffer(
             string,
-            PublicKey.fromPublicKeyString(publicKey)
+            pkey
         );
     }
 
