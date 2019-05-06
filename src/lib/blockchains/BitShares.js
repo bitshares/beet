@@ -265,9 +265,7 @@ export default class BitShares extends BlockchainAPI {
             return incoming;
         } else if (typeof incoming == "object"
             && incoming.length > 1
-            && incoming[0] == "signAndBroadcast"
-            && incoming[0] == "sign"
-            && incoming[0] == "broadcast"
+            && (incoming[0] == "signAndBroadcast" || incoming[0] == "sign" || incoming[0] == "broadcast")
         ) {
             if (incoming.length <= 3) {
                 return new TransactionBuilder(JSON.parse(incoming[1]));

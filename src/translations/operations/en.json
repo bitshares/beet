@@ -39,6 +39,8 @@
         "request": "App: `{{appName}}` from `{{origin}}` has submitted the following transaction for account {{ chain }}:{{ accountName }}.",
         "request_cta": "Do you want to execute it?",
         "accept_btn": "Sign & Broadcast",
+        "sign_and_broadcast_btn": "Sign & Broadcast",
+        "sign_btn": "Sign",
         "reject_btn": "Ignore"
     },
     "whitelist": {
