@@ -44,6 +44,31 @@ export default class BitShares extends BlockchainAPI {
         });
     }
 
+    async _needsReconnecting() {
+        if (this._isConnected) {
+            return !((Apis.instance().url.indexOf("testnet") !== -1) !== this._isTestnet());
+        } else {
+            return false;
+        }
+    }
+
+    getImportOptions() {
+        return [
+            {
+                type: "ImportKeys",
+                translate_key: "import_keys"
+            },
+            {
+                type: "bitshares/ImportBinFile",
+                translate_key: "import_bin"
+            },
+            {
+                type: "bitshares/ImportCloudPass",
+                translate_key: "import_pass"
+            }
+        ];
+    }
+
     getAccount(accountName) {
         return new Promise((resolve, reject) => {
             this.ensureConnection().then(() => {
@@ -59,7 +84,7 @@ export default class BitShares extends BlockchainAPI {
                     .catch((err) => {
                         reject(err);
                     });
-            });
+            }).catch(reject);
         });
     }
 
@@ -76,32 +101,44 @@ export default class BitShares extends BlockchainAPI {
     }
 
     getAsset(assetSymbolOrId) {
-        if (assetSymbolOrId == "1.3.0") {
-            return {
-                asset_id: "1.3.0",
-                symbol: "BTS",
-                precision: 5
-            };
-        } else if (assetSymbolOrId == "1.3.121") {
-            return {
-                asset_id: "1.3.121",
-                symbol: "bitUSD",
-                precision: 4
-            };
-        } else if (assetSymbolOrId == "1.3.113") {
-            return {
-                asset_id: "1.3.113",
-                symbol: "bitCNY",
-                precision: 4
-            };
-        } else if (assetSymbolOrId == "1.3.120") {
-            return {
-                asset_id: "1.3.120",
-                symbol: "bitEUR",
-                precision: 4
-            };
+        if (this._isTestnet()) {
+            if (assetSymbolOrId == "1.3.0") {
+                return {
+                    asset_id: "1.3.0",
+                    symbol: "TEST",
+                    precision: 5
+                };
+            } else {
+                return null;
+            }
         } else {
-            return null;
+            if (assetSymbolOrId == "1.3.0") {
+                return {
+                    asset_id: "1.3.0",
+                    symbol: "BTS",
+                    precision: 5
+                };
+            } else if (assetSymbolOrId == "1.3.121") {
+                return {
+                    asset_id: "1.3.121",
+                    symbol: "bitUSD",
+                    precision: 4
+                };
+            } else if (assetSymbolOrId == "1.3.113") {
+                return {
+                    asset_id: "1.3.113",
+                    symbol: "bitCNY",
+                    precision: 4
+                };
+            } else if (assetSymbolOrId == "1.3.120") {
+                return {
+                    asset_id: "1.3.120",
+                    symbol: "bitEUR",
+                    precision: 4
+                };
+            } else {
+                return null;
+            }
         }
     }
 
@@ -139,14 +176,14 @@ export default class BitShares extends BlockchainAPI {
                         resolve(balances);
                     });
                 });
-            });
+            }).catch(reject);
         });
     }
 
     getPublicKey(privateKey) {
         return PrivateKey.fromWif(privateKey)
             .toPublicKey()
-            .toString("BTS");
+            .toString(this._isTestnet() ? "TEST" : "BTS");
     }
 
     mapOperationData(incoming) {
@@ -217,7 +254,7 @@ export default class BitShares extends BlockchainAPI {
                         }
                     }).catch(err => reject(err));
                 }
-            });
+            }).catch(reject);
         });
     }
 
@@ -280,7 +317,7 @@ export default class BitShares extends BlockchainAPI {
                 transaction.broadcast().then(id => {
                     resolve(id);
                 }).catch(err => reject(err));
-            }).catch(err => reject(err));
+            }).catch(reject);
         });
     }
 
@@ -338,7 +375,7 @@ export default class BitShares extends BlockchainAPI {
                         resolve(operation);
                     }
                 }
-            });
+            }).catch(reject);
         });
     }
 
