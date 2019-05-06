@@ -40,8 +40,8 @@ export default class SteemBasedChain extends BlockchainAPI {
                 this.getAccount(accountName).then((account) => {
                     let balances = [];
                     balances.push({
-                        asset_type: "UIA",
-                        asset_name: this._getCoreToken(),
+                        asset_type: "Core",
+                        asset_name: this._getCoreSymbol(),
                         balance: parseFloat(account.balance),
                         owner: "-",
                         prefix: ""

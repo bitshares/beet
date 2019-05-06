@@ -25,10 +25,6 @@ export default class Steem extends SteemBasedChain {
         return steem;
     }
 
-    _getCoreToken() {
-        return "STEEM";
-    }
-
     getExplorer(object) {
         if (object.accountName) {
             return "https://steemblockexplorer.com/@" + object.accountName;

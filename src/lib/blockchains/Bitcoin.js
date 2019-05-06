@@ -11,10 +11,6 @@ export default class Bitcoin extends BlockchainAPI {
 
     // https://github.com/steemit/steem-js/tree/master/doc#broadcast-api
 
-    _getCoreToken() {
-        return "BTC";
-    }
-
     _connect(nodeToConnect) {
         return new Promise((resolve, reject) => {
             if (nodeToConnect == null) {
@@ -85,8 +81,8 @@ export default class Bitcoin extends BlockchainAPI {
             this.getAccount(accountName).then((account) => {
                 let balances = [];
                 balances.push({
-                    asset_type: "UIA",
-                    asset_name: this._getCoreToken(),
+                    asset_type: "Core",
+                    asset_name: this._getCoreSymbol(),
                     balance: formatAsset(parseFloat(account.raw.total_received - account.raw.total_sent), "BTC", null, false),
                     owner: "-",
                     prefix: ""
@@ -303,6 +299,15 @@ export default class Bitcoin extends BlockchainAPI {
         } else {
             return false;
         }
+    }
+
+    getImportOptions() {
+        return [
+            {
+                type: "ImportAdressBased",
+                translate_key: "import_address"
+            }
+        ];
     }
 
 }
