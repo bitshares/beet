@@ -110,8 +110,8 @@ export default class BlockchainAPI {
     }
 
     _connectionFailed(resolveCallback, node, error) {
-        logger.debug(this._config.name + ": Failed to connect to  + " + error);
-        console.log(this._config.name + ": Failed to connect to  + " + error);
+        logger.debug(this._config.name + ": Failed to connect to " + node, error);
+        console.log(this._config.name + ": Failed to connect to " + node, error);
         this._isConnected = false;
         this._isConnectingInProgress = false;
         EventBus.$emit(
@@ -123,7 +123,9 @@ export default class BlockchainAPI {
                 error: error
             }
         );
-        resolveCallback(node);
+        if (resolveCallback != null) {
+            resolveCallback(node);
+        }
     }
 
     getNodes() {

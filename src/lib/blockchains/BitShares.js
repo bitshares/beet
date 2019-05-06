@@ -25,7 +25,8 @@ export default class BitShares extends BlockchainAPI {
                         true,
                         10000,
                         {enableCrypto: false, enableOrders: false},
-                        this._connectionFailed.bind(null, nodeToConnect, "Connection closed")
+                        // no use in firing reject because it might happen at any time in the future after connecting!
+                        this._connectionFailed.bind(this, null, nodeToConnect, "Connection closed")
                     ).init_promise.then(() => {
                         this._connectionEstablished(resolve, nodeToConnect);
                     }).catch(this._connectionFailed.bind(this, reject, nodeToConnect));
@@ -36,7 +37,8 @@ export default class BitShares extends BlockchainAPI {
                     true,
                     10000,
                     {enableCrypto: false, enableOrders: false},
-                    this._connectionFailed.bind(null, nodeToConnect, "Connection closed")
+                    // no use in firing reject because it might happen at any time in the future after connecting!
+                    this._connectionFailed.bind(this, null, nodeToConnect, "Connection closed")
                 ).init_promise.then(() => {
                     this._connectionEstablished(resolve, nodeToConnect);
                 }).catch(this._connectionFailed.bind(this, reject, nodeToConnect));
@@ -183,7 +185,7 @@ export default class BitShares extends BlockchainAPI {
     getPublicKey(privateKey) {
         return PrivateKey.fromWif(privateKey)
             .toPublicKey()
-            .toString(this._isTestnet() ? "TEST" : "BTS");
+            .toString(this._getCoreSymbol());
     }
 
     mapOperationData(incoming) {
@@ -300,7 +302,7 @@ export default class BitShares extends BlockchainAPI {
                     tr.update_head_block()
                 ]).then(() => {
                     let privateKey = PrivateKey.fromWif(key);
-                    tr.add_signer(privateKey, privateKey.toPublicKey().toPublicKeyString());
+                    tr.add_signer(privateKey, privateKey.toPublicKey().toPublicKeyString(this._getCoreSymbol()));
                     tr.finalize().then(() => {
                         tr.sign();
                         resolve(tr);
@@ -390,7 +392,7 @@ export default class BitShares extends BlockchainAPI {
     _verifyString(signature, publicKey, string) {
         let _PublicKey = PublicKey;
         let sig = Signature.fromHex(signature);
-        let pkey = PublicKey.fromPublicKeyString(publicKey, "BTS");
+        let pkey = PublicKey.fromPublicKeyString(publicKey, this._getCoreSymbol());
         return sig.verifyBuffer(
             string,
             pkey
