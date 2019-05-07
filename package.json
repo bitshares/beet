@@ -1,7 +1,7 @@
 {
   "name": "beet",
   "productName": "beet",
-  "version": "0.6.4",
+  "version": "0.6.5",
   "apiversion": 3,
   "description": "Beet is a stand-alone key-manager and signing app for blockchains like BitShares, Steem and EOS, as well as BTC, BinanceChain and others.",
   "main": "src/index.js",
