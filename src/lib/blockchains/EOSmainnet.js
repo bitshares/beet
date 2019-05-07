@@ -14,10 +14,6 @@ export default class EOS extends BlockchainAPI {
 
     // https://github.com/steemit/steem-js/tree/master/doc#broadcast-api
 
-    _getCoreToken() {
-        return "EOS";
-    }
-
     _connect(nodeToConnect) {
         return new Promise((resolve, reject) => {
             if (nodeToConnect == null) {
@@ -57,8 +53,8 @@ export default class EOS extends BlockchainAPI {
             this.getAccount(accountName).then((account) => {
                 let balances = [];
                 balances.push({
-                    asset_type: "UIA",
-                    asset_name: this._getCoreToken(),
+                    asset_type: "Core",
+                    asset_name: this._getCoreSymbol(),
                     balance: parseFloat(account.core_liquid_balance),
                     owner: "-",
                     prefix: ""

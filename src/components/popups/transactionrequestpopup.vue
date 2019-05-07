@@ -41,7 +41,7 @@
             block
             @click="_clickedAllow"
         >
-            {{ $t('operations:rawsig.accept_btn') }}
+            {{ incoming.params && incoming.params.length > 0 && incoming.params[0] == "sign" ? $t('operations:rawsig.sign_btn') : $t('operations:rawsig.sign_and_broadcast_btn') }}
         </b-btn>
         <b-btn
             class="mt-1"
@@ -87,19 +87,19 @@
             _execute: async function () {
                 let blockchain = getBlockchain(this.incoming.chain);
                 if (this.incoming.params[0] == "sign") {
-                    return await blockchain.sign(
+                    let tr = await blockchain.sign(
                         this.incoming.params,
                         await getKey(this.$store.getters['AccountStore/getSigningKey'](this.incoming).keys.active)
                     );
+                    return tr.toObject();
                 } else if (this.incoming.params[0] == "broadcast") {
                     return await blockchain.broadcast(this.incoming.params);
-                } else {
+                } else if (this.incoming.params[0] == "signAndBroadcast") {
                     let transaction = await blockchain.sign(
                         this.incoming.params,
                         await getKey(this.$store.getters['AccountStore/getSigningKey'](this.incoming).keys.active)
                     );
-                    let returnValue=await blockchain.broadcast(transaction);
-                    return returnValue;
+                    return await blockchain.broadcast(transaction);
                 }
             }
         }

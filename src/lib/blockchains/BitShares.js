@@ -25,7 +25,8 @@ export default class BitShares extends BlockchainAPI {
                         true,
                         10000,
                         {enableCrypto: false, enableOrders: false},
-                        this._connectionFailed.bind(null, nodeToConnect, "Connection closed")
+                        // no use in firing reject because it might happen at any time in the future after connecting!
+                        this._connectionFailed.bind(this, null, nodeToConnect, "Connection closed")
                     ).init_promise.then(() => {
                         this._connectionEstablished(resolve, nodeToConnect);
                     }).catch(this._connectionFailed.bind(this, reject, nodeToConnect));
@@ -36,12 +37,38 @@ export default class BitShares extends BlockchainAPI {
                     true,
                     10000,
                     {enableCrypto: false, enableOrders: false},
-                    this._connectionFailed.bind(null, nodeToConnect, "Connection closed")
+                    // no use in firing reject because it might happen at any time in the future after connecting!
+                    this._connectionFailed.bind(this, null, nodeToConnect, "Connection closed")
                 ).init_promise.then(() => {
                     this._connectionEstablished(resolve, nodeToConnect);
                 }).catch(this._connectionFailed.bind(this, reject, nodeToConnect));
             }
         });
+    }
+
+    async _needsReconnecting() {
+        if (this._isConnected) {
+            return !((Apis.instance().url.indexOf("testnet") !== -1) !== this._isTestnet());
+        } else {
+            return false;
+        }
+    }
+
+    getImportOptions() {
+        return [
+            {
+                type: "ImportKeys",
+                translate_key: "import_keys"
+            },
+            {
+                type: "bitshares/ImportBinFile",
+                translate_key: "import_bin"
+            },
+            {
+                type: "bitshares/ImportCloudPass",
+                translate_key: "import_pass"
+            }
+        ];
     }
 
     getAccount(accountName) {
@@ -59,7 +86,7 @@ export default class BitShares extends BlockchainAPI {
                     .catch((err) => {
                         reject(err);
                     });
-            });
+            }).catch(reject);
         });
     }
 
@@ -76,32 +103,44 @@ export default class BitShares extends BlockchainAPI {
     }
 
     getAsset(assetSymbolOrId) {
-        if (assetSymbolOrId == "1.3.0") {
-            return {
-                asset_id: "1.3.0",
-                symbol: "BTS",
-                precision: 5
-            };
-        } else if (assetSymbolOrId == "1.3.121") {
-            return {
-                asset_id: "1.3.121",
-                symbol: "bitUSD",
-                precision: 4
-            };
-        } else if (assetSymbolOrId == "1.3.113") {
-            return {
-                asset_id: "1.3.113",
-                symbol: "bitCNY",
-                precision: 4
-            };
-        } else if (assetSymbolOrId == "1.3.120") {
-            return {
-                asset_id: "1.3.120",
-                symbol: "bitEUR",
-                precision: 4
-            };
+        if (this._isTestnet()) {
+            if (assetSymbolOrId == "1.3.0") {
+                return {
+                    asset_id: "1.3.0",
+                    symbol: "TEST",
+                    precision: 5
+                };
+            } else {
+                return null;
+            }
         } else {
-            return null;
+            if (assetSymbolOrId == "1.3.0") {
+                return {
+                    asset_id: "1.3.0",
+                    symbol: "BTS",
+                    precision: 5
+                };
+            } else if (assetSymbolOrId == "1.3.121") {
+                return {
+                    asset_id: "1.3.121",
+                    symbol: "bitUSD",
+                    precision: 4
+                };
+            } else if (assetSymbolOrId == "1.3.113") {
+                return {
+                    asset_id: "1.3.113",
+                    symbol: "bitCNY",
+                    precision: 4
+                };
+            } else if (assetSymbolOrId == "1.3.120") {
+                return {
+                    asset_id: "1.3.120",
+                    symbol: "bitEUR",
+                    precision: 4
+                };
+            } else {
+                return null;
+            }
         }
     }
 
@@ -139,14 +178,14 @@ export default class BitShares extends BlockchainAPI {
                         resolve(balances);
                     });
                 });
-            });
+            }).catch(reject);
         });
     }
 
     getPublicKey(privateKey) {
         return PrivateKey.fromWif(privateKey)
             .toPublicKey()
-            .toString("BTS");
+            .toString(this._getCoreSymbol());
     }
 
     mapOperationData(incoming) {
@@ -217,50 +256,56 @@ export default class BitShares extends BlockchainAPI {
                         }
                     }).catch(err => reject(err));
                 }
-            });
+            }).catch(reject);
         });
+    }
+
+    _parseTransactionBuilder(incoming) {
+        if (incoming instanceof TransactionBuilder) {
+            return incoming;
+        } else if (typeof incoming == "object"
+            && incoming.length > 1
+            && (incoming[0] == "signAndBroadcast" || incoming[0] == "sign" || incoming[0] == "broadcast")
+        ) {
+            if (incoming.length <= 3) {
+                return new TransactionBuilder(JSON.parse(incoming[1]));
+            } else {
+                console.warn("This way of parsing TransactionBuilder is deprecated, use new constructor");
+                let tr = new TransactionBuilder();
+                tr.ref_block_num = incoming[1];
+                tr.ref_block_prefix = incoming[2];
+                tr.expiration = incoming[3];
+                incoming[4].forEach(op => {
+                    tr.add_operation(tr.get_type_operation(op[0], op[1]));
+                });
+                return tr;
+            }
+        } else if (operation.type) {
+            let tr = new TransactionBuilder();
+            tr.add_type_operation(
+                operation.type,
+                operation.data
+            );
+            return tr;
+        }
+        throw "Reconstruction of TransactionBuilder failed";
     }
 
     sign(operation, key) {
         return new Promise((resolve, reject) => {
             this.ensureConnection().then(() => {
-                if (operation.type) {
-                    let tr = new TransactionBuilder();
-                    tr.add_type_operation(
-                        operation.type,
-                        operation.data
-                    );
-                    tr.set_required_fees().then(() => {
-                        let privateKey = PrivateKey.fromWif(key);
-                        tr.add_signer(privateKey, privateKey.toPublicKey().toPublicKeyString());
+                let tr = this._parseTransactionBuilder(operation);
+                Promise.all([
+                    tr.set_required_fees(),
+                    tr.update_head_block()
+                ]).then(() => {
+                    let privateKey = PrivateKey.fromWif(key);
+                    tr.add_signer(privateKey, privateKey.toPublicKey().toPublicKeyString(this._getCoreSymbol()));
+                    tr.finalize().then(() => {
+                        tr.sign();
                         resolve(tr);
-                    }).catch(err => reject(err));
-                } else {
-                    if (typeof operation == "object"
-                        && operation.length > 2
-                        && operation[0] == "signAndBroadcast") {
-                        let tr = new TransactionBuilder();
-                        tr.ref_block_num = operation[1];
-                        tr.ref_block_prefix = operation[2];
-                        tr.expiration = operation[3];
-                        operation[4].forEach(op => {
-                            tr.add_operation(tr.get_type_operation(op[0], op[1]));
-                        });
-                        let privateKey = PrivateKey.fromWif(key);
-                        Promise.all([
-                            tr.set_required_fees(),
-                            tr.update_head_block()
-                        ]).then(() => {
-                            tr.add_signer(privateKey, privateKey.toPublicKey().toPublicKeyString());
-                            tr.finalize().then(() => {
-                                tr.sign();
-                                resolve(tr);
-                            }).catch(reject);
-                        });
-                    } else {
-                        reject("Unknown sign request");
-                    }
-                }
+                    }).catch(reject);
+                });
             }).catch(err => reject(err));
         });
     }
@@ -268,10 +313,11 @@ export default class BitShares extends BlockchainAPI {
     broadcast(transaction) {
         return new Promise((resolve, reject) => {
             this.ensureConnection().then(() => {
+                transaction = this._parseTransactionBuilder(transaction);
                 transaction.broadcast().then(id => {
                     resolve(id);
                 }).catch(err => reject(err));
-            }).catch(err => reject(err));
+            }).catch(reject);
         });
     }
 
@@ -329,7 +375,7 @@ export default class BitShares extends BlockchainAPI {
                         resolve(operation);
                     }
                 }
-            });
+            }).catch(reject);
         });
     }
 
@@ -342,9 +388,12 @@ export default class BitShares extends BlockchainAPI {
     }
 
     _verifyString(signature, publicKey, string) {
-        return Signature.fromHex(signature).verifyBuffer(
+        let _PublicKey = PublicKey;
+        let sig = Signature.fromHex(signature);
+        let pkey = PublicKey.fromPublicKeyString(publicKey, this._getCoreSymbol());
+        return sig.verifyBuffer(
             string,
-            PublicKey.fromPublicKeyString(publicKey)
+            pkey
         );
     }
 

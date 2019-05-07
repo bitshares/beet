@@ -2,10 +2,6 @@ import EOSmainnet from "./EOSmainnet";
 
 export default class TLOS extends EOSmainnet {
 
-    _getCoreToken() {
-        return "TLOS";
-    }
-
     getExplorer(object) {
         if (object.accountName) {
             return "https://telos.eosx.io/account/" + object.accountName;
@@ -16,4 +12,5 @@ export default class TLOS extends EOSmainnet {
             return false;
         }
     }
+
 }

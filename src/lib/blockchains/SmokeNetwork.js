@@ -25,10 +25,6 @@ export default class SmokeNetwork extends SteemBasedChain {
         return smokejs;
     }
 
-    _getCoreToken() {
-        return "SMK";
-    }
-
     getExplorer(object) {
         if (object.accountName) {
             return "https://explore.smoke.io/#account/" + object.accountName;

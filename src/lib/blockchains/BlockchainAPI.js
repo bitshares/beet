@@ -1,9 +1,8 @@
 import {EventBus} from '../event-bus.js';
-import RendererLogger from "../RendererLogger";
-const logger = new RendererLogger();
-
 import store from "../../store";
 import {formatAsset, humanReadableFloat} from "../assetUtils";
+import RendererLogger from "../RendererLogger";
+const logger = new RendererLogger();
 
 export default class BlockchainAPI {
 
@@ -23,7 +22,7 @@ export default class BlockchainAPI {
             // enforce connection to that node
             this._isConnected = false;
         }
-        return new Promise((resolve,reject) => {
+        return new Promise((resolve, reject) => {
             if (!this._isConnected) {
                 if (this._isConnectingInProgress) {
                     // there should be a promise queue for pending connects, this is the lazy way
@@ -47,13 +46,48 @@ export default class BlockchainAPI {
                 );
                 this._connect(nodeToConnect).then(resolve).catch(reject);
             } else {
-                resolve();
+                // check if we need to reconnect
+                if (this._needsReconnecting()) {
+                    this._isConnectingInProgress = true;
+                    EventBus.$emit(
+                        'blockchainStatus',
+                        {
+                            chain: this._config.identifier,
+                            status: this._isConnected,
+                            connecting: this._isConnectingInProgress
+                        }
+                    );
+                    this._connect(nodeToConnect).then(resolve).catch(reject);
+                } else {
+                    resolve();
+                }
             }
         });
     }
 
+    _needsReconnecting() {
+        return false;
+    }
+
+    _isTestnet() {
+        return !!this._config.testnet;
+    }
+
+    _getCoreSymbol() {
+        return this._config.coreSymbol;
+    }
+
     _connect(nodeToConnect) {
         throw "Needs implementation";
+    }
+
+    getImportOptions() {
+        return [
+            {
+                type: "ImportKeys",
+                translate_key: "import_keys"
+            }
+        ];
     }
 
     _connectionEstablished(resolveCallback, node) {
@@ -76,7 +110,8 @@ export default class BlockchainAPI {
     }
 
     _connectionFailed(resolveCallback, node, error) {
-        logger.debug(this._config.identifier + "._connectionFailed", error);
+        logger.debug(this._config.name + ": Failed to connect to " + node, error);
+        console.log(this._config.name + ": Failed to connect to " + node, error);
         this._isConnected = false;
         this._isConnectingInProgress = false;
         EventBus.$emit(
@@ -88,7 +123,9 @@ export default class BlockchainAPI {
                 error: error
             }
         );
-        resolveCallback(node);
+        if (resolveCallback != null) {
+            resolveCallback(node);
+        }
     }
 
     getNodes() {
@@ -172,9 +209,23 @@ export default class BlockchainAPI {
                 signedMessage.signed = signedMessage.payload;
                 signedMessage.payload = JSON.parse(signedMessage.payload);
             }
+            // parse payload
+            let payload_dict = {};
+            let payload_list = signedMessage.payload;
+            if (payload_list[2] == "key") {
+                for (let i = 0; i < payload_list.length - 1; i = i+2) {
+                    payload_dict[payload_list[i]] = payload_list[i + 1];
+                }
+            } else {
+                for (let i = 3; i < payload_list.length - 1; i = i+2) {
+                    payload_dict[payload_list[i]] = payload_list[i + 1];
+                }
+                payload_dict.key = payload_list[2];
+                payload_dict.from = payload_list[1];
+            }
 
             // validate account and key
-            this._verifyAccountAndKey(signedMessage.payload[1], signedMessage.payload[3]).then(
+            this._verifyAccountAndKey(payload_dict.from, payload_dict.key).then(
                 found => {
                     if (found.account == null) {
                         reject("invalid user");
@@ -182,10 +233,10 @@ export default class BlockchainAPI {
                     // verify message signed
                     let verified = false;
                     try {
-                        verified = this._verifyString(signedMessage.signature, signedMessage.payload[3], signedMessage.signed);
+                        verified = this._verifyString(signedMessage.signature, payload_dict.key, signedMessage.signed);
                     } catch (err) {
                         // wrap message that could be raised from Signature
-                        reject("Error verifying signature");
+                        reject("Error verifying signature", err);
                     }
                     if (!verified) {
                         reject("Invalid signature");

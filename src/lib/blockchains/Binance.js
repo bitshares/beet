@@ -9,10 +9,6 @@ export default class Bitcoin extends BlockchainAPI {
 
     // https://github.com/steemit/steem-js/tree/master/doc#broadcast-api
 
-    _getCoreToken() {
-        return "BNB";
-    }
-
     _connect(nodeToConnect) {
         return new Promise((resolve, reject) => {
             if (nodeToConnect == null) {
@@ -57,7 +53,7 @@ export default class Bitcoin extends BlockchainAPI {
     }
 
     _publicKeyToAddress(publicKey) {
-        return binancejs.crypto.getAddressFromPublicKey(publicKey);
+        return binancejs.crypto.getAddressFromPublicKey(publicKey, this._config.testnet ? 'tbnb' : 'bnb');
     }
 
     getPublicKey(privateKey) {
@@ -236,7 +232,7 @@ export default class Bitcoin extends BlockchainAPI {
         from = await this.getAccount(from);
         to = await this.getAccount(to);
 
-        const api = 'https://testnet-dex.binance.org/';
+        const api = this.getNodes()[0].url;
         const sequenceURL = `${api}api/v1/account/${from.name}/sequence`;
 
         if (memo == null){
@@ -252,10 +248,10 @@ export default class Bitcoin extends BlockchainAPI {
 
     getExplorer(object) {
         if (object.accountName) {
-            return "https://testnet-explorer.binance.org/address/" + object.accountName;
+            return this.getNodes()[0].explorer + "address/" + object.accountName;
         } else if (object.txid) {
             // 260D46A66E79503F205AF1E826B0460FAFBBDB25C235FB408DAA1EBFA0C3D256
-            return "https://testnet-explorer.binance.org/tx/" + object.txid
+            return this.getNodes()[0].explorer + "tx/" + object.txid
         } else {
             return false;
         }
@@ -283,6 +279,15 @@ Amount: ${toSend}
         } else {
             return false;
         }
+    }
+
+    getImportOptions() {
+        return [
+            {
+                type: "ImportAdressBased",
+                translate_key: "import_address"
+            }
+        ];
     }
 
 }

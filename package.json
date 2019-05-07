@@ -1,9 +1,9 @@
 {
   "name": "beet",
   "productName": "beet",
-  "version": "0.6.2",
+  "version": "0.6.5",
   "apiversion": 3,
-  "description": "Beet is a stand-alone key-manager and signing app for BitShares.",
+  "description": "Beet is a stand-alone key-manager and signing app for blockchains like BitShares, Steem and EOS, as well as BTC, BinanceChain and others.",
   "main": "src/index.js",
   "scripts": {
     "start": "electron-forge start",
@@ -60,7 +60,7 @@
     "@smokenetwork/smoke-js": "^0.1.2",
     "@whaleshares/wlsjs": "^0.1.1",
     "bitcoinjs-lib": "^4.0.3",
-    "bitsharesjs": "^1.8.3",
+    "bitsharesjs": "^3.0.0-rc3",
     "bootstrap-vue": "^2.0.0-rc.11",
     "chalk": "^2.4.2",
     "crypto-js": "^3.1.9-1",
