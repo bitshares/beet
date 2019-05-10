@@ -43,6 +43,51 @@ let first = true;
 let tray = null;
 let minimised = false;
 
+function initMacOSMenu() {
+    if (process.platform !== 'darwin') return;
+    const template = [
+        {
+            label: app.getName(),
+            submenu: [
+                {role: 'about'},
+                {type: 'separator'},
+                {role: 'hide'},
+                {role: 'hideothers'},
+                {role: 'unhide'},
+                {type: 'separator'},
+                {role: 'quit'}
+            ]
+        },
+        {
+            label: 'Edit',
+            submenu: [
+                {role: 'undo'},
+                {role: 'redo'},
+                {type: 'separator'},
+                {role: 'cut'},
+                {role: 'copy'},
+                {role: 'paste'},
+                {role: 'delete'},
+                {role: 'selectall'}
+            ]
+        },
+        {
+            role: 'window',
+            submenu: [
+
+                {role: 'close'},
+                {role: 'minimize'},
+                {role: 'zoom'},
+                {type: 'separator'},
+                {role: 'front'},
+            ]
+        }
+    ];
+
+    const menu = Menu.buildFromTemplate(template)
+    Menu.setApplicationMenu(menu);
+}
+
 const createWindow = async () => {
     // Create the browser window.
     mainWindow = new BrowserWindow({
@@ -62,6 +107,7 @@ const createWindow = async () => {
         icon: __dirname + '/img/beet-taskbar.png'
     });
 
+    initMacOSMenu();
     // and load the index.html of the app.
     mainWindow.loadURL(`file://${__dirname}/index.html`);
     tray = new Tray(__dirname + '/img/beet-tray.png');
@@ -80,7 +126,7 @@ const createWindow = async () => {
             }
         }
     ]);
-    tray.setToolTip('Beet')
+    tray.setToolTip('Beet');
     tray.on('right-click', (event, bounds) => {
         tray.popUpContextMenu(contextMenu);
     });
@@ -178,7 +224,7 @@ const createWindow = async () => {
     let seed, key;
     function timeoutHandler() {
         seed=null;
-        mainWindow.webContents.send('eventbus', { method: 'timeout', payload: 'logout'});        
+        mainWindow.webContents.send('eventbus', { method: 'timeout', payload: 'logout'});
         clearTimeout(timeout);
     }
     ipcMain.on('key', (event, arg) => {
@@ -224,7 +270,7 @@ const createWindow = async () => {
         } = arg;
         let keypair = ec.keyFromPublic(key, 'hex');
         let msgHash = CryptoJS.SHA256('backup').toString();
-        if (keypair.verify(msgHash, sig)) {            
+        if (keypair.verify(msgHash, sig)) {
             event.sender.send('backup', CryptoJS.AES.encrypt(data, seed).toString());
         } else {
             event.sender.send('backup', null);
