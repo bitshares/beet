@@ -11,6 +11,7 @@ import {
 } from 'electron-compile';
 import Logger from './lib/Logger';
 import context_menu from './lib/electron_context_menu';
+import {initApplicationMenu} from './lib/applicationMenu';
 import {
     ec as EC
 } from "elliptic";
@@ -43,50 +44,6 @@ let first = true;
 let tray = null;
 let minimised = false;
 
-function initMacOSMenu() {
-    if (process.platform !== 'darwin') return;
-    const template = [
-        {
-            label: app.getName(),
-            submenu: [
-                {role: 'about'},
-                {type: 'separator'},
-                {role: 'hide'},
-                {role: 'hideothers'},
-                {role: 'unhide'},
-                {type: 'separator'},
-                {role: 'quit'}
-            ]
-        },
-        {
-            label: 'Edit',
-            submenu: [
-                {role: 'undo'},
-                {role: 'redo'},
-                {type: 'separator'},
-                {role: 'cut'},
-                {role: 'copy'},
-                {role: 'paste'},
-                {role: 'delete'},
-                {role: 'selectall'}
-            ]
-        },
-        {
-            role: 'window',
-            submenu: [
-
-                {role: 'close'},
-                {role: 'minimize'},
-                {role: 'zoom'},
-                {type: 'separator'},
-                {role: 'front'},
-            ]
-        }
-    ];
-
-    const menu = Menu.buildFromTemplate(template)
-    Menu.setApplicationMenu(menu);
-}
 
 const createWindow = async () => {
     // Create the browser window.
@@ -107,7 +64,7 @@ const createWindow = async () => {
         icon: __dirname + '/img/beet-taskbar.png'
     });
 
-    initMacOSMenu();
+    initApplicationMenu();
     // and load the index.html of the app.
     mainWindow.loadURL(`file://${__dirname}/index.html`);
     tray = new Tray(__dirname + '/img/beet-tray.png');
