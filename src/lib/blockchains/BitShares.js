@@ -280,11 +280,11 @@ export default class BitShares extends BlockchainAPI {
                 });
                 return tr;
             }
-        } else if (operation.type) {
+        } else if (incoming.type) {
             let tr = new TransactionBuilder();
             tr.add_type_operation(
-                operation.type,
-                operation.data
+                incoming.type,
+                incoming.data
             );
             return tr;
         }
