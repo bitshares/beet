@@ -67,7 +67,11 @@ export default class BitShares extends BlockchainAPI {
             {
                 type: "bitshares/ImportCloudPass",
                 translate_key: "import_pass"
-            }
+            },
+            {
+                type: "bitshares/ImportMemo",
+                translate_key: "import_only_memo"
+            },
         ];
     }
 
@@ -431,6 +435,14 @@ export default class BitShares extends BlockchainAPI {
             return "https://bitsharescan.com/transaction/" + object.txid;
         } else {
             return false;
+        }
+    }
+
+    getSignUpInput() {
+        return {
+            active: false,
+            memo: true,
+            owner: false
         }
     }
 
