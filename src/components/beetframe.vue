@@ -7,6 +7,10 @@
                 </div>
                 <div class="frame-controls">
                     <span
+                        class="icon-bug"
+                        @click="openDebug()"
+                    />
+                    <span
                         class="icon-minus"
                         @click="minimise()"
                     />
@@ -22,6 +26,7 @@
 <script>
     import { ipcRenderer } from "electron";
     import RendererLogger from "../lib/RendererLogger";
+    import { remote } from "electron";
     const logger = new RendererLogger();
 
     export default {
@@ -34,6 +39,9 @@
             logger.debug("Main Beet frame mounted");
         },
         methods: {
+            openDebug: () => {
+                remote.BrowserWindow.getFocusedWindow().webContents.openDevTools();
+            },
             minimise: () => {
                 ipcRenderer.send("minimise", true);
             },
