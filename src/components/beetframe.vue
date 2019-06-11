@@ -10,10 +10,10 @@
                         class="icon-bug"
                         @click="openDebug()"
                     />
-                    <!--<span-->
-                        <!--class="icon-minus"-->
-                        <!--@click="minimise()"-->
-                    <!--/>-->
+                    <span
+                        class="icon-minus"
+                        @click="minimise()"
+                    />
                     <span
                         class="icon-cross"
                         @click="close()"
