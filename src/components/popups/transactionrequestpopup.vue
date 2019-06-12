@@ -20,9 +20,9 @@
         <br>
         <br>
         <div
-            v-if="!!_visualize(incoming.params)"
+            v-if="!!incoming.visualized"
             class="text-left custom-content"
-            v-html="_visualize(incoming.params)"
+            v-html="incoming.visualized"
         />
         <pre
             v-else-if="!!incoming.params"
@@ -67,7 +67,8 @@
             return {
                 type: "TransactionRequestPopup",
                 incoming: {
-                    signingAccount: {}
+                    signingAccount: {},
+                    visualized: null
                 }
             };
         },
@@ -75,11 +76,11 @@
             logger.debug("Tx Popup initialised");
         },
         methods: {
-            _visualize(params) {
-                if (!params) {
-                    return false;
-                }
-                return getBlockchain(this.incoming.chain).visualize(params);
+            _onShow() {
+                getBlockchain(this.incoming.chain).visualize(this.incoming.params).then(result => {
+                    this.incoming.visualized = result;
+                    this.incoming = Object.assign({}, this.incoming);
+                });
             },
             getSuccessNotification(result) {
                 return {msg: 'Transaction successfully broadcast.', link: '' };

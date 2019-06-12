@@ -8,6 +8,7 @@ import {
     FetchChain
 } from "bitsharesjs";
 import RendererLogger from "../RendererLogger";
+import {formatAsset} from "../assetUtils";
 const logger = new RendererLogger();
 
 export default class BitShares extends BlockchainAPI {
@@ -94,10 +95,22 @@ export default class BitShares extends BlockchainAPI {
         });
     }
 
-    resolveAsset(assetSymbolOrId) {
+    _getAccountName(accountId) {
         return new Promise((resolve, reject) => {
             this.ensureConnection().then(() => {
-                Apis.instance().db_api().exec("lookup_asset_symbols", [[assetName]]).then((asset_objects) => {
+                Apis.instance().db_api().exec("get_objects", [[accountId]]).then((asset_objects) => {
+                    if (asset_objects.length && asset_objects[0]) {
+                        resolve(asset_objects[0].name);
+                    }
+                }).catch(reject);
+            }).catch(reject);
+        });
+    }
+
+    _resolveAsset(assetSymbolOrId) {
+        return new Promise((resolve, reject) => {
+            this.ensureConnection().then(() => {
+                Apis.instance().db_api().exec("lookup_asset_symbols", [[assetSymbolOrId]]).then((asset_objects) => {
                     if (asset_objects.length && asset_objects[0]) {
                         resolve(asset_objects[0]);
                     }
@@ -444,6 +457,30 @@ export default class BitShares extends BlockchainAPI {
             memo: true,
             owner: false
         }
+    }
+
+    async visualize(thing) {
+        let operations = [];
+        let tr = this._parseTransactionBuilder(thing);
+        for (let i = 0; i < tr.operations.length; i++) {
+            let operation = tr.operations[i];
+            if (operation[0] == 0) {
+                let from = await this._getAccountName(operation[1].from);
+                let to = await this._getAccountName(operation[1].to);
+                let asset = await this._resolveAsset(operation[1].amount.asset_id);
+
+                operations.push(
+                    from + " &#9657; " + formatAsset(operation[1].amount.amount, asset.symbol, asset.precision) + " &#9657; " + to
+                )
+            }
+        }
+        if (operations.length == 0) {
+            return false;
+        }
+        return `<pre class="text-left custom-content">
+<code>Transaction
+${operations.join('\n')}
+</code></pre>`;
     }
 
 }
