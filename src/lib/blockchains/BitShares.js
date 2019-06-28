@@ -472,6 +472,16 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(
                     from + " &#9657; " + formatAsset(operation[1].amount.amount, asset.symbol, asset.precision) + " &#9657; " + to
                 )
+            } else if (operation[0] == 25) {
+                let from = await this._getAccountName(operation[1].withdraw_from_account);
+                let to = await this._getAccountName(operation[1].authorized_account);
+                let asset = await this._resolveAsset(operation[1].withdrawal_limit.asset_id);
+                let period = operation[1].withdrawal_period_sec / 60 / 60 / 24;
+                operations.push(
+                    "Direct Debit Authorization\n" +
+                    " Recipient: " + to + "\n" +
+                    " Take " + formatAsset(operation[1].withdrawal_limit.amount, asset.symbol, asset.precision) + " every " + period + " days, for " + operation[1].periods_until_expiration + " periods"
+                )
             }
         }
         if (operations.length == 0) {
