@@ -8,7 +8,7 @@ import {
     FetchChain
 } from "bitsharesjs";
 import RendererLogger from "../RendererLogger";
-import {formatAsset} from "../assetUtils";
+import {formatAsset, humanReadableFloat} from "../assetUtils";
 const logger = new RendererLogger();
 
 export default class BitShares extends BlockchainAPI {
@@ -462,6 +462,7 @@ export default class BitShares extends BlockchainAPI {
     async visualize(thing) {
         let operations = [];
         let tr = this._parseTransactionBuilder(thing);
+        console.log("Visualizing " + tr);
         for (let i = 0; i < tr.operations.length; i++) {
             let operation = tr.operations[i];
             if (operation[0] == 0) {
@@ -473,7 +474,6 @@ export default class BitShares extends BlockchainAPI {
                     from + " &#9657; " + formatAsset(operation[1].amount.amount, asset.symbol, asset.precision) + " &#9657; " + to
                 )
             } else if (operation[0] == 25) {
-                let from = await this._getAccountName(operation[1].withdraw_from_account);
                 let to = await this._getAccountName(operation[1].authorized_account);
                 let asset = await this._resolveAsset(operation[1].withdrawal_limit.asset_id);
                 let period = operation[1].withdrawal_period_sec / 60 / 60 / 24;
@@ -482,14 +482,38 @@ export default class BitShares extends BlockchainAPI {
                     " Recipient: " + to + "\n" +
                     " Take " + formatAsset(operation[1].withdrawal_limit.amount, asset.symbol, asset.precision) + " every " + period + " days, for " + operation[1].periods_until_expiration + " periods"
                 )
+            } else if (operation[0] == 33) {
+                let owner = await this._getAccountName(operation[1].owner);
+                let asset = await this._resolveAsset(operation[1].amount.asset_id);
+                operations.push(
+                    "Vesting Balance\n" +
+                    " Claim " + formatAsset(operation[1].amount.amount, asset.symbol, asset.precision) + " from balance " + operation[1].vesting_balance
+                )
+            } else if (operation[0] == 1) {
+                let seller = await this._getAccountName(operation[1].seller);
+                let buy = await this._resolveAsset(operation[1].min_to_receive.asset_id);
+                let sell = await this._resolveAsset(operation[1].amount_to_sell.asset_id);
+                let fillOrKill = operation[1].amount_to_sell.fill_or_kill;
+
+                let price = humanReadableFloat(operation[1].amount_to_sell.amount, sell.precision)
+                    / humanReadableFloat(operation[1].min_to_receive.amount, buy.precision);
+
+                operations.push(
+                    "Trade" + (fillOrKill ? "(Fill or Kill)" : "") + "\n" +
+                    " Sell: " + formatAsset(operation[1].amount_to_sell.amount, sell.symbol, sell.precision) + "\n" +
+                    " Buy: " + formatAsset(operation[1].min_to_receive.amount, buy.symbol, buy.precision) + "\n" +
+                    " Price: " + price.toPrecision(6) + " " + sell.symbol + "/" +  buy.symbol
+                )
             }
         }
         if (operations.length == 0) {
             return false;
         }
+        let header = operations.length == 1 ? "" : "Transaction\n";
+
+
         return `<pre class="text-left custom-content">
-<code>Transaction
-${operations.join('\n')}
+<code>${header}${operations.join('\n')}
 </code></pre>`;
     }
 
