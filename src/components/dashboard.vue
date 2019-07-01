@@ -13,14 +13,26 @@
                     />
                 </div>
                 <div v-if="isConnecting" class="col-2 text-center icons">
-                    <span
-                        class="status align-self-center icon-connected"
-                    />
+                    <a
+                        href="#"
+                        @click="reconnect()"
+                        class="status align-self-center"
+                    >
+                        <span
+                            class="status align-self-center icon-connected"
+                        />
+                    </a>
                 </div>
                 <div v-else-if="connectionFailed" class="col-2 text-center icons">
-                    <span
-                        class="status align-self-center icon-disconnected"
-                    />
+                    <a
+                        href="#"
+                        @click="reconnect()"
+                        class="status align-self-center"
+                    >
+                        <span
+                            class="status align-self-center icon-disconnected"
+                        />
+                    </a>
                 </div>
                 <div v-else class="col-2 text-center">
                     <a
@@ -159,6 +171,14 @@
             this.loadBalances();
         },
         methods: {
+            reconnect: async function() {
+                let _selectedNode = this.selectedNode;
+                let idx = this.nodes.findIndex(item => item.url == _selectedNode);
+                if (this.nodes.length == idx+1) {
+                    idx = -1;
+                }
+                this.selectedNode = this.nodes[idx+1].url;
+            },
             loadBalances: async function() {
                 EventBus.$emit("popup", "load-start");
                 await this.$refs.balancetable.getBalances();
