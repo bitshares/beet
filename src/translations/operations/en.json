@@ -1,4 +1,7 @@
 {
+    "general": {
+        "content": "Content"
+    },
     "link": {
         "title": "Account Link Request",
         "request": "The application `{{appName}}` from `{{origin}}` is requesting access to a {{chain}} account.",
@@ -35,7 +38,7 @@
         "reject_btn": "Ignore"
     },
     "rawsig": {
-        "title": "Transaction Request",
+        "title": "Request",
         "request": "App: `{{appName}}` from `{{origin}}` has submitted the following transaction for account {{ chain }}:{{ accountName }}.",
         "request_cta": "Do you want to execute it?",
         "accept_btn": "Sign & Broadcast",
