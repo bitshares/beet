@@ -5,31 +5,28 @@ let _blockchains = {
         chainId: '4018d7844c78f6a6c41c6a552b898022310fc5dec06da467ee7905a8dad512c8',
         nodeList: [
             {
-                url: "wss://master.eu.api.bitshares.org/ws"
-            },
-            {
                 url: "wss://eu.nodes.bitshares.ws"
-            },
-            {
-                url: "wss://bts.proxyhosts.info/wss"
-            },
-            {
-                url: "wss://bts-seoul.clockwork.gr"
             },
             {
                 url: "wss://bitshares.openledger.info/ws"
             },
             {
-                url: "wss://openledger.hk/ws"
+                url: "wss://new-york.us.api.bitshares.org/ws"
             },
             {
-                url: "wss://node.btscharts.com/ws"
+                url: "wss://bts-seoul.clockwork.gr"
+            },
+            {
+                url: "wss://na.openledger.info/ws"
+            },
+            {
+                url: "wss://bts.proxyhosts.info/wss"
+            },
+            {
+                url: "wss://btsfullnode.bangzi.info/ws"
             },
             {
                 url: "wss://japan.bitshares.apasia.tech/ws"
-            },
-            {
-                url: "wss://bitshares.crypto.fans/ws"
             },
             {
                 url: "wss://ws.gdex.top"

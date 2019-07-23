@@ -65,6 +65,8 @@ npm install
 npm run start
 ```
 
+If you are in linux you may need to do: `sudo apt-get install libudev-dev` before start Beet.
+
 ## Supported apps and web pages
 
  - Voting Showcase www.bitsharesvotes.com

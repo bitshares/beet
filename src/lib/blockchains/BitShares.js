@@ -47,9 +47,10 @@ export default class BitShares extends BlockchainAPI {
         });
     }
 
-    async _needsReconnecting() {
+    _needsReconnecting() {
         if (this._isConnected) {
-            return !((Apis.instance().url.indexOf("testnet") !== -1) !== this._isTestnet());
+            let _isConnectedToTestnet = Apis.instance().url.indexOf("testnet") !== -1;
+            return _isConnectedToTestnet !== this._isTestnet();
         } else {
             return false;
         }
@@ -163,37 +164,36 @@ export default class BitShares extends BlockchainAPI {
 
     getBalances(accountName) {
         return new Promise((resolve, reject) => {
-            this.ensureConnection().then(() => {
-                this.getAccount(accountName).then((account) => {
-                    let neededAssets = [];
+            // getAccount has already ensureConnection
+            this.getAccount(accountName).then((account) => {
+                let neededAssets = [];
+                for (let i = 0; i < account.balances.length; i++) {
+                    neededAssets.push(account.balances[i].asset_type);
+                }
+                Apis.instance().db_api().exec("get_objects", [neededAssets]).then((assets) => {
+                    let balances = [];
                     for (let i = 0; i < account.balances.length; i++) {
-                        neededAssets.push(account.balances[i].asset_type);
-                    }
-                    Apis.instance().db_api().exec("get_objects", [neededAssets]).then((assets) => {
-                        let balances = [];
-                        for (let i = 0; i < account.balances.length; i++) {
-                            if (assets[i].issuer == "1.2.0") {
-                                balances[i] = {
-                                    asset_type: account.balances[i].asset_type,
-                                    asset_name: assets[i].symbol,
-                                    balance: account.balances[i].balance,
-                                    owner: assets[i].issuer,
-                                    prefix: "BIT"
-                                };
-                            } else {
-                                balances[i] = {
-                                    asset_type: account.balances[i].asset_type,
-                                    asset_name: assets[i].symbol,
-                                    rawbalance: account.balances[i].balance,
-                                    balance: account.balances[i].balance /
-                                        Math.pow(10, assets[i].precision),
-                                    owner: assets[i].issuer,
-                                    prefix: ""
-                                };
-                            }
+                        if (assets[i].issuer == "1.2.0") {
+                            balances[i] = {
+                                asset_type: account.balances[i].asset_type,
+                                asset_name: assets[i].symbol,
+                                balance: account.balances[i].balance,
+                                owner: assets[i].issuer,
+                                prefix: "BIT"
+                            };
+                        } else {
+                            balances[i] = {
+                                asset_type: account.balances[i].asset_type,
+                                asset_name: assets[i].symbol,
+                                rawbalance: account.balances[i].balance,
+                                balance: account.balances[i].balance /
+                                    Math.pow(10, assets[i].precision),
+                                owner: assets[i].issuer,
+                                prefix: ""
+                            };
                         }
-                        resolve(balances);
-                    });
+                    }
+                    resolve(balances);
                 });
             }).catch(reject);
         });

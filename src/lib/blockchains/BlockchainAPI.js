@@ -44,6 +44,13 @@ export default class BlockchainAPI {
                         connecting: this._isConnectingInProgress
                     }
                 );
+                // load last node from config
+                if (nodeToConnect == null) {
+                    let lastNode = store.state.SettingsStore.settings.selected_node[
+                        this._config.identifier
+                    ];
+                    if (lastNode) nodeToConnect = lastNode;
+                }
                 this._connect(nodeToConnect).then(resolve).catch(reject);
             } else {
                 // check if we need to reconnect
@@ -57,6 +64,13 @@ export default class BlockchainAPI {
                             connecting: this._isConnectingInProgress
                         }
                     );
+                    // load last node from config
+                    if (nodeToConnect == null) {
+                        let lastNode = store.state.SettingsStore.settings.selected_node[
+                            this._config.identifier
+                            ];
+                        if (lastNode) nodeToConnect = lastNode;
+                    }
                     this._connect(nodeToConnect).then(resolve).catch(reject);
                 } else {
                     resolve();

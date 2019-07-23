@@ -11,6 +11,7 @@ import {
 } from 'electron-compile';
 import Logger from './lib/Logger';
 import context_menu from './lib/electron_context_menu';
+import {initApplicationMenu} from './lib/applicationMenu';
 import {
     ec as EC
 } from "elliptic";
@@ -43,6 +44,7 @@ let first = true;
 let tray = null;
 let minimised = false;
 
+
 const createWindow = async () => {
     // Create the browser window.
     mainWindow = new BrowserWindow({
@@ -62,6 +64,7 @@ const createWindow = async () => {
         icon: __dirname + '/img/beet-taskbar.png'
     });
 
+    initApplicationMenu();
     // and load the index.html of the app.
     mainWindow.loadURL(`file://${__dirname}/index.html`);
     tray = new Tray(__dirname + '/img/beet-tray.png');
@@ -80,7 +83,7 @@ const createWindow = async () => {
             }
         }
     ]);
-    tray.setToolTip('Beet')
+    tray.setToolTip('Beet');
     tray.on('right-click', (event, bounds) => {
         tray.popUpContextMenu(contextMenu);
     });
@@ -178,7 +181,7 @@ const createWindow = async () => {
     let seed, key;
     function timeoutHandler() {
         seed=null;
-        mainWindow.webContents.send('eventbus', { method: 'timeout', payload: 'logout'});        
+        mainWindow.webContents.send('eventbus', { method: 'timeout', payload: 'logout'});
         clearTimeout(timeout);
     }
     ipcMain.on('key', (event, arg) => {
@@ -224,7 +227,7 @@ const createWindow = async () => {
         } = arg;
         let keypair = ec.keyFromPublic(key, 'hex');
         let msgHash = CryptoJS.SHA256('backup').toString();
-        if (keypair.verify(msgHash, sig)) {            
+        if (keypair.verify(msgHash, sig)) {
             event.sender.send('backup', CryptoJS.AES.encrypt(data, seed).toString());
         } else {
             event.sender.send('backup', null);
