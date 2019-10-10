@@ -16,7 +16,7 @@ import store from '../../../store/index.js';
 class BTSWalletHandler {
 
     constructor(backup) {
-        this.wallet_buffer = new Buffer.from(backup, "binary");
+        this.wallet_buffer = Buffer.from(backup, "binary");
     }
     unlock(wallet_pass) {
         try {
@@ -171,4 +171,4 @@ class BTSWalletHandler {
         return account_matrix;
     }
 }
-module.exports = BTSWalletHandler;
+export default BTSWalletHandler;
