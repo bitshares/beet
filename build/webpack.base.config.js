@@ -28,7 +28,6 @@ module.exports = env => {
       mainFields: ["main", "browser"],
       alias: {
         vue$: 'vue/dist/vue.min.js',
-        '7zip': path.resolve(__dirname, 'node_modules/7zip/7zip-lite/index.js'),
         env: path.resolve(__dirname, `../config/env_${env}.json`),
         '~': path.resolve(__dirname, '../src/')
       }

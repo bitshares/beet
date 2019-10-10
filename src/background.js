@@ -51,9 +51,9 @@ let first = true;
 let tray = null;
 let minimised = false;
 
-console.log('here');
+
 const createWindow = async () => {
-        console.log('readied')
+
   // Create the browser window.
   mainWindow = new BrowserWindow({
       width: 600,
@@ -81,7 +81,7 @@ const createWindow = async () => {
       slashes: true
     })
   );
-  console.log('opened');
+  
   tray = new Tray(__dirname + '/img/beet-tray.png');
   const contextMenu = Menu.buildFromTemplate([{
           label: 'Show App',
@@ -271,11 +271,12 @@ if (env.name !== "production") {
   const userDataPath = app.getPath("userData");
   app.setPath("userData", `${userDataPath} (${env.name})`);
 }
+app.disableHardwareAcceleration();
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', function() {
-    console.log('ready');
+    
     createWindow();
 });
 

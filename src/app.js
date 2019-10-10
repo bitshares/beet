@@ -11,7 +11,8 @@ import Backend from "i18next-node-fs-backend";
 import VueI18Next from '@panter/vue-i18next';
 import BeetServer from "./lib/BeetServer";
 import RendererLogger from "./lib/RendererLogger";
-
+import 'typeface-roboto';
+import 'typeface-rajdhani';
 
 import "./css/style.css";
 import './scss/beet.scss';
