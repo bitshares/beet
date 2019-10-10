@@ -10,8 +10,6 @@ $danger:        #F44336;
 $light:         #E5EAED;
 $dark:          #29324A;
 $white:         #F4F8FB;
-@import '../../node_modules/typeface-roboto/index.css';
-@import '../../node_modules/typeface-rajdhani/index.css'; 
-@import "../css/style.css";
+
 @import "./bootstrap";
 @import "./styles";

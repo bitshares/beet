@@ -122,7 +122,7 @@ export default class EOS extends BlockchainAPI {
     }
 
     _signString(key, string) {
-        return ecc.Signature.sign(new Buffer(string), key).toHex();
+        return ecc.Signature.sign(Buffer.from(string), key).toHex();
     }
 
     _verifyString(signature, publicKey, string) {

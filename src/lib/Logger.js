@@ -1,5 +1,5 @@
-const chalk = require('chalk');
-const readline = require('readline');
+import chalk  from 'chalk';
+import readline from 'readline';
 
 function lpad(str, padString, length) {
     while (str.toString().length < length) {
@@ -86,4 +86,4 @@ class Logger {
     }
 
 }
-module.exports = Logger;
+export default Logger;
