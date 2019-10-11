@@ -1,6 +1,6 @@
 {
   "name": "beet",
-  "productName": "beet",
+  "productName": "Beet Blockchain Companion",
   "version": "0.8.0",
   "apiversion": 3,
   "description": "Beet is a stand-alone key-manager and signing app for blockchains like BitShares, Steem and EOS, as well as BTC, BinanceChain and others.",
@@ -10,6 +10,7 @@
   "main": "app/background.js",
   "build": {
     "appId": "io.get-beet.beet",
+    "productName": "Beet Blockchain Companion",
     "files": [
       "app/**/*",
       "node_modules/**/*",
@@ -17,6 +18,13 @@
     ],
     "directories": {
       "buildResources": "resources"
+    },
+    "nsis": {
+        "oneClick": false,
+        "allowToChangeInstallationDirectory": true
+    },
+    "win": {
+        "target": "nsis"
     },
     "publish": null
   },
