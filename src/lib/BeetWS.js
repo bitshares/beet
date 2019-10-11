@@ -1,4 +1,5 @@
 import EventEmitter from "events";
+import BeetDB from './BeetDB.js';
 import WebSocket from "ws";
 import {
     v4 as uuidv4
@@ -21,10 +22,40 @@ const logger = new RendererLogger();
 export default class BeetWS extends EventEmitter {
     constructor(port, sslport, timeout) {
         super(); // required
+        this.init(port, sslport, timeout);
+    }
+    async init(port, sslport, timeout) {
         var self = this;
+        let key;
+        let cert;
+        try {
+            key = await fetch('https://raw.githubusercontent.com/beetapp/beet-certs/master/beet.key').then(res => res.text());
+            cert = await fetch('https://raw.githubusercontent.com/beetapp/beet-certs/master/beet.cert').then(res => res.text());
+            
+            let db = BeetDB.ssl_data;
+            let payload= {key: key, cert: cert};
+            db.toArray().then((res) => {
+                if (res.length == 0) {
+                    db.add(payload);
+                } else {
+                    db.update(res[0].id, payload);
+                }
+            })
+        }catch (e) {
+            let ssl = await BeetDB.ssl_data.toArray();
+            if (ssl && ssl.length>0) {
+                key=ssl[0].key;
+                cert=ssl[0].cert;
+            }else{
+                key=Fs.readFileSync(__dirname + '/ssl/beet.key');
+                cert=Fs.readFileSync(__dirname + '/ssl/beet.cert');
+            }
+        }
+        
+       
         const httpsServer = Https.createServer({
-            key: Fs.readFileSync(__dirname + '/ssl/beet.key'),
-            cert: Fs.readFileSync(__dirname + '/ssl/beet.cert')
+            key: key,
+            cert: cert
         });
         const server = new WebSocket.Server({
             server: httpsServer
