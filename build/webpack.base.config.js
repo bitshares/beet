@@ -20,11 +20,12 @@ module.exports = env => {
     },
     externals: [nodeExternals({
       // this WILL include `jquery` and `webpack/hot/dev-server` in the bundle, as well as `lodash/*`
-      whitelist: ['vue']
-  })],
+      whitelist: ['bootstrap-vue','vue','typeface-roboto','typeface-rajdhani']
+      
+    })],
     resolve: {
       extensions: ['*', '.js', '.vue', '.json', '.css', '.scss'],
-      
+
       mainFields: ["main", "browser"],
       alias: {
         vue$: 'vue/dist/vue.min.js',
@@ -33,22 +34,18 @@ module.exports = env => {
       }
     },
     devtool: "source-map",
-    
-    externals: {
-      
-      bufferutil: "commonjs bufferutil",
-      memcpy: "commonjs memcpy",
-      lzma: "commonjs lzma",
-      "utf-8-validate": "commonjs utf-8-validate"
-    },
     module: {
-      rules: [
-        {
+      rules: [{
+        test: /node_modules[/\\](bytebuffer)[/\\].+/,
+        resolve: {
+          aliasFields: ["main"]
+        }
+      },{
           test: /node_modules[/\\](iconv-lite)[/\\].+/,
           resolve: {
             aliasFields: ["main"]
           }
-        },{
+        }, {
           test: /node_modules[/\\](lzma)[/\\].+/,
           resolve: {
             aliasFields: ["browser"]
@@ -77,15 +74,13 @@ module.exports = env => {
         },
         {
           test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
-          use: [
-            {
-              loader: 'file-loader',
-              options: {
-                name: '[name].[ext]',
-                outputPath: 'fonts/'
-              }
+          use: [{
+            loader: 'file-loader',
+            options: {
+              name: '[name].[ext]',
+              outputPath: 'fonts/'
             }
-          ]
+          }]
         }
       ]
     },

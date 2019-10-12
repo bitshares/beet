@@ -1,4 +1,4 @@
-import Vue from 'vue/dist/vue.js';
+import Vue from 'vue';
 import BeetDB from '../../lib/BeetDB.js';
 import RendererLogger from "../../lib/RendererLogger";
 const logger = new RendererLogger();

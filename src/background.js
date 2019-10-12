@@ -52,6 +52,10 @@ let tray = null;
 let minimised = false;
 
 
+if (env.name !== "production") {
+    const userDataPath = app.getPath("userData");
+    //app.setPath("userData", `${userDataPath} (${env.name})`);
+  }
 const createWindow = async () => {
 
   // Create the browser window.
@@ -106,7 +110,8 @@ const createWindow = async () => {
   // Open the DevTools.
   if (isDevMode) {
       //await installExtension(VUEJS_DEVTOOLS);
-  //    await installExtension('ljjemllljcmogpfapbkkighbhhppjdbg');
+     await installExtension('ljjemllljcmogpfapbkkighbhhppjdbg');
+     console.log('Installing');
      mainWindow.webContents.openDevTools();
   }
 
@@ -267,10 +272,6 @@ const createWindow = async () => {
   });
 };
 
-if (env.name !== "production") {
-  const userDataPath = app.getPath("userData");
-  app.setPath("userData", `${userDataPath} (${env.name})`);
-}
 app.disableHardwareAcceleration();
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
