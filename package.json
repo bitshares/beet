@@ -20,11 +20,11 @@
       "buildResources": "resources"
     },
     "nsis": {
-        "oneClick": false,
-        "allowToChangeInstallationDirectory": true
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
     },
     "win": {
-        "target": "nsis"
+      "target": "nsis"
     },
     "publish": null
   },
@@ -70,10 +70,13 @@
     "@babel/plugin-proposal-object-rest-spread": "^7.6.2",
     "@babel/plugin-transform-runtime": "^7.6.2",
     "@babel/preset-env": "^7.6.3",
+    "babel-eslint": "^10.0.3",
     "babel-loader": "^8.0.6",
     "css-loader": "^3.2.0",
     "electron": "^3.0.0",
     "electron-builder": "^21.2.0",
+    "eslint": "^6.5.1",
+    "eslint-plugin-vue": "^5.2.3",
     "file-loader": "^4.2.0",
     "friendly-errors-webpack-plugin": "^1.7.0",
     "node-sass": "^4.12.0",
