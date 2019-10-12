@@ -6,6 +6,7 @@ import OriginStore from './modules/OriginStore.js';
 import SettingsStore from './modules/SettingsStore.js';
 import AccountStore from './modules/AccountStore.js';
 
+Vue.config.devtools = true;
 Vue.use(Vuex);
 
 const store = new Vuex.Store({
