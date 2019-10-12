@@ -34,6 +34,7 @@ process.on('unhandledRejection', (reason, p) => {
 Vue.use(VueI18Next);
 Vue.use(BootstrapVue);
 Vue.use(VueRouter);
+Vue.config.devtools = true;
 Vue.component('Popups', Popups);
 Vue.component('Beetframe', Beetframe);
 store.dispatch("SettingsStore/loadSettings");

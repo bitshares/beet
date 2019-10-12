@@ -109,10 +109,11 @@ const createWindow = async () => {
 
   // Open the DevTools.
   if (isDevMode) {
-      //await installExtension(VUEJS_DEVTOOLS);
-     await installExtension('ljjemllljcmogpfapbkkighbhhppjdbg');
-     console.log('Installing');
-     mainWindow.webContents.openDevTools();
+     
+    installExtension('ljjemllljcmogpfapbkkighbhhppjdbg').then(() => {
+        mainWindow.webContents.openDevTools();
+    });
+     
   }
 
   // Emitted when the window is closed.
