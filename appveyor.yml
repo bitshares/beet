@@ -23,7 +23,7 @@ install:
   - yarn
 build_script:
   - yarn dist
-build: off
+build: on
 artifacts:
 - path: dist/*.exe
   name: BeetSetup
