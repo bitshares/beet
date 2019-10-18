@@ -31,7 +31,8 @@
     "linux": {
       "target": [
         "AppImage",
-        "deb"
+        "deb",
+        "rpm"
       ],
       "category": "Utility"
     }
@@ -42,7 +43,7 @@
     "compile": "webpack --config=build/webpack.app.config.js --env=production",
     "build": "webpack --config=build/webpack.app.config.js --env=production && electron-builder --publish never",
     "release": "webpack --config=build/webpack.app.config.js --env=production && electron-builder --publish never",
-    "dist": "yarn compile && electron-builder"
+    "dist": "yarn compile && electron-builder --publish never"
   },
   "dependencies": {
     "@binance-chain/javascript-sdk": "^2.16.0",

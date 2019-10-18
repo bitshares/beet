@@ -1,9 +1,10 @@
 version: Beet-{build}
+pull_requests:
+  do_not_increment_build_number: true
 image: Visual Studio 2017
 max_jobs: 3
 platform:
   - x64
-skip_non_tags: true
 environment:
   nodejs_version: 12
   GITHUB_TOKEN:
@@ -27,32 +28,11 @@ artifacts:
 - path: dist/*.exe.blockmap
   name: BeetSetupBlockMap
 deploy:
-- provider: GitHub
-#  release: Beet Installer v$(package_version)
-#  description: "This is the latest Beet Installer"
+  provider: GitHub
   auth_token:
     secure: jr08/oNuLLnJAth0P0/KslT6bJPfGGA/QkkPWo83z82i0R+U6jJMZxWVrqDBMXKL
   repository: bitshares/beet
   prerelease: true
-#  force_update: true
+  force_update: true
   on:
     APPVEYOR_REPO_TAG: true
-#    branch: master
-#- provider: GitHub  
-#  release: v$(package_version)-dev-$(APPVEYOR_REPO_COMMIT)
-#  description: "This is a snapshot installer of the latest develop branch. May contain bugs. Not suited for normal use."
-#  auth_token:
-#    secure: jr08/oNuLLnJAth0P0/KslT6bJPfGGA/QkkPWo83z82i0R+U6jJMZxWVrqDBMXKL
-#  repository: bitshares/beet
-#  prerelease: true
-#  on:
-#    branch: develop
-#- provider: GitHub  
-#  release: Refactor Beet Installer v$(package_version)-$(APPVEYOR_REPO_COMMIT)
-#  description: "This is a one-off installer of a specific branch. May contain bugs. Not suited for normal use. Will be removed"
-#  auth_token:
-#    secure: jr08/oNuLLnJAth0P0/KslT6bJPfGGA/QkkPWo83z82i0R+U6jJMZxWVrqDBMXKL
-#  repository: bitshares/beet
-#  draft: true
-#  on:
-#    branch: scaffold-refactor

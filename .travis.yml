@@ -5,7 +5,8 @@ matrix:
   - os: osx
     osx_image: xcode10.2
   - os: linux
-    dist: bionic
+    sudo: required
+    dist: xenial
     addons:
       snaps:
       - name: snapcraft
@@ -13,7 +14,11 @@ matrix:
 env:
   global:
   - GITHUB_REPO: bitshares/beet
-  - secure: CCFEuKsekI/PvoVeSvrBYHgAz/daHJukqktOoviPn1tJnIFCJzNeyhNyepSQSb48QJLeWepkjDTGEbyBBMqbCE+D+M4bDNdSynlBhX/fN8vK2uKYw9MFjdhTo50/ZR1oNY0rhEVmU4zznxsNecYSFAOkq8/XHviBspko14aTcfataZO5vOpJvKoM1pA8nk45C7zjXaK1W3T4Zhx1rQO83yI28mjhbKEWnnSj/g5CrkVBZmuyzhq2ocB2lk1HX5HJFtqLHIRUpX+ERQHSK2VhnAllb5OrIpnZYuMOe3pLWMbnOXcUiy+/+DCWInk/i+JLoGktx2kIpUZ6y4uoxOgdVLZns7A1AcuROYa/5jLbJGhxFPl15jzJS64REOkyuCvjG1zjnITy2Z2UZGh2nIgCJSHPyfy/LbUiBdYqWsFewUiVBvp9nm9kTkoMQihiMOwBsBN9L5JuQ7W87epPNCMSKdymvTzjlS2yshRdAho+j23g6bGahgEwweGUdBHzG3B7aICkjP/nnblnV/k2Ku3lDQmViBYQSAqL1ujGRoxhLC+qckGnjop3yYZjbG92T43Qptp/k5n58GhO510xl2C9iTEP8iLU0hWTAU45dGaVjB/vx2ACB2psJ584bwRsqQM8ZF3DfbTnR1M/Sp8iblFjV9ICuPfv2kMVFohuo44CRzQ=
+  - secure: abv21fB7gKbkYLHChvNptwi3wc1szvxLx+lBGEBsfpv06vJbbJ0fqs317pVQghkpmsdCV440SJ6eC4qD1h2CtN3++VNlkFQcvI9we46VdHIiO15JB/SB/X/fGSIyu5pRWE5xLs30HXk3zYY8xezb1p8rzA/vLbAz+Kfr30iVnaIXBIokAyUjd60V7eIU0uDl+czK42aJEgq4hSfpIAXDinBizAjqnYIJTWSLIYMM6+LQA8nuRWxfq3BANmn/MZOelmLtLOyipnhrENubOkvISpj++MU+0eHYlHryMsP93vEYUqJq0rw1El99eB8IokVEJpvpjmPpopxPo4X+H5kQhewwWkXPiOM6VeV35DSb84AnCmsA+HfaZDLMkz4wbUVJsRuFjmc4PIHPFaGISMsU5Oonsal4hnMDTN5pwhhc7hkGEBza1HXQaNunmdYxuEGvPIls5Adx6jZQD5VE4OcpHHauhDYuta16raNtcO42yN+JR+UrC0gzqMYwNRzpErtFNnrW+69R/84CtDWIcan2eQ0WbxsvpO9Ixyuvp9DEwj5tQosCP16gfnlzJxmUfgvJalG6tFbGXepE3MB1utUt3CTx4R71iuX5Xk4fdH9BZZjyb7z53Jh3XLm3yLKklnPP58YFT7WyHDOXmjcQ4g7uTdWlH1t5Kv5kKbzVjTI7Hq4=
+  
+before_install:
+  - sudo apt-get install --no-install-recommends -y libopenjp2-tools
+  - sudo apt-get install --no-install-recommends -y rpm
 addons:
   apt:
     sources:
@@ -23,6 +28,7 @@ addons:
     - g++
     - icnsutils
     - build-essential
+    - libopenjp2-tools
     - libstdc++6
     - graphicsmagick
     - xz-utils
@@ -36,6 +42,8 @@ install:
 script:
 - PACKAGE_VERSION=$(node -p -e "require('./package.json').version")
 - npm run build
+before_deploy:
+  - ./publish.sh
 deploy:
 - provider: releases
   api_key:
