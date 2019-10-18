@@ -1,4 +1,4 @@
-version: 0.0.{build}
+version: {build}
 image: Visual Studio 2017
 max_jobs: 3
 platform:
@@ -20,7 +20,7 @@ init:
 install:
   - ps: Install-Product node 12 x64
   - ps: $env:package_version = (Get-Content -Raw -Path package.json | ConvertFrom-Json).version
-  - ps: Update-AppveyorBuild -Version "$env:package_version"
+  - ps: Update-AppveyorBuild -Version "$env:package_version-$env:APPVEYOR_BUILD_NUMBER"
   - yarn
 build_script:
   - yarn dist
@@ -32,8 +32,8 @@ artifacts:
   name: BeetSetupBlockMap
 deploy:
 - provider: GitHub
-  tag: v$(appveyor_build_version)
-  release: Beet Installer v$(appveyor_build_version)
+  tag: v$env:package_version
+  release: Beet Installer v$env:package_version
   auth_token:
     secure: jr08/oNuLLnJAth0P0/KslT6bJPfGGA/QkkPWo83z82i0R+U6jJMZxWVrqDBMXKL
   repository: bitshares/beet
@@ -42,7 +42,7 @@ deploy:
   on:
     branch: master
 - provider: GitHub  
-  release: Beet Installer DEV v$(appveyor_build_version)-$(APPVEYOR_REPO_COMMIT)
+  release: Beet Installer DEV v$env:package_version-$(APPVEYOR_REPO_COMMIT)
   auth_token:
     secure: jr08/oNuLLnJAth0P0/KslT6bJPfGGA/QkkPWo83z82i0R+U6jJMZxWVrqDBMXKL
   repository: bitshares/beet
@@ -50,7 +50,7 @@ deploy:
   on:
     branch: develop
 - provider: GitHub  
-  release: Refactor Beet Installer v$(appveyor_build_version)-$(APPVEYOR_REPO_COMMIT)
+  release: Refactor Beet Installer v$env:package_version-$(APPVEYOR_REPO_COMMIT)
   auth_token:
     secure: jr08/oNuLLnJAth0P0/KslT6bJPfGGA/QkkPWo83z82i0R+U6jJMZxWVrqDBMXKL
   repository: bitshares/beet
