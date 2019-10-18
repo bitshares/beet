@@ -26,6 +26,7 @@ addons:
     - rpm
     - libusb-dev
     - libudev-dev
+    - snapcraft
 install:
   - npm ci
 script: npm run release
