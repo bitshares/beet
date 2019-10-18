@@ -6,6 +6,13 @@ matrix:
       osx_image: xcode10.2
     - os: linux
       dist: bionic
+      addons:
+        snaps:
+          - name: snapcraft
+            classic: true
+          - name: multipass
+            beta: true
+            classic: true
 env:
   global:
   - GITHUB_REPO: bitshares/beet
@@ -26,7 +33,6 @@ addons:
     - rpm
     - libusb-dev
     - libudev-dev
-    - snapcraft
 install:
   - npm ci
 script: npm run release
