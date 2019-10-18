@@ -18,6 +18,6 @@ if [[ "$TRAVIS_COMMIT_MESSAGE" =~ ^[\ []Test[]\ ].*$ ]]; then
     export RELEASE_NAME="Beet Installer ${TRAVIS_TAG}"
     export RELEASE_DESC="This is a test development Beet build. Not for production use."
 fi
-
+ls
 git tag $TRAVIS_TAG
 git push --tags
