@@ -27,6 +27,8 @@ artifacts:
   name: BeetSetup
 - path: dist/*.exe.blockmap
   name: BeetSetupBlockMap
+- path: dist/*.yml
+  name: BeetSetupLatest
 deploy:
   provider: GitHub
   auth_token:
