@@ -31,7 +31,6 @@
     "linux": {
       "target": [
         "AppImage",
-        "snap",
         "deb"
       ],
       "category": "Utility"
