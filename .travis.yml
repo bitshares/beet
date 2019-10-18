@@ -33,5 +33,5 @@ addons:
     - rpm
 install:
   - npm ci
-script: npm run build
+script: npm run release
 after_success: "./publish.sh"
