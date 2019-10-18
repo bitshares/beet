@@ -2,6 +2,10 @@ version: 1.0.{build}
 image: Visual Studio 2017
 platform:
   - x64
+environment:
+  nodejs_version: 12
+  GITHUB_TOKEN:
+      secure: jr08/oNuLLnJAth0P0/KslT6bJPfGGA/QkkPWo83z82i0R+U6jJMZxWVrqDBMXKL
 branches:
   only:
     - master
@@ -10,7 +14,6 @@ branches:
 cache:
   - node_modules
   - '%USERPROFILE%\.electron'
-
 init:
   - git config --global core.autocrlf input
 install:
@@ -20,10 +23,6 @@ install:
   - yarn
 build_script:
   - yarn dist
-environment:
-  nodejs_version: 12
-  GITHUB_TOKEN:
-      secure: jr08/oNuLLnJAth0P0/KslT6bJPfGGA/QkkPWo83z82i0R+U6jJMZxWVrqDBMXKL
 build: off
 artifacts:
 - path: dist/*.exe
@@ -48,7 +47,6 @@ deploy:
   repository: bitshares/beet
   artifact: BeetSetup
   prerelease: true
-  force_update: true
   on:
     branch: develop
 - provider: GitHub
@@ -59,6 +57,5 @@ deploy:
   repository: bitshares/beet
   artifact: BeetSetup
   prerelease: true
-  force_update: true
   on:
     branch: scaffold-refactor
