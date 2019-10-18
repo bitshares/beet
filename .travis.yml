@@ -5,7 +5,7 @@ matrix:
     - os: osx
       osx_image: xcode10.2
     - os: linux
-      dist: xenial
+      dist: bionic
 env:
   global:
   - GITHUB_REPO: bitshares/beet
