@@ -10,9 +10,6 @@ matrix:
         snaps:
           - name: snapcraft
             classic: true
-          - name: multipass
-            beta: true
-            classic: true
 env:
   global:
   - GITHUB_REPO: bitshares/beet
