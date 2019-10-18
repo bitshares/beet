@@ -9,12 +9,12 @@ if [[ "$TRAVIS_COMMIT_MESSAGE" =~ ^[\ []Release[]\ ].*$ ]]; then
     export RELEASE_DESC="This is the official Beet v${PACKAGE_VERSION} release."
 fi
 if [[ "$TRAVIS_COMMIT_MESSAGE" =~ ^[\ []RC[]\ ].*$ ]]; then
-    export TRAVIS_TAG="v${PACKAGE_VERSION}-rc"
+    export TRAVIS_TAG="v${PACKAGE_VERSION}-rc-${TRAVIS_COMMIT}"
     export RELEASE_NAME="Beet Installer ${TRAVIS_TAG}"
     export RELEASE_DESC="This is a Release Candidate Beet build. Contains new features but may also contain bugs."
 fi
 if [[ "$TRAVIS_COMMIT_MESSAGE" =~ ^[\ []Test[]\ ].*$ ]]; then
-    export TRAVIS_TAG="v${PACKAGE_VERSION}-devbuild"
+    export TRAVIS_TAG="v${PACKAGE_VERSION}-devbuild-${TRAVIS_COMMIT}"
     export RELEASE_NAME="Beet Installer ${TRAVIS_TAG}"
     export RELEASE_DESC="This is a test development Beet build. Not for production use."
 fi
