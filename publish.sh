@@ -1,4 +1,3 @@
-#!/bin/bash
 cd $TRAVIS_BUILD_DIR
 git config --global user.email "travis@travis-ci.org"
 git config --global user.name "Travis CI"
@@ -19,5 +18,7 @@ if [[ "$TRAVIS_COMMIT_MESSAGE" =~ ^[\ []Test[]\ ].*$ ]]; then
     export RELEASE_DESC="This is a test development Beet build. Not for production use."
 fi
 ls
+git remote rm origin
+git remote add origin https://github.com:${GITHUB_TOKEN}@github.com/bitshares/beet.git > /dev/null 2>&1
 git tag $TRAVIS_TAG
-git push --tags
+git push origin --tags
