@@ -46,7 +46,7 @@ deploy:
     - "dist/BeetSetup.zip"
     - "dist/BeetSetup.AppImage"
   skip_cleanup: true
-  draft: true
+  prerelease: true
   name: v${PACKAGE_VERSION}-dev-${TRAVIS_COMMIT}
   body: "This is a snapshot installer of the latest develop branch. May contain bugs. Not suited for normal use."
   on:
