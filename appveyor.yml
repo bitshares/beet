@@ -1,8 +1,5 @@
+version: 1.0.{build}
 image: Visual Studio 2017
-environment:
-    nodejs_version: 11
-    GITHUB_TOKEN:
-        secure: jr08/oNuLLnJAth0P0/KslT6bJPfGGA/QkkPWo83z82i0R+U6jJMZxWVrqDBMXKL
 platform:
   - x64
 branches:
@@ -16,14 +13,52 @@ cache:
 
 init:
   - git config --global core.autocrlf input
-
 install:
   - ps: Install-Product node 12 x64
   - ps: $env:package_version = (Get-Content -Raw -Path package.json | ConvertFrom-Json).version
   - ps: Update-AppveyorBuild -Version "$env:package_version-$env:APPVEYOR_BUILD_NUMBER"
   - yarn
-
 build_script:
   - yarn dist
-
-test: off
+environment:
+  nodejs_version: 12
+  GITHUB_TOKEN:
+      secure: jr08/oNuLLnJAth0P0/KslT6bJPfGGA/QkkPWo83z82i0R+U6jJMZxWVrqDBMXKL
+build: off
+artifacts:
+- path: dist/*.exe
+  name: BeetSetup
+deploy:
+- provider: GitHub
+  tag: v$(appveyor_build_version)
+  release: Beet Installer v$(appveyor_build_version)
+  auth_token:
+    secure: jr08/oNuLLnJAth0P0/KslT6bJPfGGA/QkkPWo83z82i0R+U6jJMZxWVrqDBMXKL
+  repository: bitshares/beet
+  artifact: BeetSetup
+  prerelease: true
+  force_update: true
+  on:
+    branch: master
+- provider: GitHub
+  tag: v$(appveyor_build_version)-dev
+  release: DEV Beet Installer v$(appveyor_build_version)-dev
+  auth_token:
+    secure: jr08/oNuLLnJAth0P0/KslT6bJPfGGA/QkkPWo83z82i0R+U6jJMZxWVrqDBMXKL
+  repository: bitshares/beet
+  artifact: BeetSetup
+  prerelease: true
+  force_update: true
+  on:
+    branch: develop
+- provider: GitHub
+  tag: v$(appveyor_build_version)-scaffold
+  release: Refactor Beet Installer v$(appveyor_build_version)-scaffold
+  auth_token:
+    secure: jr08/oNuLLnJAth0P0/KslT6bJPfGGA/QkkPWo83z82i0R+U6jJMZxWVrqDBMXKL
+  repository: bitshares/beet
+  artifact: BeetSetup
+  prerelease: true
+  force_update: true
+  on:
+    branch: scaffold-refactor
