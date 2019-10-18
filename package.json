@@ -32,8 +32,7 @@
       "target": [
         "AppImage",
         "snap",
-        "deb",
-        "pacman"
+        "deb"
       ],
       "category": "Utility"
     },
