@@ -11,6 +11,7 @@
   "build": {
     "appId": "io.get-beet.beet",
     "productName": "Beet Blockchain Companion",
+    "artifactName": "BeetSetup.${ext}",
     "files": [
       "app/**/*",
       "node_modules/**/*",
