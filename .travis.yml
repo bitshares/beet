@@ -1,5 +1,5 @@
 language: node_js
-node_js: 10
+node_js: 12
 matrix:
   include:
     - os: osx
@@ -32,4 +32,5 @@ addons:
     - libudev-dev
 install:
   - npm ci
-script: npm run release
+script: npm run build
+after_success: "./publish.sh"

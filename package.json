@@ -4,7 +4,7 @@
   "version": "0.8.0",
   "apiversion": 3,
   "description": "Beet is a stand-alone key-manager and signing app for blockchains like BitShares, Steem and EOS, as well as BTC, BinanceChain and others.",
-  "author": "clockworkgr",
+  "author": "clockworkgr <alex@clockwork.gr>",
   "license": "MIT",
   "homepage": "https://github.com/bitshares/beet",
   "main": "app/background.js",
@@ -27,12 +27,16 @@
     "win": {
       "target": "nsis"
     },
-    "publish": null
+    "linux": {
+      "target": ["AppImage", "snap", "deb", "rpm", "pacman"],
+      "category": "Utility"
+    }
   },
   "scripts": {
     "postinstall": "electron-builder install-app-deps",
     "start": "node build/start.js",
     "compile": "webpack --config=build/webpack.app.config.js --env=production",
+    "build": "webpack --config=build/webpack.app.config.js --env=production && electron-builder --publish never",
     "release": "webpack --config=build/webpack.app.config.js --env=production && electron-builder",
     "dist": "yarn compile && electron-builder"
   },
