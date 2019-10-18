@@ -1,4 +1,4 @@
-version: {build}
+version: Beet-{build}
 image: Visual Studio 2017
 max_jobs: 3
 platform:
