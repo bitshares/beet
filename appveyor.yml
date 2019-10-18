@@ -32,7 +32,6 @@ artifacts:
   name: BeetSetupBlockMap
 deploy:
 - provider: GitHub
-  tag: v$(package_version)
   release: Beet Installer v$(package_version)
   description: "This is the latest Beet Installer"
   auth_token:
@@ -41,9 +40,9 @@ deploy:
   prerelease: true
   force_update: true
   on:
-    branch: master
+    APPVEYOR_REPO_TAG: true
 - provider: GitHub  
-  release: Beet Installer DEV v$(package_version)
+  release: Beet Installer DEV v$(package_version)-$(APPVEYOR_REPO_COMMIT)
   description: "This is a snapshot installer of the latest develop branch. May contain bugs. Not suited for normal use."
   auth_token:
     secure: jr08/oNuLLnJAth0P0/KslT6bJPfGGA/QkkPWo83z82i0R+U6jJMZxWVrqDBMXKL
@@ -51,12 +50,12 @@ deploy:
   prerelease: true
   on:
     branch: develop
-- provider: GitHub  
-  release: Refactor Beet Installer v$(package_version)
-  description: "This is a one-off installer of a specific branch. May contain bugs. Not suited for normal use. Will be removed"
-  auth_token:
-    secure: jr08/oNuLLnJAth0P0/KslT6bJPfGGA/QkkPWo83z82i0R+U6jJMZxWVrqDBMXKL
-  repository: bitshares/beet
-  draft: true
-  on:
-    branch: scaffold-refactor
+#- provider: GitHub  
+#  release: Refactor Beet Installer v$(package_version)-$(APPVEYOR_REPO_COMMIT)
+#  description: "This is a one-off installer of a specific branch. May contain bugs. Not suited for normal use. Will be removed"
+#  auth_token:
+#    secure: jr08/oNuLLnJAth0P0/KslT6bJPfGGA/QkkPWo83z82i0R+U6jJMZxWVrqDBMXKL
+#  repository: bitshares/beet
+#  draft: true
+#  on:
+#    branch: scaffold-refactor
