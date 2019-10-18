@@ -41,7 +41,7 @@
     "start": "node build/start.js",
     "compile": "webpack --config=build/webpack.app.config.js --env=production",
     "build": "webpack --config=build/webpack.app.config.js --env=production && electron-builder --publish never",
-    "release": "webpack --config=build/webpack.app.config.js --env=production && electron-builder",
+    "release": "webpack --config=build/webpack.app.config.js --env=production && electron-builder --publish never",
     "dist": "yarn compile && electron-builder"
   },
   "dependencies": {

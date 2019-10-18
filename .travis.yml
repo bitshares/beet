@@ -51,19 +51,4 @@ deploy:
   body: "This is a snapshot installer of the latest develop branch. May contain bugs. Not suited for normal use."
   on:
     repo: bitshares/beet
-    branch: develop
-- provider: releases
-  api_key:
-    secure: abv21fB7gKbkYLHChvNptwi3wc1szvxLx+lBGEBsfpv06vJbbJ0fqs317pVQghkpmsdCV440SJ6eC4qD1h2CtN3++VNlkFQcvI9we46VdHIiO15JB/SB/X/fGSIyu5pRWE5xLs30HXk3zYY8xezb1p8rzA/vLbAz+Kfr30iVnaIXBIokAyUjd60V7eIU0uDl+czK42aJEgq4hSfpIAXDinBizAjqnYIJTWSLIYMM6+LQA8nuRWxfq3BANmn/MZOelmLtLOyipnhrENubOkvISpj++MU+0eHYlHryMsP93vEYUqJq0rw1El99eB8IokVEJpvpjmPpopxPo4X+H5kQhewwWkXPiOM6VeV35DSb84AnCmsA+HfaZDLMkz4wbUVJsRuFjmc4PIHPFaGISMsU5Oonsal4hnMDTN5pwhhc7hkGEBza1HXQaNunmdYxuEGvPIls5Adx6jZQD5VE4OcpHHauhDYuta16raNtcO42yN+JR+UrC0gzqMYwNRzpErtFNnrW+69R/84CtDWIcan2eQ0WbxsvpO9Ixyuvp9DEwj5tQosCP16gfnlzJxmUfgvJalG6tFbGXepE3MB1utUt3CTx4R71iuX5Xk4fdH9BZZjyb7z53Jh3XLm3yLKklnPP58YFT7WyHDOXmjcQ4g7uTdWlH1t5Kv5kKbzVjTI7Hq4=
-  file: 
-    - "dist/BeetSetup.deb"
-    - "dist/BeetSetup.dmg"
-    - "dist/BeetSetup.zip"
-    - "dist/BeetSetup.AppImage"
-  skip_cleanup: true
-  prerelease: true
-  name: v${PACKAGE_VERSION}-dev-${TRAVIS_COMMIT}
-  body: "This is the latest Beet Installer."
-  on:
-    repo: bitshares/beet
-    branch: master
+    tags: true
