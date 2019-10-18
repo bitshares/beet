@@ -7,6 +7,7 @@
   "author": "clockworkgr <alex@clockwork.gr>",
   "license": "MIT",
   "homepage": "https://github.com/bitshares/beet",
+  "repository": "github:bitshares/beet",
   "main": "app/background.js",
   "build": {
     "appId": "io.get-beet.beet",
@@ -28,9 +29,18 @@
       "target": "nsis"
     },
     "linux": {
-      "target": ["AppImage", "snap", "deb", "rpm", "pacman"],
+      "target": [
+        "AppImage",
+        "snap",
+        "deb",
+        "rpm",
+        "pacman"
+      ],
       "category": "Utility"
-    }
+    },
+    "publish": [
+      "github"
+    ]
   },
   "scripts": {
     "postinstall": "electron-builder install-app-deps",
