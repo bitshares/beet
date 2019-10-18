@@ -42,8 +42,7 @@ install:
 script:
 - PACKAGE_VERSION=$(node -p -e "require('./package.json').version")
 - npm run build
-before_deploy:
-  - ./publish.sh
+- ./publish.sh
 deploy:
 - provider: releases
   file_glob: true
