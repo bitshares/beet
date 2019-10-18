@@ -1,8 +1,15 @@
 image: Visual Studio 2017
-
+environment:
+    nodejs_version: 11
+    GITHUB_TOKEN:
+        secure: jr08/oNuLLnJAth0P0/KslT6bJPfGGA/QkkPWo83z82i0R+U6jJMZxWVrqDBMXKL
 platform:
   - x64
-
+branches:
+  only:
+    - master
+    - develop
+    - scaffold-refactor
 cache:
   - node_modules
   - '%USERPROFILE%\.electron'
