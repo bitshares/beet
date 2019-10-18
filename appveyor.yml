@@ -1,5 +1,6 @@
-version: 1.0.{build}
+version: 0.0.{build}
 image: Visual Studio 2017
+max_jobs: 3
 platform:
   - x64
 environment:
@@ -27,6 +28,8 @@ build: on
 artifacts:
 - path: dist/*.exe
   name: BeetSetup
+- path: dist/*.exe.blockmap
+  name: BeetSetupBlockMap
 deploy:
 - provider: GitHub
   tag: v$(appveyor_build_version)
@@ -34,26 +37,23 @@ deploy:
   auth_token:
     secure: jr08/oNuLLnJAth0P0/KslT6bJPfGGA/QkkPWo83z82i0R+U6jJMZxWVrqDBMXKL
   repository: bitshares/beet
-  artifact: BeetSetup
   prerelease: true
   force_update: true
   on:
     branch: master
 - provider: GitHub  
-  release: DEV Beet Installer v$(appveyor_build_version)-dev
+  release: Beet Installer DEV v$(appveyor_build_version)-$(APPVEYOR_REPO_COMMIT)
   auth_token:
     secure: jr08/oNuLLnJAth0P0/KslT6bJPfGGA/QkkPWo83z82i0R+U6jJMZxWVrqDBMXKL
   repository: bitshares/beet
-  artifact: BeetSetup
   prerelease: true
   on:
     branch: develop
 - provider: GitHub  
-  release: Refactor Beet Installer v$(appveyor_build_version)-scaffold
+  release: Refactor Beet Installer v$(appveyor_build_version)-$(APPVEYOR_REPO_COMMIT)
   auth_token:
     secure: jr08/oNuLLnJAth0P0/KslT6bJPfGGA/QkkPWo83z82i0R+U6jJMZxWVrqDBMXKL
   repository: bitshares/beet
-  artifact: BeetSetup
-  prerelease: true
+  draft: true
   on:
     branch: scaffold-refactor
