@@ -27,6 +27,7 @@
             :chain="incoming.chain"
             :existing="existingLinks"
             :cta="$t('operations:link.request_cta')"
+            extraclass="accountProvide"
         />
         <b-btn
             class="mt-3"
@@ -70,7 +71,7 @@
                             && x.origin==this.incoming.origin
                             && (
                                 this.incoming.chain == "ANY"
-                                || x.chain==this.incoming.chain
+                            || x.chain==this.incoming.chain
                             )
                     }
                 );

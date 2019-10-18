@@ -22,7 +22,7 @@
 // THE SOFTWARE.
 
 "use strict";
-const electron = require("electron");
+import electron from "electron";
 const webContents = win => win.webContents || win.getWebContents();
 
 function create(win, opts) {
@@ -160,7 +160,7 @@ function delUnusedElements(menuTpl) {
     });
 }
 
-module.exports = (opts = {}) => {
+export default (opts = {}) => {
     if (opts.window) {
         const win = opts.window;
         const wc = webContents(win);

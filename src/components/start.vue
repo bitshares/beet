@@ -36,28 +36,19 @@
                 v-if="hasWallet"
                 class="icon-account"
             />
-            <select
+            <multiselect
                 v-if="hasWallet"
-                id="wallet-select"
+                id="wallet-select"                
                 v-model="selectedWallet"
-                class="form-control my-3"
+                :class="'form-control my-3 accountProvide text-left'"
+                :searchable="false"
+                :placeholder="$t('select_wallet')"
+                label="name"
+                :allow-empty="false"
+                :options="walletlist"        
+                track-by="id"
                 @change="passincorrect=''"
-            >
-                <option
-                    selected
-                    disabled
-                    value="0"
-                >
-                    {{ $t('select_wallet') }}
-                </option>
-                <option
-                    v-for="wallet in walletlist"
-                    :key="wallet.id"
-                    :value="wallet.id"
-                >
-                    {{ wallet.name }}
-                </option>
-            </select>
+            />
             <br>
             <span
                 v-if="hasWallet"
@@ -68,9 +59,10 @@
                 id="inputPassword"
                 v-model="walletpass"
                 type="password"
-                class="form-control mb-4"
+                class="form-control mb-4 px-3"
                 :placeholder=" $t('password_placeholder')"
                 required
+                
                 :class="passincorrect"
                 @focus="passincorrect=''"
             >
@@ -129,15 +121,17 @@
 </template>
 <script>
     import RendererLogger from "../lib/RendererLogger";
+    import Multiselect from "vue-multiselect";
     const logger = new RendererLogger();
 
     export default {
         name: "Start",
+        components: { Multiselect },
         i18nOptions: { namespaces: "common" },
         data() {
             return {
                 walletpass: "",
-                selectedWallet: "0",
+                selectedWallet: null,
                 passincorrect: "",
                 errorMsg: ""
             };
@@ -148,7 +142,7 @@
             },
             walletlist() {
                 return this.$store.state.WalletStore.walletlist;
-            }
+            } 
         },
         mounted() {
             logger.debug("Start screen mounted");
@@ -158,7 +152,7 @@
             unlockWallet() {
                 this.$store
                     .dispatch("WalletStore/getWallet", {
-                        wallet_id: this.selectedWallet,
+                        wallet_id: this.selectedWallet.id,
                         wallet_pass: this.walletpass
                     })
                     .then(() => {

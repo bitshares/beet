@@ -1,4 +1,7 @@
 {
-    "presets": ["es2017"],
-    "plugins": ["transform-object-rest-spread"]
+  "presets": [
+    "@babel/preset-env"],
+    "plugins": [
+        "@babel/plugin-transform-runtime"
+    ]
 }

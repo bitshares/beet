@@ -2,7 +2,7 @@
     <multiselect
         id="account-select"
         v-model="selectedAccount"
-        class="form-control"
+        :class="'form-control '+extraclass"
         :searchable="false"
         :allow-empty="false"
         :custom-label="accountLabel"
@@ -38,6 +38,7 @@
             value: Object,
             chain: String,
             cta: String,
+            extraclass: String,
             existing: {
                 type: Array,
                 default: function() {

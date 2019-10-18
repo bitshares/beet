@@ -59,7 +59,7 @@ export default class Bitcoin extends BlockchainAPI {
 
     _publicKeyToAddress(publicKey) {
         let _bitcoin = bitcoin;
-        let publicKeyBuffer = new Buffer(publicKey, 'hex')
+        let publicKeyBuffer = Buffer.from(publicKey, 'hex')
         let options = {};
         if (this._config.testnet) {
             options.network = bitcoin.networks.testnet;
@@ -177,10 +177,10 @@ export default class Bitcoin extends BlockchainAPI {
     }
 
     _verifyString(signature, publicKey, string) {
-        let publicKeyBuffer = new Buffer(publicKey, 'hex')
+        let publicKeyBuffer =  Buffer.from(publicKey, 'hex')
         let keyPair = this._getKeyPairFromPublic(publicKeyBuffer);
         let hash = bitcoin.crypto.sha256(string);
-        return keyPair.verify(hash, new Buffer(signature, 'hex'));
+        return keyPair.verify(hash, Buffer.from(signature, 'hex'));
     }
 
     _compareKeys(key1, key2) {

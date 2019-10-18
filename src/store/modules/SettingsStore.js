@@ -1,4 +1,4 @@
-import Vue from 'vue/dist/vue.js';
+import Vue from 'vue';
 import {
     defaultLocale
 } from '../../config/i18n.js'

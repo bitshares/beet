@@ -1,11 +1,15 @@
 language: node_js
-node_js: 10
+node_js: 12
 matrix:
   include:
-  - os: linux
-    dist: xenial
-  - os: osx
-    osx_image: xcode8.3
+    - os: osx
+      osx_image: xcode10.2
+    - os: linux
+      dist: bionic
+      addons:
+        snaps:
+          - name: snapcraft
+            classic: true
 env:
   global:
   - GITHUB_REPO: bitshares/beet
@@ -26,7 +30,8 @@ addons:
     - rpm
     - libusb-dev
     - libudev-dev
+    - rpm
 install:
   - npm ci
-script: "./package.sh"
+script: npm run build
 after_success: "./publish.sh"

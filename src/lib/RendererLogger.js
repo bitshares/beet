@@ -60,4 +60,4 @@ class RendererLogger {
         
     }
 }
-module.exports = RendererLogger;
+export default  RendererLogger;
