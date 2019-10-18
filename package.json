@@ -31,7 +31,9 @@
   "scripts": {
     "postinstall": "electron-builder install-app-deps",
     "start": "node build/start.js",
-    "release": "webpack --config=build/webpack.app.config.js --env=production && electron-builder"
+    "compile": "webpack --config=build/webpack.app.config.js --env=production",
+    "release": "webpack --config=build/webpack.app.config.js --env=production && electron-builder",
+    "dist": "yarn compile && electron-builder"
   },
   "dependencies": {
     "@binance-chain/javascript-sdk": "^2.16.0",
