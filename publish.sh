@@ -19,6 +19,6 @@ if [[ "$TRAVIS_COMMIT_MESSAGE" =~ ^[\ []Test[]\ ].*$ ]]; then
 fi
 ls
 git remote rm origin
-git remote add origin https://github.com:${GITHUB_TOKEN}@github.com/bitshares/beet.git > /dev/null 2>&1
+git remote add origin https://github.com:${GH_TOKEN}@github.com/bitshares/beet.git > /dev/null 2>&1
 git tag $TRAVIS_TAG
 git push origin --tags
