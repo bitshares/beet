@@ -39,7 +39,8 @@ addons:
 install:
 - npm ci
 script:
-- PACKAGE_VERSION=$(node -p -e "require('./package.json').version")
+- PACKAGE_VERSION=$(node -p "require('./package.json').version")
+- echo $PACKAGE_VERSION
 - npm run build
 - bash publish.sh
 deploy:
@@ -56,8 +57,8 @@ deploy:
     - "dist/*.yml"
   skip_cleanup: true
   prerelease: true
-  name: ${RELEASE_NAME}
-  body: ${RELEASE_DESC}
+  name: $RELEASE_NAME
+  body: $RELEASE_DESC
   on:
     repo: bitshares/beet
     tags: true
