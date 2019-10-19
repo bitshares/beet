@@ -62,5 +62,5 @@ deploy:
   body: "${RELEASE_DESC}"
   on:
     repo: bitshares/beet
-    condition: $SHOULD_BUILD = true
     all_branches: true
+    condition: "$SHOULD_BUILD = true"
