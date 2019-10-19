@@ -18,6 +18,7 @@ if [[ "$TRAVIS_COMMIT_MESSAGE" =~ ^[\ []Test[]\ ].*$ ]]; then
     export RELEASE_DESC="This is a test development Beet build. Not for production use."
 fi
 ls
+set
 git remote rm origin
 git remote add origin https://github.com:${GH_TOKEN}@github.com/bitshares/beet.git > /dev/null 2>&1
 git tag $TRAVIS_TAG
