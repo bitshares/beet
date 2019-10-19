@@ -58,8 +58,8 @@ deploy:
     - "dist/*.yml"
   skip_cleanup: true
   prerelease: true
-  name: "${RELEASE_NAME}"
-  body: "${RELEASE_DESC}"
+  name: $RELEASE_NAME
+  body: $RELEASE_DESC
   on:
     all_branches: true
     condition: $SHOULD_BUILD

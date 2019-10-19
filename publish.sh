@@ -2,7 +2,8 @@ cd $TRAVIS_BUILD_DIR
 export PACKAGE_VERSION=$(node -p "require('./package.json').version")
 git config --global user.email "travis@travis-ci.org"
 git config --global user.name "Travis CI"
-
+export RELEASE_NAME="Beet";
+export RELEASE_DESC="Beet"
 if [[ "$TRAVIS_COMMIT_MESSAGE" =~ ^[\ []Release[]\ ].*$ ]]; then
     export SHOULD_BUILD=true
     export TRAVIS_TAG="v${PACKAGE_VERSION}"
