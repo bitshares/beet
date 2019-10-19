@@ -44,6 +44,10 @@ install:
 script:
 - npm run build
 - bash publish.sh
+before_deploy:
+- export RELEASE_NAME=$(cat release_name)
+- export RELEASE_DESC=$(cat release_desc)
+- export SHOULD_BUILD=$(cat release_deploy)
 deploy:
   provider: releases
   file_glob: true
@@ -62,4 +66,4 @@ deploy:
   body: $RELEASE_DESC
   on:
     all_branches: true
-    condition: $SHOULD_BUILD
+    condition: $SHOULD_BUILD = 1

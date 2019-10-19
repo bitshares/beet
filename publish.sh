@@ -2,26 +2,24 @@ cd $TRAVIS_BUILD_DIR
 export PACKAGE_VERSION=$(node -p "require('./package.json').version")
 git config --global user.email "travis@travis-ci.org"
 git config --global user.name "Travis CI"
-export RELEASE_NAME="Beet";
+export RELEASE_NAME="Beet"
 export RELEASE_DESC="Beet"
 if [[ "$TRAVIS_COMMIT_MESSAGE" =~ ^[\ []Release[]\ ].*$ ]]; then
-    export SHOULD_BUILD=true
+    echo SHOULD_BUILD > "release_deploy"
     export TRAVIS_TAG="v${PACKAGE_VERSION}"
-    export RELEASE_NAME="Beet Installer ${TRAVIS_TAG}"
-    export RELEASE_DESC="This is the official Beet v${PACKAGE_VERSION} release."
-
+    echo "Beet Installer ${TRAVIS_TAG}" > release_name
+    echo "This is the official Beet v${PACKAGE_VERSION} release." > release_desc
 fi
 if [[ "$TRAVIS_COMMIT_MESSAGE" =~ ^[\ []RC[]\ ].*$ ]]; then
-    export SHOULD_BUILD=true
+    echo SHOULD_BUILD > release_deploy
     export TRAVIS_TAG="v${PACKAGE_VERSION}-rc-${TRAVIS_COMMIT}"
-    export RELEASE_NAME="Beet Installer ${TRAVIS_TAG}"
-    export RELEASE_DESC="This is a Release Candidate Beet build. Contains new features but may also contain bugs."
+    echo "Beet Installer ${TRAVIS_TAG}" > release_name
+    echo "This is a Release Candidate Beet build. Contains new features but may also contain bugs." > release_desc
 fi
 if [[ "$TRAVIS_COMMIT_MESSAGE" =~ ^[\ []Test[]\ ].*$ ]]; then
-    export SHOULD_BUILD=true
     export TRAVIS_TAG="v${PACKAGE_VERSION}-devbuild-${TRAVIS_COMMIT}"
-    export RELEASE_NAME="Beet Installer ${TRAVIS_TAG}"
-    export RELEASE_DESC="This is a test development Beet build. Not for production use."    
+    echo "Beet Installer ${TRAVIS_TAG}" > release_name
+    echo "This is a test development Beet build. Not for production use." > release_desc
 fi
 if $SHOULD_BUILD ; then
     git remote rm origin
