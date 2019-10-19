@@ -57,8 +57,8 @@ deploy:
     - "dist/*.yml"
   skip_cleanup: true
   prerelease: true
-  name: $RELEASE_NAME
-  body: $RELEASE_DESC
+  name: "${RELEASE_NAME}"
+  body: "${RELEASE_DESC}"
   on:
     repo: bitshares/beet
     tags: true
