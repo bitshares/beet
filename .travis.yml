@@ -45,7 +45,7 @@ script:
 - npm run build
 - bash publish.sh
 deploy:
-- provider: releases
+  provider: releases
   file_glob: true
   api_key: $GH_TOKEN
   file: 
@@ -61,6 +61,5 @@ deploy:
   name: "${RELEASE_NAME}"
   body: "${RELEASE_DESC}"
   on:
-    repo: bitshares/beet
     all_branches: true
-    condition: "$SHOULD_BUILD = true"
+    condition: $SHOULD_BUILD
