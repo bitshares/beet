@@ -39,9 +39,9 @@ addons:
 install:
 - npm ci
 script:
-- PACKAGE_VERSION=$(node -p "require('./package.json').version")
-- echo $PACKAGE_VERSION
 - npm run build
+- bash publish.sh
+before_deploy:
 - bash publish.sh
 deploy:
 - provider: releases

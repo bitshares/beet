@@ -1,4 +1,5 @@
 cd $TRAVIS_BUILD_DIR
+PACKAGE_VERSION=$(node -p "require('./package.json').version")
 git config --global user.email "travis@travis-ci.org"
 git config --global user.name "Travis CI"
 
