@@ -59,4 +59,4 @@ deploy:
   body: "${RELEASE_DESC}"
   on:
     repo: bitshares/beet
-    tags: true
+    condition: $SHOULD_BUILD = true
