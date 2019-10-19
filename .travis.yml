@@ -59,4 +59,40 @@ deploy:
   body: "${RELEASE_DESC}"
   on:
     repo: bitshares/beet
-    condition: $SHOULD_BUILD = true
+    condition: $TRAVIS_COMMIT_MESSAGE =~ ^\[RC\].*
+- provider: releases
+  file_glob: true
+  api_key: $GH_TOKEN
+  file: 
+    - "dist/BeetSetup.deb"
+    - "dist/BeetSetup.rpm"
+    - "dist/BeetSetup.dmg"
+    - "dist/BeetSetup.dmg.blockmap"
+    - "dist/BeetSetup.zip"
+    - "dist/BeetSetup.AppImage"
+    - "dist/*.yml"
+  skip_cleanup: true
+  prerelease: true
+  name: "${RELEASE_NAME}"
+  body: "${RELEASE_DESC}"
+  on:
+    repo: bitshares/beet
+    condition: $TRAVIS_COMMIT_MESSAGE =~ ^\[Release\].*
+- provider: releases
+  file_glob: true
+  api_key: $GH_TOKEN
+  file: 
+    - "dist/BeetSetup.deb"
+    - "dist/BeetSetup.rpm"
+    - "dist/BeetSetup.dmg"
+    - "dist/BeetSetup.dmg.blockmap"
+    - "dist/BeetSetup.zip"
+    - "dist/BeetSetup.AppImage"
+    - "dist/*.yml"
+  skip_cleanup: true
+  prerelease: true
+  name: "${RELEASE_NAME}"
+  body: "${RELEASE_DESC}"
+  on:
+    repo: bitshares/beet
+    condition: $TRAVIS_COMMIT_MESSAGE =~ ^\[Test\].*
