@@ -4,21 +4,24 @@ git config --global user.email "travis@travis-ci.org"
 git config --global user.name "Travis CI"
 if [[ "$TRAVIS_COMMIT_MESSAGE" =~ ^[\ []Release[]\ ].*$ ]]; then
     $SHOULD_BUILD = true
+    echo "1" > release_deploy
     $TRAVIS_TAG="v${PACKAGE_VERSION}"
-    $RELEASE_NAME="Beet Installer ${TRAVIS_TAG}"
-    $RELEASE_DESC="This is the official Beet v${PACKAGE_VERSION} release."
+    echo "Beet Installer ${TRAVIS_TAG}" > release_name
+    echo "This is the official Beet v${PACKAGE_VERSION} release." > release_desc
 fi
 if [[ "$TRAVIS_COMMIT_MESSAGE" =~ ^[\ []RC[]\ ].*$ ]]; then
     $SHOULD_BUILD = true
     $TRAVIS_TAG="v${PACKAGE_VERSION}"
-    $RELEASE_NAME="v${PACKAGE_VERSION}-rc-${TRAVIS_COMMIT}"
-    $RELEASE_DESC="This is a Release Candidate Beet build. Contains new features but may also contain bugs."    
+    echo "1" > release_deploy
+    echo "v${PACKAGE_VERSION}-rc-${TRAVIS_COMMIT}" > release_name
+    echo "This is a Release Candidate Beet build. Contains new features but may also contain bugs." > release_desc
 fi
 if [[ "$TRAVIS_COMMIT_MESSAGE" =~ ^[\ []Test[]\ ].*$ ]]; then
     $SHOULD_BUILD = true
     $TRAVIS_TAG="v${PACKAGE_VERSION}"
-    $RELEASE_NAME="v${PACKAGE_VERSION}-rc-${TRAVIS_COMMIT}"
-    $RELEASE_DESC="This is a test development Beet build. Not for production use.S"
+    echo "1" > release_deploy
+    echo "v${PACKAGE_VERSION}-rc-${TRAVIS_COMMIT}" > release_name
+    echo "This is a test development Beet build. Not for production use." > release_desc
 fi
 if $SHOULD_BUILD ; then
     git remote rm origin
