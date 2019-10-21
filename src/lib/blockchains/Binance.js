@@ -134,10 +134,10 @@ export default class Bitcoin extends BlockchainAPI {
         let raw = JSON.parse(string);
         raw.msgs.forEach(msg => {
             msg.inputs.forEach(input => {
-                input.address = new Buffer(input.address);
+                input.address = Buffer.from(input.address);
             });
             msg.outputs.forEach(output => {
-                output.address = new Buffer(output.address);
+                output.address = Buffer.from(output.address);
             });
         });
         let tx = new Transaction(raw);
@@ -202,12 +202,12 @@ export default class Bitcoin extends BlockchainAPI {
     }
 
     _signString(key, string) {
-        let signature = binancejs.crypto.generateSignature(new Buffer(string).toString("hex"), key);
+        let signature = binancejs.crypto.generateSignature(Buffer.from(string).toString("hex"), key);
         return signature.toString("hex");
     }
 
     _verifyString(signature, publicKey, string) {
-        return binancejs.crypto.verifySignature(signature, new Buffer(string).toString("hex"), publicKey);
+        return binancejs.crypto.verifySignature(signature, Buffer.from(string).toString("hex"), publicKey);
     }
 
     _compareKeys(key1, key2) {

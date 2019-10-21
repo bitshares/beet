@@ -55,7 +55,7 @@ To run Beet it's simply a case of
 
 ``` bash
 # clone
-git clone git@github.com:bitshares/beet.git
+git clone https://github.com/bitshares/beet
 cd beet
 
 # install dependencies

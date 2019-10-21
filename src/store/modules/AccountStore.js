@@ -1,4 +1,4 @@
-import Vue from 'vue/dist/vue.js';
+import Vue from 'vue';
 import RendererLogger from "../../lib/RendererLogger";
 import CryptoJS from 'crypto-js';
 const logger = new RendererLogger();

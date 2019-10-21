@@ -1,15 +1,26 @@
 language: node_js
-node_js: 10
+node_js: 12
 matrix:
   include:
-  - os: linux
-    dist: xenial
   - os: osx
-    osx_image: xcode8.3
+    osx_image: xcode10.2
+  - os: linux
+    sudo: required
+    dist: xenial
+    before_install:
+    - sudo apt-get install --no-install-recommends -y libopenjp2-tools
+    - sudo apt-get install --no-install-recommends -y rpm
+    addons:
+      snaps:
+      - name: snapcraft
+        classic: true
+branches:
+  except:
+    - /^v?\d+.*$/
 env:
   global:
   - GITHUB_REPO: bitshares/beet
-  - secure: CCFEuKsekI/PvoVeSvrBYHgAz/daHJukqktOoviPn1tJnIFCJzNeyhNyepSQSb48QJLeWepkjDTGEbyBBMqbCE+D+M4bDNdSynlBhX/fN8vK2uKYw9MFjdhTo50/ZR1oNY0rhEVmU4zznxsNecYSFAOkq8/XHviBspko14aTcfataZO5vOpJvKoM1pA8nk45C7zjXaK1W3T4Zhx1rQO83yI28mjhbKEWnnSj/g5CrkVBZmuyzhq2ocB2lk1HX5HJFtqLHIRUpX+ERQHSK2VhnAllb5OrIpnZYuMOe3pLWMbnOXcUiy+/+DCWInk/i+JLoGktx2kIpUZ6y4uoxOgdVLZns7A1AcuROYa/5jLbJGhxFPl15jzJS64REOkyuCvjG1zjnITy2Z2UZGh2nIgCJSHPyfy/LbUiBdYqWsFewUiVBvp9nm9kTkoMQihiMOwBsBN9L5JuQ7W87epPNCMSKdymvTzjlS2yshRdAho+j23g6bGahgEwweGUdBHzG3B7aICkjP/nnblnV/k2Ku3lDQmViBYQSAqL1ujGRoxhLC+qckGnjop3yYZjbG92T43Qptp/k5n58GhO510xl2C9iTEP8iLU0hWTAU45dGaVjB/vx2ACB2psJ584bwRsqQM8ZF3DfbTnR1M/Sp8iblFjV9ICuPfv2kMVFohuo44CRzQ=
+  - secure: "AKaOWBQXHrukCIUFLoy6xaPigcrLlKLyO78ApdbS9zeoqVUKJamgkvpVoAo3KVtPTkEuWfD2LBFlc+OOv/3zECNynaEzy8gI/6IsUUm8DEIzg5phrImkcrW3E0rxJ1T5kQtXcAYDe36S9DhzN32qRb3YKOQgGeMykX+aTw432c3KcmYQ0HTQT6TdqXe6dmG4/nxZfbtUky45Nvp8YykyHr+TL1s9FDO+jEiaSBwnNxqYsWil60XqD1d6YPvzNuZdqwdhT+bdsDhHa9kx5d+3zPczCVW3Y5TtOtRoToyi6OUmEzUF1QwDu1fOj6u/vK1xZTys34R3RAWCUjYgF0uYx5bZbXGBQz1O0wjAdAj/XDpw0Z13zyXKxYHbNj2yY/Dy5NOMb75NEf4JkWa1uSWlEcpyCcYj6EZuKojNi1pOzAoi9uF6Z5nhc/8z6EqkPQIIz2cg1Q8MpzqL0an4wwS00xHBm5LrwqYumDqnputAjEh7VDp1ee+WazbNQqXO6d+GDzadpG7HK/f86lLW6fAkzyyCOn4CAS7Hl1wEO0DVRTzvOc8DETG4Usg2kYUYDY7OzZkWf1I9uLbZcro9RRqF0h/A7lSdnL1SiVawzLovz0+mvhx1C/BHr95Sco+voBqdIyH+LU+9c+4hIsId9n2Ze8iehdflehczymhFBVg5hNA="
 addons:
   apt:
     sources:
@@ -19,6 +30,7 @@ addons:
     - g++
     - icnsutils
     - build-essential
+    - libopenjp2-tools
     - libstdc++6
     - graphicsmagick
     - xz-utils
@@ -26,7 +38,31 @@ addons:
     - rpm
     - libusb-dev
     - libudev-dev
+    - rpm
 install:
-  - npm ci
-script: "./package.sh"
-after_success: "./publish.sh"
+- npm ci
+script:
+- npm run build
+- bash publish.sh
+- test -s release_name && export RELEASE_NAME=$(cat release_name) && rm release_name
+- test -s release_desc && export RELEASE_DESC=$(cat release_desc) && rm release_desc
+- test -s travis_tag && export TRAVIS_TAG=$(cat travis_tag) && rm travis_tag
+deploy:
+  provider: releases
+  file_glob: true
+  api_key: $GH_TOKEN
+  file: 
+    - "dist/BeetSetup.deb"
+    - "dist/BeetSetup.rpm"
+    - "dist/BeetSetup.dmg"
+    - "dist/BeetSetup.dmg.blockmap"
+    - "dist/BeetSetup.zip"
+    - "dist/BeetSetup.AppImage"
+    - "dist/*.yml"
+  skip_cleanup: true
+  prerelease: true
+  name: $RELEASE_NAME
+  body: $RELEASE_DESC
+  on:
+    tags: true
+    all_branches: true
