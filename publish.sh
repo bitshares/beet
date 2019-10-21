@@ -17,7 +17,7 @@ fi
 if [[ "$TRAVIS_COMMIT_MESSAGE" =~ ^[\ []Test[]\ ].*$ ]]; then
     export SHOULD_BUILD=true
     export TRAVIS_TAG="v${PACKAGE_VERSION}"
-    echo "v${PACKAGE_VERSION}-rc-${TRAVIS_COMMIT}" > release_name
+    echo "v${PACKAGE_VERSION}-dev-${TRAVIS_COMMIT}" > release_name
     echo "This is a test development Beet build. Not for production use." > release_desc
 fi
 echo $TRAVIS_TAG > travis_tag
