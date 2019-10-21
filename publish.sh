@@ -11,16 +11,16 @@ if [[ "$TRAVIS_COMMIT_MESSAGE" =~ ^[\ []Release[]\ ].*$ ]]; then
 fi
 if [[ "$TRAVIS_COMMIT_MESSAGE" =~ ^[\ []RC[]\ ].*$ ]]; then
     export SHOULD_BUILD="true"
-    export TRAVIS_TAG="v${PACKAGE_VERSION}"
+    export TRAVIS_TAG="v${PACKAGE_VERSION}-rc-${TRAVIS_COMMIT}"
     echo $TRAVIS_TAG > travis_tag
-    echo "v${PACKAGE_VERSION}-rc-${TRAVIS_COMMIT}" > release_name
+    echo "Release Candidate: v${PACKAGE_VERSION}-rc-${TRAVIS_COMMIT}" > release_name
     echo "This is a Release Candidate Beet build. Contains new features but may also contain bugs." > release_desc
 fi
 if [[ "$TRAVIS_COMMIT_MESSAGE" =~ ^[\ []Test[]\ ].*$ ]]; then
     export SHOULD_BUILD=true
-    export TRAVIS_TAG="v${PACKAGE_VERSION}"
+    export TRAVIS_TAG="v${PACKAGE_VERSION}-dev-${TRAVIS_COMMIT}"
     echo $TRAVIS_TAG > travis_tag
-    echo "v${PACKAGE_VERSION}-dev-${TRAVIS_COMMIT}" > release_name
+    echo "Test Release: v${PACKAGE_VERSION}-dev-${TRAVIS_COMMIT}" > release_name
     echo "This is a test development Beet build. Not for production use." > release_desc
 fi
 if [ "$SHOULD_BUILD" = "true" ]; then
