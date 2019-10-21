@@ -47,7 +47,6 @@ script:
 before_deploy:
 - export RELEASE_NAME=$(cat release_name)
 - export RELEASE_DESC=$(cat release_desc)
-- export SHOULD_BUILD=$(cat release_deploy)
 deploy:
   provider: releases
   file_glob: true
@@ -65,5 +64,5 @@ deploy:
   name: $RELEASE_NAME
   body: $RELEASE_DESC
   on:
+    tags: true
     all_branches: true
-    condition: $SHOULD_BUILD = 1
