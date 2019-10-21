@@ -44,9 +44,9 @@ install:
 script:
 - npm run build
 - bash publish.sh
-before_deploy:
 - export RELEASE_NAME=$(cat release_name)
 - export RELEASE_DESC=$(cat release_desc)
+- export TRAVIS_TAG=$(cat travis_tag)
 deploy:
   provider: releases
   file_glob: true

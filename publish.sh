@@ -20,6 +20,7 @@ if [[ "$TRAVIS_COMMIT_MESSAGE" =~ ^[\ []Test[]\ ].*$ ]]; then
     echo "v${PACKAGE_VERSION}-rc-${TRAVIS_COMMIT}" > release_name
     echo "This is a test development Beet build. Not for production use." > release_desc
 fi
+echo $TRAVIS_TAG > travis_tag
 if [ "$SHOULD_BUILD" = "true" ]; then
     git remote rm origin
     git remote add origin https://github.com:${GH_TOKEN}@github.com/bitshares/beet.git > /dev/null 2>&1
