@@ -31,7 +31,7 @@ export default class BeetWS extends EventEmitter {
         try {
             key = await fetch('https://raw.githubusercontent.com/beetapp/beet-certs/master/beet.key').then(res => res.text());
             cert = await fetch('https://raw.githubusercontent.com/beetapp/beet-certs/master/beet.cert').then(res => res.text());
-            
+
             let db = BeetDB.ssl_data;
             let payload= {key: key, cert: cert};
             db.toArray().then((res) => {
@@ -51,19 +51,7 @@ export default class BeetWS extends EventEmitter {
                 cert=Fs.readFileSync(__dirname + '/ssl/beet.cert');
             }
         }
-        
-       
-        const httpsServer = Https.createServer({
-            key: key,
-            cert: cert
-        });
-        const server = new WebSocket.Server({
-            server: httpsServer
-        });
-        const plainserver = new WebSocket.Server({
-            port: port
-        });
-        httpsServer.listen(sslport);
+
         this._clients = [];
         this._monitor = setInterval(function () {
             for (var clientid in self._clients) {
@@ -78,12 +66,46 @@ export default class BeetWS extends EventEmitter {
                 }
             }
         }, timeout);
-        server.on("connection", (client) => {
-            self._handleConnection(client);
-        });
-        plainserver.on("connection", (client) => {
-            self._handleConnection(client);
-        });
+
+        let atLeastOneStarting = false;
+
+        // setup http server
+        try {
+            const plainServer = new WebSocket.Server({
+                port: port
+            });
+            plainServer.on("connection", (client) => {
+                self._handleConnection(client);
+            });
+            atLeastOneStarting = true;
+            console.info("Plain WebSocket server listening on port ", port);
+        } catch (err) {
+            console.error("The ws server could not be established, exception below");
+            console.exception(err);
+        }
+
+        // setup https server
+        try {
+            const httpsServer = Https.createServer({
+                key: key,
+                cert: cert
+            });
+            const server = new WebSocket.Server({
+                server: httpsServer
+            });
+            httpsServer.listen(sslport);
+            server.on("connection", (client) => {
+                self._handleConnection(client);
+            });
+            atLeastOneStarting = true;
+            console.info("Secure WebSocket server listening on port ", sslport);
+        } catch (err) {
+            console.error("The wss could not be established, exception below");
+            console.exception(err);
+        }
+        if (atLeastOneStarting) {
+            throw Error("No WebSocket server could be starting, aborting ...")
+        }
     }
 
     noop() {
@@ -355,5 +377,6 @@ export default class BeetWS extends EventEmitter {
             let message = JSON.parse(msg);
             self._handleMessage(client, message);
         });
+        console.info("Client connected:", client.appName);
     }
 }
