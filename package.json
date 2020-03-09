@@ -50,7 +50,7 @@
     "@panter/vue-i18next": "^0.15.1",
     "@smokenetwork/smoke-js": "^0.1.2",
     "@whaleshares/wlsjs": "^0.1.7",
-    "bitcoinjs-lib": "^5.1.6",
+    "bitcoinjs-lib": "^5.1.7",
     "bitsharesjs": "^3.1.1",
     "bootstrap-vue": "^2.0.3",
     "chalk": "^2.4.2",

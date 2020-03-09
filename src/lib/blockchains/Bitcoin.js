@@ -4,7 +4,8 @@ const logger = new RendererLogger();
 
 const fetch = require('node-fetch');
 
-import bitcoin from "bitcoinjs-lib";
+import * as bitcoin from "bitcoinjs-lib";
+
 import {formatAsset} from "../assetUtils";
 
 export default class Bitcoin extends BlockchainAPI {
