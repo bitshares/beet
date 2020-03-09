@@ -4,6 +4,11 @@
         ref="chosen_import"
         :selected-chain="chain"
     />
+    <ImportAdressBased
+        v-else-if="type == 'ImportAdressBased'"
+        ref="chosen_import"
+        :selected-chain="chain"
+    />
     <ImportKeys
         v-else-if="type == 'ImportKeys'"
         ref="chosen_import"
