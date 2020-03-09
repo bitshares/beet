@@ -103,7 +103,7 @@ export default class BeetWS extends EventEmitter {
             console.error("The wss could not be established, exception below");
             console.exception(err);
         }
-        if (atLeastOneStarting) {
+        if (!atLeastOneStarting) {
             throw Error("No WebSocket server could be starting, aborting ...")
         }
     }
