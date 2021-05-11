@@ -5,34 +5,34 @@ let _blockchains = {
         chainId: '4018d7844c78f6a6c41c6a552b898022310fc5dec06da467ee7905a8dad512c8',
         nodeList: [
             {
-                url: "wss://eu.nodes.bitshares.ws"
+                url: "wss://newyork.bitshares.im/ws"
             },
             {
-                url: "wss://bitshares.openledger.info/ws"
+                url: "wss://api.bts.mobi/ws"
             },
             {
-                url: "wss://new-york.us.api.bitshares.org/ws"
+                url: "wss://api.iamredbar.com/ws"
             },
             {
-                url: "wss://bts-seoul.clockwork.gr"
+                url: "wss://nexus01.co.uk/ws"
             },
             {
-                url: "wss://na.openledger.info/ws"
+                url: "wss://dex.iobanker.com/ws"
             },
             {
-                url: "wss://bts.proxyhosts.info/wss"
-            },
-            {
-                url: "wss://btsfullnode.bangzi.info/ws"
-            },
-            {
-                url: "wss://japan.bitshares.apasia.tech/ws"
-            },
-            {
-                url: "wss://ws.gdex.top"
+                url: "wss://node.xbts.io/ws"
             },
             {
                 url: "wss://api.dex.trading/"
+            },
+            {
+                url: "wss://api-bts.liondani.com/ws"
+            },
+            {
+                url: "wss://api.bitshares.bhuz.info/ws"
+            },
+            {
+                url: "wss://btsws.roelandp.nl/ws"
             }
         ]
     },
@@ -43,11 +43,16 @@ let _blockchains = {
         chainId: '39f5e2ede1f8bc1a3a54a7914414e3779e33193f1f5693510e73cb7a87617447',
         nodeList: [
             {
-                url: "wss://testnet.nodes.bitshares.ws",
-                region: "Western Europe",
-                country: "Germany",
-                operator: "Infrastructure Worker",
-                contact: "email:info@blockchainprojectsbv.com"
+                url: "wss://testnet.xbts.io/ws"
+            },
+            {
+                url: "wss://testnet.dex.trading/"
+            },
+            {
+                url: "wss://api-testnet.61bts.com/ws"
+            },
+            {
+                url: "wss://testnet.bitshares.im/ws"
             }
         ]
     },
