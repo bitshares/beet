@@ -5,6 +5,9 @@ let _blockchains = {
         chainId: '4018d7844c78f6a6c41c6a552b898022310fc5dec06da467ee7905a8dad512c8',
         nodeList: [
             {
+                url: "wss://eu.nodes.bitshares.ws"
+            },
+            {
                 url: "wss://newyork.bitshares.im/ws"
             },
             {
@@ -53,6 +56,9 @@ let _blockchains = {
             },
             {
                 url: "wss://testnet.bitshares.im/ws"
+            },
+            {
+                url: "https://eu.nodes.testnet.bitshares.ws/"
             }
         ]
     },
