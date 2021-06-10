@@ -15,6 +15,7 @@ import RendererLogger from "./RendererLogger";
 import store from "../store";
 const logger = new RendererLogger();
 var ec = new EC('curve25519');
+import env from "env";
 /*
 import RendererLogger from "./RendererLogger";
 const logger = new RendererLogger();
@@ -28,9 +29,13 @@ export default class BeetWS extends EventEmitter {
         var self = this;
         let key;
         let cert;
+        let keyfile = env.localhost_cert + '.key';
+        let certfile = env.localhost_cert + '.cert';
         try {
-            key = await fetch('https://raw.githubusercontent.com/beetapp/beet-certs/master/beet.key').then(res => res.text());
-            cert = await fetch('https://raw.githubusercontent.com/beetapp/beet-certs/master/beet.cert').then(res => res.text());
+            // try fetching directly from github
+
+            key = await fetch('https://raw.githubusercontent.com/beetapp/beet-certs/master/' + keyfile).then(res => res.text());
+            cert = await fetch('https://raw.githubusercontent.com/beetapp/beet-certs/master/' + certfile).then(res => res.text());
 
             let db = BeetDB.ssl_data;
             let payload= {key: key, cert: cert};
@@ -46,9 +51,9 @@ export default class BeetWS extends EventEmitter {
             if (ssl && ssl.length>0) {
                 key=ssl[0].key;
                 cert=ssl[0].cert;
-            }else{
-                key=Fs.readFileSync(__dirname + '/ssl/beet.key');
-                cert=Fs.readFileSync(__dirname + '/ssl/beet.cert');
+            } else {
+                key=Fs.readFileSync(__dirname + '/ssl/' + keyfile);
+                cert=Fs.readFileSync(__dirname + '/ssl/' + certfile);
             }
         }
 
