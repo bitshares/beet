@@ -171,7 +171,7 @@
             v-if="createNewWallet"
             class="mt-2 mb-2 small"
         >
-            &copy; 2019 BitShares
+            &copy; 2019-2021 BitShares
         </p>
     </div>
 </template>

@@ -38,14 +38,14 @@
             />
             <multiselect
                 v-if="hasWallet"
-                id="wallet-select"                
+                id="wallet-select"
                 v-model="selectedWallet"
                 :class="'form-control my-3 accountProvide text-left'"
                 :searchable="false"
                 :placeholder="$t('select_wallet')"
                 label="name"
                 :allow-empty="false"
-                :options="walletlist"        
+                :options="walletlist"
                 track-by="id"
                 @change="passincorrect=''"
             />
@@ -62,7 +62,7 @@
                 class="form-control mb-4 px-3"
                 :placeholder=" $t('password_placeholder')"
                 required
-                
+
                 :class="passincorrect"
                 @focus="passincorrect=''"
             >
@@ -115,7 +115,7 @@
             {{ errorMsg }}
         </b-modal>
         <p class="mt-2 mb-2 small">
-            &copy; 2019 BitShares
+            &copy; 2019-2021 BitShares
         </p>
     </div>
 </template>
@@ -142,7 +142,7 @@
             },
             walletlist() {
                 return this.$store.state.WalletStore.walletlist;
-            } 
+            }
         },
         mounted() {
             logger.debug("Start screen mounted");
