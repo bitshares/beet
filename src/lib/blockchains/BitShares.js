@@ -1,9 +1,11 @@
 import BlockchainAPI from "./BlockchainAPI";
 import {Apis} from "bitsharesjs-ws";
 import {
+    Aes,
     PrivateKey,
     PublicKey,
     TransactionBuilder,
+    TransactionHelper,
     Signature,
     FetchChain
 } from "bitsharesjs";
@@ -405,7 +407,6 @@ export default class BitShares extends BlockchainAPI {
     }
 
     _verifyString(signature, publicKey, string) {
-        let _PublicKey = PublicKey;
         let sig = Signature.fromHex(signature);
         let pkey = PublicKey.fromPublicKeyString(publicKey, this._getCoreSymbol());
         return sig.verifyBuffer(
@@ -414,7 +415,22 @@ export default class BitShares extends BlockchainAPI {
         );
     }
 
-    async transfer(key, from, to, amount, memo = null) {
+    _createMemoObject(from, to, memo) {
+        let nonce = TransactionHelper.unique_nonce_uint64();
+        return {
+            from: from.memo.public_key,
+            to: to.memo.public_key,
+            nonce,
+            message: Aes.encrypt_with_checksum(
+                PrivateKey.fromWif(memo.key),
+                to.memo.public_key,
+                nonce,
+                memo.memo
+            )
+        };
+    }
+
+    async transfer(key, from, to, amount, memo = null, broadcast = true) {
         if (!amount.amount || !amount.asset_id) {
             throw "Amount must be a dict with amount and asset_id as keys"
         }
@@ -430,11 +446,22 @@ export default class BitShares extends BlockchainAPI {
                 from: from.id,
                 to: to.id,
                 amount: amount,
-                memo: memo == null ? undefined : memo
+                memo: memo == null ? undefined : this._createMemoObject(from, to, memo)
             }
         };
         let transaction = await this.sign(operation, key);
-        return await this.broadcast(transaction);
+        if (broadcast) {
+            return await this.broadcast(transaction);
+        } else {
+            return {
+                transaction: transaction,
+                feeInSatoshis: {asset_id: "1.3.0", satoshis: transaction.operations.reduce((a, b) => a + b[1].fee.amount, 0)},
+            };
+        }
+    }
+
+    supportsFeeCalculation() {
+        return true;
     }
 
     getExplorer(object) {

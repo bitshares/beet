@@ -15,7 +15,8 @@
         <pre class="text-left custom-content"><code>
   Recipient: {{ to }}
   Amount: {{ toSend }}
-{{ toSendFee != null ? "    Fee: " + toSendFee : "" }}
+{{ memo != null ? "  Memo: '" + memo + "'" : undefined}}
+{{ toSendFee != null ? "    Fee: " + toSendFee : undefined }}
         </code></pre>
         <b-btn
             class="mt-3"
@@ -55,7 +56,8 @@
                 feeInSatoshis: null,
                 asset_id: null,
                 toSend: null,
-                toSendFee: null
+                toSendFee: null,
+                memo: null,
             };
         },
         methods: {
@@ -72,7 +74,7 @@
                 this.to = this.incoming.params.to;
                 this.satoshis = this.incoming.params.amount.satoshis;
                 this.asset_id = this.incoming.params.amount.asset_id;
-
+                this.memo = this.incoming.params.memo;
                 this.toSend = blockchain.format(
                     this.incoming.params.amount
                 );
@@ -81,15 +83,16 @@
                     this.toSendFee = "Calculating ...";
                     let loadFee = async () => {
                         try {
+                            const account = this.$store.getters['AccountStore/getSigningKey'](this.incoming)
                             let result = await blockchain.transfer(
-                                await getKey(this.$store.getters['AccountStore/getSigningKey'](this.incoming).keys.active),
-                                this.$store.getters['AccountStore/getSigningKey'](this.incoming).accountName,
+                                await getKey(account.keys.active),
+                                account.accountName,
                                 this.incoming.params.to,
                                 {
                                     amount: this.incoming.params.amount.satoshis || this.incoming.params.amount.amount,
                                     asset_id: this.incoming.params.amount.asset_id
                                 },
-                                this.incoming.params.memo,
+                                !!this.incoming.params.memo ? {key: await getKey(account.keys.memo), memo: this.incoming.params.memo} : undefined,
                                 false
                             );
                             this.feeInSatoshis = result.feeInSatoshis;
@@ -115,16 +118,16 @@
                 if (!this.incoming.params.amount) {
                     this.incoming.params.amount = this.incoming.params.satoshis;
                 }
-
+                const account = this.$store.getters['AccountStore/getSigningKey'](this.incoming)
                 return await blockchain.transfer(
-                    await getKey(this.$store.getters['AccountStore/getSigningKey'](this.incoming).keys.active),
-                    this.$store.getters['AccountStore/getSigningKey'](this.incoming).accountName,
+                    await getKey(account.keys.active),
+                    account.accountName,
                     this.incoming.params.to,
                     {
                         amount: this.incoming.params.amount.satoshis || this.incoming.params.amount.amount,
                         asset_id: this.incoming.params.amount.asset_id
                     },
-                    this.incoming.params.memo,
+                    !!this.incoming.params.memo ? {key: await getKey(account.keys.memo), memo: this.incoming.params.memo} : undefined,
                 );
             }
         }
