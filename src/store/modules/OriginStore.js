@@ -101,7 +101,7 @@ const actions = {
 
 const getters = {
     walletAccessibleDapps: (state) => (account_id,chain) => {
-        return state.apps.find( x => { return x.chain==chain && x.account_id==account_id});
+        return state.apps.filter( x => { return x.chain==chain && x.account_id==account_id});
     }
 };
 

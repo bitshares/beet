@@ -139,7 +139,7 @@ body {
     background: $alternate;
     border: 1px solid $alternate;
     outline: none !important;
-    box-shadow: none !important;    
+    box-shadow: none !important;
     box-shadow: 0px 2px 6px 1px rgba(0,0,0,0.3) !important;
 }
 .error {
@@ -329,13 +329,13 @@ p {
     border: 1px solid #ced4da;
     padding-left: 1rem;
     .multiselect__content-wrapper {
-        position:absolute; 
+        position:absolute;
         z-index:100;
         width:100%;
         top: 3.4rem;
         left:0;
         background:white;
-        box-shadow: 0px 2px 6px 1px rgba(0,0,0,0.3) !important;        
+        box-shadow: 0px 2px 6px 1px rgba(0,0,0,0.3) !important;
         border: 1px solid #ced4da;
         .multiselect__content {
             list-style:none;
@@ -538,6 +538,9 @@ pre {
 }
 
 .content {
+    max-height: 30rem;
+    overflow-y: auto;
+    overflow-x: hidden;
     flex-grow: 1;
 }
 

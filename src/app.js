@@ -39,7 +39,7 @@ Vue.component('Popups', Popups);
 Vue.component('Beetframe', Beetframe);
 store.dispatch("SettingsStore/loadSettings");
 store.dispatch("WhitelistStore/loadWhitelist");
-store.dispatch("OriginStore/loadApps");
+
 i18next.use(Backend).init({
   lng: store.state.SettingsStore.settings.locale.iso,
   ns: ['common', 'operations'],

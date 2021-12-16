@@ -147,6 +147,7 @@
         mounted() {
             logger.debug("Start screen mounted");
             this.$store.dispatch("WalletStore/loadWallets", {}).catch(() => {});
+            this.$store.dispatch("OriginStore/loadApps");
         },
         methods: {
             unlockWallet() {

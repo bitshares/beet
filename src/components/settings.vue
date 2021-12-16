@@ -88,7 +88,7 @@
                     </tbody>
                 </table>
             </div>
-            <div class="backup mt-2">
+            <div class="backup mt-2 mb-4">
                 <p class="mb-2 font-weight-bold small">
                     <u>{{ $t('backup_lbl') }}</u>
                 </p>
@@ -151,8 +151,9 @@
         },
         watch: {},
         created() {},
-        mounted() {
+        async mounted() {
             logger.debug("Settings Mounted");
+            await this.$store.dispatch("OriginStore/loadApps");
         },
         methods: {
             downloadBackup: async function () {
