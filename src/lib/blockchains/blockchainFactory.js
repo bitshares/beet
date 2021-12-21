@@ -3,6 +3,7 @@ import { blockchains } from "../../config/config.js";
 let apiCache = {}
 
 import BitShares from "./BitShares"
+import TUSC from "./TUSC"
 import Steem from "./Steem"
 import store from "../../store";
 import WhaleShares from "./WhaleShares";
@@ -27,6 +28,11 @@ export default function getBlockchainAPI(chain = null) {
             apiCache.BTS_TEST = new BitShares(blockchains[chain]);
         }
         return apiCache.BTS_TEST;
+    } else if (chain == "TUSC") {
+        if (!apiCache.TUSC) {
+            apiCache.TUSC = new TUSC(blockchains[chain]);
+        }
+        return apiCache.TUSC;
     } else if (chain == "STEEM" || chain == "STM") {
         if (!apiCache.STEEM) {
             apiCache.STEEM = new Steem(blockchains["STEEM"]);

@@ -62,6 +62,16 @@ let _blockchains = {
             }
         ]
     },
+    TUSC: {
+        coreSymbol: 'TUSC',
+        name: 'The Universal Settlement Coin',
+        chainId: 'eb938e2a955e39e335120d0a99f3b9f8c04a9ed5690275ea5037d6bbadfc6cf3',
+        nodeList: [
+            {
+                url: "wss://api.cryptotusc.com"
+            }
+        ]
+    },
     STEEM: {
         coreSymbol: 'STM',
         name: 'Steem',
