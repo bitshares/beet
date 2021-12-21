@@ -1,7 +1,7 @@
 {
   "name": "beet",
   "productName": "Beet Blockchain Companion",
-  "version": "0.12.0",
+  "version": "0.13.0-rc1",
   "apiversion": 3,
   "description": "Beet is a stand-alone key-manager and signing app for blockchains like BitShares, Steem and EOS, as well as BTC, BinanceChain and others.",
   "author": "clockworkgr <alex@clockwork.gr>",
@@ -30,9 +30,7 @@
     },
     "linux": {
       "target": [
-        "AppImage",
-        "deb",
-        "rpm"
+        "AppImage"
       ],
       "category": "Utility"
     }
@@ -57,7 +55,7 @@
     "crypto-js": "^3.1.9-1",
     "dexie": "^2.0.4",
     "electron-devtools-installer": "^2.2.4",
-    "elliptic": "^6.5.1",
+    "elliptic": "^6.5.4",
     "eosjs": "^20.0.0",
     "eosjs-ecc": "^4.0.7",
     "fs-jetpack": "^2.2.2",
@@ -74,7 +72,7 @@
     "vue-password-strength-meter": "^1.5.0",
     "vue-router": "^3.1.3",
     "vuex": "^3.1.1",
-    "ws": "^7.1.2",
+    "ws": "^7.5.6",
     "zxcvbn": "^4.4.2"
   },
   "devDependencies": {
@@ -91,7 +89,7 @@
     "eslint-plugin-vue": "^5.2.3",
     "file-loader": "^4.2.0",
     "friendly-errors-webpack-plugin": "^1.7.0",
-    "node-sass": "^4.12.0",
+    "node-sass": "^4.14.1",
     "sass-loader": "^8.0.0",
     "source-map-support": "^0.5.13",
     "style-loader": "^1.0.0",
