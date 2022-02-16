@@ -7,7 +7,6 @@ import TUSC from "./TUSC"
 import Steem from "./Steem"
 import store from "../../store";
 import WhaleShares from "./WhaleShares";
-import SmokeNetwork from "./SmokeNetwork";
 import EOSmainnet from "./EOSmainnet";
 import TLOS from "./TLOS";
 import Bitcoin from "./Bitcoin";
@@ -43,11 +42,6 @@ export default function getBlockchainAPI(chain = null) {
             apiCache.WLS = new WhaleShares(blockchains[chain]);
         }
         return apiCache.WLS;
-    } else if (chain == "SMOKE" || chain == "SMK") {
-        if (!apiCache.SMOKE) {
-            apiCache.SMOKE = new SmokeNetwork(blockchains["SMOKE"]);
-        }
-        return apiCache.SMOKE;
     } else if (chain == "EOS") {
         if (!apiCache.EOS) {
             apiCache.EOS = new EOSmainnet(blockchains[chain]);

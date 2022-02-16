@@ -102,29 +102,6 @@ let _blockchains = {
             }
         ]
     },
-    SMOKE: {
-        coreSymbol: 'SMK',
-        name: 'Smoke',
-        chainID: '1ce08345e61cd3bf91673a47fc507e7ed01550dab841fd9cdb0ab66ef576aaf0',
-        nodeList: [
-            {
-                url: 'https://rpc.smoke.io/',
-                location: 'Unknown',
-                region: 'Unkown',
-                country: 'Unkown',
-                operator: 'Smoke Holdings Ltd',
-                contact: 'hello@smoke.network',
-            },
-            {
-                url: 'http://pubrpc.smoke.io/',
-                location: 'Unknown',
-                region: 'Unkown',
-                country: 'Unkown',
-                operator: 'Smoke Holdings Ltd',
-                contact: 'hello@smoke.network',
-            },
-        ]
-    },
     EOS: {
         coreSymbol: 'EOS',
         name: 'EOSmainnet',
