@@ -72,7 +72,7 @@ let _blockchains = {
             }
         ]
     },
-    STEEM: {
+    /*STEEM: {
         coreSymbol: 'STM',
         name: 'Steem',
         chainId: '0',
@@ -131,7 +131,7 @@ let _blockchains = {
                 contact: "Greymass"
             }
         ]
-    },
+    },*/
     BTC: {
         coreSymbol: 'BTC',
         name: 'Bitcoin',
@@ -164,7 +164,7 @@ let _blockchains = {
                 contact: "https://www.blockchain.com"
             }
         ]
-    },
+    }/*,
     BNB_TEST: {
         coreSymbol: 'BNB',
         name: 'BinanceChain',
@@ -197,7 +197,7 @@ let _blockchains = {
                 contact: "Binance.org"
             }
         ]
-    }
+    }*/
 };
 
 Object.keys(_blockchains).forEach(key => {
