@@ -1,4 +1,3 @@
-import chalk  from 'chalk';
 import readline from 'readline';
 
 function lpad(str, padString, length) {
@@ -44,44 +43,44 @@ class Logger {
     log(msg) {
         readline.clearLine(process.stdout, 0);
         readline.cursorTo(process.stdout, 0, null);
-        process.stdout.write(chalk.white(this.timestamp()) + ' - ' + chalk.magenta('[LOG]') + ' ' + msg + '\n');
+        process.stdout.write(`${this.timestamp()} - [LOG] ${msg}\n`);
     }
     info(msg) {
         if (this.log_level > 0) {
             readline.clearLine(process.stdout, 0);
             readline.cursorTo(process.stdout, 0, null);
-            process.stdout.write(chalk.white(this.timestamp()) + ' - ' + chalk.cyan('[INFO]') + ' ' + msg + '\n');
+            process.stdout.write(`${this.timestamp()} - [INFO] ${msg}\n`);
         }
     }
     warning(msg) {
         readline.clearLine(process.stdout, 0);
         readline.cursorTo(process.stdout, 0, null);
-        process.stdout.write(chalk.white(this.timestamp()) + ' - ' + chalk.yellow('[WARNING]') + ' ' + msg + '\n');
+        process.stdout.write(`${this.timestamp()} - [WARNING] ${msg}\n`);
     }
     error(msg) {
         readline.clearLine(process.stdout, 0);
         readline.cursorTo(process.stdout, 0, null);
-        process.stdout.write(chalk.white(this.timestamp()) + ' - ' + chalk.red('[ERROR]') + ' ' + msg + '\n');
+        process.stdout.write(`${this.timestamp()} - [ERROR] ${msg}\n`);
     }
     verbose(msg) {
         if (this.log_level > 1) {
             readline.clearLine(process.stdout, 0);
             readline.cursorTo(process.stdout, 0, null);
-            process.stdout.write(chalk.white(this.timestamp()) + ' - ' + chalk.blue('[VERBOSE]') + ' ' + msg + '\n');
+            process.stdout.write(`${this.timestamp()} - [VERBOSE] ${msg}\n`);
         }
     }
     debug(msg) {
         if (this.log_level > 1) {
             readline.clearLine(process.stdout, 0);
             readline.cursorTo(process.stdout, 0, null);
-            process.stdout.write(chalk.white(this.timestamp()) + ' - ' + chalk.green('[DEBUG]') + ' ' + msg + '\n');
+            process.stdout.write(`${this.timestamp()} - [DEBUG] ${msg}\n`);
         }
     }
     transient(msg) {
         if (this.log_level > 2) {
             readline.clearLine(process.stdout, 0);
             readline.cursorTo(process.stdout, 0, null);
-            process.stdout.write(chalk.white(msg));
+            process.stdout.write(msg);
         }
     }
 

@@ -13,3 +13,8 @@ Thumbs.db
 /app/app.js
 /app/background.js
 /app/**/*.map
+/app/*.ttf
+/app/*.woff
+/app/*.woff2
+/app/*.svg
+/app/*.eot

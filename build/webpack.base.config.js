@@ -1,6 +1,6 @@
 const path = require("path");
 const nodeExternals = require("webpack-node-externals");
-const FriendlyErrorsWebpackPlugin = require("friendly-errors-webpack-plugin");
+const FriendlyErrorsWebpackPlugin = require("@soda/friendly-errors-webpack-plugin");
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
 const translateEnvToMode = (env) => {
@@ -20,8 +20,8 @@ module.exports = env => {
     },
     externals: [nodeExternals({
       // this WILL include `jquery` and `webpack/hot/dev-server` in the bundle, as well as `lodash/*`
-      whitelist: ['bootstrap-vue','vue','typeface-roboto','typeface-rajdhani']
-      
+      allowlist: ['bootstrap-vue','vue','typeface-roboto','typeface-rajdhani']
+
     })],
     resolve: {
       extensions: ['*', '.js', '.vue', '.json', '.css', '.scss'],

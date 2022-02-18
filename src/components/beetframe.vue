@@ -40,7 +40,7 @@
         },
         methods: {
             openDebug: () => {
-                remote.BrowserWindow.getFocusedWindow().webContents.openDevTools();
+              remote.BrowserWindow.getFocusedWindow().webContents.openDevTools();
             },
             minimise: () => {
                 ipcRenderer.send("minimise", true);

@@ -16,7 +16,7 @@ import {
   Tray,
   ipcMain
 } from 'electron';
-import installExtension from 'electron-devtools-installer';
+import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
 import Logger from '~/lib/Logger';
 import context_menu from '~/lib/electron_context_menu';
 import {initApplicationMenu} from '~/lib/applicationMenu';
@@ -42,7 +42,7 @@ if (env.name === "development") {
 }
 let logLevel = 0;
 
-if (isDevMode) { 
+if (isDevMode) {
   logLevel = 3;
 }
 
@@ -72,6 +72,8 @@ const createWindow = async () => {
       transparent: true,
       webPreferences: {
           nodeIntegration: true,
+          contextIsolation: false,
+          enableRemoteModule: true
       },
       icon: __dirname + '/img/beet-taskbar.png'
   });
@@ -85,7 +87,7 @@ const createWindow = async () => {
       slashes: true
     })
   );
-  
+
   tray = new Tray(__dirname + '/img/beet-tray.png');
   const contextMenu = Menu.buildFromTemplate([{
           label: 'Show App',
@@ -109,11 +111,11 @@ const createWindow = async () => {
 
   // Open the DevTools.
   if (isDevMode) {
-     
-    installExtension('ljjemllljcmogpfapbkkighbhhppjdbg').then(() => {
+
+    installExtension(VUEJS_DEVTOOLS).then(() => {
         mainWindow.webContents.openDevTools();
     });
-     
+
   }
 
   // Emitted when the window is closed.
@@ -278,7 +280,7 @@ app.disableHardwareAcceleration();
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', function() {
-    
+
     createWindow();
 });
 

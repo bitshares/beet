@@ -4,7 +4,7 @@ import WebSocket from "ws";
 import {
     v4 as uuidv4
 } from "uuid"
-const OTPAuth = require("otpauth");
+import OTPAuth from "otpauth";
 import CryptoJS from 'crypto-js';
 import Https from 'https';
 import Fs from 'fs';

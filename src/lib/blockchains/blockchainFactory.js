@@ -4,13 +4,16 @@ let apiCache = {}
 
 import BitShares from "./BitShares"
 import TUSC from "./TUSC"
-import Steem from "./Steem"
 import store from "../../store";
+import Bitcoin from "./Bitcoin";
+
+/*
+import Steem from "./Steem"
 import WhaleShares from "./WhaleShares";
 import EOSmainnet from "./EOSmainnet";
 import TLOS from "./TLOS";
-import Bitcoin from "./Bitcoin";
 import Binance from "./Binance";
+*/
 
 export default function getBlockchainAPI(chain = null) {
     if (chain == null) {

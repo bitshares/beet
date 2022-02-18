@@ -3,7 +3,7 @@ import BlockchainAPI from "./BlockchainAPI";
 import binancejs from "@binance-chain/javascript-sdk";
 import Transaction from "@binance-chain/javascript-sdk/lib/tx";
 import {formatAsset, humanReadableFloat} from "../assetUtils";
-const fetch = require('node-fetch');
+import fetch from 'node-fetch';
 
 export default class Bitcoin extends BlockchainAPI {
 

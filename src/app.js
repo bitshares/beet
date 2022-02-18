@@ -7,7 +7,7 @@ import Beetframe from './components/beetframe';
 import VueRouter from 'vue-router';
 import router from './router/index.js';
 import i18next from 'i18next';
-import Backend from "i18next-node-fs-backend";
+import Backend from "i18next-fs-backend";
 import VueI18Next from '@panter/vue-i18next';
 import BeetServer from "./lib/BeetServer";
 import RendererLogger from "./lib/RendererLogger";

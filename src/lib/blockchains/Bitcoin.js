@@ -2,7 +2,7 @@ import BlockchainAPI from "./BlockchainAPI";
 import RendererLogger from "../RendererLogger";
 const logger = new RendererLogger();
 
-const fetch = require('node-fetch');
+import fetch from 'node-fetch';
 
 import * as bitcoin from "bitcoinjs-lib";
 
