@@ -111,11 +111,9 @@ const createWindow = async () => {
 
   // Open the DevTools.
   if (isDevMode) {
-
     installExtension(VUEJS_DEVTOOLS).then(() => {
         mainWindow.webContents.openDevTools();
     });
-
   }
 
   // Emitted when the window is closed.
@@ -165,6 +163,10 @@ const createWindow = async () => {
       return false;
     });
     */
+  ipcMain.on('openDebug', (event, arg) => {
+      mainWindow.webContents.openDevTools();
+  });
+
   ipcMain.on('minimise', (event, arg) => {
       minimised = true;
       mainWindow.minimize();

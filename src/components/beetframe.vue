@@ -26,7 +26,6 @@
 <script>
     import { ipcRenderer } from "electron";
     import RendererLogger from "../lib/RendererLogger";
-    import { remote } from "electron";
     const logger = new RendererLogger();
 
     export default {
@@ -40,7 +39,7 @@
         },
         methods: {
             openDebug: () => {
-              remote.BrowserWindow.getFocusedWindow().webContents.openDevTools();
+                ipcRenderer.send("openDebug", true);
             },
             minimise: () => {
                 ipcRenderer.send("minimise", true);
