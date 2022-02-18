@@ -8,7 +8,6 @@ import url from "url";
 
 // Special module holding environment variables which you declared
 // in config/env_xxx.json file.
-import env from "env";
 import {
   app,
   BrowserWindow,
@@ -37,9 +36,11 @@ context_menu({
 let mainWindow;
 
 var isDevMode = process.execPath.match(/[\\/]electron/);
+/*
 if (env.name === "development") {
   isDevMode=true;
 }
+*/
 let logLevel = 0;
 
 if (isDevMode) {
@@ -52,10 +53,12 @@ let tray = null;
 let minimised = false;
 
 
+/*
 if (env.name !== "production") {
-    const userDataPath = app.getPath("userData");
-    //app.setPath("userData", `${userDataPath} (${env.name})`);
-  }
+  const userDataPath = app.getPath("userData");
+  //app.setPath("userData", `${userDataPath} (${env.name})`);
+}
+*/
 const createWindow = async () => {
 
   // Create the browser window.
