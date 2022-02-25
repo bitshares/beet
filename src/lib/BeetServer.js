@@ -159,15 +159,18 @@ export default class BeetServer {
           socket.on("authenticate", async (data) => {
             logger.debug("incoming authenticate request", data);
 
-            let authobj = {
-              id: data.id,
-              client: socket.id,
-              payload: data.payload
-            };
+            if (!store.state.WalletStore.isUnlocked) {
+              socket.emit("error", {id: data.id, error: true, payload: {code: 7, message: "Beet wallet is not unlocked."}});
+              return;
+            }
 
             let status;
             try {
-              status = await authHandler(authobj);
+              status = await authHandler({
+                id: data.id,
+                client: socket.id,
+                payload: data.payload
+              });
             } catch (error) {
               console.log(error)
               logger.debug("incoming auth req fail", error);
@@ -233,22 +236,34 @@ export default class BeetServer {
           });
 
           socket.on("linkRequest", async (data) => {
+            if (!socket.isAuthenticated || !store.state.WalletStore.isUnlocked) {
+              socket.emit("error", {id: data.id, error: true, payload: {code: 5, message: "Beet wallet is not unlocked."}});
+              return;
+            }
             logger.debug("processing link");
             try {
               await respondLink("link", socket, data);
             } catch (error) {
-
+              console.log(error);
             }
           });
 
           socket.on("relinkRequest", async (data) => {
+            if (!socket.isAuthenticated || !store.state.WalletStore.isUnlocked) {
+              socket.emit("error", {id: data.id, error: true, payload: {code: 5, message: "Beet wallet is not unlocked."}});
+              return;
+            }
             logger.debug("processing relink");
-            await respondLink("relink", socket, data);
+            try {
+              await respondLink("relink", socket, data);
+            } catch (error) {
+              console.log(error);
+            }
           });
 
           socket.on("api", async (data) => {
-            if (!socket.isAuthenticated) {
-              socket.emit("error", {id: data.id, error: true, payload: {code: 5, message: "Must authenticate first"}});
+            if (!socket.isAuthenticated || !store.state.WalletStore.isUnlocked) {
+              socket.emit("error", {id: data.id, error: true, payload: {code: 5, message: "Beet wallet is not unlocked."}});
               return;
             }
 

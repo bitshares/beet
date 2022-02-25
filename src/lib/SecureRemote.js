@@ -20,7 +20,7 @@ class proover {
           return;
         }
 
-        let encodedPubK = secp.utils.bytesToHex(secret);
+        let encodedPubK = secp.utils.bytesToHex(pubk);
         ipcRenderer.send('key', encodedPubK);
     }
 
