@@ -119,11 +119,8 @@
 <script>
     import { EventBus } from "../lib/event-bus.js";
     import Actionbar from "./actionbar";
-    import {remote} from "electron";
+    import { ipcRenderer } from "electron";
     import RendererLogger from "../lib/RendererLogger";
-    import path from 'path';
-    import { getBackup } from "../lib/SecureRemote";
-    import fs from 'fs';
     import {formatAccount} from "../lib/formatter";
 
     const logger = new RendererLogger();
@@ -157,23 +154,15 @@
         },
         methods: {
             downloadBackup: async function () {
-
                 EventBus.$emit("popup", "load-start");
-                const dialog=remote.dialog;
-                const app=remote.app;
-                let remoteUrl="BeetBackup-"+this.$store.state.WalletStore.wallet.name+'-'+(new Date().toISOString().slice(0,10))+".beet";
-                let toLocalPath = path.resolve(app.getPath("desktop"), remoteUrl);
-                let userChosenPath = dialog.showSaveDialog({ defaultPath: toLocalPath });
-                if(userChosenPath) {
-                    let accounts=JSON.stringify({wallet: this.$store.state.WalletStore.wallet.name, accounts: this.$store.state.AccountStore.accountlist.slice()});
-                    let backup=await getBackup(accounts);
-                    if (backup) {
-                        fs.writeFileSync(userChosenPath,backup);
-                    }
-                    EventBus.$emit("popup", "load-end");
-                }else{
-                    EventBus.$emit("popup", "load-end");
-                }
+                ipcRenderer.send(
+                  "downloadBackup",
+                  {
+                    eventbus: EventBus,
+                    walletName: this.$store.state.WalletStore.wallet.name,
+                    accounts: this.$store.state.AccountStore.accountlist.slice()
+                  }
+                );
             },
             deleteDapp: async function(dapp_id) {
                 await this.$store.dispatch('OriginStore/removeApp', dapp_id);

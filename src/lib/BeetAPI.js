@@ -20,7 +20,7 @@ export default class BeetAPI {
         let result;
         if (popupQ.isEmpty()) {
             let qresolve;
-            let queued = new Promise(function (resolve) {
+            let queued = new Promise((resolve) => {
                 qresolve = resolve
             });
             popupQ.enqueue({
@@ -45,7 +45,7 @@ export default class BeetAPI {
                 }
             }
             let qresolve;
-            let queued = new Promise(function (resolve) {
+            let queued = new Promise((resolve) => {
                 qresolve = resolve
             });
             let previous = popupQ.tail();

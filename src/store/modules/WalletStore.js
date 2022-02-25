@@ -23,8 +23,6 @@ const wallet = {};
 
 const mutations = {
     [GET_WALLET](state, wallet) {
-
-
         Vue.set(state, 'wallet', wallet);
     },
     [CONFIRM_UNLOCK](state) {
@@ -40,16 +38,12 @@ const mutations = {
         ipcRenderer.send('seeding',  '');
     },
     [SET_WALLET_STATUS](state, status) {
-
         Vue.set(state, 'hasWallet', status);
     },
-
     [SET_WALLET_UNLOCKED](state, unlocked) {
-
         Vue.set(state, 'unlocked', unlocked);
     },
     [SET_WALLETLIST](state, walletlist) {
-
         Vue.set(state, 'walletlist', walletlist);
     },
     [REQ_NOTIFY](state, notify) {
@@ -78,7 +72,7 @@ const actions = {
                     });
                     commit(GET_WALLET, public_wallets[0]);
                     let accountlist = decrypted_wallet;
-                    ipcRenderer.send('seeding',  payload.wallet_pass);                    
+                    ipcRenderer.send('seeding',  payload.wallet_pass);
                     dispatch('AccountStore/loadAccounts', accountlist, {
                         root: true
                     });
@@ -91,7 +85,6 @@ const actions = {
             });
         });
     },
-    
     confirmUnlock({
         commit
     }) {
@@ -123,13 +116,13 @@ const actions = {
                     });
                     commit(SET_WALLET_STATUS, true);
                     commit(SET_WALLETLIST, wallets);
-                    
+
                     let walletdata = CryptoJS.AES.encrypt(JSON.stringify(payload.backup.accounts), payload.password).toString();
                     BeetDB.wallets_encrypted.put({
                         id: walletid,
                         data: walletdata
-                    });                    
-                    ipcRenderer.send('seeding',  payload.password);   
+                    });
+                    ipcRenderer.send('seeding',  payload.password);
                     commit(GET_WALLET, newwallet);
                     dispatch('AccountStore/loadAccounts', payload.backup.walletdata, {
                         root: true
@@ -169,7 +162,7 @@ const actions = {
                     });
                     commit(SET_WALLET_STATUS, true);
                     commit(SET_WALLETLIST, wallets);
-                    
+
                     for (let keytype in payload.walletdata.keys) {
                         try {
                             payload.walletdata.keys[keytype] = CryptoJS.AES.encrypt(payload.walletdata.keys[keytype], payload.password).toString();
@@ -181,8 +174,8 @@ const actions = {
                     BeetDB.wallets_encrypted.put({
                         id: walletid,
                         data: walletdata
-                    });                    
-                    ipcRenderer.send('seeding',  payload.password);   
+                    });
+                    ipcRenderer.send('seeding',  payload.password);
                     commit(GET_WALLET, newwallet);
                     dispatch('AccountStore/loadAccounts', [payload.walletdata], {
                         root: true
@@ -203,7 +196,7 @@ const actions = {
     }, payload) {
         return new Promise(async (resolve, reject) => {
             let walletdata =  rootState.AccountStore.accountlist.slice();
-            let newwalletdata=walletdata;            
+            let newwalletdata=walletdata;
             newwalletdata.push(payload.account);
             await BeetDB.wallets_encrypted.get({
                 id: state.wallet.id
@@ -217,7 +210,7 @@ const actions = {
                 let encwalletdata = CryptoJS.AES.encrypt(JSON.stringify(newwalletdata), payload.password).toString();
                 let updatedWallet = Object.assign({}, state.wallet);
                 updatedWallet.accounts.push({ accountID: payload.account.accountID, chain: payload.account.chain});
-               
+
                 BeetDB.wallets_encrypted.update(updatedWallet.id, {
                     data: encwalletdata
                 }).then(() => {
@@ -235,7 +228,7 @@ const actions = {
             }).catch((e) => {
                 reject(e);
             });
-            
+
         });
     },
     loadWallets({

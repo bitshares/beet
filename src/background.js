@@ -13,45 +13,38 @@ import {
   BrowserWindow,
   Menu,
   Tray,
+  dialog,
   ipcMain
 } from 'electron';
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
 import Logger from '~/lib/Logger';
 import context_menu from '~/lib/electron_context_menu';
 import {initApplicationMenu} from '~/lib/applicationMenu';
-import {
-  ec as EC
-} from "elliptic";
-import CryptoJS from 'crypto-js';
 
-const ec = new EC('secp256k1');
+import fs from 'fs';
+import { getBackup } from "./lib/SecureRemote";
+
+import sha256 from "crypto-js/sha256.js";
+import aes from "crypto-js/aes.js";
+import ENC from 'crypto-js/enc-utf8.js';
+import * as ed from '@noble/ed25519';
+
 var timeout;
 context_menu({
   prepend: (params, browserWindow) => [{
       label: 'Beet',
   }]
 });
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 
 var isDevMode = process.execPath.match(/[\\/]electron/);
-/*
-if (env.name === "development") {
-  isDevMode=true;
-}
-*/
-let logLevel = 0;
-
-if (isDevMode) {
-  logLevel = 3;
-}
-
-const logger = new Logger(logLevel);
+const logger = new Logger(isDevMode ? 3 : 0);
 let first = true;
 let tray = null;
 let minimised = false;
-
 
 /*
 if (env.name !== "production") {
@@ -59,6 +52,7 @@ if (env.name !== "production") {
   //app.setPath("userData", `${userDataPath} (${env.name})`);
 }
 */
+
 const createWindow = async () => {
 
   // Create the browser window.
@@ -126,46 +120,30 @@ const createWindow = async () => {
       // when you should delete the corresponding element.
       mainWindow = null;
   });
-  /*
-    mainWindow.on('minimize', function (event) {
-      event.preventDefault();
-      if (first) {
-        tray.displayBalloon({
-          icon: __dirname + '/img/beet-tray.png',
-          title: "Beet is minimised.",
-          content: "It will run in the background until you quit."
-        });
-        first = false;
-      }
-      minimised = true;
-      mainWindow.hide();
-    });
-  */
+
   mainWindow.on('show', function () {
       minimised = false;
-      tray.setHighlightMode('always')
   });
-  /*
-    mainWindow.on('close', function (event) {
-      if (!app.isQuiting) {
-        event.preventDefault();
 
-        if (first) {
-          tray.displayBalloon({
-            icon: __dirname + '/img/beet-tray.png',
-            title: "Beet is minimised.",
-            content: "It will run in the background until you quit."
-          });
-          first = false;
-        }
+  ipcMain.on('downloadBackup', async (event, arg) => {
+    console.log("downloadBackup")
+    let toLocalPath = path.resolve(
+      app.getPath("desktop"),
+      `BeetBackup-${arg.walletName}-${new Date().toISOString().slice(0,10)}.beet`
+    );
+    let userChosenPath = dialog.showSaveDialog({ defaultPath: toLocalPath });
+    if (userChosenPath) {
+        let accounts = JSON.stringify({wallet: arg.walletName, accounts: arg.accounts});
+        return getBackup(accounts)
+        .then(result => {
+          if (result) {
+              fs.writeFileSync(userChosenPath,backup);
+          }
+        })
+    }
+    arg.eventbus.$emit("popup", "load-end");
+  });
 
-        minimised = true;
-        mainWindow.hide();
-      }
-
-      return false;
-    });
-    */
   ipcMain.on('openDebug', (event, arg) => {
       mainWindow.webContents.openDevTools();
   });
@@ -174,6 +152,7 @@ const createWindow = async () => {
       minimised = true;
       mainWindow.minimize();
   });
+
   ipcMain.on('close', (event, arg) => {
       if (first) {
           tray.displayBalloon({
@@ -189,81 +168,108 @@ const createWindow = async () => {
       minimised = true;
       mainWindow.hide();
   });
+
   ipcMain.on('notify', (event, arg) => {
+      logger.debug("notify");
       if (minimised) {
-          if (arg == 'request') {
-              tray.displayBalloon({
-                  icon: __dirname + '/img/beet-tray.png',
-                  title: "Beet has received a new request.",
-                  content: "Click here to view"
-              });
-          } else {
-              tray.displayBalloon({
-                  icon: __dirname + '/img/beet-tray.png',
-                  title: arg,
-                  content: "Click here to view"
-              });
-          }
+        tray.displayBalloon({
+            icon: __dirname + '/img/beet-tray.png',
+            title: arg == 'request'
+                    ? "Beet has received a new request."
+                    : arg,
+            content: "Click here to view"
+        });
       }
   });
+
   let seed, key;
   function timeoutHandler() {
-      seed=null;
+      seed = null;
       mainWindow.webContents.send('eventbus', { method: 'timeout', payload: 'logout'});
       clearTimeout(timeout);
   }
+
   ipcMain.on('key', (event, arg) => {
       if (timeout) {
           clearTimeout(timeout);
       }
-      timeout= setTimeout(timeoutHandler,300000);
+      timeout = setTimeout(timeoutHandler,300000);
       if (key) return;
       key = arg;
   });
+
   ipcMain.on('seeding', (event, arg) => {
       if (timeout) {
           clearTimeout(timeout);
       }
-      if (arg!='') {
-          timeout= setTimeout(timeoutHandler,300000);
+      if (arg != '') {
+          timeout = setTimeout(timeoutHandler,300000);
       }
       seed = arg;
   });
-  ipcMain.on('decrypt', (event, arg) => {
+
+  ipcMain.on('decrypt', async (event, arg) => {
       if (timeout) {
           clearTimeout(timeout);
       }
-      timeout= setTimeout(timeoutHandler,300000);
-      const {
-          data,
-          sig
-      } = arg;
-      let keypair = ec.keyFromPublic(key, 'hex');
-      let msgHash = CryptoJS.SHA256('decrypt').toString();
+      timeout = setTimeout(timeoutHandler,300000);
+      const {data, sig} = arg;
 
-      if (keypair.verify(msgHash, sig)) {
+      let msgHash;
+      try {
+        msgHash = sha256('decrypt').toString();
+      } catch (error) {
+        console.log(error);
+        return;
+      }
 
-          event.sender.send('decrypt', CryptoJS.AES.decrypt(data, seed).toString(CryptoJS.enc.Utf8));
-      } else {
-          event.sender.send('decrypt', null);
+      let isValid;
+      try {
+        isValid = await ed.verify(sig, msgHash, key);
+      } catch (error) {
+        console.log(error);
+        return;
       }
+
+      event.sender.send(
+        'decrypt',
+        isValid
+          ? aes.decrypt(data, seed).toString(ENC)
+          : null
+      );
   });
-  ipcMain.on('backup', (event, arg) => {
-      const {
-          data,
-          sig
-      } = arg;
-      let keypair = ec.keyFromPublic(key, 'hex');
-      let msgHash = CryptoJS.SHA256('backup').toString();
-      if (keypair.verify(msgHash, sig)) {
-          event.sender.send('backup', CryptoJS.AES.encrypt(data, seed).toString());
-      } else {
-          event.sender.send('backup', null);
+
+  ipcMain.on('backup', async (event, arg) => {
+      const {data, sig} = arg;
+
+      let msgHash;
+      try {
+        msgHash = sha256('backup').toString();
+      } catch (error) {
+        console.log(error);
+        return;
       }
+
+      let isValid;
+      try {
+        isValid = await ed.verify(sig, msgHash, key);
+      } catch (error) {
+        console.log(error);
+        return;
+      }
+
+      event.sender.send(
+        'backup',
+        isValid
+          ? aes.encrypt(data, seed).toString()
+          : null
+      );
   });
+
   ipcMain.on('log', (event, arg) => {
       logger[arg.level](arg.data);
   });
+
   tray.on('click', () => {
       mainWindow.setAlwaysOnTop(true);
       mainWindow.show();
@@ -271,6 +277,7 @@ const createWindow = async () => {
       mainWindow.setAlwaysOnTop(false);
       minimised = false;
   });
+
   tray.on('balloon-click', () => {
       mainWindow.setAlwaysOnTop(true);
       mainWindow.show();
@@ -285,7 +292,6 @@ app.disableHardwareAcceleration();
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', function() {
-
     createWindow();
 });
 

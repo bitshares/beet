@@ -61,7 +61,6 @@
 <script>
 
     import { EventBus } from "../lib/event-bus.js";
-    import {remote} from "electron";
     import CryptoJS from 'crypto-js';
     import RendererLogger from "../lib/RendererLogger";
     import path from 'path';

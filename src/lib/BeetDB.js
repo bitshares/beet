@@ -5,7 +5,6 @@ BeetDB.version(1).stores({
     apps: `++id, appName, origin, &identityhash, account_id, chain, secret, next_hash`,
     settings: `++id, setting, value`,
     wallets_public: `&id, name, accounts`,
-    ssl_data: `++id, key, cert, &date`,
     wallets_encrypted: `&id, data`,
     whitelistable: `++id,method`,
     whitelist: `++id,identityhash,method`

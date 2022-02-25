@@ -56,4 +56,4 @@ const app = new Vue({
   i18n: i18n
 }).$mount('#app');
 
-BeetServer.initialize(app);
+BeetServer.initialize(app, 60555);
