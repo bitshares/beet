@@ -3,13 +3,13 @@
         id="step2"
     >
         <h4 class="h4 mt-3 font-weight-bold">
-            {{ $t('step_counter',{ 'step_no' : 2}) }}
+            {{ $t('common.step_counter',{ 'step_no' : 2}) }}
         </h4>
         <template v-if="substep1">
             <p
                 class="mb-2 font-weight-bold"
             >
-                {{ $t('Select your .bin backup file.') }}
+                {{ $t('common.Select your .bin backup file.') }}
             </p>
             <input
                 type="file"
@@ -19,7 +19,7 @@
             <p
                 class="mb-2 font-weight-bold"
             >
-                {{ $t('Enter your .bin file password.') }}
+                {{ $t('common.Enter your .bin file password.') }}
             </p>
             <input
                 v-model="bin_file_password"
@@ -120,7 +120,7 @@
                 <!--class="btn btn-lg btn-primary btn-block mt-3"-->
                 <!--@click="simpleStep3"-->
             <!--&gt;-->
-                <!--{{ $t('import_btn') }}-->
+                <!--{{ $t('common.import_btn') }}-->
             <!--</button>-->
         </template>
     </div>
@@ -132,7 +132,6 @@
 
     export default {
         name: "ImportBinFile",
-        i18nOptions: { namespaces: "common" },
         props: [ "selectedChain" ],
         data() {
             return {
@@ -196,7 +195,7 @@
                 } catch (err) {
                     this.accountID = "";
                     if (err.key) {
-                        this.errorMsg = this.$t(err.key);
+                        this.errorMsg = this.$t(`common.${err.key}`);
                     } else {
                         this.errorMsg = err.toString();
                     }

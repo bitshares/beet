@@ -1,76 +1,63 @@
+<script setup>
+    import { defineProps } from 'vue';
+    import RendererLogger from "../lib/RendererLogger";
+    const logger = new RendererLogger();
+
+    const props = defineProps({
+      getNew: {
+          type: Boolean,
+          required: false,
+          default: false
+      }
+    });
+
+    onMounted(() => {
+      logger.debug("Enter Password Mounted");
+    });
+
+    let password = "";
+    let confirmPassword = "";
+
+    function getPassword() {
+        if (
+            this.password == "" ||
+            (this.password != this.confirmPassword && this.new)
+        ) {
+            throw { key: "confirm_pass_error" };
+        }
+        return this.password;
+    }
+</script>
+
 <template>
     <div>
         <p
             v-b-tooltip.hover
-            :title="$t('tooltip_password_cta')"
+            :title="$t('common.tooltip_password_cta')"
             class="mb-2 font-weight-bold"
         >
-            {{ $t(getNew ? 'password_cta' : 'unlock_with_password_cta') }} &#10068;
+            {{ $t(getNew ? 'common.password_cta' : 'common.unlock_with_password_cta') }} &#10068;
         </p>
         <input
             id="inputPass"
             v-model="password"
             type="password"
             class="form-control mb-3"
-            :placeholder="$t('password_placeholder')"
+            :placeholder="$t('common.password_placeholder')"
             required
         >
         <template v-if="getNew">
-            <password
-                v-model="password"
-                :secure-length="12"
-                :strength-meter-only="true"
-            />
             <p class="mb-2 font-weight-bold">
-                {{ $t('confirm_cta') }}
+                {{ $t('common.confirm_cta') }}
             </p>
             <input
                 id="inputConfirmPass"
-                v-model="confirmpassword"
+                v-model="confirmPassword"
                 type="password"
                 class="form-control mb-3"
-                :placeholder="$t('confirm_placeholder')"
+                :placeholder="$t('common.confirm_placeholder')"
                 required
             >
         </template>
     </div>
 </template>
-
-<script>
-    import Password from "vue-password-strength-meter";
-    import RendererLogger from "../lib/RendererLogger";
-    const logger = new RendererLogger();
-
-    export default {
-        name: "EnterPassword",
-        i18nOptions: { namespaces: "common" },
-        components: { Password },
-        props: {
-            getNew: {
-                type: Boolean,
-                required: false,
-                default: false
-            }
-        },
-        data() {
-            return {
-                password: "",
-                confirmPassword: ""
-            };
-        },
-        mounted() {
-            logger.debug("Enter Password Mounted");
-        },
-        methods: {
-            getPassword: function() {
-                if (
-                    this.password == "" ||
-                    (this.password != this.confirmPassword && this.new)
-                ) {
-                    throw { key: "confirm_pass_error" };
-                }
-                return this.password;
-            }
-        }
-    };
-</script>

@@ -1,4 +1,4 @@
-import Vue from 'vue';
+import {set} from 'vue';
 import {
     defaultLocale
 } from '../../config/i18n.js'
@@ -9,7 +9,7 @@ const LOAD_SETTINGS = 'LOAD_SETTINGS';
 
 const mutations = {
     [LOAD_SETTINGS](state, settings) {
-        Vue.set(state, 'settings', settings);
+        set(state, 'settings', settings);
     }
 };
 

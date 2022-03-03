@@ -6,15 +6,15 @@
                 id="step1"
             >
                 <h4 class="h4 mt-3 font-weight-bold">
-                    {{ $t('step_counter',{ 'step_no' : 1}) }}
+                    {{ $t('common.step_counter',{ 'step_no' : 1}) }}
                 </h4>
                 <template v-if="createNewWallet">
                     <p
                         v-b-tooltip.hover
-                        :title="$t('tooltip_friendly_cta')"
+                        :title="$t('common.tooltip_friendly_cta')"
                         class="my-3 font-weight-bold"
                     >
-                        {{ $t('friendly_cta') }} &#10068;
+                        {{ $t('common.friendly_cta') }} &#10068;
                     </p>
                     <input
                         id="inputWallet"
@@ -22,24 +22,24 @@
                         type="text"
                         class="form-control mb-3"
                         :class="s1c"
-                        :placeholder="$t('walletname_placeholder')"
+                        :placeholder="$t('common.walletname_placeholder')"
                         required
                         @focus="s1c=''"
                     >
                 </template>
                 <p
                     v-b-tooltip.hover
-                    :title="$t('tooltip_chain_cta')"
+                    :title="$t('common.tooltip_chain_cta')"
                     class="my-3 font-weight-bold"
                 >
-                    {{ $t('chain_cta') }} &#10068;
+                    {{ $t('common.chain_cta') }} &#10068;
                 </p>
                 <select
                     id="chain-select"
                     v-model="selectedChain"
                     class="form-control mb-3"
                     :class="s1c"
-                    :placeholder="$t('chain_placeholder')"
+                    :placeholder="$t('common.chain_placeholder')"
                     required
                 >
                     <option
@@ -47,7 +47,7 @@
                         disabled
                         value="0"
                     >
-                        {{ $t('select_chain') }}
+                        {{ $t('common.select_chain') }}
                     </option>
                     <option
                         v-for="chain in chainList"
@@ -59,14 +59,14 @@
                 </select>
                 <div v-if="selectedImportOptions.length > 1">
                     <p class="my-3 font-weight-bold">
-                        {{ $t('bts_importtype_cta') }}
+                        {{ $t('common.bts_importtype_cta') }}
                     </p>
                     <select
                         id="import-select"
                         v-model="selectedImport"
                         class="form-control mb-3"
                         :class="s1c"
-                        :placeholder="$t('import_placeholder')"
+                        :placeholder="$t('common.import_placeholder')"
                         required
                     >
                         <option
@@ -75,10 +75,10 @@
                             value="0"
                             key="0"
                         >
-                            {{ $t('import_placeholder') }}
+                            {{ $t('common.import_placeholder') }}
                         </option>
                         <option v-for="option in selectedImportOptions" :value="option" :key="option.type">
-                            {{ $t(option.translate_key) }}
+                            {{ $t(`common.${option.translate_key}`) }}
                         </option>
                     </select>
                 </div>
@@ -90,7 +90,7 @@
                             class="btn btn-lg btn-secondary btn-block"
                             replace
                         >
-                            {{ $t('cancel_btn') }}
+                            {{ $t('common.cancel_btn') }}
                         </router-link>
                     </div>
                     <div class="col-6">
@@ -99,7 +99,7 @@
                             type="submit"
                             @click="step2"
                         >
-                            {{ $t('next_btn') }}
+                            {{ $t('common.next_btn') }}
                         </button>
                     </div>
                 </div>
@@ -122,7 +122,7 @@
                             type="submit"
                             @click="step1"
                         >
-                            {{ $t('back_btn') }}
+                            {{ $t('common.back_btn') }}
                         </button>
                     </div>
                     <div class="col-6">
@@ -131,7 +131,7 @@
                             type="submit"
                             @click="step3"
                         >
-                            {{ $t('next_btn') }}
+                            {{ $t('common.next_btn') }}
                         </button>
                     </div>
                 </div>
@@ -141,7 +141,7 @@
                 id="step3"
             >
                 <h4 class="h4 mt-3 font-weight-bold">
-                    {{ $t('step_counter',{ 'step_no' : 3}) }}
+                    {{ $t('common.step_counter',{ 'step_no' : 3}) }}
                 </h4>
                 <EnterPassword
                     ref="enterPassword"
@@ -152,7 +152,7 @@
                     type="submit"
                     @click="addAccounts"
                 >
-                    {{ $t('next_btn') }}
+                    {{ $t('common.next_btn') }}
                 </button>
             </div>
             <b-modal
@@ -160,7 +160,7 @@
                 ref="errorModal"
                 centered
                 hide-footer
-                :title="$t('error_lbl')"
+                :title="$t('common.error_lbl')"
                 e
             >
                 {{ errorMsg }}
@@ -191,7 +191,6 @@
     export default {
         name: "AddAccount",
         components: { Actionbar, ImportOptions, EnterPassword },
-        i18nOptions: { namespaces: "common" },
         data() {
             return {
                 walletname: "",
@@ -251,7 +250,7 @@
             step2: function() {
                 if (this.createNewWallet) {
                     if (this.walletname.trim() == "") {
-                        this.errorMsg = this.$t("empty_wallet_error");
+                        this.errorMsg = this.$t("common.empty_wallet_error");
                         this.$refs.errorModal.show();
                         this.s1c = "is-invalid";
                         return;
@@ -263,7 +262,7 @@
                         wallets.filter(wallet => wallet.name === this.walletname.trim())
                             .length > 0
                     ) {
-                        this.errorMsg = this.$t("duplicate_wallet_error");
+                        this.errorMsg = this.$t("common.duplicate_wallet_error");
                         this.$refs.errorModal.show();
                         this.s1c = "is-invalid";
                         return;
@@ -295,11 +294,11 @@
             },
             _handleError(err) {
                 if (err == "invalid") {
-                    this.errorMsg = this.$t("invalid_password");
+                    this.errorMsg = this.$t("common.invalid_password");
                 } else if (err == "update_failed") {
-                    this.errorMsg = this.$t("update_failed");
+                    this.errorMsg = this.$t("common.update_failed");
                 } else if (err.key) {
-                    this.errorMsg = this.$t(err.key);
+                    this.errorMsg = this.$t(`common.${err.key}`);
                 } else {
                     this.errorMsg = err.toString();
                 }

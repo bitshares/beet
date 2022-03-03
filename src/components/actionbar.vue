@@ -31,7 +31,7 @@
             <a
                 v-b-tooltip.hover
                 v-b-tooltip.d500
-                :title="$t('common:tooltip_lock')"
+                :title="$t('common.tooltip_lock')"
                 href="#"
                 class=" status align-self-center"
                 @click="logout()"
@@ -49,7 +49,6 @@
 
     export default {
         name: "Actionbar",
-        i18nOptions: { namespaces: "common" },
         data() {
             return {};
         },

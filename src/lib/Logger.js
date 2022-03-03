@@ -1,4 +1,4 @@
-import readline from 'readline';
+import readline from 'linebyline';
 
 function lpad(str, padString, length) {
     while (str.toString().length < length) {

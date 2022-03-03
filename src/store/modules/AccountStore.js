@@ -1,4 +1,5 @@
 import Vue from 'vue';
+import {set} from 'vue';
 import RendererLogger from "../../lib/RendererLogger";
 import CryptoJS from 'crypto-js';
 const logger = new RendererLogger();
@@ -11,17 +12,15 @@ const accountlist = [];
 
 const mutations = {
     [LOAD_ACCOUNTS](state, accounts) {
-        Vue.set(state, 'accountlist', accounts);
-        Vue.set(state, 'selectedIndex', 0);
+        set(state, 'accountlist', accounts);
+        set(state, 'selectedIndex', 0);
     },
     [CHOOSE_ACCOUNT](state, accountIndex) {
-
-        Vue.set(state, 'selectedIndex', accountIndex);
+        set(state, 'selectedIndex', accountIndex);
     },
     [ADD_ACCOUNT](state, account) {
-
         state.accountlist.push(account);
-        Vue.set(state, 'selectedIndex', state.accountlist.length - 1);
+        set(state, 'selectedIndex', state.accountlist.length - 1);
     },
     [CLEAR_ACCOUNTS](state) {
         state.selectedIndex = null;

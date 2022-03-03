@@ -3,36 +3,36 @@
         id="step2"
     >
         <h4 class="h4 mt-3 font-weight-bold">
-            {{ $t('step_counter',{ 'step_no' : 2}) }}
+            {{ $t('common.step_counter',{ 'step_no' : 2}) }}
         </h4>
         <p
             class="mb-2 font-weight-bold"
         >
-            {{ $t('address_name', { 'chain' : selectedChain}) }}
+            {{ $t('common.address_name', { 'chain' : selectedChain}) }}
         </p>
         <input
             id="inputAccount"
             v-model="adress"
             type="text"
             class="form-control mb-3"
-            :placeholder="$t('address_name', { 'chain' : selectedChain})"
+            :placeholder="$t('common.address_name', { 'chain' : selectedChain})"
             required
         >
         <p class="my-3 font-weight-normal">
-            {{ $t('keys_cta') }}
+            {{ $t('common.keys_cta') }}
         </p>
         <template v-if="requiredFields.public !== null">
             <p
                 class="mb-2 font-weight-bold"
             >
-                {{ $t('public_authority') }}
+                {{ $t('common.public_authority') }}
             </p>
             <input
                 id="inputActive"
                 v-model="activepk"
                 type="password"
                 class="form-control mb-3 small"
-                :placeholder="$t('public_authority_placeholder')"
+                :placeholder="$t('common.public_authority_placeholder')"
                 required
             >
         </template>
@@ -45,7 +45,6 @@
 
     export default {
         name: "ImportAddressBased",
-        i18nOptions: { namespaces: "common" },
         props: [ "selectedChain" ],
         data() {
             return {

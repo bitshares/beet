@@ -1,4 +1,5 @@
 import Vue from 'vue';
+import {set} from 'vue';
 import BeetDB from '../../lib/BeetDB.js';
 import RendererLogger from "../../lib/RendererLogger";
 const logger = new RendererLogger();
@@ -9,7 +10,7 @@ const NEW_REQUEST = 'NEW_REQUEST';
 
 const mutations = {
     [LOAD_APPS](state, apps) {
-        Vue.set(state, 'apps', apps);
+        set(state, 'apps', apps);
     },
     [ADD_APP](state, app) {
         state.apps.push(app);

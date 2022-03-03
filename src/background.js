@@ -5,6 +5,7 @@
 
 import path from "path";
 import url from "url";
+import fs from 'fs';
 
 // Special module holding environment variables which you declared
 // in config/env_xxx.json file.
@@ -17,17 +18,16 @@ import {
   ipcMain
 } from 'electron';
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
-import Logger from '~/lib/Logger';
-import context_menu from '~/lib/electron_context_menu';
-import {initApplicationMenu} from '~/lib/applicationMenu';
-
-import fs from 'fs';
-import { getBackup } from "./lib/SecureRemote";
 
 import sha256 from "crypto-js/sha256.js";
 import aes from "crypto-js/aes.js";
 import ENC from 'crypto-js/enc-utf8.js';
 import * as ed from '@noble/ed25519';
+
+import Logger from '~/lib/Logger';
+import context_menu from '~/lib/electron_context_menu';
+import {initApplicationMenu} from '~/lib/applicationMenu';
+import { getBackup } from "./lib/SecureRemote";
 
 var timeout;
 context_menu({

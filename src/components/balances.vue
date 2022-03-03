@@ -1,11 +1,11 @@
 <template>
     <div class="balances mt-3">
         <p class="mb-1 font-weight-bold small">
-            {{ $t('balances_lbl') }}
+            {{ $t('common.balances_lbl') }}
         </p>
         <table class="table small table-striped table-sm">
             <span v-if="errored">
-                {{ $t('balances_error') }}
+                {{ $t('common.balances_error') }}
             </span>
             <tbody v-if="balances != null">
                 <tr
@@ -40,7 +40,6 @@
 
     export default {
         name: "Balances",
-        i18nOptions: { namespaces: "common" },
         data() {
             return {
                 balances: null,

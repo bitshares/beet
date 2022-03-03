@@ -7,7 +7,7 @@
         no-close-on-backdrop
         hide-header-close
         hide-footer
-        :title="$t('operations:transfer.title')"
+        :title="$t('operations.transfer.title')"
     >
         {{ message }}:
         <br>
@@ -23,7 +23,7 @@
             block
             @click="_clickedAllow"
         >
-            {{ $t("operations:transfer.accept_btn") }}
+            {{ $t("operations.transfer.accept_btn") }}
         </b-btn>
         <b-btn
             class="mt-1"
@@ -31,7 +31,7 @@
             block
             @click="_clickedDeny"
         >
-            {{ $t("operations:transfer.reject_btn") }}
+            {{ $t("operations.transfer.reject_btn") }}
         </b-btn>
     </b-modal>
 </template>
@@ -60,7 +60,7 @@
         },
         methods: {
             _onShow() {
-                this.message = this.$t("operations:transfer.request", {
+                this.message = this.$t("operations.transfer.request", {
                     appName: this.incoming.appName,
                     origin: this.incoming.origin,
                     chain:   this.$store.getters['AccountStore/getSigningKey'](this.incoming).chain,

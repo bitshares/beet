@@ -7,7 +7,7 @@
         no-close-on-backdrop
         hide-header-close
         hide-footer
-        :title="$t('operations:message.title')"
+        :title="$t('operations.message.title')"
     >
         {{ message }}:
         <br>
@@ -17,7 +17,7 @@
             v-if="askWhitelist"
             v-model="allowWhitelist"
         >
-            {{ $t('operations:whitelist.prompt', { method: incoming.method }) }}
+            {{ $t('operations.whitelist.prompt', { method: incoming.method }) }}
         </b-form-checkbox>
         <b-btn
             class="mt-3"
@@ -25,7 +25,7 @@
             block
             @click="_clickedAllow"
         >
-            {{ $t("operations:message.accept_btn") }}
+            {{ $t("operations.message.accept_btn") }}
         </b-btn>
         <b-btn
             class="mt-1"
@@ -33,7 +33,7 @@
             block
             @click="_clickedDeny"
         >
-            {{ $t("operations:message.reject_btn") }}
+            {{ $t("operations.message.reject_btn") }}
         </b-btn>
     </b-modal>
 </template>
@@ -56,7 +56,7 @@
         },
         methods: {
             _onShow() {
-                this.message = this.$t("operations:message.request", {
+                this.message = this.$t("operations.message.request", {
                     appName: this.incoming.appName,
                     origin: this.incoming.origin,
                     chain: this.$store.getters['AccountStore/getSigningKey'](this.incoming).chain,

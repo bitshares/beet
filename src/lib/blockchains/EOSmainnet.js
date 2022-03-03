@@ -2,8 +2,6 @@ import BlockchainAPI from "./BlockchainAPI";
 import RendererLogger from "../RendererLogger";
 const logger = new RendererLogger();
 
-import fetch from 'node-fetch';
-
 import { Api, JsonRpc, RpcError } from 'eosjs';
 import { JsSignatureProvider } from "eosjs/dist/eosjs-jssig";
 

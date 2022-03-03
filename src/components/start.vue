@@ -1,3 +1,44 @@
+<script setup>
+    import RendererLogger from "../lib/RendererLogger";
+    import Multiselect from "vue-multiselect";
+    const logger = new RendererLogger();
+
+    let hasWallet = computed(() => {
+      return this.$store.state.WalletStore.hasWallet;
+    })
+
+    let walletlist = computed(() => {
+      return this.$store.state.WalletStore.walletlist;
+    })
+
+    let walletpass = "";
+    let selectedWallet = null;
+    let passincorrect = "";
+    let errorMsg = "";
+
+    onMounted(() => {
+      logger.debug("Start screen mounted");
+      this.$store.dispatch("WalletStore/loadWallets", {}).catch(() => {});
+      this.$store.dispatch("OriginStore/loadApps");
+    });
+
+    function unlockWallet() {
+        this.$store
+            .dispatch("WalletStore/getWallet", {
+                wallet_id: this.selectedWallet.id,
+                wallet_pass: this.walletpass
+            })
+            .then(() => {
+                this.$router.replace("/dashboard");
+            })
+            .catch(() => {
+                this.passincorrect = "is-invalid";
+                this.errorMsg = "Invalid Password.";
+                this.$refs.errorModal.show();
+            });
+    }
+</script>
+
 <template>
     <div class="bottom">
         <div class="content">
@@ -5,31 +46,31 @@
                 v-if="!hasWallet"
                 class="mt-3 mb-3 font-weight-normal"
             >
-                <em>{{ $t('no_wallet') }}</em>
+                <em>{{ $t('common.no_wallet') }}</em>
             </p>
             <router-link
                 v-if="!hasWallet"
                 to="/create"
-                tag="button"
-                class="btn btn-lg btn-primary btn-block"
                 replace
             >
-                {{ $t('start_cta') }}
+              <ui-button outlined>
+                {{ $t('common.start_cta') }}
+              </ui-button>
             </router-link>
             <p
                 v-if="!hasWallet"
                 class="my-2 font-weight-normal"
             >
-                <em>{{ $t('or') }}</em>
+                <em>{{ $t('common.or') }}</em>
             </p>
             <router-link
                 v-if="!hasWallet"
                 to="/restore"
-                tag="button"
-                class="btn btn-lg btn-secondary btn-block"
                 replace
             >
-                {{ $t('restore_cta') }}
+              <ui-button outlined>
+                {{ $t('common.restore_cta') }}
+              </ui-button>
             </router-link>
 
             <span
@@ -42,7 +83,7 @@
                 v-model="selectedWallet"
                 :class="'form-control my-3 accountProvide text-left'"
                 :searchable="false"
-                :placeholder="$t('select_wallet')"
+                :placeholder="$t('common.select_wallet')"
                 label="name"
                 :allow-empty="false"
                 :options="walletlist"
@@ -60,47 +101,47 @@
                 v-model="walletpass"
                 type="password"
                 class="form-control mb-4 px-3"
-                :placeholder=" $t('password_placeholder')"
+                :placeholder=" $t('common.password_placeholder')"
                 required
 
                 :class="passincorrect"
                 @focus="passincorrect=''"
             >
-            <button
-                v-if="hasWallet"
-                class="btn btn-lg btn-primary btn-block"
-                type="submit"
-                @click="unlockWallet"
+            <ui-button
+              v-if="hasWallet"
+              type="submit"
+              @click="unlockWallet"
+              outlined
             >
-                {{ $t('unlock_cta') }}
-            </button>
+              {{ $t('common.unlock_cta') }}
+            </ui-button>
             <p
                 v-if="hasWallet"
                 class="my-2 font-weight-normal"
             >
-                <em>{{ $t('or') }}</em>
+                <em>{{ $t('common.or') }}</em>
             </p>
             <div class="row">
                 <div class="col-6">
                     <router-link
                         v-if="hasWallet"
                         to="/create"
-                        tag="button"
-                        class="btn btn-lg btn-primary btn-block"
                         replace
                     >
-                        {{ $t('create_cta') }}
+                      <ui-button outlined>
+                        {{ $t('common.create_cta') }}
+                      </ui-button>
                     </router-link>
                 </div>
                 <div class="col-6">
                     <router-link
                         v-if="hasWallet"
                         to="/restore"
-                        tag="button"
-                        class="btn btn-lg btn-secondary btn-block"
                         replace
                     >
-                        {{ $t('restore_cta') }}
+                      <ui-button outlined>
+                        {{ $t('common.restore_cta') }}
+                      </ui-button>
                     </router-link>
                 </div>
             </div>
@@ -119,52 +160,3 @@
         </p>
     </div>
 </template>
-<script>
-    import RendererLogger from "../lib/RendererLogger";
-    import Multiselect from "vue-multiselect";
-    const logger = new RendererLogger();
-
-    export default {
-        name: "Start",
-        components: { Multiselect },
-        i18nOptions: { namespaces: "common" },
-        data() {
-            return {
-                walletpass: "",
-                selectedWallet: null,
-                passincorrect: "",
-                errorMsg: ""
-            };
-        },
-        computed: {
-            hasWallet() {
-                return this.$store.state.WalletStore.hasWallet;
-            },
-            walletlist() {
-                return this.$store.state.WalletStore.walletlist;
-            }
-        },
-        mounted() {
-            logger.debug("Start screen mounted");
-            this.$store.dispatch("WalletStore/loadWallets", {}).catch(() => {});
-            this.$store.dispatch("OriginStore/loadApps");
-        },
-        methods: {
-            unlockWallet() {
-                this.$store
-                    .dispatch("WalletStore/getWallet", {
-                        wallet_id: this.selectedWallet.id,
-                        wallet_pass: this.walletpass
-                    })
-                    .then(() => {
-                        this.$router.replace("/dashboard");
-                    })
-                    .catch(() => {
-                        this.passincorrect = "is-invalid";
-                        this.errorMsg = "Invalid Password.";
-                        this.$refs.errorModal.show();
-                    });
-            }
-        }
-    };
-</script>

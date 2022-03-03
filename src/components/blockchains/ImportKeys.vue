@@ -3,49 +3,49 @@
         id="step2"
     >
         <h4 class="h4 mt-3 font-weight-bold">
-            {{ $t('step_counter',{ 'step_no' : 2}) }}
+            {{ $t('common.step_counter',{ 'step_no' : 2}) }}
         </h4>
         <p
             class="mb-2 font-weight-bold"
         >
-            {{ $t(accessType == 'account' ? 'account_name' : 'address_name', { 'chain' : selectedChain}) }}
+            {{ $t(accessType == 'account' ? 'common.account_name' : 'common.address_name', { 'chain' : selectedChain}) }}
         </p>
         <input
             id="inputAccount"
             v-model="accountname"
             type="text"
             class="form-control mb-3"
-            :placeholder="$t(accessType == 'account' ? 'account_name' : 'address_name', { 'chain' : selectedChain})"
+            :placeholder="$t(accessType == 'account' ? 'common.account_name' : 'common.address_name', { 'chain' : selectedChain})"
             required
         >
         <p class="my-3 font-weight-normal">
-            {{ $t('keys_cta') }}
+            {{ $t('common.keys_cta') }}
         </p>
         <template v-if="requiredFields.active !== null">
             <p
                 class="mb-2 font-weight-bold"
             >
-                {{ $t(accessType == 'account' ? 'active_authority' : 'public_authority') }}
+                {{ $t(accessType == 'account' ? 'common.active_authority' : 'common.public_authority') }}
             </p>
             <input
                 id="inputActive"
                 v-model="activepk"
                 type="password"
                 class="form-control mb-3 small"
-                :placeholder="$t(accessType == 'account' ? 'active_authority_placeholder' : 'public_authority_placeholder')"
+                :placeholder="$t(accessType == 'account' ? 'common.active_authority_placeholder' : 'common.public_authority_placeholder')"
                 required
             >
         </template>
         <template v-if="requiredFields.memo !== null">
             <p class="mb-2 font-weight-bold">
-                {{ $t('memo_authority') }}
+                {{ $t('common.memo_authority') }}
             </p>
             <input
                 id="inputMemo"
                 v-model="memopk"
                 type="password"
                 class="form-control mb-3 small"
-                :placeholder="$t('memo_authority_placeholder')"
+                :placeholder="$t('common.memo_authority_placeholder')"
                 required
             >
         </template>
@@ -57,7 +57,7 @@
                 unchecked-value="0"
                 class="mb-3"
             >
-                {{ $t('include_owner_check') }}
+                {{ $t('common.include_owner_check') }}
             </b-form-checkbox>
             <div v-if="includeOwner==1">
                 <input
@@ -65,7 +65,7 @@
                     v-model="ownerpk"
                     type="password"
                     class="form-control mb-3 small"
-                    :placeholder="$t('owner_authority_placeholder')"
+                    :placeholder="$t('common.owner_authority_placeholder')"
                     required
                 >
             </div>
@@ -79,7 +79,6 @@
 
     export default {
         name: "ImportKeys",
-        i18nOptions: { namespaces: "common" },
         props: [ "selectedChain" ],
         data() {
             return {

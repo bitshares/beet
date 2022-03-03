@@ -1,4 +1,4 @@
-import Vue from 'vue';
+import {set} from 'vue';
 import {
     ipcRenderer,
 } from 'electron';
@@ -23,11 +23,11 @@ const wallet = {};
 
 const mutations = {
     [GET_WALLET](state, wallet) {
-        Vue.set(state, 'wallet', wallet);
+        set(state, 'wallet', wallet);
     },
     [CONFIRM_UNLOCK](state) {
         state.unlocked.resolve();
-        Vue.set(state, 'isUnlocked', true);
+        set(state, 'isUnlocked', true);
     },
     [CLOSE_WALLET](state) {
         state.wallet={};
@@ -38,19 +38,19 @@ const mutations = {
         ipcRenderer.send('seeding',  '');
     },
     [SET_WALLET_STATUS](state, status) {
-        Vue.set(state, 'hasWallet', status);
+        set(state, 'hasWallet', status);
     },
     [SET_WALLET_UNLOCKED](state, unlocked) {
-        Vue.set(state, 'unlocked', unlocked);
+        set(state, 'unlocked', unlocked);
     },
     [SET_WALLETLIST](state, walletlist) {
-        Vue.set(state, 'walletlist', walletlist);
+        set(state, 'walletlist', walletlist);
     },
     [REQ_NOTIFY](state, notify) {
         state.ipc.send("notify", notify);
     },
     [CREATE_WALLET](state, wallet) {
-        Vue.set(state, 'wallet', wallet);
+        set(state, 'wallet', wallet);
     }
 };
 

@@ -8,13 +8,13 @@
         no-close-on-backdrop
         hide-header-close
         hide-footer
-        :title="$t('operations:account_id.title')"
+        :title="$t('operations.account_id.title')"
     >
         <div
             v-b-tooltip.hover
-            :title="$t('operations:identity.request_tooltip')"
+            :title="$t('operations.identity.request_tooltip')"
         >
-            {{ $t('operations:account_id.request', {appName: incoming.appName, origin: incoming.origin, chain: incoming.chain, accountId: beetapp.account_id, accountName: idaccount.accountName }) }} &#10068;
+            {{ $t('operations.account_id.request', {appName: incoming.appName, origin: incoming.origin, chain: incoming.chain, accountId: beetapp.account_id, accountName: idaccount.accountName }) }} &#10068;
         </div>
         <b-btn
             class="mt-3"
@@ -22,7 +22,7 @@
             block
             @click="_clickedAllow"
         >
-            {{ $t('operations:account_id.accept_btn') }}
+            {{ $t('operations.account_id.accept_btn') }}
         </b-btn>
         <b-btn
             class="mt-1"
@@ -30,7 +30,7 @@
             block
             @click="_clickedDeny"
         >
-            {{ $t('operations:account_id.reject_btn') }}
+            {{ $t('operations.account_id.reject_btn') }}
         </b-btn>
     </b-modal>
 </template>
@@ -56,11 +56,11 @@
         },
         methods: {
             _onShow: function() {
-                
+
                 let beetapp = this.$store.state.OriginStore.apps.filter(
                     x => x.identityhash == this.incoming.identityhash
                 )[0];
-                
+
                 this.idaccount = this.$store.state.AccountStore.accountlist.filter(
                     x => {  return  x.accountID == beetapp.account_id && x.chain == beetapp.chain; }
                 )[0];
@@ -75,4 +75,4 @@
             }
         }
     };
-</script> 
+</script>

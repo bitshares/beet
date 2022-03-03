@@ -1,5 +1,3 @@
-
-
 $primary:       #C7088E;
 $alternate:     #960069;
 $secondary:     #707070;
@@ -11,6 +9,5 @@ $light:         #E5EAED;
 $dark:          #29324A;
 $white:         #F4F8FB;
 
-
-@import "./bootstrap";
+@use "balm-ui/dist/balm-ui";
 @import "./styles";

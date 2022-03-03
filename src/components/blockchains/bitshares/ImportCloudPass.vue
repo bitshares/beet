@@ -3,30 +3,30 @@
         id="step2"
     >
         <h4 class="h4 mt-3 font-weight-bold">
-            {{ $t('step_counter', { 'step_no' : 2}) }}
+            {{ $t('common.step_counter', { 'step_no' : 2}) }}
         </h4>
         <p
                 class="mb-2 font-weight-bold"
         >
-            {{ $t('account_name', { 'chain' : selectedChain}) }}
+            {{ $t('common.account_name', { 'chain' : selectedChain}) }}
         </p>
         <input
             id="inputAccount"
             v-model="accountname"
             type="text"
             class="form-control mb-3"
-            :placeholder="$t('account_name',{ 'chain' : selectedChain})"
+            :placeholder="$t('common.account_name',{ 'chain' : selectedChain})"
             required
         >
         <p class="my-3 font-weight-normal">
-            {{ $t('btspass_cta') }}
+            {{ $t('common.btspass_cta') }}
         </p>
         <input
             id="inputActive"
             v-model="bitshares_cloud_login_password"
             type="password"
             class="form-control mb-3 small"
-            :placeholder="$t('btspass_placeholder')"
+            :placeholder="$t('common.btspass_placeholder')"
             required
         >
     </div>
@@ -39,7 +39,6 @@
 
     export default {
         name: "ImportCloudPass",
-        i18nOptions: { namespaces: "common" },
         props: [ "selectedChain" ],
         data() {
             return {

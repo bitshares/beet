@@ -7,13 +7,13 @@
         no-close-on-backdrop
         hide-header-close
         hide-footer
-        :title="$t('operations:account_id.title')"
+        :title="$t('operations.account_id.title')"
     >
         <div
             v-b-tooltip.hover
-            :title="$t('operations:relink.request_tooltip')"
+            :title="$t('operations.relink.request_tooltip')"
         >
-            {{ $t('operations:relink.request', {appName: incoming.appName, origin: incoming.origin, chain: incoming.chain, accountId: beetapp.account_id }) }} &#10068;
+            {{ $t('operations.relink.request', {appName: incoming.appName, origin: incoming.origin, chain: incoming.chain, accountId: beetapp.account_id }) }} &#10068;
         </div>
         <br>
         <b-btn
@@ -22,7 +22,7 @@
             block
             @click="_clickedAllow"
         >
-            {{ $t('operations:link.accept_btn') }}
+            {{ $t('operations.link.accept_btn') }}
         </b-btn>
         <b-btn
             class="mt-1"
@@ -30,7 +30,7 @@
             block
             @click="_clickedDeny"
         >
-            {{ $t('operations:link.reject_btn') }}
+            {{ $t('operations.link.reject_btn') }}
         </b-btn>
     </b-modal>
 </template>

@@ -1,4 +1,5 @@
-import VueRouter from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
+
 import HeaderGuest from "../components/header-guest";
 import HeaderSmall from "../components/header-small";
 import Start from "../components/start";
@@ -7,7 +8,7 @@ import Restore from "../components/restore";
 import AddAccount from "../components/add-account";
 import Settings from "../components/settings";
 
-const router = new VueRouter({
+const router = createRouter({
   routes: [{
       path: '/',
       components: {
@@ -50,6 +51,7 @@ const router = new VueRouter({
         header: HeaderSmall
       }
     }
-  ]
+  ],
+  history: createWebHashHistory()
 });
 export default router;
