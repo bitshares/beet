@@ -21,18 +21,17 @@
     });
 
     let accounts = computed(() => {
-      let accounts;
-      if (this.chain == "ANY" || this.chain == null) {
-          accounts = this.$store.state.AccountStore.accountlist;
-      } else {
-          accounts = this.$store.state.AccountStore.accountlist.filter(
-              x => x.chain == this.chain
-          );
-      }
+      let computedAccounts = this.chain == "ANY" || this.chain == null
+            ? computedAccounts = this.$store.state.AccountStore.accountlist
+            : computedAccounts = this.$store.state.AccountStore.accountlist.filter(
+                x => x.chain == this.chain
+            );
+
       if (this.cta != "") {
-          accounts = [{}].concat(accounts);
+          computedAccounts = [{}].concat(computedAccounts);
       }
-      return accounts.slice().map((acc, i) => {
+
+      return computedAccounts.slice().map((acc, i) => {
           acc.trackId = i;
           let match = this.existing.filter(
               x => x.account_id == acc.accountID && x.chain == acc.chain
@@ -63,23 +62,25 @@
     }
 
     watchEffect(() => {
-      if (selectedAccount != { trackId: 0 }) {
-          this.$emit("input", selectedAccount);
+      if (selectedAccount.value != { trackId: 0 }) {
+          this.$emit("input", selectedAccount.value);
       }
     });
 
     watchEffect(() => {
-      if (accounts.length == 1) {
-          selectedAccount = accounts[0];
+      if (accounts.value.length == 1) {
+          selectedAccount = accounts.value[0];
       }
-      if (accounts.length == 2) {
-          selectedAccount = accounts[1];
+      if (accounts.value.length == 2) {
+          selectedAccount = accounts.value[1];
       }
     });
 
+    /*
     watchEffect(() => {
       selectedAccount = value;
     });
+    */
 </script>
 
 <template>

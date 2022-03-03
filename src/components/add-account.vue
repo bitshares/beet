@@ -1,3 +1,163 @@
+<script>
+    import { watch, ref, computed, onMounted } from "vue";
+
+    import Actionbar from "./actionbar";
+    import ImportOptions from "./blockchains/ImportOptions";
+    import EnterPassword from "./EnterPassword";
+
+    import { blockchains } from "../config/config.js";
+    import getBlockchain from "../lib/blockchains/blockchainFactory";
+    import { EventBus } from "../lib/event-bus.js";
+    import RendererLogger from "../lib/RendererLogger";
+    const logger = new RendererLogger();
+
+    let walletname = ref("");
+    let accountname = ref("");
+    let step = ref(1);
+    let s1c = ref("");
+    let includeOwner = ref(0);
+    let errorMsg = ref("");
+    let selectedChain = ref(0);
+    let selectedImport = ref(0);
+    let accounts_to_import = ref(null);
+
+    onMounted(() => {
+      logger.debug("Account-Add wizard Mounted");
+    });
+
+
+    function step1() {
+        step.value = 1;
+    }
+
+    function step2() {
+        if (!createNewWallet) {
+          step.value = 2;
+          return;
+        }
+
+        if (walletname.value.trim() == "") {
+            errorMsg.value = this.$t("common.empty_wallet_error");
+            this.$refs.errorModal.show();
+            s1c.value = "is-invalid";
+            return;
+        }
+
+        // todo use WalletStore
+        let wallets = JSON.parse(localStorage.getItem("wallets"));
+        if (
+            wallets &&
+            wallets.filter(wallet => wallet.name === walletname.value.trim())
+                .length > 0
+        ) {
+            errorMsg.value = this.$t("common.duplicate_wallet_error");
+            this.$refs.errorModal.show();
+            s1c.value = "is-invalid";
+            return;
+        } else {
+            walletname.value = this.walletname.trim();
+            step.value = 2;
+        }
+    }
+
+    async function step3() {
+        EventBus.$emit("popup", "load-start");
+        try {
+            getBlockchain(selectedChain.value);
+            // abstract UI concept more
+            accounts_to_import.value = await this.$refs.import_accounts.getAccountEvent();
+            EventBus.$emit("popup", "load-end");
+            if (accounts_to_import.value != null) {
+                // if import accounts are filled, advance to next step. If not, it is a substep in the
+                // import component
+                step.value = 3;
+            }
+        } catch (err) {
+            _handleError(err);
+        } finally {
+            EventBus.$emit("popup", "load-end");
+        }
+    }
+
+    function _handleError(err) {
+        if (err == "invalid") {
+            errorMsg.value = this.$t("common.invalid_password");
+        } else if (err == "update_failed") {
+            errorMsg.value = this.$t("common.update_failed");
+        } else if (err.key) {
+            errorMsg.value = this.$t(`common.${err.key}`);
+        } else {
+            errorMsg.value = err.toString();
+        }
+        this.$refs.errorModal.show();
+    }
+
+    async function addAccounts() {
+        try {
+            let password = this.$refs.enterPassword.getPassword(); // this.$refs doesn't work in vue3!
+            EventBus.$emit("popup", "load-start");
+            if (accounts_to_import) {
+                for (let i in accounts_to_import) {
+                    let account = accounts_to_import[i];
+                    if (i == 0 && createNewWallet.value) {
+                        await this.$store.dispatch("WalletStore/saveWallet", {
+                            walletname: walletname.value,
+                            password: password,
+                            walletdata: account.account
+                        });
+                    } else {
+                        account.password = password;
+                        account.walletname = walletname.value;
+                        await this.$store.dispatch("AccountStore/addAccount", account);
+                    }
+                }
+                this.$router.replace("/");
+            } else {
+                throw "No account selected!";
+            }
+        } catch (err) {
+            _handleError(err);
+        } finally {
+            EventBus.$emit("popup", "load-end");
+        }
+    }
+
+    let createNewWallet = computed(() => {
+      return !this.$store.state.WalletStore.isUnlocked;
+    });
+
+    let chainList = computed(() => {
+      return Object.values(blockchains).sort((a, b) => {
+          if (!!a.testnet != !!b.testnet) {
+              return a.testnet ? 1 : -1;
+          }
+          return a.name > b.name;
+      });
+    });
+
+    let selectedImportOptions = computed(() => {
+      if (!selectedChain || !selectedChain.value) {
+          return [];
+      } else {
+          return getBlockchain(selectedChain.value).getImportOptions();
+      }
+    });
+
+    let selectedImportOption = computed(() => {
+      if (!selectedChain || !selectedChain.value) {
+          return null;
+      }
+
+      let useImport = !selectedImport || !selectedImport.value
+          ? selectedImportOptions.value[0]
+          : selectedImport.value;
+
+      return getBlockchain(selectedChain.value)
+              .getImportOptions()
+              .find(option => { return option.type == useImport.type; });
+    });
+</script>
+
 <template>
     <div class="bottom p-0">
         <div class="content px-3">
@@ -175,164 +335,3 @@
         </p>
     </div>
 </template>
-
-<script>
-    import { blockchains } from "../config/config.js";
-    import getBlockchain from "../lib/blockchains/blockchainFactory";
-    import Actionbar from "./actionbar";
-    import ImportOptions from "./blockchains/ImportOptions";
-    import EnterPassword from "./EnterPassword";
-
-    import { EventBus } from "../lib/event-bus.js";
-
-    import RendererLogger from "../lib/RendererLogger";
-    const logger = new RendererLogger();
-
-    export default {
-        name: "AddAccount",
-        components: { Actionbar, ImportOptions, EnterPassword },
-        data() {
-            return {
-                walletname: "",
-                accountname: "",
-                step: 1,
-                s1c: "",
-                includeOwner: 0,
-                errorMsg: "",
-                selectedChain: 0,
-                selectedImport: 0
-            };
-        },
-        computed: {
-            createNewWallet() {
-                return !this.$store.state.WalletStore.isUnlocked;
-            },
-            chainList() {
-                return Object.values(blockchains).sort((a, b) => {
-                    if (!!a.testnet != !!b.testnet) {
-                        return a.testnet ? 1 : -1;
-                    }
-                    return a.name > b.name;
-                });
-            },
-            selectedImportOptions() {
-                if (!this.selectedChain) {
-                    return [];
-                } else {
-                    return getBlockchain(this.selectedChain).getImportOptions();
-                }
-            },
-            selectedImportOption() {
-                if (!this.selectedChain) {
-                    return null;
-                } else {
-                    let useImport = null;
-                    if (!this.selectedImport) {
-                        useImport = this.selectedImportOptions[0];
-                    } else {
-                        useImport = this.selectedImport;
-                    }
-                    return getBlockchain(
-                        this.selectedChain
-                    ).getImportOptions().find(
-                        option => { return option.type == useImport.type; }
-                    );
-                }
-            },
-        },
-        mounted() {
-            logger.debug("Account-Add wizard Mounted");
-        },
-        methods: {
-            step1: function() {
-                this.step = 1;
-            },
-            step2: function() {
-                if (this.createNewWallet) {
-                    if (this.walletname.trim() == "") {
-                        this.errorMsg = this.$t("common.empty_wallet_error");
-                        this.$refs.errorModal.show();
-                        this.s1c = "is-invalid";
-                        return;
-                    }
-                    // todo use WalletStore
-                    let wallets = JSON.parse(localStorage.getItem("wallets"));
-                    if (
-                        wallets &&
-                        wallets.filter(wallet => wallet.name === this.walletname.trim())
-                            .length > 0
-                    ) {
-                        this.errorMsg = this.$t("common.duplicate_wallet_error");
-                        this.$refs.errorModal.show();
-                        this.s1c = "is-invalid";
-                        return;
-                    } else {
-                        this.walletname = this.walletname.trim();
-                        this.step = 2;
-                    }
-                } else {
-                    this.step = 2;
-                }
-            },
-            step3: async function() {
-                EventBus.$emit("popup", "load-start");
-                try {
-                    getBlockchain(this.selectedChain);
-                    // abstract UI concept more
-                    this.accounts_to_import = await this.$refs.import_accounts.getAccountEvent();
-                    EventBus.$emit("popup", "load-end");
-                    if (this.accounts_to_import != null) {
-                        // if import accounts are filled, advance to next step. If not, it is a substep in the
-                        // import component
-                        this.step = 3;
-                    }
-                } catch (err) {
-                    this._handleError(err);
-                } finally {
-                    EventBus.$emit("popup", "load-end");
-                }
-            },
-            _handleError(err) {
-                if (err == "invalid") {
-                    this.errorMsg = this.$t("common.invalid_password");
-                } else if (err == "update_failed") {
-                    this.errorMsg = this.$t("common.update_failed");
-                } else if (err.key) {
-                    this.errorMsg = this.$t(`common.${err.key}`);
-                } else {
-                    this.errorMsg = err.toString();
-                }
-                this.$refs.errorModal.show();
-            },
-            addAccounts: async function() {
-                try {
-                    let password = this.$refs.enterPassword.getPassword();
-                    EventBus.$emit("popup", "load-start");
-                    if (this.accounts_to_import) {
-                        for (let i in this.accounts_to_import) {
-                            let account = this.accounts_to_import[i];
-                            if (i == 0 && this.createNewWallet) {
-                                await this.$store.dispatch("WalletStore/saveWallet", {
-                                    walletname: this.walletname,
-                                    password: password,
-                                    walletdata: account.account
-                                });
-                            } else {
-                                account.password = password;
-                                account.walletname = this.walletname;
-                                await this.$store.dispatch("AccountStore/addAccount", account);
-                            }
-                        }
-                        this.$router.replace("/");
-                    } else {
-                        throw "No account selected!";
-                    }
-                } catch (err) {
-                    this._handleError(err);
-                } finally {
-                    EventBus.$emit("popup", "load-end");
-                }
-            }
-        }
-    };
-</script>

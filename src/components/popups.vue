@@ -10,43 +10,42 @@
     import TransferRequestPopup from "./popups/transferrequestpopup";
     import { shell } from 'electron';
 
-    import { onMounted, onBeforeMount, watchEffect } from 'vue';
+    import { ref, onMounted, onBeforeMount, watchEffect } from 'vue';
 
     import RendererLogger from "../lib/RendererLogger";
     import SignMessageRequestPopup from "./popups/signedmessagepopup";
     const logger = new RendererLogger();
 
-    let alerts = [];
-    let loaderpromise = {};
-    let dismissCountDown = 0;
-    let transientMsg = '';
-    let transientLink = '';
-
+    let alerts = ref([]);
+    let loaderpromise = ref({});
+    let dismissCountDown = ref(0);
+    let transientMsg = ref('');
+    let transientLink = ref('');
 
     watchEffect(() => $route() {
-        this.alerts = [];
+        alerts.value = [];
     });
 
     onBeforeMount() {
         EventBus.$on("popup", async what => {
             switch (what) {
             case "load-start":
-                this.loaderpromise.show = new Promise(resolve => {
+                loaderpromise.value.show = new Promise(resolve => {
                     this.$refs.loaderAnimModal.show();
-                    this.loaderpromise.resolve = resolve;
+                    loaderpromise.value.resolve = resolve;
                 });
                 break;
             case "load-end":
-                await this.loaderpromise.show;
+                await loaderpromise.value.show;
                 this.$refs.loaderAnimModal.hide();
                 break;
             }
         });
 
         EventBus.$on("tx-success", (data) => {
-            this.dismissCountDown=5;
-            this.transientMsg=data.msg;
-            this.transientLink=data.link;
+            dismissCountDown.value = 5;
+            transientMsg.value = data.msg;
+            transientLink.value = data.link;
         });
     }
 
@@ -54,7 +53,7 @@
         logger.debug("Popup Service panel mounted");
         this.$root.$on("bv::modal::shown", bvEvent => {
             if (bvEvent.target.id == "loaderAnim") {
-                this.loaderpromise.resolve();
+                loaderpromise.value.resolve();
             }
         });
     }
@@ -64,7 +63,7 @@
     }
 
     function countDownChanged(dismissCountDown) {
-        this.dismissCountDown = dismissCountDown;
+        dismissCountDown.value = dismissCountDown;
     }
 
     function showAlert(request) {
@@ -90,14 +89,16 @@
             alert = { msg: alertmsg, id: uuidv4() };
             break;
         }
-        this.alerts.push(alert);
+        alerts.value.push(alert);
     }
 
     function hideAlert(id) {
-        let index = this.alerts.findIndex(function(o) {
+        let index = alerts.value.findIndex(function(o) {
             return o.id === id;
         });
-        if (index !== -1) this.alerts.splice(index, 1);
+        if (index !== -1) {
+          alerts.value.splice(index, 1);
+        }
     }
 
     async function requestAccess(request) {
@@ -142,7 +143,7 @@
     function requestTx(payload) {
         return this.$refs.transactionReqModal.show(payload);
     }
-    
+
     function isWhitelisted(identity, method) {
         if (
             !!this.$store.state.WhitelistStore &&
@@ -164,7 +165,7 @@
     }
 
     async function requestSignedMessage(payload) {
-        if (this.isWhitelisted(payload.identityhash, "SignMessageRequestPopup")) {
+        if (isWhitelisted(payload.identityhash, "SignMessageRequestPopup")) {
             return {
                 response: await this.$refs.signMessageModal.execute(payload),
                 whitelisted: true

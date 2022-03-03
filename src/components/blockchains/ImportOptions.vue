@@ -1,3 +1,18 @@
+<script setup>
+    import { defineProps } from "vue";
+    import ImportCloudPass from "./bitshares/ImportCloudPass";
+    import ImportBinFile from "./bitshares/ImportBinFile";
+    import ImportMemo from "./bitshares/ImportMemo";
+    import ImportKeys from "./ImportKeys";
+    import ImportAdressBased from "./address/ImportAdressBased";
+
+    const selectedChain = defineProps(["chain", "type"]);
+
+    function getAccountEvent() {
+        return this.$refs.chosen_import.getAccountEvent();
+    }
+</script>
+
 <template>
     <ImportAdressBased
         v-if="type == 'address/ImportAdressBased'"
@@ -33,29 +48,3 @@
         No import option found
     </div>
 </template>
-
-<script>
-    import ImportCloudPass from "./bitshares/ImportCloudPass";
-    import ImportBinFile from "./bitshares/ImportBinFile";
-    import ImportMemo from "./bitshares/ImportMemo";
-    import ImportKeys from "./ImportKeys";
-    import ImportAdressBased from "./address/ImportAdressBased";
-
-    export default {
-        name: "ImportOptions",
-        props: [ "chain", "type" ],
-        components: {ImportCloudPass, ImportBinFile, ImportKeys, ImportAdressBased, ImportMemo},
-        mounted() {
-            // todo: ideally this is a dynamic import component, not importing all at once
-            // see https://vuejs.org/v2/guide/components-dynamic-async.html
-            // see https://medium.com/scrumpy/dynamic-component-templates-with-vue-js-d9236ab183bb
-            // the above two dont work for some reason
-        },
-        methods: {
-            getAccountEvent: function() {
-                return this.$refs.chosen_import.getAccountEvent();
-            }
-        }
-
-    };
-</script>

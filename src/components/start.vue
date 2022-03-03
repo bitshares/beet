@@ -1,4 +1,6 @@
 <script setup>
+    import { ref, onMounted } from 'vue';
+
     import RendererLogger from "../lib/RendererLogger";
     import Multiselect from "vue-multiselect";
     const logger = new RendererLogger();
@@ -11,10 +13,10 @@
       return this.$store.state.WalletStore.walletlist;
     })
 
-    let walletpass = "";
-    let selectedWallet = null;
-    let passincorrect = "";
-    let errorMsg = "";
+    let walletpass = ref("");
+    let selectedWallet = ref(null);
+    let passincorrect = ref("");
+    let errorMsg = ref("");
 
     onMounted(() => {
       logger.debug("Start screen mounted");
@@ -25,15 +27,15 @@
     function unlockWallet() {
         this.$store
             .dispatch("WalletStore/getWallet", {
-                wallet_id: this.selectedWallet.id,
-                wallet_pass: this.walletpass
+                wallet_id: selectedWallet.value.id,
+                wallet_pass: walletpass.value
             })
             .then(() => {
                 this.$router.replace("/dashboard");
             })
             .catch(() => {
-                this.passincorrect = "is-invalid";
-                this.errorMsg = "Invalid Password.";
+                passincorrect.value = "is-invalid";
+                errorMsg.value = "Invalid Password.";
                 this.$refs.errorModal.show();
             });
     }

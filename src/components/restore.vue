@@ -1,17 +1,15 @@
 <script setup>
-
-    import { EventBus } from "../lib/event-bus.js";
+    import { ref, onMounted } from 'vue';
     import aes from "crypto-js/aes.js";
     import ENC from 'crypto-js/enc-utf8.js';
-
-    import RendererLogger from "../lib/RendererLogger";
-    import path from 'path';
     import fs from 'fs';
+    import path from 'path';
 
+    import { EventBus } from "../lib/event-bus.js";
+    import RendererLogger from "../lib/RendererLogger";
     const logger = new RendererLogger();
 
-    let walletfile = ""; // unused?
-    let backuppass = "";
+    let backupPass = ref("");
 
     onMounted(() => {
       logger.debug("Restore wizard Mounted");
@@ -26,7 +24,7 @@
           return;
         }
 
-        if (this.backupPass === "") {
+        if (backupPass.value === "") {
           document.getElementById('backupPass').classList.add("error");
           return;
         }
@@ -41,8 +39,8 @@
                 return;
             }
             try {
-                let wallet=JSON.parse(aes.decrypt(data, this.backuppass).toString(ENC));
-                await this.$store.dispatch('WalletStore/restoreWallet', { backup: wallet, password: this.backuppass});
+                let wallet=JSON.parse(aes.decrypt(data, backupPass.value).toString(ENC));
+                await this.$store.dispatch('WalletStore/restoreWallet', { backup: wallet, password: backupPass.value});
                 EventBus.$emit("popup", "load-end");
                 this.$router.replace("/");
             } catch(e) {
@@ -82,7 +80,7 @@
             </p>
             <input
                 id="backupPass"
-                v-model="backuppass"
+                v-model="backupPass"
                 type="password"
                 class="form-control mb-3"
                 :placeholder="$t('common.password_placeholder')"

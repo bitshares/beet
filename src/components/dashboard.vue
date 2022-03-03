@@ -1,4 +1,5 @@
-<script>
+<script setup>
+    import { watch, ref, computed, onMounted } from "vue";
     import AccountSelect from "./account-select";
     import Actionbar from "./actionbar";
     import Balances from "./balances";
@@ -8,8 +9,16 @@
     import { EventBus } from "../lib/event-bus.js";
     const logger = new RendererLogger();
 
+    let nodes = ref([]);
+    let api = ref(null);
+    let isConnected = ref(false);
+    let isConnecting = ref(false);
+    let incoming = ref(null);
+    let genericmsg = ref("");
+    let specifics = ref("");
+
     let connectionFailed = computed(() => {
-      return !this.isConnecting && !this.isConnected;
+      return !isConnecting.value && !isConnected.value;
     });
 
     let selectedAccount = computed(() => {
@@ -24,26 +33,26 @@
     });
 
     let blockchain = computed(() => {
-      return getBlockchain(this.selectedAccount.chain);
+      return getBlockchain(selectedAccount.value.chain);
     });
 
     let selectedChain = computed(() => {
-      return this.selectedAccount.chain;
+      return selectedAccount.value.chain;
     });
 
     let selectedNode = computed(() => {
-      get: function() {
+      get: () => {
           return this.$store.state.SettingsStore.settings.selected_node[
-              this.selectedAccount.chain
+              selectedAccount.value.chain
           ];
       },
-      set: function(newVal) {
-          if (!this.selectedNode || this.selectedNode != newVal) {
-              this.blockchain
-                  .ensureConnection(newVal)
-                  .finally(() => {
-                      this.isConnected = this.blockchain.isConnected();
-                  });
+      set: (newVal) => {
+          if (!selectedNode || selectedNode != newVal) {
+              blockchain.value
+                .ensureConnection(newVal)
+                .finally(() => {
+                    isConnected.value = blockchain.value.isConnected();
+                });
           }
       }
     });
@@ -60,21 +69,14 @@
       return this.$store.state.AccountStore.accountlist;
     });
 
-    let nodes = [];
-    let api = null;
-    let isConnected = false;
-    let isConnecting = false;
-    let incoming = null;
-    let genericmsg = "";
-    let specifics = "";
-
     async function reconnect() {
-        let _selectedNode = this.selectedNode;
-        let idx = this.nodes.findIndex(item => item.url == _selectedNode);
-        if (this.nodes.length == idx+1) {
+        let _selectedNode = selectedNode.value;
+        let idx = nodes.value.findIndex(item => item.url == _selectedNode);
+        if (nodes.value.length == idx+1) {
             idx = -1;
         }
-        this.selectedNode = this.nodes[idx+1].url;
+
+        selectedNode.value = nodes.value[idx+1].url;
     }
 
     async function loadBalances() {
@@ -86,51 +88,47 @@
 
     onMounted(() => {
       EventBus.$emit("popup", "load-start");
-      this.nodes = this.blockchain.getNodes();
-      this.isConnected = this.blockchain.isConnected();
-      this.loadBalances();
+      nodes.value = blockchain.value.getNodes();
+      isConnected.value = blockchain.value.isConnected();
+      loadBalances();
     });
 
-
-    export default {
-        watch: {
-            selectedAccount: async function(newAcc, oldAcc) {
-                if (
-                    newAcc.chain != oldAcc.chain ||
-                    newAcc.accountID != oldAcc.accountID
-                ) {
-                    EventBus.$emit("popup", "load-start");
-                }
-            },
-            selectedChain: function(newVal, oldVal) {
-                if (oldVal !== newVal) {
-                    this.isConnected = false;
-                    this.nodes = this.blockchain.getNodes();
-                    this.isConnected = this.blockchain.isConnected();
-                    if (!this.selectedNode) {
-                        this.selectedNode = this.nodes[0].url;
-                    }
-                }
-            }
-        },
-        created() {
-            // Is EventBus here necessary? Could this be a computed field and listen
-            // to this.blockchain.isConnected?
-            EventBus.$on("blockchainStatus", what => {
-                if (what.chain == this.selectedChain) {
-                    this.isConnected = what.status;
-                    this.isConnecting = !!what.connecting;
-                }
-            });
-            EventBus.$on("balances", what => {
-                switch (what) {
-                case "loaded":
-                    EventBus.$emit("popup", "load-end");
-                    break;
-                }
-            });
+    // Is EventBus here necessary? Could this be a computed field and listen
+    // to this.blockchain.isConnected?
+    EventBus.$on("blockchainStatus", what => {
+        if (what.chain == selectedChain.value) {
+            isConnected.value = what.status;
+            isConnecting.value = !!what.connecting;
         }
-    };
+    });
+
+    EventBus.$on("balances", what => {
+        switch (what) {
+        case "loaded":
+            EventBus.$emit("popup", "load-end");
+            break;
+        }
+    });
+
+    watch(selectedAccount, async (newAcc, oldAcc) => {
+      if (
+          newAcc.chain != oldAcc.chain ||
+          newAcc.accountID != oldAcc.accountID
+      ) {
+          EventBus.$emit("popup", "load-start");
+      }
+    },{immediate:true});
+
+    watch(selectedChain, async (newVal, oldVal) => {
+      if (oldVal !== newVal) {
+          isConnected.value = false;
+          nodes.value = blockchain.getNodes();
+          isConnected.value = blockchain.isConnected();
+          if (!selectedNode || !selectedNode.value) {
+              selectedNode.value = nodes.value[0].url;
+          }
+      }
+    },{immediate:true});
 </script>
 
 <template>

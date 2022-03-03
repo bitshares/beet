@@ -6,12 +6,15 @@
     function getChainLabel(chain) {
         return formatChain(chain);
     }
+    
     function getExplorer(account) {
         return getBlockchain(account.chain).getExplorer(account);
     }
+
     function getAccessType(chain) {
         return getBlockchain(chain).getAccessType();
     }
+
     function openExplorer(account) {
         shell.openExternal(this.getExplorer(account));
     }

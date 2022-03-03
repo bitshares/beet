@@ -1,4 +1,5 @@
 <script setup>
+    import { onMounted } from 'vue';
     import { EventBus } from "../lib/event-bus.js";
     import Actionbar from "./actionbar";
     import { ipcRenderer } from "electron";
@@ -13,14 +14,14 @@
     });
 
     let dapps = computed(() => {
-      let dapps = [];
-      for (let i=0;i< this.$store.state.AccountStore.accountlist.length;i++) {
+      let storedDapps = [];
+      for (let i=0; i < this.$store.state.AccountStore.accountlist.length; i++) {
           let apps = this.$store.getters['OriginStore/walletAccessibleDapps'](this.$store.state.AccountStore.accountlist[i].accountID, this.$store.state.AccountStore.accountlist[i].chain);
           if (typeof apps != 'undefined') {
-              dapps = dapps.concat(apps);
+              storedDapps = storedDapps.concat(apps);
           }
       }
-      return dapps;
+      return storedDapps;
     })
 
     async function downloadBackup() {

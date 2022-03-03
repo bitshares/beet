@@ -1,3 +1,54 @@
+<script setup>
+    import {defineprops, ref} from "vue";
+    import getBlockchain from "../../../lib/blockchains/blockchainFactory";
+
+    const account = defineProps(["selectedChain"]);
+
+    let accountname = ref("");
+    let memopk = ref("");
+    //let includeOwner = ref(0);
+    let accessType = ref(null);
+    let requiredFields = ref(null);
+
+    let blockchain = getBlockchain(this.selectedChain);
+    accessType.value = blockchain.getAccessType();
+    requiredFields.value = blockchain.getSignUpInput();
+
+    async function _verifyAccount() {
+        if (accountname.value == "") {
+            throw {
+                key: "missing_account_error",
+                args: {
+                    chain: this.selectedChain
+                }
+            };
+        }
+        let blockchain = getBlockchain(this.selectedChain);
+        let authorities = {};
+        if (requiredFields.value.memo != null) {
+            authorities.memo = memopk.value;
+        }
+        let account = await blockchain.verifyAccount(accountname.value, authorities);
+        return {
+            account: {
+                accountName: accountname.value,
+                accountID: account.id,
+                chain: this.selectedChain,
+                keys: authorities
+            }
+        };
+    }
+
+    async function getAccountEvent() {
+        let account = await _verifyAccount();
+        if (account.accountID !== null) {
+            return [account];
+        } else {
+            throw "This shouldn't happen!"
+        }
+    }
+</script>
+
 <template>
     <div
         id="step2"
@@ -40,60 +91,3 @@
     </div>
 
 </template>
-
-<script>
-    import getBlockchain from "../../../lib/blockchains/blockchainFactory";
-
-    export default {
-        name: "ImportMemo",
-        props: [ "selectedChain" ],
-        data() {
-            return {
-                accountname: "",
-                memopk: "",
-                includeOwner: 0,
-                accessType: null,
-                requiredFields: null
-            };
-        },
-        created() {
-            let blockchain = getBlockchain(this.selectedChain);
-            this.accessType = blockchain.getAccessType();
-            this.requiredFields = blockchain.getSignUpInput();
-        },
-        methods: {
-            _verifyAccount: async function() {
-                if (this.accountname == "") {
-                    throw {
-                        key: "missing_account_error",
-                        args: {
-                            chain: this.selectedChain
-                        }
-                    };
-                }
-                let blockchain = getBlockchain(this.selectedChain);
-                let authorities = {};
-                if (this.requiredFields.memo != null) {
-                    authorities.memo = this.memopk;
-                }
-                let account = await blockchain.verifyAccount(this.accountname, authorities);
-                return {
-                    account: {
-                        accountName: this.accountname,
-                        accountID: account.id,
-                        chain: this.selectedChain,
-                        keys: authorities
-                    }
-                };
-            },
-            getAccountEvent: async function() {
-                let account = await this._verifyAccount();
-                if (this.accountID !== null) {
-                    return [account];
-                } else {
-                    throw "This shouldn't happen!"
-                }
-            }
-        }
-    };
-</script>

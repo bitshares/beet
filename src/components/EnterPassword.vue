@@ -15,17 +15,14 @@
       logger.debug("Enter Password Mounted");
     });
 
-    let password = "";
-    let confirmPassword = "";
+    let password = ref("");
+    let confirmPassword = ref("");
 
     function getPassword() {
-        if (
-            this.password == "" ||
-            (this.password != this.confirmPassword && this.new)
-        ) {
+        if (password.value == "" || password.value !== confirmPassword.value) {
             throw { key: "confirm_pass_error" };
         }
-        return this.password;
+        return password.value;
     }
 </script>
 

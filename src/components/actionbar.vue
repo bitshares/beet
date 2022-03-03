@@ -1,3 +1,24 @@
+<script setup>
+    import RendererLogger from "../lib/RendererLogger";
+    import { EventBus } from "../lib/event-bus.js";
+    const logger = new RendererLogger();
+
+    EventBus.$on('timeout', (data)=>{
+        if(data=='logout') {
+            this.logout();
+        }
+    })
+
+    function logout() {
+        this.$store.dispatch("WalletStore/logout");
+        this.$router.replace("/");
+    }
+
+    onMounted(() => {
+      logger.debug("Action Bar mounted");
+    });
+</script>
+
 <template>
     <div class="row node-selector">
         <div class="col-12 p-0 text-center d-flex justify-content-center">
@@ -41,34 +62,3 @@
         </div>
     </div>
 </template>
-
-<script>
-    import RendererLogger from "../lib/RendererLogger";
-    import { EventBus } from "../lib/event-bus.js";
-    const logger = new RendererLogger();
-
-    export default {
-        name: "Actionbar",
-        data() {
-            return {};
-        },
-        computed: {},
-        watch: {},
-        created() {
-            EventBus.$on('timeout', (data)=>{
-                if(data=='logout') {
-                    this.logout();
-                }
-            })
-        },
-        mounted() {
-            logger.debug("Action Bar mounted");
-        },
-        methods: {
-            logout: function() {
-                this.$store.dispatch("WalletStore/logout");
-                this.$router.replace("/");
-            }
-        }
-    };
-</script>
