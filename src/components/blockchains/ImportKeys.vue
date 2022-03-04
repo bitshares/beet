@@ -1,5 +1,5 @@
 <script setup>
-    import { ref, defineProps } from "vue";
+    import { ref } from "vue";
     import getBlockchain from "../../lib/blockchains/blockchainFactory";
 
     const selectedChain = defineProps(["selectedChain"]);
@@ -18,7 +18,7 @@
     requiredFields.value = blockchain.getSignUpInput();
 
     async function _verifyAccount() {
-        if (this.accountname == "") {
+        if (accountname.value == "") {
             throw {
                 key: "missing_account_error",
                 args: {
@@ -28,19 +28,19 @@
         }
         let blockchain = getBlockchain(this.selectedChain);
         let authorities = {};
-        if (this.requiredFields.active != null) {
-            authorities.active = this.activepk;
+        if (requiredFields.value.active != null) {
+            authorities.active = activepk.value;
         }
-        if (this.requiredFields.memo != null) {
-            authorities.memo = this.memopk;
+        if (requiredFields.value.memo != null) {
+            authorities.memo = memopk.value;
         }
-        if (this.includeOwner == 1 && this.requiredFields.owner != null) {
-            authorities.owner = this.ownerpk;
+        if (includeOwner.value == 1 && requiredFields.value.owner != null) {
+            authorities.owner = ownerpk.value;
         }
-        let account = await blockchain.verifyAccount(this.accountname, authorities);
+        let account = await blockchain.verifyAccount(accountname.value, authorities);
         return {
             account: {
-                accountName: this.accountname,
+                accountName: accountname.value,
                 accountID: account.id,
                 chain: this.selectedChain,
                 keys: authorities

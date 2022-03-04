@@ -1,3 +1,39 @@
+<script setup>
+    import { ref, onMounted } from "vue";
+
+    import AbstractPopup from "./abstractpopup";
+    import RendererLogger from "../../lib/RendererLogger";
+    const logger = new RendererLogger();
+
+    let type = ref("IdentityRequestPopup");
+    let beetapp = ref({});
+    let idaccount = ref({});
+
+    onMounted(() => {
+      logger.debug("Link Popup initialised");
+    });
+
+    function _onShow() {
+        let shownBeetApp = this.$store.state.OriginStore.apps.filter(
+            x => x.identityhash == incoming.identityhash
+        )[0];
+
+        idaccount.value = this.$store.state.AccountStore.accountlist.filter(
+            x => {  return  x.accountID == shownBeetApp.account_id && x.chain == shownBeetApp.chain; }
+        )[0];
+
+        beetapp.value = shownBeetApp;
+    }
+
+    function _execute() {
+        return {
+            name: idaccount.value.accountName,
+            chain: beetapp.value.chain,
+            id: beetapp.value.account_id
+        };
+    }
+</script>
+
 <template>
     <b-modal
         id="type"
@@ -34,45 +70,3 @@
         </b-btn>
     </b-modal>
 </template>
-<script>
-    import AbstractPopup from "./abstractpopup";
-    import RendererLogger from "../../lib/RendererLogger";
-    const logger = new RendererLogger();
-
-    export default {
-        name: "IdentityRequestPopup",
-        components: {},
-        extends: AbstractPopup,
-        data() {
-            return {
-                type: "IdentityRequestPopup",
-                beetapp: {},
-                idaccount: {}
-            };
-        },
-        computed: {},
-        mounted() {
-            logger.debug("Link Popup initialised");
-        },
-        methods: {
-            _onShow: function() {
-
-                let beetapp = this.$store.state.OriginStore.apps.filter(
-                    x => x.identityhash == this.incoming.identityhash
-                )[0];
-
-                this.idaccount = this.$store.state.AccountStore.accountlist.filter(
-                    x => {  return  x.accountID == beetapp.account_id && x.chain == beetapp.chain; }
-                )[0];
-                this.beetapp=beetapp;
-            },
-            _execute: function() {
-                return {
-                    name: this.idaccount.accountName,
-                    chain: this.beetapp.chain,
-                    id: this.beetapp.account_id
-                };
-            }
-        }
-    };
-</script>

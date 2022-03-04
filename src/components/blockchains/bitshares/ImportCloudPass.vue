@@ -35,7 +35,7 @@
         try {
             account = await blockchain.verifyAccount(accountname.value, authorities);
         } catch (e) {
-            authorities = this.getAuthoritiesFromPass(this.bitshares_cloud_login_password, true);
+            authorities = this.getAuthoritiesFromPass(bitshares_cloud_login_password.value, true);
             account = await blockchain.verifyAccount(accountname.value, authorities);
             //TODO: Should notify user of legacy/dangerous permissions (active==memo)
         }

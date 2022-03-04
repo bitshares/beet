@@ -64,7 +64,7 @@
         }
 
         if (retrievedBalance) {
-          balances = retrievedBalance;
+          balances.value = retrievedBalance;
         }
     }
 
@@ -95,12 +95,12 @@
             {{ $t('common.balances_lbl') }}
         </p>
         <table class="table small table-striped table-sm">
-            <span v-if="errored.value">
+            <span v-if="errored">
                 {{ $t('common.balances_error') }}
             </span>
-            <tbody v-if="balances.value != null">
+            <tbody v-if="balances != null">
                 <tr
-                    v-for="balance in balances.value"
+                    v-for="balance in balances"
                     :key="balance.id"
                 >
                     <td class="text-left">

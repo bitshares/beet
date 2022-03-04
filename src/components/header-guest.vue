@@ -1,4 +1,5 @@
 <script setup>
+    import { onMounted } from 'vue';
     import LangSelect from "./lang-select";
     import RendererLogger from "../lib/RendererLogger";
     const logger = new RendererLogger();

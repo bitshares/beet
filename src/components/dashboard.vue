@@ -10,12 +10,13 @@
     const logger = new RendererLogger();
 
     let nodes = ref([]);
-    let api = ref(null);
     let isConnected = ref(false);
     let isConnecting = ref(false);
-    let incoming = ref(null);
-    let genericmsg = ref("");
-    let specifics = ref("");
+
+    //let api = ref(null);
+    //let incoming = ref(null);
+    //let genericmsg = ref("");
+    //let specifics = ref("");
 
     let connectionFailed = computed(() => {
       return !isConnecting.value && !isConnected.value;
@@ -117,7 +118,7 @@
       ) {
           EventBus.$emit("popup", "load-start");
       }
-    },{immediate:true});
+    }, {immediate: true});
 
     watch(selectedChain, async (newVal, oldVal) => {
       if (oldVal !== newVal) {
@@ -128,60 +129,64 @@
               selectedNode.value = nodes.value[0].url;
           }
       }
-    },{immediate:true});
+    }, {immediate: true});
 </script>
 
 <template>
     <div class="bottom p-0">
         <div class="content">
-            <div class="row mb-2 account no-gutters">
-                <div class="col-2 text-right label">
-                    {{ $t('common.account') }}
-                </div>
-                <div class="col-8 text-center">
-                    <AccountSelect
-                        v-model="selectedAccount"
-                        chain="ANY"
-                        cta
-                    />
-                </div>
-                <div v-if="isConnecting" class="col-2 text-center icons">
-                    <a
-                        href="#"
-                        @click="reconnect()"
-                        class="status align-self-center"
-                    >
-                        <span
-                            class="status align-self-center icon-connected"
-                        />
-                    </a>
-                </div>
-                <div v-else-if="connectionFailed" class="col-2 text-center icons">
-                    <a
-                        href="#"
-                        @click="reconnect()"
-                        class="status align-self-center"
-                    >
-                        <span
-                            class="status align-self-center icon-disconnected"
-                        />
-                    </a>
-                </div>
-                <div v-else class="col-2 text-center">
-                    <a
-                        href="#"
-                        @click="loadBalances()"
-                        class="status align-self-center"
-                    >
-                        <span
-                            v-b-tooltip.hover
-                            v-b-tooltip.d500
-                            :title="$t('common.tooltip_refresh')"
-                            class="icon-spinner11"
-                        />
-                    </a>
-                </div>
-            </div>
+            <ui-grid class="row mb-2 account no-gutters">
+              <ui-grid-cell class="text-right label" columns="2">
+                  {{ $t('common.account') }}
+              </ui-grid-cell>
+
+              <ui-grid-cell class="text-center" columns="8">
+                  <AccountSelect
+                      v-model="selectedAccount"
+                      chain="ANY"
+                      cta
+                  />
+              </ui-grid-cell>
+
+              <ui-grid-cell v-if="isConnecting" columns="2" class="text-center icons">
+                  <a
+                      href="#"
+                      @click="reconnect()"
+                      class="status align-self-center"
+                  >
+                      <span
+                          class="status align-self-center icon-connected"
+                      />
+                  </a>
+              </ui-grid-cell>
+
+              <ui-grid-cell v-else-if="connectionFailed" class="col-2 text-center icons" columns="2">
+                  <a
+                      href="#"
+                      @click="reconnect()"
+                      class="status align-self-center"
+                  >
+                      <span
+                          class="status align-self-center icon-disconnected"
+                      />
+                  </a>
+              </ui-grid-cell>
+
+              <ui-grid-cell v-else class="col-2 text-center" columns="2">
+                  <a
+                      href="#"
+                      @click="loadBalances()"
+                      class="status align-self-center"
+                  >
+                      <span
+                          v-b-tooltip.hover
+                          v-b-tooltip.d500
+                          :title="$t('common.tooltip_refresh')"
+                          class="icon-spinner11"
+                      />
+                  </a>
+              </ui-grid-cell>
+            </ui-grid>
             <AccountDetails :account="selectedAccount"/>
             <Balances ref="balancetable" />
         </div>

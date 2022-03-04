@@ -1,5 +1,5 @@
 <script setup>
-    import { ref, onMounted } from 'vue';
+    import { onMounted } from 'vue';
 
     import { locales } from "../config/i18n.js";
     import Multiselect from '@vueform/multiselect'
@@ -12,7 +12,7 @@
           locale: option
       });
     }
-    
+
     onMounted(() => {
         logger.debug("Language Selector mounted");
     });

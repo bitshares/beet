@@ -12,10 +12,10 @@
     const logger = new RendererLogger();
 
     let walletname = ref("");
-    let accountname = ref("");
+    //let accountname = ref("");
     let step = ref(1);
     let s1c = ref("");
-    let includeOwner = ref(0);
+    //let includeOwner = ref(0);
     let errorMsg = ref("");
     let selectedChain = ref(0);
     let selectedImport = ref(0);
@@ -55,7 +55,7 @@
             s1c.value = "is-invalid";
             return;
         } else {
-            walletname.value = this.walletname.trim();
+            walletname.value = walletname.value.trim();
             step.value = 2;
         }
     }
@@ -96,9 +96,9 @@
         try {
             let password = this.$refs.enterPassword.getPassword(); // this.$refs doesn't work in vue3!
             EventBus.$emit("popup", "load-start");
-            if (accounts_to_import) {
-                for (let i in accounts_to_import) {
-                    let account = accounts_to_import[i];
+            if (accounts_to_import && accounts_to_import.value) {
+                for (let i in accounts_to_import.value) {
+                    let account = accounts_to_import.value[i];
                     if (i == 0 && createNewWallet.value) {
                         await this.$store.dispatch("WalletStore/saveWallet", {
                             walletname: walletname.value,
@@ -138,9 +138,9 @@
     let selectedImportOptions = computed(() => {
       if (!selectedChain || !selectedChain.value) {
           return [];
-      } else {
-          return getBlockchain(selectedChain.value).getImportOptions();
       }
+
+      return getBlockchain(selectedChain.value).getImportOptions();
     });
 
     let selectedImportOption = computed(() => {
@@ -161,10 +161,7 @@
 <template>
     <div class="bottom p-0">
         <div class="content px-3">
-            <div
-                v-if="step==1"
-                id="step1"
-            >
+            <div v-if="step==1" id="step1">
                 <h4 class="h4 mt-3 font-weight-bold">
                     {{ $t('common.step_counter',{ 'step_no' : 1}) }}
                 </h4>
@@ -202,11 +199,7 @@
                     :placeholder="$t('common.chain_placeholder')"
                     required
                 >
-                    <option
-                        selected
-                        disabled
-                        value="0"
-                    >
+                    <option selected disabled value="0">
                         {{ $t('common.select_chain') }}
                     </option>
                     <option
@@ -264,10 +257,7 @@
                     </div>
                 </div>
             </div>
-            <div
-                v-else-if="step==2"
-                id="step2"
-            >
+            <div v-else-if="step==2" id="step2">
                 <ImportOptions
                     v-if="selectedImportOption"
                     ref="import_accounts"
@@ -327,11 +317,8 @@
             </b-modal>
         </div>
         <Actionbar v-if="!createNewWallet" />
-        <p
-            v-if="createNewWallet"
-            class="mt-2 mb-2 small"
-        >
-            &copy; 2019-2021 BitShares
+        <p v-if="createNewWallet" class="mt-2 mb-2 small">
+            &copy; 2019-2022 BitShares
         </p>
     </div>
 </template>

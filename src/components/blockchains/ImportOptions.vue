@@ -1,5 +1,4 @@
 <script setup>
-    import { defineProps } from "vue";
     import ImportCloudPass from "./bitshares/ImportCloudPass";
     import ImportBinFile from "./bitshares/ImportBinFile";
     import ImportMemo from "./bitshares/ImportMemo";

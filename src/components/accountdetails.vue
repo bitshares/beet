@@ -6,7 +6,7 @@
     function getChainLabel(chain) {
         return formatChain(chain);
     }
-    
+
     function getExplorer(account) {
         return getBlockchain(account.chain).getExplorer(account);
     }
@@ -16,10 +16,10 @@
     }
 
     function openExplorer(account) {
-        shell.openExternal(this.getExplorer(account));
+        shell.openExternal(getExplorer(account));
     }
 
-    const account = defineProps(["account"]);
+    const props = defineProps(["account"]);
 </script>
 
 <template>

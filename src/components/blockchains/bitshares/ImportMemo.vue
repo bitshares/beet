@@ -1,5 +1,5 @@
 <script setup>
-    import {defineprops, ref} from "vue";
+    import {ref} from "vue";
     import getBlockchain from "../../../lib/blockchains/blockchainFactory";
 
     const account = defineProps(["selectedChain"]);

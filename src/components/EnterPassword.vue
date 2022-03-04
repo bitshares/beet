@@ -1,5 +1,5 @@
 <script setup>
-    import { defineProps } from 'vue';
+    import { onMounted } from 'vue';
     import RendererLogger from "../lib/RendererLogger";
     const logger = new RendererLogger();
 

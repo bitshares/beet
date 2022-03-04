@@ -10,7 +10,7 @@
     import TransferRequestPopup from "./popups/transferrequestpopup";
     import { shell } from 'electron';
 
-    import { ref, onMounted, onBeforeMount, watchEffect } from 'vue';
+    import { ref, onMounted, watchEffect } from 'vue';
 
     import RendererLogger from "../lib/RendererLogger";
     import SignMessageRequestPopup from "./popups/signedmessagepopup";
@@ -22,32 +22,30 @@
     let transientMsg = ref('');
     let transientLink = ref('');
 
+    EventBus.$on("popup", async what => {
+        switch (what) {
+        case "load-start":
+            loaderpromise.value.show = new Promise(resolve => {
+                this.$refs.loaderAnimModal.show();
+                loaderpromise.value.resolve = resolve;
+            });
+            break;
+        case "load-end":
+            await loaderpromise.value.show;
+            this.$refs.loaderAnimModal.hide();
+            break;
+        }
+    });
+
+    EventBus.$on("tx-success", (data) => {
+        dismissCountDown.value = 5;
+        transientMsg.value = data.msg;
+        transientLink.value = data.link;
+    });
+
     watchEffect(() => $route() {
         alerts.value = [];
     });
-
-    onBeforeMount() {
-        EventBus.$on("popup", async what => {
-            switch (what) {
-            case "load-start":
-                loaderpromise.value.show = new Promise(resolve => {
-                    this.$refs.loaderAnimModal.show();
-                    loaderpromise.value.resolve = resolve;
-                });
-                break;
-            case "load-end":
-                await loaderpromise.value.show;
-                this.$refs.loaderAnimModal.hide();
-                break;
-            }
-        });
-
-        EventBus.$on("tx-success", (data) => {
-            dismissCountDown.value = 5;
-            transientMsg.value = data.msg;
-            transientLink.value = data.link;
-        });
-    }
 
     onMounted() {
         logger.debug("Popup Service panel mounted");
@@ -62,8 +60,8 @@
         shell.openExternal(link);
     }
 
-    function countDownChanged(dismissCountDown) {
-        dismissCountDown.value = dismissCountDown;
+    function countDownChanged(countdownChange) {
+        dismissCountDown.value = countdownChange.value;
     }
 
     function showAlert(request) {

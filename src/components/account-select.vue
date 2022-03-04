@@ -5,8 +5,6 @@
     const logger = new RendererLogger();
     import {formatChain, formatAccount} from "../lib/formatter";
 
-    let selectedAccount = ref(this.value);
-
     const props = defineProps({
         value: Object,
         chain: String,
@@ -20,20 +18,22 @@
         }
     });
 
+    let selectedAccount = ref(props.value);
+
     let accounts = computed(() => {
-      let computedAccounts = this.chain == "ANY" || this.chain == null
+      let computedAccounts = props.chain == "ANY" || props.chain == null
             ? computedAccounts = this.$store.state.AccountStore.accountlist
             : computedAccounts = this.$store.state.AccountStore.accountlist.filter(
-                x => x.chain == this.chain
+                x => x.chain == props.chain
             );
 
-      if (this.cta != "") {
+      if (props.cta != "") {
           computedAccounts = [{}].concat(computedAccounts);
       }
 
       return computedAccounts.slice().map((acc, i) => {
           acc.trackId = i;
-          let match = this.existing.filter(
+          let match = props.existing.filter(
               x => x.account_id == acc.accountID && x.chain == acc.chain
           );
           if (match.length > 0) {
@@ -51,7 +51,7 @@
 
     function accountLabel(account) {
         if (!account.hasOwnProperty("accountID") && account.trackId == 0) {
-            return this.cta;
+            return props.cta;
         } else {
             return (
                 formatChain(account.chain) +
@@ -69,16 +69,16 @@
 
     watchEffect(() => {
       if (accounts.value.length == 1) {
-          selectedAccount = accounts.value[0];
+          selectedAccount.value = accounts.value[0];
       }
       if (accounts.value.length == 2) {
-          selectedAccount = accounts.value[1];
+          selectedAccount.value = accounts.value[1];
       }
     });
 
     /*
     watchEffect(() => {
-      selectedAccount = value;
+      selectedAccount.value = props.value;
     });
     */
 </script>
