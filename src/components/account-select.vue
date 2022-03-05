@@ -1,7 +1,6 @@
 <script setup>
-    import { watchEffect, ref } from "vue";
+    import { watchEffect, ref, onMounted, computed } from "vue";
     import RendererLogger from "../lib/RendererLogger";
-    import Multiselect from "vue-multiselect";
     const logger = new RendererLogger();
     import {formatChain, formatAccount} from "../lib/formatter";
 
@@ -76,32 +75,26 @@
       }
     });
 
-    /*
     watchEffect(() => {
       selectedAccount.value = props.value;
     });
-    */
+
 </script>
 
 <template>
-    <multiselect
-        id="account-select"
-        v-model="selectedAccount"
-        :class="'form-control '+extraclass"
-        :searchable="false"
-        :allow-empty="false"
-        :custom-label="accountLabel"
-        :options="accounts"
-        track-by="trackId"
-    >
-        <template #option slot-scope="props">
-            <span
-                class="option__desc"
-                :class="{ prevLink: props.option.linked }"
-                :data-linked="$t('common.previously_linked')"
-            >
-                <span class="option__title options">{{ accountLabel(props.option) }}</span>
-            </span>
-        </template>
-    </multiselect>
+    <section :dir="null">
+        <ui-select
+            id="full-func-js-select"
+            v-model="selectedAccount"
+            :options="accounts"
+            :label="accountLabel"
+            :class="{ prevLink: props.option.linked }"
+            :data-linked="$t('common.previously_linked')"
+            :disabled="false"
+            @selected="onSelected($event)"
+            track-by="trackId"
+        >
+            Language select
+        </ui-select>
+    </section>
 </template>

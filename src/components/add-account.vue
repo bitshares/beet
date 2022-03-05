@@ -1,4 +1,4 @@
-<script>
+<script setup>
     import { watch, ref, computed, onMounted } from "vue";
 
     import Actionbar from "./actionbar";
@@ -7,7 +7,6 @@
 
     import { blockchains } from "../config/config.js";
     import getBlockchain from "../lib/blockchains/blockchainFactory";
-    import { EventBus } from "../lib/event-bus.js";
     import RendererLogger from "../lib/RendererLogger";
     const logger = new RendererLogger();
 
@@ -61,12 +60,12 @@
     }
 
     async function step3() {
-        EventBus.$emit("popup", "load-start");
+        this.emitter.emit("popup", "load-start");
         try {
             getBlockchain(selectedChain.value);
             // abstract UI concept more
             accounts_to_import.value = await this.$refs.import_accounts.getAccountEvent();
-            EventBus.$emit("popup", "load-end");
+            this.emitter.emit("popup", "load-end");
             if (accounts_to_import.value != null) {
                 // if import accounts are filled, advance to next step. If not, it is a substep in the
                 // import component
@@ -75,7 +74,7 @@
         } catch (err) {
             _handleError(err);
         } finally {
-            EventBus.$emit("popup", "load-end");
+            this.emitter.emit("popup", "load-end");
         }
     }
 
@@ -95,7 +94,7 @@
     async function addAccounts() {
         try {
             let password = this.$refs.enterPassword.getPassword(); // this.$refs doesn't work in vue3!
-            EventBus.$emit("popup", "load-start");
+            this.emitter.emit("popup", "load-start");
             if (accounts_to_import && accounts_to_import.value) {
                 for (let i in accounts_to_import.value) {
                     let account = accounts_to_import.value[i];
@@ -118,7 +117,7 @@
         } catch (err) {
             _handleError(err);
         } finally {
-            EventBus.$emit("popup", "load-end");
+            this.emitter.emit("popup", "load-end");
         }
     }
 

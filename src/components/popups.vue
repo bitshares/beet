@@ -1,6 +1,5 @@
 <script setup>
     import { v4 as uuidv4 } from "uuid";
-    import { EventBus } from "../lib/event-bus.js";
     import getBlockchain from "../lib/blockchains/blockchainFactory";
     import LinkRequestPopup from "./popups/linkrequestpopup";
     import IdentityRequestPopup from "./popups/identityrequestpopup";
@@ -22,7 +21,7 @@
     let transientMsg = ref('');
     let transientLink = ref('');
 
-    EventBus.$on("popup", async what => {
+    this.emitter.on("popup", async what => {
         switch (what) {
         case "load-start":
             loaderpromise.value.show = new Promise(resolve => {
@@ -37,7 +36,7 @@
         }
     });
 
-    EventBus.$on("tx-success", (data) => {
+    this.emitter.on("tx-success", (data) => {
         dismissCountDown.value = 5;
         transientMsg.value = data.msg;
         transientLink.value = data.link;

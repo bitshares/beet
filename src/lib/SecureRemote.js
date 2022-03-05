@@ -1,6 +1,4 @@
-import {
-    ipcRenderer,
-} from 'electron';
+import { ipcRenderer } from 'electron';
 import sha256 from "crypto-js/sha256.js";
 import * as secp from "@noble/secp256k1";
 
@@ -21,10 +19,14 @@ class proover {
         }
 
         let encodedPubK = secp.utils.bytesToHex(pubk);
-        ipcRenderer.send('key', encodedPubK);
+        try {
+          ipcRenderer.send('key', encodedPubK);
+        } catch (error) {
+          console.log(error)
+        }
     }
 
-    sign(data) {
+    async sign(data) {
         let msgHash;
         try {
           msgHash = sha256(data).toString();
@@ -33,7 +35,15 @@ class proover {
           return;
         }
 
-        return sign(msgHash, this.key, {der: true})
+        let signedMessage;
+        try {
+          signedMessage = await secp.sign(msgHash, this.key, {der: true})
+        } catch (error) {
+          console.log(error);
+          return;
+        }
+
+        return signedMessage;
     }
 }
 
@@ -51,6 +61,7 @@ export const getKey = (enc_key) => {
         })
     })
 }
+
 export const getBackup = (data) => {
     return new Promise(resolve => {
         ipcRenderer.removeAllListeners('backup');

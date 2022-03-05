@@ -1,7 +1,7 @@
 <script setup>
     // import AbstractPopup from "./abstractpopup";
     // extends: AbstractPopup,
-
+    import { onMounted } from "vue";
     import RendererLogger from "../../lib/RendererLogger";
     import getBlockchain from "../../lib/blockchains/blockchainFactory";
     import {getKey} from '../../lib/SecureRemote';

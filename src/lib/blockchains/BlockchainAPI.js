@@ -1,4 +1,3 @@
-import {EventBus} from '../event-bus.js';
 import store from "../../store";
 import {formatAsset, humanReadableFloat} from "../assetUtils";
 import RendererLogger from "../RendererLogger";
@@ -36,7 +35,7 @@ export default class BlockchainAPI {
                     return;
                 }
                 this._isConnectingInProgress = true;
-                EventBus.$emit(
+                this.emitter.emit(
                     'blockchainStatus',
                     {
                         chain: this._config.identifier,
@@ -56,7 +55,7 @@ export default class BlockchainAPI {
                 // check if we need to reconnect
                 if (this._needsReconnecting()) {
                     this._isConnectingInProgress = true;
-                    EventBus.$emit(
+                    this.emitter.emit(
                         'blockchainStatus',
                         {
                             chain: this._config.identifier,
@@ -108,7 +107,7 @@ export default class BlockchainAPI {
         this._isConnectedToNode = node;
         this._isConnected = true;
         this._isConnectingInProgress = false;
-        EventBus.$emit(
+        this.emitter.emit(
             'blockchainStatus',
             {
                 chain: this._config.identifier,
@@ -128,7 +127,7 @@ export default class BlockchainAPI {
         console.log(this._config.name + ": Failed to connect to " + node, error);
         this._isConnected = false;
         this._isConnectingInProgress = false;
-        EventBus.$emit(
+        this.emitter.emit(
             'blockchainStatus',
             {
                 chain: this._config.identifier,

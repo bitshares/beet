@@ -1,4 +1,5 @@
 <script setup>
+    import { onMounted } from "vue";
     import { ipcRenderer } from "electron";
     import RendererLogger from "../lib/RendererLogger";
     const logger = new RendererLogger();
@@ -32,5 +33,5 @@
                 <ui-icon-button icon="close" @click="close()"></ui-icon-button>
             </div>
         </ui-grid-cell>
-    </div>
+    </ui-grid>
 </template>

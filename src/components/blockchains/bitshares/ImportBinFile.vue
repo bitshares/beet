@@ -57,14 +57,14 @@
               }
             */
 
-            EventBus.$emit("popup", "load-end");
+            this.emitter.emit("popup", "load-end");
             accountID.value = account.id;
         } catch (err) {
             accountID.value = "";
             errorMsg.value = err.key ? this.$t(`common.${err.key}`) : err.toString();
             this.$refs.errorModal.show();
         } finally {
-            EventBus.$emit("popup", "load-end");
+            this.emitter.emit("popup", "load-end");
         }
     }
 

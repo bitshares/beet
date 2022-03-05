@@ -1,8 +1,6 @@
 import { createApp } from 'vue';
 import { createI18n } from 'vue-i18n';
 import VueRouter from 'vue-router';
-import mitt from 'mitt';
-import { ipcRenderer } from 'electron';
 
 import BalmUI from 'balm-ui'; // Official Google Material Components
 import BalmUIPlus from 'balm-ui/dist/balm-ui-plus'; // BalmJS Team Material Components
@@ -46,17 +44,6 @@ const i18n = createI18n({
 })
 
 const app = createApp({});
-
-const emitter = mitt();
-app.config.globalProperties.emitter = emitter;
-
-ipcRenderer.on('eventbus', (event,data)=> {
-  emitter.emit(data.method, data.payload);
-});
-
-emitter.on("main", (data) => {
-    ipcRenderer.send(data.method, data.payload);
-});
 
 app.config.devtools = true;
 app.config.errorHandler = function (err, vm, info) {

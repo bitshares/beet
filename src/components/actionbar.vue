@@ -1,11 +1,11 @@
 <script setup>
+    import { onMounted } from "vue";
     import RendererLogger from "../lib/RendererLogger";
-    import { EventBus } from "../lib/event-bus.js";
     const logger = new RendererLogger();
 
-    EventBus.$on('timeout', (data)=>{
-        if(data=='logout') {
-            this.logout();
+    this.emitter.on('timeout', (data)=>{
+        if(data == 'logout') {
+            logout();
         }
     })
 

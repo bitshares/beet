@@ -1,7 +1,6 @@
 <script setup>
     import { watch, ref, computed, onMounted } from "vue";
     import getBlockchain from "../lib/blockchains/blockchainFactory";
-    import { EventBus } from "../lib/event-bus.js";
     import RendererLogger from "../lib/RendererLogger";
     const logger = new RendererLogger();
 
@@ -40,7 +39,7 @@
           newAcc.accountID != oldAcc.accountID
       ) {
           await this.getBalances();
-          EventBus.$emit("balances", "loaded");
+          this.emitter.emit("balances", "loaded");
       }
     },{immediate:true});
 

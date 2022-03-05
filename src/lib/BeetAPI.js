@@ -17,6 +17,7 @@ export default class BeetAPI {
                 }
             }
         }
+
         let result;
         if (popupQ.isEmpty()) {
             let qresolve;
@@ -66,6 +67,7 @@ export default class BeetAPI {
         console.log("user response", result);
         return result;
     }
+
     static _parseReject(method, request, err) {
         if (!err.canceled) {
             console.error(err);
@@ -78,6 +80,7 @@ export default class BeetAPI {
             }
         };
     }
+
     static async [Actions.GET_ACCOUNT](request, vue) {
         try {
             let response = await vue.requestAccess(request.payload);
@@ -90,6 +93,7 @@ export default class BeetAPI {
             return this._parseReject("BeetAPI.getAccount", request, err);
         }
     }
+
     static async [Actions.REQUEST_RELINK](request, vue) {
         try {
             let response;
@@ -106,6 +110,7 @@ export default class BeetAPI {
             };
         }
     }
+
     static async [Actions.REQUEST_LINK](request, vue) {
         try {
             let response;
@@ -122,6 +127,7 @@ export default class BeetAPI {
             };
         }
     }
+
     static async [Actions.VOTE_FOR](request, vue) {
         try {
             let response = await vue.requestVote(request.payload);
@@ -133,6 +139,7 @@ export default class BeetAPI {
             return this._parseReject("BeetAPI.voteFor", request, err);
         }
     }
+
     static async [Actions.REQUEST_SIGNATURE](request, vue) {
         try {
             let response = await vue.requestTx(request.payload);
@@ -144,6 +151,7 @@ export default class BeetAPI {
             return this._parseReject("BeetAPI.requestSignature", request, err);
         }
     }
+
     static async [Actions.INJECTED_CALL](request, vue) {
         try {
             let response = await vue.requestTx(request.payload);
@@ -155,6 +163,7 @@ export default class BeetAPI {
             return this._parseReject("BeetAPI.injectedCall", request, err);
         }
     }
+
     static async [Actions.SIGN_MESSAGE](request, vue) {
         try {
             let response = await vue.requestSignedMessage(request.payload);
@@ -168,6 +177,7 @@ export default class BeetAPI {
             return this._parseReject("BeetAPI.signMessage", request, err);
         }
     }
+
     static async [Actions.VERIFY_MESSAGE](request, vue) {
         try {
             let response = await vue.verifyMessage(request.payload);
@@ -179,6 +189,7 @@ export default class BeetAPI {
             return this._parseReject("BeetAPI.verifyMessage", request, err);
         }
     }
+    
     static async [Actions.TRANSFER](request, vue) {
         try {
             let response = await vue.requestTransfer(request.payload);

@@ -5,7 +5,6 @@
     import fs from 'fs';
     import path from 'path';
 
-    import { EventBus } from "../lib/event-bus.js";
     import RendererLogger from "../lib/RendererLogger";
     const logger = new RendererLogger();
 
@@ -31,21 +30,21 @@
 
         let file = document.getElementById('restoreWallet').files[0].path;
 
-        EventBus.$emit("popup", "load-start");
+        this.emitter.emit("popup", "load-start");
         fs.readFile(file, 'utf-8', async (err, data) => {
             if (err) {
                 alert("An error ocurred reading the file :" + err.message);
-                EventBus.$emit("popup", "load-end");
+                this.emitter.emit("popup", "load-end");
                 return;
             }
             try {
                 let wallet=JSON.parse(aes.decrypt(data, backupPass.value).toString(ENC));
                 await this.$store.dispatch('WalletStore/restoreWallet', { backup: wallet, password: backupPass.value});
-                EventBus.$emit("popup", "load-end");
+                this.emitter.emit("popup", "load-end");
                 this.$router.replace("/");
             } catch(e) {
                 //Wrong  Password
-                EventBus.$emit("popup", "load-end");
+                this.emitter.emit("popup", "load-end");
             }
         });
     }

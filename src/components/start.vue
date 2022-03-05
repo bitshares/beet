@@ -1,8 +1,6 @@
 <script setup>
-    import { ref, onMounted } from 'vue';
-
+    import { ref, onMounted, computed } from 'vue';
     import RendererLogger from "../lib/RendererLogger";
-    import Multiselect from "vue-multiselect";
     const logger = new RendererLogger();
 
     let hasWallet = computed(() => {
@@ -79,19 +77,21 @@
                 v-if="hasWallet"
                 class="icon-account"
             />
-            <multiselect
+            <section :dir="null">
+              <ui-select
                 v-if="hasWallet"
                 id="wallet-select"
                 v-model="selectedWallet"
                 :class="'form-control my-3 accountProvide text-left'"
-                :searchable="false"
                 :placeholder="$t('common.select_wallet')"
                 label="name"
-                :allow-empty="false"
                 :options="walletlist"
                 track-by="id"
                 @change="passincorrect=''"
-            />
+              >
+                Name
+              </ui-select>
+            </section>
             <br>
             <span
                 v-if="hasWallet"

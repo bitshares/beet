@@ -141,9 +141,26 @@ const createWindow = async () => {
           }
         })
     }
-    arg.eventbus.$emit("popup", "load-end");
+    this.emitter.emit("popup", "load-end");
   });
 
+  /*
+  ipcMain.on('popup', (event, arg) => {
+
+  })
+
+  ipcMain.on('', (event, arg) => {
+
+  })
+
+  ipcMain.on('', (event, arg) => {
+
+  })
+
+  ipcMain.on('', (event, arg) => {
+
+  })
+  */
   ipcMain.on('openDebug', (event, arg) => {
       mainWindow.webContents.openDevTools();
   });
@@ -185,7 +202,11 @@ const createWindow = async () => {
   let seed, key;
   function timeoutHandler() {
       seed = null;
-      mainWindow.webContents.send('eventbus', { method: 'timeout', payload: 'logout'});
+      try {
+        this.emitter.emit('timeout', 'logout');
+      } catch (error) {
+        console.log(error);
+      }
       clearTimeout(timeout);
   }
 
@@ -231,12 +252,16 @@ const createWindow = async () => {
         return;
       }
 
-      event.sender.send(
-        'decrypt',
-        isValid
-          ? aes.decrypt(data, seed).toString(ENC)
-          : null
-      );
+      if (event && event.sender) {
+        event.sender.send(
+          'decrypt',
+          isValid
+            ? aes.decrypt(data, seed).toString(ENC)
+            : null
+        );
+      } else {
+        console.log("No event || event.sender")
+      }
   });
 
   ipcMain.on('backup', async (event, arg) => {
@@ -258,12 +283,18 @@ const createWindow = async () => {
         return;
       }
 
-      event.sender.send(
-        'backup',
-        isValid
-          ? aes.encrypt(data, seed).toString()
-          : null
-      );
+      if (event && event.sender) {
+        event.sender.send(
+          'backup',
+          isValid
+            ? aes.encrypt(data, seed).toString()
+            : null
+        );
+      } else {
+        console.log("No event || event.sender")
+      }
+
+
   });
 
   ipcMain.on('log', (event, arg) => {

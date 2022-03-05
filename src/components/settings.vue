@@ -1,21 +1,20 @@
 <script setup>
-    import { onMounted } from 'vue';
-    import { EventBus } from "../lib/event-bus.js";
-    import Actionbar from "./actionbar";
+    import { onMounted, computed } from 'vue';
     import { ipcRenderer } from "electron";
     import RendererLogger from "../lib/RendererLogger";
     import {formatAccount} from "../lib/formatter";
+    import Actionbar from "./actionbar";
 
     const logger = new RendererLogger();
 
     onMounted(() => {
       logger.debug("Settings Mounted");
-      await this.$store.dispatch("OriginStore/loadApps");
+      //await this.$store.dispatch("OriginStore/loadApps");
     });
 
     let dapps = computed(() => {
       let storedDapps = [];
-      for (let i=0; i < this.$store.state.AccountStore.accountlist.length; i++) {
+      for (let i = 0; i < this.$store.state.AccountStore.accountlist.length; i++) {
           let apps = this.$store.getters['OriginStore/walletAccessibleDapps'](this.$store.state.AccountStore.accountlist[i].accountID, this.$store.state.AccountStore.accountlist[i].chain);
           if (typeof apps != 'undefined') {
               storedDapps = storedDapps.concat(apps);
@@ -25,11 +24,10 @@
     })
 
     async function downloadBackup() {
-        EventBus.$emit("popup", "load-start");
+        this.emitter.emit("popup", "load-start");
         ipcRenderer.send(
           "downloadBackup",
           {
-            eventbus: EventBus,
             walletName: this.$store.state.WalletStore.wallet.name,
             accounts: this.$store.state.AccountStore.accountlist.slice()
           }
@@ -123,7 +121,7 @@
                       </p>
                   </ui-grid-cell>
                   <ui-grid-cell columns="3" />
-                  <ui-grid-cell columns="6" />
+                  <ui-grid-cell columns="6" >
                     <button
                         class="btn btn-sm btn-info btn-block"
                         type="button"

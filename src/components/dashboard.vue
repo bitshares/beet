@@ -6,7 +6,6 @@
     import AccountDetails from "./accountdetails";
     import getBlockchain from "../lib/blockchains/blockchainFactory";
     import RendererLogger from "../lib/RendererLogger";
-    import { EventBus } from "../lib/event-bus.js";
     const logger = new RendererLogger();
 
     let nodes = ref([]);
@@ -19,9 +18,9 @@
     //let specifics = ref("");
 
     let connectionFailed = computed(() => {
-      return !isConnecting.value && !isConnected.value;
+      return !isConnecting || !isConnecting.value && !isConnected || !isConnected.value;
     });
-
+/*
     let selectedAccount = computed(() => {
       get: () {
           return this.$store.state.AccountStore.accountlist[
@@ -59,11 +58,11 @@
     });
 
     let accountName = computed(() => {
-      return this.selectedAccount.accountName;
+      return selectedAccount.value.accountName;
     });
 
     let accountID = computed(() => {
-      return this.selectedAccount.accountID;
+      return selectedAccount.value.accountID;
     });
 
     let accountlist = computed(() => {
@@ -81,14 +80,14 @@
     }
 
     async function loadBalances() {
-        EventBus.$emit("popup", "load-start");
-        await this.$refs.balancetable.getBalances();
+        //this.emitter.emit("popup", "load-start");
+        //await this.$refs.balancetable.getBalances();
         this.$store.dispatch("WalletStore/confirmUnlock");
-        EventBus.$emit("popup", "load-end");
+        //this.emitter.emit("popup", "load-end");
     }
 
     onMounted(() => {
-      EventBus.$emit("popup", "load-start");
+      this.emitter.emit("popup", "load-start");
       nodes.value = blockchain.value.getNodes();
       isConnected.value = blockchain.value.isConnected();
       loadBalances();
@@ -96,17 +95,17 @@
 
     // Is EventBus here necessary? Could this be a computed field and listen
     // to this.blockchain.isConnected?
-    EventBus.$on("blockchainStatus", what => {
+    this.emitter.on("blockchainStatus", what => {
         if (what.chain == selectedChain.value) {
             isConnected.value = what.status;
             isConnecting.value = !!what.connecting;
         }
     });
 
-    EventBus.$on("balances", what => {
+    this.emitter.on("balances", what => {
         switch (what) {
         case "loaded":
-            EventBus.$emit("popup", "load-end");
+            this.emitter.emit("popup", "load-end");
             break;
         }
     });
@@ -116,7 +115,7 @@
           newAcc.chain != oldAcc.chain ||
           newAcc.accountID != oldAcc.accountID
       ) {
-          EventBus.$emit("popup", "load-start");
+          this.emitter.emit("popup", "load-start");
       }
     }, {immediate: true});
 
@@ -129,7 +128,7 @@
               selectedNode.value = nodes.value[0].url;
           }
       }
-    }, {immediate: true});
+    }, {immediate: true});*/
 </script>
 
 <template>

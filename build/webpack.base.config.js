@@ -26,6 +26,9 @@ module.exports = env => {
       extensions: ['*', '.js', '.vue', '.json', '.css', '.scss'],
       mainFields: ["main", "browser"],
       alias: {
+        vue: "vue/dist/vue.esm-bundler.js",
+        "balm-ui-plus": "balm-ui/dist/balm-ui-plus.esm.js",
+        "balm-ui-css": "balm-ui/dist/balm-ui.css",
         vue$: 'vue/dist/vue.min.js',
         env: path.resolve(__dirname, `../config/env_${env}.json`),
         '~': path.resolve(__dirname, '../src/')
@@ -60,12 +63,12 @@ module.exports = env => {
         },
         {
           test: /\.css$/,
-          use: ["vue-style-loader", "css-loader"]
+          use: ["style-loader", "css-loader"]
         },
         {
           test: /\.scss$/,
           use: [
-            'vue-style-loader',
+            'style-loader',
             'css-loader',
             'sass-loader'
           ]
