@@ -1,3 +1,57 @@
+<script setup>
+    import { ref, onMounted, computed } from "vue";
+    import AbstractPopup from "./abstractpopup";
+    import AccountSelect from "../account-select";
+    import RendererLogger from "../../lib/RendererLogger";
+    const logger = new RendererLogger();
+
+    let error = ref(false);
+    let type = ref("LinkRequestPopup");
+    let chosenAccount = ref({trackId: 0});
+
+    //extends: AbstractPopup,
+
+    function _onShow() {
+        error.value = false;
+        chosenAccount.value = {trackId: 0};
+    }
+
+    function _execute() {
+        return {
+            name: chosenAccount.value.accountName,
+            chain: chosenAccount.value.chain,
+            id: chosenAccount.value.accountID
+        };
+    }
+
+    function clickedAllow() {
+        if (chosenAccount.value.trackId == 0) {
+            error.value = true;
+        } else {
+            error.value = false;
+            _clickedAllow();
+        }
+    }
+
+    onMounted() {
+      logger.debug("Link Popup initialised");
+    }
+
+    let existingLinks = computed(() => {
+      return this.$store.state.OriginStore.apps.filter(
+          (x) => {
+              return x.appName == this.incoming.appName
+                  && x.origin==this.incoming.origin
+                  && (
+                      this.incoming.chain == "ANY"
+                  || x.chain==this.incoming.chain
+                  )
+          }
+      );
+    });
+</script>
+
+
 <template>
     <b-modal
         id="type"
@@ -10,10 +64,7 @@
         hide-footer
         :title="$t('operations.account_id.title')"
     >
-        <div
-            v-b-tooltip.hover
-            :title="$t('operations.link.request_tooltip')"
-        >
+        <div v-tooltip="$t('operations.link.request_tooltip')">
             {{ $t('operations.link.request', {appName: incoming.appName, origin: incoming.origin, chain: incoming.chain }) }} &#10068;
         </div>
         <br>
@@ -47,59 +98,3 @@
         </b-btn>
     </b-modal>
 </template>
-<script>
-    import AbstractPopup from "./abstractpopup";
-    import RendererLogger from "../../lib/RendererLogger";
-    import AccountSelect from "../account-select";
-    const logger = new RendererLogger();
-
-    export default {
-        name: "LinkRequestPopup",
-        components: { AccountSelect },
-        extends: AbstractPopup,
-        data() {
-            return {
-                type: "LinkRequestPopup",
-                chosenAccount: {trackId: 0},
-            };
-        },
-        computed: {
-            existingLinks() {
-                return this.$store.state.OriginStore.apps.filter(
-                    (x) => {
-                        return x.appName == this.incoming.appName
-                            && x.origin==this.incoming.origin
-                            && (
-                                this.incoming.chain == "ANY"
-                            || x.chain==this.incoming.chain
-                            )
-                    }
-                );
-            }
-        },
-        mounted() {
-            logger.debug("Link Popup initialised");
-        },
-        methods: {
-            _onShow: function () {
-                this.error=false;
-                this.chosenAccount={trackId: 0};
-            },
-            _execute: function () {
-                return {
-                    name: this.chosenAccount.accountName,
-                    chain: this.chosenAccount.chain,
-                    id: this.chosenAccount.accountID
-                };
-            },
-            clickedAllow: function() {
-                if (this.chosenAccount.trackId==0) {
-                    this.error=true;
-                }else{
-                    this.error=false;
-                    this._clickedAllow();
-                }
-            }
-        }
-    };
-</script>

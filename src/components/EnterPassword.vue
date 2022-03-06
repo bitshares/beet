@@ -29,8 +29,7 @@
 <template>
     <div>
         <p
-            v-b-tooltip.hover
-            :title="$t('common.tooltip_password_cta')"
+            v-tooltip="$t('common.tooltip_password_cta')"
             class="mb-2 font-weight-bold"
         >
             {{ $t(getNew ? 'common.password_cta' : 'common.unlock_with_password_cta') }} &#10068;

@@ -11,7 +11,7 @@ export function formatAccount(account, withTooltip=false) {
         displayString = displayString + " (" + account.accountID + ")";
     }
     if (withTooltip) {
-        return `<span v-b-tooltip.hover title="${accountString}">${displayString}</span>`;
+        return `<span v-tooltip="${accountString}">${displayString}</span>`;
     } else {
         return displayString;
     }

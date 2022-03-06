@@ -178,9 +178,7 @@
                       class="status align-self-center"
                   >
                       <span
-                          v-b-tooltip.hover
-                          v-b-tooltip.d500
-                          :title="$t('common.tooltip_refresh')"
+                          v-tooltip="$t('common.tooltip_refresh')"
                           class="icon-spinner11"
                       />
                   </a>

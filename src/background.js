@@ -39,6 +39,7 @@ context_menu({
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
+let modalWindow;
 
 var isDevMode = process.execPath.match(/[\\/]electron/);
 const logger = new Logger(isDevMode ? 3 : 0);
@@ -52,6 +53,66 @@ if (env.name !== "production") {
   //app.setPath("userData", `${userDataPath} (${env.name})`);
 }
 */
+
+const createModal = async () => {
+  let modalHeight = 400;
+  let modalWidth = 600;
+  if (!createWindow) {
+    // Can't create modal without parent window
+    return;
+  }
+  modalWindow = new BrowserWindow({
+      parent: createWindow,
+      modal: true,
+      show: false,
+      //
+      width: modalWidth,
+      height: modalHeight,
+      minWidth: modalWidth,
+      minHeight: modalHeight,
+      maxWidth: modalWidth,
+      maximizable: false,
+      maxHeight: modalHeight,
+      useContentSize: true,
+      frame: false,
+      transparent: true,
+      webPreferences: {
+          nodeIntegration: true,
+          contextIsolation: false,
+          enableRemoteModule: true
+      },
+      icon: __dirname + '/img/beet-taskbar.png'
+  });
+
+  modalWindow.loadURL(
+    url.format({
+      pathname: path.join(__dirname, "modal.html"),
+      protocol: "file:",
+      slashes: true
+    })
+  );
+
+  modalWindow.once('ready-to-show', () => {
+    modalWindow.show();
+  })
+
+  modalWindow.on('closed', () => {
+    modalWindow = null;
+    // emitter.emit -> popup rejection
+  });
+
+  ipcMain.on('rejectModal', (event, arg) => {
+    modalWindow = null;
+    // emitter.emit -> popup rejection
+  });
+
+  /*
+  modalWindow.on('show', () => {
+    // emit back to the popup?
+  });
+  */
+};
+
 
 const createWindow = async () => {
 
@@ -146,7 +207,8 @@ const createWindow = async () => {
 
   /*
   ipcMain.on('popup', (event, arg) => {
-
+    // create popup modal window
+    modalWindow();
   })
 
   ipcMain.on('', (event, arg) => {

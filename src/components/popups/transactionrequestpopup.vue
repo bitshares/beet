@@ -1,3 +1,72 @@
+<script setup>
+    import {ref, onMounted} from "vue";
+    import AbstractPopup from "./abstractpopup";
+    import RendererLogger from "../../lib/RendererLogger";
+    import getBlockchain from "../../lib/blockchains/blockchainFactory";
+    import {getKey} from '../../lib/SecureRemote';
+    import {formatChain} from "../../lib/formatter";
+    const logger = new RendererLogger();
+
+    //extends: AbstractPopup,
+
+    let type = ref("TransactionRequestPopup");
+    let incoming = ref({
+        signingAccount: {},
+        visualized: null
+    });
+
+    fonMounted() {
+      logger.debug("Tx Popup initialised");
+    }
+
+    function getChainLabel(chain) {
+        return formatChain(chain);
+    }
+
+    function getRequestType() {
+        if (this.incoming.params && this.incoming.params.length > 0 && this.incoming.params[0] == "sign") {
+            return "sign"
+        } else {
+            return "sign_and_broadcast";
+        }
+    }
+
+    function _onShow() {
+        let blockchain = getBlockchain(this.incoming.chain);
+        blockchain.visualize(this.incoming.params).then(result => {
+            this.incoming.visualized = result;
+            this.incoming = Object.assign({}, this.incoming);
+            blockchain.visualize(this.incoming.account_id).then(account_name => {
+                this.incoming.account_name = account_name;
+                this.incoming = Object.assign({}, this.incoming);
+            });
+        })
+
+    }
+
+    function getSuccessNotification(result) {
+        return {msg: 'Transaction successfully broadcast.', link: '' };
+    }
+
+    async function _execute() {
+        let blockchain = getBlockchain(this.incoming.chain);
+        if (this.incoming.params[0] == "sign") {
+            let tr = await blockchain.sign(
+                this.incoming.params,
+                await getKey(this.$store.getters['AccountStore/getSigningKey'](this.incoming).keys.active)
+            );
+            return tr.toObject();
+        } else if (this.incoming.params[0] == "broadcast") {
+            return await blockchain.broadcast(this.incoming.params);
+        } else if (this.incoming.params[0] == "signAndBroadcast") {
+            let transaction = await blockchain.sign(
+                this.incoming.params,
+                await getKey(this.$store.getters['AccountStore/getSigningKey'](this.incoming).keys.active)
+            );
+            return await blockchain.broadcast(transaction);
+        }
+    }
+</script>
 <template>
     <b-modal
         id="type"
@@ -10,8 +79,7 @@
         :title="$t('operations.rawsig.title')"
     >
         <table
-            v-b-tooltip.hover
-            :title="$t('operations.rawsig.request',
+            v-tooltip="$t('operations.rawsig.request',
                 { appName: incoming.appName,
                   origin: incoming.origin,
                   chain: getChainLabel(incoming.chain),
@@ -92,73 +160,3 @@
         </b-btn>
     </b-modal>
 </template>
-<script>
-    import AbstractPopup from "./abstractpopup";
-    import RendererLogger from "../../lib/RendererLogger";
-    import getBlockchain from "../../lib/blockchains/blockchainFactory";
-    import {getKey} from '../../lib/SecureRemote';
-    import {formatChain} from "../../lib/formatter";
-    const logger = new RendererLogger();
-
-    export default {
-        name: "TransactionRequestPopup",
-        extends: AbstractPopup,
-        data() {
-            return {
-                type: "TransactionRequestPopup",
-                incoming: {
-                    signingAccount: {},
-                    visualized: null
-                }
-            };
-        },
-        mounted() {
-            logger.debug("Tx Popup initialised");
-        },
-        methods: {
-            getChainLabel: function(chain) {
-                return formatChain(chain);
-            },
-            getRequestType: function() {
-                if (this.incoming.params && this.incoming.params.length > 0 && this.incoming.params[0] == "sign") {
-                    return "sign"
-                } else {
-                    return "sign_and_broadcast";
-                }
-            },
-            _onShow() {
-                let blockchain = getBlockchain(this.incoming.chain);
-                blockchain.visualize(this.incoming.params).then(result => {
-                    this.incoming.visualized = result;
-                    this.incoming = Object.assign({}, this.incoming);
-                    blockchain.visualize(this.incoming.account_id).then(account_name => {
-                        this.incoming.account_name = account_name;
-                        this.incoming = Object.assign({}, this.incoming);
-                    });
-                })
-
-            },
-            getSuccessNotification(result) {
-                return {msg: 'Transaction successfully broadcast.', link: '' };
-            },
-            _execute: async function () {
-                let blockchain = getBlockchain(this.incoming.chain);
-                if (this.incoming.params[0] == "sign") {
-                    let tr = await blockchain.sign(
-                        this.incoming.params,
-                        await getKey(this.$store.getters['AccountStore/getSigningKey'](this.incoming).keys.active)
-                    );
-                    return tr.toObject();
-                } else if (this.incoming.params[0] == "broadcast") {
-                    return await blockchain.broadcast(this.incoming.params);
-                } else if (this.incoming.params[0] == "signAndBroadcast") {
-                    let transaction = await blockchain.sign(
-                        this.incoming.params,
-                        await getKey(this.$store.getters['AccountStore/getSigningKey'](this.incoming).keys.active)
-                    );
-                    return await blockchain.broadcast(transaction);
-                }
-            }
-        }
-    };
-</script>

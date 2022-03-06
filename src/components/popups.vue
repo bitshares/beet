@@ -1,18 +1,17 @@
 <script setup>
     import { v4 as uuidv4 } from "uuid";
-    import getBlockchain from "../lib/blockchains/blockchainFactory";
+    import { ref, onMounted, watchEffect } from 'vue';
+
     import LinkRequestPopup from "./popups/linkrequestpopup";
     import IdentityRequestPopup from "./popups/identityrequestpopup";
     import ReLinkRequestPopup from "./popups/relinkrequestpopup";
     import GenericRequestPopup from "./popups/genericrequestpopup";
     import TransactionRequestPopup from "./popups/transactionrequestpopup";
     import TransferRequestPopup from "./popups/transferrequestpopup";
-    import { shell } from 'electron';
-
-    import { ref, onMounted, watchEffect } from 'vue';
-
-    import RendererLogger from "../lib/RendererLogger";
     import SignMessageRequestPopup from "./popups/signedmessagepopup";
+
+    import getBlockchain from "../lib/blockchains/blockchainFactory";
+    import RendererLogger from "../lib/RendererLogger";
     const logger = new RendererLogger();
 
     let alerts = ref([]);
@@ -25,13 +24,13 @@
         switch (what) {
         case "load-start":
             loaderpromise.value.show = new Promise(resolve => {
-                this.$refs.loaderAnimModal.show();
+                //this.$refs.loaderAnimModal.show();
                 loaderpromise.value.resolve = resolve;
             });
             break;
         case "load-end":
             await loaderpromise.value.show;
-            this.$refs.loaderAnimModal.hide();
+            //this.$refs.loaderAnimModal.hide();
             break;
         }
     });
@@ -47,7 +46,7 @@
     });
 
     onMounted() {
-        logger.debug("Popup Service panel mounted");
+        logger.debug("Modal mounted");
         this.$root.$on("bv::modal::shown", bvEvent => {
             if (bvEvent.target.id == "loaderAnim") {
                 loaderpromise.value.resolve();
@@ -55,47 +54,13 @@
         });
     }
 
-    function openExplorer (link) {
-        shell.openExternal(link);
-    }
-
-    function countDownChanged(countdownChange) {
-        dismissCountDown.value = countdownChange.value;
-    }
-
     function showAlert(request) {
-        let alert;
-        let alertmsg;
-        switch (request.type) {
-        case "link":
-            alertmsg = this.$t("common.link_alert", request);
-            alert = { msg: alertmsg, id: uuidv4() };
+        let alertmsg = request.type === "link"
+            ? this.$t("common.link_alert", request)
+            : this.$t("common.access_alert", request.payload);
 
-            this.$store.dispatch("WalletStore/notifyUser", {
-                notify: "request",
-                message: alertmsg
-            });
-            break;
-        default:
-            alertmsg = this.$t("common.access_alert", request.payload);
-
-            this.$store.dispatch("WalletStore/notifyUser", {
-                notify: "request",
-                message: alertmsg
-            });
-            alert = { msg: alertmsg, id: uuidv4() };
-            break;
-        }
-        alerts.value.push(alert);
-    }
-
-    function hideAlert(id) {
-        let index = alerts.value.findIndex(function(o) {
-            return o.id === id;
-        });
-        if (index !== -1) {
-          alerts.value.splice(index, 1);
-        }
+        this.$store.dispatch("WalletStore/notifyUser", {notify: "request", message: alertmsg});
+        alerts.value.push({ msg: alertmsg, id: uuidv4() });
     }
 
     async function requestAccess(request) {
@@ -187,88 +152,33 @@
                 payload_dict.key = payload_list[2];
                 payload_dict.from = payload_list[1];
             }
-            let messageChain = null;
-            if (payload_dict.chain) {
-                messageChain = payload_dict.chain;
-            } else {
-                messageChain = payload_dict.key.substr(0, 3);
-            }
-            let blockchain = getBlockchain(messageChain);
+
+            let blockchain = getBlockchain(
+              payload_dict.chain
+                ? messageChain = payload_dict.chain
+                : messageChain = payload_dict.key.substr(0, 3)
+            );
+
             blockchain
-                .verifyMessage(payload.params)
-                .then(result => {
-                    resolve(result);
-                })
-                .catch(err => {
-                    reject(err);
-                });
+            .verifyMessage(payload.params)
+            .then(result => {
+                resolve(result);
+            })
+            .catch(err => {
+                reject(err);
+            });
         });
     }
 </script>
 
 <template>
     <div>
-        <LinkRequestPopup ref="linkReqModal" />
-        <ReLinkRequestPopup ref="reLinkReqModal" />
-        <IdentityRequestPopup ref="identityReqModal" />
-        <SignMessageRequestPopup ref="signMessageModal" />
-        <TransferRequestPopup ref="transferReqModal" />
-        <TransactionRequestPopup ref="transactionReqModal" />
-        <GenericRequestPopup ref="genericReqModal" />
-
-        <b-modal
-            id="loaderAnim"
-            ref="loaderAnimModal"
-            centered
-            no-close-on-esc
-            no-close-on-backdrop
-            hide-header
-            hide-header-close
-            hide-footer
-        >
-            <div class="lds-roller">
-                <div />
-                <div />
-                <div />
-                <div />
-                <div />
-                <div />
-                <div />
-                <div />
-            </div>
-        </b-modal>
-
-        <div class="alerts">
-
-            <b-alert
-                v-for="alert in alerts"
-                :key="alert.id"
-                variant="info"
-                show
-                fade
-                dismissible
-                @dismissed="hideAlert(alert.id)"
-            >
-                {{ alert.msg }}
-            </b-alert>
-
-            <b-alert
-                :show="dismissCountDown"
-                dismissible
-                variant="primary"
-                fade
-                @dismissed="dismissCountDown=0"
-                @dismiss-count-down="countDownChanged"
-            >
-                {{ transientMsg }}
-                <a
-                    v-if="transientLink!=''"
-                    href="#"
-                    @click="openExplorer(transientLink)"
-                >
-                    {{ transientLink }}
-                </a>
-            </b-alert>
-        </div>
+        <LinkRequestPopup v-if="type === 'linkReqModal'" ref="linkReqModal" />
+        <ReLinkRequestPopup v-else-if="type === 'reLinkReqModal'" ref="reLinkReqModal" />
+        <IdentityRequestPopup v-else-if="type === 'identityReqModal'" ref="identityReqModal" />
+        <SignMessageRequestPopup v-else-if="type === 'signMessageModal'" ref="signMessageModal" />
+        <TransferRequestPopup v-else-if="type === 'transferReqModal'" ref="transferReqModal" />
+        <TransactionRequestPopup v-else-if="type === 'transactionReqModal'" ref="transactionReqModal" />
+        <GenericRequestPopup v-else-if="type === 'genericReqModal'" ref="genericReqModal" />
     </div>
 </template>

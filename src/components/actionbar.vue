@@ -29,7 +29,7 @@
                 :class="{active: $route.path=='/dashboard'}"
                 replace
             >
-                <span class="icon-stats-bars" />
+              <ui-icon>query_stats</ui-icon>
             </router-link>
             <router-link
                 to="/add-account"
@@ -38,7 +38,7 @@
                 :class="{active: $route.path=='/add-account'}"
                 replace
             >
-                <span class="icon-user-plus" />
+              <ui-icon>add</ui-icon>
             </router-link>
             <router-link
                 to="/settings"
@@ -47,17 +47,15 @@
                 :class="{active: $route.path=='/settings'}"
                 replace
             >
-                <span class="icon-settings" />
+              <ui-icon>settings</ui-icon>
             </router-link>
             <a
-                v-b-tooltip.hover
-                v-b-tooltip.d500
-                :title="$t('common.tooltip_lock')"
+                v-tooltip="$t('common.tooltip_lock')"
                 href="#"
                 class=" status align-self-center"
                 @click="logout()"
             >
-                <span class="icon-unlock" />
+              <ui-icon>lock</ui-icon>
             </a>
         </div>
     </div>

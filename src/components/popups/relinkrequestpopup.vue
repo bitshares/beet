@@ -1,3 +1,38 @@
+<script setup>
+    import {ref, onMounted} from "vue";
+    import AbstractPopup from "./abstractpopup";
+    import RendererLogger from "../../lib/RendererLogger";
+    const logger = new RendererLogger();
+
+    let type = ref("ReLinkRequestPopup");
+    let chosenAccount = ref({ trackId: 0 });
+    let beetapp = ref({});
+
+    onMounted(() => {
+      logger.debug("Relink Popup initialised");
+    });
+
+    function _onShow() {
+        this.error = false;
+        console.log("Popup incoming, payload:", this.incoming);
+        this.beetapp = this.$store.state.OriginStore.apps.filter(
+            x => x.identityhash == this.incoming.payload.identityhash
+        )[0];
+    }
+
+    function _execute() {
+        let account = this.$store.state.AccountStore.accountlist.filter(
+            x => x.accountID == this.beetapp.account_id && x.chain == this.beetapp.chain
+        );
+        return {
+            identityhash: this.incoming.payload.identityhash,
+            name: account.accountName,
+            chain: this.beetapp.chain,
+            id: this.beetapp.account_id
+        };
+    }
+</script>
+
 <template>
     <b-modal
         id="type"
@@ -9,10 +44,7 @@
         hide-footer
         :title="$t('operations.account_id.title')"
     >
-        <div
-            v-b-tooltip.hover
-            :title="$t('operations.relink.request_tooltip')"
-        >
+        <div v-tooltip="$t('operations.relink.request_tooltip')">
             {{ $t('operations.relink.request', {appName: incoming.appName, origin: incoming.origin, chain: incoming.chain, accountId: beetapp.account_id }) }} &#10068;
         </div>
         <br>
@@ -34,44 +66,3 @@
         </b-btn>
     </b-modal>
 </template>
-<script>
-    import AbstractPopup from "./abstractpopup";
-    import RendererLogger from "../../lib/RendererLogger";
-    const logger = new RendererLogger();
-
-    export default {
-        name: "ReLinkRequestPopup",
-        components: {},
-        extends: AbstractPopup,
-        data() {
-            return {
-                type: "ReLinkRequestPopup",
-                chosenAccount: { trackId: 0 },
-                beetapp: {}
-            };
-        },
-        mounted() {
-            logger.debug("Relink Popup initialised");
-        },
-        methods: {
-            _onShow: function() {
-                this.error = false;
-                console.log("Popup incoming, payload:", this.incoming);
-                this.beetapp = this.$store.state.OriginStore.apps.filter(
-                    x => x.identityhash == this.incoming.payload.identityhash
-                )[0];
-            },
-            _execute: function() {
-                let account = this.$store.state.AccountStore.accountlist.filter(
-                    x => x.accountID == this.beetapp.account_id && x.chain == this.beetapp.chain
-                );
-                return {
-                    identityhash: this.incoming.payload.identityhash,
-                    name: account.accountName,
-                    chain: this.beetapp.chain,
-                    id: this.beetapp.account_id
-                };
-            }
-        }
-    };
-</script>

@@ -11,14 +11,11 @@
     let askWhitelist = ref(false);
     let allowWhitelist = ref(false);
 
-    async function show(incoming, askWhitelist = null) {
-        this.$store.dispatch("WalletStore/notifyUser", {
-            notify: "request",
-            message: "request"
-        });
-        this.incoming = incoming;
-        if (askWhitelist !== null) {
-            this.askWhitelist = askWhitelist;
+    async function show(incoming, newWhitelist = null) {
+        this.$store.dispatch("WalletStore/notifyUser", {notify: "request", message: "request"});
+        incoming.value = incoming;
+        if (newWhitelist !== null) {
+            askWhitelist.value = newWhitelist;
         }
         _onShow();
         this.$refs.modalComponent.show();
@@ -41,8 +38,8 @@
         // this.emitter.emit("popup", "load-end");
         this.$refs.modalComponent.hide();
         try {
-            let result = await this._execute();
-            let notification = this.getSuccessNotification(result);
+            let result = await _execute();
+            let notification = getSuccessNotification(result);
             if (notification) {
                 this.emitter.emit("tx-success", notification);
             }

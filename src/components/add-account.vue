@@ -24,6 +24,40 @@
       logger.debug("Account-Add wizard Mounted");
     });
 
+    let createNewWallet = computed(() => {
+      return !this.$store.state.WalletStore.isUnlocked;
+    });
+
+    let chainList = computed(() => {
+      return Object.values(blockchains).sort((a, b) => {
+          if (!!a.testnet != !!b.testnet) {
+              return a.testnet ? 1 : -1;
+          }
+          return a.name > b.name;
+      });
+    });
+
+    let selectedImportOptions = computed(() => {
+      if (!selectedChain || !selectedChain.value) {
+          return [];
+      }
+
+      return getBlockchain(selectedChain.value).getImportOptions();
+    });
+
+    let selectedImportOption = computed(() => {
+      if (!selectedChain || !selectedChain.value) {
+          return null;
+      }
+
+      let useImport = !selectedImport || !selectedImport.value
+          ? selectedImportOptions.value[0]
+          : selectedImport.value;
+
+      return getBlockchain(selectedChain.value)
+              .getImportOptions()
+              .find(option => { return option.type == useImport.type; });
+    });
 
     function step1() {
         step.value = 1;
@@ -120,41 +154,6 @@
             this.emitter.emit("popup", "load-end");
         }
     }
-
-    let createNewWallet = computed(() => {
-      return !this.$store.state.WalletStore.isUnlocked;
-    });
-
-    let chainList = computed(() => {
-      return Object.values(blockchains).sort((a, b) => {
-          if (!!a.testnet != !!b.testnet) {
-              return a.testnet ? 1 : -1;
-          }
-          return a.name > b.name;
-      });
-    });
-
-    let selectedImportOptions = computed(() => {
-      if (!selectedChain || !selectedChain.value) {
-          return [];
-      }
-
-      return getBlockchain(selectedChain.value).getImportOptions();
-    });
-
-    let selectedImportOption = computed(() => {
-      if (!selectedChain || !selectedChain.value) {
-          return null;
-      }
-
-      let useImport = !selectedImport || !selectedImport.value
-          ? selectedImportOptions.value[0]
-          : selectedImport.value;
-
-      return getBlockchain(selectedChain.value)
-              .getImportOptions()
-              .find(option => { return option.type == useImport.type; });
-    });
 </script>
 
 <template>
@@ -166,8 +165,7 @@
                 </h4>
                 <template v-if="createNewWallet">
                     <p
-                        v-b-tooltip.hover
-                        :title="$t('common.tooltip_friendly_cta')"
+                        v-tooltip="$t('common.tooltip_friendly_cta')"
                         class="my-3 font-weight-bold"
                     >
                         {{ $t('common.friendly_cta') }} &#10068;
@@ -184,8 +182,7 @@
                     >
                 </template>
                 <p
-                    v-b-tooltip.hover
-                    :title="$t('common.tooltip_chain_cta')"
+                    v-tooltip="$t('common.tooltip_chain_cta')"
                     class="my-3 font-weight-bold"
                 >
                     {{ $t('common.chain_cta') }} &#10068;

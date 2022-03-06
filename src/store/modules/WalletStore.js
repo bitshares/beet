@@ -20,7 +20,6 @@ const CLOSE_WALLET = 'CLOSE_WALLET';
 
 const wallet = {};
 
-
 const mutations = {
     [GET_WALLET](state, wallet) {
         set(state, 'wallet', wallet);

@@ -1,10 +1,8 @@
 import * as Actions from './Actions';
-import Queue from './Queue';
 import store from '../store/index.js';
 import RendererLogger from "./RendererLogger";
 const logger = new RendererLogger();
 
-var popupQ = new Queue();
 export default class BeetAPI {
 
     static async handler(request, vueInst) {
@@ -18,52 +16,30 @@ export default class BeetAPI {
             }
         }
 
-        let result;
-        if (popupQ.isEmpty()) {
-            let qresolve;
-            let queued = new Promise((resolve) => {
-                qresolve = resolve
-            });
-            popupQ.enqueue({
-                promise: queued,
-                resolve: qresolve
-            });
-            if (store.state.WalletStore.isUnlocked == false) {
-                vueInst.$refs.popupComp.showAlert(request);
-            }
-            await store.state.WalletStore.unlocked.promise;
-            result = await this[request.type](request, vueInst.$refs.popupComp);
-            let finished = popupQ.dequeue();
-            finished.resolve(true);
-        } else {
-            if (popupQ.size() > 10) {
-                return {
-                    id: request.id,
-                    result: {
-                        isError: true,
-                        error: 'Too many pending requests.'
-                    }
+        if (store.state.WalletStore.isUnlocked == false) {
+            return {
+                id: request.id,
+                result: {
+                    isError: true,
+                    error: 'Unlock the Beet wallet and try again.'
                 }
             }
-            let qresolve;
-            let queued = new Promise((resolve) => {
-                qresolve = resolve
-            });
-            let previous = popupQ.tail();
-            popupQ.enqueue({
-                promise: queued,
-                resolve: qresolve
-            });
-            if (store.state.WalletStore.isUnlocked == false) {
-                vueInst.$refs.popupComp.showAlert('Please unlock');
-            }
-
-            await previous.promise;
-
-            result = await this[request.type](request, vueInst.$refs.popupComp);
-            let finished = popupQ.dequeue();
-            finished.resolve(true);
+            //vueInst.$refs.popupComp.showAlert(request);
+            // prompt user to unlock wallet
         }
+
+        //await store.state.WalletStore.unlocked.promise; // wait forever if locked?
+        let result;
+        try {
+          result = await this[request.type](request, vueInst.$refs.popupComp);
+        } catch (error) {
+          console.log(error);
+          return {
+              id: request.id,
+              result: {isError: true, error: 'An error occurred whilst processing your request.'}
+          }
+        }
+
         console.log("user response", result);
         return result;
     }
@@ -189,7 +165,7 @@ export default class BeetAPI {
             return this._parseReject("BeetAPI.verifyMessage", request, err);
         }
     }
-    
+
     static async [Actions.TRANSFER](request, vue) {
         try {
             let response = await vue.requestTransfer(request.payload);

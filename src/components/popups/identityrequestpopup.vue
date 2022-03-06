@@ -46,10 +46,7 @@
         hide-footer
         :title="$t('operations.account_id.title')"
     >
-        <div
-            v-b-tooltip.hover
-            :title="$t('operations.identity.request_tooltip')"
-        >
+        <div v-tooltip="$t('operations.identity.request_tooltip')">
             {{ $t('operations.account_id.request', {appName: incoming.appName, origin: incoming.origin, chain: incoming.chain, accountId: beetapp.account_id, accountName: idaccount.accountName }) }} &#10068;
         </div>
         <b-btn

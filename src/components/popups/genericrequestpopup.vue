@@ -24,7 +24,7 @@
                 this.incoming,
                 this._getLinkedAccount()
             );
-            if (!operation.notingToDo) {
+            if (!operation.nothingToDo) {
                 let transaction = await blockchain.sign(
                     operation,
                     await getKey(this.$store.getters['AccountStore/getSigningKey'](this.incoming).keys.active)

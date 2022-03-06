@@ -1,3 +1,47 @@
+<script setup>
+    import {ref} from "vue";
+    import AbstractPopup from "./abstractpopup";
+    import {getKey} from '../../lib/SecureRemote';
+    import getBlockchain from "../../lib/blockchains/blockchainFactory";
+    import RendererLogger from "../../lib/RendererLogger";
+    const logger = new RendererLogger();
+
+    let type = ref("SignMessageRequestPopup");
+    let askWhitelist = ref(false);
+    let message = ref(null);
+
+    function _onShow() {
+        this.message = this.$t("operations.message.request", {
+            appName: this.incoming.appName,
+            origin: this.incoming.origin,
+            chain: this.$store.getters['AccountStore/getSigningKey'](this.incoming).chain,
+            accountName: this.$store.getters['AccountStore/getSigningKey'](this.incoming).accountName
+        });
+    }
+
+    function getSuccessNotification(result) {
+        return {msg: 'Message successfully signed.', link: '' };
+    }
+
+    async function _execute() {
+        let blockchain = getBlockchain(this.incoming.chain);
+
+        let keys = this.$store.getters['AccountStore/getSigningKey'](this.incoming).keys;
+
+        let signatureKey = null;
+        if (keys.memo) {
+            signatureKey = keys.memo;
+        } else {
+            signatureKey = keys.active;
+        }
+
+        return await blockchain.signMessage(
+            await getKey(signatureKey),
+            this.$store.getters['AccountStore/getSigningKey'](this.incoming).accountName,
+            this.incoming.params
+        );
+    }
+</script>
 <template>
     <b-modal
         id="type"
@@ -37,53 +81,3 @@
         </b-btn>
     </b-modal>
 </template>
-<script>
-    import AbstractPopup from "./abstractpopup";
-    import RendererLogger from "../../lib/RendererLogger";
-    import getBlockchain from "../../lib/blockchains/blockchainFactory";
-    const logger = new RendererLogger();
-    import {getKey} from '../../lib/SecureRemote';
-
-    export default {
-        name: "SignMessageRequestPopup",
-        extends: AbstractPopup,
-        data() {
-            return {
-                type: "SignMessageRequestPopup",
-                askWhitelist: false,
-                message: null
-            };
-        },
-        methods: {
-            _onShow() {
-                this.message = this.$t("operations.message.request", {
-                    appName: this.incoming.appName,
-                    origin: this.incoming.origin,
-                    chain: this.$store.getters['AccountStore/getSigningKey'](this.incoming).chain,
-                    accountName: this.$store.getters['AccountStore/getSigningKey'](this.incoming).accountName
-                });
-            },
-            getSuccessNotification(result) {
-                return {msg: 'Message successfully signed.', link: '' };
-            },
-            _execute: async function () {
-                let blockchain = getBlockchain(this.incoming.chain);
-
-                let keys = this.$store.getters['AccountStore/getSigningKey'](this.incoming).keys;
-
-                let signatureKey = null;
-                if (keys.memo) {
-                    signatureKey = keys.memo;
-                } else {
-                    signatureKey = keys.active;
-                }
-
-                return await blockchain.signMessage(
-                    await getKey(signatureKey),
-                    this.$store.getters['AccountStore/getSigningKey'](this.incoming).accountName,
-                    this.incoming.params
-                );
-            }
-        }
-    };
-</script>

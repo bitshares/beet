@@ -365,7 +365,7 @@ export default class BitShares extends BlockchainAPI {
                             if (new_options.votes.findIndex(item => item == data.vote_id) !== -1) {
                                 resolve({
                                    vote_id: data.vote_id,
-                                   notingToDo: true
+                                   nothingToDo: true
                                 });
                             }
 

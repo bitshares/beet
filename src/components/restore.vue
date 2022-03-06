@@ -57,8 +57,7 @@
                 {{ $t('common.restore_lbl') }}
             </h4>
             <p
-                v-b-tooltip.hover
-                :title="$t('common.tooltip_backupfile_cta')"
+                v-tooltip="$t('common.tooltip_backupfile_cta')"
                 class="my-3 font-weight-bold"
             >
                 {{ $t('common.backupfile_cta') }} &#10068;
@@ -71,8 +70,7 @@
                 required
             >
             <p
-                v-b-tooltip.hover
-                :title="$t('common.tooltip_backuppass_cta')"
+                v-tooltip="$t('common.tooltip_backuppass_cta')"
                 class="my-3 font-weight-bold"
             >
                 {{ $t('common.backuppass_cta') }} &#10068;
