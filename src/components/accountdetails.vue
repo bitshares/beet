@@ -3,6 +3,8 @@
     import {formatChain} from "../lib/formatter";
     import { shell } from 'electron';
 
+    const props = defineProps(["account"]);
+
     function getChainLabel(chain) {
         return formatChain(chain);
     }
@@ -19,7 +21,6 @@
         shell.openExternal(getExplorer(account));
     }
 
-    const props = defineProps(["account"]);
 </script>
 
 <template>

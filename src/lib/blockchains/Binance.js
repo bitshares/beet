@@ -283,7 +283,7 @@ Amount: ${toSend}
     getImportOptions() {
         return [
             {
-                type: "ImportAdressBased",
+                type: "ImportAddressBased",
                 translate_key: "import_address"
             }
         ];

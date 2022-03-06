@@ -54,17 +54,20 @@ if (env.name !== "production") {
 }
 */
 
-const createModal = async () => {
+const createModal = async (args) => {
   let modalHeight = 400;
   let modalWidth = 600;
   if (!createWindow) {
     // Can't create modal without parent window
     return;
   }
+
   modalWindow = new BrowserWindow({
       parent: createWindow,
       modal: true,
       show: false,
+      //
+      title: args.title ?? 'Beet prompt',
       //
       width: modalWidth,
       height: modalHeight,
@@ -84,12 +87,9 @@ const createModal = async () => {
       icon: __dirname + '/img/beet-taskbar.png'
   });
 
-  modalWindow.loadURL(
-    url.format({
-      pathname: path.join(__dirname, "modal.html"),
-      protocol: "file:",
-      slashes: true
-    })
+  modalWindow.loadFile(
+    path.join(__dirname, "modal.html"),
+    {query: {"type": args.type ?? null}}
   );
 
   modalWindow.once('ready-to-show', () => {
@@ -202,15 +202,15 @@ const createWindow = async () => {
           }
         })
     }
-    this.emitter.emit("popup", "load-end");
+    //this.emitter.emit("popup", "load-end");
   });
 
-  /*
   ipcMain.on('popup', (event, arg) => {
     // create popup modal window
-    modalWindow();
+    createModal(arg);
   })
 
+  /*
   ipcMain.on('', (event, arg) => {
 
   })
@@ -223,6 +223,7 @@ const createWindow = async () => {
 
   })
   */
+
   ipcMain.on('openDebug', (event, arg) => {
       mainWindow.webContents.openDevTools();
   });

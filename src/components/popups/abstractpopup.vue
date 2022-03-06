@@ -1,7 +1,6 @@
 <script setup>
     import {ref} from "vue";
     import RendererLogger from "../../lib/RendererLogger";
-
     const logger = new RendererLogger();
 
     let type = ref(null);

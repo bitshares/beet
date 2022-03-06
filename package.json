@@ -57,6 +57,7 @@
     "lzma": "^2.3.2",
     "mitt": "^3.0.0",
     "otpauth": "^7.1.0",
+    "query-string": "^7.1.1",
     "socket.io": "^4.4.1",
     "typeface-rajdhani": "1.1.13",
     "typeface-roboto": "1.1.13",

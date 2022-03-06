@@ -1,3 +1,14 @@
+import {
+  requestAccess,
+  requestReLink,
+  requestLink,
+  requestVote,
+  requestTx,
+  requestSignedMessage,
+  verifyMessage,
+  requestTransfer,
+  showAlert
+} from "./modals.js";
 import * as Actions from './Actions';
 import store from '../store/index.js';
 import RendererLogger from "./RendererLogger";
@@ -5,33 +16,27 @@ const logger = new RendererLogger();
 
 export default class BeetAPI {
 
-    static async handler(request, vueInst) {
+    static async handler(request) {
         if (!Object.keys(Actions).map(key => Actions[key]).includes(request.type)) {
             return {
                 id: request.id,
-                result: {
-                    isError: true,
-                    error: 'Request type not supported.'
-                }
+                result: {isError: true, error: 'Request type not supported.'}
             }
         }
 
         if (store.state.WalletStore.isUnlocked == false) {
+            showAlert(request);
             return {
                 id: request.id,
-                result: {
-                    isError: true,
-                    error: 'Unlock the Beet wallet and try again.'
-                }
+                result: {isError: true,error: 'Unlock the Beet wallet and try again.'}
             }
-            //vueInst.$refs.popupComp.showAlert(request);
             // prompt user to unlock wallet
         }
 
         //await store.state.WalletStore.unlocked.promise; // wait forever if locked?
         let result;
         try {
-          result = await this[request.type](request, vueInst.$refs.popupComp);
+          result = await this[request.type](request);
         } catch (error) {
           console.log(error);
           return {
@@ -52,14 +57,15 @@ export default class BeetAPI {
             id: request.id,
             result: {
                 isError: true,
+                method: method,
                 error: err.canceled ? "User rejected" : (err.error ? err.error : err)
             }
         };
     }
 
-    static async [Actions.GET_ACCOUNT](request, vue) {
+    static async [Actions.GET_ACCOUNT](request) {
         try {
-            let response = await vue.requestAccess(request.payload);
+            let response = await requestAccess(request.payload);
 
             return {
                 id: request.id,
@@ -70,13 +76,10 @@ export default class BeetAPI {
         }
     }
 
-    static async [Actions.REQUEST_RELINK](request, vue) {
+    static async [Actions.REQUEST_RELINK](request) {
+        let response;
         try {
-            let response;
-            response = await vue.requestReLink(request);
-            return Object.assign(request, {
-                identity: response.response
-            });
+            response = await requestReLink(request);
         } catch (e) {
             return {
                 id: request.id,
@@ -85,15 +88,13 @@ export default class BeetAPI {
                 }
             };
         }
+        return Object.assign(request, {identity: response.response});
     }
 
-    static async [Actions.REQUEST_LINK](request, vue) {
+    static async [Actions.REQUEST_LINK](request) {
+      let response;
         try {
-            let response;
-            response = await vue.requestLink(request);
-            return Object.assign(request, {
-                identity: response.response
-            });
+            response = await requestLink(request);
         } catch (e) {
             return {
                 id: request.id,
@@ -102,79 +103,74 @@ export default class BeetAPI {
                 }
             };
         }
+        return Object.assign(request, {identity: response.response});
     }
 
-    static async [Actions.VOTE_FOR](request, vue) {
+    static async [Actions.VOTE_FOR](request) {
+        let response;
         try {
-            let response = await vue.requestVote(request.payload);
-            return {
-                id: request.id,
-                result: response.response
-            };
+            response = await requestVote(request.payload);
         } catch (err) {
             return this._parseReject("BeetAPI.voteFor", request, err);
         }
+        return {id: request.id, result: response.response};
     }
 
-    static async [Actions.REQUEST_SIGNATURE](request, vue) {
+    static async [Actions.REQUEST_SIGNATURE](request) {
+        let response;
         try {
-            let response = await vue.requestTx(request.payload);
-            return {
-                id: request.id,
-                result: response.response
-            };
+            response = await requestTx(request.payload);
         } catch (err) {
             return this._parseReject("BeetAPI.requestSignature", request, err);
         }
+        return {id: request.id, result: response.response};
     }
 
-    static async [Actions.INJECTED_CALL](request, vue) {
+    static async [Actions.INJECTED_CALL](request) {
+        let response;
         try {
-            let response = await vue.requestTx(request.payload);
-            return {
-                id: request.id,
-                result: response.response
-            };
+            response = await requestTx(request.payload);
         } catch (err) {
             return this._parseReject("BeetAPI.injectedCall", request, err);
         }
+        return {id: request.id, result: response.response};
     }
 
-    static async [Actions.SIGN_MESSAGE](request, vue) {
+    static async [Actions.SIGN_MESSAGE](request) {
+        let response;
         try {
-            let response = await vue.requestSignedMessage(request.payload);
-            // make sure an invalid message never leaves the house
-            await vue.verifyMessage({params: response.response});
-            return {
-                id: request.id,
-                result: response.response
-            };
+            response = await requestSignedMessage(request.payload);
         } catch (err) {
-            return this._parseReject("BeetAPI.signMessage", request, err);
+            return this._parseReject("BeetAPI.signMessage.request", request, err);
         }
+
+        try {
+          // make sure an invalid message never leaves the house
+          await verifyMessage({params: response.response});
+        } catch (err) {
+          return this._parseReject("BeetAPI.signMessage.verify", request, err);
+        }
+
+        return {id: request.id, result: response.response};
     }
 
-    static async [Actions.VERIFY_MESSAGE](request, vue) {
+    static async [Actions.VERIFY_MESSAGE](request) {
+        let response;
         try {
-            let response = await vue.verifyMessage(request.payload);
-            return {
-                id: request.id,
-                result: response
-            };
+            response = await verifyMessage(request.payload);
         } catch (err) {
             return this._parseReject("BeetAPI.verifyMessage", request, err);
         }
+        return {id: request.id, result: response};
     }
 
-    static async [Actions.TRANSFER](request, vue) {
+    static async [Actions.TRANSFER](request) {
+        let response;
         try {
-            let response = await vue.requestTransfer(request.payload);
-            return {
-                id: request.id,
-                result: response.response
-            };
+            response = await requestTransfer(request.payload);
         } catch (err) {
             return this._parseReject("BeetAPI.transfer", request, err);
         }
+        return {id: request.id, result: response.response};
     }
 }

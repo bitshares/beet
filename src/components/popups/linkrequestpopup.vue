@@ -42,10 +42,7 @@
           (x) => {
               return x.appName == this.incoming.appName
                   && x.origin==this.incoming.origin
-                  && (
-                      this.incoming.chain == "ANY"
-                  || x.chain==this.incoming.chain
-                  )
+                  && this.incoming.chain == "ANY" || x.chain==this.incoming.chain
           }
       );
     });

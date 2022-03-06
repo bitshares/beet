@@ -303,7 +303,7 @@ export default class Bitcoin extends BlockchainAPI {
     getImportOptions() {
         return [
             {
-                type: "ImportAdressBased",
+                type: "ImportAddressBased",
                 translate_key: "import_address"
             }
         ];

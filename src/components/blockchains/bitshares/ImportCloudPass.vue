@@ -3,8 +3,8 @@
     import {PrivateKey} from "bitsharesjs";
     import getBlockchain from "../../../lib/blockchains/blockchainFactory";
 
-    const selectedChain = defineProps(["selectedChain"]);
-    if (this.selectedChain !== "BTS") {
+    const props = defineProps(["selectedChain"]);
+    if (props.selectedChain !== "BTS") {
         throw "Unsupported chain!";
     }
 
@@ -17,7 +17,7 @@
             throw {
                 key: "missing_account_error",
                 args: {
-                    chain: this.selectedChain
+                    chain: props.selectedChain
                 }
             };
         }
@@ -28,7 +28,7 @@
             };
         }
 
-        let blockchain = getBlockchain(this.selectedChain);
+        let blockchain = getBlockchain(props.selectedChain);
         // abstract UI concept more
         let authorities = this.getAuthoritiesFromPass(bitshares_cloud_login_password.value);
         let account = null;
@@ -43,7 +43,7 @@
             account: {
                 accountName: accountname.value,
                 accountID: account.id,
-                chain: this.selectedChain,
+                chain: props.selectedChain,
                 keys: authorities
             }
         };

@@ -35,11 +35,7 @@
           let match = props.existing.filter(
               x => x.account_id == acc.accountID && x.chain == acc.chain
           );
-          if (match.length > 0) {
-              acc.linked = true;
-          } else {
-              acc.linked = false;
-          }
+          acc.linked = match.length > 0 ? true : false;
           return acc;
       });
     });

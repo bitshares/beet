@@ -3,7 +3,7 @@
     import ImportBinFile from "./bitshares/ImportBinFile";
     import ImportMemo from "./bitshares/ImportMemo";
     import ImportKeys from "./ImportKeys";
-    import ImportAdressBased from "./address/ImportAdressBased";
+    import ImportAddressBased from "./address/ImportAddressBased";
 
     const selectedChain = defineProps(["chain", "type"]);
 
@@ -13,13 +13,13 @@
 </script>
 
 <template>
-    <ImportAdressBased
-        v-if="type == 'address/ImportAdressBased'"
+    <ImportAddressBased
+        v-if="type == 'address/ImportAddressBased'"
         ref="chosen_import"
         :selected-chain="chain"
     />
-    <ImportAdressBased
-        v-else-if="type == 'ImportAdressBased'"
+    <ImportAddressBased
+        v-else-if="type == 'ImportAddressBased'"
         ref="chosen_import"
         :selected-chain="chain"
     />

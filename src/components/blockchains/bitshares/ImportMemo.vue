@@ -2,7 +2,7 @@
     import {ref} from "vue";
     import getBlockchain from "../../../lib/blockchains/blockchainFactory";
 
-    const account = defineProps(["selectedChain"]);
+    const props = defineProps(["selectedChain"]);
 
     let accountname = ref("");
     let memopk = ref("");
@@ -10,7 +10,7 @@
     let accessType = ref(null);
     let requiredFields = ref(null);
 
-    let blockchain = getBlockchain(this.selectedChain);
+    let blockchain = getBlockchain(props.selectedChain);
     accessType.value = blockchain.getAccessType();
     requiredFields.value = blockchain.getSignUpInput();
 
@@ -19,11 +19,11 @@
             throw {
                 key: "missing_account_error",
                 args: {
-                    chain: this.selectedChain
+                    chain: props.selectedChain
                 }
             };
         }
-        let blockchain = getBlockchain(this.selectedChain);
+        let blockchain = getBlockchain(props.selectedChain);
         let authorities = {};
         if (requiredFields.value.memo != null) {
             authorities.memo = memopk.value;
@@ -33,7 +33,7 @@
             account: {
                 accountName: accountname.value,
                 accountID: account.id,
-                chain: this.selectedChain,
+                chain: props.selectedChain,
                 keys: authorities
             }
         };
@@ -50,15 +50,11 @@
 </script>
 
 <template>
-    <div
-        id="step2"
-    >
+    <div id="step2">
         <h4 class="h4 mt-3 font-weight-bold">
             {{ $t('common.step_counter',{ 'step_no' : 2}) }}
         </h4>
-        <p
-            class="mb-2 font-weight-bold"
-        >
+        <p class="mb-2 font-weight-bold">
             {{ $t('common.account_name', { 'chain' : selectedChain}) }}
         </p>
         <input
@@ -89,5 +85,4 @@
             {{ $t('common.use_only_for_messages_and_proof') }}
         </p>
     </div>
-
 </template>
