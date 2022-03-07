@@ -1,5 +1,9 @@
 <script setup>
     import { onMounted } from "vue";
+    import { useI18n } from 'vue-i18n';
+    const { t } = useI18n({ useScope: 'global' });
+    import store from '../store/index';
+    import router from '../router/index.js';
     import RendererLogger from "../lib/RendererLogger";
     const logger = new RendererLogger();
 
@@ -10,8 +14,8 @@
     })
 
     function logout() {
-        this.$store.dispatch("WalletStore/logout");
-        this.$router.replace("/");
+        store.dispatch("WalletStore/logout");
+        router.replace("/");
     }
 
     onMounted(() => {
@@ -50,7 +54,7 @@
               <ui-icon>settings</ui-icon>
             </router-link>
             <a
-                v-tooltip="$t('common.tooltip_lock')"
+                v-tooltip="t('common.tooltip_lock')"
                 href="#"
                 class=" status align-self-center"
                 @click="logout()"

@@ -1,5 +1,7 @@
 <script setup>
     import {ref} from "vue";
+    import { useI18n } from 'vue-i18n';
+    const { t } = useI18n({ useScope: 'global' });
     import getBlockchain from "../../../lib/blockchains/blockchainFactory";
     import BTSWalletHandler from "../../../lib/blockchains/bitshares/BTSWalletHandler";
 
@@ -61,7 +63,7 @@
             accountID.value = account.id;
         } catch (err) {
             accountID.value = "";
-            errorMsg.value = err.key ? this.$t(`common.${err.key}`) : err.toString();
+            errorMsg.value = err.key ? t(`common.${err.key}`) : err.toString();
             this.$refs.errorModal.show();
         } finally {
             this.emitter.emit("popup", "load-end");
@@ -121,11 +123,11 @@
 <template>
     <div id="step2">
         <h4 class="h4 mt-3 font-weight-bold">
-            {{ $t('common.step_counter',{ 'step_no' : 2}) }}
+            {{ t('common.step_counter',{ step_no : 2}) }}
         </h4>
         <template v-if="substep1">
             <p class="mb-2 font-weight-bold">
-                {{ $t('common.Select your .bin backup file.') }}
+                {{ t('common.Select your .bin backup file.') }}
             </p>
             <input
                 type="file"
@@ -133,7 +135,7 @@
                 @change="handleWalletSelect"
             >
             <p class="mb-2 font-weight-bold">
-                {{ $t('common.Enter your .bin file password.') }}
+                {{ t('common.Enter your .bin file password.') }}
             </p>
             <input
                 v-model="bin_file_password"
@@ -219,7 +221,7 @@
                 <!--class="btn btn-lg btn-primary btn-block mt-3"-->
                 <!--@click="simpleStep3"-->
             <!--&gt;-->
-                <!--{{ $t('common.import_btn') }}-->
+                <!--{{ t('common.import_btn') }}-->
             <!--</button>-->
         </template>
     </div>

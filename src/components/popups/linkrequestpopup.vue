@@ -1,7 +1,10 @@
 <script setup>
     import { ref, onMounted, computed } from "vue";
+    import { useI18n } from 'vue-i18n';
+    const { t } = useI18n({ useScope: 'global' });
     import AbstractPopup from "./abstractpopup";
     import AccountSelect from "../account-select";
+    import store from '../store/index';
     import RendererLogger from "../../lib/RendererLogger";
     const logger = new RendererLogger();
 
@@ -38,7 +41,7 @@
     }
 
     let existingLinks = computed(() => {
-      return this.$store.state.OriginStore.apps.filter(
+      return store.state.OriginStore.apps.filter(
           (x) => {
               return x.appName == this.incoming.appName
                   && x.origin==this.incoming.origin
@@ -59,14 +62,14 @@
         no-close-on-backdrop
         hide-header-close
         hide-footer
-        :title="$t('operations.account_id.title')"
+        :title="t('operations.account_id.title')"
     >
-        <div v-tooltip="$t('operations.link.request_tooltip')">
-            {{ $t('operations.link.request', {appName: incoming.appName, origin: incoming.origin, chain: incoming.chain }) }} &#10068;
+        <div v-tooltip="t('operations.link.request_tooltip')">
+            {{ t('operations.link.request', {appName: incoming.appName, origin: incoming.origin, chain: incoming.chain }) }} &#10068;
         </div>
         <br>
         <div v-if="existingLinks.length>0">
-            {{ $t('operations.link.request_fresh', {chain: incoming.chain }) }}
+            {{ t('operations.link.request_fresh', {chain: incoming.chain }) }}
         </div>
         <br>
         <AccountSelect
@@ -74,7 +77,7 @@
             v-model="chosenAccount"
             :chain="incoming.chain"
             :existing="existingLinks"
-            :cta="$t('operations.link.request_cta')"
+            :cta="t('operations.link.request_cta')"
             extraclass="accountProvide"
         />
         <b-btn
@@ -83,7 +86,7 @@
             block
             @click="clickedAllow"
         >
-            {{ $t('operations.link.accept_btn') }}
+            {{ t('operations.link.accept_btn') }}
         </b-btn>
         <b-btn
             class="mt-1"
@@ -91,7 +94,7 @@
             block
             @click="_clickedDeny"
         >
-            {{ $t('operations.link.reject_btn') }}
+            {{ t('operations.link.reject_btn') }}
         </b-btn>
     </b-modal>
 </template>

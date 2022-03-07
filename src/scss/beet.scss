@@ -10,4 +10,15 @@ $dark:          #29324A;
 $white:         #F4F8FB;
 
 //@use "balm-ui/dist/balm-ui";
+
+@use "balm-ui/components/core";
+@use "balm-ui/components/button/button";
+@use "balm-ui/components/icon/icon";
+@use 'balm-ui/components/grid/grid';
+@use 'balm-ui/components/icon-button/icon-button';
+@use 'balm-ui/components/menu/menu';
+@use 'balm-ui/components/list/list';
+@use 'balm-ui/components/select/select';
+@use 'balm-ui/components/tooltip/tooltip';
+
 @import "./styles";

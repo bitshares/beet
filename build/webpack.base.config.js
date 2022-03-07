@@ -62,15 +62,24 @@ module.exports = env => {
           use: ["babel-loader"]
         },
         {
-          test: /\.css$/,
+          test: /\.css$/i,
           use: ["style-loader", "css-loader"]
         },
         {
-          test: /\.scss$/,
+          test: /\.s[ac]ss$/i,
           use: [
-            'style-loader',
-            'css-loader',
-            'sass-loader'
+            // Creates `style` nodes from JS strings
+            "style-loader",
+            // Translates CSS into CommonJS
+            "css-loader",
+            // Compiles Sass to CSS
+            {
+              loader: "sass-loader",
+              options: {
+                // Prefer `dart-sass`
+                implementation: require("sass"),
+              },
+            },
           ]
         },
         {
@@ -78,7 +87,7 @@ module.exports = env => {
           use: [{
             loader: 'file-loader',
             options: {
-              name: '[name].[ext]',
+              name: '[path][name].[ext]',
               outputPath: 'fonts/'
             }
           }]

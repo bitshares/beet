@@ -1,14 +1,18 @@
 <script setup>
     import { ref, onMounted, computed } from 'vue';
+    import { useI18n } from 'vue-i18n';
+    const { t } = useI18n({ useScope: 'global' });
+    import store from '../store/index';
+    import router from '../router/index.js';
     import RendererLogger from "../lib/RendererLogger";
     const logger = new RendererLogger();
 
     let hasWallet = computed(() => {
-      return this.$store.state.WalletStore.hasWallet;
+      return store.state.WalletStore.hasWallet;
     })
 
     let walletlist = computed(() => {
-      return this.$store.state.WalletStore.walletlist;
+      return store.state.WalletStore.walletlist;
     })
 
     let walletpass = ref("");
@@ -18,18 +22,18 @@
 
     onMounted(() => {
       logger.debug("Start screen mounted");
-      this.$store.dispatch("WalletStore/loadWallets", {}).catch(() => {});
-      this.$store.dispatch("OriginStore/loadApps");
+      store.dispatch("WalletStore/loadWallets", {}).catch(() => {});
+      store.dispatch("OriginStore/loadApps");
     });
 
     function unlockWallet() {
-        this.$store
+        store
             .dispatch("WalletStore/getWallet", {
                 wallet_id: selectedWallet.value.id,
                 wallet_pass: walletpass.value
             })
             .then(() => {
-                this.$router.replace("/dashboard");
+                router.replace("/dashboard");
             })
             .catch(() => {
                 passincorrect.value = "is-invalid";
@@ -46,7 +50,7 @@
                 v-if="!hasWallet"
                 class="mt-3 mb-3 font-weight-normal"
             >
-                <em>{{ $t('common.no_wallet') }}</em>
+                <em>{{ t('common.no_wallet') }}</em>
             </p>
             <router-link
                 v-if="!hasWallet"
@@ -54,14 +58,14 @@
                 replace
             >
               <ui-button outlined>
-                {{ $t('common.start_cta') }}
+                {{ t('common.start_cta') }}
               </ui-button>
             </router-link>
             <p
                 v-if="!hasWallet"
                 class="my-2 font-weight-normal"
             >
-                <em>{{ $t('common.or') }}</em>
+                <em>{{ t('common.restore_lbl') }}</em>
             </p>
             <router-link
                 v-if="!hasWallet"
@@ -69,7 +73,7 @@
                 replace
             >
               <ui-button outlined>
-                {{ $t('common.restore_cta') }}
+                {{ t('common.restore_cta') }}
               </ui-button>
             </router-link>
 
@@ -83,7 +87,7 @@
                 id="wallet-select"
                 v-model="selectedWallet"
                 :class="'form-control my-3 accountProvide text-left'"
-                :placeholder="$t('common.select_wallet')"
+                :placeholder="t('common.select_wallet')"
                 label="name"
                 :options="walletlist"
                 track-by="id"
@@ -103,7 +107,7 @@
                 v-model="walletpass"
                 type="password"
                 class="form-control mb-4 px-3"
-                :placeholder=" $t('common.password_placeholder')"
+                :placeholder=" t('common.password_placeholder')"
                 required
 
                 :class="passincorrect"
@@ -115,13 +119,13 @@
               @click="unlockWallet"
               outlined
             >
-              {{ $t('common.unlock_cta') }}
+              {{ t('common.unlock_cta') }}
             </ui-button>
             <p
                 v-if="hasWallet"
                 class="my-2 font-weight-normal"
             >
-                <em>{{ $t('common.or') }}</em>
+                <em>{{ t('common.origin_lbl') }}</em>
             </p>
             <div class="row">
                 <div class="col-6">
@@ -131,7 +135,7 @@
                         replace
                     >
                       <ui-button outlined>
-                        {{ $t('common.create_cta') }}
+                        {{ t('common.create_cta') }}
                       </ui-button>
                     </router-link>
                 </div>
@@ -142,7 +146,7 @@
                         replace
                     >
                       <ui-button outlined>
-                        {{ $t('common.restore_cta') }}
+                        {{ t('common.restore_cta') }}
                       </ui-button>
                     </router-link>
                 </div>

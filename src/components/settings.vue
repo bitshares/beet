@@ -1,6 +1,9 @@
 <script setup>
     import { onMounted, computed } from 'vue';
+    import { useI18n } from 'vue-i18n';
+    const { t } = useI18n({ useScope: 'global' });
     import { ipcRenderer } from "electron";
+    import store from '../store/index';
     import RendererLogger from "../lib/RendererLogger";
     import {formatAccount} from "../lib/formatter";
     import Actionbar from "./actionbar";
@@ -9,13 +12,13 @@
 
     onMounted(() => {
       logger.debug("Settings Mounted");
-      //await this.$store.dispatch("OriginStore/loadApps");
+      //await store.dispatch("OriginStore/loadApps");
     });
 
     let dapps = computed(() => {
       let storedDapps = [];
-      for (let i = 0; i < this.$store.state.AccountStore.accountlist.length; i++) {
-          let apps = this.$store.getters['OriginStore/walletAccessibleDapps'](this.$store.state.AccountStore.accountlist[i].accountID, this.$store.state.AccountStore.accountlist[i].chain);
+      for (let i = 0; i < store.state.AccountStore.accountlist.length; i++) {
+          let apps = store.getters['OriginStore/walletAccessibleDapps'](store.state.AccountStore.accountlist[i].accountID, store.state.AccountStore.accountlist[i].chain);
           if (typeof apps != 'undefined') {
               storedDapps = storedDapps.concat(apps);
           }
@@ -28,18 +31,18 @@
         ipcRenderer.send(
           "downloadBackup",
           {
-            walletName: this.$store.state.WalletStore.wallet.name,
-            accounts: this.$store.state.AccountStore.accountlist.slice()
+            walletName: store.state.WalletStore.wallet.name,
+            accounts: store.state.AccountStore.accountlist.slice()
           }
         );
     }
 
     async function deleteDapp(dapp_id) {
-        await this.$store.dispatch('OriginStore/removeApp', dapp_id);
+        await store.dispatch('OriginStore/removeApp', dapp_id);
     }
 
     function getDisplayString(accountID,chain) {
-        let account = this.$store.state.AccountStore.accountlist.find(x => { return (x.accountID==accountID && x.chain==chain);});
+        let account = store.state.AccountStore.accountlist.find(x => { return (x.accountID==accountID && x.chain==chain);});
         return formatAccount(account, true);
     }
 </script>
@@ -49,37 +52,37 @@
         <div class="content">
             <div class="settings mt-3">
                 <p class="mb-1 font-weight-bold">
-                    {{ $t('common.settings_lbl') }}
+                    {{ t('common.settings_lbl') }}
                 </p>
             </div>
             <div class="dapp-list mt-2">
                 <p class="mb-2 font-weight-bold small">
-                    <u>{{ $t('common.dapps_lbl') }}</u>
+                    <u>{{ t('common.dapps_lbl') }}</u>
                 </p>
                 <table>
                     <thead>
                         <tr>
                             <th class="align-middle">
-                                {{ $t('common.appname_lbl') }}
+                                {{ t('common.appname_lbl') }}
                             </th>
                             <th class="align-middle">
-                                {{ $t('common.origin_lbl') }}
+                                {{ t('common.origin_lbl') }}
                             </th>
                             <th class="align-middle">
-                                {{ $t('common.account_lbl') }}
+                                {{ t('common.account_lbl') }}
                             </th>
                             <th class="align-middle">
-                                {{ $t('common.chain_lbl') }}
+                                {{ t('common.chain_lbl') }}
                             </th>
                             <th class="align-middle">
-                                {{ $t('common.actions_lbl') }}
+                                {{ t('common.actions_lbl') }}
                             </th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr v-if="dapps.length==0">
                             <td colspan="6" class="align-center">
-                                <em>{{ $t('common.no_dapps_linked') }}</em>
+                                <em>{{ t('common.no_dapps_linked') }}</em>
                             </td>
                         </tr>
                         <tr v-for="dapp in dapps" :key="dapp.id">
@@ -103,7 +106,7 @@
                                     type="button"
                                     @click="deleteDapp(dapp.id)"
                                 >
-                                    {{ $t('common.delete_btn') }}
+                                    {{ t('common.delete_btn') }}
                                 </button>
                             </td>
                         </tr>
@@ -112,12 +115,12 @@
             </div>
             <div class="backup mt-2 mb-4">
                 <p class="mb-2 font-weight-bold small">
-                    <u>{{ $t('common.backup_lbl') }}</u>
+                    <u>{{ t('common.backup_lbl') }}</u>
                 </p>
                 <ui-grid class="row px-4">
                   <ui-grid-cell class="largeHeader" columns="12">
                       <p class="small text-justify">
-                          {{ $t('common.backup_txt') }}
+                          {{ t('common.backup_txt') }}
                       </p>
                   </ui-grid-cell>
                   <ui-grid-cell columns="3" />
@@ -127,7 +130,7 @@
                         type="button"
                         @click="downloadBackup"
                     >
-                        {{ $t('common.backup_btn') }}
+                        {{ t('common.backup_btn') }}
                     </button>
                   </ui-grid-cell>
                   <ui-grid-cell columns="3" />

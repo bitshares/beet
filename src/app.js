@@ -19,7 +19,7 @@ import Beetframe from './components/beetframe';
 import 'typeface-roboto';
 import 'typeface-rajdhani';
 
-import './css/style.css';
+//import './css/style.css';
 import './scss/beet.scss';
 
 const logger = new RendererLogger;
@@ -40,7 +40,8 @@ store.dispatch("WhitelistStore/loadWhitelist");
 const messages = fetchMessages();
 
 const i18n = createI18n({
-  locale: store.state.SettingsStore.settings.locale.iso,
+  legacy: false, // you must set `false`, to use Composition API
+  locale: store.state.SettingsStore.settings.locale.iso ?? 'en',
   fallbackLocale: 'en',
   messages
 })

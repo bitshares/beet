@@ -1,6 +1,10 @@
 <script setup>
     import { watch, ref, computed, onMounted } from "vue";
+    import { useI18n } from 'vue-i18n';
+    const { t } = useI18n({ useScope: 'global' });
     import getBlockchain from "../lib/blockchains/blockchainFactory";
+    import store from '../store/index';
+
     import RendererLogger from "../lib/RendererLogger";
     const logger = new RendererLogger();
 
@@ -8,8 +12,8 @@
     let errored = ref(false);
 
     let selectedAccount = computed(() => {
-      return this.$store.state.AccountStore.accountlist[
-          this.$store.state.AccountStore.selectedIndex
+      return store.state.AccountStore.accountlist[
+          store.state.AccountStore.selectedIndex
       ];
     });
 
@@ -26,7 +30,7 @@
     });
 
     let accountlist = computed(() => {
-      return this.$store.state.AccountStore.accountlist;
+      return store.state.AccountStore.accountlist;
     });
 
     onMounted(() => {
@@ -91,11 +95,11 @@
 <template>
     <div class="balances mt-3">
         <p class="mb-1 font-weight-bold small">
-            {{ $t('common.balances_lbl') }}
+            {{ t('common.balances_lbl') }}
         </p>
         <table class="table small table-striped table-sm">
             <span v-if="errored">
-                {{ $t('common.balances_error') }}
+                {{ t('common.balances_error') }}
             </span>
             <tbody v-if="balances != null">
                 <tr

@@ -1,6 +1,9 @@
 <script setup>
     import {ref, onMounted} from "vue";
+    import { useI18n } from 'vue-i18n';
+    const { t } = useI18n({ useScope: 'global' });
     import AbstractPopup from "./abstractpopup";
+    import store from '../store/index';
     import RendererLogger from "../../lib/RendererLogger";
     import getBlockchain from "../../lib/blockchains/blockchainFactory";
     const logger = new RendererLogger();
@@ -17,11 +20,11 @@
     let toSendFee = ref(null);
 
     function _onShow() {
-        this.message = this.$t("operations.transfer.request", {
+        this.message = t("operations.transfer.request", {
             appName: this.incoming.appName,
             origin: this.incoming.origin,
-            chain:   this.$store.getters['AccountStore/getSigningKey'](this.incoming).chain,
-            accountName:   this.$store.getters['AccountStore/getSigningKey'](this.incoming).accountName
+            chain:   store.getters['AccountStore/getSigningKey'](this.incoming).chain,
+            accountName:   store.getters['AccountStore/getSigningKey'](this.incoming).accountName
         });
 
         let blockchain = getBlockchain(this.incoming.chain);
@@ -39,8 +42,8 @@
             let loadFee = async () => {
                 try {
                     let result = await blockchain.transfer(
-                        await getKey(this.$store.getters['AccountStore/getSigningKey'](this.incoming).keys.active),
-                        this.$store.getters['AccountStore/getSigningKey'](this.incoming).accountName,
+                        await getKey(store.getters['AccountStore/getSigningKey'](this.incoming).keys.active),
+                        store.getters['AccountStore/getSigningKey'](this.incoming).accountName,
                         this.incoming.params.to,
                         {
                             amount: this.incoming.params.amount.satoshis || this.incoming.params.amount.amount,
@@ -76,8 +79,8 @@
         }
 
         return await blockchain.transfer(
-            await getKey(this.$store.getters['AccountStore/getSigningKey'](this.incoming).keys.active),
-            this.$store.getters['AccountStore/getSigningKey'](this.incoming).accountName,
+            await getKey(store.getters['AccountStore/getSigningKey'](this.incoming).keys.active),
+            store.getters['AccountStore/getSigningKey'](this.incoming).accountName,
             this.incoming.params.to,
             {
                 amount: this.incoming.params.amount.satoshis || this.incoming.params.amount.amount,
@@ -96,7 +99,7 @@
         no-close-on-backdrop
         hide-header-close
         hide-footer
-        :title="$t('operations.transfer.title')"
+        :title="t('operations.transfer.title')"
     >
         {{ message }}:
         <br>
@@ -112,7 +115,7 @@
             block
             @click="_clickedAllow"
         >
-            {{ $t("operations.transfer.accept_btn") }}
+            {{ t("operations.transfer.accept_btn") }}
         </b-btn>
         <b-btn
             class="mt-1"
@@ -120,7 +123,7 @@
             block
             @click="_clickedDeny"
         >
-            {{ $t("operations.transfer.reject_btn") }}
+            {{ t("operations.transfer.reject_btn") }}
         </b-btn>
     </b-modal>
 </template>

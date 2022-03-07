@@ -1,5 +1,7 @@
 <script setup>
     import { ref } from "vue";
+    import { useI18n } from 'vue-i18n';
+    const { t } = useI18n({ useScope: 'global' });
     import getBlockchain from "../../../lib/blockchains/blockchainFactory";
 
     const props = defineProps(["selectedChain"]);
@@ -57,32 +59,32 @@
 <template>
     <div id="step2">
         <h4 class="h4 mt-3 font-weight-bold">
-            {{ $t('common.step_counter',{ 'step_no' : 2}) }}
+            {{ t('common.step_counter',{ step_no : 2}) }}
         </h4>
         <p class="mb-2 font-weight-bold">
-            {{ $t('common.address_name', { 'chain' : selectedChain}) }}
+            {{ t('common.address_name', { 'chain' : selectedChain}) }}
         </p>
         <input
             id="inputAccount"
             v-model="address"
             type="text"
             class="form-control mb-3"
-            :placeholder="$t('common.address_name', { 'chain' : selectedChain})"
+            :placeholder="t('common.address_name', { 'chain' : selectedChain})"
             required
         >
         <p class="my-3 font-weight-normal">
-            {{ $t('common.keys_cta') }}
+            {{ t('common.keys_cta') }}
         </p>
         <template v-if="requiredFields.public !== null">
             <p class="mb-2 font-weight-bold">
-                {{ $t('common.public_authority') }}
+                {{ t('common.public_authority') }}
             </p>
             <input
                 id="inputActive"
                 v-model="activepk"
                 type="password"
                 class="form-control mb-3 small"
-                :placeholder="$t('common.public_authority_placeholder')"
+                :placeholder="t('common.public_authority_placeholder')"
                 required
             >
         </template>

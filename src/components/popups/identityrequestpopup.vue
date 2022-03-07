@@ -1,7 +1,9 @@
 <script setup>
     import { ref, onMounted } from "vue";
-
-    import AbstractPopup from "./abstractpopup";
+    import { useI18n } from 'vue-i18n';
+    const { t } = useI18n({ useScope: 'global' });
+    //import AbstractPopup from "./abstractpopup";
+    import store from '../store/index';
     import RendererLogger from "../../lib/RendererLogger";
     const logger = new RendererLogger();
 
@@ -14,11 +16,11 @@
     });
 
     function _onShow() {
-        let shownBeetApp = this.$store.state.OriginStore.apps.filter(
+        let shownBeetApp = store.state.OriginStore.apps.filter(
             x => x.identityhash == incoming.identityhash
         )[0];
 
-        idaccount.value = this.$store.state.AccountStore.accountlist.filter(
+        idaccount.value = store.state.AccountStore.accountlist.filter(
             x => {  return  x.accountID == shownBeetApp.account_id && x.chain == shownBeetApp.chain; }
         )[0];
 
@@ -44,10 +46,10 @@
         no-close-on-backdrop
         hide-header-close
         hide-footer
-        :title="$t('operations.account_id.title')"
+        :title="t('operations.account_id.title')"
     >
-        <div v-tooltip="$t('operations.identity.request_tooltip')">
-            {{ $t('operations.account_id.request', {appName: incoming.appName, origin: incoming.origin, chain: incoming.chain, accountId: beetapp.account_id, accountName: idaccount.accountName }) }} &#10068;
+        <div v-tooltip="t('operations.identity.request_tooltip')">
+            {{ t('operations.account_id.request', {appName: incoming.appName, origin: incoming.origin, chain: incoming.chain, accountId: beetapp.account_id, accountName: idaccount.accountName }) }} &#10068;
         </div>
         <b-btn
             class="mt-3"
@@ -55,7 +57,7 @@
             block
             @click="_clickedAllow"
         >
-            {{ $t('operations.account_id.accept_btn') }}
+            {{ t('operations.account_id.accept_btn') }}
         </b-btn>
         <b-btn
             class="mt-1"
@@ -63,7 +65,7 @@
             block
             @click="_clickedDeny"
         >
-            {{ $t('operations.account_id.reject_btn') }}
+            {{ t('operations.account_id.reject_btn') }}
         </b-btn>
     </b-modal>
 </template>

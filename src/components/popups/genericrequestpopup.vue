@@ -2,9 +2,13 @@
     // import AbstractPopup from "./abstractpopup";
     // extends: AbstractPopup,
     import { onMounted } from "vue";
-    import RendererLogger from "../../lib/RendererLogger";
+    import { useI18n } from 'vue-i18n';
+    const { t } = useI18n({ useScope: 'global' });
     import getBlockchain from "../../lib/blockchains/blockchainFactory";
     import {getKey} from '../../lib/SecureRemote';
+    import store from '../store/index';
+
+    import RendererLogger from "../../lib/RendererLogger";
     const logger = new RendererLogger();
 
     let type = "GenericRequestPopup";
@@ -27,7 +31,7 @@
             if (!operation.nothingToDo) {
                 let transaction = await blockchain.sign(
                     operation,
-                    await getKey(this.$store.getters['AccountStore/getSigningKey'](this.incoming).keys.active)
+                    await getKey(store.getters['AccountStore/getSigningKey'](this.incoming).keys.active)
                 );
                 returnValue = await blockchain.broadcast(transaction);
             } else {
@@ -38,7 +42,7 @@
         }
         if (this.allowWhitelist) {
             // todo: allowWhitelist move whitelisting into BeetAPI
-            this.$store.dispatch(
+            store.dispatch(
                 "WhitelistStore/addWhitelist",
                 {
                     identityhash: this.incoming.identityhash,
@@ -51,26 +55,16 @@
 </script>
 
 <template>
-    <b-modal
-        id="type"
-        ref="modalComponent"
-        centered
-        no-close-on-esc
-        no-close-on-backdrop
-        hide-header-close
-        hide-footer
-        :title="incoming.generic.title"
-    >
-        {{ incoming.generic.message }}:
-        <br>
-        <br>
-        <pre class="text-left custom-content"><code>{{ incoming.generic.details }}</code></pre>
-        <ui-button raised @click="_clickedAllow">
-          {{ incoming.generic.acceptText || $t('operations.rawsig.accept_btn') }}
-        </ui-button>
+    {{ incoming.generic.message }}:
+    <br>
+    <br>
+    <pre class="text-left custom-content"><code>{{ incoming.generic.details }}</code></pre>
 
-        <ui-button outlined @click="_clickedDeny">
-          {{ incoming.generic.rejectText || $t('operations.rawsig.reject_btn') }}
-        </ui-button>
-    </b-modal>
+    <ui-button raised @click="_clickedAllow">
+      {{ incoming.generic.acceptText || t('operations.rawsig.accept_btn') }}
+    </ui-button>
+
+    <ui-button outlined @click="_clickedDeny">
+      {{ incoming.generic.rejectText || t('operations.rawsig.reject_btn') }}
+    </ui-button>
 </template>

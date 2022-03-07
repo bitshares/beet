@@ -1,6 +1,9 @@
 <script setup>
     import {ref} from "vue";
+    import { useI18n } from 'vue-i18n';
+    const { t } = useI18n({ useScope: 'global' });
     import AbstractPopup from "./abstractpopup";
+    import store from '../store/index';
     import {getKey} from '../../lib/SecureRemote';
     import getBlockchain from "../../lib/blockchains/blockchainFactory";
     import RendererLogger from "../../lib/RendererLogger";
@@ -11,11 +14,11 @@
     let message = ref(null);
 
     function _onShow() {
-        this.message = this.$t("operations.message.request", {
+        this.message = t("operations.message.request", {
             appName: this.incoming.appName,
             origin: this.incoming.origin,
-            chain: this.$store.getters['AccountStore/getSigningKey'](this.incoming).chain,
-            accountName: this.$store.getters['AccountStore/getSigningKey'](this.incoming).accountName
+            chain: store.getters['AccountStore/getSigningKey'](this.incoming).chain,
+            accountName: store.getters['AccountStore/getSigningKey'](this.incoming).accountName
         });
     }
 
@@ -26,7 +29,7 @@
     async function _execute() {
         let blockchain = getBlockchain(this.incoming.chain);
 
-        let keys = this.$store.getters['AccountStore/getSigningKey'](this.incoming).keys;
+        let keys = store.getters['AccountStore/getSigningKey'](this.incoming).keys;
 
         let signatureKey = null;
         if (keys.memo) {
@@ -37,7 +40,7 @@
 
         return await blockchain.signMessage(
             await getKey(signatureKey),
-            this.$store.getters['AccountStore/getSigningKey'](this.incoming).accountName,
+            store.getters['AccountStore/getSigningKey'](this.incoming).accountName,
             this.incoming.params
         );
     }
@@ -51,7 +54,7 @@
         no-close-on-backdrop
         hide-header-close
         hide-footer
-        :title="$t('operations.message.title')"
+        :title="t('operations.message.title')"
     >
         {{ message }}:
         <br>
@@ -61,7 +64,7 @@
             v-if="askWhitelist"
             v-model="allowWhitelist"
         >
-            {{ $t('operations.whitelist.prompt', { method: incoming.method }) }}
+            {{ t('operations.whitelist.prompt', { method: incoming.method }) }}
         </b-form-checkbox>
         <b-btn
             class="mt-3"
@@ -69,7 +72,7 @@
             block
             @click="_clickedAllow"
         >
-            {{ $t("operations.message.accept_btn") }}
+            {{ t("operations.message.accept_btn") }}
         </b-btn>
         <b-btn
             class="mt-1"
@@ -77,7 +80,7 @@
             block
             @click="_clickedDeny"
         >
-            {{ $t("operations.message.reject_btn") }}
+            {{ t("operations.message.reject_btn") }}
         </b-btn>
     </b-modal>
 </template>

@@ -1,11 +1,15 @@
 <script setup>
     import { watch, ref, computed, onMounted } from "vue";
+    import { useI18n } from 'vue-i18n';
+    const { t } = useI18n({ useScope: 'global' });
     import AccountSelect from "./account-select";
     import Actionbar from "./actionbar";
     import Balances from "./balances";
     import AccountDetails from "./accountdetails";
     import getBlockchain from "../lib/blockchains/blockchainFactory";
     import RendererLogger from "../lib/RendererLogger";
+    import store from '../store/index';
+
     const logger = new RendererLogger();
 
     let nodes = ref([]);
@@ -23,12 +27,12 @@
 /*
     let selectedAccount = computed(() => {
       get: () {
-          return this.$store.state.AccountStore.accountlist[
-              this.$store.state.AccountStore.selectedIndex
+          return store.state.AccountStore.accountlist[
+              store.state.AccountStore.selectedIndex
           ];
       },
       set: (newValue) {
-          this.$store.dispatch("AccountStore/selectAccount", newValue);
+          store.dispatch("AccountStore/selectAccount", newValue);
       }
     });
 
@@ -42,7 +46,7 @@
 
     let selectedNode = computed(() => {
       get: () => {
-          return this.$store.state.SettingsStore.settings.selected_node[
+          return store.state.SettingsStore.settings.selected_node[
               selectedAccount.value.chain
           ];
       },
@@ -66,7 +70,7 @@
     });
 
     let accountlist = computed(() => {
-      return this.$store.state.AccountStore.accountlist;
+      return store.state.AccountStore.accountlist;
     });
 
     async function reconnect() {
@@ -82,7 +86,7 @@
     async function loadBalances() {
         //this.emitter.emit("popup", "load-start");
         //await this.$refs.balancetable.getBalances();
-        this.$store.dispatch("WalletStore/confirmUnlock");
+        store.dispatch("WalletStore/confirmUnlock");
         //this.emitter.emit("popup", "load-end");
     }
 
@@ -136,7 +140,7 @@
         <div class="content">
             <ui-grid class="row mb-2 account no-gutters">
               <ui-grid-cell class="text-right label" columns="2">
-                  {{ $t('common.account') }}
+                  {{ t('common.account') }}
               </ui-grid-cell>
 
               <ui-grid-cell class="text-center" columns="8">
@@ -178,7 +182,7 @@
                       class="status align-self-center"
                   >
                       <span
-                          v-tooltip="$t('common.tooltip_refresh')"
+                          v-tooltip="t('common.tooltip_refresh')"
                           class="icon-spinner11"
                       />
                   </a>

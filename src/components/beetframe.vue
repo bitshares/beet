@@ -23,14 +23,14 @@
 
 <template>
     <ui-grid class="container-fluid menubar">
-        <ui-grid-cell class="demo-cell" columns="12">
-            <div class="title">
-                Beet Blockchain Companion
-            </div>
+        <ui-grid-cell columns="9">
+            Beet Blockchain Companion
+        </ui-grid-cell>
+        <ui-grid-cell columns="3">
             <div class="frame-controls">
-                <ui-icon-button icon="pest_control" @click="openDebug()"></ui-icon-button>
-                <ui-icon-button icon="remove" @click="minimise()"></ui-icon-button>
-                <ui-icon-button icon="close" @click="close()"></ui-icon-button>
+                <ui-button icon="pest_control" @click="openDebug()"></ui-button>
+                <ui-button icon="remove" @click="minimise()"></ui-button>
+                <ui-button icon="close" @click="close()"></ui-button>
             </div>
         </ui-grid-cell>
     </ui-grid>

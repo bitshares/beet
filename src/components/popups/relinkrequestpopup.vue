@@ -1,6 +1,9 @@
 <script setup>
     import {ref, onMounted} from "vue";
+    import { useI18n } from 'vue-i18n';
+    const { t } = useI18n({ useScope: 'global' });
     import AbstractPopup from "./abstractpopup";
+    import store from '../store/index';
     import RendererLogger from "../../lib/RendererLogger";
     const logger = new RendererLogger();
 
@@ -15,13 +18,13 @@
     function _onShow() {
         this.error = false;
         console.log("Popup incoming, payload:", this.incoming);
-        this.beetapp = this.$store.state.OriginStore.apps.filter(
+        this.beetapp = store.state.OriginStore.apps.filter(
             x => x.identityhash == this.incoming.payload.identityhash
         )[0];
     }
 
     function _execute() {
-        let account = this.$store.state.AccountStore.accountlist.filter(
+        let account = store.state.AccountStore.accountlist.filter(
             x => x.accountID == this.beetapp.account_id && x.chain == this.beetapp.chain
         );
         return {
@@ -42,10 +45,10 @@
         no-close-on-backdrop
         hide-header-close
         hide-footer
-        :title="$t('operations.account_id.title')"
+        :title="t('operations.account_id.title')"
     >
-        <div v-tooltip="$t('operations.relink.request_tooltip')">
-            {{ $t('operations.relink.request', {appName: incoming.appName, origin: incoming.origin, chain: incoming.chain, accountId: beetapp.account_id }) }} &#10068;
+        <div v-tooltip="t('operations.relink.request_tooltip')">
+            {{ t('operations.relink.request', {appName: incoming.appName, origin: incoming.origin, chain: incoming.chain, accountId: beetapp.account_id }) }} &#10068;
         </div>
         <br>
         <b-btn
@@ -54,7 +57,7 @@
             block
             @click="_clickedAllow"
         >
-            {{ $t('operations.link.accept_btn') }}
+            {{ t('operations.link.accept_btn') }}
         </b-btn>
         <b-btn
             class="mt-1"
@@ -62,7 +65,7 @@
             block
             @click="_clickedDeny"
         >
-            {{ $t('operations.link.reject_btn') }}
+            {{ t('operations.link.reject_btn') }}
         </b-btn>
     </b-modal>
 </template>

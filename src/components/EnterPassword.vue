@@ -1,5 +1,7 @@
 <script setup>
     import { onMounted } from "vue";
+    import { useI18n } from 'vue-i18n';
+    const { t } = useI18n({ useScope: 'global' });
     import RendererLogger from "../lib/RendererLogger";
     const logger = new RendererLogger();
 
@@ -29,29 +31,29 @@
 <template>
     <div>
         <p
-            v-tooltip="$t('common.tooltip_password_cta')"
+            v-tooltip="t('common.tooltip_password_cta')"
             class="mb-2 font-weight-bold"
         >
-            {{ $t(getNew ? 'common.password_cta' : 'common.unlock_with_password_cta') }} &#10068;
+            {{ t(getNew ? 'common.password_cta' : 'common.unlock_with_password_cta') }} &#10068;
         </p>
         <input
             id="inputPass"
             v-model="password"
             type="password"
             class="form-control mb-3"
-            :placeholder="$t('common.password_placeholder')"
+            :placeholder="t('common.password_placeholder')"
             required
         >
         <template v-if="getNew">
             <p class="mb-2 font-weight-bold">
-                {{ $t('common.confirm_cta') }}
+                {{ t('common.confirm_cta') }}
             </p>
             <input
                 id="inputConfirmPass"
                 v-model="confirmPassword"
                 type="password"
                 class="form-control mb-3"
-                :placeholder="$t('common.confirm_placeholder')"
+                :placeholder="t('common.confirm_placeholder')"
                 required
             >
         </template>

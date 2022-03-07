@@ -1,8 +1,11 @@
 <script setup>
     import { watchEffect, ref, onMounted, computed } from "vue";
+    import { useI18n } from 'vue-i18n';
+    const { t } = useI18n({ useScope: 'global' });
     import RendererLogger from "../lib/RendererLogger";
     const logger = new RendererLogger();
     import {formatChain, formatAccount} from "../lib/formatter";
+    import store from '../store/index';
 
     const props = defineProps({
         value: Object,
@@ -21,8 +24,8 @@
 
     let accounts = computed(() => {
       let computedAccounts = props.chain == "ANY" || props.chain == null
-            ? computedAccounts = this.$store.state.AccountStore.accountlist
-            : computedAccounts = this.$store.state.AccountStore.accountlist.filter(
+            ? computedAccounts = store.state.AccountStore.accountlist
+            : computedAccounts = store.state.AccountStore.accountlist.filter(
                 x => x.chain == props.chain
             );
 
@@ -85,7 +88,7 @@
             :options="accounts"
             :label="accountLabel"
             :class="{ prevLink: props.option.linked }"
-            :data-linked="$t('common.previously_linked')"
+            :data-linked="t('common.previously_linked')"
             :disabled="false"
             @selected="onSelected($event)"
             track-by="trackId"

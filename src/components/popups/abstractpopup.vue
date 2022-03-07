@@ -1,6 +1,8 @@
 <script setup>
     import {ref} from "vue";
     import RendererLogger from "../../lib/RendererLogger";
+    import store from '../store/index';
+
     const logger = new RendererLogger();
 
     let type = ref(null);
@@ -11,7 +13,7 @@
     let allowWhitelist = ref(false);
 
     async function show(incoming, newWhitelist = null) {
-        this.$store.dispatch("WalletStore/notifyUser", {notify: "request", message: "request"});
+        store.dispatch("WalletStore/notifyUser", {notify: "request", message: "request"});
         incoming.value = incoming;
         if (newWhitelist !== null) {
             askWhitelist.value = newWhitelist;
@@ -51,7 +53,7 @@
             );
             if (this.allowWhitelist) {
                 // todo: allowWhitelist move whitelisting into BeetAPI
-                this.$store.dispatch(
+                store.dispatch(
                     "WhitelistStore/addWhitelist",
                     {
                         identityhash: this.incoming.identityhash,
@@ -86,7 +88,7 @@
     }
 
     function _getLinkedAccount() {
-        let account = this.$store.getters['AccountStore/getSigningKey'](this.incoming);
+        let account = store.getters['AccountStore/getSigningKey'](this.incoming);
         return {
             id: account.accountID,
             name: account.accountName,

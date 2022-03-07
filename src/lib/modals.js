@@ -1,10 +1,10 @@
 import store from '../store/index.js';
 import getBlockchain from "./blockchains/blockchainFactory";
 
-export export function showAlert(request) {
+export function showAlert(request) {
     let alertmsg = request.type === "link"
-        ? this.$t("common.link_alert", request)
-        : this.$t("common.access_alert", request.payload);
+        ? t("common.link_alert", request)
+        : t("common.access_alert", request.payload);
 
     store.dispatch("WalletStore/notifyUser", {notify: "request", message: alertmsg});
     //alerts.value.push({ msg: alertmsg, id: uuidv4() });
@@ -30,7 +30,7 @@ export async function requestTransfer(request) {
     return this.$refs.transferReqModal.show(request);
 }
 
-export function requestVote(payload) {
+export async function requestVote(payload) {
     payload.action = "vote";
     let blockchain = getBlockchain(payload.chain);
     let mappedData;
@@ -42,8 +42,8 @@ export function requestVote(payload) {
     }
 
     payload.generic = {
-        title: this.$t("operations.vote.title"),
-        message: this.$t("operations.vote.request", {
+        title: t("operations.vote.title"),
+        message: t("operations.vote.request", {
             appName: payload.appName,
             origin: payload.origin,
             entity: mappedData.entity,
@@ -51,8 +51,8 @@ export function requestVote(payload) {
             accountName: payload.account_id
         }),
         details: mappedData.description,
-        acceptText: this.$t("operations.vote.accept_btn"),
-        rejectText: this.$t("operations.vote.reject_btn")
+        acceptText: t("operations.vote.accept_btn"),
+        rejectText: t("operations.vote.reject_btn")
     };
     payload.vote_id = mappedData.vote_id;
 
