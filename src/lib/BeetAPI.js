@@ -64,16 +64,17 @@ export default class BeetAPI {
     }
 
     static async [Actions.GET_ACCOUNT](request) {
+        let response;
         try {
-            let response = await requestAccess(request.payload);
-
-            return {
-                id: request.id,
-                result: response.response
-            };
+            //response = this.$refs.identityReqModal.show(request);
+            response = await requestAccess(request.payload);
         } catch (err) {
             return this._parseReject("BeetAPI.getAccount", request, err);
         }
+        return {
+            id: request.id,
+            result: response.response
+        };
     }
 
     static async [Actions.REQUEST_RELINK](request) {
@@ -92,7 +93,7 @@ export default class BeetAPI {
     }
 
     static async [Actions.REQUEST_LINK](request) {
-      let response;
+        let response;
         try {
             response = await requestLink(request);
         } catch (e) {

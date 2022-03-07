@@ -1,7 +1,8 @@
 import Vue from 'vue';
 import {set} from 'vue';
 import RendererLogger from "../../lib/RendererLogger";
-import CryptoJS from 'crypto-js';
+import aes from "crypto-js/aes.js";
+
 const logger = new RendererLogger();
 const LOAD_ACCOUNTS = 'LOAD_ACCOUNTS';
 const CHOOSE_ACCOUNT = 'CHOOSE_ACCOUNT';
@@ -48,7 +49,7 @@ const actions = {
             } else {
 
                 for (let keytype in payload.account.keys) {
-                    payload.account.keys[keytype] = CryptoJS.AES.encrypt(payload.account.keys[keytype], payload.password).toString();
+                    payload.account.keys[keytype] = aes.encrypt(payload.account.keys[keytype], payload.password).toString();
                 }
                 dispatch('WalletStore/saveAccountToWallet', payload, {
                     root: true

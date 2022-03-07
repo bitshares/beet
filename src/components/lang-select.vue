@@ -68,6 +68,7 @@
 
 
 <template>
+
   <ui-menu-anchor absolute>
     <ui-button raised @click="menuClick">
       {{selected}}
@@ -88,6 +89,5 @@
       </ui-menu>
     </div>
   </ui-menu-anchor>
-
 
 </template>

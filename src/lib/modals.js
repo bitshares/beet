@@ -7,12 +7,13 @@ export function showAlert(request) {
         : t("common.access_alert", request.payload);
 
     store.dispatch("WalletStore/notifyUser", {notify: "request", message: alertmsg});
+    // perform alert
     //alerts.value.push({ msg: alertmsg, id: uuidv4() });
 }
 
 export async function requestAccess(request) {
+  // trigger pop up
 
-    return this.$refs.identityReqModal.show(request);
 }
 
 export async function requestLink(request) {

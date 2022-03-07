@@ -1,8 +1,3 @@
-import BeetAPI from './BeetAPI';
-import BeetDB from './BeetDB.js';
-import RendererLogger from "./RendererLogger";
-import store from '../store/index.js';
-
 import {
     v4 as uuidv4
 } from "uuid";
@@ -16,8 +11,11 @@ import * as ed from '@noble/ed25519';
 import { createServer } from "http";
 import { Server } from "socket.io";
 
+import store from '../store/index.js';
+import BeetAPI from './BeetAPI';
+import BeetDB from './BeetDB.js';
+import RendererLogger from "./RendererLogger";
 const logger = new RendererLogger();
-let vueInst = null;
 
 const rejectRequest = (req, error) => {
   return {
@@ -33,7 +31,7 @@ const linkHandler = async (req) => {
     // todo: only forward fields that are actually used in handler
     let userResponse;
     try {
-      userResponse = await BeetAPI.handler(Object.assign(req, {}), vueInst);
+      userResponse = await BeetAPI.handler(Object.assign(req, {}));
     } catch (error) {
       console.log(error)
       rejectRequest(req, 'User rejected request')
@@ -131,8 +129,6 @@ export default class BeetServer {
      * @returns {BeetServer}
      */
     static async initialize(vue, port) {
-        vueInst = vue;
-
         const httpServer = createServer();
         const io = new Server(
           httpServer,
@@ -313,7 +309,7 @@ export default class BeetServer {
 
             let status;
             try {
-              status = await BeetAPI.handler(apiobj, vueInst);
+              status = await BeetAPI.handler(apiobj);
             } catch (error) {
               console.log(error)
               logger.debug("incoming api req fail", error);

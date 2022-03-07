@@ -2,7 +2,6 @@
     import {ref, onMounted} from "vue";
     import { useI18n } from 'vue-i18n';
     const { t } = useI18n({ useScope: 'global' });
-    import AbstractPopup from "./abstractpopup";
     import store from '../store/index';
     import RendererLogger from "../../lib/RendererLogger";
     import getBlockchain from "../../lib/blockchains/blockchainFactory";
@@ -19,8 +18,79 @@
     let toSend = ref(null);
     let toSendFee = ref(null);
 
+    ///
+
+    let error = ref(false);
+    let incoming = ref({});
+    let api = ref(null);
+    let allowWhitelist = ref(false);
+
+    /////////
+
+    async function show(incoming, newWhitelist = null) {
+        store.dispatch("WalletStore/notifyUser", {notify: "request", message: "request"});
+        incoming.value = incoming;
+        if (newWhitelist !== null) {
+            askWhitelist.value = newWhitelist;
+        }
+        _onShow();
+        this.$refs.modalComponent.show();
+        return new Promise((resolve, reject) => {
+            this._accept = resolve;
+            this._reject = reject;
+        });
+    }
+
+    async function _clickedAllow() {
+        // this.emitter.emit("popup", "load-start");
+        // this.emitter.emit("popup", "load-end");
+        this.$refs.modalComponent.hide();
+        try {
+            let result = await _execute();
+            let notification = getSuccessNotification(result);
+            if (notification) {
+                this.emitter.emit("tx-success", notification);
+            }
+            // todo allowWhitelist move whitelisting to BeetAPI, thus return flag here
+            this._accept(
+                {
+                    response: result,
+                    whitelisted: this.allowWhitelist
+                }
+            );
+            if (this.allowWhitelist) {
+                // todo: allowWhitelist move whitelisting into BeetAPI
+                store.dispatch(
+                    "WhitelistStore/addWhitelist",
+                    {
+                        identityhash: this.incoming.identityhash,
+                        method: this.type
+                    }
+                );
+            }
+        } catch (err) {
+            this._reject({ error: err });
+        }
+    }
+
+    function _clickedDeny() {
+        this.$refs.modalComponent.hide();
+        this._reject({ canceled: true });
+    }
+
+    function _getLinkedAccount() {
+        let account = store.getters['AccountStore/getSigningKey'](this.incoming);
+        return {
+            id: account.accountID,
+            name: account.accountName,
+            chain: account.chain
+        }
+    }
+
+    /////////
+
     function _onShow() {
-        this.message = t("operations.transfer.request", {
+        message.value = t("operations.transfer.request", {
             appName: this.incoming.appName,
             origin: this.incoming.origin,
             chain:   store.getters['AccountStore/getSigningKey'](this.incoming).chain,

@@ -1,14 +1,14 @@
 import {set} from 'vue';
-import {
-    ipcRenderer,
-} from 'electron';
-import {
-    v4 as uuid
-} from "uuid";
-import CryptoJS from 'crypto-js';
+import {ipcRenderer} from 'electron';
+import {v4 as uuid} from "uuid";
+import sha256 from "crypto-js/sha256.js";
+import aes from "crypto-js/aes.js";
+import ENC from 'crypto-js/enc-utf8.js';
+
 import BeetDB from '../../lib/BeetDB.js';
 import RendererLogger from "../../lib/RendererLogger";
 const logger = new RendererLogger();
+
 const GET_WALLET = 'GET_WALLET';
 const CREATE_WALLET = 'CREATE_WALLET';
 const CONFIRM_UNLOCK = 'CONFIRM_UNLOCK';
@@ -64,8 +64,8 @@ const actions = {
                 id: payload.wallet_id
             }).then((wallet) => {
                 try {
-                    let bytes = CryptoJS.AES.decrypt(wallet.data, payload.wallet_pass);
-                    let decrypted_wallet = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+                    let bytes = aes.decrypt(wallet.data, payload.wallet_pass);
+                    let decrypted_wallet = JSON.parse(bytes.toString(ENC));
                     let public_wallets = state.walletlist.filter((x) => {
                         return x.id == payload.wallet_id
                     });
@@ -116,7 +116,7 @@ const actions = {
                     commit(SET_WALLET_STATUS, true);
                     commit(SET_WALLETLIST, wallets);
 
-                    let walletdata = CryptoJS.AES.encrypt(JSON.stringify(payload.backup.accounts), payload.password).toString();
+                    let walletdata = aes.encrypt(JSON.stringify(payload.backup.accounts), payload.password).toString();
                     BeetDB.wallets_encrypted.put({
                         id: walletid,
                         data: walletdata
@@ -164,12 +164,12 @@ const actions = {
 
                     for (let keytype in payload.walletdata.keys) {
                         try {
-                            payload.walletdata.keys[keytype] = CryptoJS.AES.encrypt(payload.walletdata.keys[keytype], payload.password).toString();
+                            payload.walletdata.keys[keytype] = aes.encrypt(payload.walletdata.keys[keytype], payload.password).toString();
                         } catch (e) {
                             reject('Wrong Password');
                         }
                     }
-                    let walletdata = CryptoJS.AES.encrypt(JSON.stringify([payload.walletdata]), payload.password).toString();
+                    let walletdata = aes.encrypt(JSON.stringify([payload.walletdata]), payload.password).toString();
                     BeetDB.wallets_encrypted.put({
                         id: walletid,
                         data: walletdata
@@ -201,12 +201,12 @@ const actions = {
                 id: state.wallet.id
             }).then((wallet) => {
                 try {
-                    let bytes = CryptoJS.AES.decrypt(wallet.data, payload.password);
-                    JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+                    let bytes = aes.decrypt(wallet.data, payload.password);
+                    JSON.parse(bytes.toString(ENC));
                 } catch (e) {
                     throw ('invalid');
                 }
-                let encwalletdata = CryptoJS.AES.encrypt(JSON.stringify(newwalletdata), payload.password).toString();
+                let encwalletdata = aes.encrypt(JSON.stringify(newwalletdata), payload.password).toString();
                 let updatedWallet = Object.assign({}, state.wallet);
                 updatedWallet.accounts.push({ accountID: payload.account.accountID, chain: payload.account.chain});
 
