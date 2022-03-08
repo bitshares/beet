@@ -15,7 +15,8 @@ import {
   Menu,
   Tray,
   dialog,
-  ipcMain
+  ipcMain,
+  Notification
 } from 'electron';
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
 
@@ -96,13 +97,6 @@ const createModal = async (args) => {
     modalWindow.show();
   })
 
-  /*
-  modalWindow.on('show', () => {
-    // emit back to the popup?
-
-  });
-  */
-
   modalWindow.on('closed', () => {
     modalWindow = null;
   });
@@ -124,6 +118,10 @@ const createModal = async (args) => {
   });
 
   ipcMain.on('clickedDeny', (event, arg) => {
+    modalWindow = null;
+  });
+
+  ipcMain.on('modalError', (event, arg) => {
     modalWindow = null;
   });
 };
@@ -386,7 +384,14 @@ app.disableHardwareAcceleration();
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', function() {
-    createWindow();
+    const NOTIFICATION_TITLE = 'Basic Notification'
+    const NOTIFICATION_BODY = 'Notification from the Main process'
+
+    function showNotification () {
+      new Notification({ title: NOTIFICATION_TITLE, body: NOTIFICATION_BODY }).show()
+    }
+
+    createWindow().then(showNotification);
 });
 
 // Quit when all windows are closed.

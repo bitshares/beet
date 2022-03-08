@@ -12,175 +12,115 @@
     let askWhitelist = ref(false);
     let message = ref(null);
 
-    //
-    let type = ref(null);
-    let error = ref(false);
     let incoming = ref({});
-    let api = ref(null);
     let allowWhitelist = ref(false);
-    //
+    let _accept = ref(null);
+    let _reject = ref(null);
+
+    onBeforeMount(() => {
+      ipcRenderer.send("getContent", true);
+      ipcRenderer.on('contentResponse', (event, args) => {
+        incoming.value = args.request;
+        _accept.value = args._accept;
+        _reject.value = args._reject;
+      });
+    });
 
     onMounted(() => {
       logger.debug("Signed message popup initialised");
       store.dispatch("WalletStore/notifyUser", {notify: "request", message: message}); //show alert instead?
+
+      message.value = t("operations.message.request", {
+          appName: incoming.value.appName,
+          origin: incoming.value.origin,
+          chain: store.getters['AccountStore/getSigningKey'](incoming.value).chain,
+          accountName: store.getters['AccountStore/getSigningKey'](incoming.value).accountName
+      });
     });
 
-    /////////
-
+    /*
     async function show(incoming, newWhitelist = null) {
-        store.dispatch("WalletStore/notifyUser", {notify: "request", message: "request"});
-        incoming.value = incoming;
         if (newWhitelist !== null) {
             askWhitelist.value = newWhitelist;
         }
-        _onShow();
-        this.$refs.modalComponent.show();
-        return new Promise((resolve, reject) => {
-            this._accept = resolve;
-            this._reject = reject;
-        });
     }
-
-    function _onShow() {
-        // to overwrite, do nothing in default
-    }
-
-    function getSuccessNotification(res) {
-        return false;
-    }
+    */
 
     async function _clickedAllow() {
-        // this.emitter.emit("popup", "load-start");
-        // this.emitter.emit("popup", "load-end");
-        this.$refs.modalComponent.hide();
+        let keys = store.getters['AccountStore/getSigningKey'](incoming.value).keys;
+
+        let key;
         try {
-            let result = await _execute();
-            let notification = getSuccessNotification(result);
-            if (notification) {
-                this.emitter.emit("tx-success", notification);
-            }
+          key = await getKey(keys.memo ?? keys.active)
+        } catch (error) {
+          console.log(error);
+          _reject.value({ error: error });
+          ipcRenderer.send("modalError", true);
+        }
+
+        let blockchain = getBlockchain(incoming.value.chain);
+        let signingKey;
+        try {
+          signingKey = store.getters['AccountStore/getSigningKey'](incoming.value).accountName;
+        } catch (error) {
+          console.log(error);
+          _reject.value({ error: error });
+          ipcRenderer.send("modalError", true);
+        }
+
+        let signedMessage;
+        try {
+          signedMessage = await blockchain.signMessage(key, signingKey, incoming.value.params);
+        } catch (error) {
+          console.log(error);
+          _reject.value({ error: error });
+          ipcRenderer.send("modalError", true);
+        }
+
+
+        /*
+            this.emitter.emit("tx-success", {msg: 'Message successfully signed.', link: '' });
+        */
+        try {
             // todo allowWhitelist move whitelisting to BeetAPI, thus return flag here
-            this._accept(
-                {
-                    response: result,
-                    whitelisted: this.allowWhitelist
-                }
-            );
-            if (this.allowWhitelist) {
+            _accept.value({response: signedMessage, whitelisted: allowWhitelist.value});
+
+            if (allowWhitelist.value) {
                 // todo: allowWhitelist move whitelisting into BeetAPI
                 store.dispatch(
                     "WhitelistStore/addWhitelist",
                     {
-                        identityhash: this.incoming.identityhash,
-                        method: this.type
+                        identityhash: incoming.value.identityhash,
+                        method: type.value
                     }
                 );
             }
-        } catch (err) {
-            this._reject({ error: err });
+        } catch (error) {
+          console.log(error);
+          _reject.value({ error: error });
+          ipcRenderer.send("modalError", true);
         }
-    }
-
-    function _execute() {
-        // to overwrite
-        throw "Needs implementation"
-    }
-
-    function execute(payload) {
-        this.incoming = payload;
-        return new Promise((resolve,reject) => {
-            try {
-                resolve(this._execute());
-            } catch (err) {
-                reject(err);
-            }
-        });
     }
 
     function _clickedDeny() {
-        this.$refs.modalComponent.hide();
-        this._reject({ canceled: true });
-    }
-
-    function _getLinkedAccount() {
-        let account = store.getters['AccountStore/getSigningKey'](this.incoming);
-        return {
-            id: account.accountID,
-            name: account.accountName,
-            chain: account.chain
-        }
-    }
-
-    /////////
-
-    function _onShow() {
-        message.value = t("operations.message.request", {
-            appName: this.incoming.appName,
-            origin: this.incoming.origin,
-            chain: store.getters['AccountStore/getSigningKey'](this.incoming).chain,
-            accountName: store.getters['AccountStore/getSigningKey'](this.incoming).accountName
-        });
-    }
-
-    function getSuccessNotification(result) {
-        return {msg: 'Message successfully signed.', link: '' };
-    }
-
-    async function _execute() {
-        let blockchain = getBlockchain(this.incoming.chain);
-
-        let keys = store.getters['AccountStore/getSigningKey'](this.incoming).keys;
-
-        let signatureKey = null;
-        if (keys.memo) {
-            signatureKey = keys.memo;
-        } else {
-            signatureKey = keys.active;
-        }
-
-        return await blockchain.signMessage(
-            await getKey(signatureKey),
-            store.getters['AccountStore/getSigningKey'](this.incoming).accountName,
-            this.incoming.params
-        );
+        ipcRenderer.send("clickedDeny", true);
+        _reject.value({ canceled: true });
     }
 </script>
+
 <template>
-    <b-modal
-        id="type"
-        ref="modalComponent"
-        centered
-        no-close-on-esc
-        no-close-on-backdrop
-        hide-header-close
-        hide-footer
-        :title="t('operations.message.title')"
-    >
-        {{ message }}:
-        <br>
-        <br>
-        <pre class="text-left custom-content"><code>{{ incoming.params }}</code></pre>
-        <b-form-checkbox
-            v-if="askWhitelist"
-            v-model="allowWhitelist"
-        >
-            {{ t('operations.whitelist.prompt', { method: incoming.method }) }}
-        </b-form-checkbox>
-        <b-btn
-            class="mt-3"
-            variant="success"
-            block
-            @click="_clickedAllow"
-        >
-            {{ t("operations.message.accept_btn") }}
-        </b-btn>
-        <b-btn
-            class="mt-1"
-            variant="danger"
-            block
-            @click="_clickedDeny"
-        >
-            {{ t("operations.message.reject_btn") }}
-        </b-btn>
-    </b-modal>
+    {{ message }}:
+    <br>
+    <br>
+    <pre class="text-left custom-content"><code>{{ incoming.params }}</code></pre>
+    <ui-form-field v-if="askWhitelist">
+      <ui-checkbox v-model="allowWhitelist" input-id="allowWhitelist"></ui-checkbox>
+      <label>{{ t('operations.whitelist.prompt', { method: incoming.method }) }}</label>
+    </ui-form-field>
+    <ui-button raised @click="_clickedAllow">
+        {{ t("operations.message.accept_btn") }}
+    </ui-button>
+    <ui-button raised @click="_clickedDeny">
+        {{ t("operations.message.reject_btn") }}
+    </ui-button>
 </template>

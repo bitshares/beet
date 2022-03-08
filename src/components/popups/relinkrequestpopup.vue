@@ -10,141 +10,83 @@
     let chosenAccount = ref({ trackId: 0 });
     let beetapp = ref({});
 
-    //
-
-    let type = ref(null);
-    let error = ref(false);
-    let incoming = ref({});
-    let api = ref(null);
     let allowWhitelist = ref(false);
 
-    //
+    let incoming = ref({});
+    let requestText = ref('');
+    let _accept = ref(null);
+    let _reject = ref(null);
+
+    onBeforeMount(() => {
+      ipcRenderer.send("getContent", true);
+      ipcRenderer.on('contentResponse', (event, args) => {
+        incoming.value = args.request;
+        _accept.value = args._accept;
+        _reject.value = args._reject;
+      });
+    });
 
     onMounted(() => {
       logger.debug("Relink Popup initialised");
       store.dispatch("WalletStore/notifyUser", {notify: "request", message: "request"}); //show alert instead?
+      beetapp.value = store.state.OriginStore.apps.filter(
+          x => x.identityhash == incoming.value.payload.identityhash
+      )[0];
+      requestText.value = t('operations.relink.request', {appName: incoming.appName, origin: incoming.origin, chain: incoming.chain, accountId: beetapp.account_id });
     });
 
     /////////
 
-    async function show(incoming, newWhitelist = null) {
-        store.dispatch("WalletStore/notifyUser", {notify: "request", message: "request"});
-        incoming.value = incoming;
-        _onShow();
-        this.$refs.modalComponent.show();
-        return new Promise((resolve, reject) => {
-            this._accept = resolve;
-            this._reject = reject;
-        });
-    }
-
-    function _onShow() {
-        // to overwrite, do nothing in default
-    }
-
-    function getSuccessNotification(res) {
-        return false;
-    }
-
     async function _clickedAllow() {
-        // this.emitter.emit("popup", "load-start");
-        // this.emitter.emit("popup", "load-end");
-        this.$refs.modalComponent.hide();
         try {
-            let result = await _execute();
-            let notification = getSuccessNotification(result);
-            if (notification) {
-                this.emitter.emit("tx-success", notification);
-            }
+            let account = store.state.AccountStore.accountlist.filter(
+                x => x.accountID == beetapp.value.account_id && x.chain == beetapp.value.chain
+            );
+
             // todo allowWhitelist move whitelisting to BeetAPI, thus return flag here
-            this._accept(
+            _accept.value(
                 {
-                    response: result,
-                    whitelisted: this.allowWhitelist
+                    response: {
+                        identityhash: incoming.value.payload.identityhash,
+                        name: account.value.accountName,
+                        chain: beetapp.value.chain,
+                        id: beetapp.value.account_id
+                    },
+                    whitelisted: allowWhitelist.value
                 }
             );
-            if (this.allowWhitelist) {
+            if (allowWhitelist.value) {
                 // todo: allowWhitelist move whitelisting into BeetAPI
                 store.dispatch(
                     "WhitelistStore/addWhitelist",
                     {
-                        identityhash: this.incoming.identityhash,
-                        method: this.type
+                        identityhash: incoming.value.identityhash,
+                        method: type.value
                     }
                 );
             }
-        } catch (err) {
-            this._reject({ error: err });
+        } catch (error) {
+            console.log(error);
+            _reject.value({ error: error });
+            ipcRenderer.send("modalError", true);
         }
     }
 
     function _clickedDeny() {
-        this.$refs.modalComponent.hide();
-        this._reject({ canceled: true });
-    }
-
-    function _getLinkedAccount() {
-        let account = store.getters['AccountStore/getSigningKey'](this.incoming);
-        return {
-            id: account.accountID,
-            name: account.accountName,
-            chain: account.chain
-        }
-    }
-
-    /////////
-
-    function _onShow() {
-        this.error = false;
-        console.log("Popup incoming, payload:", this.incoming);
-        this.beetapp = store.state.OriginStore.apps.filter(
-            x => x.identityhash == this.incoming.payload.identityhash
-        )[0];
-    }
-
-    function _execute() {
-        let account = store.state.AccountStore.accountlist.filter(
-            x => x.accountID == this.beetapp.account_id && x.chain == this.beetapp.chain
-        );
-        return {
-            identityhash: this.incoming.payload.identityhash,
-            name: account.accountName,
-            chain: this.beetapp.chain,
-            id: this.beetapp.account_id
-        };
+        ipcRenderer.send("clickedDeny", true);
+        _reject.value({ canceled: true });
     }
 </script>
 
 <template>
-    <b-modal
-        id="type"
-        ref="modalComponent"
-        centered
-        no-close-on-esc
-        no-close-on-backdrop
-        hide-header-close
-        hide-footer
-        :title="t('operations.account_id.title')"
-    >
-        <div v-tooltip="t('operations.relink.request_tooltip')">
-            {{ t('operations.relink.request', {appName: incoming.appName, origin: incoming.origin, chain: incoming.chain, accountId: beetapp.account_id }) }} &#10068;
-        </div>
-        <br>
-        <b-btn
-            class="mt-3"
-            variant="success"
-            block
-            @click="_clickedAllow"
-        >
-            {{ t('operations.link.accept_btn') }}
-        </b-btn>
-        <b-btn
-            class="mt-1"
-            variant="danger"
-            block
-            @click="_clickedDeny"
-        >
-            {{ t('operations.link.reject_btn') }}
-        </b-btn>
-    </b-modal>
+    <div v-tooltip="t('operations.relink.request_tooltip')">
+        {{ requestText }} &#10068;
+    </div>
+    <br>
+    <ui-button raised @click="_clickedAllow">
+      {{ t('operations.link.accept_btn') }}
+    </ui-button>
+    <ui-button raised @click="_clickedDeny">
+      {{ t('operations.link.reject_btn') }}
+    </ui-button>
 </template>

@@ -9,225 +9,212 @@
     import {formatChain} from "../../lib/formatter";
     const logger = new RendererLogger();
 
-    //extends: AbstractPopup,
-
     let type = ref("TransactionRequestPopup");
     let incoming = ref({
         signingAccount: {},
         visualized: null
     });
 
-    //
-    let type = ref(null);
-    let error = ref(false);
-    let incoming = ref({});
-    let api = ref(null);
     let allowWhitelist = ref(false);
-    //
+    let _accept = ref(null);
+    let _reject = ref(null);
 
-    onMounted() {
+    onBeforeMount(() => {
+      ipcRenderer.send("getContent", true);
+      ipcRenderer.on('contentResponse', (event, args) => {
+        incoming.value = args.request;
+        _accept.value = args._accept;
+        _reject.value = args._reject;
+      });
+    });
+
+    onMounted(async () => {
       logger.debug("Tx Popup initialised");
-    }
+      store.dispatch("WalletStore/notifyUser", {notify: "request", message: "request"});
 
-    /////////
+      let blockchain = getBlockchain(incoming.value.chain);
+      let visualizedParams;
+      try {
+        visualizedParams = await blockchain.visualize(incoming.value.params);
+      } catch (error) {
+        console.log(error);
+        return;
+      }
 
-    async function show(incoming, newWhitelist = null) {
-        store.dispatch("WalletStore/notifyUser", {notify: "request", message: "request"});
-        incoming.value = incoming;
-        _onShow();
-        this.$refs.modalComponent.show();
-        return new Promise((resolve, reject) => {
-            this._accept = resolve;
-            this._reject = reject;
-        });
-    }
+      incoming.value.visualized = visualizedParams;
+      incoming.value = Object.assign({}, incoming.value); // Why?
+
+      let visualizedAccount;
+      try {
+        visualizedAccount = await blockchain.visualize(incoming.value.account_id);
+      } catch (error) {
+        console.log(error);
+        _reject.value({ error: error });
+        ipcRenderer.send("modalError", true);
+      }
+
+      incoming.value.account_name = visualizedAccount;
+      incoming.value = Object.assign({}, incoming.value); // Why?
+    });
 
     async function _clickedAllow() {
-        // this.emitter.emit("popup", "load-start");
-        // this.emitter.emit("popup", "load-end");
-        this.$refs.modalComponent.hide();
-        try {
-            let result = await _execute();
-            let notification = getSuccessNotification(result);
-            if (notification) {
-                this.emitter.emit("tx-success", notification);
+        let blockchain = getBlockchain(incoming.value.chain);
+        let txType = incoming.value.params[0];
+        let result;
+        if (txType == "sign") {
+            let transaction;
+            try {
+              transaction = await blockchain.sign(
+                  incoming.value.params,
+                  await getKey(store.getters['AccountStore/getSigningKey'](incoming.value).keys.active)
+              );
+            } catch (error) {
+              console.log(error);
+              _reject.value({ error: error });
+              ipcRenderer.send("modalError", true);
             }
-            // todo allowWhitelist move whitelisting to BeetAPI, thus return flag here
-            this._accept(
+            result = transaction.toObject();
+        } else if (txType == "broadcast") {
+            try {
+              result = await blockchain.broadcast(incoming.value.params);
+            } catch (error) {
+              console.log(error);
+              _reject.value({ error: error });
+              ipcRenderer.send("modalError", true);
+            }
+        } else if (txType == "signAndBroadcast") {
+            let transaction;
+            try {
+              transaction = await blockchain.sign(
+                  incoming.value.params,
+                  await getKey(store.getters['AccountStore/getSigningKey'](incoming.value).keys.active)
+              );
+            } catch (error) {
+              console.log(error);
+              _reject.value({ error: error });
+              ipcRenderer.send("modalError", true);
+            }
+
+            try {
+              result = await blockchain.broadcast(transaction);
+            } catch (error) {
+              console.log(error);
+              _reject.value({ error: error });
+              ipcRenderer.send("modalError", true);
+            }
+        }
+
+        /*
+            this.emitter.emit("tx-success", {msg: 'Transaction successfully broadcast.', link: '' });
+        */
+
+        // todo allowWhitelist move whitelisting to BeetAPI, thus return flag here
+        _accept.value(
+            {
+                response: result,
+                whitelisted: allowWhitelist.value
+            }
+        );
+
+        if (allowWhitelist.value) {
+            // todo: allowWhitelist move whitelisting into BeetAPI
+            store.dispatch(
+                "WhitelistStore/addWhitelist",
                 {
-                    response: result,
-                    whitelisted: this.allowWhitelist
+                    identityhash: incoming.value.identityhash,
+                    method: type.value
                 }
             );
-            if (this.allowWhitelist) {
-                // todo: allowWhitelist move whitelisting into BeetAPI
-                store.dispatch(
-                    "WhitelistStore/addWhitelist",
-                    {
-                        identityhash: this.incoming.identityhash,
-                        method: this.type
-                    }
-                );
-            }
-        } catch (err) {
-            this._reject({ error: err });
         }
     }
 
     function _clickedDeny() {
-        this.$refs.modalComponent.hide();
-        this._reject({ canceled: true });
+        ipcRenderer.send("clickedDeny", true);
+        _reject.value({ canceled: true });
     }
-
-    function _getLinkedAccount() {
-        let account = store.getters['AccountStore/getSigningKey'](this.incoming);
-        return {
-            id: account.accountID,
-            name: account.accountName,
-            chain: account.chain
-        }
-    }
-
-    /////////
 
     function getChainLabel(chain) {
         return formatChain(chain);
     }
 
+    // TODO: REFACTOR THIS FUNCTION
     function getRequestType() {
-        if (this.incoming.params && this.incoming.params.length > 0 && this.incoming.params[0] == "sign") {
+        if (incoming.value.params && incoming.value.params.length > 0 && incoming.value.params[0] == "sign") {
             return "sign"
         } else {
             return "sign_and_broadcast";
         }
     }
-
-    function _onShow() {
-        let blockchain = getBlockchain(this.incoming.chain);
-        blockchain.visualize(this.incoming.params).then(result => {
-            this.incoming.visualized = result;
-            this.incoming = Object.assign({}, this.incoming);
-            blockchain.visualize(this.incoming.account_id).then(account_name => {
-                this.incoming.account_name = account_name;
-                this.incoming = Object.assign({}, this.incoming);
-            });
-        })
-
-    }
-
-    function getSuccessNotification(result) {
-        return {msg: 'Transaction successfully broadcast.', link: '' };
-    }
-
-    async function _execute() {
-        let blockchain = getBlockchain(this.incoming.chain);
-        if (this.incoming.params[0] == "sign") {
-            let tr = await blockchain.sign(
-                this.incoming.params,
-                await getKey(store.getters['AccountStore/getSigningKey'](this.incoming).keys.active)
-            );
-            return tr.toObject();
-        } else if (this.incoming.params[0] == "broadcast") {
-            return await blockchain.broadcast(this.incoming.params);
-        } else if (this.incoming.params[0] == "signAndBroadcast") {
-            let transaction = await blockchain.sign(
-                this.incoming.params,
-                await getKey(store.getters['AccountStore/getSigningKey'](this.incoming).keys.active)
-            );
-            return await blockchain.broadcast(transaction);
-        }
-    }
 </script>
 <template>
-    <b-modal
-        id="type"
-        ref="modalComponent"
-        centered
-        no-close-on-esc
-        no-close-on-backdrop
-        hide-header-close
-        hide-footer
-        :title="t('operations.rawsig.title')"
+    <table
+        v-tooltip="t('operations.rawsig.request',
+            { appName: incoming.appName,
+              origin: incoming.origin,
+              chain: getChainLabel(incoming.chain),
+              accountName: incoming.account_id
+            }
+        )"
+        class="table small table-striped table-sm"
     >
-        <table
-            v-tooltip="t('operations.rawsig.request',
-                { appName: incoming.appName,
-                  origin: incoming.origin,
-                  chain: getChainLabel(incoming.chain),
-                  accountName: incoming.account_id
-                }
-            )"
-            class="table small table-striped table-sm"
-        >
-            <tbody>
-                <tr>
-                    <td class="text-left">
-                        Origin
-                    </td>
-                    <td class="text-right">
-                        {{incoming.origin}}
-                    </td>
-                </tr>
-                <tr>
-                    <td class="text-left">
-                        App
-                    </td>
-                    <td class="text-right">
-                        {{incoming.appName}}
-                    </td>
-                </tr>
-                <tr>
-                    <td class="text-left">
-                        Account
-                    </td>
-                    <td class="text-right">
-                        {{getChainLabel(incoming.chain) + ":" + (incoming.account_name ? incoming.account_name : incoming.account_id)}}
-                    </td>
-                </tr>
-                <tr>
-                    <td class="text-left">
-                        Action
-                    </td>
-                    <td class="text-right">
-                        {{getRequestType() ? t('operations.rawsig.sign_btn') : t('operations.rawsig.sign_and_broadcast_btn') }}
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <p class="mb-1 font-weight-bold small">
-            {{ t('operations.general.content') }}
-        </p>
-        <div
-            v-if="!!incoming.visualized"
-            class="text-left custom-content"
-            v-html="incoming.visualized"
-        />
-        <pre
-            v-else-if="!!incoming.params"
-            class="text-left custom-content"
-        >
-<code>
-{
-{{ incoming.params }}
-}
-</code>
-        </pre>
-        {{ t('operations.rawsig.request_cta') }}
-        <b-btn
-            class="mt-3"
-            variant="success"
-            block
-            @click="_clickedAllow"
-        >
-            {{ getRequestType() == "sign" ? t('operations.rawsig.sign_btn') : t('operations.rawsig.sign_and_broadcast_btn') }}
-        </b-btn>
-        <b-btn
-            class="mt-1"
-            variant="danger"
-            block
-            @click="_clickedDeny"
-        >
-            {{ t('operations.rawsig.reject_btn') }}
-        </b-btn>
-    </b-modal>
+        <tbody>
+            <tr>
+                <td class="text-left">
+                    Origin
+                </td>
+                <td class="text-right">
+                    {{incoming.origin}}
+                </td>
+            </tr>
+            <tr>
+                <td class="text-left">
+                    App
+                </td>
+                <td class="text-right">
+                    {{incoming.appName}}
+                </td>
+            </tr>
+            <tr>
+                <td class="text-left">
+                    Account
+                </td>
+                <td class="text-right">
+                    {{getChainLabel(incoming.chain) + ":" + (incoming.account_name ? incoming.account_name : incoming.account_id)}}
+                </td>
+            </tr>
+            <tr>
+                <td class="text-left">
+                    Action
+                </td>
+                <td class="text-right">
+                    {{getRequestType() ? t('operations.rawsig.sign_btn') : t('operations.rawsig.sign_and_broadcast_btn') }}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <p class="mb-1 font-weight-bold small">
+        {{ t('operations.general.content') }}
+    </p>
+    <div
+        v-if="!!incoming.visualized"
+        class="text-left custom-content"
+        v-html="incoming.visualized"
+    />
+    <pre
+        v-else-if="!!incoming.params"
+        class="text-left custom-content"
+    >
+      <code>
+        {
+          {{ incoming.params }}
+        }
+      </code>
+    </pre>
+    {{ t('operations.rawsig.request_cta') }}
+    <ui-button raised @click="_clickedAllow">
+        {{ getRequestType() == "sign" ? t('operations.rawsig.sign_btn') : t('operations.rawsig.sign_and_broadcast_btn') }}
+    </ui-button>
+    <ui-button raised @click="_clickedDeny">
+        {{ t('operations.rawsig.reject_btn') }}
+    </ui-button>
 </template>

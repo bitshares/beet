@@ -12,11 +12,12 @@
     import RendererLogger from "../../lib/RendererLogger";
     const logger = new RendererLogger();
 
-    //let error = ref(false);
     let type = ref("GenericRequestPopup");
     let incoming = ref({generic: {}});
-    //let api = ref(null);
     let allowWhitelist = ref(false);
+
+    let acceptText = ref(null);
+    let rejectText = ref(null);
 
     let _accept = ref(null);
     let _reject = ref(null);
@@ -33,6 +34,9 @@
     onMounted(() => {
       logger.debug("Req Popup initialised");
       store.dispatch("WalletStore/notifyUser", {notify: "request", message: "request"});
+
+      acceptText.value = incoming.generic.acceptText || t('operations.rawsig.accept_btn');
+      rejectText.value = incoming.generic.rejectText || t('operations.rawsig.reject_btn');
     });
 
     /////////
@@ -46,8 +50,8 @@
     }
 
     async function _clickedAllow() {
-        ipcRenderer.send("clickedAllow", true);
         if (incoming.value.acceptCall) {
+            // ipcRenderer.send("clickedAllow", true); // return without cutting off acceptcall code?
             return incoming.value.acceptCall();
         }
 
@@ -57,11 +61,13 @@
           operation = await blockchain.getOperation(incoming.value, _getLinkedAccount());
         } catch (error) {
           console.log(error);
-          return _reject.value({ error: error });
+          _reject.value({ error: error });
+          ipcRenderer.send("modalError", true);
         }
 
         if (operation.nothingToDo) {
-          return {msg: "Already done, no action needed"}
+          _accept.value({msg: "Already done, no action needed"});
+          ipcRenderer.send("clickedAllow", true);
         }
 
         let signingKey;
@@ -69,7 +75,8 @@
           signingKey = await getKey(store.getters['AccountStore/getSigningKey'](incoming.value).keys.active);
         } catch (error) {
           console.log(error);
-          return _reject.value({ error: error });
+          _reject.value({ error: error });
+          ipcRenderer.send("modalError", true);
         }
 
         let transaction;
@@ -77,7 +84,8 @@
           transaction = await blockchain.sign(operation, signingKey);
         } catch (error) {
           console.log(error);
-          return _reject.value({ error: error });
+          _reject.value({ error: error });
+          ipcRenderer.send("modalError", true);
         }
 
         let result;
@@ -85,25 +93,23 @@
           result = await blockchain.broadcast(transaction);
         } catch (error) {
           console.log(error);
-          return _reject.value({ error: error });
-        }
-
-        if (allowWhitelist.value) {
-            // todo: allowWhitelist move whitelisting into BeetAPI
-            store.dispatch(
-                "WhitelistStore/addWhitelist",
-                {
-                    identityhash: incoming.value.identityhash,
-                    method: 'signMessage'
-                }
-            );
+          _reject.value({ error: error });
+          ipcRenderer.send("modalError", true);
         }
 
         try {
             // todo allowWhitelist move whitelisting to BeetAPI, thus return flag here
-            return _accept.value({response: result, whitelisted: allowWhitelist.value});
+            _accept.value({response: result, whitelisted: allowWhitelist.value});
+
             if (allowWhitelist.value) {
                 // todo: allowWhitelist move whitelisting into BeetAPI
+                store.dispatch(
+                    "WhitelistStore/addWhitelist",
+                    {
+                        identityhash: incoming.value.identityhash,
+                        method: 'signMessage'
+                    }
+                );
                 store.dispatch(
                     "WhitelistStore/addWhitelist",
                     {
@@ -113,15 +119,18 @@
                 );
             }
         } catch (error) {
-            return _reject.value({error: error});
+            console.log(error);
+            _reject.value({ error: error });
+            ipcRenderer.send("modalError", true);
         }
+
+        ipcRenderer.send("clickedAllow", true);
     }
 
     function _clickedDeny() {
+        _reject.value({ canceled: true });
         ipcRenderer.send("clickedDeny", true);
-        return _reject.value({ canceled: true });
     }
-    /////////
 
 </script>
 
@@ -133,14 +142,14 @@
     <pre class="text-left custom-content"><code>{{ incoming.generic.details }}</code></pre>
 
     <ui-button raised @click="_clickedAllow">
-      {{ incoming.generic.acceptText || t('operations.rawsig.accept_btn') }}
+      {{ acceptText }}
     </ui-button>
 
     <ui-button outlined @click="_clickedDeny">
-      {{ incoming.generic.rejectText || t('operations.rawsig.reject_btn') }}
+      {{ rejectText }}
     </ui-button>
   </div>
   <div v-else>
-    Loading popup contents
+    Loading beet modal contents
   </div>
 </template>
