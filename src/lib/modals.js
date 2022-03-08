@@ -1,5 +1,6 @@
 import store from '../store/index.js';
 import getBlockchain from "./blockchains/blockchainFactory";
+import { ipcRenderer } from 'electron';
 
 export function showAlert(request) {
     let alertmsg = request.type === "link"
@@ -11,24 +12,19 @@ export function showAlert(request) {
     //alerts.value.push({ msg: alertmsg, id: uuidv4() });
 }
 
-export async function requestAccess(request) {
+export async function requestModal(request, title, ) {
   // trigger pop up
+  return new Promise((resolve, reject) => {
+    ipcRenderer.send(
+      "popup",
+      {
+        _accept: resolve,
+        _reject: reject,
+        request: request
+      }
+    );
+  });
 
-}
-
-export async function requestLink(request) {
-
-    return this.$refs.linkReqModal.show(request);
-}
-
-export async function requestReLink(request) {
-
-    return this.$refs.reLinkReqModal.show(request);
-}
-
-export async function requestTransfer(request) {
-
-    return this.$refs.transferReqModal.show(request);
 }
 
 export async function requestVote(payload) {
@@ -58,11 +54,6 @@ export async function requestVote(payload) {
     payload.vote_id = mappedData.vote_id;
 
     return this.$refs.genericReqModal.show(payload, false);
-}
-
-export function requestTx(payload) {
-
-    return this.$refs.transactionReqModal.show(payload);
 }
 
 export function isWhitelisted(identity, method) {

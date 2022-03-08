@@ -89,34 +89,46 @@ const createModal = async (args) => {
 
   modalWindow.loadFile(
     path.join(__dirname, "modal.html"),
-    {query: {"type": args.type ?? null}}
+    {query: {"type": args.request.type ?? null}}
   );
 
   modalWindow.once('ready-to-show', () => {
     modalWindow.show();
   })
 
-  modalWindow.on('closed', () => {
-    modalWindow = null;
-    // emitter.emit -> popup rejection
-  });
-
-  ipcMain.on('rejectModal', (event, arg) => {
-    modalWindow = null;
-    // emitter.emit -> popup rejection
-  });
-
   /*
   modalWindow.on('show', () => {
     // emit back to the popup?
+
   });
   */
+
+  modalWindow.on('closed', () => {
+    modalWindow = null;
+  });
+
+  // Providing modal required data
+  ipcMain.on('getContent', (event, arg) => {
+    event.sender.send(
+      'contentResponse',
+      {
+        request: args.request,
+        _accept: args._accept,
+        _reject: args._reject
+      }
+    );
+  });
+
+  ipcMain.on('clickedAllow', (event, arg) => {
+    modalWindow = null;
+  });
+
+  ipcMain.on('clickedDeny', (event, arg) => {
+    modalWindow = null;
+  });
 };
 
-
 const createWindow = async () => {
-
-  // Create the browser window.
   mainWindow = new BrowserWindow({
       width: 600,
       height: 660,
@@ -137,7 +149,6 @@ const createWindow = async () => {
   });
 
   initApplicationMenu();
-  // and load the index.html of the app.
   mainWindow.loadURL(
     url.format({
       pathname: path.join(__dirname, "index.html"),
@@ -207,22 +218,11 @@ const createWindow = async () => {
 
   ipcMain.on('popup', (event, arg) => {
     // create popup modal window
-    createModal(arg);
+    if (!modalWindow) {
+      createModal(arg);
+    }
+    console.log('Error: More than one popup cannot exist.');
   })
-
-  /*
-  ipcMain.on('', (event, arg) => {
-
-  })
-
-  ipcMain.on('', (event, arg) => {
-
-  })
-
-  ipcMain.on('', (event, arg) => {
-
-  })
-  */
 
   ipcMain.on('openDebug', (event, arg) => {
       mainWindow.webContents.openDevTools();

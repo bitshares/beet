@@ -16,7 +16,6 @@
     let error = ref(false);
     let incoming = ref({});
     let api = ref(null);
-    let askWhitelist = ref(false);
     let allowWhitelist = ref(false);
 
     ///
@@ -31,9 +30,6 @@
     async function show(incoming, newWhitelist = null) {
         store.dispatch("WalletStore/notifyUser", {notify: "request", message: "request"});
         incoming.value = incoming;
-        if (newWhitelist !== null) {
-            askWhitelist.value = newWhitelist;
-        }
         _onShow();
         this.$refs.modalComponent.show();
         return new Promise((resolve, reject) => {

@@ -9,7 +9,6 @@
     import {getKey} from '../../lib/SecureRemote';
 
     let type = ref("TransferRequestPopup");
-    let askWhitelist = ref(false);
     let message = ref(null);
     let recipient = ref(null);
     let satoshis = ref(null);
@@ -30,9 +29,6 @@
     async function show(incoming, newWhitelist = null) {
         store.dispatch("WalletStore/notifyUser", {notify: "request", message: "request"});
         incoming.value = incoming;
-        if (newWhitelist !== null) {
-            askWhitelist.value = newWhitelist;
-        }
         _onShow();
         this.$refs.modalComponent.show();
         return new Promise((resolve, reject) => {

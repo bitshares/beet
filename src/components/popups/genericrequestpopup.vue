@@ -1,5 +1,8 @@
 <script setup>
-    import { ref, onMounted } from "vue";
+    import { ipcRenderer } from 'electron';
+    import { ref, onMounted, onBeforeMount, inject } from "vue";
+    const emitter = inject('emitter');
+
     import { useI18n } from 'vue-i18n';
     const { t } = useI18n({ useScope: 'global' });
     import getBlockchain from "../../lib/blockchains/blockchainFactory";
@@ -9,15 +12,23 @@
     import RendererLogger from "../../lib/RendererLogger";
     const logger = new RendererLogger();
 
-    let error = ref(false);
+    //let error = ref(false);
     let type = ref("GenericRequestPopup");
     let incoming = ref({generic: {}});
-    let api = ref(null);
-    let askWhitelist = ref(false);
+    //let api = ref(null);
     let allowWhitelist = ref(false);
 
     let _accept = ref(null);
     let _reject = ref(null);
+
+    onBeforeMount(() => {
+      ipcRenderer.send("getContent", true);
+      ipcRenderer.on('contentResponse', (event, args) => {
+        incoming.value = args.request;
+        _accept.value = args._accept;
+        _reject.value = args._reject;
+      });
+    });
 
     onMounted(() => {
       logger.debug("Req Popup initialised");
@@ -25,24 +36,17 @@
     });
 
     /////////
-
-    async function show(incoming, newWhitelist = null) {
-        incoming.value = incoming;
-        if (newWhitelist !== null) {
-            askWhitelist.value = newWhitelist;
+    function _getLinkedAccount() {
+        let account = store.getters['AccountStore/getSigningKey'](incoming.value);
+        return {
+            id: account.accountID,
+            name: account.accountName,
+            chain: account.chain
         }
-        //this.$refs.modalComponent.show();
-        return new Promise((resolve, reject) => {
-            _accept.value = resolve;
-            _reject.value = reject;
-        });
     }
 
-    function getSuccessNotification(res) {
-        return false;
-    }
-
-    async function  _execute() {
+    async function _clickedAllow() {
+        ipcRenderer.send("clickedAllow", true);
         if (incoming.value.acceptCall) {
             return incoming.value.acceptCall();
         }
@@ -53,7 +57,7 @@
           operation = await blockchain.getOperation(incoming.value, _getLinkedAccount());
         } catch (error) {
           console.log(error);
-          return;
+          return _reject.value({ error: error });
         }
 
         if (operation.nothingToDo) {
@@ -65,7 +69,7 @@
           signingKey = await getKey(store.getters['AccountStore/getSigningKey'](incoming.value).keys.active);
         } catch (error) {
           console.log(error);
-          return;
+          return _reject.value({ error: error });
         }
 
         let transaction;
@@ -73,15 +77,15 @@
           transaction = await blockchain.sign(operation, signingKey);
         } catch (error) {
           console.log(error);
-          return;
+          return _reject.value({ error: error });
         }
 
-        let returnValue;
+        let result;
         try {
-          returnValue = await blockchain.broadcast(transaction);
+          result = await blockchain.broadcast(transaction);
         } catch (error) {
           console.log(error);
-          return;
+          return _reject.value({ error: error });
         }
 
         if (allowWhitelist.value) {
@@ -94,27 +98,10 @@
                 }
             );
         }
-        
-        return returnValue;
-    }
 
-    async function _clickedAllow() {
-        // this.emitter.emit("popup", "load-start");
-        // this.emitter.emit("popup", "load-end");
-        //this.$refs.modalComponent.hide();
         try {
-            let result = await _execute();
-            let notification = getSuccessNotification(result);
-            if (notification) {
-                this.emitter.emit("tx-success", notification);
-            }
             // todo allowWhitelist move whitelisting to BeetAPI, thus return flag here
-            _accept.value(
-                {
-                    response: result,
-                    whitelisted: allowWhitelist.value
-                }
-            );
+            return _accept.value({response: result, whitelisted: allowWhitelist.value});
             if (allowWhitelist.value) {
                 // todo: allowWhitelist move whitelisting into BeetAPI
                 store.dispatch(
@@ -125,30 +112,21 @@
                     }
                 );
             }
-        } catch (err) {
-            _reject.value({ error: err });
+        } catch (error) {
+            return _reject.value({error: error});
         }
     }
 
     function _clickedDeny() {
-        //this.$refs.modalComponent.hide();
-        _reject.value({ canceled: true });
+        ipcRenderer.send("clickedDeny", true);
+        return _reject.value({ canceled: true });
     }
-
-    function _getLinkedAccount() {
-        let account = store.getters['AccountStore/getSigningKey'](incoming.value);
-        return {
-            id: account.accountID,
-            name: account.accountName,
-            chain: account.chain
-        }
-    }
-
     /////////
 
 </script>
 
 <template>
+  <div v-if="_accept">
     {{ incoming.generic.message }}:
     <br>
     <br>
@@ -161,4 +139,8 @@
     <ui-button outlined @click="_clickedDeny">
       {{ incoming.generic.rejectText || t('operations.rawsig.reject_btn') }}
     </ui-button>
+  </div>
+  <div v-else>
+    Loading popup contents
+  </div>
 </template>

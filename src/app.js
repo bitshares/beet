@@ -49,7 +49,8 @@ const i18n = createI18n({
 const app = createApp({});
 
 const emitter = mitt();
-app.config.globalProperties.emitter = emitter;
+//app.config.globalProperties.emitter = emitter;
+app.provide('emitter', emitter);  
 
 ipcRenderer.on('eventbus', (event,data)=> {
   emitter.emit(data.method, data.payload);

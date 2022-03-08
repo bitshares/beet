@@ -17,7 +17,6 @@
     let error = ref(false);
     let incoming = ref({});
     let api = ref(null);
-    let askWhitelist = ref(false);
     let allowWhitelist = ref(false);
     //
 

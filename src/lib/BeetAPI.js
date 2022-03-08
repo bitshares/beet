@@ -1,9 +1,5 @@
 import {
-  requestAccess,
-  requestReLink,
-  requestLink,
-  requestVote,
-  requestTx,
+  requestModal,
   requestSignedMessage,
   verifyMessage,
   requestTransfer,
@@ -67,7 +63,7 @@ export default class BeetAPI {
         let response;
         try {
             //response = this.$refs.identityReqModal.show(request);
-            response = await requestAccess(request.payload);
+            response = await requestModal(request.payload);
         } catch (err) {
             return this._parseReject("BeetAPI.getAccount", request, err);
         }
@@ -80,7 +76,7 @@ export default class BeetAPI {
     static async [Actions.REQUEST_RELINK](request) {
         let response;
         try {
-            response = await requestReLink(request);
+            response = await requestModal(request);
         } catch (e) {
             return {
                 id: request.id,
@@ -95,7 +91,7 @@ export default class BeetAPI {
     static async [Actions.REQUEST_LINK](request) {
         let response;
         try {
-            response = await requestLink(request);
+            response = await requestModal(request);
         } catch (e) {
             return {
                 id: request.id,
@@ -120,7 +116,7 @@ export default class BeetAPI {
     static async [Actions.REQUEST_SIGNATURE](request) {
         let response;
         try {
-            response = await requestTx(request.payload);
+            response = await requestModal(request.payload);
         } catch (err) {
             return this._parseReject("BeetAPI.requestSignature", request, err);
         }
@@ -130,9 +126,19 @@ export default class BeetAPI {
     static async [Actions.INJECTED_CALL](request) {
         let response;
         try {
-            response = await requestTx(request.payload);
+            response = await requestModal(request.payload);
         } catch (err) {
             return this._parseReject("BeetAPI.injectedCall", request, err);
+        }
+        return {id: request.id, result: response.response};
+    }
+
+    static async [Actions.TRANSFER](request) {
+        let response;
+        try {
+            response = await requestModal(request.payload);
+        } catch (err) {
+            return this._parseReject("BeetAPI.transfer", request, err);
         }
         return {id: request.id, result: response.response};
     }
@@ -163,15 +169,5 @@ export default class BeetAPI {
             return this._parseReject("BeetAPI.verifyMessage", request, err);
         }
         return {id: request.id, result: response};
-    }
-
-    static async [Actions.TRANSFER](request) {
-        let response;
-        try {
-            response = await requestTransfer(request.payload);
-        } catch (err) {
-            return this._parseReject("BeetAPI.transfer", request, err);
-        }
-        return {id: request.id, result: response.response};
     }
 }
