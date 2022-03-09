@@ -137,8 +137,8 @@ const createWindow = async () => {
       maximizable: false,
       maxHeight: 660,
       useContentSize: true,
-      frame: false,
-      transparent: true,
+      autoHideMenuBar: true,
+      //frame: false,
       webPreferences: {
           nodeIntegration: true,
           contextIsolation: false,
@@ -397,6 +397,18 @@ app.disableHardwareAcceleration();
 // Some APIs can only be used after this event occurs.
 app.on('ready', function() {
     createWindow();
+    let template = [
+      {
+        label: 'View',
+        submenu: [
+          { label: 'Reload', role: 'reload' },
+          { label: 'Force reload', role: 'forceReload' },
+          { label: 'Dev tools', role: 'toggleDevTools' }
+        ]
+      }
+    ];
+    const menu = Menu.buildFromTemplate(template);
+    Menu.setApplicationMenu(menu);
 });
 
 // Quit when all windows are closed.

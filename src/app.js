@@ -13,8 +13,6 @@ import store from './store/index';
 import BeetServer from './lib/BeetServer';
 import RendererLogger from './lib/RendererLogger';
 import fetchMessages from './lib/i18n';
-//import Popups from './components/popups';
-import Beetframe from './components/beetframe';
 
 import 'typeface-roboto';
 import 'typeface-rajdhani';
@@ -65,8 +63,6 @@ app.config.errorHandler = function (err, vm, info) {
   logger.error(err, vm, info);
   console.log("error");
 };
-
-app.component('Beetframe', Beetframe);
 
 app.use(i18n);
 app.use(VueRouter);
