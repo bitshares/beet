@@ -15,21 +15,9 @@
 
     let qs = ref(queryString.parse(location.search));
 
-    //let dismissCountDown = ref(0);
-    //let transientMsg = ref('');
-    //let transientLink = ref('');
-
-    /*
-    this.emitter.on("tx-success", (data) => {
-        dismissCountDown.value = 5;
-        transientMsg.value = data.msg;
-        transientLink.value = data.link;
-    });
-    */
-
-    onMounted() {
+    onMounted(() => {
         logger.debug("Modal mounted");
-    }
+    })
 </script>
 
 <template>

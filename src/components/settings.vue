@@ -27,7 +27,6 @@
     })
 
     async function downloadBackup() {
-        this.emitter.emit("popup", "load-start");
         ipcRenderer.send(
           "downloadBackup",
           {
@@ -42,7 +41,9 @@
     }
 
     function getDisplayString(accountID,chain) {
-        let account = store.state.AccountStore.accountlist.find(x => { return (x.accountID==accountID && x.chain==chain);});
+        let account = store.state.AccountStore.accountlist.find(x => {
+          return (x.accountID == accountID && x.chain == chain);
+        });
         return formatAccount(account, true);
     }
 </script>

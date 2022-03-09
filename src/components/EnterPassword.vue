@@ -34,7 +34,12 @@
             v-tooltip="t('common.tooltip_password_cta')"
             class="mb-2 font-weight-bold"
         >
-            {{ t(getNew ? 'common.password_cta' : 'common.unlock_with_password_cta') }} &#10068;
+          <span v-if="getNew">
+            {{ t('common.password_cta') }} &#10068;
+          </span>
+          <span v-else>
+            {{ t('common.unlock_with_password_cta') }} &#10068;
+          </span>
         </p>
         <input
             id="inputPass"

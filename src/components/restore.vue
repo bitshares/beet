@@ -34,21 +34,18 @@
 
         let file = document.getElementById('restoreWallet').files[0].path;
 
-        this.emitter.emit("popup", "load-start");
         fs.readFile(file, 'utf-8', async (err, data) => {
             if (err) {
                 alert("An error ocurred reading the file :" + err.message);
-                this.emitter.emit("popup", "load-end");
                 return;
             }
             try {
-                let wallet=JSON.parse(aes.decrypt(data, backupPass.value).toString(ENC));
+                let wallet = JSON.parse(aes.decrypt(data, backupPass.value).toString(ENC));
                 await store.dispatch('WalletStore/restoreWallet', { backup: wallet, password: backupPass.value});
-                this.emitter.emit("popup", "load-end");
                 router.replace("/");
             } catch(e) {
                 //Wrong  Password
-                this.emitter.emit("popup", "load-end");
+                //
             }
         });
     }

@@ -77,10 +77,7 @@
           ipcRenderer.send("modalError", true);
         }
 
-
-        /*
-            this.emitter.emit("tx-success", {msg: 'Message successfully signed.', link: '' });
-        */
+        ipcRenderer.send("notify", 'Message successfully signed.');
         try {
             // todo allowWhitelist move whitelisting to BeetAPI, thus return flag here
             _accept.value({response: signedMessage, whitelisted: allowWhitelist.value});
@@ -100,6 +97,7 @@
           _reject.value({ error: error });
           ipcRenderer.send("modalError", true);
         }
+        ipcRenderer.send("clickedAllow", true);
     }
 
     function _clickedDeny() {

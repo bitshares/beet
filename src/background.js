@@ -19,6 +19,7 @@ import {
   Notification
 } from 'electron';
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
+import mitt from 'mitt';
 
 import sha256 from "crypto-js/sha256.js";
 import aes from "crypto-js/aes.js";
@@ -211,7 +212,6 @@ const createWindow = async () => {
           }
         })
     }
-    //this.emitter.emit("popup", "load-end");
   });
 
   ipcMain.on('popup', (event, arg) => {
@@ -249,6 +249,16 @@ const createWindow = async () => {
 
   ipcMain.on('notify', (event, arg) => {
       logger.debug("notify");
+
+      const NOTIFICATION_TITLE = 'Beet wallet notification';
+      const NOTIFICATION_BODY = arg == 'request' ? "Beet has received a new request." : arg;
+
+      function showNotification () {
+        new Notification({ title: NOTIFICATION_TITLE, body: NOTIFICATION_BODY }).show()
+      }
+
+      showNotification();
+      /*
       if (minimised) {
         tray.displayBalloon({
             icon: __dirname + '/img/beet-tray.png',
@@ -258,13 +268,15 @@ const createWindow = async () => {
             content: "Click here to view"
         });
       }
+      */
   });
 
   let seed, key;
   function timeoutHandler() {
       seed = null;
+      const emitter = mitt();
       try {
-        this.emitter.emit('timeout', 'logout');
+        emitter.emit('timeout', 'logout');
       } catch (error) {
         console.log(error);
       }
@@ -275,7 +287,7 @@ const createWindow = async () => {
       if (timeout) {
           clearTimeout(timeout);
       }
-      timeout = setTimeout(timeoutHandler,300000);
+      timeout = setTimeout(timeoutHandler, 300000);
       if (key) return;
       key = arg;
   });
@@ -285,7 +297,7 @@ const createWindow = async () => {
           clearTimeout(timeout);
       }
       if (arg != '') {
-          timeout = setTimeout(timeoutHandler,300000);
+          timeout = setTimeout(timeoutHandler, 300000);
       }
       seed = arg;
   });
@@ -294,7 +306,7 @@ const createWindow = async () => {
       if (timeout) {
           clearTimeout(timeout);
       }
-      timeout = setTimeout(timeoutHandler,300000);
+      timeout = setTimeout(timeoutHandler, 300000);
       const {data, sig} = arg;
 
       let msgHash;
@@ -384,14 +396,7 @@ app.disableHardwareAcceleration();
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', function() {
-    const NOTIFICATION_TITLE = 'Basic Notification'
-    const NOTIFICATION_BODY = 'Notification from the Main process'
-
-    function showNotification () {
-      new Notification({ title: NOTIFICATION_TITLE, body: NOTIFICATION_BODY }).show()
-    }
-
-    createWindow().then(showNotification);
+    createWindow();
 });
 
 // Quit when all windows are closed.

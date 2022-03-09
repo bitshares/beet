@@ -24,10 +24,18 @@
       });
     });
 
-    onMounted() {
+    let requestText = ref('');
+    let secondText = ref('');
+
+    onMounted(() => {
       logger.debug("Link Popup initialised");
       store.dispatch("WalletStore/notifyUser", {notify: "request", message: "request"});
-    }
+      requestText.value = t(
+        'operations.link.request',
+        {appName: incoming.appName, origin: incoming.origin, chain: incoming.chain }
+      );
+      secondText.value = t('operations.link.request_fresh', {chain: incoming.chain });
+    })
 
     let existingLinks = computed(() => {
       return store.state.OriginStore.apps.filter(
@@ -69,6 +77,7 @@
             _reject.value({ error: error });
             ipcRenderer.send("modalError", true);
         }
+        ipcRenderer.send("clickedAllow", true);
     }
 
     function _clickedDeny() {
@@ -80,16 +89,11 @@
 
 <template>
     <div v-tooltip="t('operations.link.request_tooltip')">
-        {{
-          t(
-            'operations.link.request',
-            {appName: incoming.appName, origin: incoming.origin, chain: incoming.chain }
-          )
-        }} &#10068;
+        {{ requestText }} &#10068;
     </div>
     <br>
     <div v-if="existingLinks.length > 0">
-        {{ t('operations.link.request_fresh', {chain: incoming.chain }) }}
+        {{ secondText }}
     </div>
     <br>
     <AccountSelect

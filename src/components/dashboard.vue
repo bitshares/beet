@@ -1,5 +1,6 @@
 <script setup>
     import { watch, ref, computed, onMounted } from "vue";
+    const emitter = inject('emitter');
     import { useI18n } from 'vue-i18n';
     const { t } = useI18n({ useScope: 'global' });
     import AccountSelect from "./account-select";
@@ -16,15 +17,10 @@
     let isConnected = ref(false);
     let isConnecting = ref(false);
 
-    //let api = ref(null);
-    //let incoming = ref(null);
-    //let genericmsg = ref("");
-    //let specifics = ref("");
-
     let connectionFailed = computed(() => {
       return !isConnecting || !isConnecting.value && !isConnected || !isConnected.value;
     });
-/*
+
     let selectedAccount = computed(() => {
       get: () {
           return store.state.AccountStore.accountlist[
@@ -84,14 +80,11 @@
     }
 
     async function loadBalances() {
-        //this.emitter.emit("popup", "load-start");
         //await this.$refs.balancetable.getBalances();
         store.dispatch("WalletStore/confirmUnlock");
-        //this.emitter.emit("popup", "load-end");
     }
 
     onMounted(() => {
-      this.emitter.emit("popup", "load-start");
       nodes.value = blockchain.value.getNodes();
       isConnected.value = blockchain.value.isConnected();
       loadBalances();
@@ -99,29 +92,12 @@
 
     // Is EventBus here necessary? Could this be a computed field and listen
     // to this.blockchain.isConnected?
-    this.emitter.on("blockchainStatus", what => {
+    emitter.on("blockchainStatus", what => {
         if (what.chain == selectedChain.value) {
             isConnected.value = what.status;
             isConnecting.value = !!what.connecting;
         }
     });
-
-    this.emitter.on("balances", what => {
-        switch (what) {
-        case "loaded":
-            this.emitter.emit("popup", "load-end");
-            break;
-        }
-    });
-
-    watch(selectedAccount, async (newAcc, oldAcc) => {
-      if (
-          newAcc.chain != oldAcc.chain ||
-          newAcc.accountID != oldAcc.accountID
-      ) {
-          this.emitter.emit("popup", "load-start");
-      }
-    }, {immediate: true});
 
     watch(selectedChain, async (newVal, oldVal) => {
       if (oldVal !== newVal) {
@@ -132,7 +108,7 @@
               selectedNode.value = nodes.value[0].url;
           }
       }
-    }, {immediate: true});*/
+    }, {immediate: true});
 </script>
 
 <template>

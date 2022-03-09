@@ -15,20 +15,20 @@
     let requiredFields = ref(null);
 
     // onMount/compute the following?
-    let blockchain = getBlockchain(this.selectedChain);
+    let blockchain = getBlockchain(props.selectedChain);
     accessType.value = blockchain.getAccessType();
     requiredFields.value = blockchain.getSignUpInput();
 
     async function _verifyAccount() {
         if (accountname.value == "") {
-            throw {
+            return {
                 key: "missing_account_error",
                 args: {
-                    chain: this.selectedChain
+                    chain: props.selectedChain
                 }
             };
         }
-        let blockchain = getBlockchain(this.selectedChain);
+        let blockchain = getBlockchain(props.selectedChain);
         let authorities = {};
         if (requiredFields.value.active != null) {
             authorities.active = activepk.value;
@@ -39,12 +39,19 @@
         if (includeOwner.value == 1 && requiredFields.value.owner != null) {
             authorities.owner = ownerpk.value;
         }
-        let account = await blockchain.verifyAccount(accountname.value, authorities);
+        let account;
+        try {
+            account = await blockchain.verifyAccount(accountname.value, authorities);
+        } catch (error) {
+            console.log(error);
+            return;
+        }
+
         return {
             account: {
                 accountName: accountname.value,
                 accountID: account.id,
-                chain: this.selectedChain,
+                chain: props.selectedChain,
                 keys: authorities
             }
         };
@@ -52,7 +59,7 @@
 
     async function getAccountEvent() {
         let account = await _verifyAccount();
-        if (this.accountID !== null) {
+        if (account.accountID !== null) {
             return [account];
         } else {
             throw "This shouldn't happen!"

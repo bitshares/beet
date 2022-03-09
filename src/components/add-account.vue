@@ -17,9 +17,12 @@
     let walletname = ref("");
     //let accountname = ref("");
     let step = ref(1);
+    let stepMessage = computed(() = > {
+      return t('common.step_counter', {step_no : step});
+    })
     let s1c = ref("");
     //let includeOwner = ref(0);
-    let errorMsg = ref("");
+    //let errorMsg = ref("");
     let selectedChain = ref(0);
     let selectedImport = ref(0);
     let accounts_to_import = ref(null);
@@ -74,8 +77,7 @@
         }
 
         if (walletname.value.trim() == "") {
-            errorMsg.value = t("common.empty_wallet_error");
-            this.$refs.errorModal.show();
+            ipcRenderer.send("notify", t("common.empty_wallet_error"));
             s1c.value = "is-invalid";
             return;
         }
@@ -87,8 +89,7 @@
             wallets.filter(wallet => wallet.name === walletname.value.trim())
                 .length > 0
         ) {
-            errorMsg.value = t("common.duplicate_wallet_error");
-            this.$refs.errorModal.show();
+            ipcRenderer.send("notify", t("common.duplicate_wallet_error"));
             s1c.value = "is-invalid";
             return;
         } else {
@@ -98,12 +99,11 @@
     }
 
     async function step3() {
-        this.emitter.emit("popup", "load-start");
         try {
             getBlockchain(selectedChain.value);
             // abstract UI concept more
+            // TODO: FIX BUG:
             accounts_to_import.value = await this.$refs.import_accounts.getAccountEvent();
-            this.emitter.emit("popup", "load-end");
             if (accounts_to_import.value != null) {
                 // if import accounts are filled, advance to next step. If not, it is a substep in the
                 // import component
@@ -111,51 +111,46 @@
             }
         } catch (err) {
             _handleError(err);
-        } finally {
-            this.emitter.emit("popup", "load-end");
         }
     }
 
     function _handleError(err) {
         if (err == "invalid") {
-            errorMsg.value = t("common.invalid_password");
+            ipcRenderer.send("notify", t("common.invalid_password"));
         } else if (err == "update_failed") {
-            errorMsg.value = t("common.update_failed");
+            ipcRenderer.send("notify", t("common.update_failed"));
         } else if (err.key) {
-            errorMsg.value = t(`common.${err.key}`);
+            ipcRenderer.send("notify", t(`common.${err.key}`));
         } else {
-            errorMsg.value = err.toString();
+            ipcRenderer.send("notify", err.toString());
         }
-        this.$refs.errorModal.show();
+        ipcRenderer.send("notify", errorMsg.value);
     }
 
     async function addAccounts() {
         try {
             let password = this.$refs.enterPassword.getPassword(); // this.$refs doesn't work in vue3!
-            this.emitter.emit("popup", "load-start");
-            if (accounts_to_import && accounts_to_import.value) {
-                for (let i in accounts_to_import.value) {
-                    let account = accounts_to_import.value[i];
-                    if (i == 0 && createNewWallet.value) {
-                        await store.dispatch("WalletStore/saveWallet", {
-                            walletname: walletname.value,
-                            password: password,
-                            walletdata: account.account
-                        });
-                    } else {
-                        account.password = password;
-                        account.walletname = walletname.value;
-                        await store.dispatch("AccountStore/addAccount", account);
-                    }
-                }
-                router.replace("/");
-            } else {
-                throw "No account selected!";
+            if (!accounts_to_import && !accounts_to_import.value) {
+              throw "No account selected!";
             }
+
+            for (let i in accounts_to_import.value) {
+                let account = accounts_to_import.value[i];
+                if (i == 0 && createNewWallet.value) {
+                    await store.dispatch("WalletStore/saveWallet", {
+                        walletname: walletname.value,
+                        password: password,
+                        walletdata: account.account
+                    });
+                } else {
+                    account.password = password;
+                    account.walletname = walletname.value;
+                    await store.dispatch("AccountStore/addAccount", account);
+                }
+            }
+            router.replace("/");
         } catch (err) {
             _handleError(err);
-        } finally {
-            this.emitter.emit("popup", "load-end");
         }
     }
 </script>
@@ -163,9 +158,9 @@
 <template>
     <div class="bottom p-0">
         <div class="content px-3">
-            <div v-if="step==1" id="step1">
+            <div v-if="step == 1" id="step1">
                 <h4 class="h4 mt-3 font-weight-bold">
-                    {{ t('common.step_counter',{ step_no : 1}) }}
+                    {{ stepMessage }}
                 </h4>
                 <template v-if="createNewWallet">
                     <p
@@ -182,7 +177,7 @@
                         :class="s1c"
                         :placeholder="t('common.walletname_placeholder')"
                         required
-                        @focus="s1c=''"
+                        @focus="s1c = ''"
                     >
                 </template>
                 <p
@@ -207,7 +202,12 @@
                         :key="chain.identifier"
                         :value="chain.identifier"
                     >
-                        {{ (chain.testnet ? "Testnet: " : '') }} {{ chain.name }} ({{ chain.identifier }})
+                      <span v-if="chain.testnet">
+                        Testnet: {{ chain.name }} ({{ chain.identifier }})
+                      </span>
+                      <span v-else>
+                        {{ chain.name }} ({{ chain.identifier }})
+                      </span>
                     </option>
                 </select>
                 <div v-if="selectedImportOptions.length > 1">
@@ -222,12 +222,7 @@
                         :placeholder="t('common.import_placeholder')"
                         required
                     >
-                        <option
-                            selected
-                            disabled
-                            value="0"
-                            key="0"
-                        >
+                        <option selected disabled value="0" key="0">
                             {{ t('common.import_placeholder') }}
                         </option>
                         <option v-for="option in selectedImportOptions" :value="option" :key="option.type">
@@ -257,7 +252,11 @@
                     </div>
                 </div>
             </div>
-            <div v-else-if="step==2" id="step2">
+            <div v-else-if="step == 2" id="step2">
+                <h4 class="h4 mt-3 font-weight-bold">
+                    {{ stepMessage }}
+                </h4>
+
                 <ImportOptions
                     v-if="selectedImportOption"
                     ref="import_accounts"
@@ -286,12 +285,9 @@
                     </div>
                 </div>
             </div>
-            <div
-                v-else-if="step==3"
-                id="step3"
-            >
+            <div v-else-if="step == 3" id="step3">
                 <h4 class="h4 mt-3 font-weight-bold">
-                    {{ t('common.step_counter',{ step_no : 3}) }}
+                    {{ stepMessage }}
                 </h4>
                 <EnterPassword
                     ref="enterPassword"
@@ -305,16 +301,6 @@
                     {{ t('common.next_btn') }}
                 </button>
             </div>
-            <b-modal
-                id="error"
-                ref="errorModal"
-                centered
-                hide-footer
-                :title="t('common.error_lbl')"
-                e
-            >
-                {{ errorMsg }}
-            </b-modal>
         </div>
         <Actionbar v-if="!createNewWallet" />
         <p v-if="createNewWallet" class="mt-2 mb-2 small">

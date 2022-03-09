@@ -104,10 +104,6 @@
             }
         }
 
-        /*
-            this.emitter.emit("tx-success", {msg: 'Transaction successfully broadcast.', link: '' });
-        */
-
         // todo allowWhitelist move whitelisting to BeetAPI, thus return flag here
         _accept.value(
             {
@@ -126,6 +122,9 @@
                 }
             );
         }
+        
+        ipcRenderer.send("notify", 'Transaction successfully broadcast.');
+        ipcRenderer.send("clickedAllow", true);
     }
 
     function _clickedDeny() {

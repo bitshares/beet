@@ -1,14 +1,21 @@
 <script setup>
-    import {ref} from "vue";
+    import {ref, onMounted} from "vue";
     import { useI18n } from 'vue-i18n';
     const { t } = useI18n({ useScope: 'global' });
     import getBlockchain from "../../../lib/blockchains/blockchainFactory";
     import BTSWalletHandler from "../../../lib/blockchains/bitshares/BTSWalletHandler";
 
-    const selectedChain = defineProps(["selectedChain"]);
-    if (this.selectedChain !== "BTS") {
-        throw "Unsupported chain!";
-    }
+    const props = defineProps({
+      selectedChain: String
+    });
+
+    let selectedChain = ref(props.selectedChain);
+
+    onMounted(() => {
+      if (selectedChain.value !== "BTS") {
+          throw "Unsupported chain!";
+      }
+    })
 
     let accountname = ref("");
     let accountID = ref("");
@@ -26,13 +33,13 @@
             throw {
                 key: "missing_account_error",
                 args: {
-                    chain: this.selectedChain
+                    chain: selectedChain.value
                 }
             };
         }
 
         try {
-            let blockchain = getBlockchain(this.selectedChain);
+            let blockchain = getBlockchain(selectedChain.value);
             // abstract UI concept more
             let authorities = blockchain.getAccessType() == "account"
                 ? {
@@ -59,14 +66,11 @@
               }
             */
 
-            this.emitter.emit("popup", "load-end");
             accountID.value = account.id;
         } catch (err) {
             accountID.value = "";
             errorMsg.value = err.key ? t(`common.${err.key}`) : err.toString();
             this.$refs.errorModal.show();
-        } finally {
-            this.emitter.emit("popup", "load-end");
         }
     }
 
@@ -103,7 +107,7 @@
                 account: {
                     accountName: account.name,
                     accountID: account.id,
-                    chain: this.selectedChain,
+                    chain: selectedChain.value,
                     keys: {
                         active: account.active.key,
                         owner: account.owner.key,

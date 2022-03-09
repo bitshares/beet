@@ -1,22 +1,27 @@
 <script setup>
     import { onMounted } from "vue";
+    import { useRouter, useRoute } from 'vue-router'
+    import router from '../router/index.js';
+    const route = useRoute()
+    import store from '../store/index';
+
     import { useI18n } from 'vue-i18n';
     const { t } = useI18n({ useScope: 'global' });
-    import store from '../store/index';
-    import router from '../router/index.js';
+    const emitter = inject('emitter');
+
     import RendererLogger from "../lib/RendererLogger";
     const logger = new RendererLogger();
-
-    this.emitter.on('timeout', (data)=>{
-        if(data == 'logout') {
-            logout();
-        }
-    })
 
     function logout() {
         store.dispatch("WalletStore/logout");
         router.replace("/");
     }
+
+    emitter.on('timeout', (data)=>{
+        if (data == 'logout') {
+            logout();
+        }
+    })
 
     onMounted(() => {
       logger.debug("Action Bar mounted");
@@ -30,7 +35,7 @@
                 to="/dashboard"
                 tag="a"
                 class=" status align-self-center"
-                :class="{active: $route.path=='/dashboard'}"
+                :class="{active: route.path == '/dashboard'}"
                 replace
             >
               <ui-icon>query_stats</ui-icon>
@@ -39,7 +44,7 @@
                 to="/add-account"
                 tag="a"
                 class=" status align-self-center"
-                :class="{active: $route.path=='/add-account'}"
+                :class="{active: route.path == '/add-account'}"
                 replace
             >
               <ui-icon>add</ui-icon>
@@ -48,7 +53,7 @@
                 to="/settings"
                 tag="a"
                 class=" status align-self-center"
-                :class="{active: $route.path=='/settings'}"
+                :class="{active: route.path == '/settings'}"
                 replace
             >
               <ui-icon>settings</ui-icon>

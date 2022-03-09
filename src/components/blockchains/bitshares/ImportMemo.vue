@@ -4,28 +4,32 @@
     const { t } = useI18n({ useScope: 'global' });
     import getBlockchain from "../../../lib/blockchains/blockchainFactory";
 
-    const props = defineProps(["selectedChain"]);
+    const props = defineProps({
+      selectedChain: String
+    });
+    let selectedChain = ref(props.selectedChain);
 
     let accountname = ref("");
     let memopk = ref("");
-    //let includeOwner = ref(0);
     let accessType = ref(null);
     let requiredFields = ref(null);
 
-    let blockchain = getBlockchain(props.selectedChain);
-    accessType.value = blockchain.getAccessType();
-    requiredFields.value = blockchain.getSignUpInput();
+    onMounted(() => {
+      let blockchain = getBlockchain(selectedChain.value);
+      accessType.value = blockchain.getAccessType();
+      requiredFields.value = blockchain.getSignUpInput();
+    })
 
     async function _verifyAccount() {
         if (accountname.value == "") {
             throw {
                 key: "missing_account_error",
                 args: {
-                    chain: props.selectedChain
+                    chain: selectedChain.value
                 }
             };
         }
-        let blockchain = getBlockchain(props.selectedChain);
+        let blockchain = getBlockchain(selectedChain.value);
         let authorities = {};
         if (requiredFields.value.memo != null) {
             authorities.memo = memopk.value;
@@ -35,7 +39,7 @@
             account: {
                 accountName: accountname.value,
                 accountID: account.id,
-                chain: props.selectedChain,
+                chain: selectedChain.value,
                 keys: authorities
             }
         };

@@ -1,5 +1,6 @@
 <script setup>
     import { watch, ref, computed, onMounted } from "vue";
+    const emitter = inject('emitter');
     import { useI18n } from 'vue-i18n';
     const { t } = useI18n({ useScope: 'global' });
     import getBlockchain from "../lib/blockchains/blockchainFactory";
@@ -42,7 +43,7 @@
           newAcc.chain != oldAcc.chain ||
           newAcc.accountID != oldAcc.accountID
       ) {
-          await this.getBalances();
+          await getBalances();
           this.emitter.emit("balances", "loaded");
       }
     },{immediate:true});
@@ -50,7 +51,7 @@
     async function getBalances() {
         let blockchain;
         try {
-            blockchain = getBlockchain(this.selectedChain);
+            blockchain = getBlockchain(selectedChain.value);
         } catch (error) {
             console.error(error);
             errored = true;
@@ -59,7 +60,7 @@
 
         let retrievedBalance;
         try {
-            retrievedBalance = await blockchain.getBalances(this.accountName);
+            retrievedBalance = await blockchain.getBalances(accountName.value);
         } catch (error) {
             console.error(error);
             errored = true;

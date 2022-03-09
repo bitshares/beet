@@ -1,9 +1,11 @@
+import mitt from 'mitt';
+const emitter = mitt();
 import store from '../store/index.js';
 
 export default class TimeoutService {
     constructor(timeout) {
         this.timeout = timeout;
-        this.emitter.on('keyaccess', () => {
+        emitter.on('keyaccess', () => {
             this.resetTimeout();
         });
         this.timer = setTimeout(this.expireKeys, this.timeout);

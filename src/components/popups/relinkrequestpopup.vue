@@ -70,6 +70,7 @@
             _reject.value({ error: error });
             ipcRenderer.send("modalError", true);
         }
+        ipcRenderer.send("clickedAllow", true);
     }
 
     function _clickedDeny() {

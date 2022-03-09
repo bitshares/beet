@@ -46,12 +46,11 @@ const i18n = createI18n({
   messages
 })
 
-const app = createApp({});
-
 const emitter = mitt();
-//app.config.globalProperties.emitter = emitter;
+const app = createApp({});
 app.provide('emitter', emitter);
 
+/*
 ipcRenderer.on('eventbus', (event,data)=> {
   emitter.emit(data.method, data.payload);
 });
@@ -59,6 +58,7 @@ ipcRenderer.on('eventbus', (event,data)=> {
 emitter.on("main", (data) => {
     ipcRenderer.send(data.method, data.payload);
 });
+*/
 
 app.config.devtools = true;
 app.config.errorHandler = function (err, vm, info) {
@@ -66,7 +66,6 @@ app.config.errorHandler = function (err, vm, info) {
   console.log("error");
 };
 
-//app.component('Popups', Popups);
 app.component('Beetframe', Beetframe);
 
 app.use(i18n);

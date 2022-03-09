@@ -4,14 +4,20 @@
     const { t } = useI18n({ useScope: 'global' });
     import getBlockchain from "../../../lib/blockchains/blockchainFactory";
 
-    const props = defineProps(["selectedChain"]);
+    const props = defineProps({
+      selectedChain: String
+    });
+
+    let selectedChain = props.selectedChain;
     let address = ref("");
     let activepk = ref("");
     let requiredFields = ref(null);
 
-    // onmount/compute the following?
-    let blockchain = getBlockchain(props.selectedChain);
-    requiredFields.value = blockchain.getSignUpInput();
+    onMounted(() => {
+      // onmount/compute the following?
+      let blockchain = getBlockchain(props.selectedChain);
+      requiredFields.value = blockchain.getSignUpInput();
+    });
 
     async function _verifyAccount() {
         if (address.value == "") {

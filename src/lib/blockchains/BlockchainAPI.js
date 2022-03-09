@@ -3,6 +3,9 @@ import {formatAsset, humanReadableFloat} from "../assetUtils";
 import RendererLogger from "../RendererLogger";
 const logger = new RendererLogger();
 
+import mitt from 'mitt';
+const emitter = mitt();
+
 export default class BlockchainAPI {
 
     constructor(config) {
@@ -35,7 +38,7 @@ export default class BlockchainAPI {
                     return;
                 }
                 this._isConnectingInProgress = true;
-                this.emitter.emit(
+                emitter.emit(
                     'blockchainStatus',
                     {
                         chain: this._config.identifier,
@@ -55,7 +58,7 @@ export default class BlockchainAPI {
                 // check if we need to reconnect
                 if (this._needsReconnecting()) {
                     this._isConnectingInProgress = true;
-                    this.emitter.emit(
+                    emitter.emit(
                         'blockchainStatus',
                         {
                             chain: this._config.identifier,
@@ -107,7 +110,7 @@ export default class BlockchainAPI {
         this._isConnectedToNode = node;
         this._isConnected = true;
         this._isConnectingInProgress = false;
-        this.emitter.emit(
+        emitter.emit(
             'blockchainStatus',
             {
                 chain: this._config.identifier,
@@ -127,7 +130,7 @@ export default class BlockchainAPI {
         console.log(this._config.name + ": Failed to connect to " + node, error);
         this._isConnected = false;
         this._isConnectingInProgress = false;
-        this.emitter.emit(
+        emitter.emit(
             'blockchainStatus',
             {
                 chain: this._config.identifier,

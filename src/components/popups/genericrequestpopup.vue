@@ -1,7 +1,6 @@
 <script setup>
     import { ipcRenderer } from 'electron';
     import { ref, onMounted, onBeforeMount, inject } from "vue";
-    const emitter = inject('emitter');
 
     import { useI18n } from 'vue-i18n';
     const { t } = useI18n({ useScope: 'global' });

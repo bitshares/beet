@@ -5,10 +5,17 @@
     import {PrivateKey} from "bitsharesjs";
     import getBlockchain from "../../../lib/blockchains/blockchainFactory";
 
-    const props = defineProps(["selectedChain"]);
-    if (props.selectedChain !== "BTS") {
-        throw "Unsupported chain!";
-    }
+    const props = defineProps({
+      selectedChain: String
+    });
+
+    let selectedChain = ref(props.selectedChain);
+
+    onMounted(() => {
+      if (selectedChain.value !== "BTS") {
+          throw "Unsupported chain!";
+      }
+    })
 
     let accountname = ref("");
     let accountID = ref("");

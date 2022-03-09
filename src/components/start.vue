@@ -1,7 +1,10 @@
 <script setup>
     import { ref, onMounted, computed } from 'vue';
+    import {ipcRenderer} from 'electron';
+
     import { useI18n } from 'vue-i18n';
     const { t } = useI18n({ useScope: 'global' });
+
     import store from '../store/index';
     import router from '../router/index.js';
     import RendererLogger from "../lib/RendererLogger";
@@ -18,7 +21,6 @@
     let walletpass = ref("");
     let selectedWallet = ref(null);
     let passincorrect = ref("");
-    let errorMsg = ref("");
 
     onMounted(() => {
       logger.debug("Start screen mounted");
@@ -28,18 +30,17 @@
 
     function unlockWallet() {
         store
-            .dispatch("WalletStore/getWallet", {
-                wallet_id: selectedWallet.value.id,
-                wallet_pass: walletpass.value
-            })
-            .then(() => {
-                router.replace("/dashboard");
-            })
-            .catch(() => {
-                passincorrect.value = "is-invalid";
-                errorMsg.value = "Invalid Password.";
-                this.$refs.errorModal.show();
-            });
+        .dispatch("WalletStore/getWallet", {
+            wallet_id: selectedWallet.value.id,
+            wallet_pass: walletpass.value
+        })
+        .then(() => {
+            router.replace("/dashboard");
+        })
+        .catch(() => {
+            passincorrect.value = "is-invalid";
+            ipcRenderer.send("notify", 'An attempt to unlock the Beet wallet was made with an invalid password.');
+        });
     }
 </script>
 
@@ -76,11 +77,7 @@
                 {{ t('common.restore_cta') }}
               </ui-button>
             </router-link>
-
-            <span
-                v-if="hasWallet"
-                class="icon-account"
-            />
+            <ui-icon v-if="hasWallet">person_pin</ui-icon>
             <section :dir="null">
               <ui-select
                 v-if="hasWallet"
@@ -97,10 +94,7 @@
               </ui-select>
             </section>
             <br>
-            <span
-                v-if="hasWallet"
-                class="icon-lock1"
-            />
+            <ui-icon v-if="hasWallet">lock</ui-icon>
             <input
                 v-if="hasWallet"
                 id="inputPassword"
@@ -152,15 +146,6 @@
                 </div>
             </div>
         </div>
-        <b-modal
-            id="error"
-            ref="errorModal"
-            centered
-            hide-footer
-            title="Error"
-        >
-            {{ errorMsg }}
-        </b-modal>
         <p class="mt-2 mb-2 small">
             &copy; 2019-2022 BitShares
         </p>

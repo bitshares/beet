@@ -124,10 +124,7 @@
           ipcRenderer.send("modalError", true);
         }
 
-        //this.emitter.emit("tx-success", {msg: 'Transaction `transfer` successfully broadcast.', link: '' });
-
         // todo allowWhitelist move whitelisting to BeetAPI, thus return flag here
-        ipcRenderer.send("clickedAllow", true);
         _accept.value(
             {
                 response: result,
@@ -145,6 +142,9 @@
                 }
             );
         }
+
+        ipcRenderer.send("notify", 'Transaction `transfer` successfully broadcast.');
+        ipcRenderer.send("clickedAllow", true);
     }
 
     function _clickedDeny() {
@@ -157,11 +157,19 @@
     <br>
     <br>
     <pre class="text-left custom-content">
-      <code>
-        Recipient: {{ to }}
-        Amount: {{ toSend }}
-        {{ toSendFee != null ? "    Fee: " + toSendFee : "" }}
-      </code>
+      <span v-if="toSendFee">
+        <code>
+          Recipient: {{ to }}
+          Amount: {{ toSend }}
+          Fee: {{ toSendFee }}
+        </code>
+      </span>
+      <span v-else>
+        <code>
+          Recipient: {{ to }}
+          Amount: {{ toSend }}
+        </code>
+      </span>
     </pre>
     <ui-button raised @click="_clickedAllow">
         {{ t("operations.transfer.accept_btn") }}
