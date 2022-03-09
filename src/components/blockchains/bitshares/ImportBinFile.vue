@@ -1,5 +1,7 @@
 <script setup>
     import {ref, onMounted} from "vue";
+    import { ipcRenderer } from 'electron';
+
     import { useI18n } from 'vue-i18n';
     const { t } = useI18n({ useScope: 'global' });
     import getBlockchain from "../../../lib/blockchains/blockchainFactory";
@@ -12,7 +14,7 @@
     let selectedChain = ref(props.selectedChain);
 
     onMounted(() => {
-      if (selectedChain.value !== "BTS") {
+      if (!["BTS", "TUSC"].includes(selectedChain.value)) {
           throw "Unsupported chain!";
       }
     })
@@ -38,20 +40,21 @@
             };
         }
 
-        try {
-            let blockchain = getBlockchain(selectedChain.value);
-            // abstract UI concept more
-            let authorities = blockchain.getAccessType() == "account"
-                ? {
-                    active: this.activepk,
-                    memo: this.memopk,
-                    owner: this.includeOwner == 1 ? this.ownerpk : null
-                  }
-                : {
-                    active: this.activepk
-                  };
+        let blockchain = getBlockchain(selectedChain.value);
+        // abstract UI concept more
+        let authorities = blockchain.getAccessType() == "account"
+            ? {
+                active: this.activepk,
+                memo: this.memopk,
+                owner: this.includeOwner == 1 ? this.ownerpk : null
+              }
+            : {
+                active: this.activepk
+              };
 
-            let account = await blockchain.verifyAccount(accountname.value, authorities);
+        let account;
+        try {
+            account = await blockchain.verifyAccount(accountname.value, authorities);
 
             /*
               if (blockchain.getAccessType() == "account" && this.BTSImportType == 2){
@@ -65,13 +68,14 @@
                   }
               }
             */
-
-            accountID.value = account.id;
-        } catch (err) {
+        } catch (error) {
             accountID.value = "";
-            errorMsg.value = err.key ? t(`common.${err.key}`) : err.toString();
-            this.$refs.errorModal.show();
+            ipcRenderer.send(
+              "notify",
+              error.key ? t(`common.${error.key}`) : error.toString()
+            );
         }
+        accountID.value = account.id;
     }
 
     function handleWalletSelect(e) {
@@ -126,9 +130,6 @@
 
 <template>
     <div id="step2">
-        <h4 class="h4 mt-3 font-weight-bold">
-            {{ t('common.step_counter',{ step_no : 2}) }}
-        </h4>
         <template v-if="substep1">
             <p class="mb-2 font-weight-bold">
                 {{ t('common.Select your .bin backup file.') }}

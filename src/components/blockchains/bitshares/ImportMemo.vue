@@ -1,5 +1,5 @@
 <script setup>
-    import {ref} from "vue";
+    import {ref, onMounted} from "vue";
     import { useI18n } from 'vue-i18n';
     const { t } = useI18n({ useScope: 'global' });
     import getBlockchain from "../../../lib/blockchains/blockchainFactory";
@@ -57,9 +57,6 @@
 
 <template>
     <div id="step2">
-        <h4 class="h4 mt-3 font-weight-bold">
-            {{ t('common.step_counter',{ step_no : 2}) }}
-        </h4>
         <p class="mb-2 font-weight-bold">
             {{ t('common.account_name', { 'chain' : selectedChain}) }}
         </p>

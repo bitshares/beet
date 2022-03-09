@@ -1,5 +1,8 @@
 <script setup>
-    import { watch, ref, computed, onMounted } from "vue";
+    import { watch, ref, computed, onMounted, inject } from "vue";
+    import { ipcRenderer } from 'electron';
+    const emitter = inject('emitter');
+
     import { useI18n } from 'vue-i18n';
     const { t } = useI18n({ useScope: 'global' });
 
@@ -15,17 +18,22 @@
     const logger = new RendererLogger();
 
     let walletname = ref("");
-    //let accountname = ref("");
     let step = ref(1);
-    let stepMessage = computed(() = > {
-      return t('common.step_counter', {step_no : step});
-    })
+    let stepMessage = ref(t('common.step_counter', {step_no: 1}));
+
+    watch(step, async (newVal, oldVal) => {
+      if (newVal !== oldVal) {
+        stepMessage.value = t('common.step_counter', {step_no: newVal});
+      }
+    }, {immediate: true});
+
     let s1c = ref("");
-    //let includeOwner = ref(0);
-    //let errorMsg = ref("");
     let selectedChain = ref(0);
     let selectedImport = ref(0);
+
     let accounts_to_import = ref(null);
+    let import_accounts = ref(null);
+    let enterPassword = ref(null);
 
     onMounted(() => {
       logger.debug("Account-Add wizard Mounted");
@@ -102,11 +110,13 @@
         try {
             getBlockchain(selectedChain.value);
             // abstract UI concept more
-            // TODO: FIX BUG:
-            accounts_to_import.value = await this.$refs.import_accounts.getAccountEvent();
+            emitter.emit('getAccountEvent', true);
+            emitter.on('accounts_to_import', response => {
+              accounts_to_import.value = response;
+            })
+
             if (accounts_to_import.value != null) {
-                // if import accounts are filled, advance to next step. If not, it is a substep in the
-                // import component
+                // if import accounts are filled, advance to next step.
                 step.value = 3;
             }
         } catch (err) {
@@ -124,15 +134,14 @@
         } else {
             ipcRenderer.send("notify", err.toString());
         }
-        ipcRenderer.send("notify", errorMsg.value);
     }
 
     async function addAccounts() {
+        if (!accounts_to_import && !accounts_to_import.value) {
+          throw "No account selected!";
+        }
         try {
-            let password = this.$refs.enterPassword.getPassword(); // this.$refs doesn't work in vue3!
-            if (!accounts_to_import && !accounts_to_import.value) {
-              throw "No account selected!";
-            }
+            let password = enterPassword.value.getPassword();
 
             for (let i in accounts_to_import.value) {
                 let account = accounts_to_import.value[i];
@@ -149,8 +158,9 @@
                 }
             }
             router.replace("/");
-        } catch (err) {
-            _handleError(err);
+        } catch (error) {
+            console.log(error);
+            _handleError(error);
         }
     }
 </script>
@@ -158,10 +168,10 @@
 <template>
     <div class="bottom p-0">
         <div class="content px-3">
+            <h4 class="h4 mt-3 font-weight-bold">
+                {{ stepMessage }}
+            </h4>
             <div v-if="step == 1" id="step1">
-                <h4 class="h4 mt-3 font-weight-bold">
-                    {{ stepMessage }}
-                </h4>
                 <template v-if="createNewWallet">
                     <p
                         v-tooltip="t('common.tooltip_friendly_cta')"
@@ -253,10 +263,6 @@
                 </div>
             </div>
             <div v-else-if="step == 2" id="step2">
-                <h4 class="h4 mt-3 font-weight-bold">
-                    {{ stepMessage }}
-                </h4>
-
                 <ImportOptions
                     v-if="selectedImportOption"
                     ref="import_accounts"
@@ -286,9 +292,6 @@
                 </div>
             </div>
             <div v-else-if="step == 3" id="step3">
-                <h4 class="h4 mt-3 font-weight-bold">
-                    {{ stepMessage }}
-                </h4>
                 <EnterPassword
                     ref="enterPassword"
                     :get-new="createNewWallet"

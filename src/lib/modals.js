@@ -12,7 +12,7 @@ export function showAlert(request) {
     //alerts.value.push({ msg: alertmsg, id: uuidv4() });
 }
 
-export async function requestModal(request, title, ) {
+export async function requestModal(request) {
   // trigger pop up
   return new Promise((resolve, reject) => {
     ipcRenderer.send(

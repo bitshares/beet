@@ -47,7 +47,7 @@
     "@electron/remote": "^2.0.5",
     "@noble/ed25519": "^1.6.0",
     "@noble/secp256k1": "^1.5.5",
-    "balm-ui": "^9.42.2",
+    "balm-ui": "^9.42.3",
     "bitcoinjs-lib": "^6.0.1",
     "bitsharesjs": "^6.0.0",
     "crypto-js": "^4.1.1",
@@ -75,8 +75,8 @@
     "@soda/friendly-errors-webpack-plugin": "^1.8.1",
     "babel-eslint": "^10.0.3",
     "babel-loader": "^8.2.3",
-    "css-loader": "^6.7.0",
-    "electron": "^17.1.0",
+    "css-loader": "^6.7.1",
+    "electron": "^17.1.1",
     "electron-builder": "^22.14.13",
     "eslint": "^8.10.0",
     "eslint-plugin-vue": "^8.5.0",
@@ -94,6 +94,6 @@
   },
   "optionalDependencies": {
     "bufferutil": "^4.0.6",
-    "utf-8-validate": "^5.0.8"
+    "utf-8-validate": "^5.0.9"
   }
 }

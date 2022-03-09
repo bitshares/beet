@@ -1,5 +1,5 @@
 <script setup>
-    import { ref } from "vue";
+    import { ref, onMounted } from "vue";
     import { useI18n } from 'vue-i18n';
     const { t } = useI18n({ useScope: 'global' });
     import getBlockchain from "../../../lib/blockchains/blockchainFactory";
@@ -8,27 +8,27 @@
       selectedChain: String
     });
 
-    let selectedChain = props.selectedChain;
+    let selectedChain = ref(props.selectedChain);
     let address = ref("");
     let activepk = ref("");
     let requiredFields = ref(null);
 
     onMounted(() => {
       // onmount/compute the following?
-      let blockchain = getBlockchain(props.selectedChain);
+      let blockchain = getBlockchain(selectedChain.value);
       requiredFields.value = blockchain.getSignUpInput();
     });
 
     async function _verifyAccount() {
-        if (address.value == "") {
+        if (!address || !address.value || address.value == "") {
             throw {
                 key: "missing_account_error",
                 args: {
-                    chain: props.selectedChain
+                    chain: selectedChain.value
                 }
             };
         }
-        let blockchain = getBlockchain(props.selectedChain);
+        let blockchain = getBlockchain(selectedChain.value);
         let authorities = {};
         if (requiredFields.value.active != null) {
             authorities.active = activepk.value;
@@ -46,7 +46,7 @@
             account: {
                 accountName: address.value,
                 accountID: account.id,
-                chain: props.selectedChain,
+                chain: selectedChain.value,
                 keys: authorities
             }
         };
@@ -64,9 +64,6 @@
 
 <template>
     <div id="step2">
-        <h4 class="h4 mt-3 font-weight-bold">
-            {{ t('common.step_counter',{ step_no : 2}) }}
-        </h4>
         <p class="mb-2 font-weight-bold">
             {{ t('common.address_name', { 'chain' : selectedChain}) }}
         </p>

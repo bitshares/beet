@@ -75,13 +75,13 @@ body {
         line-height: 2rem;
 
         .title {
-            width: calc(100% - 10rem);
             margin: auto;
             -webkit-app-region: drag;
         }
 
         .frame-controls {
             font-size: 0.6rem;
+            background: $dark;
             position: fixed;
             right: 0;
             top: 0;

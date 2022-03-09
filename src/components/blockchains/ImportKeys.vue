@@ -69,9 +69,6 @@
 
 <template>
     <div id="step2">
-        <h4 class="h4 mt-3 font-weight-bold">
-            {{ t('common.step_counter',{ step_no : 2}) }}
-        </h4>
         <p class="mb-2 font-weight-bold">
             {{ t(accessType == 'account' ? 'common.account_name' : 'common.address_name', { 'chain' : selectedChain}) }}
         </p>

@@ -1,14 +1,19 @@
 <script setup>
+    import {ref} from 'vue';
     import ImportCloudPass from "./bitshares/ImportCloudPass";
     import ImportBinFile from "./bitshares/ImportBinFile";
     import ImportMemo from "./bitshares/ImportMemo";
     import ImportKeys from "./ImportKeys";
     import ImportAddressBased from "./address/ImportAddressBased";
 
-    const selectedChain = defineProps(["chain", "type"]);
+    const props = defineProps({
+      chain: String,
+      type: String
+    });
 
+    let chosen_import = ref(null);
     function getAccountEvent() {
-        return this.$refs.chosen_import.getAccountEvent();
+        return chosen_import.getAccountEvent();
     }
 </script>
 

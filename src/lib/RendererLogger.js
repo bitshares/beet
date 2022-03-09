@@ -1,6 +1,4 @@
-import {
-    ipcRenderer,
-} from 'electron';
+import {ipcRenderer} from 'electron';
 import util from 'util';
 
 class RendererLogger {
@@ -51,13 +49,13 @@ class RendererLogger {
         })
     }
     serialize(obj) {
-            
+
             return util.inspect(obj, {
                 compact: true,
                 breakLength: 80,
                 depth: 3
             })
-        
+
     }
 }
 export default  RendererLogger;

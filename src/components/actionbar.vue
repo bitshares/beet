@@ -1,5 +1,5 @@
 <script setup>
-    import { onMounted } from "vue";
+    import { onMounted, inject } from "vue";
     import { useRouter, useRoute } from 'vue-router'
     import router from '../router/index.js';
     const route = useRoute()
@@ -38,7 +38,7 @@
                 :class="{active: route.path == '/dashboard'}"
                 replace
             >
-              <ui-icon>query_stats</ui-icon>
+              <ui-icon>⚙</ui-icon>
             </router-link>
             <router-link
                 to="/add-account"

@@ -1,5 +1,5 @@
 <script setup>
-    import {ref} from "vue";
+    import {ref, onMounted} from "vue";
     import { useI18n } from 'vue-i18n';
     const { t } = useI18n({ useScope: 'global' });
     import {PrivateKey} from "bitsharesjs";
@@ -12,7 +12,7 @@
     let selectedChain = ref(props.selectedChain);
 
     onMounted(() => {
-      if (selectedChain.value !== "BTS") {
+      if (!["BTS", "TUSC"].includes(selectedChain.value)) {
           throw "Unsupported chain!";
       }
     })
@@ -20,43 +20,6 @@
     let accountname = ref("");
     let accountID = ref("");
     let bitshares_cloud_login_password = ref("");
-
-    async function _verifyAccount() {
-        if (accountname.value == "") {
-            throw {
-                key: "missing_account_error",
-                args: {
-                    chain: props.selectedChain
-                }
-            };
-        }
-
-        if (bitshares_cloud_login_password.value == "") {
-            throw {
-                key: "empty_pass_error"
-            };
-        }
-
-        let blockchain = getBlockchain(props.selectedChain);
-        // abstract UI concept more
-        let authorities = this.getAuthoritiesFromPass(bitshares_cloud_login_password.value);
-        let account = null;
-        try {
-            account = await blockchain.verifyAccount(accountname.value, authorities);
-        } catch (e) {
-            authorities = this.getAuthoritiesFromPass(bitshares_cloud_login_password.value, true);
-            account = await blockchain.verifyAccount(accountname.value, authorities);
-            //TODO: Should notify user of legacy/dangerous permissions (active==memo)
-        }
-        return {
-            account: {
-                accountName: accountname.value,
-                accountID: account.id,
-                chain: props.selectedChain,
-                keys: authorities
-            }
-        };
-    }
 
     function getAuthoritiesFromPass(password, legacy=false) {
         let active_seed = accountname.value + 'active' + password;
@@ -77,6 +40,43 @@
         }
     }
 
+    async function _verifyAccount() {
+        if (accountname.value == "") {
+            throw {
+                key: "missing_account_error",
+                args: {
+                    chain: props.selectedChain
+                }
+            };
+        }
+
+        if (bitshares_cloud_login_password.value == "") {
+            throw {
+                key: "empty_pass_error"
+            };
+        }
+
+        let blockchain = getBlockchain(props.selectedChain);
+        // abstract UI concept more
+        let authorities = getAuthoritiesFromPass(bitshares_cloud_login_password.value);
+        let account = null;
+        try {
+            account = await blockchain.verifyAccount(accountname.value, authorities);
+        } catch (e) {
+            authorities = getAuthoritiesFromPass(bitshares_cloud_login_password.value, true);
+            account = await blockchain.verifyAccount(accountname.value, authorities);
+            //TODO: Should notify user of legacy/dangerous permissions (active==memo)
+        }
+        return {
+            account: {
+                accountName: accountname.value,
+                accountID: account.id,
+                chain: props.selectedChain,
+                keys: authorities
+            }
+        };
+    }
+
     async function getAccountEvent() {
         let account = await _verifyAccount();
         if (accountID.value !== null) {
@@ -90,9 +90,6 @@
 
 <template>
     <div id="step2">
-        <h4 class="h4 mt-3 font-weight-bold">
-            {{ t('common.step_counter', { step_no : 2}) }}
-        </h4>
         <p class="mb-2 font-weight-bold">
             {{ t('common.account_name', { 'chain' : selectedChain}) }}
         </p>

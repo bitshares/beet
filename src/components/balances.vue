@@ -1,5 +1,5 @@
 <script setup>
-    import { watch, ref, computed, onMounted } from "vue";
+    import { watch, ref, computed, onMounted, inject } from "vue";
     const emitter = inject('emitter');
     import { useI18n } from 'vue-i18n';
     const { t } = useI18n({ useScope: 'global' });
@@ -44,9 +44,13 @@
           newAcc.accountID != oldAcc.accountID
       ) {
           await getBalances();
-          this.emitter.emit("balances", "loaded");
+          //emitter.emit("balances", "loaded"); // necessary?
       }
     },{immediate:true});
+
+    emitter.on('getBalances', async args => {
+      await getBalances();
+    });
 
     async function getBalances() {
         let blockchain;

@@ -8,7 +8,7 @@
     import store from '../store/index';
 
     const props = defineProps({
-        value: Object,
+        selectedAccount: Object,
         chain: String,
         cta: String,
         extraclass: String,
@@ -19,8 +19,6 @@
             }
         }
     });
-
-    let selectedAccount = ref(props.value);
 
     let accounts = computed(() => {
       let computedAccounts = props.chain == "ANY" || props.chain == null
@@ -59,11 +57,13 @@
         }
     }
 
+    /*
     watchEffect(() => {
       if (selectedAccount.value != { trackId: 0 }) {
           this.$emit("input", selectedAccount.value);
       }
     });
+    */
 
     watchEffect(() => {
       if (accounts.value.length == 1) {
@@ -73,11 +73,6 @@
           selectedAccount.value = accounts.value[1];
       }
     });
-
-    watchEffect(() => {
-      selectedAccount.value = props.value;
-    });
-
 </script>
 
 <template>
