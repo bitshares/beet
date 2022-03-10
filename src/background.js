@@ -16,6 +16,7 @@ import {
   Tray,
   dialog,
   ipcMain,
+  ipcRenderer,
   Notification
 } from 'electron';
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
@@ -26,6 +27,7 @@ import aes from "crypto-js/aes.js";
 import ENC from 'crypto-js/enc-utf8.js';
 import * as ed from '@noble/ed25519';
 
+import store from './store/index';
 import Logger from '~/lib/Logger';
 import context_menu from '~/lib/electron_context_menu';
 import {initApplicationMenu} from '~/lib/applicationMenu';
@@ -173,16 +175,19 @@ const createWindow = async () => {
       }
   ]);
   tray.setToolTip('Beet');
+
   tray.on('right-click', (event, bounds) => {
       tray.popUpContextMenu(contextMenu);
   });
 
   // Open the DevTools.
+  /*
   if (isDevMode) {
     installExtension(VUEJS_DEVTOOLS).then(() => {
         mainWindow.webContents.openDevTools();
     });
   }
+  */
 
   // Emitted when the window is closed.
   mainWindow.on('closed', () => {
@@ -395,15 +400,58 @@ app.disableHardwareAcceleration();
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', function() {
+app.on('ready', async () => {
     createWindow();
+    const emitter = mitt();
     let template = [
+      {
+        label: 'Window',
+        submenu: [
+          {
+            label: 'Send to tray',
+            click() {
+              minimised = true;
+              mainWindow.minimize();
+            }
+          }
+        ]
+      },
       {
         label: 'View',
         submenu: [
           { label: 'Reload', role: 'reload' },
-          { label: 'Force reload', role: 'forceReload' },
           { label: 'Dev tools', role: 'toggleDevTools' }
+        ]
+      },
+      {
+        label: 'Language',
+        submenu: [
+          {
+            label:'English',
+            async click() {
+                try {
+                  await store.dispatch(
+                    "SettingsStore/setLocale",
+                    {locale: {iso: 'en', name: 'English', dir: 'ltr'}}
+                  );
+                } catch (error) {
+                  console.log(error)
+                }
+            }
+          },
+          {
+            label:'German',
+            async click() {
+              try {
+                await store.dispatch(
+                  "SettingsStore/setLocale",
+                  {locale: {iso: 'de', name: 'German', dir: 'ltr'}}
+                );
+              } catch (error) {
+                console.log(error)
+              }
+            }
+          }
         ]
       }
     ];

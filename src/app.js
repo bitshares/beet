@@ -27,6 +27,7 @@ window.onerror = function (msg, url, lineNo, columnNo, error) {
   console.log(error);
   return false;
 };
+
 process.on('unhandledRejection', (reason, p) => {
   console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
   // application specific logging, throwing an error, or other logic here
@@ -58,7 +59,7 @@ emitter.on("main", (data) => {
 });
 */
 
-app.config.devtools = true;
+//app.config.devtools = true;
 app.config.errorHandler = function (err, vm, info) {
   logger.error(err, vm, info);
   console.log("error");
@@ -74,3 +75,8 @@ app.use(store);
 app.mount('#app');
 
 BeetServer.initialize(app, 60555);
+emitter.on('i18n', (data) => {
+  console.log(data)
+  i18n.global.locale = data;
+  console.log(i18n.global.locale)
+});

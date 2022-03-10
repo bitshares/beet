@@ -64,6 +64,7 @@ body {
     .top {
         padding: 15px;
         background: $dark;
+        text-align: center;
         color: white;
         position: relative;
     }
@@ -102,12 +103,16 @@ body {
         padding: 15px;
         padding-top: 0;
         padding-bottom: 0;
+        text-align: center;
         color: #222222;
         background: white;
         display: flex;
         flex-direction: column;
         height: 100%;
         justify-content: space-between;
+        a {
+          text-decoration: none;
+        }
     }
 }
 

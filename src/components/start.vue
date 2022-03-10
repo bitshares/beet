@@ -58,7 +58,7 @@
                 to="/create"
                 replace
             >
-              <ui-button outlined>
+              <ui-button raised>
                 {{ t('common.start_cta') }}
               </ui-button>
             </router-link>
@@ -73,7 +73,7 @@
                 to="/restore"
                 replace
             >
-              <ui-button outlined>
+              <ui-button raised>
                 {{ t('common.restore_cta') }}
               </ui-button>
             </router-link>

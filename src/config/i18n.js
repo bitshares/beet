@@ -4,10 +4,10 @@ let localeList = [{
         dir: 'ltr',
     },
     {
-            iso: 'de',
-            name: 'ger',
-            dir: 'ltr',
-        }
+        iso: 'de',
+        name: 'German',
+        dir: 'ltr',
+    }
     //,
     // {
     //    iso: 'de',
