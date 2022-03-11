@@ -240,27 +240,22 @@
                         </option>
                     </select>
                 </div>
-                <div class="row">
-                    <div class="col-6">
-                        <router-link
-                            :to="createNewWallet ? '/' : '/dashboard'"
-                            tag="button"
-                            class="btn btn-lg btn-secondary btn-block"
-                            replace
-                        >
-                            {{ t('common.cancel_btn') }}
-                        </router-link>
-                    </div>
-                    <div class="col-6">
-                        <button
-                            class="btn btn-lg btn-primary btn-block"
-                            type="submit"
-                            @click="step2"
-                        >
-                            {{ t('common.next_btn') }}
-                        </button>
-                    </div>
-                </div>
+                <ui-grid>
+                    <ui-grid-cell columns="12">
+                          <router-link
+                              :to="createNewWallet ? '/' : '/dashboard'"
+                              replace
+                          >
+                              <ui-button outlined class="step_btn">
+                                  {{ t('common.cancel_btn') }}
+                              </ui-button>
+                          </router-link>
+
+                          <ui-button raised class="step_btn" type="submit" @click="step2">
+                              {{ t('common.next_btn') }}
+                          </ui-button>
+                    </ui-grid-cell>
+                </ui-grid>
             </div>
             <div v-else-if="step == 2" id="step2">
                 <ImportOptions
@@ -270,26 +265,16 @@
                     :type="selectedImportOption.type"
                 />
 
-                <div class="row">
-                    <div class="col-6">
-                        <button
-                            class="btn btn-lg btn-secondary btn-block"
-                            type="submit"
-                            @click="step1"
-                        >
-                            {{ t('common.back_btn') }}
-                        </button>
-                    </div>
-                    <div class="col-6">
-                        <button
-                            class="btn btn-lg btn-primary btn-block"
-                            type="submit"
-                            @click="step3"
-                        >
-                            {{ t('common.next_btn') }}
-                        </button>
-                    </div>
-                </div>
+                <ui-grid>
+                    <ui-grid-cell columns="12">
+                          <ui-button outlined class="step_btn" @click="step1">
+                              {{ t('common.back_btn') }}
+                          </ui-button>
+                          <ui-button raised class="step_btn" type="submit" @click="step3">
+                              {{ t('common.next_btn') }}
+                          </ui-button>
+                    </ui-grid-cell>
+                </ui-grid>
             </div>
             <div v-else-if="step == 3" id="step3">
                 <EnterPassword

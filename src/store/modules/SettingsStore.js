@@ -19,9 +19,8 @@ const actions = {
         commit
     }) {
         return new Promise(async (resolve, reject) => {
-            let settings;
             try {
-                settings = await BeetDB.settings.get();
+                let settings = localStorage.getItem("settings");
 
                 if (settings && settings.length > 0) {
                     commit(LOAD_SETTINGS, JSON.parse(settings));
@@ -42,7 +41,7 @@ const actions = {
         return new Promise(async (resolve, reject) => {
               let settings;
               try {
-                  settings = await BeetDB.settings.get({id: payload.wallet_id});
+                  settings = localStorage.getItem("settings");
               } catch (error) {
                   console.log(error)
                   reject(error);
@@ -53,14 +52,7 @@ const actions = {
                   settings.selected_node = {}
               }
               settings.selected_node[payload.chain] = payload.node;
-
-              try {
-                await BeetDB.settings.set(settings);
-              } catch (error) {
-                console.log(error)
-                reject(error);
-              }
-
+              localStorage.setItem("settings", JSON.stringify(settings));
               commit(LOAD_SETTINGS, settings);
               resolve();
         });
@@ -71,7 +63,7 @@ const actions = {
         return new Promise(async (resolve, reject) => {
             let settings;
             try {
-                settings = await BeetDB.settings.get({id: payload.wallet_id});
+                settings = localStorage.getItem("settings");
             } catch (error) {
                 console.log(error)
                 reject(error);
@@ -83,16 +75,8 @@ const actions = {
             } else if (!settings && initialState.settings) {
               settings = initialState.settings;
             }
-
             settings.locale = payload.locale;
-
-            try {
-              await BeetDB.settings.set(settings);
-            } catch (error) {
-              console.log(error)
-              reject(error);
-            }
-
+            localStorage.setItem("settings", JSON.stringify(settings));
             commit(LOAD_SETTINGS, settings);
             resolve();
         });

@@ -84,20 +84,20 @@
                 :placeholder="t('common.password_placeholder')"
                 required
             >
-            <ui-grid class="container-fluid">
-              <ui-grid-cell class="largeHeader" columns="6">
-                <router-link to="/" replace>
-                  <ui-button outlined>
-                    {{ t('common.cancel_btn') }}
-                  </ui-button>
-                </router-link>
-              </ui-grid-cell>
-              <ui-grid-cell class="largeHeader" columns="6">
-                <ui-button outlined @click="restore">
-                    {{ t('common.restore_go_cta') }}
-                </ui-button>
-              </ui-grid-cell>
+
+            <ui-grid>
+                <ui-grid-cell columns="12">
+                      <router-link to="/" replace>
+                          <ui-button outlined class="step_btn">
+                              {{ t('common.cancel_btn') }}
+                          </ui-button>
+                      </router-link>
+                      <ui-button raised class="step_btn" type="submit" @click="restore">
+                          {{ t('common.restore_go_cta') }}
+                      </ui-button>
+                </ui-grid-cell>
             </ui-grid>
+
         </div>
     </div>
 </template>

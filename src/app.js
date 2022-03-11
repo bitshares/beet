@@ -49,17 +49,6 @@ const emitter = mitt();
 const app = createApp({});
 app.provide('emitter', emitter);
 
-/*
-ipcRenderer.on('eventbus', (event,data)=> {
-  emitter.emit(data.method, data.payload);
-});
-
-emitter.on("main", (data) => {
-    ipcRenderer.send(data.method, data.payload);
-});
-*/
-
-//app.config.devtools = true;
 app.config.errorHandler = function (err, vm, info) {
   logger.error(err, vm, info);
   console.log("error");
@@ -75,6 +64,7 @@ app.use(store);
 app.mount('#app');
 
 BeetServer.initialize(app, 60555);
+
 emitter.on('i18n', (data) => {
   console.log(data)
   i18n.global.locale = data;

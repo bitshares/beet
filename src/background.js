@@ -19,7 +19,7 @@ import {
   ipcRenderer,
   Notification
 } from 'electron';
-import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
+//import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
 import mitt from 'mitt';
 
 import sha256 from "crypto-js/sha256.js";
@@ -50,13 +50,6 @@ const logger = new Logger(isDevMode ? 3 : 0);
 let first = true;
 let tray = null;
 let minimised = false;
-
-/*
-if (env.name !== "production") {
-  const userDataPath = app.getPath("userData");
-  //app.setPath("userData", `${userDataPath} (${env.name})`);
-}
-*/
 
 const createModal = async (args) => {
   let modalHeight = 400;
@@ -149,7 +142,7 @@ const createWindow = async () => {
       icon: __dirname + '/img/beet-taskbar.png'
   });
 
-  initApplicationMenu();
+  initApplicationMenu(mainWindow);
   mainWindow.loadURL(
     url.format({
       pathname: path.join(__dirname, "index.html"),
@@ -213,7 +206,7 @@ const createWindow = async () => {
         return getBackup(accounts)
         .then(result => {
           if (result) {
-              fs.writeFileSync(userChosenPath,backup);
+              fs.writeFileSync(userChosenPath, backup);
           }
         })
     }
@@ -226,15 +219,6 @@ const createWindow = async () => {
     }
     console.log('Error: More than one popup cannot exist.');
   })
-
-  ipcMain.on('openDebug', (event, arg) => {
-      mainWindow.webContents.openDevTools();
-  });
-
-  ipcMain.on('minimise', (event, arg) => {
-      minimised = true;
-      mainWindow.minimize();
-  });
 
   ipcMain.on('close', (event, arg) => {
       if (first) {
@@ -402,61 +386,6 @@ app.disableHardwareAcceleration();
 // Some APIs can only be used after this event occurs.
 app.on('ready', async () => {
     createWindow();
-    const emitter = mitt();
-    let template = [
-      {
-        label: 'Window',
-        submenu: [
-          {
-            label: 'Send to tray',
-            click() {
-              minimised = true;
-              mainWindow.minimize();
-            }
-          }
-        ]
-      },
-      {
-        label: 'View',
-        submenu: [
-          { label: 'Reload', role: 'reload' },
-          { label: 'Dev tools', role: 'toggleDevTools' }
-        ]
-      },
-      {
-        label: 'Language',
-        submenu: [
-          {
-            label:'English',
-            async click() {
-                try {
-                  await store.dispatch(
-                    "SettingsStore/setLocale",
-                    {locale: {iso: 'en', name: 'English', dir: 'ltr'}}
-                  );
-                } catch (error) {
-                  console.log(error)
-                }
-            }
-          },
-          {
-            label:'German',
-            async click() {
-              try {
-                await store.dispatch(
-                  "SettingsStore/setLocale",
-                  {locale: {iso: 'de', name: 'German', dir: 'ltr'}}
-                );
-              } catch (error) {
-                console.log(error)
-              }
-            }
-          }
-        ]
-      }
-    ];
-    const menu = Menu.buildFromTemplate(template);
-    Menu.setApplicationMenu(menu);
 });
 
 // Quit when all windows are closed.
@@ -475,3 +404,18 @@ app.on('activate', () => {
       createWindow();
   }
 });
+/*
+export function sendToTray() {
+  minimised = true;
+  mainWindow.minimize();
+}
+
+export function producePopup(args) {
+  // create popup modal window
+  if (!modalWindow) {
+    createModal(args);
+  } else {
+    console.log('Error: More than one popup cannot exist.');
+  }
+}
+*/

@@ -1,46 +1,27 @@
-import {app, Menu,} from 'electron';
+import {app, Menu} from 'electron';
+//import {sendToTray} from '../background';
 
-export function initApplicationMenu() {
-    if (process.platform !== 'darwin') return;
+/**
+ * For configuring the electron window menu
+ * @parameter {BrowserWindow} mainWindow
+ *
+ */
+export function initApplicationMenu(mainWindow) {
     const template = [
-        {
-            label: app.getName(),
-            submenu: [
-                {role: 'about'},
-                {type: 'separator'},
-                {role: 'hide'},
-                {role: 'hideothers'},
-                {role: 'unhide'},
-                {type: 'separator'},
-                {role: 'quit'}
-            ]
-        },
-        {
-            label: 'Edit',
-            submenu: [
-                {role: 'undo'},
-                {role: 'redo'},
-                {type: 'separator'},
-                {role: 'cut'},
-                {role: 'copy'},
-                {role: 'paste'},
-                {role: 'delete'},
-                {role: 'selectall'}
-            ]
-        },
-        {
-            role: 'window',
-            submenu: [
-
-                {role: 'close'},
-                {role: 'minimize'},
-                {role: 'zoom'},
-                {type: 'separator'},
-                {role: 'front'},
-            ]
-        }
+      {
+        label: 'View',
+        submenu: [
+          {
+            label: 'Send to tray',
+            click() {
+              mainWindow.minimize();
+            }
+          },
+          { label: 'Reload', role: 'reload' },
+          { label: 'Dev tools', role: 'toggleDevTools' }
+        ]
+      }
     ];
-
     const menu = Menu.buildFromTemplate(template);
     Menu.setApplicationMenu(menu);
 }
