@@ -1,20 +1,19 @@
 <script setup>
-    import {ref, onMounted} from "vue";
+    import {ref, onMounted, inject} from "vue";
+    const emitter = inject('emitter');
     import { ipcRenderer } from 'electron';
 
     import { useI18n } from 'vue-i18n';
     const { t } = useI18n({ useScope: 'global' });
-    import getBlockchain from "../../../lib/blockchains/blockchainFactory";
+    import getBlockchainAPI from "../../../lib/blockchains/blockchainFactory";
     import BTSWalletHandler from "../../../lib/blockchains/bitshares/BTSWalletHandler";
 
     const props = defineProps({
-      selectedChain: String
+      chain: String
     });
 
-    let selectedChain = ref(props.selectedChain);
-
     onMounted(() => {
-      if (!["BTS", "TUSC"].includes(selectedChain.value)) {
+      if (!["BTS", "TUSC"].includes(props.chain)) {
           throw "Unsupported chain!";
       }
     })
@@ -35,12 +34,12 @@
             throw {
                 key: "missing_account_error",
                 args: {
-                    chain: selectedChain.value
+                    chain: props.chain
                 }
             };
         }
 
-        let blockchain = getBlockchain(selectedChain.value);
+        let blockchain = getBlockchainAPI(props.chain);
         // abstract UI concept more
         let authorities = blockchain.getAccessType() == "account"
             ? {
@@ -111,7 +110,7 @@
                 account: {
                     accountName: account.name,
                     accountID: account.id,
-                    chain: selectedChain.value,
+                    chain: props.chain,
                     keys: {
                         active: account.active.key,
                         owner: account.owner.key,
@@ -123,7 +122,11 @@
         return accounts;
     }
 
-    async function getAccountEvent() {
+    function back() {
+      // emit back
+    }
+
+    async function next() {
       return substep1.value ? await _decryptBackup() : _getPickedAccounts();
     }
 </script>
@@ -220,6 +223,18 @@
                     </tr>
                     </tbody>
                 </table>
+
+                <ui-grid>
+                    <ui-grid-cell columns="12">
+                          <ui-button outlined class="step_btn" @click="back">
+                              {{ t('common.back_btn') }}
+                          </ui-button>
+
+                          <ui-button raised class="step_btn" type="submit" @click="next">
+                              {{ t('common.next_btn') }}
+                          </ui-button>
+                    </ui-grid-cell>
+                </ui-grid>
             </div>
             <!--<button-->
                 <!--v-if="picked.length>10"-->

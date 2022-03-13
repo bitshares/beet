@@ -58,7 +58,7 @@
     "unlock_with_password_cta": "Unlock your wallet to add the account(s):",
     "confirm_cta": "Confirm password:",
     "confirm_placeholder": "Confirm password",
-    "empty_wallet_error": "Can not create a wallet with an empty name.",
+    "empty_wallet_error": "Can't create a wallet without a name.",
     "duplicate_wallet_error": "A wallet with this name already exists.",
     "missing_account_error": "You must specify your {chain} account name.",
     "invalid_key_error": "Invalid Private key format.",

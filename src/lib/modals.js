@@ -1,5 +1,5 @@
 import store from '../store/index.js';
-import getBlockchain from "./blockchains/blockchainFactory";
+import getBlockchainAPI from "./blockchains/blockchainFactory";
 import { ipcRenderer } from 'electron';
 
 export function showAlert(request) {
@@ -29,7 +29,7 @@ export async function requestModal(request) {
 
 export async function requestVote(payload) {
     payload.action = "vote";
-    let blockchain = getBlockchain(payload.chain);
+    let blockchain = getBlockchainAPI(payload.chain);
     let mappedData;
     try {
       mappedData = await blockchain.mapOperationData(payload);
@@ -103,7 +103,7 @@ export function verifyMessage(payload) {
             payload_dict.from = payload_list[1];
         }
 
-        let blockchain = getBlockchain(
+        let blockchain = getBlockchainAPI(
           payload_dict.chain
             ? messageChain = payload_dict.chain
             : messageChain = payload_dict.key.substr(0, 3)

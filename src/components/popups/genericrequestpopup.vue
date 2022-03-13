@@ -4,7 +4,7 @@
 
     import { useI18n } from 'vue-i18n';
     const { t } = useI18n({ useScope: 'global' });
-    import getBlockchain from "../../lib/blockchains/blockchainFactory";
+    import getBlockchainAPI from "../../lib/blockchains/blockchainFactory";
     import {getKey} from '../../lib/SecureRemote';
     import store from '../store/index';
 
@@ -54,7 +54,7 @@
             return incoming.value.acceptCall();
         }
 
-        let blockchain = getBlockchain(incoming.value.chain);
+        let blockchain = getBlockchainAPI(incoming.value.chain);
         let operation;
         try {
           operation = await blockchain.getOperation(incoming.value, _getLinkedAccount());

@@ -5,7 +5,7 @@
     const { t } = useI18n({ useScope: 'global' });
     import store from '../store/index';
     import RendererLogger from "../../lib/RendererLogger";
-    import getBlockchain from "../../lib/blockchains/blockchainFactory";
+    import getBlockchainAPI from "../../lib/blockchains/blockchainFactory";
     import {getKey} from '../../lib/SecureRemote';
     import {formatChain} from "../../lib/formatter";
     const logger = new RendererLogger();
@@ -33,7 +33,7 @@
       logger.debug("Tx Popup initialised");
       store.dispatch("WalletStore/notifyUser", {notify: "request", message: "request"});
 
-      let blockchain = getBlockchain(incoming.value.chain);
+      let blockchain = getBlockchainAPI(incoming.value.chain);
       let visualizedParams;
       try {
         visualizedParams = await blockchain.visualize(incoming.value.params);
@@ -59,7 +59,7 @@
     });
 
     async function _clickedAllow() {
-        let blockchain = getBlockchain(incoming.value.chain);
+        let blockchain = getBlockchainAPI(incoming.value.chain);
         let txType = incoming.value.params[0];
         let result;
         if (txType == "sign") {

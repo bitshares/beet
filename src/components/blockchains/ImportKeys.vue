@@ -1,10 +1,13 @@
 <script setup>
-    import { ref } from "vue";
+    import {ref, onMounted, inject} from "vue";
+    const emitter = inject('emitter');
     import { useI18n } from 'vue-i18n';
     const { t } = useI18n({ useScope: 'global' });
-    import getBlockchain from "../../lib/blockchains/blockchainFactory";
+    import getBlockchainAPI from "../../lib/blockchains/blockchainFactory";
 
-    const selectedChain = defineProps(["selectedChain"]);
+    const props = defineProps({
+      chain: String
+    });
 
     let accountname = ref("");
     let activepk = ref("");
@@ -15,7 +18,7 @@
     let requiredFields = ref(null);
 
     // onMount/compute the following?
-    let blockchain = getBlockchain(props.selectedChain);
+    let blockchain = getBlockchainAPI(props.chain);
     accessType.value = blockchain.getAccessType();
     requiredFields.value = blockchain.getSignUpInput();
 
@@ -24,11 +27,11 @@
             return {
                 key: "missing_account_error",
                 args: {
-                    chain: props.selectedChain
+                    chain: props.chain
                 }
             };
         }
-        let blockchain = getBlockchain(props.selectedChain);
+        let blockchain = getBlockchainAPI(props.chain);
         let authorities = {};
         if (requiredFields.value.active != null) {
             authorities.active = activepk.value;
@@ -51,14 +54,19 @@
             account: {
                 accountName: accountname.value,
                 accountID: account.id,
-                chain: props.selectedChain,
+                chain: props.chain,
                 keys: authorities
             }
         };
     }
 
-    async function getAccountEvent() {
+    function back() {
+      // emit back
+    }
+
+    async function next() {
         let account = await _verifyAccount();
+
         if (account.accountID !== null) {
             return [account];
         } else {
@@ -70,14 +78,14 @@
 <template>
     <div id="step2">
         <p class="mb-2 font-weight-bold">
-            {{ t(accessType == 'account' ? 'common.account_name' : 'common.address_name', { 'chain' : selectedChain}) }}
+            {{ t(accessType == 'account' ? 'common.account_name' : 'common.address_name', { 'chain' : chain}) }}
         </p>
         <input
             id="inputAccount"
             v-model="accountname"
             type="text"
             class="form-control mb-3"
-            :placeholder="t(accessType == 'account' ? 'common.account_name' : 'common.address_name', { 'chain' : selectedChain})"
+            :placeholder="t(accessType == 'account' ? 'common.account_name' : 'common.address_name', { 'chain' : chain})"
             required
         >
         <p class="my-3 font-weight-normal">
@@ -130,6 +138,18 @@
                 >
             </div>
         </template>
+
+        <ui-grid>
+            <ui-grid-cell columns="12">
+                  <ui-button outlined class="step_btn" @click="back">
+                      {{ t('common.back_btn') }}
+                  </ui-button>
+
+                  <ui-button raised class="step_btn" type="submit" @click="next">
+                      {{ t('common.next_btn') }}
+                  </ui-button>
+            </ui-grid-cell>
+        </ui-grid>
     </div>
 
 </template>

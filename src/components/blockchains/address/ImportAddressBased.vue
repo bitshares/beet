@@ -1,21 +1,21 @@
 <script setup>
-    import { ref, onMounted } from "vue";
+    import {ref, onMounted, inject} from "vue";
+    const emitter = inject('emitter');
     import { useI18n } from 'vue-i18n';
     const { t } = useI18n({ useScope: 'global' });
-    import getBlockchain from "../../../lib/blockchains/blockchainFactory";
+    import getBlockchainAPI from "../../../lib/blockchains/blockchainFactory";
 
     const props = defineProps({
-      selectedChain: String
+      chain: String
     });
 
-    let selectedChain = ref(props.selectedChain);
     let address = ref("");
     let activepk = ref("");
     let requiredFields = ref(null);
 
     onMounted(() => {
       // onmount/compute the following?
-      let blockchain = getBlockchain(selectedChain.value);
+      let blockchain = getBlockchainAPI(props.chain);
       requiredFields.value = blockchain.getSignUpInput();
     });
 
@@ -24,11 +24,11 @@
             throw {
                 key: "missing_account_error",
                 args: {
-                    chain: selectedChain.value
+                    chain: props.chain
                 }
             };
         }
-        let blockchain = getBlockchain(selectedChain.value);
+        let blockchain = getBlockchainAPI(props.chain);
         let authorities = {};
         if (requiredFields.value.active != null) {
             authorities.active = activepk.value;
@@ -46,33 +46,37 @@
             account: {
                 accountName: address.value,
                 accountID: account.id,
-                chain: selectedChain.value,
+                chain: props.chain,
                 keys: authorities
             }
         };
     }
 
-    async function getAccountEvent() {
-        let account = await _verifyAccount();
-        if (account.accountID !== null) {
-            return [account];
-        } else {
-            throw "This shouldn't happen!"
-        }
+    function back() {
+      // emit back
+    }
+
+    async function next() {
+      let account = await _verifyAccount();
+      if (account.accountID !== null) {
+          return [account];
+      } else {
+          throw "This shouldn't happen!"
+      }
     }
 </script>
 
 <template>
     <div id="step2">
         <p class="mb-2 font-weight-bold">
-            {{ t('common.address_name', { 'chain' : selectedChain}) }}
+            {{ t('common.address_name', { 'chain' : chain}) }}
         </p>
         <input
             id="inputAccount"
             v-model="address"
             type="text"
             class="form-control mb-3"
-            :placeholder="t('common.address_name', { 'chain' : selectedChain})"
+            :placeholder="t('common.address_name', { 'chain' : chain})"
             required
         >
         <p class="my-3 font-weight-normal">
@@ -91,6 +95,17 @@
                 required
             >
         </template>
+        <ui-grid>
+            <ui-grid-cell columns="12">
+                  <ui-button outlined class="step_btn" @click="step1">
+                      {{ t('common.back_btn') }}
+                  </ui-button>
+
+                  <ui-button raised class="step_btn" type="submit" @click="step3">
+                      {{ t('common.next_btn') }}
+                  </ui-button>
+            </ui-grid-cell>
+        </ui-grid>
     </div>
 
 </template>

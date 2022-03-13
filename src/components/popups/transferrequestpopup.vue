@@ -5,7 +5,7 @@
     const { t } = useI18n({ useScope: 'global' });
     import store from '../store/index';
     import RendererLogger from "../../lib/RendererLogger";
-    import getBlockchain from "../../lib/blockchains/blockchainFactory";
+    import getBlockchainAPI from "../../lib/blockchains/blockchainFactory";
     const logger = new RendererLogger();
     import {getKey} from '../../lib/SecureRemote';
 
@@ -51,7 +51,7 @@
       satoshis.value = incoming.value.params.amount.satoshis;
       asset_id.value = incoming.value.params.amount.asset_id;
 
-      let blockchain = getBlockchain(incoming.value.chain);
+      let blockchain = getBlockchainAPI(incoming.value.chain);
       toSend.value = blockchain.format(incoming.value.params.amount);
 
       if (blockchain.supportsFeeCalculation()) {
@@ -92,7 +92,7 @@
     });
 
     async function _clickedAllow() {
-        let blockchain = getBlockchain(incoming.value.chain);
+        let blockchain = getBlockchainAPI(incoming.value.chain);
 
         if (!incoming.value.params.amount) {
             incoming.value.params.amount = incoming.value.params.satoshis;

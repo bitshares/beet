@@ -5,7 +5,7 @@
     const { t } = useI18n({ useScope: 'global' });
     import store from '../store/index';
     import {getKey} from '../../lib/SecureRemote';
-    import getBlockchain from "../../lib/blockchains/blockchainFactory";
+    import getBlockchainAPI from "../../lib/blockchains/blockchainFactory";
     import RendererLogger from "../../lib/RendererLogger";
     const logger = new RendererLogger();
 
@@ -59,7 +59,7 @@
           ipcRenderer.send("modalError", true);
         }
 
-        let blockchain = getBlockchain(incoming.value.chain);
+        let blockchain = getBlockchainAPI(incoming.value.chain);
         let signingKey;
         try {
           signingKey = store.getters['AccountStore/getSigningKey'](incoming.value).accountName;

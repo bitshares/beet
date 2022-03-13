@@ -1,5 +1,5 @@
 <script setup>
-    import getBlockchain from "../lib/blockchains/blockchainFactory";
+    import getBlockchainAPI from "../lib/blockchains/blockchainFactory";
     import {formatChain} from "../lib/formatter";
     import { shell, ref } from 'electron';
     import { useI18n } from 'vue-i18n';
@@ -16,11 +16,11 @@
     }
 
     function getExplorer(account) {
-        return getBlockchain(account.value.chain).getExplorer(account.value);
+        return getBlockchainAPI(account.value.chain).getExplorer(account.value);
     }
 
     function getAccessType(account) {
-        return getBlockchain(account.value.chain).getAccessType();
+        return getBlockchainAPI(account.value.chain).getAccessType();
     }
 
     function openExplorer(account) {

@@ -10,7 +10,7 @@
     import AccountDetails from "./accountdetails";
 
     import store from '../store/index';
-    import getBlockchain from "../lib/blockchains/blockchainFactory";
+    import getBlockchainAPI from "../lib/blockchains/blockchainFactory";
     import RendererLogger from "../lib/RendererLogger";
     const logger = new RendererLogger();
 
@@ -70,7 +70,7 @@
 
     watch(selectedAccount, async (newVal, oldVal) => {
       if (newVal !== oldVal) {
-        blockchain.value = getBlockchain(newVal.chain);
+        blockchain.value = getBlockchainAPI(newVal.chain);
         selectedChain.value = newVal.chain;
         accountName.value = newVal.accountName;
         accountID.value = newVal.accountID;

@@ -3,7 +3,7 @@
     const emitter = inject('emitter');
     import { useI18n } from 'vue-i18n';
     const { t } = useI18n({ useScope: 'global' });
-    import getBlockchain from "../lib/blockchains/blockchainFactory";
+    import getBlockchainAPI from "../lib/blockchains/blockchainFactory";
     import store from '../store/index';
 
     import RendererLogger from "../lib/RendererLogger";
@@ -55,7 +55,7 @@
     async function getBalances() {
         let blockchain;
         try {
-            blockchain = getBlockchain(selectedChain.value);
+            blockchain = getBlockchainAPI(selectedChain.value);
         } catch (error) {
             console.error(error);
             errored = true;

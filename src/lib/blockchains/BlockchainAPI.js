@@ -312,7 +312,12 @@ export default class BlockchainAPI {
     }
 
     async verifyAccount(accountName, credentials) {
-        let account = await this.getAccount(accountName);
+        let account;
+        try {
+          account = await this.getAccount(accountName);
+        } catch (error) {
+          console.log(error);
+        }
         let required = this.getSignUpInput();
         Object.keys(required).forEach(key => {
             let given = credentials[key];
@@ -325,7 +330,8 @@ export default class BlockchainAPI {
                 let publicKey = null;
                 try {
                     publicKey = this.getPublicKey(given);
-                } catch (err) {
+                } catch (error) {
+                    console.log(error)
                     throw {key: "invalid_key_error"};
                 }
                 let found = false;

@@ -10,7 +10,7 @@ import {
     Apis
 } from "bitsharesjs-ws";
 
-import getBlockchain from "../blockchainFactory";
+import getBlockchainAPI from "../blockchainFactory";
 import store from '../../../store/index.js';
 
 class BTSWalletHandler {
@@ -61,7 +61,7 @@ class BTSWalletHandler {
 
     async lookupAccounts() {
 
-        let blockchain = getBlockchain('BTS');
+        let blockchain = getBlockchainAPI('BTS');
         await blockchain.ensureConnection().then((connectedNode) => {
             store.dispatch("SettingsStore/setNode", {
                 chain: 'BTS',

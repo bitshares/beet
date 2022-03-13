@@ -242,11 +242,23 @@ const createWindow = async () => {
       const NOTIFICATION_TITLE = 'Beet wallet notification';
       const NOTIFICATION_BODY = arg == 'request' ? "Beet has received a new request." : arg;
 
+      if (process.platform === 'win32')
+      {
+          app.setAppUserModelId(app.name);
+      }
+
       function showNotification () {
-        new Notification({ title: NOTIFICATION_TITLE, body: NOTIFICATION_BODY }).show()
+        new Notification({
+          title: NOTIFICATION_TITLE,
+          subtitle: 'subtitle',
+          body: NOTIFICATION_BODY,
+          icon: __dirname + '/img/beet-tray.png',
+        }).show()
       }
 
       showNotification();
+
+
       /*
       if (minimised) {
         tray.displayBalloon({

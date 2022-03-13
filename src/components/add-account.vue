@@ -7,17 +7,22 @@
     const { t } = useI18n({ useScope: 'global' });
 
     import Actionbar from "./actionbar";
-    import ImportOptions from "./blockchains/ImportOptions";
-    import EnterPassword from "./EnterPassword";
+    import ImportCloudPass from "./blockchains/bitshares/ImportCloudPass";
+    import ImportBinFile from "./blockchains/bitshares/ImportBinFile";
+    import ImportMemo from "./blockchains/bitshares/ImportMemo";
+    import ImportKeys from "./blockchains/ImportKeys";
+    import ImportAddressBased from "./blockchains/address/ImportAddressBased";
 
     import store from '../store/index';
     import router from '../router/index.js';
     import { blockchains } from "../config/config.js";
-    import getBlockchain from "../lib/blockchains/blockchainFactory";
+    import getBlockchainAPI from "../lib/blockchains/blockchainFactory";
     import RendererLogger from "../lib/RendererLogger";
     const logger = new RendererLogger();
 
+    let importMethod = ref(null);
     let walletname = ref("");
+    let password = ref("");
     let step = ref(1);
     let stepMessage = ref(t('common.step_counter', {step_no: 1}));
 
@@ -34,6 +39,18 @@
     let accounts_to_import = ref(null);
     let import_accounts = ref(null);
     let enterPassword = ref(null);
+
+    emitter.on('accounts_to_import', response => {
+      console.log(response);
+      if (response) {
+        accounts_to_import.value = response;
+        step.value = 3;
+      }
+    });
+
+    emitter.on('back', response => {
+        step.value -= 1;
+    });
 
     onMounted(() => {
       logger.debug("Account-Add wizard Mounted");
@@ -57,7 +74,7 @@
           return [];
       }
 
-      return getBlockchain(selectedChain.value).getImportOptions();
+      return getBlockchainAPI(selectedChain.value).getImportOptions();
     });
 
     let selectedImportOption = computed(() => {
@@ -69,7 +86,7 @@
           ? selectedImportOptions.value[0]
           : selectedImport.value;
 
-      return getBlockchain(selectedChain.value)
+      return getBlockchainAPI(selectedChain.value)
               .getImportOptions()
               .find(option => { return option.type == useImport.type; });
     });
@@ -106,24 +123,6 @@
         }
     }
 
-    async function step3() {
-        try {
-            getBlockchain(selectedChain.value);
-            // abstract UI concept more
-            emitter.emit('getAccountEvent', true);
-            emitter.on('accounts_to_import', response => {
-              accounts_to_import.value = response;
-            })
-
-            if (accounts_to_import.value != null) {
-                // if import accounts are filled, advance to next step.
-                step.value = 3;
-            }
-        } catch (err) {
-            _handleError(err);
-        }
-    }
-
     function _handleError(err) {
         if (err == "invalid") {
             ipcRenderer.send("notify", t("common.invalid_password"));
@@ -138,17 +137,22 @@
 
     async function addAccounts() {
         if (!accounts_to_import && !accounts_to_import.value) {
-          throw "No account selected!";
+            ipcRenderer.send("notify", "No account selected!");
+            return;
         }
-        try {
-            let password = enterPassword.value.getPassword();
 
+        if (password.value == "" || password.value !== confirmPassword.value) {
+            ipcRenderer.send("notify", t(`common.confirm_pass_error`));
+            return;
+        }
+
+        try {
             for (let i in accounts_to_import.value) {
                 let account = accounts_to_import.value[i];
                 if (i == 0 && createNewWallet.value) {
                     await store.dispatch("WalletStore/saveWallet", {
                         walletname: walletname.value,
-                        password: password,
+                        password: password.value,
                         walletdata: account.account
                     });
                 } else {
@@ -251,36 +255,107 @@
                               </ui-button>
                           </router-link>
 
-                          <ui-button raised class="step_btn" type="submit" @click="step2">
-                              {{ t('common.next_btn') }}
-                          </ui-button>
+                          <span v-if="selectedImportOptions.length > 1">
+                              <span v-if="selectedImport != 0">
+                                  <ui-button raised class="step_btn" type="submit" @click="step2">
+                                      {{ t('common.next_btn') }}
+                                  </ui-button>
+                              </span>
+                              <span v-else>
+                                  <ui-button disabled class="step_btn" type="submit">
+                                      {{ t('common.next_btn') }}
+                                  </ui-button>
+                              </span>
+                          </span>
+                          <span v-else>
+                            <span v-if="walletname !== '' && selectedChain !== 0">
+                                <ui-button raised class="step_btn" type="submit" @click="step2">
+                                    {{ t('common.next_btn') }}
+                                </ui-button>
+                            </span>
+                            <span v-else>
+                              <ui-button disabled class="step_btn" type="submit">
+                                  {{ t('common.next_btn') }}
+                              </ui-button>
+                            </span>
+                          </span>
+
+
+
                     </ui-grid-cell>
                 </ui-grid>
             </div>
             <div v-else-if="step == 2" id="step2">
-                <ImportOptions
-                    v-if="selectedImportOption"
-                    ref="import_accounts"
+                <ImportAddressBased
+                    v-if="selectedImportOption.type == 'address/ImportAddressBased'"
+                    v-model="importMethod"
                     :chain="selectedChain"
-                    :type="selectedImportOption.type"
                 />
-
-                <ui-grid>
-                    <ui-grid-cell columns="12">
-                          <ui-button outlined class="step_btn" @click="step1">
-                              {{ t('common.back_btn') }}
-                          </ui-button>
-                          <ui-button raised class="step_btn" type="submit" @click="step3">
-                              {{ t('common.next_btn') }}
-                          </ui-button>
-                    </ui-grid-cell>
-                </ui-grid>
+                <ImportAddressBased
+                    v-else-if="selectedImportOption.type == 'ImportAddressBased'"
+                    v-model="importMethod"
+                    :chain="selectedChain"
+                />
+                <ImportKeys
+                    v-else-if="selectedImportOption.type == 'ImportKeys'"
+                    v-model="importMethod"
+                    :chain="selectedChain"
+                />
+                <ImportCloudPass
+                    v-else-if="selectedImportOption.type == 'bitshares/ImportCloudPass'"
+                    v-model="importMethod"
+                    :chain="selectedChain"
+                />
+                <ImportBinFile
+                    v-else-if="selectedImportOption.type == 'bitshares/ImportBinFile'"
+                    v-model="importMethod"
+                    :chain="selectedChain"
+                />
+                <ImportMemo
+                    v-else-if="selectedImportOption.type == 'bitshares/ImportMemo'"
+                    v-model="importMethod"
+                    :chain="selectedChain"
+                />
+                <div v-else>
+                    No import option found
+                </div>
             </div>
             <div v-else-if="step == 3" id="step3">
-                <EnterPassword
-                    ref="enterPassword"
-                    :get-new="createNewWallet"
-                />
+                <div>
+                    <p
+                        v-tooltip="t('common.tooltip_password_cta')"
+                        class="mb-2 font-weight-bold"
+                    >
+                      <span v-if="getNew">
+                        {{ t('common.password_cta') }} &#10068;
+                      </span>
+                      <span v-else>
+                        {{ t('common.unlock_with_password_cta') }} &#10068;
+                      </span>
+                    </p>
+                    <input
+                        id="inputPass"
+                        v-model="password"
+                        type="password"
+                        class="form-control mb-3"
+                        :placeholder="t('common.password_placeholder')"
+                        required
+                    >
+                    <template v-if="getNew">
+                        <p class="mb-2 font-weight-bold">
+                            {{ t('common.confirm_cta') }}
+                        </p>
+                        <input
+                            id="inputConfirmPass"
+                            v-model="confirmPassword"
+                            type="password"
+                            class="form-control mb-3"
+                            :placeholder="t('common.confirm_placeholder')"
+                            required
+                        >
+                    </template>
+                </div>
+
                 <button
                     class="btn btn-lg btn-primary btn-block"
                     type="submit"
