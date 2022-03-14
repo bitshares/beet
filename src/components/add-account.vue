@@ -81,28 +81,43 @@
           return [];
       }
 
-      return getBlockchainAPI(selectedChain.value).getImportOptions();
+      return getBlockchainAPI(selectedChain.value, null).getImportOptions();
     });
 
     /*
      * Reset selections if the selectedChain changes
      */
-    watch(selectedChain, (newVal, oldVal) => {
+    watch(selectedChain, async (newVal, oldVal) => {
       if (newVal !== oldVal) {
         selectedImport.value = 0;
         selectedNode.value = 0;
       }
     }, {immediate: true});
 
-    /*
-     * Array of chain nodes for select menu
-     */
+
     let selectedNodeOptions = computed(() => {
       if (!selectedChain || !selectedChain.value) {
           return [];
       }
 
-      return blockchains[selectedChain.value].nodeList.map((node, i) => { return {url: node.url, id: i} });
+      return blockchains[selectedChain.value].nodeList.map((node, i) => {
+          if (node.url.includes('ws')) {
+              try {
+                  let socket = new WebSocket(node.url);
+                  socket.onopen = (e) => {
+                    return {url: node.url, id: i}
+                  };
+                  socket.onerror = (error) => {
+                    console.log(error);
+                    return null;
+                  };
+              } catch (error) {
+                console.log(error);
+                return null;
+              }
+          }
+          return {url: node.url, id: i};
+      }).filter(x => !!x);
     });
 
     /*
@@ -355,37 +370,37 @@
                     v-if="selectedImportOption.type == 'address/ImportAddressBased'"
                     v-model="importMethod"
                     :chain="selectedChain"
-                    :node="selectedNode"
+                    :node="selectedNode.url"
                 />
                 <ImportAddressBased
                     v-else-if="selectedImportOption.type == 'ImportAddressBased'"
                     v-model="importMethod"
                     :chain="selectedChain"
-                    :node="selectedNode"
+                    :node="selectedNode.url"
                 />
                 <ImportKeys
                     v-else-if="selectedImportOption.type == 'ImportKeys'"
                     v-model="importMethod"
                     :chain="selectedChain"
-                    :node="selectedNode"
+                    :node="selectedNode.url"
                 />
                 <ImportCloudPass
                     v-else-if="selectedImportOption.type == 'bitshares/ImportCloudPass'"
                     v-model="importMethod"
                     :chain="selectedChain"
-                    :node="selectedNode"
+                    :node="selectedNode.url"
                 />
                 <ImportBinFile
                     v-else-if="selectedImportOption.type == 'bitshares/ImportBinFile'"
                     v-model="importMethod"
                     :chain="selectedChain"
-                    :node="selectedNode"
+                    :node="selectedNode.url"
                 />
                 <ImportMemo
                     v-else-if="selectedImportOption.type == 'bitshares/ImportMemo'"
                     v-model="importMethod"
                     :chain="selectedChain"
-                    :node="selectedNode"
+                    :node="selectedNode.url"
                 />
                 <div v-else>
                     No import option found

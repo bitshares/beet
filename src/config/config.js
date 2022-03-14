@@ -11,9 +11,6 @@ let _blockchains = {
                 url: "wss://api.bts.mobi/ws"
             },
             {
-                url: "wss://api.iamredbar.com/ws"
-            },
-            {
                 url: "wss://nexus01.co.uk/ws"
             },
             {
@@ -21,9 +18,6 @@ let _blockchains = {
             },
             {
                 url: "wss://api.dex.trading/"
-            },
-            {
-                url: "wss://api-bts.liondani.com/ws"
             },
             {
                 url: "wss://api.bitshares.bhuz.info/ws"

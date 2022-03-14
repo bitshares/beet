@@ -8,8 +8,9 @@ const emitter = mitt();
 
 export default class BlockchainAPI {
 
-    constructor(config) {
+    constructor(config, initNode) {
         this._config = config;
+        this._node = initNode ?? config.nodeList[0].url;
         this._isConnected = false;
         this._isConnectingInProgress = false;
         this._isConnectedToNode = null;
@@ -34,9 +35,13 @@ export default class BlockchainAPI {
                 // there should be a promise queue for pending connects, this is the lazy way
                 setTimeout(() => {
                     if (this._isConnected) {
-                        this._connectionEstablished(resolve, nodeToConnect);
+                        this._connectionEstablished(resolve, nodeToConnect ?? this._node);
                     } else {
-                        this._connectionFailed(reject, nodeToConnect, "multiple connects, did not resolve in time");
+                        this._connectionFailed(
+                          reject,
+                          nodeToConnect ?? this._node,
+                          "multiple connects, did not resolve in time"
+                        );
                     }
                 }, 2000);
                 return;
@@ -53,21 +58,20 @@ export default class BlockchainAPI {
             );
 
             // load last node from config
-            /*
             if (
               !nodeToConnect
+              && !this._node
               && store.state.SettingsStore.settings.selected_node[this._config.identifier]
             ) {
-                nodeToConnect = store.state.SettingsStore.settings.selected_node[this._config.identifier];
+                nodeToConnect = store.state.SettingsStore.settings.selected_node[this._config.identifier].url;
             }
-            */
 
-            if (!nodeToConnect) {
+            if (!nodeToConnect && !this._node) {
               console.log("No node to connect to")
               reject();
             }
 
-            this._connect(nodeToConnect).then(resolve).catch(reject);
+            this._connect(nodeToConnect ?? this._node).then(resolve).catch(reject);
         });
     }
 

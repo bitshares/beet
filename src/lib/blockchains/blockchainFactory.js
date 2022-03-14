@@ -15,7 +15,7 @@ import Binance from "./Binance";
 
 let bts,bts_test,tusc,steem,wls,eos,tlos,btc,btc_test,bnb,bnb_test;
 
-export default function getBlockchainAPI(chain = null) {
+export default function getBlockchainAPI(chain = null, node = null) {
     if (chain == null) {
         // ask store
         chain = store.state.AccountStore.accountlist[store.state.AccountStore.selectedIndex].chain
@@ -32,9 +32,8 @@ export default function getBlockchainAPI(chain = null) {
     let requiredLibrary;
     if (chain == "BTS") {
         if (!bts) {
-            console.log(blockchain)
             try {
-              bts = new BitShares(blockchain);
+              bts = new BitShares(blockchain, node);
             } catch (error) {
               console.log(error);
               return;
@@ -44,7 +43,7 @@ export default function getBlockchainAPI(chain = null) {
     } else if (chain == "BTS_TEST") {
         if (!bts_test) {
             try {
-              bts_test = new BitShares(blockchain);
+              bts_test = new BitShares(blockchain, node);
             } catch (error) {
               console.log(error);
               return;
@@ -54,7 +53,7 @@ export default function getBlockchainAPI(chain = null) {
     } else if (chain == "TUSC") {
         if (!tusc) {
             try {
-              tusc = new TUSC(blockchain);
+              tusc = new TUSC(blockchain, node);
             } catch (error) {
               console.log(error);
               return;
@@ -64,7 +63,7 @@ export default function getBlockchainAPI(chain = null) {
     } else if (chain == "BTC") {
         if (!btc) {
             try {
-              btc = new Bitcoin(blockchain);
+              btc = new Bitcoin(blockchain, node);
             } catch (error) {
               console.log(error);
               return;
@@ -74,7 +73,7 @@ export default function getBlockchainAPI(chain = null) {
     } else if (chain == "BTC_TEST") {
         if (!btc_test) {
             try {
-              btc_test = new Bitcoin(blockchain);
+              btc_test = new Bitcoin(blockchain, node);
             } catch (error) {
               console.log(error);
               return;
@@ -84,7 +83,7 @@ export default function getBlockchainAPI(chain = null) {
     }/* else if (chain == "STEEM" || chain == "STM") {
         if (!steem) {
             try {
-              steem = new Steem(blockchain);
+              steem = new Steem(blockchain, node);
             } catch (error) {
               console.log(error);
               return;
@@ -94,7 +93,7 @@ export default function getBlockchainAPI(chain = null) {
     } else if (chain == "WLS") {
         if (!wls) {
             try {
-              wls = new WhaleShares(blockchain);
+              wls = new WhaleShares(blockchain, node);
             } catch (error) {
               console.log(error);
               return;
@@ -103,22 +102,22 @@ export default function getBlockchainAPI(chain = null) {
         return wls;
     } else if (chain == "EOS") {
         if (!apiCache.EOS) {
-            apiCache.EOS = new EOSmainnet(blockchain);
+            apiCache.EOS = new EOSmainnet(blockchain, node);
         }
         return apiCache.EOS;
     } else if (chain == "TLOS") {
         if (!apiCache.TLOS) {
-            apiCache.TLOS = new TLOS(blockchain);
+            apiCache.TLOS = new TLOS(blockchain, node);
         }
         return apiCache.TLOS;
     } else if (chain == "BNB") {
         if (!apiCache.BNB) {
-            apiCache.BNB = new Binance(blockchain);
+            apiCache.BNB = new Binance(blockchain, node);
         }
         return apiCache.BNB;
     } else if (chain == "BNB_TEST") {
         if (!apiCache.BNB_TEST) {
-            apiCache.BNB_TEST = new Binance(blockchain);
+            apiCache.BNB_TEST = new Binance(blockchain, node);
         }
         return apiCache.BNB_TEST;
     }*/

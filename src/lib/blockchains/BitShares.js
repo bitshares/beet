@@ -80,7 +80,6 @@ export default class BitShares extends BlockchainAPI {
     async getAccount(accountName) {
         return new Promise(async (resolve, reject) => {
               this.ensureConnection().then(() => {
-                /*
                 Apis.instance().db_api().exec("get_full_accounts", [[accountName], false])
                     .then(response => {
                         let parsedAccount = response[0][1].account;
@@ -94,8 +93,6 @@ export default class BitShares extends BlockchainAPI {
                         console.log(`get_full_accounts: ${error}`);
                         reject(error);
                     })
-                */
-                console.log("getAccount")
               })
               .catch(error => {
                   console.log(`ensureConnection: ${error}`);

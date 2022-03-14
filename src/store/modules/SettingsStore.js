@@ -46,6 +46,12 @@ const actions = {
                   reject(error);
               }
 
+              if (settings && settings.length > 0) {
+                  settings = JSON.parse(settings)
+              } else {
+                  settings = initialState.settings;
+              }
+
               // backwards compatibility
               if (typeof settings.selected_node === "string")
               {
@@ -93,9 +99,9 @@ const actions = {
 const getters = {};
 
 const initialState = {
-    'settings': {
-        'locale': defaultLocale,
-        'selected_node': {}
+    settings: {
+        locale: defaultLocale,
+        selected_node: {}
     }
 };
 

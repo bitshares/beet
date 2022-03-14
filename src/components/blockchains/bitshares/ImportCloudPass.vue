@@ -8,7 +8,8 @@
     import getBlockchainAPI from "../../../lib/blockchains/blockchainFactory";
 
     const props = defineProps({
-      chain: String
+      chain: String,
+      node: String
     });
 
     onMounted(() => {
