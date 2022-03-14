@@ -35,6 +35,7 @@
     let s1c = ref("");
     let selectedChain = ref(0);
     let selectedImport = ref(0);
+    let selectedNode = ref(0);
 
     let accounts_to_import = ref(null);
     let import_accounts = ref(null);
@@ -60,6 +61,9 @@
       return !store.state.WalletStore.isUnlocked;
     });
 
+    /*
+     * Array of supported blockchains for select menu
+     */
     let chainList = computed(() => {
       return Object.values(blockchains).sort((a, b) => {
           if (!!a.testnet != !!b.testnet) {
@@ -69,6 +73,9 @@
       });
     });
 
+    /*
+     * Array of chain import methods for select menu
+     */
     let selectedImportOptions = computed(() => {
       if (!selectedChain || !selectedChain.value) {
           return [];
@@ -77,6 +84,30 @@
       return getBlockchainAPI(selectedChain.value).getImportOptions();
     });
 
+    /*
+     * Reset selections if the selectedChain changes
+     */
+    watch(selectedChain, (newVal, oldVal) => {
+      if (newVal !== oldVal) {
+        selectedImport.value = 0;
+        selectedNode.value = 0;
+      }
+    }, {immediate: true});
+
+    /*
+     * Array of chain nodes for select menu
+     */
+    let selectedNodeOptions = computed(() => {
+      if (!selectedChain || !selectedChain.value) {
+          return [];
+      }
+
+      return blockchains[selectedChain.value].nodeList.map((node, i) => { return {url: node.url, id: i} });
+    });
+
+    /*
+     * Returns the selected import type
+     */
     let selectedImportOption = computed(() => {
       if (!selectedChain || !selectedChain.value) {
           return null;
@@ -91,10 +122,16 @@
               .find(option => { return option.type == useImport.type; });
     });
 
+    /*
+     * Return add account wizard to step 1
+     */
     function step1() {
         step.value = 1;
     }
 
+    /*
+     * Second step of account wizard
+     */
     function step2() {
         if (!createNewWallet) {
           step.value = 2;
@@ -123,6 +160,9 @@
         }
     }
 
+    /*
+     * Notify user of errors
+     */
     function _handleError(err) {
         if (err == "invalid") {
             ipcRenderer.send("notify", t("common.invalid_password"));
@@ -135,6 +175,9 @@
         }
     }
 
+    /*
+     * Final third step of add account wizard.
+     */
     async function addAccounts() {
         if (!accounts_to_import && !accounts_to_import.value) {
             ipcRenderer.send("notify", "No account selected!");
@@ -244,6 +287,28 @@
                         </option>
                     </select>
                 </div>
+
+                <div>
+                    <p class="my-3 font-weight-bold">
+                        {{ t('common.node_header') }}
+                    </p>
+                    <select
+                        id="node-select"
+                        v-model="selectedNode"
+                        class="form-control mb-3"
+                        :class="s1c"
+                        :placeholder="t('common.node_placeholder')"
+                        required
+                    >
+                        <option selected disabled value="0" key="0">
+                            {{ t('common.node_placeholder') }}
+                        </option>
+                        <option v-for="node in selectedNodeOptions" :value="node" :key="node.id">
+                            {{ node.url }}
+                        </option>
+                    </select>
+                </div>
+
                 <ui-grid>
                     <ui-grid-cell columns="12">
                           <router-link
@@ -256,7 +321,7 @@
                           </router-link>
 
                           <span v-if="selectedImportOptions.length > 1">
-                              <span v-if="selectedImport != 0">
+                              <span v-if="selectedImport != 0 && selectedNode !== 0">
                                   <ui-button raised class="step_btn" type="submit" @click="step2">
                                       {{ t('common.next_btn') }}
                                   </ui-button>
@@ -268,7 +333,7 @@
                               </span>
                           </span>
                           <span v-else>
-                            <span v-if="walletname !== '' && selectedChain !== 0">
+                            <span v-if="walletname !== '' && selectedChain !== 0 && selectedNode !== 0">
                                 <ui-button raised class="step_btn" type="submit" @click="step2">
                                     {{ t('common.next_btn') }}
                                 </ui-button>
@@ -290,31 +355,37 @@
                     v-if="selectedImportOption.type == 'address/ImportAddressBased'"
                     v-model="importMethod"
                     :chain="selectedChain"
+                    :node="selectedNode"
                 />
                 <ImportAddressBased
                     v-else-if="selectedImportOption.type == 'ImportAddressBased'"
                     v-model="importMethod"
                     :chain="selectedChain"
+                    :node="selectedNode"
                 />
                 <ImportKeys
                     v-else-if="selectedImportOption.type == 'ImportKeys'"
                     v-model="importMethod"
                     :chain="selectedChain"
+                    :node="selectedNode"
                 />
                 <ImportCloudPass
                     v-else-if="selectedImportOption.type == 'bitshares/ImportCloudPass'"
                     v-model="importMethod"
                     :chain="selectedChain"
+                    :node="selectedNode"
                 />
                 <ImportBinFile
                     v-else-if="selectedImportOption.type == 'bitshares/ImportBinFile'"
                     v-model="importMethod"
                     :chain="selectedChain"
+                    :node="selectedNode"
                 />
                 <ImportMemo
                     v-else-if="selectedImportOption.type == 'bitshares/ImportMemo'"
                     v-model="importMethod"
                     :chain="selectedChain"
+                    :node="selectedNode"
                 />
                 <div v-else>
                     No import option found

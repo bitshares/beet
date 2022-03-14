@@ -4,6 +4,9 @@ let _blockchains = {
         name: 'BitShares',
         chainId: '4018d7844c78f6a6c41c6a552b898022310fc5dec06da467ee7905a8dad512c8',
         nodeList: [
+            {
+                url: "wss://node.xbts.io/ws"
+            },
              {
                 url: "wss://api.bts.mobi/ws"
             },
@@ -15,9 +18,6 @@ let _blockchains = {
             },
             {
                 url: "wss://dex.iobanker.com/ws"
-            },
-            {
-                url: "wss://node.xbts.io/ws"
             },
             {
                 url: "wss://api.dex.trading/"
@@ -66,6 +66,39 @@ let _blockchains = {
             }
         ]
     },
+    BTC: {
+        coreSymbol: 'BTC',
+        name: 'Bitcoin',
+        chainId: null,
+        nodeList: [
+            {
+                url: "https://blockchain.info/rawaddr/",
+                push: "https://blockchain.info/pushtx",
+                location: "Unknown",
+                region: "Unknown",
+                country: "Luxembourg",
+                operator: "Blockchain Luxembourg S.A.",
+                contact: "https://www.blockchain.com"
+            }
+        ]
+    },
+    BTC_TEST: {
+        coreSymbol: 'BTC',
+        name: 'Bitcoin',
+        chainId: null,
+        testnet: true,
+        nodeList: [
+            {
+                url: "https://testnet.blockchain.info/rawaddr/",
+                push: "https://testnet-api.smartbit.com.au/v1/blockchain/pushtx",
+                location: "Unknown",
+                region: "Unknown",
+                country: "Luxembourg",
+                operator: "Blockchain Luxembourg S.A.",
+                contact: "https://www.blockchain.com"
+            }
+        ]
+    }
     /*STEEM: {
         coreSymbol: 'STM',
         name: 'Steem',
@@ -125,40 +158,7 @@ let _blockchains = {
                 contact: "Greymass"
             }
         ]
-    },*/
-    BTC: {
-        coreSymbol: 'BTC',
-        name: 'Bitcoin',
-        chainId: null,
-        nodeList: [
-            {
-                url: "https://blockchain.info/rawaddr/",
-                push: "https://blockchain.info/pushtx",
-                location: "Unknown",
-                region: "Unknown",
-                country: "Luxembourg",
-                operator: "Blockchain Luxembourg S.A.",
-                contact: "https://www.blockchain.com"
-            }
-        ]
     },
-    BTC_TEST: {
-        coreSymbol: 'BTC',
-        name: 'Bitcoin',
-        chainId: null,
-        testnet: true,
-        nodeList: [
-            {
-                url: "https://testnet.blockchain.info/rawaddr/",
-                push: "https://testnet-api.smartbit.com.au/v1/blockchain/pushtx",
-                location: "Unknown",
-                region: "Unknown",
-                country: "Luxembourg",
-                operator: "Blockchain Luxembourg S.A.",
-                contact: "https://www.blockchain.com"
-            }
-        ]
-    }/*,
     BNB_TEST: {
         coreSymbol: 'BNB',
         name: 'BinanceChain',

@@ -70,14 +70,16 @@
           return;
       }
 
-      emitter.emit('accounts_to_import', [{
-          account: {
-              accountName: accountname.value,
-              accountID: account.id,
-              chain: props.chain,
-              keys: authorities
-          }
-      }]);
+      if (account) {
+        emitter.emit('accounts_to_import', [{
+            account: {
+                accountName: accountname.value,
+                accountID: account.id,
+                chain: props.chain,
+                keys: authorities
+            }
+        }]);
+      }
     }
 </script>
 

@@ -21,42 +21,33 @@
       requiredFields.value = blockchain.getSignUpInput();
     })
 
-    async function _verifyAccount() {
-        if (accountname.value == "") {
-            throw {
-                key: "missing_account_error",
-                args: {
-                    chain: chain.value
-                }
-            };
-        }
-        let blockchain = getBlockchainAPI(chain.value);
-        let authorities = {};
-        if (requiredFields.value.memo != null) {
-            authorities.memo = memopk.value;
-        }
-        let account = await blockchain.verifyAccount(accountname.value, authorities);
-        return {
-            account: {
-                accountName: accountname.value,
-                accountID: account.id,
-                chain: chain.value,
-                keys: authorities
-            }
-        };
-    }
-
     function back() {
-      // emit back
+      emitter.emit('back', true);
     }
 
     async function next() {
-      let account = await _verifyAccount();
-      if (account.accountID !== null) {
-          return [account];
-      } else {
-          throw "This shouldn't happen!"
+      let blockchain = getBlockchainAPI(chain.value);
+      let authorities = {};
+      if (requiredFields.value.memo != null) {
+          authorities.memo = memopk.value;
       }
+
+      let account;
+      try {
+        account = await blockchain.verifyAccount(accountname.value, authorities);
+      } catch (error) {
+        console.log(error);
+        return;
+      }
+
+      emitter.emit('accounts_to_import', [{
+          account: {
+              accountName: accountname.value,
+              accountID: account.id,
+              chain: chain.value,
+              keys: authorities
+          }
+      }]);
     }
 </script>
 
@@ -99,7 +90,16 @@
                       {{ t('common.back_btn') }}
                   </ui-button>
 
-                  <ui-button raised class="step_btn" type="submit" @click="next">
+                  <ui-button
+                    v-if="accountname !== ''"
+                    raised
+                    class="step_btn"
+                    type="submit"
+                    @click="next"
+                  >
+                      {{ t('common.next_btn') }}
+                  </ui-button>
+                  <ui-button v-else disabled class="step_btn" type="submit">
                       {{ t('common.next_btn') }}
                   </ui-button>
             </ui-grid-cell>

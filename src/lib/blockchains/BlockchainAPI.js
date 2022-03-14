@@ -24,60 +24,50 @@ export default class BlockchainAPI {
             // enforce connection to that node
             this._isConnected = false;
         }
+
         return new Promise((resolve, reject) => {
-            if (!this._isConnected) {
-                if (this._isConnectingInProgress) {
-                    // there should be a promise queue for pending connects, this is the lazy way
-                    setTimeout(() => {
-                        if (this._isConnected) {
-                            this._connectionEstablished(resolve, nodeToConnect);
-                        } else {
-                            this._connectionFailed(reject, nodeToConnect, "multiple connects, did not resolve in time");
-                        }
-                    }, 2000);
-                    return;
-                }
-                this._isConnectingInProgress = true;
-                emitter.emit(
-                    'blockchainStatus',
-                    {
-                        chain: this._config.identifier,
-                        status: this._isConnected,
-                        connecting: this._isConnectingInProgress
-                    }
-                );
-                // load last node from config
-                if (nodeToConnect == null) {
-                    let lastNode = store.state.SettingsStore.settings.selected_node[
-                        this._config.identifier
-                    ];
-                    if (lastNode) nodeToConnect = lastNode;
-                }
-                this._connect(nodeToConnect).then(resolve).catch(reject);
-            } else {
-                // check if we need to reconnect
-                if (this._needsReconnecting()) {
-                    this._isConnectingInProgress = true;
-                    emitter.emit(
-                        'blockchainStatus',
-                        {
-                            chain: this._config.identifier,
-                            status: this._isConnected,
-                            connecting: this._isConnectingInProgress
-                        }
-                    );
-                    // load last node from config
-                    if (nodeToConnect == null) {
-                        let lastNode = store.state.SettingsStore.settings.selected_node[
-                            this._config.identifier
-                            ];
-                        if (lastNode) nodeToConnect = lastNode;
-                    }
-                    this._connect(nodeToConnect).then(resolve).catch(reject);
-                } else {
-                    resolve();
-                }
+            if (this._isConnected && !this._needsReconnecting()) {
+              resolve();
             }
+
+            if (this._isConnectingInProgress) {
+                // there should be a promise queue for pending connects, this is the lazy way
+                setTimeout(() => {
+                    if (this._isConnected) {
+                        this._connectionEstablished(resolve, nodeToConnect);
+                    } else {
+                        this._connectionFailed(reject, nodeToConnect, "multiple connects, did not resolve in time");
+                    }
+                }, 2000);
+                return;
+            }
+            this._isConnectingInProgress = true;
+
+            emitter.emit(
+                'blockchainStatus',
+                {
+                    chain: this._config.identifier,
+                    status: this._isConnected,
+                    connecting: this._isConnectingInProgress
+                }
+            );
+
+            // load last node from config
+            /*
+            if (
+              !nodeToConnect
+              && store.state.SettingsStore.settings.selected_node[this._config.identifier]
+            ) {
+                nodeToConnect = store.state.SettingsStore.settings.selected_node[this._config.identifier];
+            }
+            */
+
+            if (!nodeToConnect) {
+              console.log("No node to connect to")
+              reject();
+            }
+
+            this._connect(nodeToConnect).then(resolve).catch(reject);
         });
     }
 
@@ -316,8 +306,10 @@ export default class BlockchainAPI {
         try {
           account = await this.getAccount(accountName);
         } catch (error) {
-          console.log(error);
+          console.log(`getAccount: ${error}`);
+          return;
         }
+
         let required = this.getSignUpInput();
         Object.keys(required).forEach(key => {
             let given = credentials[key];

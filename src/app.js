@@ -40,7 +40,11 @@ const messages = fetchMessages();
 
 const i18n = createI18n({
   legacy: false, // you must set `false`, to use Composition API
-  locale: store.state.SettingsStore.settings.locale.iso ?? 'en',
+  locale: store.state.SettingsStore.settings
+          && store.state.SettingsStore.settings.locale
+          && store.state.SettingsStore.settings.locale.iso
+          ? store.state.SettingsStore.settings.locale.iso
+          : 'en',
   fallbackLocale: 'en',
   messages
 })

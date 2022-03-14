@@ -1,4 +1,3 @@
-import {set} from 'vue';
 import {ipcRenderer} from 'electron';
 import {v4 as uuid} from "uuid";
 import sha256 from "crypto-js/sha256.js";
@@ -22,34 +21,34 @@ const wallet = {};
 
 const mutations = {
     [GET_WALLET](state, wallet) {
-        set(state, 'wallet', wallet);
+        state['wallet'] = wallet;
     },
     [CONFIRM_UNLOCK](state) {
         state.unlocked.resolve();
-        set(state, 'isUnlocked', true);
+        state['isUnlocked'] = true;
     },
     [CLOSE_WALLET](state) {
-        state.wallet={};
-        state.hasWallet=false;
-        state.walletlist=[];
-        state.unlocked={};
-        state.isUnlocked=false;
+        state.wallet = {};
+        state.hasWallet = false;
+        state.walletlist = [];
+        state.unlocked = {};
+        state.isUnlocked = false;
         ipcRenderer.send('seeding',  '');
     },
     [SET_WALLET_STATUS](state, status) {
-        set(state, 'hasWallet', status);
+        state['hasWallet'] = status;
     },
     [SET_WALLET_UNLOCKED](state, unlocked) {
-        set(state, 'unlocked', unlocked);
+        state['unlocked'] = unlocked;
     },
     [SET_WALLETLIST](state, walletlist) {
-        set(state, 'walletlist', walletlist);
+        state['walletlist'] = walletlist;
     },
     [REQ_NOTIFY](state, notify) {
         state.ipc.send("notify", notify);
     },
     [CREATE_WALLET](state, wallet) {
-        set(state, 'wallet', wallet);
+        state['wallet'] = wallet;
     }
 };
 

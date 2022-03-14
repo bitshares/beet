@@ -22,17 +22,14 @@
     accessType.value = blockchain.getAccessType();
     requiredFields.value = blockchain.getSignUpInput();
 
-    async function _verifyAccount() {
-        if (accountname.value == "") {
-            return {
-                key: "missing_account_error",
-                args: {
-                    chain: props.chain
-                }
-            };
-        }
+    function back() {
+      emitter.emit('back', true);
+    }
+
+    async function next() {
         let blockchain = getBlockchainAPI(props.chain);
         let authorities = {};
+
         if (requiredFields.value.active != null) {
             authorities.active = activepk.value;
         }
@@ -42,6 +39,7 @@
         if (includeOwner.value == 1 && requiredFields.value.owner != null) {
             authorities.owner = ownerpk.value;
         }
+
         let account;
         try {
             account = await blockchain.verifyAccount(accountname.value, authorities);
@@ -50,28 +48,14 @@
             return;
         }
 
-        return {
+        emitter.emit('accounts_to_import', [{
             account: {
                 accountName: accountname.value,
                 accountID: account.id,
                 chain: props.chain,
                 keys: authorities
             }
-        };
-    }
-
-    function back() {
-      // emit back
-    }
-
-    async function next() {
-        let account = await _verifyAccount();
-
-        if (account.accountID !== null) {
-            return [account];
-        } else {
-            throw "This shouldn't happen!"
-        }
+        }]);
     }
 </script>
 
@@ -118,15 +102,10 @@
             >
         </template>
         <template v-if="requiredFields.owner !== null">
-            <b-form-checkbox
-                id="incOwnerCB"
-                v-model="includeOwner"
-                value="1"
-                unchecked-value="0"
-                class="mb-3"
-            >
-                {{ t('common.include_owner_check') }}
-            </b-form-checkbox>
+            <ui-form-field>
+              <ui-checkbox v-model="includeOwner" value="1" unchecked-value="0" input-id="incOwnerCB"></ui-checkbox>
+              <label>{{ t('common.include_owner_check') }}</label>
+            </ui-form-field>
             <div v-if="includeOwner == 1">
                 <input
                     id="inputOwner"
@@ -145,9 +124,49 @@
                       {{ t('common.back_btn') }}
                   </ui-button>
 
-                  <ui-button raised class="step_btn" type="submit" @click="next">
-                      {{ t('common.next_btn') }}
-                  </ui-button>
+                  <span v-if="includeOwner == 1 && requiredFields.memo != null && requiredFields.active != null">
+                      <ui-button
+                        v-if="
+                          accountname !== ''
+                          && ownerpk !== ''
+                          && memopk !== ''
+                          && activepk !== ''
+                        "
+                        raised
+                        class="step_btn"
+                        type="submit"
+                        @click="next"
+                      >
+                          {{ t('common.next_btn') }}
+                      </ui-button>
+                      <ui-button v-else disabled class="step_btn" type="submit">
+                          {{ t('common.next_btn') }}
+                      </ui-button>
+                  </span>
+                  <span v-else-if="includeOwner == 0 && requiredFields.memo != null && requiredFields.active != null">
+                      <ui-button
+                        v-if="
+                          accountname !== ''
+                          && memopk !== ''
+                          && activepk !== ''
+                        "
+                        raised
+                        class="step_btn"
+                        type="submit"
+                        @click="next"
+                      >
+                          {{ t('common.next_btn') }}
+                      </ui-button>
+                      <ui-button v-else disabled class="step_btn" type="submit">
+                          {{ t('common.next_btn') }}
+                      </ui-button>
+                  </span>
+                  <span v-else>
+                      <ui-button disabled class="step_btn" type="submit">
+                          {{ t('common.next_btn') }}
+                      </ui-button>
+                  </span>
+
             </ui-grid-cell>
         </ui-grid>
     </div>

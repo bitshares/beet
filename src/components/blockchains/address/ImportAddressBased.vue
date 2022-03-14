@@ -19,50 +19,34 @@
       requiredFields.value = blockchain.getSignUpInput();
     });
 
-    async function _verifyAccount() {
-        if (!address || !address.value || address.value == "") {
-            throw {
-                key: "missing_account_error",
-                args: {
-                    chain: props.chain
-                }
-            };
-        }
-        let blockchain = getBlockchainAPI(props.chain);
-        let authorities = {};
-        if (requiredFields.value.active != null) {
-            authorities.active = activepk.value;
-        }
-
-        let account;
-        try {
-          account = await blockchain.verifyAccount(address.value, authorities);
-        } catch (error) {
-          console.error(error)
-          return;
-        }
-
-        return {
-            account: {
-                accountName: address.value,
-                accountID: account.id,
-                chain: props.chain,
-                keys: authorities
-            }
-        };
-    }
-
     function back() {
-      // emit back
+      emitter.emit('back', true);
     }
 
     async function next() {
-      let account = await _verifyAccount();
-      if (account.accountID !== null) {
-          return [account];
-      } else {
-          throw "This shouldn't happen!"
+
+      let blockchain = getBlockchainAPI(props.chain);
+      let authorities = {};
+      if (requiredFields.value.active != null) {
+          authorities.active = activepk.value;
       }
+
+      let account;
+      try {
+        account = await blockchain.verifyAccount(address.value, authorities);
+      } catch (error) {
+        console.error(error)
+        return;
+      }
+
+      emitter.emit('accounts_to_import', [{
+          account: {
+              accountName: address.value,
+              accountID: account.id,
+              chain: props.chain,
+              keys: authorities
+          }
+      }]);
     }
 </script>
 
@@ -97,13 +81,23 @@
         </template>
         <ui-grid>
             <ui-grid-cell columns="12">
-                  <ui-button outlined class="step_btn" @click="step1">
+                  <ui-button outlined class="step_btn" @click="back">
                       {{ t('common.back_btn') }}
                   </ui-button>
 
-                  <ui-button raised class="step_btn" type="submit" @click="step3">
+                  <ui-button
+                    v-if="address !== ''"
+                    raised
+                    class="step_btn"
+                    type="submit"
+                    @click="next"
+                  >
                       {{ t('common.next_btn') }}
                   </ui-button>
+                  <ui-button v-else disabled class="step_btn" type="submit">
+                      {{ t('common.next_btn') }}
+                  </ui-button>
+
             </ui-grid-cell>
         </ui-grid>
     </div>

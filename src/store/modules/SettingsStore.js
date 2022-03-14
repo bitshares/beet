@@ -1,4 +1,3 @@
-import {set} from 'vue';
 import {
     defaultLocale
 } from '../../config/i18n.js'
@@ -9,8 +8,8 @@ const logger = new RendererLogger();
 const LOAD_SETTINGS = 'LOAD_SETTINGS';
 
 const mutations = {
-    [LOAD_SETTINGS](state, settings) {
-        set(state, 'settings', settings);
+    [LOAD_SETTINGS] (state, settings) {
+        state['settings'] = settings;
     }
 };
 
@@ -46,12 +45,19 @@ const actions = {
                   console.log(error)
                   reject(error);
               }
+
               // backwards compatibility
               if (typeof settings.selected_node === "string")
               {
                   settings.selected_node = {}
               }
-              settings.selected_node[payload.chain] = payload.node;
+
+              try {
+                settings.selected_node[payload.chain] = payload.node;
+              } catch (error) {
+                console.log(`setNode: ${error}`)
+              }
+
               localStorage.setItem("settings", JSON.stringify(settings));
               commit(LOAD_SETTINGS, settings);
               resolve();

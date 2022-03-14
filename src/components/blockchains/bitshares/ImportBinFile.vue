@@ -123,7 +123,7 @@
     }
 
     function back() {
-      // emit back
+      emitter.emit('back', true);
     }
 
     async function next() {
@@ -150,6 +150,11 @@
                 type="password"
                 class="form-control mb-3 small"
             >
+            <br/>
+            <br/>
+            <ui-button outlined class="step_btn" @click="back">
+                {{ t('common.back_btn') }}
+            </ui-button>
         </template>
         <template v-if="substep2">
             <div class="import-accounts mt-3">

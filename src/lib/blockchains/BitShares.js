@@ -77,22 +77,31 @@ export default class BitShares extends BlockchainAPI {
         ];
     }
 
-    getAccount(accountName) {
-        return new Promise((resolve, reject) => {
-            this.ensureConnection().then(() => {
-                Apis.instance().db_api()
-                    .exec("get_full_accounts", [[accountName], false])
-                    .then(res => {
-                        res[0][1].account.active.public_keys = res[0][1].account.active.key_auths;
-                        res[0][1].account.owner.public_keys = res[0][1].account.owner.key_auths;
-                        res[0][1].account.memo = {public_key: res[0][1].account.options.memo_key};
-                        res[0][1].account.balances = res[0][1].balances;
-                        resolve(res[0][1].account);
+    async getAccount(accountName) {
+        return new Promise(async (resolve, reject) => {
+              this.ensureConnection().then(() => {
+                /*
+                Apis.instance().db_api().exec("get_full_accounts", [[accountName], false])
+                    .then(response => {
+                        let parsedAccount = response[0][1].account;
+                        parsedAccount.active.public_keys = parsedAccount.active.key_auths;
+                        parsedAccount.owner.public_keys = parsedAccount.owner.key_auths;
+                        parsedAccount.memo = {public_key: parsedAccount.options.memo_key};
+                        parsedAccount.balances = response[0][1].balances;
+                        resolve(parsedAccount);
                     })
-                    .catch((err) => {
-                        reject(err);
-                    });
-            }).catch(reject);
+                    .catch(error => {
+                        console.log(`get_full_accounts: ${error}`);
+                        reject(error);
+                    })
+                */
+                console.log("getAccount")
+              })
+              .catch(error => {
+                  console.log(`ensureConnection: ${error}`);
+                  reject(error);
+              })
+
         });
     }
 

@@ -24,6 +24,8 @@
     "chain_cta": "Select the blockchain of your account:",
     "bts_importtype_cta": "Please select the way you would like to import this account",
     "import_placeholder": "Select import method",
+    "node_placeholder": "Select node method",
+    "node_header": "Select node connection",
     "import_address": "Using private key of your address",
     "import_keys": "Using private keys",
     "import_pass": "Using cloud account password",
