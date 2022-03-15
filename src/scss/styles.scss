@@ -33,6 +33,16 @@ body {
     overflow: hidden;
     border-radius: 0.4rem;
 
+    .wideCard {
+      min-width: 100%;
+      width: 100%;
+    }
+
+    .divider {
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+
     .step_btn {
         margin: 5px;
     }

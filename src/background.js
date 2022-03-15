@@ -123,17 +123,18 @@ const createModal = async (args) => {
 };
 
 const createWindow = async () => {
+  let width = 600;
+  let height = 850;
   mainWindow = new BrowserWindow({
-      width: 600,
-      height: 660,
-      minWidth: 600,
-      minHeight: 660,
-      maxWidth: 600,
+      width: width,
+      height: height,
+      minWidth: width,
+      minHeight: height,
+      maxWidth: width,
       maximizable: false,
-      maxHeight: 660,
+      maxHeight: height,
       useContentSize: true,
       autoHideMenuBar: true,
-      //frame: false,
       webPreferences: {
           nodeIntegration: true,
           contextIsolation: false,

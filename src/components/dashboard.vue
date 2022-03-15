@@ -23,10 +23,7 @@
     let accountName = ref('');
     let accountID = ref('');
 
-    async function loadBalances() {
-        emitter.emit('getBalances', true);
-        store.dispatch("WalletStore/confirmUnlock");
-    }
+
 
     let connectionFailed = computed(() => {
       return !isConnecting || !isConnecting.value && !isConnected || !isConnected.value;
@@ -64,7 +61,7 @@
       if (blockchain && blockchain.value) {
         nodes.value = blockchain.value.getNodes();
         isConnected.value = blockchain.value.isConnected();
-        loadBalances();
+        //loadBalances();
       }
     });
 
@@ -115,56 +112,24 @@
 </script>
 
 <template>
-    <div class="bottom p-0">
-        <div class="content">
-            <ui-grid class="row mb-2 account no-gutters">
-              <ui-grid-cell class="text-right label" columns="2">
-                  {{ t('common.account') }}
-              </ui-grid-cell>
+  <div>
+    <AccountSelect v-model="selectedAccount" cta/>
+    <ui-button v-if="isConnecting" disabled>
+        Connecting
+    </ui-button>
+    <ui-button v-else-if="connectionFailed" @click="reconnect()" outlined>
+        Reconnect
+    </ui-button>
 
-              <ui-grid-cell class="text-center" columns="8">
-                  <AccountSelect v-model="selectedAccount" chain="ANY" cta/>
-              </ui-grid-cell>
+    <ui-grid>
+      <ui-grid-cell columns="12">
+        <AccountDetails :account="selectedAccount"/>
+      </ui-grid-cell>
+      <ui-grid-cell columns="12">
+        <Balances :account="selectedAccount"/>
+      </ui-grid-cell>
+    </ui-grid>
 
-              <ui-grid-cell v-if="isConnecting" columns="2" class="text-center icons">
-                  <a
-                      href="#"
-                      @click="reconnect()"
-                      class="status align-self-center"
-                  >
-                    <ui-icon class="status align-self-center">
-                      phone_in_talk
-                    </ui-icon>
-                  </a>
-              </ui-grid-cell>
-
-              <ui-grid-cell v-else-if="connectionFailed" class="col-2 text-center icons" columns="2">
-                  <a
-                      href="#"
-                      @click="reconnect()"
-                      class="status align-self-center"
-                  >
-                      <ui-icon class="status align-self-center">
-                        wifi_off
-                      </ui-icon>
-                  </a>
-              </ui-grid-cell>
-
-              <ui-grid-cell v-else class="col-2 text-center" columns="2">
-                  <a
-                      href="#"
-                      @click="loadBalances()"
-                      class="status align-self-center"
-                  >
-                      <ui-icon v-tooltip="t('common.tooltip_refresh')">
-                        sync
-                      </ui-icon>
-                  </a>
-              </ui-grid-cell>
-            </ui-grid>
-            <AccountDetails :account="selectedAccount"/>
-            <Balances ref="balancetable" />
-        </div>
-        <Actionbar />
-    </div>
+    <Actionbar />
+  </div>
 </template>

@@ -1,5 +1,5 @@
 <script setup>
-    import { watchEffect, ref, onMounted, computed } from "vue";
+    import { watchEffect, watch, ref, onMounted, computed } from "vue";
     import { useI18n } from 'vue-i18n';
     const { t } = useI18n({ useScope: 'global' });
     import RendererLogger from "../lib/RendererLogger";
@@ -9,7 +9,6 @@
 
     const props = defineProps({
         selectedAccount: Object,
-        chain: String,
         cta: String,
         extraclass: String,
         existing: {
@@ -20,18 +19,52 @@
         }
     });
 
+    let chosenAccount = ref(0);
+
+    let accounts = computed(() => {
+      let accountList;
+      try {
+        accountList = store.getters['AccountStore/getAccountList'];
+      } catch (error) {
+        console.log(error);
+        return [];
+      }
+
+      return accountList.map(account => {
+        return {
+          label: !account.hasOwnProperty("accountID")&& account.trackId == 0
+                  ? props.cta
+                  : `${formatChain(account.chain)}: ${formatAccount(account)}`,
+          value: account
+        };
+      });
+    });
+
+    watch(chosenAccount, async (newVal, oldVal) => {
+      if (newVal !== oldVal) {
+          if (chosenAccount && accounts) {
+            props.selectedAccount = accounts[chosenAccount].value;
+          }
+      }
+    }, {immediate: true});
+
+    /*
     let accounts = computed(() => {
       let computedAccounts = props.chain == "ANY" || props.chain == null
-            ? computedAccounts = store.state.AccountStore.accountlist
-            : computedAccounts = store.state.AccountStore.accountlist.filter(
+            ? store.state.AccountStore.accountlist
+            : store.state.AccountStore.accountlist.filter(
                 x => x.chain == props.chain
-            );
+              );
+
 
       if (props.cta != "") {
           computedAccounts = [{}].concat(computedAccounts);
       }
 
-      return computedAccounts.slice().map((acc, i) => {
+
+      console.log(store.state.AccountStore)
+
+      let finalAccounts = computedAccounts.slice().map((acc, i) => {
           acc.trackId = i;
           let match = props.existing.filter(
               x => x.account_id == acc.accountID && x.chain == acc.chain
@@ -39,56 +72,25 @@
           acc.linked = match.length > 0 ? true : false;
           return acc;
       });
+
+      console.log(finalAccounts)
+
+      return finalAccounts;
     });
+    */
 
     onMounted(() => {
       logger.debug("Account-Selector Mounted");
     });
 
-    function accountLabel(account) {
-        if (!account.hasOwnProperty("accountID") && account.trackId == 0) {
-            return props.cta;
-        } else {
-            return (
-                formatChain(account.chain) +
-                ": " +
-                formatAccount(account)
-            );
-        }
-    }
-
-    /*
-    watchEffect(() => {
-      if (selectedAccount.value != { trackId: 0 }) {
-          this.$emit("input", selectedAccount.value);
-      }
-    });
-    */
-
-    watchEffect(() => {
-      if (accounts.value.length == 1) {
-          selectedAccount.value = accounts.value[0];
-      }
-      if (accounts.value.length == 2) {
-          selectedAccount.value = accounts.value[1];
-      }
-    });
 </script>
 
 <template>
-    <section :dir="null">
-        <ui-select
-            id="full-func-js-select"
-            v-model="selectedAccount"
-            :options="accounts"
-            :label="accountLabel"
-            :class="{ prevLink: props.option.linked }"
-            :data-linked="t('common.previously_linked')"
-            :disabled="false"
-            @selected="onSelected($event)"
-            track-by="trackId"
-        >
-            Language select
-        </ui-select>
-    </section>
+    <ui-select
+        id="full-func-js-select"
+        v-model="chosenAccount"
+        :options="accounts"
+    >
+        Account select
+    </ui-select>
 </template>

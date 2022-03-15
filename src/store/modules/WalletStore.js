@@ -21,11 +21,11 @@ const wallet = {};
 
 const mutations = {
     [GET_WALLET](state, wallet) {
-        state['wallet'] = wallet;
+        state.wallet = wallet;
     },
     [CONFIRM_UNLOCK](state) {
         state.unlocked.resolve();
-        state['isUnlocked'] = true;
+        state.isUnlocked = true;
     },
     [CLOSE_WALLET](state) {
         state.wallet = {};
@@ -36,19 +36,19 @@ const mutations = {
         ipcRenderer.send('seeding',  '');
     },
     [SET_WALLET_STATUS](state, status) {
-        state['hasWallet'] = status;
+        state.hasWallet = status;
     },
     [SET_WALLET_UNLOCKED](state, unlocked) {
-        state['unlocked'] = unlocked;
+        state.unlocked = unlocked;
     },
     [SET_WALLETLIST](state, walletlist) {
-        state['walletlist'] = walletlist;
+        state.walletlist = walletlist;
     },
     [REQ_NOTIFY](state, notify) {
         state.ipc.send("notify", notify);
     },
     [CREATE_WALLET](state, wallet) {
-        state['wallet'] = wallet;
+        state.wallet = wallet;
     }
 };
 
@@ -232,7 +232,6 @@ const actions = {
     loadWallets({
         commit
     }) {
-
         return new Promise((resolve, reject) => {
             BeetDB.wallets_public.toArray().then((wallets) => {
                 if (wallets && wallets.length > 0) {

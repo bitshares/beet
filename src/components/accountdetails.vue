@@ -1,7 +1,8 @@
 <script setup>
+    import { computed } from 'vue';
     import getBlockchainAPI from "../lib/blockchains/blockchainFactory";
     import {formatChain} from "../lib/formatter";
-    import { shell, ref } from 'electron';
+    import { shell } from 'electron';
     import { useI18n } from 'vue-i18n';
     const { t } = useI18n({ useScope: 'global' });
 
@@ -9,70 +10,72 @@
       account: Object
     });
 
-    let account = ref(props.account);
+    let chainLabel = computed(() => {
+      return formatChain(props.account.chain);
+    });
 
-    function getChainLabel(account) {
-        return formatChain(account.value.chain);
-    }
+    let explorer = computed(() => {
+      return getBlockchainAPI(props.account.chain).getExplorer(props.account);
+    });
 
-    function getExplorer(account) {
-        return getBlockchainAPI(account.value.chain).getExplorer(account.value);
-    }
-
-    function getAccessType(account) {
-        return getBlockchainAPI(account.value.chain).getAccessType();
-    }
+    let accessType = computed(() => {
+      let type = getBlockchainAPI(props.account.chain).getAccessType();
+      return type == "account"
+          ? t('common.account_details_name_lbl')
+          : t('common.account_details_address_lbl');
+    });
 
     function openExplorer(account) {
         // TODO: Copy/Paste link for external browser instead?
-        shell.openExternal(getExplorer(account));
+        shell.openExternal(explorer.value);
     }
 
 </script>
 
 <template>
-    <div class="account-details mt-3">
-        <p class="mb-1 font-weight-bold small">
-            {{ t('common.account_details_lbl') }}
-        </p>
-        <table class="table small table-striped table-sm">
-            <tbody v-if="account">
-                <tr>
-                    <td class="text-left">
-                        {{ t('common.account_details_chaim_lbl') }}
-                    </td>
-                    <td class="text-right">
-                        {{ getChainLabel(account) }}
-                    </td>
-                </tr>
-                <tr>
-                    <td class="text-left">
-                        {{ getAccessType(account) == "account" ? t('common.account_details_name_lbl') : t('common.account_details_address_lbl') }}
-                    </td>
-                    <td class="text-right">
-                        {{ account.accountName }}
-                    </td>
-                </tr>
-                <tr v-if="account.accountName != account.accountID">
-                    <td class="text-left">
-                        {{ t('common.account_details_id_lbl') }}
-                    </td>
-                    <td class="text-right">
-                        {{ account.accountID }}
-                    </td>
-                </tr>
-                <tr v-if="getExplorer(account)">
-                    <td class="text-left">
-                        {{ t('common.account_details_explorer_lbl') }}
-                    </td>
-                    <td class="text-right">
-                        <a href="#" @click="openExplorer(account)">
-                            Click here
-                        </a>
-                    </td>
-                </tr>
-            </tbody>
-            <tbody v-else />
-        </table>
-    </div>
+  <div>
+    <p>
+        {{ t('common.account_details_lbl') }}
+    </p>
+    <ui-card elevated class="wideCard">
+        <ui-list v-if="account">
+          <ui-item :key="chain">
+              <ui-item-text-content>
+                  <ui-item-text1>
+                      {{ t('common.account_details_chaim_lbl') }}
+                  </ui-item-text1>
+                  <ui-item-text2>
+                      {{ chainLabel }}
+                  </ui-item-text2>
+              </ui-item-text-content>
+          </ui-item>
+          <ui-item :key="accountName">
+              <ui-item-text-content>
+                  <ui-item-text1>
+                      {{ accessType }}
+                  </ui-item-text1>
+                  <ui-item-text2>
+                      {{ account.accountName }}
+                  </ui-item-text2>
+              </ui-item-text-content>
+          </ui-item>
+          <ui-item :key="accountID">
+              <ui-item-text-content v-if="account.accountName != account.accountID">
+                  <ui-item-text1>
+                      {{ t('common.account_details_id_lbl') }}
+                  </ui-item-text1>
+                  <ui-item-text2>
+                      {{ account.accountID }}
+                  </ui-item-text2>
+              </ui-item-text-content>
+          </ui-item>
+        </ui-list>
+
+        <ui-card-actions full-bleed v-if="explorer">
+          <ui-button @click="openExplorer(account)" class="step_btn">
+            {{ t('common.account_details_explorer_lbl') }}
+          </ui-button>
+        </ui-card-actions>
+    </ui-card>
+  </div>
 </template>

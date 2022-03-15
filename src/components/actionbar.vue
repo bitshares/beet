@@ -1,18 +1,16 @@
 <script setup>
-    import { onMounted, inject } from "vue";
-    import { useRouter, useRoute } from 'vue-router'
+    import { onMounted, inject, ref, watch } from "vue";
+    //import { useRouter, useRoute } from 'vue-router'
     import router from '../router/index.js';
-    const route = useRoute()
     import store from '../store/index';
 
-    import { useI18n } from 'vue-i18n';
-    const { t } = useI18n({ useScope: 'global' });
     const emitter = inject('emitter');
 
     import RendererLogger from "../lib/RendererLogger";
     const logger = new RendererLogger();
 
     function logout() {
+        console.log('logout')
         store.dispatch("WalletStore/logout");
         router.replace("/");
     }
@@ -26,46 +24,52 @@
     onMounted(() => {
       logger.debug("Action Bar mounted");
     });
+
+    let active = ref(null);
+
+    let items = ref([
+      {
+        text: 'Home'
+      },
+      {
+        text: 'New'
+      },
+      {
+        text: 'Settings'
+      },
+      {
+        text: 'Logout'
+      }
+    ]);
+
+    watch(active, async (newVal, oldVal) => {
+      if (newVal !== oldVal) {
+        if (!newVal) {
+          return;
+        }
+
+        if (newVal === 0) {
+          router.replace("/dashboard");
+        } else  if (newVal === 1) {
+          router.replace("/add-account");
+        } else  if (newVal === 2) {
+          router.replace("/settings");
+        } else  if (newVal === 3) {
+          logout()
+        }
+      }
+    }, {immediate: true});
+
 </script>
 
 <template>
-    <div class="row node-selector">
-        <div class="col-12 p-0 text-center d-flex justify-content-center">
-            <router-link
-                to="/dashboard"
-                tag="a"
-                class=" status align-self-center"
-                :class="{active: route.path == '/dashboard'}"
-                replace
-            >
-              <ui-icon>⚙</ui-icon>
-            </router-link>
-            <router-link
-                to="/add-account"
-                tag="a"
-                class=" status align-self-center"
-                :class="{active: route.path == '/add-account'}"
-                replace
-            >
-              <ui-icon>add</ui-icon>
-            </router-link>
-            <router-link
-                to="/settings"
-                tag="a"
-                class=" status align-self-center"
-                :class="{active: route.path == '/settings'}"
-                replace
-            >
-              <ui-icon>settings</ui-icon>
-            </router-link>
-            <a
-                v-tooltip="t('common.tooltip_lock')"
-                href="#"
-                class=" status align-self-center"
-                @click="logout()"
-            >
-              <ui-icon>lock</ui-icon>
-            </a>
-        </div>
+    <div class="container">
+        <ui-bottom-navigation content-selector=".container" stacked>
+            <ui-tabs
+              v-model="active"
+              :items="items"
+              stacked
+            ></ui-tabs>
+        </ui-bottom-navigation>
     </div>
 </template>

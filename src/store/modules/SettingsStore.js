@@ -9,7 +9,7 @@ const LOAD_SETTINGS = 'LOAD_SETTINGS';
 
 const mutations = {
     [LOAD_SETTINGS] (state, settings) {
-        state['settings'] = settings;
+        state.settings = settings;
     }
 };
 

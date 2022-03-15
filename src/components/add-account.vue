@@ -40,9 +40,9 @@
     let accounts_to_import = ref(null);
     let import_accounts = ref(null);
     let enterPassword = ref(null);
+    let confirmPassword = ref(null);
 
     emitter.on('accounts_to_import', response => {
-      console.log(response);
       if (response) {
         accounts_to_import.value = response;
         step.value = 3;
@@ -194,7 +194,7 @@
      * Final third step of add account wizard.
      */
     async function addAccounts() {
-        if (!accounts_to_import && !accounts_to_import.value) {
+        if (!accounts_to_import.value) {
             ipcRenderer.send("notify", "No account selected!");
             return;
         }
@@ -204,26 +204,32 @@
             return;
         }
 
-        try {
-            for (let i in accounts_to_import.value) {
-                let account = accounts_to_import.value[i];
-                if (i == 0 && createNewWallet.value) {
-                    await store.dispatch("WalletStore/saveWallet", {
-                        walletname: walletname.value,
-                        password: password.value,
-                        walletdata: account.account
-                    });
-                } else {
-                    account.password = password;
-                    account.walletname = walletname.value;
+        for (let i in accounts_to_import.value) {
+            let account = accounts_to_import.value[i];
+            if (i == 0 && createNewWallet.value) {
+              try {
+                  await store.dispatch("WalletStore/saveWallet", {
+                      walletname: walletname.value,
+                      password: password.value,
+                      walletdata: account.account
+                  });
+              } catch (error) {
+                  console.log(error);
+                  _handleError(error);
+              }
+            } else {
+                account.password = password;
+                account.walletname = walletname.value;
+                try {
                     await store.dispatch("AccountStore/addAccount", account);
+                } catch (error) {
+                    console.log(error);
+                    _handleError(error);
                 }
             }
-            router.replace("/");
-        } catch (error) {
-            console.log(error);
-            _handleError(error);
         }
+
+        router.replace("/");
     }
 </script>
 
@@ -412,7 +418,7 @@
                         v-tooltip="t('common.tooltip_password_cta')"
                         class="mb-2 font-weight-bold"
                     >
-                      <span v-if="getNew">
+                      <span v-if="createNewWallet">
                         {{ t('common.password_cta') }} &#10068;
                       </span>
                       <span v-else>
@@ -427,7 +433,7 @@
                         :placeholder="t('common.password_placeholder')"
                         required
                     >
-                    <template v-if="getNew">
+                    <template v-if="createNewWallet">
                         <p class="mb-2 font-weight-bold">
                             {{ t('common.confirm_cta') }}
                         </p>
@@ -442,13 +448,9 @@
                     </template>
                 </div>
 
-                <button
-                    class="btn btn-lg btn-primary btn-block"
-                    type="submit"
-                    @click="addAccounts"
-                >
+                <ui-button raised type="submit" class="step_btn" @click="addAccounts">
                     {{ t('common.next_btn') }}
-                </button>
+                </ui-button>
             </div>
         </div>
         <Actionbar v-if="!createNewWallet" />

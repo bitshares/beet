@@ -15,7 +15,9 @@
     })
 
     let walletlist = computed(() => {
-      return store.state.WalletStore.walletlist;
+      return store.state.WalletStore.walletlist.map(wallet => {
+        return {label: wallet.name, value: wallet}
+      });
     })
 
     let walletpass = ref("");
@@ -53,6 +55,7 @@
             >
                 <em>{{ t('common.no_wallet') }}</em>
             </p>
+
             <router-link
                 v-if="!hasWallet"
                 to="/create"
@@ -62,12 +65,14 @@
                 {{ t('common.start_cta') }}
               </ui-button>
             </router-link>
+
             <p
                 v-if="!hasWallet"
                 class="my-2 font-weight-normal"
             >
                 <em>{{ t('common.restore_lbl') }}</em>
             </p>
+
             <router-link
                 v-if="!hasWallet"
                 to="/restore"
@@ -77,24 +82,20 @@
                 {{ t('common.restore_cta') }}
               </ui-button>
             </router-link>
-            <ui-icon v-if="hasWallet">person_pin</ui-icon>
+
+            <br/>
             <section :dir="null">
               <ui-select
                 v-if="hasWallet"
                 id="wallet-select"
                 v-model="selectedWallet"
-                :class="'form-control my-3 accountProvide text-left'"
-                :placeholder="t('common.select_wallet')"
-                label="name"
                 :options="walletlist"
-                track-by="id"
                 @change="passincorrect=''"
               >
                 Name
               </ui-select>
             </section>
-            <br>
-            <ui-icon v-if="hasWallet">lock</ui-icon>
+            <br/>
             <input
                 v-if="hasWallet"
                 id="inputPassword"
@@ -103,10 +104,11 @@
                 class="form-control mb-4 px-3"
                 :placeholder=" t('common.password_placeholder')"
                 required
-
                 :class="passincorrect"
                 @focus="passincorrect=''"
             >
+            <br/>
+            <br/>
             <ui-button
               v-if="hasWallet"
               type="submit"
@@ -115,36 +117,27 @@
             >
               {{ t('common.unlock_cta') }}
             </ui-button>
-            <p
+
+            <ui-divider class="divider"></ui-divider>
+
+            <router-link
                 v-if="hasWallet"
-                class="my-2 font-weight-normal"
+                to="/create"
+                replace
             >
-                <em>{{ t('common.origin_lbl') }}</em>
-            </p>
-            <div class="row">
-                <div class="col-6">
-                    <router-link
-                        v-if="hasWallet"
-                        to="/create"
-                        replace
-                    >
-                      <ui-button outlined>
-                        {{ t('common.create_cta') }}
-                      </ui-button>
-                    </router-link>
-                </div>
-                <div class="col-6">
-                    <router-link
-                        v-if="hasWallet"
-                        to="/restore"
-                        replace
-                    >
-                      <ui-button outlined>
-                        {{ t('common.restore_cta') }}
-                      </ui-button>
-                    </router-link>
-                </div>
-            </div>
+              <ui-button class="step_btn" outlined>
+                {{ t('common.create_cta') }}
+              </ui-button>
+            </router-link>
+            <router-link
+                v-if="hasWallet"
+                to="/restore"
+                replace
+            >
+              <ui-button class="step_btn" outlined>
+                {{ t('common.restore_cta') }}
+              </ui-button>
+            </router-link>
         </div>
         <p class="mt-2 mb-2 small">
             &copy; 2019-2022 BitShares

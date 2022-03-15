@@ -1,5 +1,5 @@
 <script setup>
-    import { watch, ref, computed, onMounted, inject } from "vue";
+    import { watch, watchEffect, ref, computed, onMounted, inject } from "vue";
     const emitter = inject('emitter');
     import { useI18n } from 'vue-i18n';
     const { t } = useI18n({ useScope: 'global' });
@@ -9,125 +9,112 @@
     import RendererLogger from "../lib/RendererLogger";
     const logger = new RendererLogger();
 
-    let balances = ref(null);
-    let errored = ref(false);
+    async function fetchBalances(chain, name) {
 
-    let selectedAccount = computed(() => {
-      return store.state.AccountStore.accountlist[
-          store.state.AccountStore.selectedIndex
-      ];
+      let blockchain;
+      try {
+          blockchain = getBlockchainAPI(chain);
+      } catch (error) {
+          console.error(error);
+          errored = true;
+          return [];
+      }
+
+      let retrievedBalance;
+      try {
+          retrievedBalance = await blockchain.getBalances(name);
+      } catch (error) {
+          console.error(error);
+          errored = true;
+          return [];
+      }
+
+      console.log(retrievedBalance)
+
+      return retrievedBalance;
+    }
+
+    const props = defineProps({
+      account: Object
     });
 
+    let errored = ref(false);
+    let balances = ref([]);
+
     let selectedChain = computed(() => {
-      return selectedAccount.chain;
+      return props.account.chain;
     });
 
     let accountName = computed(() => {
-      return selectedAccount.accountName;
+      return props.account.accountName;
     });
 
     let accountID = computed(() => {
-      return selectedAccount.accountID;
+      return props.account.accountID;
     });
 
-    let accountlist = computed(() => {
-      return store.state.AccountStore.accountlist;
+    watchEffect(async () => {
+      balances.value = await fetchBalances(
+        selectedChain.value,
+        accountName.value
+      );
     });
 
-    onMounted(() => {
+    onMounted(async () => {
       logger.debug("Balances Table Mounted");
     });
 
-    watch(selectedAccount, async (newAcc, oldAcc) => {
-      if (
-          newAcc.chain != oldAcc.chain ||
-          newAcc.accountID != oldAcc.accountID
-      ) {
-          await getBalances();
-          //emitter.emit("balances", "loaded"); // necessary?
-      }
-    },{immediate:true});
-
-    emitter.on('getBalances', async args => {
-      await getBalances();
-    });
-
-    async function getBalances() {
-        let blockchain;
+    async function loadBalances() {
         try {
-            blockchain = getBlockchainAPI(selectedChain.value);
+          await store.dispatch("WalletStore/confirmUnlock");
         } catch (error) {
-            console.error(error);
-            errored = true;
-            return;
+          console.log(error);
+          balances.value = [];
         }
 
-        let retrievedBalance;
-        try {
-            retrievedBalance = await blockchain.getBalances(accountName.value);
-        } catch (error) {
-            console.error(error);
-            errored = true;
-            return;
+        if (selectedChain.value !== '' && accountName.value !== '') {
+          balances.value = await fetchBalances(selectedChain.value, accountName.value)
         }
-
-        if (retrievedBalance) {
-          balances.value = retrievedBalance;
-        }
-    }
-
-    function formatMoney(n, decimals, decimal_sep, thousands_sep) {
-        var c = isNaN(decimals) ? 2 : Math.abs(decimals),
-            d = decimal_sep || ".",
-            t = typeof thousands_sep === "undefined" ? "," : thousands_sep,
-            sign = n < 0 ? "-" : "",
-            i = parseInt((n = Math.abs(n).toFixed(c))) + "",
-            j = (j = i.length) > 3 ? j % 3 : 0;
-        return (
-            sign +
-            (j ? i.substr(0, j) + t : "") +
-            i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) +
-            (c
-                ? d +
-                    Math.abs(n - i)
-                        .toFixed(c)
-                        .slice(2)
-                : "")
-        );
     }
 </script>
 
 <template>
-    <div class="balances mt-3">
+    <div>
         <p class="mb-1 font-weight-bold small">
             {{ t('common.balances_lbl') }}
         </p>
-        <table class="table small table-striped table-sm">
-            <span v-if="errored">
-                {{ t('common.balances_error') }}
-            </span>
-            <tbody v-if="balances != null">
-                <tr
-                    v-for="balance in balances"
-                    :key="balance.id"
+        <span v-if="errored">
+            {{ t('common.balances_error') }}
+        </span>
+        <ui-card elevated class="wideCard" v-if="balances != null">
+            <ui-list>
+                <ui-item
+                  v-for="balance in balances"
+                  :key="balance.id"
                 >
-                    <td class="text-left">
-                        <span class="small">{{ balance.prefix }}</span>
-                        {{ balance.asset_name }}
-                    </td>
-                    <td class="text-right">
-                        {{ balance.balance }}
-                    </td>
-                </tr>
-                <tr v-if="balances.length == 0">
-                    <td class="text-left">
-                        <span class="small" />No balances
-                    </td>
-                    <td class="text-right">
+                    <ui-item-text-content>
+                        <ui-item-text1>
+                            {{ balance.balance }} {{ balance.prefix }} {{ balance.asset_name }}
+                        </ui-item-text1>
+                    </ui-item-text-content>
+                </ui-item>
+                <ui-item v-if="balances.length == 0">
+                  <ui-item-text-content>
+                      <ui-item-text1>
+                        No balances
+                      </ui-item-text1>
+                      <ui-item-text2>
                         -
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+                      </ui-item-text2>
+                  </ui-item-text-content>
+                </ui-item>
+            </ui-list>
+
+            <ui-card-actions full-bleed>
+              <ui-button @click="loadBalances()" class="step_btn">
+                Refresh balance
+              </ui-button>
+            </ui-card-actions>
+        </ui-card>
     </div>
 </template>
