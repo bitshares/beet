@@ -10,7 +10,6 @@
     const logger = new RendererLogger();
 
     async function fetchBalances(chain, name) {
-
       let blockchain;
       try {
           blockchain = getBlockchainAPI(chain);
@@ -28,8 +27,6 @@
           errored = true;
           return [];
       }
-
-      console.log(retrievedBalance)
 
       return retrievedBalance;
     }

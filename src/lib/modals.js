@@ -1,6 +1,8 @@
 import store from '../store/index.js';
 import getBlockchainAPI from "./blockchains/blockchainFactory";
 import { ipcRenderer } from 'electron';
+import mitt from 'mitt';
+const emitter = mitt();
 
 export function showAlert(request) {
     let alertmsg = request.type === "link"
@@ -15,16 +17,23 @@ export function showAlert(request) {
 export async function requestModal(request) {
   // trigger pop up
   return new Promise((resolve, reject) => {
-    ipcRenderer.send(
-      "popup",
-      {
+    console.log('requestModal')
+    emitter.emit('createPopup', {
+      _accept: resolve,
+      _reject: reject,
+      request: request
+    });
+    
+    try {
+      emitter.emit('createPopup', {
         _accept: resolve,
         _reject: reject,
         request: request
-      }
-    );
+      });
+    } catch (error) {
+      console.log(error);
+    }
   });
-
 }
 
 export async function requestVote(payload) {

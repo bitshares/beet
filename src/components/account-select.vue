@@ -21,6 +21,9 @@
 
     let chosenAccount = ref(0);
 
+    /*
+     * Retrieve the list of accounts for allocation to prop
+     */
     let accounts = computed(() => {
       let accountList;
       try {
@@ -29,21 +32,37 @@
         console.log(error);
         return [];
       }
-
-      return accountList.map(account => {
-        return {
-          label: !account.hasOwnProperty("accountID")&& account.trackId == 0
-                  ? props.cta
-                  : `${formatChain(account.chain)}: ${formatAccount(account)}`,
-          value: account
-        };
-      });
+      return accountList;
     });
 
-    watch(chosenAccount, async (newVal, oldVal) => {
+    /*
+     * Creating the select items
+     */
+    let accountOptions = computed(() => {
+      let accountList;
+      try {
+        accountList = store.getters['AccountStore/getAccountList'];
+      } catch (error) {
+        console.log(error);
+        return [];
+      }
+
+      let options = accountList.map((account, i) => {
+        return {
+          label: !account.hasOwnProperty("accountID") && account.trackId == 0
+                  ? props.cta
+                  : `${formatChain(account.chain)}: ${formatAccount(account)}`,
+          value: i
+        };
+      });
+
+      return options;
+    });
+
+    watch(chosenAccount, (newVal, oldVal) => {
       if (newVal !== oldVal) {
           if (chosenAccount && accounts) {
-            props.selectedAccount = accounts[chosenAccount].value;
+            props.selectedAccount.value = accounts.value[newVal];
           }
       }
     }, {immediate: true});
@@ -87,9 +106,9 @@
 
 <template>
     <ui-select
-        id="full-func-js-select"
+        id="account_select"
         v-model="chosenAccount"
-        :options="accounts"
+        :options="accountOptions"
     >
         Account select
     </ui-select>

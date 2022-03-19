@@ -35,28 +35,23 @@ const actions = {
         return new Promise((resolve, reject) => {
             let index = -1;
             for (let i = 0; i < state.accountlist.length; i++) {
-                if ((payload.account.chain == state.accountlist[i].chain) && (payload.account.accountID == state.accountlist[i].accountID)) {
-                    index = i;
-                    break;
+                if (payload.account.chain == state.accountlist[i].chain && payload.account.accountID == state.accountlist[i].accountID) {
+                    reject('Account already exists');
                 }
             }
-            if (index >= 0) {
-                reject('Account already exists');
-            } else {
 
-                for (let keytype in payload.account.keys) {
-                    payload.account.keys[keytype] = aes.encrypt(payload.account.keys[keytype], payload.password).toString();
-                }
-                dispatch('WalletStore/saveAccountToWallet', payload, {
-                    root: true
-                }).then(() => {
-
-                    commit(ADD_ACCOUNT, payload.account);
-                    resolve('Account added');
-                }).catch((e) => {
-                    reject(e);
-                });
+            for (let keytype in payload.account.keys) {
+                payload.account.keys[keytype] = aes.encrypt(payload.account.keys[keytype], payload.password).toString();
             }
+
+            dispatch('WalletStore/saveAccountToWallet', payload, {
+                root: true
+            }).then(() => {
+                commit(ADD_ACCOUNT, payload.account);
+                resolve('Account added');
+            }).catch((error) => {
+                reject(error);
+            });
         });
     },
     loadAccounts({
@@ -76,13 +71,10 @@ const actions = {
     logout({
         commit
     }) {
-
         return new Promise((resolve, reject) => {
-
             commit(CLEAR_ACCOUNTS);
             resolve();
         });
-
     },
     selectAccount({
         commit,
@@ -96,11 +88,10 @@ const actions = {
                     break;
                 }
             }
-            if (index >= 0) {
+
+            if (index != -1) {
                 commit(CHOOSE_ACCOUNT, index);
                 resolve('Account found');
-            } else {
-                reject('Account not found');
             }
         });
     }

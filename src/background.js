@@ -21,6 +21,7 @@ import {
 } from 'electron';
 //import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
 import mitt from 'mitt';
+const emitter = mitt();
 
 import sha256 from "crypto-js/sha256.js";
 import aes from "crypto-js/aes.js";
@@ -43,84 +44,85 @@ context_menu({
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
-let modalWindow;
-
 var isDevMode = process.execPath.match(/[\\/]electron/);
 const logger = new Logger(isDevMode ? 3 : 0);
 let first = true;
 let tray = null;
 let minimised = false;
 
-const createModal = async (args) => {
-  let modalHeight = 400;
-  let modalWidth = 600;
-  if (!createWindow) {
-    // Can't create modal without parent window
-    return;
-  }
+/*
+ * @parameter {Object} request
+ * @parameter {}
+ * @returns {Promise} modal response
+ *
+ */
+async function createModal (request, resolution, rejection) {
+    let modalHeight = 400;
+    let modalWidth = 600;
+    if (!mainWindow) {
+      // Can't create modal without parent window
+      return rejection();
+    }
 
-  modalWindow = new BrowserWindow({
-      parent: createWindow,
-      modal: true,
-      show: false,
-      //
-      title: args.title ?? 'Beet prompt',
-      //
-      width: modalWidth,
-      height: modalHeight,
-      minWidth: modalWidth,
-      minHeight: modalHeight,
-      maxWidth: modalWidth,
-      maximizable: false,
-      maxHeight: modalHeight,
-      useContentSize: true,
-      frame: false,
-      transparent: true,
-      webPreferences: {
-          nodeIntegration: true,
-          contextIsolation: false,
-          enableRemoteModule: true
-      },
-      icon: __dirname + '/img/beet-taskbar.png'
-  });
+    let modalWindow = new BrowserWindow({
+        parent: mainWindow,
+        //modal: true,
+        title: 'Beet prompt',
+        width: modalWidth,
+        height: modalHeight,
+        minWidth: modalWidth,
+        minHeight: modalHeight,
+        maxWidth: modalWidth,
+        maximizable: false,
+        maxHeight: modalHeight,
+        useContentSize: true,
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false,
+            enableRemoteModule: true
+        },
+        icon: __dirname + '/img/beet-taskbar.png'
+    });
 
-  modalWindow.loadFile(
-    path.join(__dirname, "modal.html"),
-    {query: {"type": args.request.type ?? null}}
-  );
+    // Providing modal required data
+    ipcMain.handle('getRequest', (event, arg) => {
+      console.log('getRequest triggered')
+      return request;
+    });
 
-  modalWindow.once('ready-to-show', () => {
-    modalWindow.show();
-  })
-
-  modalWindow.on('closed', () => {
-    modalWindow = null;
-  });
-
-  // Providing modal required data
-  ipcMain.on('getContent', (event, arg) => {
-    event.sender.send(
-      'contentResponse',
-      {
-        request: args.request,
-        _accept: args._accept,
-        _reject: args._reject
-      }
+    modalWindow.loadURL(
+      "/modal",
+      {query: {"type": request.type ?? null}}
     );
-  });
 
-  ipcMain.on('clickedAllow', (event, arg) => {
-    modalWindow = null;
-  });
+    /*
+    modalWindow.loadFile(
+      path.join(__dirname, "modal.html"),
+      {query: {"type": request.type ?? null}}
+    );
+    */
 
-  ipcMain.on('clickedDeny', (event, arg) => {
-    modalWindow = null;
-  });
+    modalWindow.once('ready-to-show', () => {
+      console.log('ready to show modal')
+      modalWindow.show();
+    })
 
-  ipcMain.on('modalError', (event, arg) => {
-    modalWindow = null;
-  });
-};
+    ipcMain.on('clickedAllow', (event, arg) => {
+      return resolution(arg);
+    });
+
+    ipcMain.on('clickedDeny', (event, arg) => {
+      return rejection(arg);
+    });
+
+    modalWindow.on('closed', () => {
+      return rejection();
+    });
+
+    ipcMain.on('modalError', (event, arg) => {
+      return rejection(arg);
+    });
+}
 
 const createWindow = async () => {
   let width = 600;
@@ -213,12 +215,13 @@ const createWindow = async () => {
     }
   });
 
-  ipcMain.on('popup', (event, arg) => {
-    // create popup modal window
-    if (!modalWindow) {
-      createModal(arg);
-    }
-    console.log('Error: More than one popup cannot exist.');
+  /*
+   * Create modal popup & wait for user response
+   */
+  ipcMain.handle('createPopup', async (event, arg) => {
+    return new Promise(async (resolve, reject) => {
+      await createModal(arg, resolve, reject);
+    });
   })
 
   ipcMain.on('close', (event, arg) => {
@@ -417,18 +420,3 @@ app.on('activate', () => {
       createWindow();
   }
 });
-/*
-export function sendToTray() {
-  minimised = true;
-  mainWindow.minimize();
-}
-
-export function producePopup(args) {
-  // create popup modal window
-  if (!modalWindow) {
-    createModal(args);
-  } else {
-    console.log('Error: More than one popup cannot exist.');
-  }
-}
-*/

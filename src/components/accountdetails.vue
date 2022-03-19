@@ -39,7 +39,7 @@
     </p>
     <ui-card elevated class="wideCard">
         <ui-list v-if="account">
-          <ui-item :key="chain">
+          <ui-item :key="chainLabel">
               <ui-item-text-content>
                   <ui-item-text1>
                       {{ t('common.account_details_chaim_lbl') }}
@@ -49,7 +49,7 @@
                   </ui-item-text2>
               </ui-item-text-content>
           </ui-item>
-          <ui-item :key="accountName">
+          <ui-item :key="account.accountName">
               <ui-item-text-content>
                   <ui-item-text1>
                       {{ accessType }}
@@ -59,7 +59,7 @@
                   </ui-item-text2>
               </ui-item-text-content>
           </ui-item>
-          <ui-item :key="accountID">
+          <ui-item :key="account.accountID">
               <ui-item-text-content v-if="account.accountName != account.accountID">
                   <ui-item-text1>
                       {{ t('common.account_details_id_lbl') }}

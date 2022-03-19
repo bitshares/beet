@@ -7,6 +7,7 @@ import Dashboard from "../components/dashboard";
 import Restore from "../components/restore";
 import AddAccount from "../components/add-account";
 import Settings from "../components/settings";
+import Popups from "../components/popups";
 
 const router = createRouter({
   routes: [{
@@ -48,6 +49,13 @@ const router = createRouter({
       path: '/dashboard',
       components: {
         default: Dashboard,
+        header: HeaderSmall
+      }
+    },
+    {
+      path: '/modal',
+      components: {
+        default: Popups,
         header: HeaderSmall
       }
     }

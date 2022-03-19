@@ -11,17 +11,23 @@
     const logger = new RendererLogger();
 
     let hasWallet = computed(() => {
-      return store.state.WalletStore.hasWallet;
+      return store.getters['WalletStore/getHasWallet'];
     })
 
     let walletlist = computed(() => {
-      return store.state.WalletStore.walletlist.map(wallet => {
-        return {label: wallet.name, value: wallet}
+      return store.getters['WalletStore/getWalletList'];
+    })
+
+    let walletOptions = computed(() => {
+      let wallets = store.getters['WalletStore/getWalletList'];
+
+      return wallets.map((wallet, i) => {
+        return {label: wallet.name, value: i}
       });
     })
 
     let walletpass = ref("");
-    let selectedWallet = ref(null);
+    let selectedWallet = ref(0);
     let passincorrect = ref("");
 
     onMounted(() => {
@@ -33,10 +39,15 @@
     function unlockWallet() {
         store
         .dispatch("WalletStore/getWallet", {
-            wallet_id: selectedWallet.value.id,
+            wallet_id: walletlist.value[selectedWallet.value].id,
             wallet_pass: walletpass.value
         })
-        .then(() => {
+        .then(async () => {
+            try {
+              await store.dispatch("WalletStore/confirmUnlock");
+            } catch (error) {
+              console.log(error);
+            }
             router.replace("/dashboard");
         })
         .catch(() => {
@@ -89,7 +100,7 @@
                 v-if="hasWallet"
                 id="wallet-select"
                 v-model="selectedWallet"
-                :options="walletlist"
+                :options="walletOptions"
                 @change="passincorrect=''"
               >
                 Name

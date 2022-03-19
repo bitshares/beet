@@ -86,6 +86,7 @@ const actions = {
     confirmUnlock({
         commit
     }) {
+        console.log('Unlocked wallet!');
         commit(CONFIRM_UNLOCK);
     },
     restoreWallet({

@@ -1,32 +1,30 @@
 <script setup>
     import { ipcRenderer } from 'electron';
-    import { ref, onMounted, computed } from "vue";
+    import { ref, onMounted, computed, onBeforeMount } from "vue";
+
     import { useI18n } from 'vue-i18n';
     const { t } = useI18n({ useScope: 'global' });
     import AccountSelect from "../account-select";
-    import store from '../store/index';
+    import store from '../../store/index';
     import RendererLogger from "../../lib/RendererLogger";
     const logger = new RendererLogger();
 
-    let type = ref("LinkRequestPopup");
     let chosenAccount = ref({trackId: 0});
-
     let incoming = ref({});
     let allowWhitelist = ref(false);
-    let _accept = ref(null);
-    let _reject = ref(null);
-
-    onBeforeMount(() => {
-      ipcRenderer.send("getContent", true);
-      ipcRenderer.on('contentResponse', (event, args) => {
-        incoming.value = args.request;
-        _accept.value = args._accept;
-        _reject.value = args._reject;
-      });
-    });
 
     let requestText = ref('');
     let secondText = ref('');
+
+    onBeforeMount(() => {
+      ipcRenderer.invoke("getRequest", true)
+        .then(request => {
+          incoming.value = request;
+        })
+        .catch(error => {
+          console.log(error)
+        });
+    });
 
     onMounted(() => {
       logger.debug("Link Popup initialised");
@@ -43,46 +41,41 @@
           (x) => {
               return x.appName == incoming.value.appName
                   && x.origin == incoming.value.origin
-                  && incoming.value.chain == "ANY" || x.chain == incoming..valuechain
+                  && incoming.value.chain == "ANY" || x.chain == incoming.value.chain
           }
       );
     });
 
     async function _clickedAllow() {
-
         if (allowWhitelist.value) {
             // todo: allowWhitelist move whitelisting into BeetAPI
             store.dispatch(
                 "WhitelistStore/addWhitelist",
                 {
                     identityhash: incoming.value.identityhash,
-                    method: type.value
+                    method: "LinkRequestPopup"
                 }
             );
         }
 
-        try {
-            // todo allowWhitelist move whitelisting to BeetAPI, thus return flag here
-            _accept.value(
-                {
-                    response: {
-                        name: chosenAccount.value.accountName,
-                        chain: chosenAccount.value.chain,
-                        id: chosenAccount.value.accountID
-                    },
-                    whitelisted: allowWhitelist.value
-                }
-            );
-        } catch (error) {
-            console.log(error);
-            _reject.value({ error: error });
-            ipcRenderer.send("modalError", true);
+        if (!chosenAccount.value) {
+          ipcRenderer.send("modalError", 'No chosen account');
         }
-        ipcRenderer.send("clickedAllow", true);
+
+        ipcRenderer.send(
+            "clickedAllow",
+            {
+              response: {
+                  name: chosenAccount.value.accountName,
+                  chain: chosenAccount.value.chain,
+                  id: chosenAccount.value.accountID
+              },
+              whitelisted: allowWhitelist.value
+          }
+        );
     }
 
     function _clickedDeny() {
-        _reject.value({ canceled: true });
         ipcRenderer.send("clickedDeny", true);
     }
 </script>

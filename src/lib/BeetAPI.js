@@ -5,6 +5,7 @@ import {
   requestTransfer,
   showAlert
 } from "./modals.js";
+import {ipcRenderer} from 'electron';
 import * as Actions from './Actions';
 import store from '../store/index.js';
 import RendererLogger from "./RendererLogger";
@@ -14,19 +15,18 @@ export default class BeetAPI {
 
     static async handler(request) {
         if (!Object.keys(Actions).map(key => Actions[key]).includes(request.type)) {
-            return {
+            throw {
                 id: request.id,
                 result: {isError: true, error: 'Request type not supported.'}
             }
         }
 
         if (store.state.WalletStore.isUnlocked == false) {
-            showAlert(request);
-            return {
+            showAlert(request); // prompt user to unlock wallet
+            throw {
                 id: request.id,
-                result: {isError: true,error: 'Unlock the Beet wallet and try again.'}
+                result: {isError: true, error: 'Unlock the Beet wallet and try again.'}
             }
-            // prompt user to unlock wallet
         }
 
         //await store.state.WalletStore.unlocked.promise; // wait forever if locked?
@@ -35,65 +35,68 @@ export default class BeetAPI {
           result = await this[request.type](request);
         } catch (error) {
           console.log(error);
-          return {
+          throw {
               id: request.id,
               result: {isError: true, error: 'An error occurred whilst processing your request.'}
           }
         }
 
-        console.log("user response", result);
         return result;
     }
 
-    static _parseReject(method, request, err) {
-        if (!err.canceled) {
-            console.error(err);
+    static _parseReject(method, request, error) {
+        if (!error.canceled) {
+            console.error(error);
         }
-        return {
+        throw {
             id: request.id,
             result: {
                 isError: true,
                 method: method,
-                error: err.canceled ? "User rejected" : (err.error ? err.error : err)
+                error: error.canceled ? "User rejected" : (error.error ? error.error : error)
             }
         };
     }
 
     static async [Actions.GET_ACCOUNT](request) {
-        let response;
-        try {
-            //response = this.$refs.identityReqModal.show(request);
-            response = await requestModal(request.payload);
-        } catch (err) {
-            return this._parseReject("BeetAPI.getAccount", request, err);
-        }
-        return {
-            id: request.id,
-            result: response.response
-        };
+        ipcRenderer.invoke('createPopup', request.payload).then((result) => {
+          // ...
+          return {
+              id: request.id,
+              result: response.response
+          };
+        }).catch((error) => {
+          return this._parseReject("BeetAPI.getAccount", request, error);
+        })
+    }
+
+    static async [Actions.REQUEST_LINK](request) {
+
+        ipcRenderer.invoke('createPopup', request.payload).then((result) => {
+          // ...
+          return {
+              id: request.id,
+              result: result
+          };
+        }).catch((error) => {
+          console.log(error);
+          throw {
+              id: request.id,
+              response: {
+                  isLinked: false
+              }
+          };
+          //return this._parseReject("BeetAPI.REQUEST_LINK", request, error);
+        })
     }
 
     static async [Actions.REQUEST_RELINK](request) {
         let response;
         try {
-            response = await requestModal(request);
-        } catch (e) {
-            return {
-                id: request.id,
-                response: {
-                    isLinked: false
-                }
-            };
-        }
-        return Object.assign(request, {identity: response.response});
-    }
-
-    static async [Actions.REQUEST_LINK](request) {
-        let response;
-        try {
-            response = await requestModal(request);
-        } catch (e) {
-            return {
+            response = await requestModal(request.payload);
+        } catch (error) {
+            console.log(error)
+            throw {
                 id: request.id,
                 response: {
                     isLinked: false
@@ -107,8 +110,8 @@ export default class BeetAPI {
         let response;
         try {
             response = await requestVote(request.payload);
-        } catch (err) {
-            return this._parseReject("BeetAPI.voteFor", request, err);
+        } catch (error) {
+            return this._parseReject("BeetAPI.voteFor", request, error);
         }
         return {id: request.id, result: response.response};
     }
@@ -117,8 +120,8 @@ export default class BeetAPI {
         let response;
         try {
             response = await requestModal(request.payload);
-        } catch (err) {
-            return this._parseReject("BeetAPI.requestSignature", request, err);
+        } catch (error) {
+            return this._parseReject("BeetAPI.requestSignature", request, error);
         }
         return {id: request.id, result: response.response};
     }
@@ -127,8 +130,8 @@ export default class BeetAPI {
         let response;
         try {
             response = await requestModal(request.payload);
-        } catch (err) {
-            return this._parseReject("BeetAPI.injectedCall", request, err);
+        } catch (error) {
+            return this._parseReject("BeetAPI.injectedCall", request, error);
         }
         return {id: request.id, result: response.response};
     }
@@ -137,8 +140,8 @@ export default class BeetAPI {
         let response;
         try {
             response = await requestModal(request.payload);
-        } catch (err) {
-            return this._parseReject("BeetAPI.transfer", request, err);
+        } catch (error) {
+            return this._parseReject("BeetAPI.transfer", request, error);
         }
         return {id: request.id, result: response.response};
     }
@@ -147,15 +150,15 @@ export default class BeetAPI {
         let response;
         try {
             response = await requestSignedMessage(request.payload);
-        } catch (err) {
-            return this._parseReject("BeetAPI.signMessage.request", request, err);
+        } catch (error) {
+            return this._parseReject("BeetAPI.signMessage.request", request, error);
         }
 
         try {
           // make sure an invalid message never leaves the house
           await verifyMessage({params: response.response});
-        } catch (err) {
-          return this._parseReject("BeetAPI.signMessage.verify", request, err);
+        } catch (error) {
+          return this._parseReject("BeetAPI.signMessage.verify", request, error);
         }
 
         return {id: request.id, result: response.response};
@@ -165,8 +168,8 @@ export default class BeetAPI {
         let response;
         try {
             response = await verifyMessage(request.payload);
-        } catch (err) {
-            return this._parseReject("BeetAPI.verifyMessage", request, err);
+        } catch (error) {
+            return this._parseReject("BeetAPI.verifyMessage", request, error);
         }
         return {id: request.id, result: response};
     }

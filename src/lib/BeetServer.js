@@ -27,6 +27,10 @@ const rejectRequest = (req, error) => {
   };
 }
 
+/*
+ * Show the link/relink modal
+ * @returns {bool}
+ */
 const linkHandler = async (req) => {
     // todo: only forward fields that are actually used in handler
     let userResponse;
@@ -37,10 +41,14 @@ const linkHandler = async (req) => {
       rejectRequest(req, 'User rejected request')
     }
 
+    console.log('linkhandler')
+
     if (!userResponse || !!userResponse.response && !userResponse.response.isLinked) {
+      console.log('No user response')
       return rejectRequest(req, 'User rejected request');
     }
 
+    console.log('user approved modal');
     let identityhash;
     try {
       identityhash = sha256(
@@ -80,7 +88,6 @@ const linkHandler = async (req) => {
           account_id: userResponse.identity.id,
           chain: userResponse.identity.chain,
           secret: ed.utils.bytesToHex(secret),
-          //secret: secret.toString(16),
           next_hash: req.payload.next_hash
       });
     } catch (error) {
@@ -104,13 +111,15 @@ const linkHandler = async (req) => {
  * @returns {Object}
  */
 const authHandler = function (req) {
-    let linked = req.payload.identityhash != null & req.payload.identityhash != undefined;
-    if (!linked) {
+
+    if (!req.payload.identityhash) {
+      // Comms authed but app not linked
       return Object.assign(req.payload, {authenticate: true, link: false});
     }
 
     let app = store.state.OriginStore.apps.find(x => x.identityhash == req.payload.identityhash);
-    if (!app || !req.payload.origin == app.origin && !req.payload.appName == app.appName) {
+    if (!app || (!req.payload.origin == app.origin && !req.payload.appName == app.appName)) {
+      // Reject authentication!
       return Object.assign(req.payload, {authenticate: false, link: false});
     }
 
@@ -122,6 +131,59 @@ const authHandler = function (req) {
 };
 
 export default class BeetServer {
+
+    /**
+     * Handle user link/relink attempts
+     *
+     * @parameter {string} linkType
+     * @parameter {socket} socket
+     * @parameter {request} data
+     */
+    static async respondLink(linkType, socket, data) {
+
+      if (!socket.isAuthenticated) {
+        socket.emit("error", {id: data.id, error: true, payload: {code: 5, message: "Must authenticate first"}});
+        return;
+      }
+
+      if (linkType == "relink") {
+        socket.isLinked = false;
+      }
+
+      let status;
+      try {
+        status = await linkHandler({
+            id: data.id,
+            client: socket.id,
+            payload: data.payload,
+            chain: data.payload.chain,
+            origin: socket.origin,
+            appName: socket.appName,
+            browser: socket.browser,
+            key: socket.keypair,
+            type: linkType
+        });
+      } catch (error) {
+        console.log(error)
+        logger.debug("incoming relink req fail", error);
+        return;
+      }
+
+      if (!status) {
+        console.log("No linkhandler status")
+        return;
+      }
+
+      if (status.isLinked == true) {
+          // link has successfully established
+          this._establishLink(socket, status);
+      }
+
+      if (status) {
+        let linkresponse = this._getLinkResponse(status);
+        socket.emit("link", linkresponse);
+      }
+    }
 
     /**
      * @parameter {Vue} vue
@@ -138,6 +200,7 @@ export default class BeetServer {
         io.on("connection", async (socket) => {
           socket.isAuthenticated = false;
 
+          socket.emit("connected", socket.id);
           socket.emit("connected", socket.id);
 
           socket.on("version", (callback) => {
@@ -156,6 +219,7 @@ export default class BeetServer {
             logger.debug("incoming authenticate request", data);
 
             if (!store.state.WalletStore.isUnlocked) {
+              console.log(`locked wallet: ${store.state.WalletStore.isUnlocked}`)
               socket.emit("error", {id: data.id, error: true, payload: {code: 7, message: "Beet wallet is not unlocked."}});
               return;
             }
@@ -175,7 +239,6 @@ export default class BeetServer {
             status.id = data.id; // necessary or not?
 
             if (!status.authenticate) {
-              //socket.emit(
               socket.emit(
                 "error",
                 {
@@ -187,47 +250,46 @@ export default class BeetServer {
                     }
                 }
               );
+              socket.isAuthenticated = false;
+              return;
             }
-
-            //logger.debug("incoming authenticate request", data);
-            //console.log("authentification result", status);
 
             socket.isAuthenticated = true;
             socket.origin = status.origin;
             socket.appName = status.appName;
             socket.browser = status.browser;
 
-            if (status.isLinked == true || status.link == true) {
+            if (status.link == true) {
               this._establishLink(socket.id, status);
               let linkResponse = this._getLinkResponse(status);
               console.log("Existing link");
               socket.emit('authenticated', linkResponse);
-            } else {
-
-              const privk = ed.utils.randomPrivateKey();
-              socket.keypair = privk;
-
-              let pubk;
-              try {
-                pubk = await ed.getPublicKey(privk);
-              } catch (error) {
-                console.error(error);
-                return;
-              }
-
-              socket.emit(
-                "authenticated",
-                {
-                  id: status.id,
-                  error: false,
-                  payload: {
-                      authenticate: true,
-                      link: false,
-                      pub_key: ed.utils.bytesToHex(pubk),
-                  }
-                }
-              );
+              return;
             }
+
+            const privk = ed.utils.randomPrivateKey();
+            socket.keypair = privk;
+
+            let pubk;
+            try {
+              pubk = await ed.getPublicKey(privk);
+            } catch (error) {
+              console.error(error);
+              return;
+            }
+
+            socket.emit(
+              "authenticated",
+              {
+                id: status.id,
+                error: false,
+                payload: {
+                    authenticate: true,
+                    link: false,
+                    pub_key: ed.utils.bytesToHex(pubk),
+                }
+              }
+            );
 
           });
 
@@ -238,7 +300,7 @@ export default class BeetServer {
             }
             logger.debug("processing link");
             try {
-              await respondLink("link", socket, data);
+              await this.respondLink("link", socket, data);
             } catch (error) {
               console.log(error);
             }
@@ -251,7 +313,7 @@ export default class BeetServer {
             }
             logger.debug("processing relink");
             try {
-              await respondLink("relink", socket, data);
+              await this.respondLink("relink", socket, data);
             } catch (error) {
               console.log(error);
             }
@@ -313,7 +375,14 @@ export default class BeetServer {
             } catch (error) {
               console.log(error)
               logger.debug("incoming api req fail", error);
+              return;
             }
+
+            if (!status) {
+              console.log('No BeetAPI handler user response');
+              return;
+            }
+
             status.id = data.id;
             socket.otp.counter = status.id;
 
@@ -341,57 +410,11 @@ export default class BeetServer {
     }
 
     /**
-     * Handle user link/relink attempts
-     *
-     * @parameter {string} linkType
-     * @parameter {socket} socket
-     * @parameter {request} data
-     */
-    async respondLink(linkType, socket, data) {
-      if (!socket.isAuthenticated) {
-        socket.emit("error", {id: data.id, error: true, payload: {code: 5, message: "Must authenticate first"}});
-        return;
-      }
-
-      if (linkType == "relink") {
-        socket.isLinked = false;
-      }
-
-      let linkobj = {
-          id: data.id,
-          client: socket.id,
-          payload: data.payload,
-          chain: data.payload.chain,
-          origin: socket.origin,
-          appName: socket.appName,
-          browser: socket.browser,
-          key: socket.keypair,
-          type: linkType
-      };
-
-      let status;
-      try {
-        status = await linkHandler(linkobj);
-      } catch (error) {
-        console.log(error)
-        logger.debug("incoming relink req fail", error);
-      }
-
-      if (status.isLinked == true || status.link == true) {
-          // link has successfully established
-          this._establishLink(socket, status);
-      }
-
-      let linkresponse = this._getLinkResponse(status);
-      socket.emit("link", linkresponse);
-    }
-
-    /**
      * Create beet link
      * @parameter {socket} socket
      * @parameter {object} target
      */
-    _establishLink(socket, target) {
+    static _establishLink(socket, target) {
         socket.isLinked = true;
         socket.identityhash = target.identityhash;
         socket.account_id = target.app.account_id;
@@ -407,9 +430,9 @@ export default class BeetServer {
         });
     }
 
-    _getLinkResponse(result) {
+    static _getLinkResponse(result) {
         // todo: unify! isLinked comes from linkHandler, link from authHandler.
-        if (!result.isLinked == true && !result.link == true) {
+        if (!result.isLinked == true) {
           return {
               id: result.id,
               error: true,

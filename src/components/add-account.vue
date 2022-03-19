@@ -57,8 +57,18 @@
       logger.debug("Account-Add wizard Mounted");
     });
 
-    let createNewWallet = computed(() => {
-      return !store.state.WalletStore.isUnlocked;
+    /*
+     * Check if the user has a wallet already
+     */
+    let userHasWallet = computed(() => {
+      let hasWallet;
+      try {
+        hasWallet = store.getters['WalletStore/getHasWallet'];
+      } catch (error) {
+        console.log(error);
+        return [];
+      }
+      return hasWallet;
     });
 
     /*
@@ -94,7 +104,9 @@
       }
     }, {immediate: true});
 
-
+    /*
+     * Ui select node options
+     */
     let selectedNodeOptions = computed(() => {
       if (!selectedChain || !selectedChain.value) {
           return [];
@@ -148,8 +160,16 @@
      * Second step of account wizard
      */
     function step2() {
-        if (!createNewWallet) {
+        if (userHasWallet) {
           step.value = 2;
+          let fetchedName;
+          try {
+            fetchedName = store.getters['WalletStore/getWallet'];
+          } catch (error) {
+            console.log(error);
+            return;
+          }
+          walletname.value = fetchedName.walletname;
           return;
         }
 
@@ -199,14 +219,16 @@
             return;
         }
 
-        if (password.value == "" || password.value !== confirmPassword.value) {
-            ipcRenderer.send("notify", t(`common.confirm_pass_error`));
-            return;
+        if (!userHasWallet.value) {
+          if (password.value == "" || password.value !== confirmPassword.value) {
+              ipcRenderer.send("notify", t(`common.confirm_pass_error`));
+              return;
+          }
         }
 
         for (let i in accounts_to_import.value) {
             let account = accounts_to_import.value[i];
-            if (i == 0 && createNewWallet.value) {
+            if (i == 0 && !userHasWallet.value) {
               try {
                   await store.dispatch("WalletStore/saveWallet", {
                       walletname: walletname.value,
@@ -240,7 +262,7 @@
                 {{ stepMessage }}
             </h4>
             <div v-if="step == 1" id="step1">
-                <template v-if="createNewWallet">
+                <template v-if="!userHasWallet">
                     <p
                         v-tooltip="t('common.tooltip_friendly_cta')"
                         class="my-3 font-weight-bold"
@@ -332,41 +354,39 @@
 
                 <ui-grid>
                     <ui-grid-cell columns="12">
-                          <router-link
-                              :to="createNewWallet ? '/' : '/dashboard'"
-                              replace
-                          >
-                              <ui-button outlined class="step_btn">
-                                  {{ t('common.cancel_btn') }}
-                              </ui-button>
-                          </router-link>
+                        <router-link
+                            :to="!userHasWallet ? '/' : '/dashboard'"
+                            replace
+                        >
+                            <ui-button outlined class="step_btn">
+                                {{ t('common.cancel_btn') }}
+                            </ui-button>
+                        </router-link>
 
-                          <span v-if="selectedImportOptions.length > 1">
-                              <span v-if="selectedImport != 0 && selectedNode !== 0">
-                                  <ui-button raised class="step_btn" type="submit" @click="step2">
-                                      {{ t('common.next_btn') }}
-                                  </ui-button>
-                              </span>
-                              <span v-else>
-                                  <ui-button disabled class="step_btn" type="submit">
-                                      {{ t('common.next_btn') }}
-                                  </ui-button>
-                              </span>
-                          </span>
-                          <span v-else>
-                            <span v-if="walletname !== '' && selectedChain !== 0 && selectedNode !== 0">
+                        <span v-if="selectedImportOptions.length > 1">
+                            <span v-if="selectedImport != 0 && selectedNode !== 0">
                                 <ui-button raised class="step_btn" type="submit" @click="step2">
                                     {{ t('common.next_btn') }}
                                 </ui-button>
                             </span>
                             <span v-else>
-                              <ui-button disabled class="step_btn" type="submit">
+                                <ui-button disabled class="step_btn" type="submit">
+                                    {{ t('common.next_btn') }}
+                                </ui-button>
+                            </span>
+                        </span>
+                        <span v-else>
+                          <span v-if="walletname !== '' && selectedChain !== 0 && selectedNode !== 0">
+                              <ui-button raised class="step_btn" type="submit" @click="step2">
                                   {{ t('common.next_btn') }}
                               </ui-button>
-                            </span>
                           </span>
-
-
+                          <span v-else>
+                            <ui-button disabled class="step_btn" type="submit">
+                                {{ t('common.next_btn') }}
+                            </ui-button>
+                          </span>
+                        </span>
 
                     </ui-grid-cell>
                 </ui-grid>
@@ -418,7 +438,7 @@
                         v-tooltip="t('common.tooltip_password_cta')"
                         class="mb-2 font-weight-bold"
                     >
-                      <span v-if="createNewWallet">
+                      <span v-if="!userHasWallet">
                         {{ t('common.password_cta') }} &#10068;
                       </span>
                       <span v-else>
@@ -433,7 +453,7 @@
                         :placeholder="t('common.password_placeholder')"
                         required
                     >
-                    <template v-if="createNewWallet">
+                    <template v-if="!userHasWallet">
                         <p class="mb-2 font-weight-bold">
                             {{ t('common.confirm_cta') }}
                         </p>
@@ -453,8 +473,8 @@
                 </ui-button>
             </div>
         </div>
-        <Actionbar v-if="!createNewWallet" />
-        <p v-if="createNewWallet" class="mt-2 mb-2 small">
+        <Actionbar v-if="userHasWallet" />
+        <p v-if="userHasWallet" class="mt-2 mb-2 small">
             &copy; 2019-2022 BitShares
         </p>
     </div>
