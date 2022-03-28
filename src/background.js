@@ -44,6 +44,9 @@ context_menu({
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
+let modalWindows = {};
+let modalRequests = {};
+
 var isDevMode = process.execPath.match(/[\\/]electron/);
 const logger = new Logger(isDevMode ? 3 : 0);
 let first = true;
@@ -51,22 +54,35 @@ let tray = null;
 let minimised = false;
 
 /*
- * @parameter {Object} request
- * @parameter {}
- * @returns {Promise} modal response
- *
+ * On modal popup this runs to create child browser window
  */
-async function createModal (request, resolution, rejection) {
+const createModal = async (arg, resolve, reject) => {
     let modalHeight = 400;
     let modalWidth = 600;
     if (!mainWindow) {
-      // Can't create modal without parent window
-      return rejection();
+        return reject('No main window');
     }
 
-    let modalWindow = new BrowserWindow({
+    let request = arg.request;
+    let id = request.id;
+    let type = request.type;
+    let accounts = arg.accounts;
+    let existingLinks = arg.existingLinks;
+
+    if (modalWindows[id] || modalRequests[id]) {
+        return reject('Modal exists already!');
+    }
+
+    modalRequests[id] = {
+        request: request,
+        accounts: accounts,
+        existingLinks: existingLinks,
+        resolve: resolve,
+        reject: reject
+    };
+
+    modalWindows[id] = new BrowserWindow({
         parent: mainWindow,
-        //modal: true,
         title: 'Beet prompt',
         width: modalWidth,
         height: modalHeight,
@@ -84,46 +100,91 @@ async function createModal (request, resolution, rejection) {
         icon: __dirname + '/img/beet-taskbar.png'
     });
 
-    // Providing modal required data
-    ipcMain.handle('getRequest', (event, arg) => {
-      console.log('getRequest triggered')
-      return request;
-    });
-
-    modalWindow.loadURL(
-      "/modal",
-      {query: {"type": request.type ?? null}}
+    modalWindows[id].loadURL(
+        `file://${__dirname}/modal.html?`
+        + `id=${id}`
+        + `&type=${type}`
+        + `&request=${JSON.stringify(request)}`
+        + `&accounts=${JSON.stringify(accounts)}`
+        + `&existingLinks=${JSON.stringify(existingLinks)}`
     );
 
-    /*
-    modalWindow.loadFile(
-      path.join(__dirname, "modal.html"),
-      {query: {"type": request.type ?? null}}
-    );
-    */
-
-    modalWindow.once('ready-to-show', () => {
-      console.log('ready to show modal')
-      modalWindow.show();
+    modalWindows[id].once('ready-to-show', () => {
+        console.log('ready to show modal')
+        modalWindows[id].show();
     })
 
-    ipcMain.on('clickedAllow', (event, arg) => {
-      return resolution(arg);
-    });
+    modalWindows[id].on('closed', () => {
+      if (modalWindows[id]) {
+          delete modalWindows[id];
+      }
 
-    ipcMain.on('clickedDeny', (event, arg) => {
-      return rejection(arg);
-    });
-
-    modalWindow.on('closed', () => {
-      return rejection();
-    });
-
-    ipcMain.on('modalError', (event, arg) => {
-      return rejection(arg);
+      if (modalRequests[id]) {
+          modalRequests[id].reject({
+              id: id,
+              result: {
+                  isError: true,
+                  method: type,
+                  error: 'User closed modal without answering prompt.'
+              }
+          });
+          delete modalRequests[id];
+      }
     });
 }
 
+/*
+ * User approved modal contents. Close window, resolve promise, delete references.
+ */
+ipcMain.on('clickedAllow', (event, arg) => {
+  console.log('ipcmain clickedAllow');
+  let id = arg.request.id;
+
+  if (modalWindows[id]) {
+    modalWindows[id].close();
+    delete modalWindows[id];
+  }
+
+  if (modalRequests[id]) {
+    console.log(`modalrequest present: ${JSON.stringify(modalRequests[id])}`)
+    modalRequests[id].resolve(arg);
+    delete modalRequests[id];
+  }
+});
+
+/*
+ * User rejected modal contents. Close window, reject promise, delete references.
+ */
+ipcMain.on('clickedDeny', (event, arg) => {
+  console.log('ipcmain clickedDeny');
+  if (modalWindows[arg.id]) {
+    modalWindows[arg.id].close();
+    delete modalWindows[arg.id];
+  }
+
+  if (modalRequests[arg.id]) {
+    modalRequests[arg.id].reject(arg);
+    delete modalRequests[arg.id];
+  }
+});
+
+/*
+ * A modal error occurred. Close window, resolve promise, delete references.
+ */
+ipcMain.on('modalError', (event, arg) => {
+  if (modalWindows[arg.id]) {
+    modalWindows[arg.id].close();
+    delete modalWindows[arg.id];
+  }
+  if (modalRequests[arg.id]) {
+    modalRequests[arg.id].reject(arg);
+    delete modalRequests[arg.id];
+  }
+});
+
+/*
+ * Creating the primary window, only runs once.
+ */
 const createWindow = async () => {
   let width = 600;
   let height = 850;
@@ -155,7 +216,8 @@ const createWindow = async () => {
   );
 
   tray = new Tray(__dirname + '/img/beet-tray.png');
-  const contextMenu = Menu.buildFromTemplate([{
+  const contextMenu = Menu.buildFromTemplate([
+      {
           label: 'Show App',
           click: function () {
               mainWindow.show();
@@ -220,6 +282,7 @@ const createWindow = async () => {
    */
   ipcMain.handle('createPopup', async (event, arg) => {
     return new Promise(async (resolve, reject) => {
+      console.log('createPopup')
       await createModal(arg, resolve, reject);
     });
   })

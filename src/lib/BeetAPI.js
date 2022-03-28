@@ -71,23 +71,74 @@ export default class BeetAPI {
     }
 
     static async [Actions.REQUEST_LINK](request) {
+        store.dispatch("WalletStore/notifyUser", {notify: "request", message: "request"});
 
-        ipcRenderer.invoke('createPopup', request.payload).then((result) => {
-          // ...
-          return {
-              id: request.id,
-              result: result
-          };
-        }).catch((error) => {
+        let accounts;
+        try {
+          //accounts = store.getters['AccountStore/getAccountList'];
+          accounts = JSON.parse(JSON.stringify(store.state.AccountStore.accountlist));
+        } catch (error) {
           console.log(error);
-          throw {
-              id: request.id,
-              response: {
-                  isLinked: false
-              }
-          };
-          //return this._parseReject("BeetAPI.REQUEST_LINK", request, error);
+          accounts = [];
+        }
+
+        let existingLinks;
+        try {
+          existingLinks = store.state.OriginStore.apps.filter((x) => {
+              return x.appName == request.appName
+                && x.origin == request.origin
+                && request.chain == "ANY" || x.chain == request.chain
+          })
+          /*
+          existingLinks = store.getters['OriginStore/getExistingLinks'](
+                              request.appName,
+                              request.origin,
+                              request.chain
+                          );
+          */
+        } catch (error) {
+          console.log(error);
+          existingLinks = [];
+        }
+
+        ipcRenderer.invoke('createPopup', {
+          request: request,
+          accounts: accounts ?? [],
+          existingLinks: existingLinks ?? []
         })
+          .then((result) => {
+            // ...
+
+            console.log('result')
+
+            store.dispatch("AccountStore/selectAccount", result.response);
+
+            if (result.whitelisted) {
+                store.dispatch(
+                    "WhitelistStore/addWhitelist",
+                    {
+                        identityhash: request.identityhash,
+                        method: "LinkRequestPopup"
+                    }
+                );
+            }
+
+            return {
+                id: request.id,
+                result: result
+            };
+          }).catch((error) => {
+            /*
+            console.log(error);
+            throw {
+                id: request.id,
+                response: {
+                    isLinked: false
+                }
+            };
+            */
+            return this._parseReject("BeetAPI.REQUEST_LINK", request, error);
+          })
     }
 
     static async [Actions.REQUEST_RELINK](request) {

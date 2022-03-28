@@ -99,8 +99,13 @@ const actions = {
 
 
 const getters = {
-    walletAccessibleDapps: (state) => (account_id,chain) => {
-        return state.apps.filter( x => { return x.chain==chain && x.account_id==account_id});
+    walletAccessibleDapps: (state) => (account_id, chain) => {
+        return state.apps.filter( x => { return x.chain == chain && x.account_id == account_id});
+    },
+    getExistingLinks: (state) => (appName, origin, chain) => {
+        return state.apps.filter((x) => {
+            return x.appName == appName && x.origin == origin && chain == "ANY" || x.chain == chain
+        })
     }
 };
 

@@ -23,8 +23,6 @@
     let accountName = ref('');
     let accountID = ref('');
 
-
-
     let connectionFailed = computed(() => {
       return !isConnecting || !isConnecting.value && !isConnected || !isConnected.value;
     });

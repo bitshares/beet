@@ -1,6 +1,6 @@
 <script setup>
     import { ipcRenderer } from 'electron';
-    import { ref, onMounted, computed, onBeforeMount } from "vue";
+    import { ref, onMounted, computed, watch } from "vue";
 
     import { useI18n } from 'vue-i18n';
     const { t } = useI18n({ useScope: 'global' });
@@ -8,67 +8,71 @@
     import store from '../../store/index';
     import RendererLogger from "../../lib/RendererLogger";
     const logger = new RendererLogger();
+    import {formatChain, formatAccount} from "../../lib/formatter";
 
-    let chosenAccount = ref({trackId: 0});
-    let incoming = ref({});
+    //let chosenAccount = ref({label: 'Account select', value: 0});
+    let chosenAccount = ref(-1);
+
     let allowWhitelist = ref(false);
 
-    let requestText = ref('');
-    let secondText = ref('');
-
-    onBeforeMount(() => {
-      ipcRenderer.invoke("getRequest", true)
-        .then(request => {
-          incoming.value = request;
-        })
-        .catch(error => {
-          console.log(error)
-        });
+    const props = defineProps({
+      request: Object,
+      accounts: Array,
+      existingLinks: Array
     });
+
+    let requestText = computed(() => {
+      return t(
+        'operations.link.request',
+        {
+          appName: props.request.appName,
+          origin: props.request.origin,
+          chain: props.request.chain
+        }
+      );
+    });
+
+    let secondText = computed(() => {
+      return t('operations.link.request_fresh', {chain: props.request.chain });
+    });
+
+    /*
+     * Creating the select items
+     */
+    let accountOptions = computed(() => {
+      return props.accounts.map((account, i) => {
+        return {
+          label: !account.hasOwnProperty("accountID") && account.trackId == 0
+                  ? props.cta
+                  : `${formatChain(account.chain)}: ${formatAccount(account)}`,
+          value: i
+        };
+      });
+    });
+
+    watch(chosenAccount, (newVal, oldVal) => {
+      if (newVal !== oldVal) {
+        console.log(`newVal: ${newVal}`);
+      }
+    }, {immediate: true});
 
     onMounted(() => {
       logger.debug("Link Popup initialised");
-      store.dispatch("WalletStore/notifyUser", {notify: "request", message: "request"});
-      requestText.value = t(
-        'operations.link.request',
-        {appName: incoming.appName, origin: incoming.origin, chain: incoming.chain }
-      );
-      secondText.value = t('operations.link.request_fresh', {chain: incoming.chain });
     })
 
-    let existingLinks = computed(() => {
-      return store.state.OriginStore.apps.filter(
-          (x) => {
-              return x.appName == incoming.value.appName
-                  && x.origin == incoming.value.origin
-                  && incoming.value.chain == "ANY" || x.chain == incoming.value.chain
-          }
-      );
-    });
-
     async function _clickedAllow() {
-        if (allowWhitelist.value) {
-            // todo: allowWhitelist move whitelisting into BeetAPI
-            store.dispatch(
-                "WhitelistStore/addWhitelist",
-                {
-                    identityhash: incoming.value.identityhash,
-                    method: "LinkRequestPopup"
-                }
-            );
-        }
-
-        if (!chosenAccount.value) {
-          ipcRenderer.send("modalError", 'No chosen account');
-        }
+        let approvedAccount = props.accounts[chosenAccount.value];
 
         ipcRenderer.send(
             "clickedAllow",
             {
               response: {
-                  name: chosenAccount.value.accountName,
-                  chain: chosenAccount.value.chain,
-                  id: chosenAccount.value.accountID
+                  name: approvedAccount.accountName,
+                  chain: approvedAccount.chain,
+                  id: approvedAccount.accountID
+              },
+              request: {
+                id: props.request.id
               },
               whitelisted: allowWhitelist.value
           }
@@ -76,39 +80,68 @@
     }
 
     function _clickedDeny() {
-        ipcRenderer.send("clickedDeny", true);
+        console.log('clicked deny')
+        ipcRenderer.send("clickedDeny", {id: props.request.id});
     }
+
+    /*
+    <AccountSelect
+        v-if="props.request.chain"
+        v-model="selectedAccount"
+        :chain="props.request.chain"
+        :existing="existingLinks"
+        :cta="t('operations.link.request_cta')"
+        extraclass="accountProvide"
+    />
+    */
+
 </script>
 
-
 <template>
+  <div>
     <div v-tooltip="t('operations.link.request_tooltip')">
-        {{ requestText }} &#10068;
+        {{ requestText }}
     </div>
     <br>
     <div v-if="existingLinks.length > 0">
         {{ secondText }}
     </div>
     <br>
-    <AccountSelect
-        v-if="incoming.chain"
+    <select
+        id="account_select"
         v-model="chosenAccount"
-        :chain="incoming.chain"
-        :existing="existingLinks"
-        :cta="t('operations.link.request_cta')"
-        extraclass="accountProvide"
-    />
-    <div v-if="!chosenAccount.trackId == 0">
-      <ui-button raised @click="_clickedAllow">
-          {{ t('operations.link.accept_btn') }}
-      </ui-button>
-      <ui-button raised @click="_clickedDeny">
-          {{ t('operations.link.reject_btn') }}
-      </ui-button>
+        class="form-control mb-3"
+        required
+    >
+        <option selected disabled value="">
+            Account select
+        </option>
+        <option
+            v-for="account in accountOptions"
+            :key="account.value"
+            :value="account.value"
+        >
+          <span>
+            {{ account.label }}
+          </span>
+        </option>
+    </select>
+    <br/>
+    <div v-if="chosenAccount == -1">
+        <ui-button disabled>
+            {{ t('operations.link.accept_btn') }}
+        </ui-button>
+        <ui-button raised @click="_clickedDeny()">
+            {{ t('operations.link.reject_btn') }}
+        </ui-button>
     </div>
     <div v-else>
-      <ui-button raised @click="_clickedDeny">
-          {{ t('operations.link.reject_btn') }}
-      </ui-button>
+        <ui-button raised @click="_clickedAllow()">
+            {{ t('operations.link.accept_btn') }}
+        </ui-button>
+        <ui-button raised @click="_clickedDeny()">
+            {{ t('operations.link.reject_btn') }}
+        </ui-button>
     </div>
+  </div>
 </template>

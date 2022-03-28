@@ -41,8 +41,6 @@ const linkHandler = async (req) => {
       rejectRequest(req, 'User rejected request')
     }
 
-    console.log('linkhandler')
-
     if (!userResponse || !!userResponse.response && !userResponse.response.isLinked) {
       console.log('No user response')
       return rejectRequest(req, 'User rejected request');

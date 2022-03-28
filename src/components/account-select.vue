@@ -62,7 +62,7 @@
     watch(chosenAccount, (newVal, oldVal) => {
       if (newVal !== oldVal) {
           if (chosenAccount && accounts) {
-            props.selectedAccount.value = accounts.value[newVal];
+            props.selectedAccount = accounts.value[newVal];
           }
       }
     }, {immediate: true});
@@ -105,11 +105,28 @@
 </script>
 
 <template>
-    <ui-select
-        id="account_select"
-        v-model="chosenAccount"
-        :options="accountOptions"
-    >
-        Account select
-    </ui-select>
+  <div v-if="accountOptions && accountOptions.length">
+      <select
+          id="account_select"
+          v-model="chosenAccount"
+          class="form-control mb-3"
+          required
+      >
+          <option selected disabled value="0">
+              Account select
+          </option>
+          <option
+              v-for="account in accountOptions"
+              :key="account.value"
+              :value="account.label"
+          >
+            <span>
+              {{ account.label }}
+            </span>
+          </option>
+      </select>
+  </div>
+  <div v-else>
+      No accounts to display
+  </div>
 </template>

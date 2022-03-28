@@ -17,6 +17,21 @@ import './css/style.css';
 import './scss/beet.scss';
 
 const logger = new RendererLogger;
+
+window.onerror = function (msg, url, lineNo, columnNo, error) {
+  logger.error(error);
+  console.log(error);
+  return false;
+};
+
+process.on('unhandledRejection', (reason, p) => {
+  console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
+  // application specific logging, throwing an error, or other logic here
+});
+
+//store.dispatch("SettingsStore/loadSettings");
+//store.dispatch("WhitelistStore/loadWhitelist");
+
 const messages = fetchMessages();
 
 const i18n = createI18n({
@@ -29,15 +44,12 @@ const i18n = createI18n({
 const app = createApp({});
 app.config.errorHandler = function (err, vm, info) {
   logger.error(err, vm, info);
-  console.log("error");
+  console.log("error:" + err);
 };
 
 app.component('Popups', Popups);
 app.use(i18n);
 app.use(BalmUI);
 app.use(BalmUIPlus);
-app.mount('#modal');
-app.on('ready', () => {
-    console.log('modal ready')
-});
 //app.use(store);
+app.mount('#modal');
