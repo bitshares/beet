@@ -57,7 +57,7 @@ app.provide('emitter', emitter);
 
 app.config.errorHandler = function (err, vm, info) {
   logger.error(err, vm, info);
-  console.log("error");
+  console.log(err);
 };
 
 app.use(i18n);

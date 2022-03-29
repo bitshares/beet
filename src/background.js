@@ -146,7 +146,6 @@ ipcMain.on('clickedAllow', (event, arg) => {
   }
 
   if (modalRequests[id]) {
-    console.log(`modalrequest present: ${JSON.stringify(modalRequests[id])}`)
     modalRequests[id].resolve(arg);
     delete modalRequests[id];
   }
@@ -282,11 +281,11 @@ const createWindow = async () => {
    */
   ipcMain.handle('createPopup', async (event, arg) => {
     return new Promise(async (resolve, reject) => {
-      console.log('createPopup')
       await createModal(arg, resolve, reject);
     });
   })
 
+  /*
   ipcMain.on('close', (event, arg) => {
       if (first) {
           tray.displayBalloon({
@@ -302,6 +301,7 @@ const createWindow = async () => {
       minimised = true;
       mainWindow.hide();
   });
+  */
 
   ipcMain.on('notify', (event, arg) => {
       logger.debug("notify");

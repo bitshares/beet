@@ -48,6 +48,7 @@
             } catch (error) {
               console.log(error);
             }
+            walletpass.value = "";
             router.replace("/dashboard");
         })
         .catch(() => {

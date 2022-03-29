@@ -42,7 +42,7 @@ const linkHandler = async (req) => {
     }
 
     if (!userResponse || !!userResponse.response && !userResponse.response.isLinked) {
-      console.log('No user response')
+      console.log(userResponse)
       return rejectRequest(req, 'User rejected request');
     }
 
@@ -50,7 +50,7 @@ const linkHandler = async (req) => {
     let identityhash;
     try {
       identityhash = sha256(
-        request.browser + ' ' + request.origin + ' ' + request.appName + ' ' + userResponse.chain + ' ' + userResponse.identity.id
+        req.browser + ' ' + req.origin + ' ' + req.appName + ' ' + userResponse.chain + ' ' + userResponse.identity.id
       ).toString();
     } catch (error) {
       console.log(error);

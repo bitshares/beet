@@ -97,10 +97,16 @@ const actions = {
     }
 }
 
-
 const getters = {
     getAccount: state => state.accountlist[state.selectedIndex],
     getAccountList: state => state.accountlist,
+    getSafeAccountList: state => state.accountlist.map(account => {
+      return {
+        accountID: account.accountID,
+        accountName: account.accountName,
+        chain: account.chain
+      };
+    }),
     getSigningKey: (state) => (request) => {
         let signing = state.accountlist.filter(x => {
             return (

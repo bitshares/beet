@@ -221,6 +221,26 @@ body {
     border-radius: 1rem;
     padding: 0rem 0rem;
 }
+
+.acc-info {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.acc-form-control {
+    position: relative;
+    color: black;
+    box-sizing: border-box;
+    height: auto;
+    padding: 0.4rem;
+    font-size: 1rem;
+    display: inline-block;
+    top: 0;
+    width: 98%;
+    margin: 0.4rem;
+    box-shadow: 0px 2px 6px 1px rgba(0,0,0,0.3) !important;
+}
+
 .form-control {
     position: relative;
     box-sizing: border-box;

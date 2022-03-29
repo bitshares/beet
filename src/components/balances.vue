@@ -79,6 +79,9 @@
     <div>
         <p class="mb-1 font-weight-bold small">
             {{ t('common.balances_lbl') }}
+            <ui-button @click="loadBalances()" class="step_btn">
+              Refresh balance
+            </ui-button>
         </p>
         <span v-if="errored">
             {{ t('common.balances_error') }}
@@ -106,12 +109,6 @@
                   </ui-item-text-content>
                 </ui-item>
             </ui-list>
-
-            <ui-card-actions full-bleed>
-              <ui-button @click="loadBalances()" class="step_btn">
-                Refresh balance
-              </ui-button>
-            </ui-card-actions>
         </ui-card>
     </div>
 </template>

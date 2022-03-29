@@ -11,7 +11,9 @@
 
     import store from '../store/index';
     import getBlockchainAPI from "../lib/blockchains/blockchainFactory";
+    import {formatChain, formatAccount} from "../lib/formatter";
     import RendererLogger from "../lib/RendererLogger";
+
     const logger = new RendererLogger();
 
     let nodes = ref([]);
@@ -23,19 +25,49 @@
     let accountName = ref('');
     let accountID = ref('');
 
-    let connectionFailed = computed(() => {
-      return !isConnecting || !isConnecting.value && !isConnected || !isConnected.value;
+    let selectedAccount = ref();
+    let chosenAccount = ref(-1);
+
+    /*
+     * Retrieve the list of accounts for allocation to prop
+     */
+    let accounts = computed(() => {
+      let accountList;
+      try {
+        accountList = store.getters['AccountStore/getSafeAccountList'];
+      } catch (error) {
+        console.log(error);
+        return [];
+      }
+      return accountList;
     });
 
-    let selectedAccount = computed({
-      get: () => {
-          return store.state.AccountStore.accountlist[
-              store.state.AccountStore.selectedIndex
-          ];
-      },
-      set: (newValue) => {
-          store.dispatch("AccountStore/selectAccount", newValue);
+    /*
+     * Creating the select items
+     */
+    let accountOptions = computed(() => {
+      let accountList;
+      try {
+        accountList = store.getters['AccountStore/getAccountList'];
+      } catch (error) {
+        console.log(error);
+        return [];
       }
+
+      let options = accountList.map((account, i) => {
+        return {
+          label: !account.hasOwnProperty("accountID") && account.trackId == 0
+                  ? 'cta' // TODO: Replace
+                  : `${formatChain(account.chain)}: ${formatAccount(account)}`,
+          value: i
+        };
+      });
+
+      return options;
+    });
+
+    let connectionFailed = computed(() => {
+      return !isConnecting || !isConnecting.value && !isConnected || !isConnected.value;
     });
 
     let selectedNode = computed({
@@ -55,16 +87,33 @@
       }
     });
 
-    onMounted(() => {
-      if (blockchain && blockchain.value) {
+    watch(blockchain, async (newVal, oldVal) => {
+      if (newVal && newVal !== oldVal) {
         nodes.value = blockchain.value.getNodes();
         isConnected.value = blockchain.value.isConnected();
-        //loadBalances();
       }
-    });
+    }, {immediate: true});
 
+    /*
+     * User selected from the account drop down menu
+     */
+    watch(chosenAccount, async (newVal, oldVal) => {
+      if (newVal !== -1) {
+        console.log(`new chosenAccount: ${newVal}`);
+        selectedAccount.value = accounts.value[newVal];
+        store.dispatch(
+          "AccountStore/selectAccount",
+          {chain: accounts.value[newVal].chain, accountID: accounts.value[newVal].accountID}
+        );
+      }
+    }, {immediate: true});
+
+    /*
+     * Account data has changed
+     */
     watch(selectedAccount, async (newVal, oldVal) => {
-      if (newVal !== oldVal) {
+      if (newVal && newVal !== oldVal) {
+        console.log(`new selectedAccount: ${newVal.accountName}`);
         blockchain.value = getBlockchainAPI(newVal.chain);
         selectedChain.value = newVal.chain;
         accountName.value = newVal.accountName;
@@ -73,7 +122,8 @@
     }, {immediate: true});
 
     watch(selectedChain, async (newVal, oldVal) => {
-      if (oldVal !== newVal) {
+      if (newVal && newVal !== oldVal) {
+          console.log('new selectedChain')
           isConnected.value = false;
           nodes.value = blockchain.value.getNodes();
           isConnected.value = blockchain.value.isConnected();
@@ -82,12 +132,6 @@
           }
       }
     }, {immediate: true});
-
-    /*
-    let accountlist = computed(() => {
-      return store.state.AccountStore.accountlist;
-    });
-    */
 
     async function reconnect() {
         let _selectedNode = selectedNode.value;
@@ -110,24 +154,39 @@
 </script>
 
 <template>
-  <div>
-    <AccountSelect v-model="selectedAccount" cta/>
-    <ui-button v-if="isConnecting" disabled>
-        Connecting
-    </ui-button>
-    <ui-button v-else-if="connectionFailed" @click="reconnect()" outlined>
-        Reconnect
-    </ui-button>
+    <select
+        id="account_select"
+        v-model="chosenAccount"
+        class="acc-form-control"
+        required
+    >
+        <option value="-1" disabled selected hidden>Select an account</option>
+        <option
+            v-for="account in accountOptions"
+            :key="account.value"
+            :value="account.value"
+        >
+          <span>
+            {{ account.label }}
+          </span>
+        </option>
+    </select>
 
-    <ui-grid>
-      <ui-grid-cell columns="12">
-        <AccountDetails :account="selectedAccount"/>
-      </ui-grid-cell>
-      <ui-grid-cell columns="12">
-        <Balances :account="selectedAccount"/>
-      </ui-grid-cell>
-    </ui-grid>
+    <div v-if="chosenAccount > -1 && selectedAccount" class="acc-info">
+      <ui-button v-if="isConnecting" disabled>
+          Connecting
+      </ui-button>
+      <ui-button v-if="isConnected" disabled>
+          Connected!
+      </ui-button>
+      <ui-button v-else-if="connectionFailed" @click="reconnect()" outlined>
+          Reconnect
+      </ui-button>
+      <br/>
+      <AccountDetails :account="selectedAccount"/>
+      <br/>
+      <Balances :account="selectedAccount"/>
+    </div>
 
     <Actionbar />
-  </div>
 </template>

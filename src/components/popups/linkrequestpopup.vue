@@ -10,9 +10,7 @@
     const logger = new RendererLogger();
     import {formatChain, formatAccount} from "../../lib/formatter";
 
-    //let chosenAccount = ref({label: 'Account select', value: 0});
     let chosenAccount = ref(-1);
-
     let allowWhitelist = ref(false);
 
     const props = defineProps({
@@ -43,18 +41,20 @@
       return props.accounts.map((account, i) => {
         return {
           label: !account.hasOwnProperty("accountID") && account.trackId == 0
-                  ? props.cta
+                  ? `account ${i}` // TODO: Replace placeholder!
                   : `${formatChain(account.chain)}: ${formatAccount(account)}`,
           value: i
         };
       });
     });
 
+    /*
     watch(chosenAccount, (newVal, oldVal) => {
       if (newVal !== oldVal) {
         console.log(`newVal: ${newVal}`);
       }
     }, {immediate: true});
+    */
 
     onMounted(() => {
       logger.debug("Link Popup initialised");
@@ -80,21 +80,8 @@
     }
 
     function _clickedDeny() {
-        console.log('clicked deny')
         ipcRenderer.send("clickedDeny", {id: props.request.id});
     }
-
-    /*
-    <AccountSelect
-        v-if="props.request.chain"
-        v-model="selectedAccount"
-        :chain="props.request.chain"
-        :existing="existingLinks"
-        :cta="t('operations.link.request_cta')"
-        extraclass="accountProvide"
-    />
-    */
-
 </script>
 
 <template>

@@ -89,13 +89,6 @@ export default class BeetAPI {
                 && x.origin == request.origin
                 && request.chain == "ANY" || x.chain == request.chain
           })
-          /*
-          existingLinks = store.getters['OriginStore/getExistingLinks'](
-                              request.appName,
-                              request.origin,
-                              request.chain
-                          );
-          */
         } catch (error) {
           console.log(error);
           existingLinks = [];
@@ -103,42 +96,48 @@ export default class BeetAPI {
 
         ipcRenderer.invoke('createPopup', {
           request: request,
-          accounts: accounts ?? [],
+          accounts: accounts.map(account => {
+            return {
+              accountID: account.accountID,
+              accountName: account.accountName,
+              chain: account.chain
+            };
+          }),
           existingLinks: existingLinks ?? []
         })
-          .then((result) => {
-            // ...
+        .then((result) => {
+          // ...
 
-            console.log('result')
+          console.log(result)
 
-            store.dispatch("AccountStore/selectAccount", result.response);
+          store.dispatch("AccountStore/selectAccount", result.response);
 
-            if (result.whitelisted) {
-                store.dispatch(
-                    "WhitelistStore/addWhitelist",
-                    {
-                        identityhash: request.identityhash,
-                        method: "LinkRequestPopup"
-                    }
-                );
-            }
+          if (result.whitelisted) {
+              store.dispatch(
+                  "WhitelistStore/addWhitelist",
+                  {
+                      identityhash: request.identityhash,
+                      method: "LinkRequestPopup"
+                  }
+              );
+          }
 
-            return {
-                id: request.id,
-                result: result
-            };
-          }).catch((error) => {
-            /*
-            console.log(error);
-            throw {
-                id: request.id,
-                response: {
-                    isLinked: false
-                }
-            };
-            */
-            return this._parseReject("BeetAPI.REQUEST_LINK", request, error);
-          })
+          return {
+              id: request.id,
+              result: result
+          };
+        }).catch((error) => {
+          /*
+          console.log(error);
+          throw {
+              id: request.id,
+              response: {
+                  isLinked: false
+              }
+          };
+          */
+          return this._parseReject("BeetAPI.REQUEST_LINK", request, error);
+        })
     }
 
     static async [Actions.REQUEST_RELINK](request) {
