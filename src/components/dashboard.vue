@@ -154,23 +154,15 @@
 </script>
 
 <template>
-    <select
+    <ui-select
         id="account_select"
         v-model="chosenAccount"
-        class="acc-form-control"
+        :options="accountOptions"
         required
+        full-bleed
     >
-        <option value="-1" disabled selected hidden>Select an account</option>
-        <option
-            v-for="account in accountOptions"
-            :key="account.value"
-            :value="account.value"
-        >
-          <span>
-            {{ account.label }}
-          </span>
-        </option>
-    </select>
+        Account
+    </ui-select>
 
     <div v-if="chosenAccount > -1 && selectedAccount" class="acc-info">
       <ui-button v-if="isConnecting" disabled>

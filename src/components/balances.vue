@@ -37,6 +37,7 @@
 
     let errored = ref(false);
     let balances = ref([]);
+    let token = ref(0);
 
     let selectedChain = computed(() => {
       return props.account.chain;
@@ -88,24 +89,21 @@
         </span>
         <ui-card elevated class="wideCard" v-if="balances != null">
             <ui-list>
-                <ui-item
-                  v-for="balance in balances"
-                  :key="balance.id"
-                >
+                <ui-item :key="balances[token]" v-if="balances.length > 0">
                     <ui-item-text-content>
                         <ui-item-text1>
-                            {{ balance.balance }} {{ balance.prefix }} {{ balance.asset_name }}
+                            {{ balances[token].balance }} {{ balances[token].prefix }} {{ balances[token].asset_name }}
                         </ui-item-text1>
                     </ui-item-text-content>
+                    <ui-card-actions v-if="balances.length > 1">
+                      <ui-pagination v-model="token" :total="balances.length" show-total mini></ui-pagination>
+                    </ui-card-actions>
                 </ui-item>
-                <ui-item v-if="balances.length == 0">
+                <ui-item v-else>
                   <ui-item-text-content>
                       <ui-item-text1>
                         No balances
                       </ui-item-text1>
-                      <ui-item-text2>
-                        -
-                      </ui-item-text2>
                   </ui-item-text-content>
                 </ui-item>
             </ui-list>

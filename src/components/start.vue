@@ -103,8 +103,9 @@
                 v-model="selectedWallet"
                 :options="walletOptions"
                 @change="passincorrect=''"
+                full-bleed
               >
-                Name
+                Beet wallet name
               </ui-select>
             </section>
             <br/>
