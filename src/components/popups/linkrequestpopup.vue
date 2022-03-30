@@ -80,7 +80,13 @@
     }
 
     function _clickedDeny() {
-        ipcRenderer.send("clickedDeny", {id: props.request.id});
+        ipcRenderer.send(
+          "clickedDeny",
+          {
+            response: {canceled: true},
+            request: {id: props.request.id}
+          }
+        );
     }
 </script>
 

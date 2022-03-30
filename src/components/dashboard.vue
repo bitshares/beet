@@ -99,7 +99,6 @@
      */
     watch(chosenAccount, async (newVal, oldVal) => {
       if (newVal !== -1) {
-        console.log(`new chosenAccount: ${newVal}`);
         selectedAccount.value = accounts.value[newVal];
         store.dispatch(
           "AccountStore/selectAccount",
@@ -113,7 +112,6 @@
      */
     watch(selectedAccount, async (newVal, oldVal) => {
       if (newVal && newVal !== oldVal) {
-        console.log(`new selectedAccount: ${newVal.accountName}`);
         blockchain.value = getBlockchainAPI(newVal.chain);
         selectedChain.value = newVal.chain;
         accountName.value = newVal.accountName;
@@ -123,7 +121,6 @@
 
     watch(selectedChain, async (newVal, oldVal) => {
       if (newVal && newVal !== oldVal) {
-          console.log('new selectedChain')
           isConnected.value = false;
           nodes.value = blockchain.value.getNodes();
           isConnected.value = blockchain.value.isConnected();
@@ -165,19 +162,19 @@
     </ui-select>
 
     <div v-if="chosenAccount > -1 && selectedAccount" class="acc-info">
-      <ui-button v-if="isConnecting" disabled>
-          Connecting
-      </ui-button>
-      <ui-button v-if="isConnected" disabled>
-          Connected!
-      </ui-button>
-      <ui-button v-else-if="connectionFailed" @click="reconnect()" outlined>
-          Reconnect
-      </ui-button>
-      <br/>
-      <AccountDetails :account="selectedAccount"/>
-      <br/>
-      <Balances :account="selectedAccount"/>
+        <ui-button v-if="isConnecting" disabled>
+            Connecting
+        </ui-button>
+        <ui-button v-if="isConnected" disabled>
+            Connected!
+        </ui-button>
+        <ui-button v-else-if="connectionFailed" @click="reconnect()" outlined>
+            Reconnect
+        </ui-button>
+        <br/>
+        <AccountDetails :account="selectedAccount"/>
+        <br/>
+        <Balances :account="selectedAccount"/>
     </div>
 
     <Actionbar />

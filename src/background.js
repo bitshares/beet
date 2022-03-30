@@ -56,7 +56,7 @@ let minimised = false;
 /*
  * On modal popup this runs to create child browser window
  */
-const createModal = async (arg, resolve, reject) => {
+const createModal = async (arg, modalEvent) => {
     let modalHeight = 400;
     let modalWidth = 600;
     if (!mainWindow) {
@@ -75,10 +75,9 @@ const createModal = async (arg, resolve, reject) => {
 
     modalRequests[id] = {
         request: request,
+        event: modalEvent,
         accounts: accounts,
-        existingLinks: existingLinks,
-        resolve: resolve,
-        reject: reject
+        existingLinks: existingLinks
     };
 
     modalWindows[id] = new BrowserWindow({
@@ -120,7 +119,7 @@ const createModal = async (arg, resolve, reject) => {
       }
 
       if (modalRequests[id]) {
-          modalRequests[id].reject({
+          modalRequests[id].event.sender.send(`popupRejected_${id}`, {
               id: id,
               result: {
                   isError: true,
@@ -146,7 +145,7 @@ ipcMain.on('clickedAllow', (event, arg) => {
   }
 
   if (modalRequests[id]) {
-    modalRequests[id].resolve(arg);
+    modalRequests[id].event.sender.send(`popupApproved_${id}`, arg);
     delete modalRequests[id];
   }
 });
@@ -156,14 +155,16 @@ ipcMain.on('clickedAllow', (event, arg) => {
  */
 ipcMain.on('clickedDeny', (event, arg) => {
   console.log('ipcmain clickedDeny');
-  if (modalWindows[arg.id]) {
-    modalWindows[arg.id].close();
-    delete modalWindows[arg.id];
+  let id = arg.request.id;
+
+  if (modalWindows[id]) {
+    modalWindows[id].close();
+    delete modalWindows[id];
   }
 
-  if (modalRequests[arg.id]) {
-    modalRequests[arg.id].reject(arg);
-    delete modalRequests[arg.id];
+  if (modalRequests[id]) {
+    modalRequests[id].event.sender.send(`popupRejected_${id}`, arg);
+    delete modalRequests[id];
   }
 });
 
@@ -279,10 +280,8 @@ const createWindow = async () => {
   /*
    * Create modal popup & wait for user response
    */
-  ipcMain.handle('createPopup', async (event, arg) => {
-    return new Promise(async (resolve, reject) => {
-      await createModal(arg, resolve, reject);
-    });
+  ipcMain.on('createPopup', async (event, arg) => {
+      await createModal(arg, event);
   })
 
   /*

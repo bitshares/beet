@@ -11,6 +11,8 @@ import * as ed from '@noble/ed25519';
 import { createServer } from "http";
 import { Server } from "socket.io";
 
+import {linkRequest} from './apiUtils.js';
+
 import store from '../store/index.js';
 import BeetAPI from './BeetAPI';
 import BeetDB from './BeetDB.js';
@@ -35,22 +37,26 @@ const linkHandler = async (req) => {
     // todo: only forward fields that are actually used in handler
     let userResponse;
     try {
-      userResponse = await BeetAPI.handler(Object.assign(req, {}));
+      if (req.type == 'link') {
+        userResponse = await linkRequest(Object.assign(req, {}));
+      } else {
+        userResponse = await relinkRequest(Object.assign(req, {}));
+      }
     } catch (error) {
       console.log(error)
       rejectRequest(req, 'User rejected request')
     }
 
-    if (!userResponse || !!userResponse.response && !userResponse.response.isLinked) {
-      console.log(userResponse)
+    if (!userResponse || !userResponse.response) {
       return rejectRequest(req, 'User rejected request');
     }
 
-    console.log('user approved modal');
+    console.log(req)
+
     let identityhash;
     try {
       identityhash = sha256(
-        req.browser + ' ' + req.origin + ' ' + req.appName + ' ' + userResponse.chain + ' ' + userResponse.identity.id
+        req.browser + ' ' + req.origin + ' ' + req.appName + ' ' + userResponse.response.chain + ' ' + userResponse.response.id
       ).toString();
     } catch (error) {
       console.log(error);
@@ -70,7 +76,7 @@ const linkHandler = async (req) => {
 
     let secret;
     try {
-      secret = await ed.getSharedSecret(privk, this.beetkey);
+      secret = await ed.getSharedSecret(privk, req.key);
     } catch (error) {
       console.error(error);
       return;

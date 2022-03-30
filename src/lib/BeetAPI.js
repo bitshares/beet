@@ -8,8 +8,6 @@ import {
 import {ipcRenderer} from 'electron';
 import * as Actions from './Actions';
 import store from '../store/index.js';
-import RendererLogger from "./RendererLogger";
-const logger = new RendererLogger();
 
 export default class BeetAPI {
 
@@ -30,6 +28,7 @@ export default class BeetAPI {
         }
 
         //await store.state.WalletStore.unlocked.promise; // wait forever if locked?
+
         let result;
         try {
           result = await this[request.type](request);
@@ -107,9 +106,6 @@ export default class BeetAPI {
         })
         .then((result) => {
           // ...
-
-          console.log(result)
-
           store.dispatch("AccountStore/selectAccount", result.response);
 
           if (result.whitelisted) {
