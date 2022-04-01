@@ -52,7 +52,7 @@ export async function linkRequest(request) {
           existingLinks = [];
         }
 
-        ipcRenderer.send('createPopup', {
+        let popupContents = {
           request: request,
           accounts: accounts.map(account => {
             return {
@@ -62,7 +62,9 @@ export async function linkRequest(request) {
             };
           }),
           existingLinks: existingLinks ?? []
-        })
+        };
+
+        ipcRenderer.send('createPopup', popupContents)
 
         ipcRenderer.once(`popupApproved_${request.id}`, (event, result) => {
             store.dispatch("AccountStore/selectAccount", result.response);

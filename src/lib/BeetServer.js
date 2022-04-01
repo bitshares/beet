@@ -1,7 +1,7 @@
 import {
     v4 as uuidv4
 } from "uuid";
-import OTPAuth from "otpauth";
+import * as OTPAuth from "otpauth";
 
 import sha256 from "crypto-js/sha256.js";
 import aes from "crypto-js/aes.js";
@@ -29,6 +29,77 @@ const rejectRequest = (req, error) => {
   };
 }
 
+/**
+ * Create beet link
+ * @parameter {socket} socket
+ * @parameter {object} target
+ */
+async function _establishLink(socket, target) {
+    socket.isLinked = true;
+    socket.identityhash = target.identityhash;
+    socket.account_id = target.app.account_id;
+    socket.chain = target.app.chain;
+    socket.next_hash = target.app.next_hash;
+    socket.otp = new OTPAuth.HOTP({
+        issuer: "Beet",
+        label: "BeetAuth",
+        algorithm: "SHA1",
+        digits: 32,
+        counter: 0,
+        secret: OTPAuth.Secret.fromHex(target.app.secret)
+    });
+}
+
+/**
+ * Create beet link
+ * @parameter {object} result
+ * @returns {object}
+ */
+function _getLinkResponse(result) {
+    // todo: unify! isLinked comes from linkHandler, link from authHandler.
+    if (!result.isLinked == true) {
+      return {
+          id: result.id,
+          error: true,
+          payload: {
+              code: 6,
+              message: "Could not link to Beet"
+          }
+      };
+    }
+
+    let response = {
+        id: result.id,
+        error: false,
+        payload: {
+            authenticate: true,
+            link: true,
+            chain: result.app ? result.chain : result.identity.chain,
+            existing: result.existing,
+            identityhash: result.identityhash,
+            requested: {
+                account: {
+                    name: result.app
+                            ? result.app.account_name
+                            : result.identity.name,
+                    id: result.app
+                            ? result.app.account_id
+                            : result.identity.id
+                }
+            }
+        }
+    };
+
+    // todo: analyze why the account name is not set and treat the cause not the sympton
+    if (!response.payload.requested.account.name) {
+        response.payload.requested.account.name = store.state.AccountStore.accountlist.find(
+            x => x.accountID == response.payload.requested.account.id
+        ).accountName;
+    }
+
+    return response;
+}
+
 /*
  * Show the link/relink modal
  * @returns {bool}
@@ -50,8 +121,6 @@ const linkHandler = async (req) => {
     if (!userResponse || !userResponse.response) {
       return rejectRequest(req, 'User rejected request');
     }
-
-    console.log(req)
 
     let identityhash;
     try {
@@ -76,21 +145,24 @@ const linkHandler = async (req) => {
 
     let secret;
     try {
-      secret = await ed.getSharedSecret(privk, req.key);
+      secret = await ed.getSharedSecret(req.key, req.payload.pubkey);
     } catch (error) {
       console.error(error);
-      return;
+      return rejectRequest(req, error);
     }
 
     try {
       app = await store.dispatch('OriginStore/addApp', {
           appName: req.appName,
+          /*
           identityhash: userResponse.identity.identityhash == identityhash
                           ? userResponse.identity.identityhash
                           : identityhash,
+          */
+          identityhash: identityhash,
           origin: req.origin,
-          account_id: userResponse.identity.id,
-          chain: userResponse.identity.chain,
+          account_id: userResponse.response.id,
+          chain: userResponse.response.chain,
           secret: ed.utils.bytesToHex(secret),
           next_hash: req.payload.next_hash
       });
@@ -180,11 +252,12 @@ export default class BeetServer {
 
       if (status.isLinked == true) {
           // link has successfully established
-          this._establishLink(socket, status);
+          _establishLink(socket, status);
       }
 
       if (status) {
-        let linkresponse = this._getLinkResponse(status);
+        let linkresponse = _getLinkResponse(status);
+        console.log(linkresponse)
         socket.emit("link", linkresponse);
       }
     }
@@ -205,14 +278,6 @@ export default class BeetServer {
           socket.isAuthenticated = false;
 
           socket.emit("connected", socket.id);
-          socket.emit("connected", socket.id);
-
-          socket.on("version", (callback) => {
-            callback({
-                api: process.env.npm_package_apiversion,
-                ui: process.env.npm_package_version
-            })
-          });
 
           socket.on("ping", (callback) => {
             console.log("ping")
@@ -264,8 +329,8 @@ export default class BeetServer {
             socket.browser = status.browser;
 
             if (status.link == true) {
-              this._establishLink(socket.id, status);
-              let linkResponse = this._getLinkResponse(status);
+              _establishLink(socket.id, status);
+              let linkResponse = _getLinkResponse(status);
               console.log("Existing link");
               socket.emit('authenticated', linkResponse);
               return;
@@ -411,72 +476,6 @@ export default class BeetServer {
         httpServer.listen(port);
 
         console.info("WebSocket server listening on port ", port);
-    }
-
-    /**
-     * Create beet link
-     * @parameter {socket} socket
-     * @parameter {object} target
-     */
-    static _establishLink(socket, target) {
-        socket.isLinked = true;
-        socket.identityhash = target.identityhash;
-        socket.account_id = target.app.account_id;
-        socket.chain = target.app.chain;
-        socket.next_hash = target.app.next_hash;
-        socket.otp = new OTPAuth.HOTP({
-            issuer: "Beet",
-            label: "BeetAuth",
-            algorithm: "SHA1",
-            digits: 32,
-            counter: 0,
-            secret: OTPAuth.Secret.fromHex(target.app.secret)
-        });
-    }
-
-    static _getLinkResponse(result) {
-        // todo: unify! isLinked comes from linkHandler, link from authHandler.
-        if (!result.isLinked == true) {
-          return {
-              id: result.id,
-              error: true,
-              payload: {
-                  code: 6,
-                  message: "Could not link to Beet"
-              }
-          };
-        }
-
-        let response = {
-            id: result.id,
-            error: false,
-            payload: {
-                authenticate: true,
-                link: true,
-                chain: result.app ? result.chain : result.identity.chain,
-                existing: result.existing,
-                identityhash: result.identityhash,
-                requested: {
-                    account: {
-                        name: result.app
-                                ? result.app.account_name
-                                : result.identity.name,
-                        id: result.app
-                                ? result.app.account_id
-                                : result.identity.id
-                    }
-                }
-            }
-        };
-
-        // todo: analyze why the account name is not set and treat the cause not the sympton
-        if (!response.payload.requested.account.name) {
-            response.payload.requested.account.name = store.state.AccountStore.accountlist.find(
-                x => x.accountID == response.payload.requested.account.id
-            ).accountName;
-        }
-
-        return response;
     }
 
 }
