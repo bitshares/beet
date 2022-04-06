@@ -7,6 +7,10 @@
     import RendererLogger from "../../lib/RendererLogger";
     const logger = new RendererLogger();
 
+    const props = defineProps({
+      request: Object
+    });
+
     let type = ref("ReLinkRequestPopup");
     let chosenAccount = ref({ trackId: 0 });
     let beetapp = ref({});
@@ -15,17 +19,6 @@
 
     let incoming = ref({});
     let requestText = ref('');
-    let _accept = ref(null);
-    let _reject = ref(null);
-
-    onBeforeMount(() => {
-      ipcRenderer.send("getContent", true);
-      ipcRenderer.on('contentResponse', (event, args) => {
-        incoming.value = args.request;
-        _accept.value = args._accept;
-        _reject.value = args._reject;
-      });
-    });
 
     onMounted(() => {
       logger.debug("Relink Popup initialised");
@@ -90,10 +83,10 @@
         {{ requestText }} &#10068;
     </div>
     <br>
-    <ui-button raised @click="_clickedAllow">
+    <ui-button raised @click="_clickedAllow()">
       {{ t('operations.link.accept_btn') }}
     </ui-button>
-    <ui-button raised @click="_clickedDeny">
+    <ui-button raised @click="_clickedDeny()">
       {{ t('operations.link.reject_btn') }}
     </ui-button>
 </template>

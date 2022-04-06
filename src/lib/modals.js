@@ -14,28 +14,6 @@ export function showAlert(request) {
     //alerts.value.push({ msg: alertmsg, id: uuidv4() });
 }
 
-export async function requestModal(request) {
-  // trigger pop up
-  return new Promise((resolve, reject) => {
-    console.log('requestModal')
-    emitter.emit('createPopup', {
-      _accept: resolve,
-      _reject: reject,
-      request: request
-    });
-    
-    try {
-      emitter.emit('createPopup', {
-        _accept: resolve,
-        _reject: reject,
-        request: request
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  });
-}
-
 export async function requestVote(payload) {
     payload.action = "vote";
     let blockchain = getBlockchainAPI(payload.chain);

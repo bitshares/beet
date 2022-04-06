@@ -1,21 +1,14 @@
 <script setup>
-    import {ipcRenderer} from "electron";
-    import { onMounted, onBeforeMount, computed, ref } from "vue";
+    import { computed } from "vue";
     import queryString from "query-string";
 
     import LinkRequestPopup from "./popups/linkrequestpopup";
-
-    /*
-    import IdentityRequestPopup from "./popups/identityrequestpopup";
     import ReLinkRequestPopup from "./popups/relinkrequestpopup";
+    import IdentityRequestPopup from "./popups/identityrequestpopup";
     import GenericRequestPopup from "./popups/genericrequestpopup";
+    import SignMessageRequestPopup from "./popups/signedmessagepopup";
     import TransactionRequestPopup from "./popups/transactionrequestpopup";
     import TransferRequestPopup from "./popups/transferrequestpopup";
-    import SignMessageRequestPopup from "./popups/signedmessagepopup";
-    */
-
-    import RendererLogger from "../lib/RendererLogger";
-    const logger = new RendererLogger();
 
     let type = computed(() => {
         let qs = queryString.parse(global.location.search);
@@ -24,49 +17,24 @@
 
     let request = computed(() => {
       let qs = queryString.parse(global.location.search);
-      return JSON.parse(qs.request);
+      return qs.request
+              ? JSON.parse(qs.request);
+              : null;
     });
 
     let accounts = computed(() => {
       let qs = queryString.parse(global.location.search);
-      return JSON.parse(qs.accounts);
+      return qs.accounts
+              ? JSON.parse(qs.accounts);
+              : [];
     });
 
     let existingLinks = computed(() => {
       let qs = queryString.parse(global.location.search);
-      return JSON.parse(qs.existingLinks);
+      return qs.existingLinks
+              ? JSON.parse(qs.existingLinks);
+              : [];
     });
-
-    onMounted(() => {
-        logger.debug("Modal mounted");
-    })
-
-    /*
-      <ReLinkRequestPopup
-        v-else-if="qs.type === 'reLinkReqModal'"
-        ref="reLinkReqModal"
-      />
-      <IdentityRequestPopup
-        v-else-if="qs.type === 'identityReqModal'"
-        ref="identityReqModal"
-      />
-      <SignMessageRequestPopup
-        v-else-if="qs.type === 'signMessageModal'"
-        ref="signMessageModal"
-      />
-      <TransferRequestPopup
-        v-else-if="qs.type === 'transferReqModal'"
-        ref="transferReqModal"
-      />
-      <TransactionRequestPopup
-        v-else-if="qs.type === 'transactionReqModal'"
-        ref="transactionReqModal"
-      />
-      <GenericRequestPopup
-        v-else-if="qs.type === 'genericReqModal'"
-        ref="genericReqModal"
-      />
-    */
 </script>
 
 <template>
@@ -77,8 +45,32 @@
         :accounts="accounts"
         :existingLinks="existingLinks"
       />
+      <ReLinkRequestPopup
+        v-else-if="type === 'reLinkReqModal'"
+        :request="request"
+      />
+      <IdentityRequestPopup
+        v-else-if="type === 'identityReqModal'"
+        :request="request"
+      />
+      <GenericRequestPopup
+        v-else-if="type === 'genericReqModal'"
+        :request="request"
+      />
+      <SignMessageRequestPopup
+        v-else-if="type === 'signMessageModal'"
+        :request="request"
+      />
+      <TransferRequestPopup
+        v-else-if="type === 'transferReqModal'"
+        :request="request"
+      />
+      <TransactionRequestPopup
+        v-else-if="type === 'transactionReqModal'"
+        :request="request"
+      />
     </div>
     <div v-else>
-        Couldn't load modal
+        Error: Unable to load prompt.
     </div>
 </template>

@@ -9,23 +9,16 @@
     import RendererLogger from "../../lib/RendererLogger";
     const logger = new RendererLogger();
 
+    const props = defineProps({
+      request: Object
+    });
+
     let type = ref("SignMessageRequestPopup");
     let askWhitelist = ref(false);
     let message = ref(null);
 
     let incoming = ref({});
     let allowWhitelist = ref(false);
-    let _accept = ref(null);
-    let _reject = ref(null);
-
-    onBeforeMount(() => {
-      ipcRenderer.send("getContent", true);
-      ipcRenderer.on('contentResponse', (event, args) => {
-        incoming.value = args.request;
-        _accept.value = args._accept;
-        _reject.value = args._reject;
-      });
-    });
 
     onMounted(() => {
       logger.debug("Signed message popup initialised");
@@ -121,10 +114,10 @@
       <ui-checkbox v-model="allowWhitelist" input-id="allowWhitelist"></ui-checkbox>
       <label>{{ t('operations.whitelist.prompt', { method: incoming.method }) }}</label>
     </ui-form-field>
-    <ui-button raised @click="_clickedAllow">
+    <ui-button raised @click="_clickedAllow()">
         {{ t("operations.message.accept_btn") }}
     </ui-button>
-    <ui-button raised @click="_clickedDeny">
+    <ui-button raised @click="_clickedDeny()">
         {{ t("operations.message.reject_btn") }}
     </ui-button>
 </template>

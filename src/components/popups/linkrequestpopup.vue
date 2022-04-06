@@ -48,14 +48,6 @@
       });
     });
 
-    /*
-    watch(chosenAccount, (newVal, oldVal) => {
-      if (newVal !== oldVal) {
-        console.log(`newVal: ${newVal}`);
-      }
-    }, {immediate: true});
-    */
-
     onMounted(() => {
       logger.debug("Link Popup initialised");
     })

@@ -10,6 +10,10 @@
     import {formatChain} from "../../lib/formatter";
     const logger = new RendererLogger();
 
+    const props = defineProps({
+      request: Object
+    });
+
     let type = ref("TransactionRequestPopup");
     let incoming = ref({
         signingAccount: {},
@@ -17,17 +21,6 @@
     });
 
     let allowWhitelist = ref(false);
-    let _accept = ref(null);
-    let _reject = ref(null);
-
-    onBeforeMount(() => {
-      ipcRenderer.send("getContent", true);
-      ipcRenderer.on('contentResponse', (event, args) => {
-        incoming.value = args.request;
-        _accept.value = args._accept;
-        _reject.value = args._reject;
-      });
-    });
 
     onMounted(async () => {
       logger.debug("Tx Popup initialised");
@@ -216,10 +209,10 @@
       </code>
     </pre>
     {{ t('operations.rawsig.request_cta') }}
-    <ui-button raised @click="_clickedAllow">
+    <ui-button raised @click="_clickedAllow()">
         {{ getRequestType() == "sign" ? t('operations.rawsig.sign_btn') : t('operations.rawsig.sign_and_broadcast_btn') }}
     </ui-button>
-    <ui-button raised @click="_clickedDeny">
+    <ui-button raised @click="_clickedDeny()">
         {{ t('operations.rawsig.reject_btn') }}
     </ui-button>
 </template>

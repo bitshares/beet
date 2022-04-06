@@ -60,7 +60,7 @@ const createModal = async (arg, modalEvent) => {
     let modalHeight = 400;
     let modalWidth = 600;
     if (!mainWindow) {
-        return reject('No main window');
+        return reject('No main window'); // TODO: REPLACE
     }
 
     let request = arg.request;
@@ -70,15 +70,22 @@ const createModal = async (arg, modalEvent) => {
     let existingLinks = arg.existingLinks;
 
     if (modalWindows[id] || modalRequests[id]) {
-        return reject('Modal exists already!');
+        return reject('Modal exists already!'); // TODO: REPLACE
     }
 
-    modalRequests[id] = {
-        request: request,
-        event: modalEvent,
-        accounts: accounts,
-        existingLinks: existingLinks
-    };
+    modalRequests[id] = {request: request, event: modalEvent};
+
+    let targetURL = `file://${__dirname}/modal.html?`
+                    + `id=${id}`
+                    + `&type=${type}`
+                    + `&request=${JSON.stringify(request)}`;
+
+    if (type === 'link') {
+        modalRequests[id]['accounts'] = accounts;
+        modalRequests[id]['existingLinks'] = existingLinks;
+        targetURL += `&accounts=${JSON.stringify(accounts)}`;
+        targetURL += `&existingLinks=${JSON.stringify(existingLinks)}`;
+    }
 
     modalWindows[id] = new BrowserWindow({
         parent: mainWindow,
@@ -99,14 +106,7 @@ const createModal = async (arg, modalEvent) => {
         icon: __dirname + '/img/beet-taskbar.png'
     });
 
-    modalWindows[id].loadURL(
-        `file://${__dirname}/modal.html?`
-        + `id=${id}`
-        + `&type=${type}`
-        + `&request=${JSON.stringify(request)}`
-        + `&accounts=${JSON.stringify(accounts)}`
-        + `&existingLinks=${JSON.stringify(existingLinks)}`
-    );
+    modalWindows[id].loadURL(targetURL);
 
     modalWindows[id].once('ready-to-show', () => {
         console.log('ready to show modal')
