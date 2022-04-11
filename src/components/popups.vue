@@ -12,26 +12,28 @@
 
     let type = computed(() => {
         let qs = queryString.parse(global.location.search);
-        return qs.type;
+        return qs && qs.type
+                ? qs.type
+                : 'none';
     });
 
     let request = computed(() => {
       let qs = queryString.parse(global.location.search);
-      return qs.request
+      return qs && qs.request
               ? JSON.parse(qs.request);
-              : null;
+              : {};
     });
 
     let accounts = computed(() => {
       let qs = queryString.parse(global.location.search);
-      return qs.accounts
+      return qs && qs.accounts
               ? JSON.parse(qs.accounts);
               : [];
     });
 
     let existingLinks = computed(() => {
       let qs = queryString.parse(global.location.search);
-      return qs.existingLinks
+      return qs && qs.existingLinks
               ? JSON.parse(qs.existingLinks);
               : [];
     });
@@ -48,10 +50,12 @@
       <ReLinkRequestPopup
         v-else-if="type === 'reLinkReqModal'"
         :request="request"
+        :accounts="accounts"
       />
       <IdentityRequestPopup
         v-else-if="type === 'identityReqModal'"
         :request="request"
+        :accounts="accounts"
       />
       <GenericRequestPopup
         v-else-if="type === 'genericReqModal'"

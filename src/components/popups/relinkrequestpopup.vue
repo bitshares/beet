@@ -1,70 +1,50 @@
 <script setup>
     import { ipcRenderer } from 'electron';
-    import {ref, onMounted} from "vue";
+    import { onMounted, computed} from "vue";
     import { useI18n } from 'vue-i18n';
     const { t } = useI18n({ useScope: 'global' });
-    import store from '../store/index';
     import RendererLogger from "../../lib/RendererLogger";
     const logger = new RendererLogger();
 
     const props = defineProps({
-      request: Object
+      request: Object,
+      accounts: Array
     });
 
-    let type = ref("ReLinkRequestPopup");
-    let chosenAccount = ref({ trackId: 0 });
-    let beetapp = ref({});
-
-    let allowWhitelist = ref(false);
-
-    let incoming = ref({});
-    let requestText = ref('');
+    let requestText = computed(() => {
+        return t(
+          'operations.relink.request',
+          {
+            appName: props.request.appName,
+            origin: props.request.origin,
+            chain: props.request.chain,
+            accountId: props.accounts[0].accountID
+          }
+        );
+    });
 
     onMounted(() => {
       logger.debug("Relink Popup initialised");
-      store.dispatch("WalletStore/notifyUser", {notify: "request", message: "request"}); //show alert instead?
-      beetapp.value = store.state.OriginStore.apps.filter(
-          x => x.identityhash == incoming.value.payload.identityhash
-      )[0];
-      requestText.value = t('operations.relink.request', {appName: incoming.appName, origin: incoming.origin, chain: incoming.chain, accountId: beetapp.account_id });
     });
 
     /////////
 
     async function _clickedAllow() {
-        try {
-            let account = store.state.AccountStore.accountlist.filter(
-                x => x.accountID == beetapp.value.account_id && x.chain == beetapp.value.chain
-            );
-
-            // todo allowWhitelist move whitelisting to BeetAPI, thus return flag here
-            _accept.value(
-                {
-                    response: {
-                        identityhash: incoming.value.payload.identityhash,
-                        name: account.value.accountName,
-                        chain: beetapp.value.chain,
-                        id: beetapp.value.account_id
-                    },
-                    whitelisted: allowWhitelist.value
-                }
-            );
-            if (allowWhitelist.value) {
-                // todo: allowWhitelist move whitelisting into BeetAPI
-                store.dispatch(
-                    "WhitelistStore/addWhitelist",
-                    {
-                        identityhash: incoming.value.identityhash,
-                        method: type.value
-                    }
-                );
-            }
-        } catch (error) {
-            console.log(error);
-            _reject.value({ error: error });
-            ipcRenderer.send("modalError", true);
-        }
-        ipcRenderer.send("clickedAllow", true);
+        ipcRenderer.send(
+            "clickedAllow",
+            {
+              response: {
+                  identityhash: props.request.payload.identityhash,
+                  name: props.accounts[0].accountName,
+                  chain: props.accounts[0].chain,
+                  id: props.accounts[0].accountID,
+                  success: true
+              },
+              request: {
+                id: props.request.id
+              }
+          }
+        );
     }
 
     function _clickedDeny() {

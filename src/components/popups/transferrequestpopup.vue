@@ -1,26 +1,25 @@
 <script setup>
     import { ipcRenderer } from 'electron';
-    import {ref, onMounted, computed} from "vue";
+    import { onMounted, computed } from "vue";
     import { useI18n } from 'vue-i18n';
     const { t } = useI18n({ useScope: 'global' });
-    import RendererLogger from "../../lib/RendererLogger";
     import getBlockchainAPI from "../../lib/blockchains/blockchainFactory";
+    import RendererLogger from "../../lib/RendererLogger";
     const logger = new RendererLogger();
 
     const props = defineProps({
       request: Object,
-      chain: String,
-      accountName: String
+      accounts: Array
     });
 
-    let type = ref("TransferRequestPopup");
+    //let type = ref("TransferRequestPopup");
 
     let message = computed(() => {
         return t("operations.transfer.request", {
             appName: props.request.appName,
             origin: props.request.origin,
-            chain: props.chain,
-            accountName: props.accountName
+            chain: props.accounts[0].accountID.chain,
+            accountName: props.accounts[0].accountID.accountName
         });
     });
 
@@ -49,7 +48,7 @@
         return props.request.feeInSatoshis ?? null;
     });
 
-    onMounted(async () => {
+    onMounted(() => {
       logger.debug("Transfer request popup initialised");
     });
 

@@ -1,97 +1,39 @@
 <script setup>
     import { ipcRenderer } from 'electron';
-    import {ref, onMounted} from "vue";
+    import {onMounted} from "vue";
     import { useI18n } from 'vue-i18n';
     const { t } = useI18n({ useScope: 'global' });
-    import store from '../store/index';
-    import {getKey} from '../../lib/SecureRemote';
-    import getBlockchainAPI from "../../lib/blockchains/blockchainFactory";
     import RendererLogger from "../../lib/RendererLogger";
     const logger = new RendererLogger();
 
     const props = defineProps({
-      request: Object
+      request: Object,
+      accounts: Array
     });
 
-    let type = ref("SignMessageRequestPopup");
-    let askWhitelist = ref(false);
-    let message = ref(null);
+    //let type = ref("SignMessageRequestPopup");
 
-    let incoming = ref({});
-    let allowWhitelist = ref(false);
+    let requestText = computed(() => {
+        return t("operations.message.request", {
+            appName: props.request.appName,
+            origin: props.request.origin,
+            chain: props.accounts[0].chain, // FIX
+            accountName: props.accounts[0].accountName
+        });
+    });
 
     onMounted(() => {
       logger.debug("Signed message popup initialised");
-      store.dispatch("WalletStore/notifyUser", {notify: "request", message: message}); //show alert instead?
-
-      message.value = t("operations.message.request", {
-          appName: incoming.value.appName,
-          origin: incoming.value.origin,
-          chain: store.getters['AccountStore/getSigningKey'](incoming.value).chain,
-          accountName: store.getters['AccountStore/getSigningKey'](incoming.value).accountName
-      });
     });
 
-    /*
-    async function show(incoming, newWhitelist = null) {
-        if (newWhitelist !== null) {
-            askWhitelist.value = newWhitelist;
-        }
-    }
-    */
-
     async function _clickedAllow() {
-        let keys = store.getters['AccountStore/getSigningKey'](incoming.value).keys;
-
-        let key;
-        try {
-          key = await getKey(keys.memo ?? keys.active)
-        } catch (error) {
-          console.log(error);
-          _reject.value({ error: error });
-          ipcRenderer.send("modalError", true);
-        }
-
-        let blockchain = getBlockchainAPI(incoming.value.chain);
-        let signingKey;
-        try {
-          signingKey = store.getters['AccountStore/getSigningKey'](incoming.value).accountName;
-        } catch (error) {
-          console.log(error);
-          _reject.value({ error: error });
-          ipcRenderer.send("modalError", true);
-        }
-
-        let signedMessage;
-        try {
-          signedMessage = await blockchain.signMessage(key, signingKey, incoming.value.params);
-        } catch (error) {
-          console.log(error);
-          _reject.value({ error: error });
-          ipcRenderer.send("modalError", true);
-        }
-
-        ipcRenderer.send("notify", 'Message successfully signed.');
-        try {
-            // todo allowWhitelist move whitelisting to BeetAPI, thus return flag here
-            _accept.value({response: signedMessage, whitelisted: allowWhitelist.value});
-
-            if (allowWhitelist.value) {
-                // todo: allowWhitelist move whitelisting into BeetAPI
-                store.dispatch(
-                    "WhitelistStore/addWhitelist",
-                    {
-                        identityhash: incoming.value.identityhash,
-                        method: type.value
-                    }
-                );
-            }
-        } catch (error) {
-          console.log(error);
-          _reject.value({ error: error });
-          ipcRenderer.send("modalError", true);
-        }
-        ipcRenderer.send("clickedAllow", true);
+        ipcRenderer.send(
+          "clickedAllow",
+          {
+            response: {success: true},
+            request: {id: props.request.id}
+          }
+        );
     }
 
     function _clickedDeny() {
@@ -109,11 +51,7 @@
     {{ message }}:
     <br>
     <br>
-    <pre class="text-left custom-content"><code>{{ incoming.params }}</code></pre>
-    <ui-form-field v-if="askWhitelist">
-      <ui-checkbox v-model="allowWhitelist" input-id="allowWhitelist"></ui-checkbox>
-      <label>{{ t('operations.whitelist.prompt', { method: incoming.method }) }}</label>
-    </ui-form-field>
+    <pre class="text-left custom-content"><code>{{ props.request.params }}</code></pre>
     <ui-button raised @click="_clickedAllow()">
         {{ t("operations.message.accept_btn") }}
     </ui-button>

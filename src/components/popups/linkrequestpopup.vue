@@ -4,14 +4,11 @@
 
     import { useI18n } from 'vue-i18n';
     const { t } = useI18n({ useScope: 'global' });
-    import AccountSelect from "../account-select";
-    import store from '../../store/index';
     import RendererLogger from "../../lib/RendererLogger";
     const logger = new RendererLogger();
     import {formatChain, formatAccount} from "../../lib/formatter";
 
     let chosenAccount = ref(-1);
-    let allowWhitelist = ref(false);
 
     const props = defineProps({
       request: Object,
@@ -65,8 +62,7 @@
               },
               request: {
                 id: props.request.id
-              },
-              whitelisted: allowWhitelist.value
+              }
           }
         );
     }
