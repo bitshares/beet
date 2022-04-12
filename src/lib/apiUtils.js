@@ -44,6 +44,16 @@ export async function linkRequest(request) {
 
         let existingLinks = [];
         try {
+          existingLinks = store.getters['OriginStore/getExistingLinks']({
+            appName: request.appName, origin: request.origin, chain: request.chain
+          })
+        } catch (error) {
+          console.log(error);
+        }
+
+        /*
+        let existingLinks = [];
+        try {
           existingLinks = store.state.OriginStore.apps.filter((x) => {
               return x.appName == request.appName
                 && x.origin == request.origin
@@ -52,18 +62,21 @@ export async function linkRequest(request) {
         } catch (error) {
           console.log(error);
         }
+        */
 
-        let popupContents = {
-          request: request,
-          accounts: accounts,
-          existingLinks: existingLinks
-        };
-
-        ipcRenderer.send('createPopup', popupContents)
+        ipcRenderer.send(
+          'createPopup',
+          {
+            request: request,
+            accounts: accounts,
+            existingLinks: existingLinks
+          }
+        )
 
         ipcRenderer.once(`popupApproved_${request.id}`, (event, result) => {
             store.dispatch("AccountStore/selectAccount", result.response);
 
+            /*
             if (result.whitelisted) {
                 store.dispatch(
                     "WhitelistStore/addWhitelist",
@@ -73,6 +86,7 @@ export async function linkRequest(request) {
                     }
                 );
             }
+            */
 
             return resolve(result);
         })
@@ -92,13 +106,16 @@ export async function relinkRequest(request) {
   return new Promise(async (resolve, reject) => {
     store.dispatch("WalletStore/notifyUser", {notify: "request", message: "request"});
 
-    let shownBeetApp = store.state.OriginStore.apps.filter(
-        x => x.identityhash == request.payload.identityhash
-    )[0];
+    let shownBeetApp = store.getters['OriginStore/getBeetApp'](request);
 
-    let account = store.getters['AccountStore/getSafeAccountList'].filter(
-        x => x.accountID == shownBeetApp.accountID && x.chain == shownBeetApp.chain
-    )[0];
+    if (!shownBeetApp) {
+      reject();
+    }
+
+    let account = store.getters['AccountStore/getSafeAccount']({
+                    account_id: shownBeetApp.accountID,
+                    chain: shownBeetApp.chain
+                  });
 
     ipcRenderer.send(
       'createPopup',
@@ -128,13 +145,16 @@ export async function getAccount(request) {
   return new Promise(async (resolve, reject) => {
     store.dispatch("WalletStore/notifyUser", {notify: "request", message: "request"});
 
-    let shownBeetApp = store.state.OriginStore.apps.filter(x => {
-      return x.identityhash == request.identityhash;
-    })[0];
+    let shownBeetApp = store.getters['OriginStore/getBeetApp'](request);
 
-    let account = store.getters['AccountStore/getSafeAccountList'].filter(x => {
-      return x.accountID == shownBeetApp.account_id && x.chain == shownBeetApp.chain;
-    })[0];
+    if (!shownBeetApp) {
+      reject();
+    }
+
+    let account = store.getters['AccountStore/getSafeAccount']({
+                    account_id: shownBeetApp.accountID,
+                    chain: shownBeetApp.chain
+                  });
 
     ipcRenderer.send(
       'createPopup',
@@ -220,7 +240,7 @@ export async function requestSignature(request) {
     })
 
     ipcRenderer.once(`popupRejected_${request.id}`, (event, result) => {
-      return _parseReject("requestSignature", request, result);
+      return reject(_parseReject("requestSignature", request, result));
     })
   });
 }
@@ -249,7 +269,7 @@ export async function injectedCall(request) {
     })
 
     ipcRenderer.once(`popupRejected_${request.id}`, (event, result) => {
-      return _parseReject("REQUEST_LINK", request, result);
+      return reject(_parseReject("REQUEST_LINK", request, result));
     })
   });
 }
@@ -300,25 +320,19 @@ export async function voteFor(request) {
     )
 
     ipcRenderer.once(`popupApproved_${request.id}`, (event, result) => {
-        function _getLinkedAccount() {
-            let account = store.getters['AccountStore/getSigningKey'](props.request);
-            return {
-                id: account.accountID,
-                name: account.accountName,
-                chain: account.chain
-            }
+        let approvedAccount;
+        try {
+          approvedAccount = store.getters['AccountStore/getSafeAccount'](request);
+        } catch (error) {
+          return reject();
         }
 
-        let blockchain = getBlockchainAPI(props.request.chain);
+        let blockchain = getBlockchainAPI(request.chain);
 
         let operation;
         try {
-          operation = await blockchain.getOperation(
-            request,
-            _getLinkedAccount()
-          );
+          operation = await blockchain.getOperation(request, approvedAccount);
         } catch (error) {
-          console.log(error);
           return reject();
         }
 
@@ -339,7 +353,6 @@ export async function voteFor(request) {
         try {
           signingKey = await getKey(store.getters['AccountStore/getSigningKey'](props.request).keys.active);
         } catch (error) {
-          console.log(error);
           return reject();
         }
 
@@ -347,7 +360,6 @@ export async function voteFor(request) {
         try {
           transaction = await blockchain.sign(operation, signingKey);
         } catch (error) {
-          console.log(error);
           return reject();
         }
 
@@ -355,7 +367,6 @@ export async function voteFor(request) {
         try {
           broadcastResult = await blockchain.broadcast(transaction);
         } catch (error) {
-          console.log(error);
           return reject();
         }
 
@@ -387,7 +398,6 @@ export async function signMessage(request) {
 
     ipcRenderer.once(`popupApproved_${request.id}`, (event, result) => {
 
-        /*
         let keys = store.getters['AccountStore/getSigningKey'](props.request).keys;
 
         let key;
@@ -415,14 +425,13 @@ export async function signMessage(request) {
         } catch (error) {
           console.log(error);
         }
-        */
 
         return resolve(result);
 
     })
 
     ipcRenderer.once(`popupRejected_${request.id}`, (event, result) => {
-      return reject(_parseReject("REQUEST_LINK", request, result));
+      return reject(_parseReject("signMessage", request, result));
     })
   });
 }

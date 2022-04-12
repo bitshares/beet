@@ -106,6 +106,17 @@ const getters = {
         return state.apps.filter((x) => {
             return x.appName == appName && x.origin == origin && chain == "ANY" || x.chain == chain
         })
+    },
+    getBeetApp: (state) => (request) => {
+        let matchingApps state.apps.filter((x) => {
+            return x.identityhash == request.payload.identityhash
+        })
+
+        return (!matchingApps || !matchingApps.length) {
+            return;
+        }
+
+        return matchingApps[0];
     }
 };
 

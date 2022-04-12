@@ -107,6 +107,28 @@ const getters = {
         chain: account.chain
       };
     }),
+    getSafeAccount: state => (request) => {
+        let safeAccounts = state.accountlist.map(account => {
+          return {
+            accountID: account.accountID,
+            accountName: account.accountName,
+            chain: account.chain
+          };
+        });
+
+        let requestedAccounts = safeAccounts.filter(x => {
+            return (
+                x.accountID == request.account_id &&
+                x.chain == request.chain
+            );
+        });
+
+        if (signing.length !== 1) {
+            throw "Couldn't retrieve account safely.";
+        }
+
+        return requestedAccounts[0];
+    },
     getSigningKey: (state) => (request) => {
         let signing = state.accountlist.filter(x => {
             return (

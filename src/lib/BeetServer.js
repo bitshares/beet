@@ -142,7 +142,7 @@ const linkHandler = async (req) => {
       return rejectRequest(req, error);
     }
 
-    let app = store.state.OriginStore.apps.find(x => x.identityhash == identityhash);
+    let app = store.getters['OriginStore/getBeetApp']({payload: {identityhash: identityhash}});
     if (app) {
       console.log('relink');
       return Object.assign(req, {
@@ -195,13 +195,12 @@ const linkHandler = async (req) => {
  * @returns {Object}
  */
 const authHandler = function (req) {
-
     if (!req.payload.identityhash) {
       // Comms authed but app not linked
       return Object.assign(req.payload, {authenticate: true, link: false});
     }
 
-    let app = store.state.OriginStore.apps.find(x => x.identityhash == req.payload.identityhash);
+    let app = store.getters['OriginStore/getBeetApp'](req);
     if (!app || (!req.payload.origin == app.origin && !req.payload.appName == app.appName)) {
       // Reject authentication!
       return Object.assign(req.payload, {authenticate: false, link: false});

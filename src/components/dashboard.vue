@@ -4,7 +4,6 @@
     import { useI18n } from 'vue-i18n';
     const { t } = useI18n({ useScope: 'global' });
 
-    import AccountSelect from "./account-select";
     import Actionbar from "./actionbar";
     import Balances from "./balances";
     import AccountDetails from "./accountdetails";

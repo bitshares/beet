@@ -5,7 +5,6 @@ import BalmUI from 'balm-ui'; // Official Google Material Components
 import BalmUIPlus from 'balm-ui/dist/balm-ui-plus'; // BalmJS Team Material Components
 import 'balm-ui-css';
 
-//import store from './store/index';
 import RendererLogger from './lib/RendererLogger';
 import fetchMessages from './lib/i18n';
 import Popups from './components/popups';
@@ -29,9 +28,6 @@ process.on('unhandledRejection', (reason, p) => {
   // application specific logging, throwing an error, or other logic here
 });
 
-//store.dispatch("SettingsStore/loadSettings");
-//store.dispatch("WhitelistStore/loadWhitelist");
-
 const messages = fetchMessages();
 
 const i18n = createI18n({
@@ -51,5 +47,4 @@ app.component('Popups', Popups);
 app.use(i18n);
 app.use(BalmUI);
 app.use(BalmUIPlus);
-//app.use(store);
 app.mount('#modal');
