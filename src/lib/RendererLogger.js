@@ -49,13 +49,11 @@ class RendererLogger {
         })
     }
     serialize(obj) {
-
-            return util.inspect(obj, {
-                compact: true,
-                breakLength: 80,
-                depth: 3
-            })
-
+        return util.inspect(obj, {
+            compact: true,
+            breakLength: 80,
+            depth: 3
+        })
     }
 }
 export default  RendererLogger;

@@ -5,22 +5,23 @@ import getBlockchainAPI from "./blockchains/blockchainFactory";
 
 /*
  * @param {String} method
- * @param {Object} request
+ * @param {String} id
  * @param {Object||Null} error
+ * @param {promise} reject
  * @returns Error
  */
-function _parseReject(method, request, error) {
+function _promptFail(method, id, error, reject) {
     if (!error.canceled) {
-        console.error(error);
+        console.log(error);
     }
-    throw {
-        id: request.id,
+    return reject({
+        id: id,
         result: {
             isError: true,
             method: method,
             error: error.canceled ? "User rejected" : (error.error ? error.error : error)
         }
-    };
+    });
 }
 
 /*
@@ -30,16 +31,18 @@ function _parseReject(method, request, error) {
  */
 export async function linkRequest(request) {
     return new Promise(async (resolve, reject) => {
+
+        /*
+        let alertmsg = request.type === "link"
+            ? t("common.link_alert", request)
+            : t("common.access_alert", request.payload);
+        */
+
         store.dispatch("WalletStore/notifyUser", {notify: "request", message: "request"});
 
-        let accounts = [];
-        try {
-          //accounts = store.getters['AccountStore/getAccountList'];
-          //accounts = JSON.parse(JSON.stringify(store.state.AccountStore.accountlist));
-          accounts = store.getters['AccountStore/getSafeAccountList'];
-        } catch (error) {
-          console.log(error);
-          return reject(error);
+        let accounts =  store.getters['AccountStore/getSafeAccountList'];
+        if (!accounts) {
+          return _promptFail("REQUEST_LINK", request.id, 'No accounts', reject);
         }
 
         let existingLinks = [];
@@ -48,21 +51,8 @@ export async function linkRequest(request) {
             appName: request.appName, origin: request.origin, chain: request.chain
           })
         } catch (error) {
-          console.log(error);
+          return _promptFail("REQUEST_LINK", request.id, error, reject);
         }
-
-        /*
-        let existingLinks = [];
-        try {
-          existingLinks = store.state.OriginStore.apps.filter((x) => {
-              return x.appName == request.appName
-                && x.origin == request.origin
-                && request.chain == "ANY" || x.chain == request.chain
-          })
-        } catch (error) {
-          console.log(error);
-        }
-        */
 
         ipcRenderer.send(
           'createPopup',
@@ -75,24 +65,11 @@ export async function linkRequest(request) {
 
         ipcRenderer.once(`popupApproved_${request.id}`, (event, result) => {
             store.dispatch("AccountStore/selectAccount", result.response);
-
-            /*
-            if (result.whitelisted) {
-                store.dispatch(
-                    "WhitelistStore/addWhitelist",
-                    {
-                        identityhash: request.identityhash,
-                        method: "LinkRequestPopup"
-                    }
-                );
-            }
-            */
-
             return resolve(result);
         })
 
         ipcRenderer.once(`popupRejected_${request.id}`, (event, result) => {
-          return reject(_parseReject("REQUEST_LINK", request, result));
+          return _promptFail("REQUEST_LINK", request.id, result, reject);
         })
     });
 }
@@ -107,9 +84,8 @@ export async function relinkRequest(request) {
     store.dispatch("WalletStore/notifyUser", {notify: "request", message: "request"});
 
     let shownBeetApp = store.getters['OriginStore/getBeetApp'](request);
-
     if (!shownBeetApp) {
-      reject();
+      return _promptFail("REQUEST_RELINK", request.id, 'No beetApp', reject);
     }
 
     let account = store.getters['AccountStore/getSafeAccount']({
@@ -130,7 +106,7 @@ export async function relinkRequest(request) {
     })
 
     ipcRenderer.once(`popupRejected_${request.id}`, (event, result) => {
-        return _parseReject("REQUEST_RELINK", request, result);
+        return _promptFail("REQUEST_RELINK", request.id, result, reject);
     })
   });
 }
@@ -146,9 +122,8 @@ export async function getAccount(request) {
     store.dispatch("WalletStore/notifyUser", {notify: "request", message: "request"});
 
     let shownBeetApp = store.getters['OriginStore/getBeetApp'](request);
-
     if (!shownBeetApp) {
-      reject();
+      return _promptFail("getAccount", request.id, 'No beetApp', reject);
     }
 
     let account = store.getters['AccountStore/getSafeAccount']({
@@ -169,7 +144,7 @@ export async function getAccount(request) {
     })
 
     ipcRenderer.once(`popupRejected_${request.id}`, (event, result) => {
-      return _parseReject("REQUEST_LINK", request, result);
+      return _promptFail("getAccount", request.id, request, reject);
     })
   });
 }
@@ -183,11 +158,8 @@ export async function requestSignature(request) {
   // transaction request popup
   return new Promise(async (resolve, reject) => {
     store.dispatch("WalletStore/notifyUser", {notify: "request", message: "request"});
-    let popupContents = {
-      request: request
-    };
 
-    ipcRenderer.send('createPopup', popupContents)
+    ipcRenderer.send('createPopup', {request: request});
 
     ipcRenderer.once(`popupApproved_${request.id}`, async (event, result) => {
 
@@ -202,7 +174,7 @@ export async function requestSignature(request) {
                   await getKey(store.getters['AccountStore/getSigningKey'](request).keys.active)
               );
             } catch (error) {
-              return reject(_parseReject("sigReq", request, error));
+              return _promptFail("sigReq", request.id, error, reject);
             }
             if (transaction) {
               finalResult = transaction.toObject();
@@ -211,7 +183,7 @@ export async function requestSignature(request) {
             try {
               finalResult = await blockchain.broadcast(request.params);
             } catch (error) {
-              return reject(_parseReject("sigReq", request, error));
+              return _promptFail("sigReq", request.id, error, reject);
             }
         } else if (txType == "signAndBroadcast") {
             let transaction;
@@ -221,26 +193,25 @@ export async function requestSignature(request) {
                   await getKey(store.getters['AccountStore/getSigningKey'](request).keys.active)
               );
             } catch (error) {
-              return reject(_parseReject("sigReq", request, error));
+              return _promptFail("sigReq", request.id, error, reject);
             }
 
             try {
               finalResult = await blockchain.broadcast(transaction);
             } catch (error) {
-              return reject(_parseReject("sigReq", request, error));
+              return _promptFail("sigReq", request.id, error, reject);
             }
         }
 
         if (!finalResult) {
-          return reject(_parseReject("sigReq", request, 'No blockchain transfer result'));
+          return _promptFail("sigReq", request.id, 'No blockchain transfer result', reject);
         }
 
         return resolve(finalResult);
-
-    })
+    });
 
     ipcRenderer.once(`popupRejected_${request.id}`, (event, result) => {
-      return reject(_parseReject("requestSignature", request, result));
+      return _promptFail("sigReq", request.id, request, reject);
     })
   });
 }
@@ -255,21 +226,19 @@ export async function injectedCall(request) {
   // transaction request popup
   return new Promise(async (resolve, reject) => {
     store.dispatch("WalletStore/notifyUser", {notify: "request", message: "request"});
-    let popupContents = {
-      request: request
-    };
 
-    ipcRenderer.send('createPopup', popupContents)
+    ipcRenderer.send('createPopup', {request: request})
 
     ipcRenderer.once(`popupApproved_${request.id}`, (event, result) => {
-
         store.dispatch("WalletStore/notifyUser", {notify: "request", message: "Transaction successfully broadcast."});
-        return resolve(result);
 
+        return result.response.success && result.request.id === request.id
+          ? resolve(result)
+          : _promptFail("injectedCall", request.id, 'Unsuccessful approval', reject);
     })
 
     ipcRenderer.once(`popupRejected_${request.id}`, (event, result) => {
-      return reject(_parseReject("REQUEST_LINK", request, result));
+      return _promptFail("injectedCall", request.id, request, reject);
     })
   });
 }
@@ -292,8 +261,7 @@ export async function voteFor(request) {
     try {
       mappedData = await blockchain.mapOperationData(payload);
     } catch (error) {
-      console.log(error);
-      return reject();
+      return _promptFail("voteFor", request.id, error, reject);
     }
 
     payload.generic = {
@@ -333,7 +301,7 @@ export async function voteFor(request) {
         try {
           operation = await blockchain.getOperation(request, approvedAccount);
         } catch (error) {
-          return reject();
+          return _promptFail("voteFor.getOperation", request.id, error, reject);
         }
 
         if (operation.nothingToDo) {
@@ -353,32 +321,30 @@ export async function voteFor(request) {
         try {
           signingKey = await getKey(store.getters['AccountStore/getSigningKey'](props.request).keys.active);
         } catch (error) {
-          return reject();
+          return _promptFail("voteFor.getKey", request.id, error, reject);
         }
 
         let transaction;
         try {
           transaction = await blockchain.sign(operation, signingKey);
         } catch (error) {
-          return reject();
+          return _promptFail("voteFor.sign", request.id, error, reject);
         }
 
         let broadcastResult;
         try {
           broadcastResult = await blockchain.broadcast(transaction);
         } catch (error) {
-          return reject();
+          return _promptFail("voteFor.broadcast", request.id, error, reject);
         }
 
-        if (!broadcastResult) {
-          return reject();
-        }
-
-        return resolve(broadcastResult);
+        return !broadcastResult
+          ? _promptFail("voteFor.broadcast", request.id, 'no broadcast', reject)
+          : resolve(broadcastResult);
     })
 
     ipcRenderer.once(`popupRejected_${request.id}`, (event, result) => {
-      return reject(_parseReject("REQUEST_LINK", request, result));
+      return _promptFail("voteFor", request.id, result, reject);
     })
   });
 }
@@ -392,7 +358,6 @@ export async function signMessage(request) {
   //signed message popup
   return new Promise(async (resolve, reject) => {
     store.dispatch("WalletStore/notifyUser", {notify: "request", message: "request"});
-    let popupContents = ;
 
     ipcRenderer.send('createPopup', {request: request});
 
@@ -404,9 +369,7 @@ export async function signMessage(request) {
         try {
           key = await getKey(keys.memo ?? keys.active)
         } catch (error) {
-          console.log(error);
-          _reject.value({ error: error });
-          ipcRenderer.send("modalError", true);
+          return _promptFail("signMessage.getKey", request.id, error, reject);
         }
 
         let blockchain = getBlockchainAPI(props.request.chain);
@@ -414,24 +377,21 @@ export async function signMessage(request) {
         try {
           signingKey = store.getters['AccountStore/getSigningKey'](props.request).accountName;
         } catch (error) {
-          console.log(error);
-          _reject.value({ error: error });
-          ipcRenderer.send("modalError", true);
+          return _promptFail("signMessage.signingKey", request.id, error, reject);
         }
 
         let signedMessage;
         try {
           signedMessage = await blockchain.signMessage(key, signingKey, props.request.params);
         } catch (error) {
-          console.log(error);
+          return _promptFail("blockchain.signMessage", request.id, error, reject);
         }
 
         return resolve(result);
-
     })
 
     ipcRenderer.once(`popupRejected_${request.id}`, (event, result) => {
-      return reject(_parseReject("signMessage", request, result));
+      return _promptFail("signMessage.reject", request.id, result, reject);
     })
   });
 }
@@ -456,7 +416,7 @@ export async function transfer(request) {
         try {
           activeKey = await getKey(store.getters['AccountStore/getSigningKey'](props.request).keys.active)
         } catch (error) {
-          console.log(error);
+          return _promptFail("transfer.getKey", request.id, error, reject);
         }
 
         if (activeKey) {
@@ -474,7 +434,7 @@ export async function transfer(request) {
                   false // PREVENTS SENDING!
               );
           } catch (error) {
-              console.log(error);
+              return _promptFail("transfer.falseTransfer", request.id, error, reject);
           }
 
           if (transferResult) {
@@ -497,7 +457,7 @@ export async function transfer(request) {
       try {
         signingKey = await getKey(store.getters['AccountStore/getSigningKey'](props.request).keys.active)
       } catch (error) {
-        return reject(_parseReject("Transfer", request, error));
+        return _promptFail("transfer.getKey", request.id, error, reject);
       }
 
       let transferResult;
@@ -513,11 +473,11 @@ export async function transfer(request) {
             props.request.params.memo,
         );
       } catch (error) {
-        return reject(_parseReject("Transfer", request, error));
+        return _promptFail("blockchain.transfer", request.id, error, reject);
       }
 
       if (!transferResult) {
-        return reject(_parseReject("Transfer", request, 'No blockchain transfer result'));
+        return _promptFail("blockchain.transfer", request.id, 'No blockchain transfer result', reject);
       }
 
       store.dispatch("WalletStore/notifyUser", {notify: "request", message: 'Transaction `transfer` successfully broadcast.'});
@@ -526,10 +486,11 @@ export async function transfer(request) {
     })
 
     ipcRenderer.once(`popupRejected_${request.id}`, (event, result) => {
-      return reject(_parseReject("Transfer", request, result));
+      return _promptFail("Transfer.reject", request.id, result, reject);
     })
   });
 }
+
 
 /*
  * Verify a signed message
@@ -540,20 +501,42 @@ export async function verifyMessage(request) {
   //
   return new Promise(async (resolve, reject) => {
     store.dispatch("WalletStore/notifyUser", {notify: "request", message: "request"});
-    let popupContents = {
-      request: request
-    };
 
-    ipcRenderer.send('createPopup', popupContents)
+    ipcRenderer.send('createPopup', {request: request});
 
     ipcRenderer.once(`popupApproved_${request.id}`, (event, result) => {
+        let payload_dict = {};
+        let payload_list = request.params.payload;
+        if (payload_list[2] == "key") {
+            for (let i = 0; i < payload_list.length - 1; i = i+2) {
+                payload_dict[payload_list[i]] = payload_list[i + 1];
+            }
+        } else {
+            for (let i = 3; i < payload_list.length - 1; i = i+2) {
+                payload_dict[payload_list[i]] = payload_list[i + 1];
+            }
+            payload_dict.key = payload_list[2];
+            payload_dict.from = payload_list[1];
+        }
 
-        return resolve(result);
+        let blockchain = getBlockchainAPI(
+          payload_dict.chain
+            ? messageChain = payload_dict.chain
+            : messageChain = payload_dict.key.substr(0, 3)
+        );
 
+        blockchain
+        .verifyMessage(request.params)
+        .then(result => {
+            return resolve(result);
+        })
+        .catch((error) => {
+            return _promptFail("blockchain.verifyMessage", request.id, error, reject);
+        });
     })
 
     ipcRenderer.once(`popupRejected_${request.id}`, (event, result) => {
-      return _parseReject("REQUEST_LINK", request, result);
+      return _promptFail("verifyMessage.reject", request.id, result, reject);
     })
   });
 }

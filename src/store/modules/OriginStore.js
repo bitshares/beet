@@ -47,7 +47,7 @@ const actions = {
                 next_hash: payload.next_hash
             }).then(() => {
                 dispatch('loadApps');
-                commit(NEW_REQUEST, payload);
+                //commit(NEW_REQUEST, payload);
                 resolve();
             }).catch((e) => {
                 reject(e);

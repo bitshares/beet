@@ -25,7 +25,6 @@ import {
 
 import store from '../store/index.js';
 import * as Actions from './Actions';
-import BeetAPI from './BeetAPI';
 import BeetDB from './BeetDB.js';
 import RendererLogger from "./RendererLogger";
 const logger = new RendererLogger();
@@ -163,11 +162,6 @@ const linkHandler = async (req) => {
     try {
       app = await store.dispatch('OriginStore/addApp', {
           appName: req.appName,
-          /*
-          identityhash: userResponse.identity.identityhash == identityhash
-                          ? userResponse.identity.identityhash
-                          : identityhash,
-          */
           identityhash: identityhash,
           origin: req.origin,
           account_id: userResponse.response.id,
@@ -313,7 +307,12 @@ export default class BeetServer {
 
       socket.emit(
         'api',
-        {id: status.id, error: !!status.result.isError, encrypted: true, payload: payload}
+        {
+          id: status.id,
+          error: !!status.result.isError,
+          encrypted: true,
+          payload: payload
+        }
       );
       return;
     }
