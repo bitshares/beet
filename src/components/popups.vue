@@ -10,29 +10,69 @@
     import TransactionRequestPopup from "./popups/transactionrequestpopup";
     import TransferRequestPopup from "./popups/transferrequestpopup";
 
-    let type = computed(() => {
-        let qs = queryString.parse(global.location.search);
+    let type = computed(async () => {
+        if (!global || !global.location || !global.location.search) {
+          return '';
+        }
+
+        let qs;
+        try {
+          qs = queryString.parse(global.location.search);
+        } catch (error) {
+          console.log(error);
+        }
+
         return qs && qs.type
                 ? qs.type
-                : 'none';
+                : '';
     });
 
-    let request = computed(() => {
-      let qs = queryString.parse(global.location.search);
+    let request = computed(async () => {
+      if (!global || !global.location || !global.location.search) {
+        return [];
+      }
+
+      let qs;
+      try {
+        qs = queryString.parse(global.location.search);
+      } catch (error) {
+        console.log(error);
+      }
+
       return qs && qs.request
               ? JSON.parse(qs.request);
               : {};
     });
 
-    let accounts = computed(() => {
-      let qs = queryString.parse(global.location.search);
+    let accounts = computed(async () => {
+      if (!global || !global.location || !global.location.search) {
+        return [];
+      }
+
+      let qs;
+      try {
+        qs = queryString.parse(global.location.search);
+      } catch (error) {
+        console.log(error);
+      }
+
       return qs && qs.accounts
               ? JSON.parse(qs.accounts);
               : [];
     });
 
     let existingLinks = computed(() => {
-      let qs = queryString.parse(global.location.search);
+      if (!global || !global.location || !global.location.search) {
+        return [];
+      }
+
+      let qs;
+      try {
+        qs = queryString.parse(global.location.search);
+      } catch (error) {
+        console.log(error);
+      }
+
       return qs && qs.existingLinks
               ? JSON.parse(qs.existingLinks);
               : [];
@@ -40,7 +80,7 @@
 </script>
 
 <template>
-    <div v-if="type && request">
+    <div v-if="type && type !== '' && request">
       <LinkRequestPopup
         v-if="type === 'link'"
         :request="request"

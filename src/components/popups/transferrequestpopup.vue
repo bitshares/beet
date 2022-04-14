@@ -12,8 +12,6 @@
       accounts: Array
     });
 
-    //let type = ref("TransferRequestPopup");
-
     let message = computed(() => {
         return t("operations.transfer.request", {
             appName: props.request.appName,
@@ -52,7 +50,7 @@
       logger.debug("Transfer request popup initialised");
     });
 
-    async function _clickedAllow() {
+    function _clickedAllow() {
         ipcRenderer.send(
           "clickedAllow",
           {

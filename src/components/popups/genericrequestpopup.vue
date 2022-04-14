@@ -3,8 +3,6 @@
     import { onMounted } from "vue";
     import { useI18n } from 'vue-i18n';
     const { t } = useI18n({ useScope: 'global' });
-    import getBlockchainAPI from "../../lib/blockchains/blockchainFactory";
-    import {getKey} from '../../lib/SecureRemote';
 
     import RendererLogger from "../../lib/RendererLogger";
     const logger = new RendererLogger();
@@ -12,8 +10,6 @@
     const props = defineProps({
       request: Object
     });
-
-    //let type = ref("GenericRequestPopup");
 
     let acceptText = computed(() => {
         return props.request.generic.acceptText ?? t('operations.rawsig.accept_btn');
@@ -27,7 +23,7 @@
       logger.debug("Req Popup initialised");
     });
 
-    async function _clickedAllow() {
+    function _clickedAllow() {
         ipcRenderer.send(
           "clickedAllow",
           {

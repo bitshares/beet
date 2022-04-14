@@ -11,8 +11,6 @@
       accounts: Array
     });
 
-    //let type = ref("SignMessageRequestPopup");
-
     let requestText = computed(() => {
         return t("operations.message.request", {
             appName: props.request.appName,
@@ -22,11 +20,7 @@
         });
     });
 
-    onMounted(() => {
-      logger.debug("Signed message popup initialised");
-    });
-
-    async function _clickedAllow() {
+    function _clickedAllow() {
         ipcRenderer.send(
           "clickedAllow",
           {
@@ -45,6 +39,10 @@
           }
         );
     }
+
+    onMounted(() => {
+      logger.debug("Signed message popup initialised");
+    });
 </script>
 
 <template>

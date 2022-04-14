@@ -6,7 +6,6 @@ import { ipcRenderer } from 'electron';
 
 import BalmUI from 'balm-ui'; // Official Google Material Components
 import BalmUIPlus from 'balm-ui/dist/balm-ui-plus'; // BalmJS Team Material Components
-import UiBottomNavigation from 'balm-ui/components/bottom-navigation';
 import UiTabsComponents from 'balm-ui/components/tabs';
 import 'balm-ui-css';
 
@@ -64,7 +63,6 @@ app.use(i18n);
 app.use(VueRouter);
 app.use(BalmUI);
 app.use(BalmUIPlus);
-app.use(UiBottomNavigation);
 
 app.use(router);
 app.use(store);

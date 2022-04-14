@@ -64,12 +64,10 @@
 
 <template>
     <div class="container">
-        <ui-bottom-navigation content-selector=".container" stacked>
-            <ui-tabs
-              v-model="active"
-              :items="items"
-              stacked
-            ></ui-tabs>
-        </ui-bottom-navigation>
+        <ui-tabs
+          v-model="active"
+          :items="items"
+          stacked
+        ></ui-tabs>
     </div>
 </template>

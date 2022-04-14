@@ -232,7 +232,7 @@ export async function injectedCall(request) {
 
     ipcRenderer.send('createPopup', {request: request});
 
-    ipcRenderer.once(`popupApproved_${request.id}`, (event, result) => {
+    ipcRenderer.once(`popupApproved_${request.id}`, async (event, result) => {
         store.dispatch("WalletStore/notifyUser", {notify: "request", message: "Transaction successfully broadcast."});
 
         return result.response.success && result.request.id === request.id
@@ -290,7 +290,7 @@ export async function voteFor(request) {
       }
     )
 
-    ipcRenderer.once(`popupApproved_${request.id}`, (event, result) => {
+    ipcRenderer.once(`popupApproved_${request.id}`, async (event, result) => {
         let approvedAccount;
         try {
           approvedAccount = store.getters['AccountStore/getSafeAccount'](request);
@@ -364,7 +364,7 @@ export async function signMessage(request) {
 
     ipcRenderer.send('createPopup', {request: request});
 
-    ipcRenderer.once(`popupApproved_${request.id}`, (event, result) => {
+    ipcRenderer.once(`popupApproved_${request.id}`, async (event, result) => {
 
         let retrievedKey = store.getters['AccountStore/getSigningKey'](request);
 
@@ -514,7 +514,7 @@ export async function verifyMessage(request) {
 
     ipcRenderer.send('createPopup', {request: request});
 
-    ipcRenderer.once(`popupApproved_${request.id}`, (event, result) => {
+    ipcRenderer.once(`popupApproved_${request.id}`, async (event, result) => {
         let payload_dict = {};
         let payload_list = request.params.payload;
         if (payload_list[2] == "key") {

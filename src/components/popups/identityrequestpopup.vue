@@ -11,8 +11,6 @@
       accounts: Array
     });
 
-    //let type = ref("IdentityRequestPopup");
-
     let account_id = computed(() => {
       return prop.accounts[0].account_id;
     });
@@ -42,7 +40,7 @@
       logger.debug("Link Popup initialised");
     });
 
-    async function _clickedAllow() {
+    function _clickedAllow() {
         ipcRenderer.send("clickedAllow", {
           response: {
               name: accountName,

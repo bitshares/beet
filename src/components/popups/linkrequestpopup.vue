@@ -1,6 +1,6 @@
 <script setup>
     import { ipcRenderer } from 'electron';
-    import { ref, onMounted, computed, watch } from "vue";
+    import { ref, onMounted, computed } from "vue";
 
     import { useI18n } from 'vue-i18n';
     const { t } = useI18n({ useScope: 'global' });
@@ -49,7 +49,7 @@
       logger.debug("Link Popup initialised");
     })
 
-    async function _clickedAllow() {
+    function _clickedAllow() {
         let approvedAccount = props.accounts[chosenAccount.value];
 
         ipcRenderer.send(

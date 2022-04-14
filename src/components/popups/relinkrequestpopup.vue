@@ -27,9 +27,7 @@
       logger.debug("Relink Popup initialised");
     });
 
-    /////////
-
-    async function _clickedAllow() {
+    function _clickedAllow() {
         ipcRenderer.send(
             "clickedAllow",
             {

@@ -10,7 +10,7 @@
       request: Object
     });
 
-    let visualizedParams = computed(() => {
+    let visualizedParams = computed(async () => {
       let blockchain = getBlockchainAPI(props.request.chain);
       let visualisation;
       try {
@@ -22,7 +22,7 @@
       return visualisation ?? null;
     });
 
-    let visualizedAccount = computed(() => {
+    let visualizedAccount = computed(async () => {
       let blockchain = getBlockchainAPI(props.request.chain);
 
       let visualisation;
@@ -54,7 +54,7 @@
              : t('operations.rawsig.sign_and_broadcast_btn')
     })
 
-    async function _clickedAllow() {
+    function _clickedAllow() {
         ipcRenderer.send(
           "clickedAllow",
           {

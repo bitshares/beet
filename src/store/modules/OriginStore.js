@@ -108,11 +108,11 @@ const getters = {
         })
     },
     getBeetApp: (state) => (request) => {
-        let matchingApps state.apps.filter((x) => {
+        let matchingApps = state.apps.filter((x) => {
             return x.identityhash == request.payload.identityhash
         })
 
-        return (!matchingApps || !matchingApps.length) {
+        if (!matchingApps || !matchingApps.length) {
             return;
         }
 
