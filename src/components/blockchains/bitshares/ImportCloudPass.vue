@@ -8,14 +8,14 @@
     import getBlockchainAPI from "../../../lib/blockchains/blockchainFactory";
 
     const props = defineProps({
-      chain: String,
-      node: String
+        chain: String,
+        node: String
     });
 
     onMounted(() => {
-      if (!["BTS", "TUSC"].includes(props.chain)) {
-          throw "Unsupported chain!";
-      }
+        if (!["BTS", "TUSC"].includes(props.chain)) {
+            throw "Unsupported chain!";
+        }
     })
 
     let accountname = ref("");
@@ -42,45 +42,45 @@
     }
 
     function back() {
-      emitter.emit('back', true);
+        emitter.emit('back', true);
     }
 
     async function next() {
-      let blockchain;
-      try {
-          blockchain = getBlockchainAPI(props.chain);
-      } catch (error) {
-          console.log(error);
-          return;
-      }
+        let blockchain;
+        try {
+            blockchain = getBlockchainAPI(props.chain);
+        } catch (error) {
+            console.log(error);
+            return;
+        }
 
-      // abstract UI concept more
-      let authorities;
-      try {
-        authorities = getAuthoritiesFromPass(legacy.value);
-      } catch (error) {
-        console.log(error);
-        return;
-      }
+        // abstract UI concept more
+        let authorities;
+        try {
+            authorities = getAuthoritiesFromPass(legacy.value);
+        } catch (error) {
+            console.log(error);
+            return;
+        }
 
-      let account;
-      try {
-          account = await blockchain.verifyAccount(accountname.value, authorities);
-      } catch (error) {
-          console.log(error);
-          return;
-      }
+        let account;
+        try {
+            account = await blockchain.verifyAccount(accountname.value, authorities);
+        } catch (error) {
+            console.log(error);
+            return;
+        }
 
-      if (account) {
-        emitter.emit('accounts_to_import', [{
-            account: {
-                accountName: accountname.value,
-                accountID: account.id,
-                chain: props.chain,
-                keys: authorities
-            }
-        }]);
-      }
+        if (account) {
+            emitter.emit('accounts_to_import', [{
+                account: {
+                    accountName: accountname.value,
+                    accountID: account.id,
+                    chain: props.chain,
+                    keys: authorities
+                }
+            }]);
+        }
     }
 </script>
 
@@ -108,30 +108,39 @@
             :placeholder="t('common.btspass_placeholder')"
             required
         >
-        <br/>
-        <br/>
+        <br>
+        <br>
         <ui-form-field>
-            <ui-checkbox v-model="legacy"></ui-checkbox>
+            <ui-checkbox v-model="legacy" />
             <label>Legacy key mode</label>
         </ui-form-field>
         <ui-grid>
             <ui-grid-cell columns="12">
-                  <ui-button outlined class="step_btn" @click="back">
-                      {{ t('common.back_btn') }}
-                  </ui-button>
+                <ui-button
+                    outlined
+                    class="step_btn"
+                    @click="back"
+                >
+                    {{ t('common.back_btn') }}
+                </ui-button>
 
-                  <ui-button
+                <ui-button
                     v-if="accountname !== '' && bitshares_cloud_login_password !== ''"
                     raised
                     class="step_btn"
                     type="submit"
                     @click="next"
-                  >
-                      {{ t('common.next_btn') }}
-                  </ui-button>
-                  <ui-button v-else disabled class="step_btn" type="submit">
-                      {{ t('common.next_btn') }}
-                  </ui-button>
+                >
+                    {{ t('common.next_btn') }}
+                </ui-button>
+                <ui-button
+                    v-else
+                    disabled
+                    class="step_btn"
+                    type="submit"
+                >
+                    {{ t('common.next_btn') }}
+                </ui-button>
             </ui-grid-cell>
         </ui-grid>
     </div>

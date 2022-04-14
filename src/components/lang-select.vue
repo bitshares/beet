@@ -7,11 +7,11 @@
     const logger = new RendererLogger();
 
     let localesRef = computed(() => {
-      return menuLocales;
+        return menuLocales;
     });
 
     let selected = ref(
-      store.state.SettingsStore.settings.locale.iso ?? defaultLocale.iso
+        store.state.SettingsStore.settings.locale.iso ?? defaultLocale.iso
     );
 
     let open = ref(false);
@@ -29,24 +29,25 @@
     }
 
     function onSelected(locale) {
-      console.log(`selected: ${locale}`);
-      store.dispatch("SettingsStore/setLocale", {locale: locale});
-      selected.value = locale.value;
-      open.value = false;
+        console.log(`selected: ${locale}`);
+        store.dispatch("SettingsStore/setLocale", {locale: locale});
+        selected.value = locale.value;
+        open.value = false;
     }
 </script>
 
 
 <template>
-    <ui-button raised @click="menuClick">
-      {{selected}}
+    <ui-button
+        raised
+        @click="menuClick"
+    >
+        {{ selected }}
     </ui-button>
     <ui-menu
-      v-model="open"
-      :items="menuLocales"
-      @selected="onSelected"
-      @cancel="onCancel"
-    >
-    </ui-menu>
-
+        v-model="open"
+        :items="menuLocales"
+        @selected="onSelected"
+        @cancel="onCancel"
+    />
 </template>

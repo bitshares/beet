@@ -6,8 +6,8 @@
     import getBlockchainAPI from "../../../lib/blockchains/blockchainFactory";
 
     const props = defineProps({
-      chain: String,
-      node: String
+        chain: String,
+        node: String
     });
 
     let address = ref("");
@@ -15,39 +15,39 @@
     let requiredFields = ref(null);
 
     onMounted(() => {
-      // onmount/compute the following?
-      let blockchain = getBlockchainAPI(props.chain);
-      requiredFields.value = blockchain.getSignUpInput();
+        // onmount/compute the following?
+        let blockchain = getBlockchainAPI(props.chain);
+        requiredFields.value = blockchain.getSignUpInput();
     });
 
     function back() {
-      emitter.emit('back', true);
+        emitter.emit('back', true);
     }
 
     async function next() {
 
-      let blockchain = getBlockchainAPI(props.chain);
-      let authorities = {};
-      if (requiredFields.value.active != null) {
-          authorities.active = activepk.value;
-      }
+        let blockchain = getBlockchainAPI(props.chain);
+        let authorities = {};
+        if (requiredFields.value.active != null) {
+            authorities.active = activepk.value;
+        }
 
-      let account;
-      try {
-        account = await blockchain.verifyAccount(address.value, authorities);
-      } catch (error) {
-        console.error(error)
-        return;
-      }
+        let account;
+        try {
+            account = await blockchain.verifyAccount(address.value, authorities);
+        } catch (error) {
+            console.error(error)
+            return;
+        }
 
-      emitter.emit('accounts_to_import', [{
-          account: {
-              accountName: address.value,
-              accountID: account.id,
-              chain: props.chain,
-              keys: authorities
-          }
-      }]);
+        emitter.emit('accounts_to_import', [{
+            account: {
+                accountName: address.value,
+                accountID: account.id,
+                chain: props.chain,
+                keys: authorities
+            }
+        }]);
     }
 </script>
 
@@ -82,25 +82,32 @@
         </template>
         <ui-grid>
             <ui-grid-cell columns="12">
-                  <ui-button outlined class="step_btn" @click="back">
-                      {{ t('common.back_btn') }}
-                  </ui-button>
+                <ui-button
+                    outlined
+                    class="step_btn"
+                    @click="back"
+                >
+                    {{ t('common.back_btn') }}
+                </ui-button>
 
-                  <ui-button
+                <ui-button
                     v-if="address !== ''"
                     raised
                     class="step_btn"
                     type="submit"
                     @click="next"
-                  >
-                      {{ t('common.next_btn') }}
-                  </ui-button>
-                  <ui-button v-else disabled class="step_btn" type="submit">
-                      {{ t('common.next_btn') }}
-                  </ui-button>
-
+                >
+                    {{ t('common.next_btn') }}
+                </ui-button>
+                <ui-button
+                    v-else
+                    disabled
+                    class="step_btn"
+                    type="submit"
+                >
+                    {{ t('common.next_btn') }}
+                </ui-button>
             </ui-grid-cell>
         </ui-grid>
     </div>
-
 </template>

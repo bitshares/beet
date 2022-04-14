@@ -15,7 +15,7 @@
     let backupPass = ref("");
 
     onMounted(() => {
-      logger.debug("Restore wizard Mounted");
+        logger.debug("Restore wizard Mounted");
     });
 
     function restore() {
@@ -23,13 +23,13 @@
         document.getElementById('backupPass').classList.remove("error");
 
         if (!document.getElementById('restoreWallet').files[0]) {
-          document.getElementById('restoreWallet').classList.add("error");
-          return;
+            document.getElementById('restoreWallet').classList.add("error");
+            return;
         }
 
         if (backupPass.value === "") {
-          document.getElementById('backupPass').classList.add("error");
-          return;
+            document.getElementById('backupPass').classList.add("error");
+            return;
         }
 
         let file = document.getElementById('restoreWallet').files[0].path;
@@ -87,17 +87,27 @@
 
             <ui-grid>
                 <ui-grid-cell columns="12">
-                      <router-link to="/" replace>
-                          <ui-button outlined class="step_btn">
-                              {{ t('common.cancel_btn') }}
-                          </ui-button>
-                      </router-link>
-                      <ui-button raised class="step_btn" type="submit" @click="restore">
-                          {{ t('common.restore_go_cta') }}
-                      </ui-button>
+                    <router-link
+                        to="/"
+                        replace
+                    >
+                        <ui-button
+                            outlined
+                            class="step_btn"
+                        >
+                            {{ t('common.cancel_btn') }}
+                        </ui-button>
+                    </router-link>
+                    <ui-button
+                        raised
+                        class="step_btn"
+                        type="submit"
+                        @click="restore"
+                    >
+                        {{ t('common.restore_go_cta') }}
+                    </ui-button>
                 </ui-grid-cell>
             </ui-grid>
-
         </div>
     </div>
 </template>

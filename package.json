@@ -41,7 +41,8 @@
     "compile": "webpack --config=build/webpack.app.config.js --env=production",
     "build": "webpack --config=build/webpack.app.config.js --env=production && electron-builder --publish never",
     "release": "webpack --config=build/webpack.app.config.js --env=production && electron-builder --publish never",
-    "dist": "yarn compile && electron-builder --publish never"
+    "dist": "yarn compile && electron-builder --publish never",
+    "lint": "yarn run eslint --ext .js,.vue src"
   },
   "dependencies": {
     "@noble/ed25519": "^1.6.0",
@@ -72,7 +73,6 @@
     "@babel/plugin-transform-runtime": "^7.17.0",
     "@babel/preset-env": "^7.16.11",
     "@soda/friendly-errors-webpack-plugin": "^1.8.1",
-    "babel-eslint": "^10.0.3",
     "babel-loader": "^8.2.4",
     "css-loader": "^6.7.1",
     "electron": "^18.0.3",

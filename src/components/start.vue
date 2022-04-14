@@ -11,19 +11,19 @@
     const logger = new RendererLogger();
 
     let hasWallet = computed(() => {
-      return store.getters['WalletStore/getHasWallet'];
+        return store.getters['WalletStore/getHasWallet'];
     })
 
     let walletlist = computed(() => {
-      return store.getters['WalletStore/getWalletList'];
+        return store.getters['WalletStore/getWalletList'];
     })
 
     let walletOptions = computed(() => {
-      let wallets = store.getters['WalletStore/getWalletList'];
+        let wallets = store.getters['WalletStore/getWalletList'];
 
-      return wallets.map((wallet, i) => {
-        return {label: wallet.name, value: i}
-      });
+        return wallets.map((wallet, i) => {
+            return {label: wallet.name, value: i}
+        });
     })
 
     let walletpass = ref("");
@@ -31,30 +31,30 @@
     let passincorrect = ref("");
 
     onMounted(() => {
-      logger.debug("Start screen mounted");
-      store.dispatch("WalletStore/loadWallets", {}).catch(() => {});
-      store.dispatch("OriginStore/loadApps");
+        logger.debug("Start screen mounted");
+        store.dispatch("WalletStore/loadWallets", {}).catch(() => {});
+        store.dispatch("OriginStore/loadApps");
     });
 
     function unlockWallet() {
         store
-        .dispatch("WalletStore/getWallet", {
-            wallet_id: walletlist.value[selectedWallet.value].id,
-            wallet_pass: walletpass.value
-        })
-        .then(async () => {
-            try {
-              await store.dispatch("WalletStore/confirmUnlock");
-            } catch (error) {
-              console.log(error);
-            }
-            walletpass.value = "";
-            router.replace("/dashboard");
-        })
-        .catch(() => {
-            passincorrect.value = "is-invalid";
-            ipcRenderer.send("notify", 'An attempt to unlock the Beet wallet was made with an invalid password.');
-        });
+            .dispatch("WalletStore/getWallet", {
+                wallet_id: walletlist.value[selectedWallet.value].id,
+                wallet_pass: walletpass.value
+            })
+            .then(async () => {
+                try {
+                    await store.dispatch("WalletStore/confirmUnlock");
+                } catch (error) {
+                    console.log(error);
+                }
+                walletpass.value = "";
+                router.replace("/dashboard");
+            })
+            .catch(() => {
+                passincorrect.value = "is-invalid";
+                ipcRenderer.send("notify", 'An attempt to unlock the Beet wallet was made with an invalid password.');
+            });
     }
 </script>
 
@@ -73,9 +73,9 @@
                 to="/create"
                 replace
             >
-              <ui-button raised>
-                {{ t('common.start_cta') }}
-              </ui-button>
+                <ui-button raised>
+                    {{ t('common.start_cta') }}
+                </ui-button>
             </router-link>
 
             <p
@@ -90,25 +90,25 @@
                 to="/restore"
                 replace
             >
-              <ui-button raised>
-                {{ t('common.restore_cta') }}
-              </ui-button>
+                <ui-button raised>
+                    {{ t('common.restore_cta') }}
+                </ui-button>
             </router-link>
 
-            <br/>
+            <br>
             <section :dir="null">
-              <ui-select
-                v-if="hasWallet"
-                id="wallet-select"
-                v-model="selectedWallet"
-                :options="walletOptions"
-                @change="passincorrect=''"
-                full-bleed
-              >
-                Beet wallet name
-              </ui-select>
+                <ui-select
+                    v-if="hasWallet"
+                    id="wallet-select"
+                    v-model="selectedWallet"
+                    :options="walletOptions"
+                    full-bleed
+                    @change="passincorrect=''"
+                >
+                    Beet wallet name
+                </ui-select>
             </section>
-            <br/>
+            <br>
             <input
                 v-if="hasWallet"
                 id="inputPassword"
@@ -120,36 +120,42 @@
                 :class="passincorrect"
                 @focus="passincorrect=''"
             >
-            <br/>
-            <br/>
+            <br>
+            <br>
             <ui-button
-              v-if="hasWallet"
-              type="submit"
-              @click="unlockWallet"
-              outlined
+                v-if="hasWallet"
+                type="submit"
+                outlined
+                @click="unlockWallet"
             >
-              {{ t('common.unlock_cta') }}
+                {{ t('common.unlock_cta') }}
             </ui-button>
 
-            <ui-divider class="divider"></ui-divider>
+            <ui-divider class="divider" />
 
             <router-link
                 v-if="hasWallet"
                 to="/create"
                 replace
             >
-              <ui-button class="step_btn" outlined>
-                {{ t('common.create_cta') }}
-              </ui-button>
+                <ui-button
+                    class="step_btn"
+                    outlined
+                >
+                    {{ t('common.create_cta') }}
+                </ui-button>
             </router-link>
             <router-link
                 v-if="hasWallet"
                 to="/restore"
                 replace
             >
-              <ui-button class="step_btn" outlined>
-                {{ t('common.restore_cta') }}
-              </ui-button>
+                <ui-button
+                    class="step_btn"
+                    outlined
+                >
+                    {{ t('common.restore_cta') }}
+                </ui-button>
             </router-link>
         </div>
         <p class="mt-2 mb-2 small">

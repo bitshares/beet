@@ -11,42 +11,42 @@
     let chosenAccount = ref(-1);
 
     const props = defineProps({
-      request: Object,
-      accounts: Array,
-      existingLinks: Array
+        request: Object,
+        accounts: Array,
+        existingLinks: Array
     });
 
     let requestText = computed(() => {
-      return t(
-        'operations.link.request',
-        {
-          appName: props.request.appName,
-          origin: props.request.origin,
-          chain: props.request.chain
-        }
-      );
+        return t(
+            'operations.link.request',
+            {
+                appName: props.request.appName,
+                origin: props.request.origin,
+                chain: props.request.chain
+            }
+        );
     });
 
     let secondText = computed(() => {
-      return t('operations.link.request_fresh', {chain: props.request.chain });
+        return t('operations.link.request_fresh', {chain: props.request.chain });
     });
 
     /*
      * Creating the select items
      */
     let accountOptions = computed(() => {
-      return props.accounts.map((account, i) => {
-        return {
-          label: !account.hasOwnProperty("accountID") && account.trackId == 0
-                  ? `account ${i}` // TODO: Replace placeholder!
-                  : `${formatChain(account.chain)}: ${formatAccount(account)}`,
-          value: i
-        };
-      });
+        return props.accounts.map((account, i) => {
+            return {
+                label: !account.hasOwnProperty("accountID") && account.trackId == 0
+                    ? `account ${i}` // TODO: Replace placeholder!
+                    : `${formatChain(account.chain)}: ${formatAccount(account)}`,
+                value: i
+            };
+        });
     });
 
     onMounted(() => {
-      logger.debug("Link Popup initialised");
+        logger.debug("Link Popup initialised");
     })
 
     function _clickedAllow() {
@@ -55,74 +55,87 @@
         ipcRenderer.send(
             "clickedAllow",
             {
-              response: {
-                  name: approvedAccount.accountName,
-                  chain: approvedAccount.chain,
-                  id: approvedAccount.accountID
-              },
-              request: {
-                id: props.request.id
-              }
-          }
+                response: {
+                    name: approvedAccount.accountName,
+                    chain: approvedAccount.chain,
+                    id: approvedAccount.accountID
+                },
+                request: {
+                    id: props.request.id
+                }
+            }
         );
     }
 
     function _clickedDeny() {
         ipcRenderer.send(
-          "clickedDeny",
-          {
-            response: {canceled: true},
-            request: {id: props.request.id}
-          }
+            "clickedDeny",
+            {
+                response: {canceled: true},
+                request: {id: props.request.id}
+            }
         );
     }
 </script>
 
 <template>
-  <div>
-    <div v-tooltip="t('operations.link.request_tooltip')">
-        {{ requestText }}
-    </div>
-    <br>
-    <div v-if="existingLinks.length > 0">
-        {{ secondText }}
-    </div>
-    <br>
-    <select
-        id="account_select"
-        v-model="chosenAccount"
-        class="form-control mb-3"
-        required
-    >
-        <option selected disabled value="">
-            Account select
-        </option>
-        <option
-            v-for="account in accountOptions"
-            :key="account.value"
-            :value="account.value"
+    <div>
+        <div v-tooltip="t('operations.link.request_tooltip')">
+            {{ requestText }}
+        </div>
+        <br>
+        <div v-if="existingLinks.length > 0">
+            {{ secondText }}
+        </div>
+        <br>
+        <select
+            id="account_select"
+            v-model="chosenAccount"
+            class="form-control mb-3"
+            required
         >
-          <span>
-            {{ account.label }}
-          </span>
-        </option>
-    </select>
-    <br/>
-    <div v-if="chosenAccount == -1">
-        <ui-button disabled>
-            {{ t('operations.link.accept_btn') }}
-        </ui-button>
-        <ui-button raised @click="_clickedDeny()">
-            {{ t('operations.link.reject_btn') }}
-        </ui-button>
+            <option
+                selected
+                disabled
+                value=""
+            >
+                Account select
+            </option>
+            <option
+                v-for="account in accountOptions"
+                :key="account.value"
+                :value="account.value"
+            >
+                <span>
+                    {{ account.label }}
+                </span>
+            </option>
+        </select>
+        <br>
+        <div v-if="chosenAccount == -1">
+            <ui-button disabled>
+                {{ t('operations.link.accept_btn') }}
+            </ui-button>
+            <ui-button
+                raised
+                @click="_clickedDeny()"
+            >
+                {{ t('operations.link.reject_btn') }}
+            </ui-button>
+        </div>
+        <div v-else>
+            <ui-button
+                raised
+                @click="_clickedAllow()"
+            >
+                {{ t('operations.link.accept_btn') }}
+            </ui-button>
+            <ui-button
+                raised
+                @click="_clickedDeny()"
+            >
+                {{ t('operations.link.reject_btn') }}
+            </ui-button>
+        </div>
     </div>
-    <div v-else>
-        <ui-button raised @click="_clickedAllow()">
-            {{ t('operations.link.accept_btn') }}
-        </ui-button>
-        <ui-button raised @click="_clickedDeny()">
-            {{ t('operations.link.reject_btn') }}
-        </ui-button>
-    </div>
-  </div>
 </template>

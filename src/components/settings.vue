@@ -11,28 +11,28 @@
     const logger = new RendererLogger();
 
     onMounted(() => {
-      logger.debug("Settings Mounted");
-      //await store.dispatch("OriginStore/loadApps");
+        logger.debug("Settings Mounted");
+        //await store.dispatch("OriginStore/loadApps");
     });
 
     let dapps = computed(() => {
-      let storedDapps = [];
-      for (let i = 0; i < store.state.AccountStore.accountlist.length; i++) {
-          let apps = store.getters['OriginStore/walletAccessibleDapps'](store.state.AccountStore.accountlist[i].accountID, store.state.AccountStore.accountlist[i].chain);
-          if (typeof apps != 'undefined') {
-              storedDapps = storedDapps.concat(apps);
-          }
-      }
-      return storedDapps;
+        let storedDapps = [];
+        for (let i = 0; i < store.state.AccountStore.accountlist.length; i++) {
+            let apps = store.getters['OriginStore/walletAccessibleDapps'](store.state.AccountStore.accountlist[i].accountID, store.state.AccountStore.accountlist[i].chain);
+            if (typeof apps != 'undefined') {
+                storedDapps = storedDapps.concat(apps);
+            }
+        }
+        return storedDapps;
     })
 
     async function downloadBackup() {
         ipcRenderer.send(
-          "downloadBackup",
-          {
-            walletName: store.state.WalletStore.wallet.name,
-            accounts: store.state.AccountStore.accountlist.slice()
-          }
+            "downloadBackup",
+            {
+                walletName: store.state.WalletStore.wallet.name,
+                accounts: store.state.AccountStore.accountlist.slice()
+            }
         );
     }
 
@@ -42,7 +42,7 @@
 
     function getDisplayString(accountID,chain) {
         let account = store.state.AccountStore.accountlist.find(x => {
-          return (x.accountID == accountID && x.chain == chain);
+            return (x.accountID == accountID && x.chain == chain);
         });
         return formatAccount(account, true);
     }
@@ -82,11 +82,17 @@
                     </thead>
                     <tbody>
                         <tr v-if="dapps.length==0">
-                            <td colspan="6" class="align-center">
+                            <td
+                                colspan="6"
+                                class="align-center"
+                            >
                                 <em>{{ t('common.no_dapps_linked') }}</em>
                             </td>
                         </tr>
-                        <tr v-for="dapp in dapps" :key="dapp.id">
+                        <tr
+                            v-for="dapp in dapps"
+                            :key="dapp.id"
+                        >
                             <td class="align-middle">
                                 {{ dapp.appName }}
                             </td>
@@ -96,8 +102,7 @@
                             <td
                                 class="align-middle"
                                 v-html="getDisplayString(dapp.account_id, dapp.chain)"
-                            >
-                            </td>
+                            />
                             <td class="align-middle">
                                 {{ dapp.chain }}
                             </td>
@@ -119,22 +124,25 @@
                     <u>{{ t('common.backup_lbl') }}</u>
                 </p>
                 <ui-grid class="row px-4">
-                  <ui-grid-cell class="largeHeader" columns="12">
-                      <p class="small text-justify">
-                          {{ t('common.backup_txt') }}
-                      </p>
-                  </ui-grid-cell>
-                  <ui-grid-cell columns="3" />
-                  <ui-grid-cell columns="6" >
-                    <button
-                        class="btn btn-sm btn-info btn-block"
-                        type="button"
-                        @click="downloadBackup"
+                    <ui-grid-cell
+                        class="largeHeader"
+                        columns="12"
                     >
-                        {{ t('common.backup_btn') }}
-                    </button>
-                  </ui-grid-cell>
-                  <ui-grid-cell columns="3" />
+                        <p class="small text-justify">
+                            {{ t('common.backup_txt') }}
+                        </p>
+                    </ui-grid-cell>
+                    <ui-grid-cell columns="3" />
+                    <ui-grid-cell columns="6">
+                        <button
+                            class="btn btn-sm btn-info btn-block"
+                            type="button"
+                            @click="downloadBackup"
+                        >
+                            {{ t('common.backup_btn') }}
+                        </button>
+                    </ui-grid-cell>
+                    <ui-grid-cell columns="3" />
                 </ui-grid>
             </div>
         </div>

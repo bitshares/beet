@@ -130,7 +130,7 @@ export default class Bitcoin extends BlockchainAPI {
                 throw result
             }
             let json = await result.json();
-            if (!!json.success) {
+            if (json.success) {
                 return json;
             } else {
                 throw json;

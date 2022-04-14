@@ -22,42 +22,42 @@
     })
 
     onMounted(() => {
-      logger.debug("Action Bar mounted");
+        logger.debug("Action Bar mounted");
     });
 
     let active = ref(null);
 
     let items = ref([
-      {
-        text: 'Home'
-      },
-      {
-        text: 'New'
-      },
-      {
-        text: 'Settings'
-      },
-      {
-        text: 'Logout'
-      }
+        {
+            text: 'Home'
+        },
+        {
+            text: 'New'
+        },
+        {
+            text: 'Settings'
+        },
+        {
+            text: 'Logout'
+        }
     ]);
 
     watch(active, async (newVal, oldVal) => {
-      if (newVal !== oldVal) {
-        if (!newVal) {
-          return;
-        }
+        if (newVal !== oldVal) {
+            if (!newVal) {
+                return;
+            }
 
-        if (newVal === 0) {
-          router.replace("/dashboard");
-        } else  if (newVal === 1) {
-          router.replace("/add-account");
-        } else  if (newVal === 2) {
-          router.replace("/settings");
-        } else  if (newVal === 3) {
-          logout()
+            if (newVal === 0) {
+                router.replace("/dashboard");
+            } else  if (newVal === 1) {
+                router.replace("/add-account");
+            } else  if (newVal === 2) {
+                router.replace("/settings");
+            } else  if (newVal === 3) {
+                logout()
+            }
         }
-      }
     }, {immediate: true});
 
 </script>
@@ -65,9 +65,9 @@
 <template>
     <div class="container">
         <ui-tabs
-          v-model="active"
-          :items="items"
-          stacked
-        ></ui-tabs>
+            v-model="active"
+            :items="items"
+            stacked
+        />
     </div>
 </template>

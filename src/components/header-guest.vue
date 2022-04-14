@@ -6,14 +6,17 @@
     const logger = new RendererLogger();
 
     onMounted(() => {
-      logger.debug("Standard Header mounted");
+        logger.debug("Standard Header mounted");
     });
 </script>
 
 <template>
     <div class="top">
-      <ui-grid class="container-fluid">
-          <ui-grid-cell class="largeHeader" columns="12">
+        <ui-grid class="container-fluid">
+            <ui-grid-cell
+                class="largeHeader"
+                columns="12"
+            >
                 <img
                     src="img/beet.png"
                     alt

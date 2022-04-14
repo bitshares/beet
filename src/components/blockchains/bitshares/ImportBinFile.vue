@@ -9,14 +9,14 @@
     import BTSWalletHandler from "../../../lib/blockchains/bitshares/BTSWalletHandler";
 
     const props = defineProps({
-      chain: String,
-      node: String
+        chain: String,
+        node: String
     });
 
     onMounted(() => {
-      if (!["BTS", "TUSC"].includes(props.chain)) {
-          throw "Unsupported chain!";
-      }
+        if (!["BTS", "TUSC"].includes(props.chain)) {
+            throw "Unsupported chain!";
+        }
     })
 
     let accountname = ref("");
@@ -47,10 +47,10 @@
                 active: this.activepk,
                 memo: this.memopk,
                 owner: this.includeOwner == 1 ? this.ownerpk : null
-              }
+            }
             : {
                 active: this.activepk
-              };
+            };
 
         let account;
         try {
@@ -71,8 +71,8 @@
         } catch (error) {
             accountID.value = "";
             ipcRenderer.send(
-              "notify",
-              error.key ? t(`common.${error.key}`) : error.toString()
+                "notify",
+                error.key ? t(`common.${error.key}`) : error.toString()
             );
         }
         accountID.value = account.id;
@@ -124,11 +124,11 @@
     }
 
     function back() {
-      emitter.emit('back', true);
+        emitter.emit('back', true);
     }
 
     async function next() {
-      return substep1.value ? await _decryptBackup() : _getPickedAccounts();
+        return substep1.value ? await _decryptBackup() : _getPickedAccounts();
     }
 </script>
 
@@ -151,9 +151,13 @@
                 type="password"
                 class="form-control mb-3 small"
             >
-            <br/>
-            <br/>
-            <ui-button outlined class="step_btn" @click="back">
+            <br>
+            <br>
+            <ui-button
+                outlined
+                class="step_btn"
+                @click="back"
+            >
                 {{ t('common.back_btn') }}
             </ui-button>
         </template>
@@ -161,93 +165,117 @@
             <div class="import-accounts mt-3">
                 <table class="table small table-striped table-sm">
                     <thead>
-                    <tr>
-                        <th rowspan="2" class="align-middle">
-                            Account Name
-                        </th>
-                        <th rowspan="2" class="align-middle">
-                            Active Authority
-                        </th>
-                        <th rowspan="2" class="align-middle">
-                            Owner Authority
-                        </th>
-                        <th rowspan="2" class="align-middle">
-                            Memo
-                        </th>
-                        <th rowspan="2" class="align-middle">
-                            Import?
-                        </th>
-                    </tr>
-                    <tr>
-                        <th class="align-middle">
-                            Propose
-                        </th>
-                        <th class="align-middle">
-                            Transact
-                        </th>
-                        <th class="align-middle">
-                            Propose
-                        </th>
-                        <th class="align-middle">
-                            Transact
-                        </th>
-                    </tr>
+                        <tr>
+                            <th
+                                rowspan="2"
+                                class="align-middle"
+                            >
+                                Account Name
+                            </th>
+                            <th
+                                rowspan="2"
+                                class="align-middle"
+                            >
+                                Active Authority
+                            </th>
+                            <th
+                                rowspan="2"
+                                class="align-middle"
+                            >
+                                Owner Authority
+                            </th>
+                            <th
+                                rowspan="2"
+                                class="align-middle"
+                            >
+                                Memo
+                            </th>
+                            <th
+                                rowspan="2"
+                                class="align-middle"
+                            >
+                                Import?
+                            </th>
+                        </tr>
+                        <tr>
+                            <th class="align-middle">
+                                Propose
+                            </th>
+                            <th class="align-middle">
+                                Transact
+                            </th>
+                            <th class="align-middle">
+                                Propose
+                            </th>
+                            <th class="align-middle">
+                                Transact
+                            </th>
+                        </tr>
                     </thead>
                     <tbody>
-                    <tr
-                        v-for="account in accounts"
-                        :key="account.id"
-                        :class="{ disabledImport : !account.importable}"
-                    >
-                        <td class="text-center align-middle">
-                            {{ account.name }}<br>({{ account.id }})
-                        </td>
-                        <td class="text-center align-middle">
-                            {{ account.active.canPropose ? 'Y' : 'N' }}
-                        </td>
-                        <td class="text-center align-middle">
-                            {{ account.active.canTransact ? 'Y' : 'N' }}
-                        </td>
-                        <td class="text-center align-middle">
-                            {{ account.owner.canPropose ? 'Y' : 'N' }}
-                        </td>
-                        <td class="text-center align-middle">
-                            {{ account.owner.canTransact ? 'Y' : 'N' }}
-                        </td>
-                        <td class="text-center align-middle">
-                            {{ account.memo.canSend ? 'Y' : 'N' }}
-                        </td>
-                        <td class="text-center align-middle">
-                            <input
-                                v-if="account.importable"
-                                :id="account.name"
-                                v-model="picked"
-                                type="checkbox"
-                                :value="account.id"
-                            >
-                        </td>
-                    </tr>
+                        <tr
+                            v-for="account in accounts"
+                            :key="account.id"
+                            :class="{ disabledImport : !account.importable}"
+                        >
+                            <td class="text-center align-middle">
+                                {{ account.name }}<br>({{ account.id }})
+                            </td>
+                            <td class="text-center align-middle">
+                                {{ account.active.canPropose ? 'Y' : 'N' }}
+                            </td>
+                            <td class="text-center align-middle">
+                                {{ account.active.canTransact ? 'Y' : 'N' }}
+                            </td>
+                            <td class="text-center align-middle">
+                                {{ account.owner.canPropose ? 'Y' : 'N' }}
+                            </td>
+                            <td class="text-center align-middle">
+                                {{ account.owner.canTransact ? 'Y' : 'N' }}
+                            </td>
+                            <td class="text-center align-middle">
+                                {{ account.memo.canSend ? 'Y' : 'N' }}
+                            </td>
+                            <td class="text-center align-middle">
+                                <input
+                                    v-if="account.importable"
+                                    :id="account.name"
+                                    v-model="picked"
+                                    type="checkbox"
+                                    :value="account.id"
+                                >
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
 
                 <ui-grid>
                     <ui-grid-cell columns="12">
-                          <ui-button outlined class="step_btn" @click="back">
-                              {{ t('common.back_btn') }}
-                          </ui-button>
+                        <ui-button
+                            outlined
+                            class="step_btn"
+                            @click="back"
+                        >
+                            {{ t('common.back_btn') }}
+                        </ui-button>
 
-                          <ui-button raised class="step_btn" type="submit" @click="next">
-                              {{ t('common.next_btn') }}
-                          </ui-button>
+                        <ui-button
+                            raised
+                            class="step_btn"
+                            type="submit"
+                            @click="next"
+                        >
+                            {{ t('common.next_btn') }}
+                        </ui-button>
                     </ui-grid-cell>
                 </ui-grid>
             </div>
             <!--<button-->
-                <!--v-if="picked.length>10"-->
-                <!--class="btn btn-lg btn-primary btn-block mt-3"-->
-                <!--@click="simpleStep3"-->
+            <!--v-if="picked.length>10"-->
+            <!--class="btn btn-lg btn-primary btn-block mt-3"-->
+            <!--@click="simpleStep3"-->
             <!--&gt;-->
-                <!--{{ t('common.import_btn') }}-->
+            <!--{{ t('common.import_btn') }}-->
             <!--</button>-->
         </template>
     </div>

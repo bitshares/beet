@@ -2,11 +2,9 @@ import { createApp } from 'vue';
 import { createI18n } from 'vue-i18n';
 import VueRouter from 'vue-router';
 import mitt from 'mitt';
-import { ipcRenderer } from 'electron';
 
 import BalmUI from 'balm-ui'; // Official Google Material Components
 import BalmUIPlus from 'balm-ui/dist/balm-ui-plus'; // BalmJS Team Material Components
-import UiTabsComponents from 'balm-ui/components/tabs';
 import 'balm-ui-css';
 
 import router from './router/index.js';

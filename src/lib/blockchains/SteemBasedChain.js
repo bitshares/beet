@@ -109,7 +109,7 @@ export default class SteemBasedChain extends BlockchainAPI {
                 if (transaction.type) {
                     switch (transaction.type) {
                         case 'vote': {
-                            if (!!transaction.data.author) {
+                            if (transaction.data.author) {
                                 this._getLibrary().broadcast.vote(
                                     transaction.wif,
                                     transaction.data.username,
@@ -180,7 +180,7 @@ export default class SteemBasedChain extends BlockchainAPI {
             this.ensureConnection().then(() => {
                 switch (data.action) {
                     case 'vote': {
-                        if (!!data.params.author) {
+                        if (data.params.author) {
                             resolve({
                                 type: "vote",
                                 data: {
@@ -210,7 +210,7 @@ export default class SteemBasedChain extends BlockchainAPI {
         return new Promise((resolve, reject) => {
             this.ensureConnection().then(() => {
                 if (incoming.action == "vote") {
-                    if (!!incoming.params.author) {
+                    if (incoming.params.author) {
                         resolve({
                             entity: "Post",
                             description:

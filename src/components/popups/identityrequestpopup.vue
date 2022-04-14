@@ -7,57 +7,57 @@
     const logger = new RendererLogger();
 
     const props = defineProps({
-      request: Object,
-      accounts: Array
+        request: Object,
+        accounts: Array
     });
 
     let account_id = computed(() => {
-      return prop.accounts[0].account_id;
+        return prop.accounts[0].account_id;
     });
 
     let accountName = computed(() => {
-      return prop.accounts[0].accountName;
+        return prop.accounts[0].accountName;
     });
 
     let chain = computed(() => {
-      return prop.accounts[0].chain;
+        return prop.accounts[0].chain;
     });
 
     let requestText = computed(() => {
-      return t(
-        'operations.account_id.request',
-        {
-          appName: props.request.appName,
-          origin: props.request.origin,
-          chain: chain,
-          accountId: account_id,
-          accountName: accountName
-        }
-      );
+        return t(
+            'operations.account_id.request',
+            {
+                appName: props.request.appName,
+                origin: props.request.origin,
+                chain: chain,
+                accountId: account_id,
+                accountName: accountName
+            }
+        );
     });
 
     onMounted(() => {
-      logger.debug("Link Popup initialised");
+        logger.debug("Link Popup initialised");
     });
 
     function _clickedAllow() {
         ipcRenderer.send("clickedAllow", {
-          response: {
-              name: accountName,
-              chain: chain,
-              id: account_id
-          },
-          request: {id: props.request.id}
+            response: {
+                name: accountName,
+                chain: chain,
+                id: account_id
+            },
+            request: {id: props.request.id}
         });
     }
 
     function _clickedDeny() {
         ipcRenderer.send(
-          "clickedDeny",
-          {
-            response: {canceled: true},
-            request: {id: props.request.id}
-          }
+            "clickedDeny",
+            {
+                response: {canceled: true},
+                request: {id: props.request.id}
+            }
         );
     }
 </script>
@@ -66,10 +66,16 @@
     <div v-tooltip="t('operations.identity.request_tooltip')">
         {{ requestText }} &#10068;
     </div>
-    <ui-button raised @click="_clickedAllow()">
+    <ui-button
+        raised
+        @click="_clickedAllow()"
+    >
         {{ t('operations.account_id.accept_btn') }}
     </ui-button>
-    <ui-button raised @click="_clickedDeny()">
+    <ui-button
+        raised
+        @click="_clickedDeny()"
+    >
         {{ t('operations.account_id.reject_btn') }}
     </ui-button>
 </template>

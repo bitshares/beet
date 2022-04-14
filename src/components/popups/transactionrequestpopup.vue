@@ -7,32 +7,32 @@
     import {formatChain} from "../../lib/formatter";
 
     const props = defineProps({
-      request: Object
+        request: Object
     });
 
     let visualizedParams = computed(async () => {
-      let blockchain = getBlockchainAPI(props.request.chain);
-      let visualisation;
-      try {
-        visualisation = await blockchain.visualize(props.request.params);
-      } catch (error) {
-        console.log(error);
-      }
+        let blockchain = getBlockchainAPI(props.request.chain);
+        let visualisation;
+        try {
+            visualisation = await blockchain.visualize(props.request.params);
+        } catch (error) {
+            console.log(error);
+        }
 
-      return visualisation ?? null;
+        return visualisation ?? null;
     });
 
     let visualizedAccount = computed(async () => {
-      let blockchain = getBlockchainAPI(props.request.chain);
+        let blockchain = getBlockchainAPI(props.request.chain);
 
-      let visualisation;
-      try {
-        visualisation = await blockchain.visualize(props.request.account_id);
-      } catch (error) {
-        console.log(error);
-      }
+        let visualisation;
+        try {
+            visualisation = await blockchain.visualize(props.request.account_id);
+        } catch (error) {
+            console.log(error);
+        }
 
-      return visualisation ?? null;
+        return visualisation ?? null;
     });
 
     let tableTooltip = computed(() => {
@@ -47,30 +47,30 @@
     });
 
     let buttonText = computed(() => {
-      return props.request.params &&
-             props.request.params.length > 0 &&
-             props.request.params[0] == "sign"
-             ? t('operations.rawsig.sign_btn')
-             : t('operations.rawsig.sign_and_broadcast_btn')
+        return props.request.params &&
+            props.request.params.length > 0 &&
+            props.request.params[0] == "sign"
+            ? t('operations.rawsig.sign_btn')
+            : t('operations.rawsig.sign_and_broadcast_btn')
     })
 
     function _clickedAllow() {
         ipcRenderer.send(
-          "clickedAllow",
-          {
-            response: {success: true},
-            request: {id: props.request.id}
-          }
+            "clickedAllow",
+            {
+                response: {success: true},
+                request: {id: props.request.id}
+            }
         );
     }
 
     function _clickedDeny() {
         ipcRenderer.send(
-          "clickedDeny",
-          {
-            response: {canceled: true},
-            request: {id: props.request.id}
-          }
+            "clickedDeny",
+            {
+                response: {canceled: true},
+                request: {id: props.request.id}
+            }
         );
     }
 </script>
@@ -85,7 +85,7 @@
                     Origin
                 </td>
                 <td class="text-right">
-                    {{props.request.origin}}
+                    {{ props.request.origin }}
                 </td>
             </tr>
             <tr>
@@ -93,7 +93,7 @@
                     App
                 </td>
                 <td class="text-right">
-                    {{props.request.appName}}
+                    {{ props.request.appName }}
                 </td>
             </tr>
             <tr>
@@ -101,7 +101,7 @@
                     Account
                 </td>
                 <td class="text-right">
-                    {{formatChain(props.request.chain) + ":" + (visualizedAccount)}}
+                    {{ formatChain(props.request.chain) + ":" + (visualizedAccount) }}
                 </td>
             </tr>
             <tr>
@@ -133,10 +133,16 @@
       </code>
     </pre>
     {{ t('operations.rawsig.request_cta') }}
-    <ui-button raised @click="_clickedAllow()">
+    <ui-button
+        raised
+        @click="_clickedAllow()"
+    >
         {{ buttonText }}
     </ui-button>
-    <ui-button raised @click="_clickedDeny()">
+    <ui-button
+        raised
+        @click="_clickedDeny()"
+    >
         {{ t('operations.rawsig.reject_btn') }}
     </ui-button>
 </template>

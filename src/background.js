@@ -16,19 +16,15 @@ import {
   Tray,
   dialog,
   ipcMain,
-  ipcRenderer,
   Notification
 } from 'electron';
 //import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
 import mitt from 'mitt';
-const emitter = mitt();
-
 import sha256 from "crypto-js/sha256.js";
 import aes from "crypto-js/aes.js";
 import ENC from 'crypto-js/enc-utf8.js';
 import * as ed from '@noble/ed25519';
 
-import store from './store/index';
 import Logger from '~/lib/Logger';
 import context_menu from '~/lib/electron_context_menu';
 import {initApplicationMenu} from '~/lib/applicationMenu';
@@ -49,9 +45,9 @@ let modalRequests = {};
 
 var isDevMode = process.execPath.match(/[\\/]electron/);
 const logger = new Logger(isDevMode ? 3 : 0);
-let first = true;
+//let first = true;
 let tray = null;
-let minimised = false;
+//let minimised = false;
 
 /*
  * On modal popup this runs to create child browser window
@@ -60,7 +56,7 @@ const createModal = async (arg, modalEvent) => {
     let modalHeight = 400;
     let modalWidth = 600;
     if (!mainWindow) {
-        return reject('No main window'); // TODO: REPLACE
+        throw 'No main window';
     }
 
     let request = arg.request;
@@ -70,7 +66,7 @@ const createModal = async (arg, modalEvent) => {
     let existingLinks = arg.existingLinks;
 
     if (modalWindows[id] || modalRequests[id]) {
-        return reject('Modal exists already!'); // TODO: REPLACE
+        throw 'Modal exists already!';
     }
 
     modalRequests[id] = {request: request, event: modalEvent};
@@ -271,7 +267,7 @@ const createWindow = async () => {
         return getBackup(accounts)
         .then(result => {
           if (result) {
-              fs.writeFileSync(userChosenPath, backup);
+              fs.writeFileSync(userChosenPath, result);
           }
         })
     }

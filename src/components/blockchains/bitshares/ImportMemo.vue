@@ -6,8 +6,8 @@
     import getBlockchainAPI from "../../../lib/blockchains/blockchainFactory";
 
     const props = defineProps({
-      chain: String,
-      node: String
+        chain: String,
+        node: String
     });
     let chain = ref(props.chain);
 
@@ -17,38 +17,38 @@
     let requiredFields = ref(null);
 
     onMounted(() => {
-      let blockchain = getBlockchainAPI(chain.value);
-      accessType.value = blockchain.getAccessType();
-      requiredFields.value = blockchain.getSignUpInput();
+        let blockchain = getBlockchainAPI(chain.value);
+        accessType.value = blockchain.getAccessType();
+        requiredFields.value = blockchain.getSignUpInput();
     })
 
     function back() {
-      emitter.emit('back', true);
+        emitter.emit('back', true);
     }
 
     async function next() {
-      let blockchain = getBlockchainAPI(chain.value);
-      let authorities = {};
-      if (requiredFields.value.memo != null) {
-          authorities.memo = memopk.value;
-      }
+        let blockchain = getBlockchainAPI(chain.value);
+        let authorities = {};
+        if (requiredFields.value.memo != null) {
+            authorities.memo = memopk.value;
+        }
 
-      let account;
-      try {
-        account = await blockchain.verifyAccount(accountname.value, authorities);
-      } catch (error) {
-        console.log(error);
-        return;
-      }
+        let account;
+        try {
+            account = await blockchain.verifyAccount(accountname.value, authorities);
+        } catch (error) {
+            console.log(error);
+            return;
+        }
 
-      emitter.emit('accounts_to_import', [{
-          account: {
-              accountName: accountname.value,
-              accountID: account.id,
-              chain: chain.value,
-              keys: authorities
-          }
-      }]);
+        emitter.emit('accounts_to_import', [{
+            account: {
+                accountName: accountname.value,
+                accountID: account.id,
+                chain: chain.value,
+                keys: authorities
+            }
+        }]);
     }
 </script>
 
@@ -87,22 +87,31 @@
 
         <ui-grid>
             <ui-grid-cell columns="12">
-                  <ui-button outlined class="step_btn" @click="back">
-                      {{ t('common.back_btn') }}
-                  </ui-button>
+                <ui-button
+                    outlined
+                    class="step_btn"
+                    @click="back"
+                >
+                    {{ t('common.back_btn') }}
+                </ui-button>
 
-                  <ui-button
+                <ui-button
                     v-if="accountname !== ''"
                     raised
                     class="step_btn"
                     type="submit"
                     @click="next"
-                  >
-                      {{ t('common.next_btn') }}
-                  </ui-button>
-                  <ui-button v-else disabled class="step_btn" type="submit">
-                      {{ t('common.next_btn') }}
-                  </ui-button>
+                >
+                    {{ t('common.next_btn') }}
+                </ui-button>
+                <ui-button
+                    v-else
+                    disabled
+                    class="step_btn"
+                    type="submit"
+                >
+                    {{ t('common.next_btn') }}
+                </ui-button>
             </ui-grid-cell>
         </ui-grid>
     </div>

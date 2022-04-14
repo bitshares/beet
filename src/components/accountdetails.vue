@@ -7,22 +7,22 @@
     const { t } = useI18n({ useScope: 'global' });
 
     const props = defineProps({
-      account: Object
+        account: Object
     });
 
     let chainLabel = computed(() => {
-      return formatChain(props.account.chain);
+        return formatChain(props.account.chain);
     });
 
     let explorer = computed(() => {
-      return getBlockchainAPI(props.account.chain).getExplorer(props.account);
+        return getBlockchainAPI(props.account.chain).getExplorer(props.account);
     });
 
     let accessType = computed(() => {
-      let type = getBlockchainAPI(props.account.chain).getAccessType();
-      return type == "account"
-          ? t('common.account_details_name_lbl')
-          : t('common.account_details_address_lbl');
+        let type = getBlockchainAPI(props.account.chain).getAccessType();
+        return type == "account"
+            ? t('common.account_details_name_lbl')
+            : t('common.account_details_address_lbl');
     });
 
     function openExplorer(account) {
@@ -33,49 +33,58 @@
 </script>
 
 <template>
-  <div>
-    <p>
-        {{ t('common.account_details_lbl') }}
-    </p>
-    <ui-card elevated class="wideCard">
-        <ui-list v-if="account">
-          <ui-item :key="chainLabel">
-              <ui-item-text-content>
-                  <ui-item-text1>
-                      {{ t('common.account_details_chaim_lbl') }}
-                  </ui-item-text1>
-                  <ui-item-text2>
-                      {{ chainLabel }}
-                  </ui-item-text2>
-              </ui-item-text-content>
-          </ui-item>
-          <ui-item :key="account.accountName">
-              <ui-item-text-content>
-                  <ui-item-text1>
-                      {{ accessType }}
-                  </ui-item-text1>
-                  <ui-item-text2>
-                      {{ account.accountName }}
-                  </ui-item-text2>
-              </ui-item-text-content>
-          </ui-item>
-          <ui-item :key="account.accountID">
-              <ui-item-text-content v-if="account.accountName != account.accountID">
-                  <ui-item-text1>
-                      {{ t('common.account_details_id_lbl') }}
-                  </ui-item-text1>
-                  <ui-item-text2>
-                      {{ account.accountID }}
-                  </ui-item-text2>
-              </ui-item-text-content>
-          </ui-item>
-        </ui-list>
+    <div>
+        <p>
+            {{ t('common.account_details_lbl') }}
+        </p>
+        <ui-card
+            elevated
+            class="wideCard"
+        >
+            <ui-list v-if="account">
+                <ui-item :key="chainLabel">
+                    <ui-item-text-content>
+                        <ui-item-text1>
+                            {{ t('common.account_details_chaim_lbl') }}
+                        </ui-item-text1>
+                        <ui-item-text2>
+                            {{ chainLabel }}
+                        </ui-item-text2>
+                    </ui-item-text-content>
+                </ui-item>
+                <ui-item :key="account.accountName">
+                    <ui-item-text-content>
+                        <ui-item-text1>
+                            {{ accessType }}
+                        </ui-item-text1>
+                        <ui-item-text2>
+                            {{ account.accountName }}
+                        </ui-item-text2>
+                    </ui-item-text-content>
+                </ui-item>
+                <ui-item :key="account.accountID">
+                    <ui-item-text-content v-if="account.accountName != account.accountID">
+                        <ui-item-text1>
+                            {{ t('common.account_details_id_lbl') }}
+                        </ui-item-text1>
+                        <ui-item-text2>
+                            {{ account.accountID }}
+                        </ui-item-text2>
+                    </ui-item-text-content>
+                </ui-item>
+            </ui-list>
 
-        <ui-card-actions full-bleed v-if="explorer">
-          <ui-button @click="openExplorer(account)" class="step_btn">
-            {{ t('common.account_details_explorer_lbl') }}
-          </ui-button>
-        </ui-card-actions>
-    </ui-card>
-  </div>
+            <ui-card-actions
+                v-if="explorer"
+                full-bleed
+            >
+                <ui-button
+                    class="step_btn"
+                    @click="openExplorer(account)"
+                >
+                    {{ t('common.account_details_explorer_lbl') }}
+                </ui-button>
+            </ui-card-actions>
+        </ui-card>
+    </div>
 </template>

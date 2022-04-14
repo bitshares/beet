@@ -8,8 +8,8 @@
     const logger = new RendererLogger();
 
     const props = defineProps({
-      request: Object,
-      accounts: Array
+        request: Object,
+        accounts: Array
     });
 
     let message = computed(() => {
@@ -47,26 +47,26 @@
     });
 
     onMounted(() => {
-      logger.debug("Transfer request popup initialised");
+        logger.debug("Transfer request popup initialised");
     });
 
     function _clickedAllow() {
         ipcRenderer.send(
-          "clickedAllow",
-          {
-            response: {success: true},
-            request: {id: props.request.id}
-          }
+            "clickedAllow",
+            {
+                response: {success: true},
+                request: {id: props.request.id}
+            }
         );
     }
 
     function _clickedDeny() {
         ipcRenderer.send(
-          "clickedDeny",
-          {
-            response: {canceled: true},
-            request: {id: props.request.id}
-          }
+            "clickedDeny",
+            {
+                response: {canceled: true},
+                request: {id: props.request.id}
+            }
         );
     }
 </script>
@@ -89,10 +89,16 @@
         </code>
       </span>
     </pre>
-    <ui-button raised @click="_clickedAllow()">
+    <ui-button
+        raised
+        @click="_clickedAllow()"
+    >
         {{ t("operations.transfer.accept_btn") }}
     </ui-button>
-    <ui-button raised @click="_clickedDeny()">
+    <ui-button
+        raised
+        @click="_clickedDeny()"
+    >
         {{ t("operations.transfer.reject_btn") }}
     </ui-button>
 </template>

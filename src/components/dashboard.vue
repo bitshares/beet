@@ -31,102 +31,102 @@
      * Retrieve the list of accounts for allocation to prop
      */
     let accounts = computed(() => {
-      let accountList;
-      try {
-        accountList = store.getters['AccountStore/getSafeAccountList'];
-      } catch (error) {
-        console.log(error);
-        return [];
-      }
-      return accountList;
+        let accountList;
+        try {
+            accountList = store.getters['AccountStore/getSafeAccountList'];
+        } catch (error) {
+            console.log(error);
+            return [];
+        }
+        return accountList;
     });
 
     /*
      * Creating the select items
      */
     let accountOptions = computed(() => {
-      let accountList;
-      try {
-        accountList = store.getters['AccountStore/getAccountList'];
-      } catch (error) {
-        console.log(error);
-        return [];
-      }
+        let accountList;
+        try {
+            accountList = store.getters['AccountStore/getAccountList'];
+        } catch (error) {
+            console.log(error);
+            return [];
+        }
 
-      let options = accountList.map((account, i) => {
-        return {
-          label: !account.hasOwnProperty("accountID") && account.trackId == 0
-                  ? 'cta' // TODO: Replace
-                  : `${formatChain(account.chain)}: ${formatAccount(account)}`,
-          value: i
-        };
-      });
+        let options = accountList.map((account, i) => {
+            return {
+                label: !account.hasOwnProperty("accountID") && account.trackId == 0
+                    ? 'cta' // TODO: Replace
+                    : `${formatChain(account.chain)}: ${formatAccount(account)}`,
+                value: i
+            };
+        });
 
-      return options;
+        return options;
     });
 
     let connectionFailed = computed(() => {
-      return !isConnecting || !isConnecting.value && !isConnected || !isConnected.value;
+        return !isConnecting.value || !isConnecting.value && !isConnected.value || !isConnected.value;
     });
 
     let selectedNode = computed({
-      get: () => {
-          return store.state.SettingsStore.settings.selected_node[
-              selectedAccount.value.chain
-          ];
-      },
-      set: (newVal) => {
-          if (!selectedNode || selectedNode != newVal) {
-              blockchain.value
-                .ensureConnection(newVal)
-                .finally(() => {
-                    isConnected.value = blockchain.value.isConnected();
-                });
-          }
-      }
+        get: () => {
+            return store.state.SettingsStore.settings.selected_node[
+                selectedAccount.value.chain
+            ];
+        },
+        set: (newVal) => {
+            if (!selectedNode.value || selectedNode.value != newVal) {
+                blockchain.value
+                    .ensureConnection(newVal)
+                    .finally(() => {
+                        isConnected.value = blockchain.value.isConnected();
+                    });
+            }
+        }
     });
 
     watch(blockchain, async (newVal, oldVal) => {
-      if (newVal && newVal !== oldVal) {
-        nodes.value = blockchain.value.getNodes();
-        isConnected.value = blockchain.value.isConnected();
-      }
+        if (newVal && newVal !== oldVal) {
+            nodes.value = blockchain.value.getNodes();
+            isConnected.value = blockchain.value.isConnected();
+        }
     }, {immediate: true});
 
     /*
      * User selected from the account drop down menu
      */
     watch(chosenAccount, async (newVal, oldVal) => {
-      if (newVal !== -1) {
-        selectedAccount.value = accounts.value[newVal];
-        store.dispatch(
-          "AccountStore/selectAccount",
-          {chain: accounts.value[newVal].chain, accountID: accounts.value[newVal].accountID}
-        );
-      }
+        if (newVal !== -1) {
+            selectedAccount.value = accounts.value[newVal];
+            store.dispatch(
+                "AccountStore/selectAccount",
+                {chain: accounts.value[newVal].chain, accountID: accounts.value[newVal].accountID}
+            );
+        }
     }, {immediate: true});
 
     /*
      * Account data has changed
      */
     watch(selectedAccount, async (newVal, oldVal) => {
-      if (newVal && newVal !== oldVal) {
-        blockchain.value = getBlockchainAPI(newVal.chain);
-        selectedChain.value = newVal.chain;
-        accountName.value = newVal.accountName;
-        accountID.value = newVal.accountID;
-      }
+        if (newVal && newVal !== oldVal) {
+            blockchain.value = getBlockchainAPI(newVal.chain);
+            selectedChain.value = newVal.chain;
+            accountName.value = newVal.accountName;
+            accountID.value = newVal.accountID;
+        }
     }, {immediate: true});
 
     watch(selectedChain, async (newVal, oldVal) => {
-      if (newVal && newVal !== oldVal) {
-          isConnected.value = false;
-          nodes.value = blockchain.value.getNodes();
-          isConnected.value = blockchain.value.isConnected();
-          if (!selectedNode || !selectedNode.value) {
-              selectedNode.value = nodes.value[0].url;
-          }
-      }
+        if (newVal && newVal !== oldVal) {
+            isConnected.value = false;
+            nodes.value = blockchain.value.getNodes();
+            isConnected.value = blockchain.value.isConnected();
+            if (!selectedNode.value || !selectedNode.value) {
+                selectedNode.value = nodes.value[0].url;
+            }
+        }
     }, {immediate: true});
 
     async function reconnect() {
@@ -160,20 +160,33 @@
         Account
     </ui-select>
 
-    <div v-if="chosenAccount > -1 && selectedAccount" class="acc-info">
-        <ui-button v-if="isConnecting" disabled>
+    <div
+        v-if="chosenAccount > -1 && selectedAccount"
+        class="acc-info"
+    >
+        <ui-button
+            v-if="isConnecting"
+            disabled
+        >
             Connecting
         </ui-button>
-        <ui-button v-if="isConnected" disabled>
+        <ui-button
+            v-if="isConnected"
+            disabled
+        >
             Connected!
         </ui-button>
-        <ui-button v-else-if="connectionFailed" @click="reconnect()" outlined>
+        <ui-button
+            v-else-if="connectionFailed"
+            outlined
+            @click="reconnect()"
+        >
             Reconnect
         </ui-button>
-        <br/>
-        <AccountDetails :account="selectedAccount"/>
-        <br/>
-        <Balances :account="selectedAccount"/>
+        <br>
+        <AccountDetails :account="selectedAccount" />
+        <br>
+        <Balances :account="selectedAccount" />
     </div>
 
     <Actionbar />

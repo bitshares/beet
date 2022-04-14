@@ -7,51 +7,51 @@
     const logger = new RendererLogger();
 
     const props = defineProps({
-      request: Object,
-      accounts: Array
+        request: Object,
+        accounts: Array
     });
 
     let requestText = computed(() => {
         return t(
-          'operations.relink.request',
-          {
-            appName: props.request.appName,
-            origin: props.request.origin,
-            chain: props.request.chain,
-            accountId: props.accounts[0].accountID
-          }
+            'operations.relink.request',
+            {
+                appName: props.request.appName,
+                origin: props.request.origin,
+                chain: props.request.chain,
+                accountId: props.accounts[0].accountID
+            }
         );
     });
 
     onMounted(() => {
-      logger.debug("Relink Popup initialised");
+        logger.debug("Relink Popup initialised");
     });
 
     function _clickedAllow() {
         ipcRenderer.send(
             "clickedAllow",
             {
-              response: {
-                  identityhash: props.request.payload.identityhash,
-                  name: props.accounts[0].accountName,
-                  chain: props.accounts[0].chain,
-                  id: props.accounts[0].accountID,
-                  success: true
-              },
-              request: {
-                id: props.request.id
-              }
-          }
+                response: {
+                    identityhash: props.request.payload.identityhash,
+                    name: props.accounts[0].accountName,
+                    chain: props.accounts[0].chain,
+                    id: props.accounts[0].accountID,
+                    success: true
+                },
+                request: {
+                    id: props.request.id
+                }
+            }
         );
     }
 
     function _clickedDeny() {
         ipcRenderer.send(
-          "clickedDeny",
-          {
-            response: {canceled: true},
-            request: {id: props.request.id}
-          }
+            "clickedDeny",
+            {
+                response: {canceled: true},
+                request: {id: props.request.id}
+            }
         );
     }
 </script>
@@ -61,10 +61,16 @@
         {{ requestText }} &#10068;
     </div>
     <br>
-    <ui-button raised @click="_clickedAllow()">
-      {{ t('operations.link.accept_btn') }}
+    <ui-button
+        raised
+        @click="_clickedAllow()"
+    >
+        {{ t('operations.link.accept_btn') }}
     </ui-button>
-    <ui-button raised @click="_clickedDeny()">
-      {{ t('operations.link.reject_btn') }}
+    <ui-button
+        raised
+        @click="_clickedDeny()"
+    >
+        {{ t('operations.link.reject_btn') }}
     </ui-button>
 </template>

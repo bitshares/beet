@@ -27,9 +27,9 @@
     let stepMessage = ref(t('common.step_counter', {step_no: 1}));
 
     watch(step, async (newVal, oldVal) => {
-      if (newVal !== oldVal) {
-        stepMessage.value = t('common.step_counter', {step_no: newVal});
-      }
+        if (newVal !== oldVal) {
+            stepMessage.value = t('common.step_counter', {step_no: newVal});
+        }
     }, {immediate: true});
 
     let s1c = ref("");
@@ -43,10 +43,10 @@
     let confirmPassword = ref(null);
 
     emitter.on('accounts_to_import', response => {
-      if (response) {
-        accounts_to_import.value = response;
-        step.value = 3;
-      }
+        if (response) {
+            accounts_to_import.value = response;
+            step.value = 3;
+        }
     });
 
     emitter.on('back', response => {
@@ -54,99 +54,99 @@
     });
 
     onMounted(() => {
-      logger.debug("Account-Add wizard Mounted");
+        logger.debug("Account-Add wizard Mounted");
     });
 
     /*
      * Check if the user has a wallet already
      */
     let userHasWallet = computed(() => {
-      let hasWallet;
-      try {
-        hasWallet = store.getters['WalletStore/getHasWallet'];
-      } catch (error) {
-        console.log(error);
-        return [];
-      }
-      return hasWallet;
+        let hasWallet;
+        try {
+            hasWallet = store.getters['WalletStore/getHasWallet'];
+        } catch (error) {
+            console.log(error);
+            return [];
+        }
+        return hasWallet;
     });
 
     /*
      * Array of supported blockchains for select menu
      */
     let chainList = computed(() => {
-      return Object.values(blockchains).sort((a, b) => {
-          if (!!a.testnet != !!b.testnet) {
-              return a.testnet ? 1 : -1;
-          }
-          return a.name > b.name;
-      });
+        return Object.values(blockchains).sort((a, b) => {
+            if (!!a.testnet != !!b.testnet) {
+                return a.testnet ? 1 : -1;
+            }
+            return a.name > b.name;
+        });
     });
 
     /*
      * Array of chain import methods for select menu
      */
     let selectedImportOptions = computed(() => {
-      if (!selectedChain || !selectedChain.value) {
-          return [];
-      }
+        if (!selectedChain.value || !selectedChain.value) {
+            return [];
+        }
 
-      return getBlockchainAPI(selectedChain.value, null).getImportOptions();
+        return getBlockchainAPI(selectedChain.value, null).getImportOptions();
     });
 
     /*
      * Reset selections if the selectedChain changes
      */
     watch(selectedChain, async (newVal, oldVal) => {
-      if (newVal !== oldVal) {
-        selectedImport.value = 0;
-        selectedNode.value = 0;
-      }
+        if (newVal !== oldVal) {
+            selectedImport.value = 0;
+            selectedNode.value = 0;
+        }
     }, {immediate: true});
 
     /*
      * Ui select node options
      */
     let selectedNodeOptions = computed(() => {
-      if (!selectedChain || !selectedChain.value) {
-          return [];
-      }
+        if (!selectedChain.value || !selectedChain.value) {
+            return [];
+        }
 
-      return blockchains[selectedChain.value].nodeList.map((node, i) => {
-          if (node.url.includes('ws')) {
-              try {
-                  let socket = new WebSocket(node.url);
-                  socket.onopen = (e) => {
-                    return {url: node.url, id: i}
-                  };
-                  socket.onerror = (error) => {
+        return blockchains[selectedChain.value].nodeList.map((node, i) => {
+            if (node.url.includes('ws')) {
+                try {
+                    let socket = new WebSocket(node.url);
+                    socket.onopen = (e) => {
+                        return {url: node.url, id: i}
+                    };
+                    socket.onerror = (error) => {
+                        console.log(error);
+                        return null;
+                    };
+                } catch (error) {
                     console.log(error);
                     return null;
-                  };
-              } catch (error) {
-                console.log(error);
-                return null;
-              }
-          }
-          return {url: node.url, id: i};
-      }).filter(x => !!x);
+                }
+            }
+            return {url: node.url, id: i};
+        }).filter(x => !!x);
     });
 
     /*
      * Returns the selected import type
      */
     let selectedImportOption = computed(() => {
-      if (!selectedChain || !selectedChain.value) {
-          return null;
-      }
+        if (!selectedChain.value || !selectedChain.value) {
+            return null;
+        }
 
-      let useImport = !selectedImport || !selectedImport.value
-          ? selectedImportOptions.value[0]
-          : selectedImport.value;
+        let useImport = !selectedImport.value || !selectedImport.value
+            ? selectedImportOptions.value[0]
+            : selectedImport.value;
 
-      return getBlockchainAPI(selectedChain.value)
-              .getImportOptions()
-              .find(option => { return option.type == useImport.type; });
+        return getBlockchainAPI(selectedChain.value)
+            .getImportOptions()
+            .find(option => { return option.type == useImport.type; });
     });
 
     /*
@@ -160,17 +160,17 @@
      * Second step of account wizard
      */
     function step2() {
-        if (userHasWallet) {
-          step.value = 2;
-          let fetchedName;
-          try {
-            fetchedName = store.getters['WalletStore/getWallet'];
-          } catch (error) {
-            console.log(error);
+        if (userHasWallet.value) {
+            step.value = 2;
+            let fetchedName;
+            try {
+                fetchedName = store.getters['WalletStore/getWallet'];
+            } catch (error) {
+                console.log(error);
+                return;
+            }
+            walletname.value = fetchedName.walletname;
             return;
-          }
-          walletname.value = fetchedName.walletname;
-          return;
         }
 
         if (walletname.value.trim() == "") {
@@ -220,25 +220,25 @@
         }
 
         if (!userHasWallet.value) {
-          if (password.value == "" || password.value !== confirmPassword.value) {
-              ipcRenderer.send("notify", t(`common.confirm_pass_error`));
-              return;
-          }
+            if (password.value == "" || password.value !== confirmPassword.value) {
+                ipcRenderer.send("notify", t(`common.confirm_pass_error`));
+                return;
+            }
         }
 
         for (let i in accounts_to_import.value) {
             let account = accounts_to_import.value[i];
             if (i == 0 && !userHasWallet.value) {
-              try {
-                  await store.dispatch("WalletStore/saveWallet", {
-                      walletname: walletname.value,
-                      password: password.value,
-                      walletdata: account.account
-                  });
-              } catch (error) {
-                  console.log(error);
-                  _handleError(error);
-              }
+                try {
+                    await store.dispatch("WalletStore/saveWallet", {
+                        walletname: walletname.value,
+                        password: password.value,
+                        walletdata: account.account
+                    });
+                } catch (error) {
+                    console.log(error);
+                    _handleError(error);
+                }
             } else {
                 account.password = password;
                 account.walletname = walletname.value;
@@ -261,7 +261,10 @@
             <h4 class="h4 mt-3 font-weight-bold">
                 {{ stepMessage }}
             </h4>
-            <div v-if="step == 1" id="step1">
+            <div
+                v-if="step == 1"
+                id="step1"
+            >
                 <template v-if="!userHasWallet">
                     <p
                         v-tooltip="t('common.tooltip_friendly_cta')"
@@ -294,7 +297,11 @@
                     :placeholder="t('common.chain_placeholder')"
                     required
                 >
-                    <option selected disabled value="0">
+                    <option
+                        selected
+                        disabled
+                        value="0"
+                    >
                         {{ t('common.select_chain') }}
                     </option>
                     <option
@@ -302,12 +309,12 @@
                         :key="chain.identifier"
                         :value="chain.identifier"
                     >
-                      <span v-if="chain.testnet">
-                        Testnet: {{ chain.name }} ({{ chain.identifier }})
-                      </span>
-                      <span v-else>
-                        {{ chain.name }} ({{ chain.identifier }})
-                      </span>
+                        <span v-if="chain.testnet">
+                            Testnet: {{ chain.name }} ({{ chain.identifier }})
+                        </span>
+                        <span v-else>
+                            {{ chain.name }} ({{ chain.identifier }})
+                        </span>
                     </option>
                 </select>
                 <div v-if="selectedImportOptions.length > 1">
@@ -322,10 +329,19 @@
                         :placeholder="t('common.import_placeholder')"
                         required
                     >
-                        <option selected disabled value="0" key="0">
+                        <option
+                            key="0"
+                            selected
+                            disabled
+                            value="0"
+                        >
                             {{ t('common.import_placeholder') }}
                         </option>
-                        <option v-for="option in selectedImportOptions" :value="option" :key="option.type">
+                        <option
+                            v-for="option in selectedImportOptions"
+                            :key="option.type"
+                            :value="option"
+                        >
                             {{ t(`common.${option.translate_key}`) }}
                         </option>
                     </select>
@@ -343,10 +359,19 @@
                         :placeholder="t('common.node_placeholder')"
                         required
                     >
-                        <option selected disabled value="0" key="0">
+                        <option
+                            key="0"
+                            selected
+                            disabled
+                            value="0"
+                        >
                             {{ t('common.node_placeholder') }}
                         </option>
-                        <option v-for="node in selectedNodeOptions" :value="node" :key="node.id">
+                        <option
+                            v-for="node in selectedNodeOptions"
+                            :key="node.id"
+                            :value="node"
+                        >
                             {{ node.url }}
                         </option>
                     </select>
@@ -358,40 +383,63 @@
                             :to="!userHasWallet ? '/' : '/dashboard'"
                             replace
                         >
-                            <ui-button outlined class="step_btn">
+                            <ui-button
+                                outlined
+                                class="step_btn"
+                            >
                                 {{ t('common.cancel_btn') }}
                             </ui-button>
                         </router-link>
 
                         <span v-if="selectedImportOptions.length > 1">
                             <span v-if="selectedImport != 0 && selectedNode !== 0">
-                                <ui-button raised class="step_btn" type="submit" @click="step2">
+                                <ui-button
+                                    raised
+                                    class="step_btn"
+                                    type="submit"
+                                    @click="step2"
+                                >
                                     {{ t('common.next_btn') }}
                                 </ui-button>
                             </span>
                             <span v-else>
-                                <ui-button disabled class="step_btn" type="submit">
+                                <ui-button
+                                    disabled
+                                    class="step_btn"
+                                    type="submit"
+                                >
                                     {{ t('common.next_btn') }}
                                 </ui-button>
                             </span>
                         </span>
                         <span v-else>
-                          <span v-if="walletname !== '' && selectedChain !== 0 && selectedNode !== 0">
-                              <ui-button raised class="step_btn" type="submit" @click="step2">
-                                  {{ t('common.next_btn') }}
-                              </ui-button>
-                          </span>
-                          <span v-else>
-                            <ui-button disabled class="step_btn" type="submit">
-                                {{ t('common.next_btn') }}
-                            </ui-button>
-                          </span>
+                            <span v-if="walletname !== '' && selectedChain !== 0 && selectedNode !== 0">
+                                <ui-button
+                                    raised
+                                    class="step_btn"
+                                    type="submit"
+                                    @click="step2"
+                                >
+                                    {{ t('common.next_btn') }}
+                                </ui-button>
+                            </span>
+                            <span v-else>
+                                <ui-button
+                                    disabled
+                                    class="step_btn"
+                                    type="submit"
+                                >
+                                    {{ t('common.next_btn') }}
+                                </ui-button>
+                            </span>
                         </span>
-
                     </ui-grid-cell>
                 </ui-grid>
             </div>
-            <div v-else-if="step == 2" id="step2">
+            <div
+                v-else-if="step == 2"
+                id="step2"
+            >
                 <ImportAddressBased
                     v-if="selectedImportOption.type == 'address/ImportAddressBased'"
                     v-model="importMethod"
@@ -432,18 +480,21 @@
                     No import option found
                 </div>
             </div>
-            <div v-else-if="step == 3" id="step3">
+            <div
+                v-else-if="step == 3"
+                id="step3"
+            >
                 <div>
                     <p
                         v-tooltip="t('common.tooltip_password_cta')"
                         class="mb-2 font-weight-bold"
                     >
-                      <span v-if="!userHasWallet">
-                        {{ t('common.password_cta') }} &#10068;
-                      </span>
-                      <span v-else>
-                        {{ t('common.unlock_with_password_cta') }} &#10068;
-                      </span>
+                        <span v-if="!userHasWallet">
+                            {{ t('common.password_cta') }} &#10068;
+                        </span>
+                        <span v-else>
+                            {{ t('common.unlock_with_password_cta') }} &#10068;
+                        </span>
                     </p>
                     <input
                         id="inputPass"
@@ -468,13 +519,21 @@
                     </template>
                 </div>
 
-                <ui-button raised type="submit" class="step_btn" @click="addAccounts">
+                <ui-button
+                    raised
+                    type="submit"
+                    class="step_btn"
+                    @click="addAccounts"
+                >
                     {{ t('common.next_btn') }}
                 </ui-button>
             </div>
         </div>
         <Actionbar v-if="userHasWallet" />
-        <p v-if="userHasWallet" class="mt-2 mb-2 small">
+        <p
+            v-if="userHasWallet"
+            class="mt-2 mb-2 small"
+        >
             &copy; 2019-2022 BitShares
         </p>
     </div>

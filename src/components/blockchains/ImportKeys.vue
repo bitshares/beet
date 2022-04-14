@@ -6,8 +6,8 @@
     import getBlockchainAPI from "../../lib/blockchains/blockchainFactory";
 
     const props = defineProps({
-      chain: String,
-      node: String
+        chain: String,
+        node: String
     });
 
     let accountname = ref("");
@@ -24,7 +24,7 @@
     requiredFields.value = blockchain.getSignUpInput();
 
     function back() {
-      emitter.emit('back', true);
+        emitter.emit('back', true);
     }
 
     async function next() {
@@ -104,8 +104,13 @@
         </template>
         <template v-if="requiredFields.owner !== null">
             <ui-form-field>
-              <ui-checkbox v-model="includeOwner" value="1" unchecked-value="0" input-id="incOwnerCB"></ui-checkbox>
-              <label>{{ t('common.include_owner_check') }}</label>
+                <ui-checkbox
+                    v-model="includeOwner"
+                    value="1"
+                    unchecked-value="0"
+                    input-id="incOwnerCB"
+                />
+                <label>{{ t('common.include_owner_check') }}</label>
             </ui-form-field>
             <div v-if="includeOwner == 1">
                 <input
@@ -121,55 +126,71 @@
 
         <ui-grid>
             <ui-grid-cell columns="12">
-                  <ui-button outlined class="step_btn" @click="back">
-                      {{ t('common.back_btn') }}
-                  </ui-button>
+                <ui-button
+                    outlined
+                    class="step_btn"
+                    @click="back"
+                >
+                    {{ t('common.back_btn') }}
+                </ui-button>
 
-                  <span v-if="includeOwner == 1 && requiredFields.memo != null && requiredFields.active != null">
-                      <ui-button
+                <span v-if="includeOwner == 1 && requiredFields.memo != null && requiredFields.active != null">
+                    <ui-button
                         v-if="
-                          accountname !== ''
-                          && ownerpk !== ''
-                          && memopk !== ''
-                          && activepk !== ''
+                            accountname !== ''
+                                && ownerpk !== ''
+                                && memopk !== ''
+                                && activepk !== ''
                         "
                         raised
                         class="step_btn"
                         type="submit"
                         @click="next"
-                      >
-                          {{ t('common.next_btn') }}
-                      </ui-button>
-                      <ui-button v-else disabled class="step_btn" type="submit">
-                          {{ t('common.next_btn') }}
-                      </ui-button>
-                  </span>
-                  <span v-else-if="includeOwner == 0 && requiredFields.memo != null && requiredFields.active != null">
-                      <ui-button
+                    >
+                        {{ t('common.next_btn') }}
+                    </ui-button>
+                    <ui-button
+                        v-else
+                        disabled
+                        class="step_btn"
+                        type="submit"
+                    >
+                        {{ t('common.next_btn') }}
+                    </ui-button>
+                </span>
+                <span v-else-if="includeOwner == 0 && requiredFields.memo != null && requiredFields.active != null">
+                    <ui-button
                         v-if="
-                          accountname !== ''
-                          && memopk !== ''
-                          && activepk !== ''
+                            accountname !== ''
+                                && memopk !== ''
+                                && activepk !== ''
                         "
                         raised
                         class="step_btn"
                         type="submit"
                         @click="next"
-                      >
-                          {{ t('common.next_btn') }}
-                      </ui-button>
-                      <ui-button v-else disabled class="step_btn" type="submit">
-                          {{ t('common.next_btn') }}
-                      </ui-button>
-                  </span>
-                  <span v-else>
-                      <ui-button disabled class="step_btn" type="submit">
-                          {{ t('common.next_btn') }}
-                      </ui-button>
-                  </span>
-
+                    >
+                        {{ t('common.next_btn') }}
+                    </ui-button>
+                    <ui-button
+                        v-else
+                        disabled
+                        class="step_btn"
+                        type="submit"
+                    >
+                        {{ t('common.next_btn') }}
+                    </ui-button>
+                </span>
+                <span v-else>
+                    <ui-button
+                        disabled
+                        class="step_btn"
+                        type="submit"
+                    >
+                        {{ t('common.next_btn') }}
+                    </ui-button>
+                </span>
             </ui-grid-cell>
         </ui-grid>
     </div>
-
 </template>
