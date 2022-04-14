@@ -116,30 +116,53 @@ const getters = {
           };
         });
 
-        let requestedAccounts = safeAccounts.filter(x => {
+        let requestedAccounts = safeAccounts.filter(account => {
             return (
-                x.accountID == request.account_id &&
-                x.chain == request.chain
+                account.accountID == request.account_id &&
+                account.chain == request.chain
             );
         });
 
-        if (signing.length !== 1) {
-            throw "Couldn't retrieve account safely.";
+        if (!requestedAccounts || !requestedAccounts.length) {
+            console.log("Couldn't retrieve account safely.");
+            return;
         }
 
         return requestedAccounts[0];
     },
+    getActiveKey: (state) => (request) => {
+      let signing = state.accountlist.filter(account => {
+          return (
+              account.accountID == request.account_id &&
+              account.chain == request.chain
+          );
+      });
+
+      if (!signing || !signing.length) {
+          return;
+      }
+
+      if (!signing[0].keys || !signing[0].keys.active) {
+          return;
+      }
+
+      return signing[0].keys.active;
+    },
     getSigningKey: (state) => (request) => {
-        let signing = state.accountlist.filter(x => {
+        let signing = state.accountlist.filter(account => {
             return (
-                x.accountID == request.account_id &&
-                x.chain == request.chain
+                account.accountID == request.account_id &&
+                account.chain == request.chain
             );
         });
-        if (signing.length !== 1) {
-            throw "Invalid signing accounts count";
+
+        if (!signing || !signing.length) {
+            return;
         }
-        return signing[0];
+
+        return signing[0].memo
+                ? signing[0].memo
+                : signing[0].active;
     }
 };
 

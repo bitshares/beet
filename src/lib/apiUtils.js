@@ -38,7 +38,12 @@ export async function linkRequest(request) {
             : t("common.access_alert", request.payload);
         */
 
-        store.dispatch("WalletStore/notifyUser", {notify: "request", message: "request"});
+        let linkReq = {appName: request.appName, origin: request.origin, chain: request.chain};
+
+        store.dispatch(
+          "WalletStore/notifyUser",
+          {notify: "request", message: t("common.link_alert", linkReq)}
+        );
 
         let accounts =  store.getters['AccountStore/getSafeAccountList'];
         if (!accounts) {
@@ -47,9 +52,7 @@ export async function linkRequest(request) {
 
         let existingLinks = [];
         try {
-          existingLinks = store.getters['OriginStore/getExistingLinks']({
-            appName: request.appName, origin: request.origin, chain: request.chain
-          })
+          existingLinks = store.getters['OriginStore/getExistingLinks'](linkReq);
         } catch (error) {
           return _promptFail("REQUEST_LINK", request.id, error, reject);
         }
@@ -61,7 +64,7 @@ export async function linkRequest(request) {
             accounts: accounts,
             existingLinks: existingLinks
           }
-        )
+        );
 
         ipcRenderer.once(`popupApproved_${request.id}`, (event, result) => {
             store.dispatch("AccountStore/selectAccount", result.response);
@@ -81,12 +84,12 @@ export async function linkRequest(request) {
  */
 export async function relinkRequest(request) {
   return new Promise(async (resolve, reject) => {
-    store.dispatch("WalletStore/notifyUser", {notify: "request", message: "request"});
-
     let shownBeetApp = store.getters['OriginStore/getBeetApp'](request);
     if (!shownBeetApp) {
       return _promptFail("REQUEST_RELINK", request.id, 'No beetApp', reject);
     }
+
+    store.dispatch("WalletStore/notifyUser", {notify: "request", message: "request"});
 
     let account = store.getters['AccountStore/getSafeAccount']({
                     account_id: shownBeetApp.accountID,
@@ -171,7 +174,7 @@ export async function requestSignature(request) {
             try {
               transaction = await blockchain.sign(
                   request.params,
-                  await getKey(store.getters['AccountStore/getSigningKey'](request).keys.active)
+                  await getKey(store.getters['AccountStore/getActiveKey'](request))
               );
             } catch (error) {
               return _promptFail("sigReq", request.id, error, reject);
@@ -190,7 +193,7 @@ export async function requestSignature(request) {
             try {
               transaction = await blockchain.sign(
                   request.params,
-                  await getKey(store.getters['AccountStore/getSigningKey'](request).keys.active)
+                  await getKey(store.getters['AccountStore/getActiveKey'](request))
               );
             } catch (error) {
               return _promptFail("sigReq", request.id, error, reject);
@@ -227,7 +230,7 @@ export async function injectedCall(request) {
   return new Promise(async (resolve, reject) => {
     store.dispatch("WalletStore/notifyUser", {notify: "request", message: "request"});
 
-    ipcRenderer.send('createPopup', {request: request})
+    ipcRenderer.send('createPopup', {request: request});
 
     ipcRenderer.once(`popupApproved_${request.id}`, (event, result) => {
         store.dispatch("WalletStore/notifyUser", {notify: "request", message: "Transaction successfully broadcast."});
@@ -312,14 +315,14 @@ export async function voteFor(request) {
                   id: approvedAccount.accountID
               },
               request: {
-                id: props.request.id
+                id: request.id
               }
           });
         }
 
         let signingKey;
         try {
-          signingKey = await getKey(store.getters['AccountStore/getSigningKey'](props.request).keys.active);
+          signingKey = await getKey(store.getters['AccountStore/getActiveKey'](request));
         } catch (error) {
           return _promptFail("voteFor.getKey", request.id, error, reject);
         }
@@ -363,26 +366,27 @@ export async function signMessage(request) {
 
     ipcRenderer.once(`popupApproved_${request.id}`, (event, result) => {
 
-        let keys = store.getters['AccountStore/getSigningKey'](props.request).keys;
+        let retrievedKey = store.getters['AccountStore/getSigningKey'](request);
 
-        let key;
+        let processedKey;
         try {
-          key = await getKey(keys.memo ?? keys.active)
+          processedKey = await getKey(retrievedKey)
         } catch (error) {
           return _promptFail("signMessage.getKey", request.id, error, reject);
         }
 
-        let blockchain = getBlockchainAPI(props.request.chain);
-        let signingKey;
+        let accountName;
         try {
-          signingKey = store.getters['AccountStore/getSigningKey'](props.request).accountName;
+          accountName = store.getters['AccountStore/getSafeAccount'](request).accountName;
         } catch (error) {
-          return _promptFail("signMessage.signingKey", request.id, error, reject);
+          return _promptFail("signMessage.getSafeAccount", request.id, error, reject);
         }
+
+        let blockchain = getBlockchainAPI(request.chain);
 
         let signedMessage;
         try {
-          signedMessage = await blockchain.signMessage(key, signingKey, props.request.params);
+          signedMessage = await blockchain.signMessage(processedKey, accountName, request.params);
         } catch (error) {
           return _promptFail("blockchain.signMessage", request.id, error, reject);
         }
@@ -405,16 +409,22 @@ export async function transfer(request) {
   // transfer req popup
   return new Promise(async (resolve, reject) => {
     store.dispatch("WalletStore/notifyUser", {notify: "request", message: "request"});
+    let accountDetails = store.getters['AccountStore/getSafeAccount'](request);
+
+    if (!accountDetails) {
+      return _promptFail("transfer.getSafeAccount", request.id, 'no account details', reject);
+    }
+
     let popupContents = {
       request: request,
-      chain: store.getters['AccountStore/getSigningKey'](request).chain,
-      accountName: store.getters['AccountStore/getSigningKey'](request).accountName
+      chain: accountDetails.chain,
+      accountName: accountDetails.accountName
     };
 
     if (blockchain.supportsFeeCalculation() && chain === "BTC") {
         let activeKey;
         try {
-          activeKey = await getKey(store.getters['AccountStore/getSigningKey'](props.request).keys.active)
+          activeKey = await getKey(store.getters['AccountStore/getActiveKey'](request));
         } catch (error) {
           return _promptFail("transfer.getKey", request.id, error, reject);
         }
@@ -424,13 +434,13 @@ export async function transfer(request) {
           try {
               transferResult = await blockchain.transfer(
                   activeKey, // Can we do this without the key?
-                  props.accountName,
+                  accountName,
                   to.value,
                   {
-                      amount: props.request.params.amount.satoshis || props.request.params.amount.amount,
-                      asset_id: props.request.params.amount.asset_id
+                      amount: request.params.amount.satoshis || request.params.amount.amount,
+                      asset_id: request.params.amount.asset_id
                   },
-                  props.request.params.memo,
+                  request.params.memo,
                   false // PREVENTS SENDING!
               );
           } catch (error) {
@@ -455,7 +465,7 @@ export async function transfer(request) {
 
       let signingKey;
       try {
-        signingKey = await getKey(store.getters['AccountStore/getSigningKey'](props.request).keys.active)
+        signingKey = await getKey(store.getters['AccountStore/getActiveKey'](request))
       } catch (error) {
         return _promptFail("transfer.getKey", request.id, error, reject);
       }
@@ -464,13 +474,13 @@ export async function transfer(request) {
       try {
         transferResult = await blockchain.transfer(
             signingKey,
-            store.getters['AccountStore/getSigningKey'](props.request).accountName,
+            store.getters['AccountStore/getSafeAccount'](request).accountName,
             to.value,
             {
-                amount: props.request.params.amount.satoshis || props.request.params.amount.amount,
-                asset_id: props.request.params.amount.asset_id
+                amount: request.params.amount.satoshis || request.params.amount.amount,
+                asset_id: request.params.amount.asset_id
             },
-            props.request.params.memo,
+            request.params.memo,
         );
       } catch (error) {
         return _promptFail("blockchain.transfer", request.id, error, reject);
