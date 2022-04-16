@@ -6,8 +6,16 @@
     import getBlockchainAPI from "../../lib/blockchains/blockchainFactory";
 
     const props = defineProps({
-        chain: String,
-        node: String
+        chain: {
+            type: String,
+            required: true,
+            default: ''
+        }/*,
+        node: {
+            type: String,
+            required: true,
+            default: ''
+        }*/
     });
 
     let accountname = ref("");

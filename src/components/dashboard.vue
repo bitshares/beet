@@ -55,7 +55,7 @@
 
         let options = accountList.map((account, i) => {
             return {
-                label: !account.hasOwnProperty("accountID") && account.trackId == 0
+                label: !account.accountID && account.trackId == 0
                     ? 'cta' // TODO: Replace
                     : `${formatChain(account.chain)}: ${formatAccount(account)}`,
                 value: i

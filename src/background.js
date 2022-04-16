@@ -252,7 +252,7 @@ const createWindow = async () => {
   });
 
   mainWindow.on('show', function () {
-      minimised = false;
+      //minimised = false;
   });
 
   ipcMain.on('downloadBackup', async (event, arg) => {
@@ -442,7 +442,7 @@ const createWindow = async () => {
       mainWindow.show();
       mainWindow.focus();
       mainWindow.setAlwaysOnTop(false);
-      minimised = false;
+      //minimised = false;
   });
 
   tray.on('balloon-click', () => {
@@ -450,7 +450,7 @@ const createWindow = async () => {
       mainWindow.show();
       mainWindow.focus();
       mainWindow.setAlwaysOnTop(false);
-      minimised = false;
+      //minimised = false;
   });
 };
 

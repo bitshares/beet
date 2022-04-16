@@ -2,6 +2,8 @@ import {ipcRenderer} from 'electron';
 import store from '../store/index.js';
 import {getKey} from './SecureRemote';
 import getBlockchainAPI from "./blockchains/blockchainFactory";
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n({ useScope: 'global' });
 
 /*
  * @param {String} method
@@ -421,7 +423,8 @@ export async function transfer(request) {
       accountName: accountDetails.accountName
     };
 
-    if (blockchain.supportsFeeCalculation() && chain === "BTC") {
+    let blockchain = getBlockchainAPI(request.chain);
+    if (blockchain.supportsFeeCalculation() && request.chain === "BTC") {
         let activeKey;
         try {
           activeKey = await getKey(store.getters['AccountStore/getActiveKey'](request));
@@ -434,7 +437,7 @@ export async function transfer(request) {
           try {
               transferResult = await blockchain.transfer(
                   activeKey, // Can we do this without the key?
-                  accountName,
+                  accountDetails.accountName,
                   to.value,
                   {
                       amount: request.params.amount.satoshis || request.params.amount.amount,
@@ -457,7 +460,7 @@ export async function transfer(request) {
     ipcRenderer.send('createPopup', popupContents)
 
     ipcRenderer.once(`popupApproved_${request.id}`, async (event, result) => {
-      let blockchain = getBlockchainAPI(request.chain);
+      let approvedBlockchain = getBlockchainAPI(request.chain);
 
       if (!popupContents.request.params.amount) {
         popupContents.request.params.amount = popupContents.request.params.satoshis;
@@ -472,7 +475,7 @@ export async function transfer(request) {
 
       let transferResult;
       try {
-        transferResult = await blockchain.transfer(
+        transferResult = await approvedBlockchain.transfer(
             signingKey,
             store.getters['AccountStore/getSafeAccount'](request).accountName,
             to.value,
@@ -531,8 +534,8 @@ export async function verifyMessage(request) {
 
         let blockchain = getBlockchainAPI(
           payload_dict.chain
-            ? messageChain = payload_dict.chain
-            : messageChain = payload_dict.key.substr(0, 3)
+            ? payload_dict.chain
+            : payload_dict.key.substr(0, 3)
         );
 
         blockchain

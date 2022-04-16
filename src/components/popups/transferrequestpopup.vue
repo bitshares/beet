@@ -8,8 +8,20 @@
     const logger = new RendererLogger();
 
     const props = defineProps({
-        request: Object,
-        accounts: Array
+        request: {
+            type: Object,
+            required: true,
+            default() {
+                return {}
+            }
+        },
+        accounts: {
+            type: Array,
+            required: true,
+            default() {
+                return []
+            }
+        }
     });
 
     let message = computed(() => {

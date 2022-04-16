@@ -10,109 +10,109 @@
     import TransactionRequestPopup from "./popups/transactionrequestpopup";
     import TransferRequestPopup from "./popups/transferrequestpopup";
 
-    let type = computed(async () => {
+    let type = computed(() => {
         if (!global || !global.location || !global.location.search) {
-          return '';
+            return '';
         }
 
         let qs;
         try {
-          qs = queryString.parse(global.location.search);
+            qs = queryString.parse(global.location.search);
         } catch (error) {
-          console.log(error);
+            console.log(error);
         }
 
         return qs && qs.type
-                ? qs.type
-                : '';
+            ? qs.type
+            : '';
     });
 
-    let request = computed(async () => {
-      if (!global || !global.location || !global.location.search) {
-        return [];
-      }
+    let request = computed(() => {
+        if (!global || !global.location || !global.location.search) {
+            return [];
+        }
 
-      let qs;
-      try {
-        qs = queryString.parse(global.location.search);
-      } catch (error) {
-        console.log(error);
-      }
+        let qs;
+        try {
+            qs = queryString.parse(global.location.search);
+        } catch (error) {
+            console.log(error);
+        }
 
-      return qs && qs.request
-              ? JSON.parse(qs.request);
-              : {};
+        return qs && qs.request
+            ? JSON.parse(qs.request)
+            : {};
     });
 
-    let accounts = computed(async () => {
-      if (!global || !global.location || !global.location.search) {
-        return [];
-      }
+    let accounts = computed(() => {
+        if (!global || !global.location || !global.location.search) {
+            return [];
+        }
 
-      let qs;
-      try {
-        qs = queryString.parse(global.location.search);
-      } catch (error) {
-        console.log(error);
-      }
+        let qs;
+        try {
+            qs = queryString.parse(global.location.search);
+        } catch (error) {
+            console.log(error);
+        }
 
-      return qs && qs.accounts
-              ? JSON.parse(qs.accounts);
-              : [];
+        return qs && qs.accounts
+            ? JSON.parse(qs.accounts)
+            : [];
     });
 
     let existingLinks = computed(() => {
-      if (!global || !global.location || !global.location.search) {
-        return [];
-      }
+        if (!global || !global.location || !global.location.search) {
+            return [];
+        }
 
-      let qs;
-      try {
-        qs = queryString.parse(global.location.search);
-      } catch (error) {
-        console.log(error);
-      }
+        let qs;
+        try {
+            qs = queryString.parse(global.location.search);
+        } catch (error) {
+            console.log(error);
+        }
 
-      return qs && qs.existingLinks
-              ? JSON.parse(qs.existingLinks);
-              : [];
+        return qs && qs.existingLinks
+            ? JSON.parse(qs.existingLinks)
+            : [];
     });
 </script>
 
 <template>
     <div v-if="type && type !== '' && request">
-      <LinkRequestPopup
-        v-if="type === 'link'"
-        :request="request"
-        :accounts="accounts"
-        :existingLinks="existingLinks"
-      />
-      <ReLinkRequestPopup
-        v-else-if="type === 'reLinkReqModal'"
-        :request="request"
-        :accounts="accounts"
-      />
-      <IdentityRequestPopup
-        v-else-if="type === 'identityReqModal'"
-        :request="request"
-        :accounts="accounts"
-      />
-      <GenericRequestPopup
-        v-else-if="type === 'genericReqModal'"
-        :request="request"
-      />
-      <SignMessageRequestPopup
-        v-else-if="type === 'signMessageModal'"
-        :request="request"
-      />
-      <TransferRequestPopup
-        v-else-if="type === 'transferReqModal'"
-        :request="request"
-      />
-      <TransactionRequestPopup
-        v-else-if="type === 'transactionReqModal'"
-        :request="request"
-      />
+        <LinkRequestPopup
+            v-if="type === 'link'"
+            :request="request"
+            :accounts="accounts"
+            :existing-links="existingLinks"
+        />
+        <ReLinkRequestPopup
+            v-else-if="type === 'reLinkReqModal'"
+            :request="request"
+            :accounts="accounts"
+        />
+        <IdentityRequestPopup
+            v-else-if="type === 'identityReqModal'"
+            :request="request"
+            :accounts="accounts"
+        />
+        <GenericRequestPopup
+            v-else-if="type === 'genericReqModal'"
+            :request="request"
+        />
+        <SignMessageRequestPopup
+            v-else-if="type === 'signMessageModal'"
+            :request="request"
+        />
+        <TransferRequestPopup
+            v-else-if="type === 'transferReqModal'"
+            :request="request"
+        />
+        <TransactionRequestPopup
+            v-else-if="type === 'transactionReqModal'"
+            :request="request"
+        />
     </div>
     <div v-else>
         Error: Unable to load prompt.

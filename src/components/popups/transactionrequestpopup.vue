@@ -7,14 +7,20 @@
     import {formatChain} from "../../lib/formatter";
 
     const props = defineProps({
-        request: Object
+        request: {
+            type: Object,
+            required: true,
+            default() {
+                return {}
+            }
+        }
     });
 
-    let visualizedParams = computed(async () => {
+    let visualizedParams = computed(() => {
         let blockchain = getBlockchainAPI(props.request.chain);
         let visualisation;
         try {
-            visualisation = await blockchain.visualize(props.request.params);
+            visualisation = blockchain.visualize(props.request.params);
         } catch (error) {
             console.log(error);
         }
@@ -22,12 +28,12 @@
         return visualisation ?? null;
     });
 
-    let visualizedAccount = computed(async () => {
+    let visualizedAccount = computed(() => {
         let blockchain = getBlockchainAPI(props.request.chain);
 
         let visualisation;
         try {
-            visualisation = await blockchain.visualize(props.request.account_id);
+            visualisation = blockchain.visualize(props.request.account_id);
         } catch (error) {
             console.log(error);
         }

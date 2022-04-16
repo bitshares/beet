@@ -1,14 +1,26 @@
 <script setup>
     import { ipcRenderer } from 'electron';
-    import {onMounted} from "vue";
+    import { onMounted, computed } from "vue";
     import { useI18n } from 'vue-i18n';
     const { t } = useI18n({ useScope: 'global' });
     import RendererLogger from "../../lib/RendererLogger";
     const logger = new RendererLogger();
 
     const props = defineProps({
-        request: Object,
-        accounts: Array
+        request: {
+            type: Object,
+            required: true,
+            default() {
+                return {}
+            }
+        },
+        accounts: {
+            type: Array,
+            required: true,
+            default() {
+                return []
+            }
+        }
     });
 
     let requestText = computed(() => {

@@ -9,8 +9,16 @@
     import BTSWalletHandler from "../../../lib/blockchains/bitshares/BTSWalletHandler";
 
     const props = defineProps({
-        chain: String,
-        node: String
+        chain: {
+            type: String,
+            required: true,
+            default: ''
+        }/*,
+        node: {
+            type: String,
+            required: true,
+            default: ''
+        }*/
     });
 
     onMounted(() => {

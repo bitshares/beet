@@ -18,6 +18,9 @@ module.exports = {
         'vue/html-indent': ['error', 4, {
           'baseIndent': 1
         }],
-        "no-console": 0
+        "no-console": 0,
+        "no-unused-vars": "off",
+        "no-async-promise-executor": "off",
+        "vue/multi-word-component-names": "off"
     }
   }

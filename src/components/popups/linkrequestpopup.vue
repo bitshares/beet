@@ -11,9 +11,27 @@
     let chosenAccount = ref(-1);
 
     const props = defineProps({
-        request: Object,
-        accounts: Array,
-        existingLinks: Array
+        request: {
+            type: Object,
+            required: true,
+            default() {
+                return {}
+            }
+        },
+        accounts: {
+            type: Array,
+            required: true,
+            default() {
+                return []
+            }
+        },
+        existingLinks: {
+            type: Array,
+            required: false,
+            default() {
+                return []
+            }
+        }
     });
 
     let requestText = computed(() => {
@@ -37,7 +55,7 @@
     let accountOptions = computed(() => {
         return props.accounts.map((account, i) => {
             return {
-                label: !account.hasOwnProperty("accountID") && account.trackId == 0
+                label: !account.accountID && account.trackId == 0
                     ? `account ${i}` // TODO: Replace placeholder!
                     : `${formatChain(account.chain)}: ${formatAccount(account)}`,
                 value: i

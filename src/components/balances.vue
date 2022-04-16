@@ -32,7 +32,13 @@
     }
 
     const props = defineProps({
-        account: Object
+        account: {
+            type: Object,
+            required: true,
+            default() {
+                return {}
+            }
+        }
     });
 
     let errored = ref(false);

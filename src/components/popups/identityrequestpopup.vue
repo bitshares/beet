@@ -7,20 +7,32 @@
     const logger = new RendererLogger();
 
     const props = defineProps({
-        request: Object,
-        accounts: Array
+        request: {
+            type: Object,
+            required: true,
+            default() {
+                return {}
+            }
+        },
+        accounts: {
+            type: Array,
+            required: true,
+            default() {
+                return []
+            }
+        }
     });
 
     let account_id = computed(() => {
-        return prop.accounts[0].account_id;
+        return props.accounts[0].account_id;
     });
 
     let accountName = computed(() => {
-        return prop.accounts[0].accountName;
+        return props.accounts[0].accountName;
     });
 
     let chain = computed(() => {
-        return prop.accounts[0].chain;
+        return props.accounts[0].chain;
     });
 
     let requestText = computed(() => {

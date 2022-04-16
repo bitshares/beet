@@ -42,7 +42,8 @@
     "build": "webpack --config=build/webpack.app.config.js --env=production && electron-builder --publish never",
     "release": "webpack --config=build/webpack.app.config.js --env=production && electron-builder --publish never",
     "dist": "yarn compile && electron-builder --publish never",
-    "lint": "yarn run eslint --ext .js,.vue src"
+    "lint": "yarn run eslint --ext .js,.vue src",
+    "lintFix": "yarn run eslint --ext .js,.vue src --fix"
   },
   "dependencies": {
     "@noble/ed25519": "^1.6.0",

@@ -7,7 +7,13 @@
     const { t } = useI18n({ useScope: 'global' });
 
     const props = defineProps({
-        account: Object
+        account: {
+            type: Object,
+            required: true,
+            default() {
+                return {}
+            }
+        }
     });
 
     let chainLabel = computed(() => {

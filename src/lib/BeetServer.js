@@ -295,7 +295,7 @@ export default class BeetServer {
       status.id = data.id;
       socket.otp.counter = status.id;
 
-      var key = socket.otp.generate();
+      //var key = socket.otp.generate();
       let payload;
       try {
         payload = aes.encrypt(JSON.stringify(status.result), key).toString();
