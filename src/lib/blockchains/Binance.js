@@ -6,8 +6,6 @@ import {formatAsset, humanReadableFloat} from "../assetUtils";
 
 export default class Bitcoin extends BlockchainAPI {
 
-    // https://github.com/steemit/steem-js/tree/master/doc#broadcast-api
-
     _connect(nodeToConnect) {
         return new Promise((resolve, reject) => {
             if (nodeToConnect == null) {
@@ -150,9 +148,9 @@ export default class Bitcoin extends BlockchainAPI {
     broadcast(transaction) {
         return new Promise((resolve, reject) => {
             this.ensureConnection().then(() => {
-                if (typeof operation == "object"
-                    && operation.length == 2
-                    && operation[0] == "broadcast") {
+                if (typeof transaction == "object"
+                    && transaction.length == 2
+                    && transaction[0] == "broadcast") {
                     this.client.sendTransaction(this._stringToTx(transaction[1])).then(resolve).catch(reject);
                 } else if (typeof transaction == "object" && !!transaction.type) {
                     this.client.sendTransaction(transaction).then(resolve).catch(reject);

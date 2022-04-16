@@ -438,7 +438,7 @@ export async function transfer(request) {
               transferResult = await blockchain.transfer(
                   activeKey, // Can we do this without the key?
                   accountDetails.accountName,
-                  to.value,
+                  request.params.to,
                   {
                       amount: request.params.amount.satoshis || request.params.amount.amount,
                       asset_id: request.params.amount.asset_id
@@ -478,7 +478,7 @@ export async function transfer(request) {
         transferResult = await approvedBlockchain.transfer(
             signingKey,
             store.getters['AccountStore/getSafeAccount'](request).accountName,
-            to.value,
+            request.params.to,
             {
                 amount: request.params.amount.satoshis || request.params.amount.amount,
                 asset_id: request.params.amount.asset_id

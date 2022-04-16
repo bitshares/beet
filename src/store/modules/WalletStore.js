@@ -62,12 +62,12 @@ const actions = {
             BeetDB.wallets_encrypted.get({
                 id: payload.wallet_id
             }).then((wallet) => {
-                try {
                     let bytes = aes.decrypt(wallet.data, payload.wallet_pass);
                     let decrypted_wallet = JSON.parse(bytes.toString(ENC));
                     let public_wallets = state.walletlist.filter((x) => {
                         return x.id == payload.wallet_id
                     });
+
                     commit(GET_WALLET, public_wallets[0]);
                     let accountlist = decrypted_wallet;
                     ipcRenderer.send('seeding',  payload.wallet_pass);
@@ -75,9 +75,6 @@ const actions = {
                         root: true
                     });
                     resolve();
-                } catch (e) {
-                    throw (e);
-                }
             }).catch((e) => {
                 reject(e);
             });
