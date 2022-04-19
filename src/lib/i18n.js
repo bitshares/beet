@@ -1,10 +1,12 @@
+import { createI18n } from 'vue-i18n';
+
 const locales = ['en'];
 const namespaces = ['common', 'operations'];
 
 import enCommon from '../translations/common/en.json';
 import enOperations from '../translations/operations/en.json';
 
-export default function fetchMessages() {
+function fetchMessages() {
   return {
     'en': {
       'common': enCommon,
@@ -12,3 +14,10 @@ export default function fetchMessages() {
     }
   }
 }
+
+export const i18n = createI18n({
+  legacy: false, // you must set `false`, to use Composition API
+  locale: 'en',
+  fallbackLocale: 'en',
+  messages: fetchMessages()
+})

@@ -11,7 +11,7 @@ import router from './router/index.js';
 import store from './store/index';
 import BeetServer from './lib/BeetServer';
 import RendererLogger from './lib/RendererLogger';
-import fetchMessages from './lib/i18n';
+import {i18n} from './lib/i18n.js';
 
 import 'typeface-roboto';
 import 'typeface-rajdhani';
@@ -35,19 +35,6 @@ process.on('unhandledRejection', (reason, p) => {
 store.dispatch("SettingsStore/loadSettings");
 store.dispatch("WhitelistStore/loadWhitelist");
 
-const messages = fetchMessages();
-
-const i18n = createI18n({
-  legacy: false, // you must set `false`, to use Composition API
-  locale: store.state.SettingsStore.settings
-          && store.state.SettingsStore.settings.locale
-          && store.state.SettingsStore.settings.locale.iso
-          ? store.state.SettingsStore.settings.locale.iso
-          : 'en',
-  fallbackLocale: 'en',
-  messages
-})
-
 const emitter = mitt();
 const app = createApp({});
 app.provide('emitter', emitter);
@@ -58,6 +45,11 @@ app.config.errorHandler = function (err, vm, info) {
 };
 
 app.use(i18n);
+
+window.t = (key) => {
+    return i18n.global.t(key)
+}
+
 app.use(VueRouter);
 app.use(BalmUI);
 app.use(BalmUIPlus);

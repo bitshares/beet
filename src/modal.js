@@ -5,8 +5,8 @@ import BalmUI from 'balm-ui'; // Official Google Material Components
 import BalmUIPlus from 'balm-ui/dist/balm-ui-plus'; // BalmJS Team Material Components
 import 'balm-ui-css';
 
+import {i18n} from './lib/i18n';
 import RendererLogger from './lib/RendererLogger';
-import fetchMessages from './lib/i18n';
 import Popups from './components/popups';
 
 import 'typeface-roboto';
@@ -28,15 +28,6 @@ process.on('unhandledRejection', (reason, p) => {
   // application specific logging, throwing an error, or other logic here
 });
 
-const messages = fetchMessages();
-
-const i18n = createI18n({
-  //locale: store.state.SettingsStore.settings.locale.iso,
-  locale: 'en',
-  fallbackLocale: 'en',
-  messages
-});
-
 const app = createApp({});
 app.config.errorHandler = function (err, vm, info) {
   logger.error(err, vm, info);
@@ -45,6 +36,11 @@ app.config.errorHandler = function (err, vm, info) {
 
 app.component('Popups', Popups);
 app.use(i18n);
+
+window.t = (key) => {
+    return i18n.global.t(key)
+}
+
 app.use(BalmUI);
 app.use(BalmUIPlus);
 app.mount('#modal');

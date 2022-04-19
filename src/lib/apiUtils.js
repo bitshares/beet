@@ -1,9 +1,7 @@
 import {ipcRenderer} from 'electron';
 import store from '../store/index.js';
-import {getKey} from './SecureRemote';
-import getBlockchainAPI from "./blockchains/blockchainFactory";
-import { useI18n } from 'vue-i18n';
-const { t } = useI18n({ useScope: 'global' });
+import {getKey} from './SecureRemote.js';
+import getBlockchainAPI from "./blockchains/blockchainFactory.js";
 
 /*
  * @param {String} method
@@ -36,15 +34,15 @@ export async function linkRequest(request) {
 
         /*
         let alertmsg = request.type === "link"
-            ? t("common.link_alert", request)
-            : t("common.access_alert", request.payload);
+            ? window.t("common.link_alert", request)
+            : window.t("common.access_alert", request.payload);
         */
 
         let linkReq = {appName: request.appName, origin: request.origin, chain: request.chain};
 
         store.dispatch(
           "WalletStore/notifyUser",
-          {notify: "request", message: t("common.link_alert", linkReq)}
+          {notify: "request", message: window.t("common.link_alert", linkReq)}
         );
 
         let accounts =  store.getters['AccountStore/getSafeAccountList'];
@@ -270,8 +268,8 @@ export async function voteFor(request) {
     }
 
     payload.generic = {
-        title: t("operations.vote.title"),
-        message: t("operations.vote.request", {
+        title: window.t("operations.vote.title"),
+        message: window.t("operations.vote.request", {
             appName: payload.appName,
             origin: payload.origin,
             entity: mappedData.entity,
@@ -279,8 +277,8 @@ export async function voteFor(request) {
             accountName: payload.account_id
         }),
         details: mappedData.description,
-        acceptText: t("operations.vote.accept_btn"),
-        rejectText: t("operations.vote.reject_btn")
+        acceptText: window.t("operations.vote.accept_btn"),
+        rejectText: window.t("operations.vote.reject_btn")
     };
     payload.vote_id = mappedData.vote_id;
 
