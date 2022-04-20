@@ -260,19 +260,19 @@ export default class BeetServer {
 
       let status;
       try {
-        if (msg.method === Actions.GET_ACCOUNT) {
+        if (apiobj.type === Actions.GET_ACCOUNT) {
           status = await getAccount(apiobj);
-        } else if (msg.method === Actions.REQUEST_SIGNATURE) {
+        } else if (apiobj.type === Actions.REQUEST_SIGNATURE) {
           status = await requestSignature(apiobj);
-        } else if (msg.method === Actions.INJECTED_CALL) {
+        } else if (apiobj.type === Actions.INJECTED_CALL) {
           status = await injectedCall(apiobj);
-        } else if (msg.method === Actions.VOTE_FOR) {
+        } else if (apiobj.type === Actions.VOTE_FOR) {
           status = await voteFor(apiobj);
-        } else if (msg.method === Actions.SIGN_MESSAGE) {
+        } else if (apiobj.type === Actions.SIGN_MESSAGE) {
           status = await signMessage(apiobj);
-        } else if (msg.method === Actions.VERIFY_MESSAGE) {
+        } else if (apiobj.type === Actions.VERIFY_MESSAGE) {
           status = await verifyMessage(apiobj);
-        } else if (msg.method === Actions.TRANSFER) {
+        } else if (apiobj.type === Actions.TRANSFER) {
           status = await transfer(apiobj);
         }
       } catch (error) {
