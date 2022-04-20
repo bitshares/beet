@@ -24,6 +24,10 @@
     });
 
     let requestText = computed(() => {
+        if (!props.request || !props.accounts.length) {
+          return '';
+        }
+
         return t(
             'operations.relink.request',
             {
@@ -69,20 +73,35 @@
 </script>
 
 <template>
-    <div v-tooltip="t('operations.relink.request_tooltip')">
-        {{ requestText }} &#10068;
+    <div v-if="props.request && props.accounts">
+        <div v-tooltip="t('operations.relink.request_tooltip')">
+            {{ requestText }} &#10068;
+        </div>
+        <br>
+        <ui-button
+            raised
+            @click="_clickedAllow()"
+        >
+            {{ t('operations.link.accept_btn') }}
+        </ui-button>
+        <ui-button
+            raised
+            @click="_clickedDeny()"
+        >
+            {{ t('operations.link.reject_btn') }}
+        </ui-button>
     </div>
-    <br>
-    <ui-button
-        raised
-        @click="_clickedAllow()"
-    >
-        {{ t('operations.link.accept_btn') }}
-    </ui-button>
-    <ui-button
-        raised
-        @click="_clickedDeny()"
-    >
-        {{ t('operations.link.reject_btn') }}
-    </ui-button>
+    <div v-else>
+        <div>
+            Error showing prompt
+        </div>
+        <br>
+        <ui-button
+            raised
+            @click="_clickedDeny()"
+        >
+            {{ t('operations.link.reject_btn') }}
+        </ui-button>
+    </div>
+
 </template>

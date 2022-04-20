@@ -89,12 +89,28 @@ export async function relinkRequest(request) {
       return _promptFail("REQUEST_RELINK", request.id, 'No beetApp', reject);
     }
 
-    store.dispatch("WalletStore/notifyUser", {notify: "request", message: "request"});
+    console.log(request)
 
-    let account = store.getters['AccountStore/getSafeAccount']({
-                    account_id: shownBeetApp.accountID,
-                    chain: shownBeetApp.chain
-                  });
+    let linkReq = {appName: request.appName, origin: request.origin, chain: request.chain};
+
+    store.dispatch(
+      "WalletStore/notifyUser",
+      {notify: "request", message: window.t("common.link_alert", linkReq)}
+    );
+    /*
+      {
+          "appName": "NFTEA Gallery",
+          "identityhash": "85ff4474e8e5a8183f774c11501cfcc592364b67bb244cb93a1cee63ce0b495a",
+          "origin": "nftea.gallery",
+          "account_id": "1.2.1808745",
+          "chain": "BTS",
+          "secret": "fd3a2f2207bb4aedb2885a8b326d67d6f4f0f478ee19b118c7845f609bed5f45",
+          "next_hash": "87da8ac347d1244cbaee055833c3d3bbac4acc52b46d3ae88328700889f484aa",
+          "id": 24
+      }
+    */
+
+    let account = store.getters['AccountStore/getSafeAccount'](JSON.parse(JSON.stringify(shownBeetApp)));
 
     ipcRenderer.send(
       'createPopup',

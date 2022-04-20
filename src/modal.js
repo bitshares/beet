@@ -37,8 +37,8 @@ app.config.errorHandler = function (err, vm, info) {
 app.component('Popups', Popups);
 app.use(i18n);
 
-window.t = (key) => {
-    return i18n.global.t(key)
+window.t = (key, params) => {
+    return i18n.global.t(key, params)
 }
 
 app.use(BalmUI);

@@ -77,10 +77,13 @@ const createModal = async (arg, modalEvent) => {
                     + `&request=${JSON.stringify(request)}`;
 
     if (type === 'link') {
-        modalRequests[id]['accounts'] = accounts;
         modalRequests[id]['existingLinks'] = existingLinks;
-        targetURL += `&accounts=${JSON.stringify(accounts)}`;
         targetURL += `&existingLinks=${JSON.stringify(existingLinks)}`;
+    }
+
+    if (type === 'link' || type === 'relink' || type === 'identityReqModal') {
+      modalRequests[id]['accounts'] = accounts;
+      targetURL += `&accounts=${JSON.stringify(accounts)}`;
     }
 
     modalWindows[id] = new BrowserWindow({

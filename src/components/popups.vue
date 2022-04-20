@@ -88,7 +88,7 @@
             :existing-links="existingLinks"
         />
         <ReLinkRequestPopup
-            v-else-if="type === 'reLinkReqModal'"
+            v-else-if="type === 'relink'"
             :request="request"
             :accounts="accounts"
         />

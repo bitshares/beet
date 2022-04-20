@@ -350,14 +350,8 @@ export default class BeetServer {
         return;
       }
 
-      if (!status) {
+      if (!status || status.result && status.result.isError) {
         console.log("No linkhandler status");
-        socket.emit("error", {id: data.id, error: true, payload: {code: 7, message: "API request unsuccessful"}});
-        return;
-      }
-
-      if (status.result.isError) {
-        console.log(status.result.error);
         socket.emit("error", {id: data.id, error: true, payload: {code: 7, message: "API request unsuccessful"}});
         return;
       }
