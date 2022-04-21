@@ -1,6 +1,6 @@
 <script setup>
     import { ipcRenderer } from 'electron';
-    import { computed } from "vue";
+    import { computed, onMounted } from "vue";
     import { useI18n } from 'vue-i18n';
     const { t } = useI18n({ useScope: 'global' });
     import getBlockchainAPI from "../../lib/blockchains/blockchainFactory";
@@ -16,46 +16,66 @@
         }
     });
 
-    let visualizedParams = computed(() => {
-        let blockchain = getBlockchainAPI(props.request.chain);
-        let visualisation;
-        try {
-            visualisation = blockchain.visualize(props.request.params);
-        } catch (error) {
-            console.log(error);
-        }
-
-        return visualisation ?? null;
+    onMounted(() => {
+        console.log(props.request)
     });
 
-    let visualizedAccount = computed(() => {
-        let blockchain = getBlockchainAPI(props.request.chain);
+    let visualizedParams = computed(async () => {
+        if (!props.request) {
+          return '';
+        }
 
+        let blockchain = getBlockchainAPI(props.request.payload.chain);
         let visualisation;
         try {
-            visualisation = blockchain.visualize(props.request.account_id);
+            visualisation = await blockchain.visualize(props.request.payload.params);
         } catch (error) {
             console.log(error);
         }
 
-        return visualisation ?? null;
+        return visualisation ?? '';
+    });
+
+    let visualizedAccount = computed(async () => {
+        if (!props.request) {
+          return '';
+        }
+        
+        let blockchain = getBlockchainAPI(props.request.payload.chain);
+
+        let visualisation;
+        try {
+            visualisation = await blockchain.visualize(props.request.payload.account_id);
+        } catch (error) {
+            console.log(error);
+        }
+
+        return visualisation ?? '';
     });
 
     let tableTooltip = computed(() => {
+        if (!props.request) {
+          return '';
+        }
+
         return t(
             'operations.rawsig.request',
-            { appName: props.request.appName,
-              origin: props.request.origin,
-              chain: formatChain(props.request.chain),
-              accountName: props.request.account_id
+            { appName: props.request.payload.appName,
+              origin: props.request.payload.origin,
+              chain: formatChain(props.request.payload.chain),
+              accountName: props.request.payload.account_id
             }
         );
     });
 
     let buttonText = computed(() => {
-        return props.request.params &&
-            props.request.params.length > 0 &&
-            props.request.params[0] == "sign"
+        if (!props.request) {
+          return '';
+        }
+
+        return props.request.payload.params &&
+            props.request.payload.params.length > 0 &&
+            props.request.payload.params[0] == "sign"
             ? t('operations.rawsig.sign_btn')
             : t('operations.rawsig.sign_and_broadcast_btn')
     })
@@ -79,6 +99,8 @@
             }
         );
     }
+
+
 </script>
 <template>
     <table
@@ -91,7 +113,7 @@
                     Origin
                 </td>
                 <td class="text-right">
-                    {{ props.request.origin }}
+                    {{ props.request.payload.origin }}
                 </td>
             </tr>
             <tr>
@@ -99,7 +121,7 @@
                     App
                 </td>
                 <td class="text-right">
-                    {{ props.request.appName }}
+                    {{ props.request.payload.appName }}
                 </td>
             </tr>
             <tr>
@@ -107,7 +129,7 @@
                     Account
                 </td>
                 <td class="text-right">
-                    {{ formatChain(props.request.chain) + ":" + (visualizedAccount) }}
+                    {{ formatChain(props.request.payload.chain) + ":" + (visualizedAccount) }}
                 </td>
             </tr>
             <tr>
@@ -134,7 +156,7 @@
     >
       <code>
         {
-          {{ props.request.params }}
+          {{ props.request.payload.params }}
         }
       </code>
     </pre>
