@@ -40,7 +40,7 @@
         if (!props.request) {
           return '';
         }
-        
+
         let blockchain = getBlockchainAPI(props.request.payload.chain);
 
         let visualisation;

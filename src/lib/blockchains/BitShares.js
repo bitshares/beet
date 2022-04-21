@@ -468,8 +468,9 @@ export default class BitShares extends BlockchainAPI {
     async visualize(thing) {
         if (typeof thing == "string" && thing.startsWith("1.2.")) {
             // resolve id to name
-            return this._getAccountName(thing);
+            return await this._getAccountName(thing);
         }
+
         let operations = [];
         let tr = this._parseTransactionBuilder(thing);
         console.log("Visualizing " + tr);

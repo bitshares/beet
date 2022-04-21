@@ -35,6 +35,9 @@
     });
 
     let requestText = computed(() => {
+        if (!props.request) {
+          return '';
+        }
         return t(
             'operations.link.request',
             {
@@ -53,6 +56,9 @@
      * Creating the select items
      */
     let accountOptions = computed(() => {
+        if (!props.accounts || !props.accounts.length) {
+          return [];
+        }
         return props.accounts.map((account, i) => {
             return {
                 label: !account.accountID && account.trackId == 0

@@ -24,18 +24,30 @@
     });
 
     let account_id = computed(() => {
+        if (!props.accounts || !props.accounts.length) {
+          return '';
+        }
         return props.accounts[0].account_id;
     });
 
     let accountName = computed(() => {
+        if (!props.accounts || !props.accounts.length) {
+          return '';
+        }
         return props.accounts[0].accountName;
     });
 
     let chain = computed(() => {
+        if (!props.accounts || !props.accounts.length) {
+          return '';
+        }
         return props.accounts[0].chain;
     });
 
     let requestText = computed(() => {
+        if (!props.request) {
+          return '';
+        }
         return t(
             'operations.account_id.request',
             {

@@ -24,6 +24,9 @@
     });
 
     let requestText = computed(() => {
+        if (!props.request || !props.request.accounts) {
+          return '';
+        }
         return t("operations.message.request", {
             appName: props.request.appName,
             origin: props.request.origin,

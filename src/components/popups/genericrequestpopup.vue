@@ -18,10 +18,16 @@
     });
 
     let acceptText = computed(() => {
+        if (!props.request) {
+          return '';
+        }
         return props.request.generic.acceptText ?? t('operations.rawsig.accept_btn');
     });
 
     let rejectText = computed(() => {
+        if (!props.request) {
+          return '';
+        }
         return props.request.generic.rejectText ?? t('operations.rawsig.reject_btn');
     });
 
