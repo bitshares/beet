@@ -13,6 +13,11 @@ const logger = new RendererLogger();
 
 export default class BitShares extends BlockchainAPI {
 
+    /*
+     * Connect to the Bitshares blockchain. (placeholder replacement)
+     * @param {String||null} nodeToConnect
+     * @returns {String}
+     */
     _connect(nodeToConnect = null) {
         return new Promise((resolve, reject) => {
             if (nodeToConnect == null) {
@@ -47,6 +52,10 @@ export default class BitShares extends BlockchainAPI {
         });
     }
 
+    /*
+     * Check if the connection needs reestablished (placeholder replacement)
+     * @returns {Boolean}
+     */
     _needsReconnecting() {
         if (this._isConnected) {
             let _isConnectedToTestnet = Apis.instance().url.indexOf("testnet") !== -1;
@@ -56,6 +65,10 @@ export default class BitShares extends BlockchainAPI {
         }
     }
 
+    /*
+     * Returns an array of default import options. (placeholder replacement)
+     * @returns {Array}
+     */
     getImportOptions() {
         return [
             {
@@ -77,6 +90,11 @@ export default class BitShares extends BlockchainAPI {
         ];
     }
 
+    /*
+     * Retrieve the contents of the provided account name from the blockchain API
+     * @param {String} accountName
+     * @returns {Object} parsedAccount
+     */
     async getAccount(accountName) {
         return new Promise(async (resolve, reject) => {
               this.ensureConnection().then(() => {
@@ -102,6 +120,11 @@ export default class BitShares extends BlockchainAPI {
         });
     }
 
+    /*
+     * Get the associated Bitshares account name from the provided account ID
+     * @param {String} accountId
+     * @returns {String}
+     */
     _getAccountName(accountId) {
         return new Promise((resolve, reject) => {
             this.ensureConnection().then(() => {
@@ -114,6 +137,11 @@ export default class BitShares extends BlockchainAPI {
         });
     }
 
+    /*
+     * Retrieve an asset object from a provided asset symbol or ID
+     * @param {String} assetSymbolOrId
+     * @returns {Object}
+     */
     _resolveAsset(assetSymbolOrId) {
         return new Promise((resolve, reject) => {
             this.ensureConnection().then(() => {
@@ -126,6 +154,11 @@ export default class BitShares extends BlockchainAPI {
         });
     }
 
+    /*
+     * Retrieve an asset object from a provided asset symbol or ID
+     * @param {String} assetSymbolOrId
+     * @returns {Object}
+     */
     getAsset(assetSymbolOrId) {
         if (this._isTestnet()) {
             if (assetSymbolOrId == "1.3.0") {
@@ -135,39 +168,34 @@ export default class BitShares extends BlockchainAPI {
                     precision: 5
                 };
             } else {
+                // TODO: Provide testnet bitshares lookup
                 return null;
             }
         } else {
-            if (assetSymbolOrId == "1.3.0") {
-                return {
-                    asset_id: "1.3.0",
-                    symbol: "BTS",
-                    precision: 5
-                };
-            } else if (assetSymbolOrId == "1.3.121") {
-                return {
-                    asset_id: "1.3.121",
-                    symbol: "bitUSD",
-                    precision: 4
-                };
-            } else if (assetSymbolOrId == "1.3.113") {
-                return {
-                    asset_id: "1.3.113",
-                    symbol: "bitCNY",
-                    precision: 4
-                };
-            } else if (assetSymbolOrId == "1.3.120") {
-                return {
-                    asset_id: "1.3.120",
-                    symbol: "bitEUR",
-                    precision: 4
-                };
-            } else {
-                return null;
-            }
+            return new Promise((resolve, reject) => {
+                this.ensureConnection().then(() => {
+                    Apis.instance().db_api().exec("lookup_asset_symbols", [[assetSymbolOrId]]).then((asset_objects) => {
+                        if (!asset_objects.length || !asset_objects[0]) {
+                          return resolve(null);
+                        }
+
+                        let retrievedAsset = asset_objects[0];
+                        return resolve({
+                            asset_id: retrievedAsset.id,
+                            symbol: retrievedAsset.symbol,
+                            precision: retrievedAsset.precision
+                        });
+                    }).catch(reject);
+                }).catch(reject);
+            });
         }
     }
 
+    /*
+     * Retrieve the Bitshares balances for the provided account name.
+     * @param {String} accountName
+     * @returns {Array} balances
+     */
     getBalances(accountName) {
         return new Promise((resolve, reject) => {
             // getAccount has already ensureConnection
@@ -205,12 +233,23 @@ export default class BitShares extends BlockchainAPI {
         });
     }
 
+    /*
+     * Retrieve the pubkey from a provided BTS private key
+     * @param {String} privateKey
+     * @returns {String} publicKey
+     */
     getPublicKey(privateKey) {
         return PrivateKey.fromWif(privateKey)
             .toPublicKey()
             .toString(this._getCoreSymbol());
     }
 
+    /*
+     * Map operational data for incoming Bitshares vote actions
+     * Retrieves committee members, witnesses and worker proposal objects.
+     * @param {Object} incoming
+     * @returns {Object}
+     */
     mapOperationData(incoming) {
         return new Promise((resolve, reject) => {
             this.ensureConnection().then(() => {
@@ -283,6 +322,11 @@ export default class BitShares extends BlockchainAPI {
         });
     }
 
+    /*
+     * Parse incoming and return a readied transaction builder instance
+     * @param {Class||Object} incoming
+     * @returns {Class} TransactionBuilder
+     */
     _parseTransactionBuilder(incoming) {
         if (incoming instanceof TransactionBuilder) {
             return incoming;
@@ -314,6 +358,12 @@ export default class BitShares extends BlockchainAPI {
         throw "Reconstruction of TransactionBuilder failed";
     }
 
+    /*
+     * Parse incoming and return a readied transaction builder instance
+     * @param {Class||Object} operation
+     * @param {String} key
+     * @returns {Class} TransactionBuilder
+     */
     sign(operation, key) {
         return new Promise((resolve, reject) => {
             this.ensureConnection().then(() => {
@@ -333,6 +383,11 @@ export default class BitShares extends BlockchainAPI {
         });
     }
 
+    /*
+     * Broadcast a transaction on the Bitshares blockchain.
+     * @param {Class||Object} transaction
+     * @returns {Object} broadcastResult
+     */
     broadcast(transaction) {
         return new Promise((resolve, reject) => {
             this.ensureConnection().then(() => {
@@ -344,6 +399,12 @@ export default class BitShares extends BlockchainAPI {
         });
     }
 
+    /*
+     * Retrieve operation from input data and account combination
+     * @param {Object} data
+     * @param {Object} account
+     * @returns {Object}
+     */
     getOperation(data, account) {
         let account_id = account.id;
         return new Promise((resolve, reject) => {
@@ -402,6 +463,12 @@ export default class BitShares extends BlockchainAPI {
         });
     }
 
+    /*
+     * Signs a string using a provided private key.
+     * @param {String} key
+     * @param {String} string
+     * @returns {String} hexString
+     */
     _signString(key, string) {
         let signature = Signature.signBuffer(
             string,
@@ -410,6 +477,13 @@ export default class BitShares extends BlockchainAPI {
         return signature.toHex();
     }
 
+    /*
+     * Verifies that the signature is the BTS public key signed string.
+     * @param {String} signature (hex)
+     * @param {String} publicKey
+     * @param {String} string
+     * @returns {Boolean}
+     */
     _verifyString(signature, publicKey, string) {
         let _PublicKey = PublicKey;
         let sig = Signature.fromHex(signature);
@@ -420,29 +494,62 @@ export default class BitShares extends BlockchainAPI {
         );
     }
 
+    /*
+     * Broadcast a transfer operation on the Bitshares blockchain.
+     * @param {String} key
+     * @param {String} from
+     * @param {String} to
+     * @param {String} amount
+     * @param {String} memo
+     * @returns {Object} transfer result
+     */
     async transfer(key, from, to, amount, memo = null) {
         if (!amount.amount || !amount.asset_id) {
             throw "Amount must be a dict with amount and asset_id as keys"
         }
         from = await this.getAccount(from);
         to = await this.getAccount(to);
-        let operation = {
-            type: "transfer",
-            data: {
-                fee: {
-                    amount: 0,
-                    asset_id: "1.3.0"
-                },
-                from: from.id,
-                to: to.id,
-                amount: amount,
-                memo: memo == null ? undefined : memo
-            }
-        };
-        let transaction = await this.sign(operation, key);
-        return await this.broadcast(transaction);
+
+        let transaction;
+        try {
+          transaction = await this.sign(
+            {
+                type: "transfer",
+                data: {
+                    fee: {
+                        amount: 0,
+                        asset_id: "1.3.0"
+                    },
+                    from: from.id,
+                    to: to.id,
+                    amount: amount,
+                    memo: memo == null ? undefined : memo
+                }
+            },
+            key
+          );
+        } catch (error) {
+          console.log(error);
+          throw "Could not sign operation with Bitshares key";
+        }
+
+        let broadcastResult;
+        try {
+          broadcastResult = await this.broadcast(transaction);
+        } catch (error) {
+          console.log(error);
+          throw "Could not broadcast signed Bitshares transaction";
+        }
+
+        return broadcastResult
     }
 
+    /*
+     * Return an appropriate Bitshares blockchain explorer link.
+     * Warning: Opens dangerously, be cautious adding alt explorers.
+     * @param {Object} object
+     * @returns {String}
+     */
     getExplorer(object) {
         if (object.accountName) {
             return "https://blocksights.info/#/accounts/" + object.accountID;
@@ -457,6 +564,10 @@ export default class BitShares extends BlockchainAPI {
         }
     }
 
+    /*
+     * Returns the required keys for sign up input forms
+     * @returns {Object}
+     */
     getSignUpInput() {
         return {
             active: false,
@@ -465,6 +576,12 @@ export default class BitShares extends BlockchainAPI {
         }
     }
 
+    /*
+     * Returns a visualization for the input data.
+     * TODO: Requires refactor
+     * @param {String||Class||Object} thing
+     * @returns {String}
+     */
     async visualize(thing) {
         if (typeof thing == "string" && thing.startsWith("1.2.")) {
             // resolve id to name
@@ -473,20 +590,55 @@ export default class BitShares extends BlockchainAPI {
 
         let operations = [];
         let tr = this._parseTransactionBuilder(thing);
-        console.log("Visualizing " + tr);
+
+        //console.log("Visualizing " + tr);
         for (let i = 0; i < tr.operations.length; i++) {
             let operation = tr.operations[i];
             if (operation[0] == 0) {
-                let from = await this._getAccountName(operation[1].from);
-                let to = await this._getAccountName(operation[1].to);
-                let asset = await this._resolveAsset(operation[1].amount.asset_id);
+                let from;
+                try {
+                  from = await this._getAccountName(operation[1].from);
+                } catch (error) {
+                  console.log(error);
+                  return;
+                }
+
+                let to;
+                try {
+                  to = await this._getAccountName(operation[1].to);
+                } catch (error) {
+                  console.log(error);
+                  return;
+                }
+
+                let asset;
+                try {
+                  asset = await this._resolveAsset(operation[1].amount.asset_id);
+                } catch (error) {
+                  console.log(error);
+                  return;
+                }
 
                 operations.push(
                     from + " &#9657; " + formatAsset(operation[1].amount.amount, asset.symbol, asset.precision) + " &#9657; " + to
                 )
             } else if (operation[0] == 25) {
-                let to = await this._getAccountName(operation[1].authorized_account);
-                let asset = await this._resolveAsset(operation[1].withdrawal_limit.asset_id);
+                let to;
+                try {
+                  to = await this._getAccountName(operation[1].authorized_account);
+                } catch (error) {
+                  console.log(error);
+                  return;
+                }
+
+                let asset;
+                try {
+                  asset = await this._resolveAsset(operation[1].withdrawal_limit.asset_id);
+                } catch (error) {
+                  console.log(error);
+                  return;
+                }
+
                 let period = operation[1].withdrawal_period_sec / 60 / 60 / 24;
                 operations.push(
                     "Direct Debit Authorization\n" +
@@ -494,16 +646,51 @@ export default class BitShares extends BlockchainAPI {
                     " Take " + formatAsset(operation[1].withdrawal_limit.amount, asset.symbol, asset.precision) + " every " + period + " days, for " + operation[1].periods_until_expiration + " periods"
                 )
             } else if (operation[0] == 33) {
-                let owner = await this._getAccountName(operation[1].owner);
-                let asset = await this._resolveAsset(operation[1].amount.asset_id);
+                let owner;
+                try {
+                  owner = await this._getAccountName(operation[1].owner);
+                } catch (error) {
+                  console.log(error);
+                  return;
+                }
+
+                let asset;
+                try {
+                  asset = await this._resolveAsset(operation[1].amount.asset_id);
+                } catch (error) {
+                  console.log(error);
+                  return;
+                }
+
                 operations.push(
                     "Vesting Balance\n" +
                     " Claim " + formatAsset(operation[1].amount.amount, asset.symbol, asset.precision) + " from balance " + operation[1].vesting_balance
                 )
             } else if (operation[0] == 1) {
-                let seller = await this._getAccountName(operation[1].seller);
-                let buy = await this._resolveAsset(operation[1].min_to_receive.asset_id);
-                let sell = await this._resolveAsset(operation[1].amount_to_sell.asset_id);
+                let seller;
+                try {
+                  seller = await this._getAccountName(operation[1].seller);
+                } catch (error) {
+                  console.log(error);
+                  return;
+                }
+
+                let buy;
+                try {
+                  buy = await this._resolveAsset(operation[1].min_to_receive.asset_id);
+                } catch (error) {
+                  console.log(error);
+                  return;
+                }
+
+                let sell;
+                try {
+                  sell = await this._resolveAsset(operation[1].amount_to_sell.asset_id);
+                } catch (error) {
+                  console.log(error);
+                  return;
+                }
+
                 let fillOrKill = operation[1].amount_to_sell.fill_or_kill;
 
                 let price = humanReadableFloat(operation[1].amount_to_sell.amount, sell.precision)
@@ -517,9 +704,11 @@ export default class BitShares extends BlockchainAPI {
                 )
             }
         }
-        if (operations.length == 0) {
+
+        if (!operations.length) {
             return false;
         }
+
         let header = operations.length == 1 ? "" : "Transaction\n";
 
 

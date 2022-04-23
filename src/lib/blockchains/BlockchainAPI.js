@@ -16,17 +16,18 @@ export default class BlockchainAPI {
         this._isConnectedToNode = null;
     }
 
-    isConnected() {
-        return this._isConnected;
-    }
-
+    /*
+     * Ensure blockchain connection exists, if it doesn't make one.
+     * @param {String||Null} nodeToConnect
+     * @returns {Promise} connection
+     */
     ensureConnection(nodeToConnect = null) {
-        if (nodeToConnect != null && this._isConnectedToNode !== nodeToConnect) {
-            // enforce connection to that node
-            this._isConnected = false;
-        }
-
         return new Promise((resolve, reject) => {
+            if (nodeToConnect != null && this._isConnectedToNode !== nodeToConnect) {
+                // enforce connection to that node
+                this._isConnected = false;
+            }
+
             if (this._isConnected && !this._needsReconnecting()) {
               resolve();
             }
@@ -75,31 +76,12 @@ export default class BlockchainAPI {
         });
     }
 
-    _needsReconnecting() {
-        return false;
-    }
-
-    _isTestnet() {
-        return !!this._config.testnet;
-    }
-
-    _getCoreSymbol() {
-        return this._config.coreSymbol;
-    }
-
-    _connect(nodeToConnect) {
-        throw "Needs implementation";
-    }
-
-    getImportOptions() {
-        return [
-            {
-                type: "ImportKeys",
-                translate_key: "import_keys"
-            }
-        ];
-    }
-
+    /*
+     * Triggers upon successful blockchain node connection. Stores successful changes.
+     * @param {callback} resolveCallback
+     * @param {String} node
+     * @returns {String} node
+     */
     _connectionEstablished(resolveCallback, node) {
         this._isConnectedToNode = node;
         this._isConnected = true;
@@ -119,6 +101,12 @@ export default class BlockchainAPI {
         resolveCallback(node);
     }
 
+    /*
+     * Triggers upon blockchain node connection failure. Logs and changes connection states.
+     * @param {callback} resolveCallback
+     * @param {String} node
+     * @returns {String} node
+     */
     _connectionFailed(resolveCallback, node, error) {
         logger.debug(this._config.name + ": Failed to connect to " + node, error);
         console.log(this._config.name + ": Failed to connect to " + node, error);
@@ -138,50 +126,13 @@ export default class BlockchainAPI {
         }
     }
 
-    getNodes() {
-        return this._config.nodeList;
-    }
-
-    getAccount(accountName) {
-        throw "Needs implementation";
-    }
-
-    getBalances(accountName) {
-        throw "Needs implmenetation";
-    }
-
-    getPublicKey(privateKey) {
-        throw "Needs implementation";
-    }
-
-    getOperation(data, account_id) {
-        throw "Needs implementation";
-    }
-
-    sign(incoming, key) {
-        throw "Needs implementation";
-    }
-
-    broadcast(transaction) {
-        throw "Needs implementation";
-    }
-
-    _signString(key, string) {
-        throw "Needs implementation";
-    }
-
-    getAccessType() {
-        return "account";
-    }
-
-    getSignUpInput() {
-        return {
-            active: true,
-            memo: true,
-            owner: false
-        }
-    }
-
+    /*
+     * Signing a string with a key
+     * @param {string} key
+     * @param {String} accountName
+     * @param {String} randomString
+     * @returns {Promise}
+     */
     signMessage(key, accountName, randomString) {
         return new Promise((resolve,reject) => {
             // do as a list, to preserve order
@@ -213,6 +164,11 @@ export default class BlockchainAPI {
         });
     }
 
+    /*
+     * Verifying a signed message
+     * @param {Object} signedMessage
+     * @returns {Promise}
+     */
     verifyMessage(signedMessage) {
         return new Promise((resolve, reject) => {
             if (typeof signedMessage.payload === "string" || signedMessage.payload instanceof String) {
@@ -259,10 +215,13 @@ export default class BlockchainAPI {
         });
     }
 
-    _verifyString(signature, publicKey, string) {
-        throw "Needs implementation";
-    }
-
+    /*
+     * Verify provided publicKey matches the blockchain fetched accoutName publicKey
+     * @param {String} accountName
+     * @param {String} publicKey
+     * @param {string} permission // Not used at all in the default blockchain function
+     * @returns {Object}
+     */
     _verifyAccountAndKey(accountName, publicKey, permission = null) {
         return new Promise((resolve, reject) => {
             this.getAccount(accountName).then(account => {
@@ -301,10 +260,22 @@ export default class BlockchainAPI {
         });
     }
 
+    /*
+     * Verify the two blockchain keys are identical
+     * @param {Object} key1
+     * @param {Object} key2
+     * @returns {Boolean}
+     */
     _compareKeys(key1, key2) {
         return key1 === key2;
     }
 
+    /*
+     * Verify an account name against provided credentials
+     * @param {String} accountName
+     * @param {Object} credentials
+     * @returns {Boolean}
+     */
     async verifyAccount(accountName, credentials) {
         let account;
         try {
@@ -348,18 +319,10 @@ export default class BlockchainAPI {
         return account;
     }
 
-    transfer(key, from, to, amount, asset, memo = null, broadcast = true) {
-        throw "Needs implementation!"
-    }
-
-    supportsFeeCalculation() {
-        return false;
-    }
-
-    getAsset(assetSymbolOrId) {
-        throw "Needs implementation!";
-    }
-
+    /*
+     * Prettifying amounts of crypto for display
+     * @returns {String}
+     */
     format(amount) {
         let asset = null;
         if (typeof amount.asset_id == "string" && amount.asset_id.substring(0,1) == "1") {
@@ -374,10 +337,183 @@ export default class BlockchainAPI {
         }
     }
 
+    /*
+     * Check if there is an active blockchain connection
+     * @returns {Boolean}
+     */
+    isConnected() {
+        return this._isConnected;
+    }
+
+    /*
+     * Check if the current blockchain is a test network
+     * @returns {Boolean}
+     */
+    _isTestnet() {
+        return !!this._config.testnet;
+    }
+
+    /*
+     * Returns the core blockchain symbol (e.g. BTS)
+     * @returns {String}
+     */
+    _getCoreSymbol() {
+        return this._config.coreSymbol;
+    }
+
+    /*
+     * Returns an array of default import options
+     * @returns {Array}
+     */
+    getImportOptions() {
+        return [
+            {
+                type: "ImportKeys",
+                translate_key: "import_keys"
+            }
+        ];
+    }
+
+    /*
+     * Returns a list of nodes for the current blockchain
+     * @returns {Array}
+     */
+    getNodes() {
+        return this._config.nodeList;
+    }
+
+    /*
+     * Placeholder for retrieving
+     * @returns {String}
+     */
+    getAccessType() {
+        return "account";
+    }
+
+    getSignUpInput() {
+        return {
+            active: true,
+            memo: true,
+            owner: false
+        }
+    }
+
+    /*
+     * Placeholder for blockchain specific reconnection
+     * @returns {Boolean} connection
+     */
+    _needsReconnecting() {
+        return false;
+    }
+
+    /*
+     * Placeholder for blockchain specific connection.
+     * @returns {String}
+     */
+    _connect(nodeToConnect) {
+        throw "Needs implementation";
+    }
+
+    /*
+     * Placeholder for retrieving blockchain account details.
+     * @returns {String}
+     */
+    getAccount(accountName) {
+        throw "Needs implementation";
+    }
+
+    /*
+     * Placeholder for retrieving blockchain account balances.
+     * @returns {String}
+     */
+    getBalances(accountName) {
+        throw "Needs implmenetation";
+    }
+
+    /*
+     * Placeholder for retrieving
+     * @returns {String}
+     */
+    getPublicKey(privateKey) {
+        throw "Needs implementation";
+    }
+
+    /*
+     * Placeholder for retrieving
+     * @returns {String}
+     */
+    getOperation(data, account_id) {
+        throw "Needs implementation";
+    }
+
+    /*
+     * Placeholder for retrieving
+     * @returns {String}
+     */
+    sign(incoming, key) {
+        throw "Needs implementation";
+    }
+
+    /*
+     * Placeholder for retrieving
+     * @returns {String}
+     */
+    broadcast(transaction) {
+        throw "Needs implementation";
+    }
+
+    /*
+     * Placeholder for retrieving
+     * @returns {String}
+     */
+    _signString(key, string) {
+        throw "Needs implementation";
+    }
+
+    /*
+     * Placeholder for verifying a blockchain signature against a pubkey
+     * @returns {String}
+     */
+    _verifyString(signature, publicKey, string) {
+        throw "Needs implementation";
+    }
+
+    /*
+     * Placeholder for performing a blockchain transfer transaction
+     * @returns {String}
+     */
+    transfer(key, from, to, amount, asset, memo = null, broadcast = true) {
+        throw "Needs implementation!"
+    }
+
+    /*
+     * Placeholder for checking fee calculation support
+     * @returns {String}
+     */
+    supportsFeeCalculation() {
+        return false;
+    }
+
+    /*
+     * Placeholder for retrieving a blockchain asset
+     * @returns {String}
+     */
+    getAsset(assetSymbolOrId) {
+        throw "Needs implementation!";
+    }
+
+    /*
+     * Placeholder for retrieving a blockchain explorer URL
+     * @returns {String}
+     */
     getExplorer(account) {
         return false;
     }
 
+    /*
+     * Placeholder for displaying prompt contents
+     * @returns {String}
+     */
     visualize(thing) {
         return false;
     }
