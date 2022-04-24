@@ -26,7 +26,7 @@
 
     let message = computed(() => {
         if (!props.request || !props.accounts) {
-          return '';
+            return '';
         }
         return t("operations.transfer.request", {
             appName: props.request.appName,
@@ -38,28 +38,28 @@
 
     let to = computed(() => {
         if (!props.request) {
-          return '';
+            return '';
         }
         return props.request.params.to;
     });
 
     let satoshis = computed(() => {
         if (!props.request) {
-          return '';
+            return '';
         }
         return props.request.params.amount.satoshis;
     });
 
     let asset_id = computed(() => {
         if (!props.request) {
-          return '';
+            return '';
         }
         return props.request.params.amount.asset_id;
     });
 
     let toSend = computed(() => {
         if (!props.request) {
-          return '';
+            return '';
         }
         let blockchain = getBlockchainAPI(props.request.chain);
         return blockchain.format(props.request.params.amount);
@@ -67,14 +67,14 @@
 
     let toSendFee = computed(() => {
         if (!props.request) {
-          return '';
+            return '';
         }
         return props.request.toSendFee ?? null;
     });
 
     let feeInSatoshis = computed(() => {
         if (!props.request) {
-          return '';
+            return '';
         }
         return props.request.feeInSatoshis ?? null;
     });

@@ -1,5 +1,5 @@
 <script setup>
-    import { watch, ref, computed, onMounted, inject } from "vue";
+    import { watch, ref, computed, inject } from "vue";
     const emitter = inject('emitter');
     import { useI18n } from 'vue-i18n';
     const { t } = useI18n({ useScope: 'global' });

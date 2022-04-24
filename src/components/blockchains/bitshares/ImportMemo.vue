@@ -1,5 +1,5 @@
 <script setup>
-    import {ref, onMounted, inject} from "vue";
+    import {ref, inject, computed} from "vue";
     const emitter = inject('emitter');
     import { useI18n } from 'vue-i18n';
     const { t } = useI18n({ useScope: 'global' });
@@ -17,25 +17,32 @@
             default: ''
         }*/
     });
-    let chain = ref(props.chain);
 
     let accountname = ref("");
     let memopk = ref("");
-    let accessType = ref(null);
-    let requiredFields = ref(null);
 
-    onMounted(() => {
-        let blockchain = getBlockchainAPI(chain.value);
-        accessType.value = blockchain.getAccessType();
-        requiredFields.value = blockchain.getSignUpInput();
-    })
+    let accessType = computed(() => {
+        if (!props.chain) {
+            return null;
+        }
+        let blockchain = getBlockchainAPI(props.chain);
+        return blockchain.getAccessType();
+    });
+
+    let requiredFields = computed(() => {
+        if (!props.chain) {
+            return null;
+        }
+        let blockchain = getBlockchainAPI(props.chain);
+        return blockchain.getSignUpInput();
+    });
 
     function back() {
         emitter.emit('back', true);
     }
 
     async function next() {
-        let blockchain = getBlockchainAPI(chain.value);
+        let blockchain = getBlockchainAPI(props.chain);
         let authorities = {};
         if (requiredFields.value.memo != null) {
             authorities.memo = memopk.value;
@@ -53,7 +60,7 @@
             account: {
                 accountName: accountname.value,
                 accountID: account.id,
-                chain: chain.value,
+                chain: props.chain,
                 keys: authorities
             }
         }]);

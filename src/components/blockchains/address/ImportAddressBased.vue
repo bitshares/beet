@@ -1,5 +1,5 @@
 <script setup>
-    import {ref, onMounted, inject} from "vue";
+    import {ref, inject, computed} from "vue";
     const emitter = inject('emitter');
     import { useI18n } from 'vue-i18n';
     const { t } = useI18n({ useScope: 'global' });
@@ -20,12 +20,13 @@
 
     let address = ref("");
     let activepk = ref("");
-    let requiredFields = ref(null);
 
-    onMounted(() => {
-        // onmount/compute the following?
+    let requiredFields = computed(() => {
+        if (!props.chain) {
+            return null;
+        }
         let blockchain = getBlockchainAPI(props.chain);
-        requiredFields.value = blockchain.getSignUpInput();
+        return blockchain.getSignUpInput();
     });
 
     function back() {

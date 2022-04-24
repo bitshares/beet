@@ -1,5 +1,5 @@
 <script setup>
-    import {ref, onMounted, inject} from "vue";
+    import {ref, inject, computed} from "vue";
     const emitter = inject('emitter');
     import { useI18n } from 'vue-i18n';
     const { t } = useI18n({ useScope: 'global' });
@@ -23,13 +23,22 @@
     let ownerpk = ref("");
     let memopk = ref("");
     let includeOwner = ref(0);
-    let accessType = ref(null);
-    let requiredFields = ref(null);
 
-    // onMount/compute the following?
-    let blockchain = getBlockchainAPI(props.chain);
-    accessType.value = blockchain.getAccessType();
-    requiredFields.value = blockchain.getSignUpInput();
+    let accessType = computed(() => {
+        if (!props.chain) {
+            return null;
+        }
+        let blockchain = getBlockchainAPI(props.chain);
+        return blockchain.getAccessType();
+    });
+
+    let requiredFields = computed(() => {
+        if (!props.chain) {
+            return null;
+        }
+        let blockchain = getBlockchainAPI(props.chain);
+        return blockchain.getSignUpInput();
+    });
 
     function back() {
         emitter.emit('back', true);

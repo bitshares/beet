@@ -64,7 +64,7 @@
         );
     });
 
-    onMounted(async () => {
+    onMounted(() => {
         logger.debug("Balances Table Mounted");
     });
 

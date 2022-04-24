@@ -25,7 +25,7 @@
 
     let requestText = computed(() => {
         if (!props.request || !props.accounts.length) {
-          return '';
+            return '';
         }
 
         return t(
@@ -103,5 +103,4 @@
             {{ t('operations.link.reject_btn') }}
         </ui-button>
     </div>
-
 </template>

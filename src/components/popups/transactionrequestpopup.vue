@@ -17,12 +17,12 @@
     });
 
     onMounted(() => {
-        console.log(props.request)
+        //console.log(props.request)
     });
 
     let visualizedParams = computed(async () => {
         if (!props.request) {
-          return '';
+            return '';
         }
 
         let blockchain = getBlockchainAPI(props.request.payload.chain);
@@ -38,7 +38,7 @@
 
     let visualizedAccount = computed(async () => {
         if (!props.request) {
-          return '';
+            return '';
         }
 
         let blockchain = getBlockchainAPI(props.request.payload.chain);
@@ -55,7 +55,7 @@
 
     let tableTooltip = computed(() => {
         if (!props.request) {
-          return '';
+            return '';
         }
 
         return t(
@@ -70,7 +70,7 @@
 
     let buttonText = computed(() => {
         if (!props.request) {
-          return '';
+            return '';
         }
 
         return props.request.payload.params &&

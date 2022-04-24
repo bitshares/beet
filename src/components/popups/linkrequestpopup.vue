@@ -36,7 +36,7 @@
 
     let requestText = computed(() => {
         if (!props.request) {
-          return '';
+            return '';
         }
         return t(
             'operations.link.request',
@@ -57,7 +57,7 @@
      */
     let accountOptions = computed(() => {
         if (!props.accounts || !props.accounts.length) {
-          return [];
+            return [];
         }
         return props.accounts.map((account, i) => {
             return {

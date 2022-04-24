@@ -25,7 +25,7 @@
 
     let requestText = computed(() => {
         if (!props.request || !props.request.accounts) {
-          return '';
+            return '';
         }
         return t("operations.message.request", {
             appName: props.request.appName,
