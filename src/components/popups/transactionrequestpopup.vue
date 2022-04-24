@@ -1,6 +1,6 @@
 <script setup>
     import { ipcRenderer } from 'electron';
-    import { computed, onMounted } from "vue";
+    import { computed, ref, watchEffect } from "vue";
     import { useI18n } from 'vue-i18n';
     const { t } = useI18n({ useScope: 'global' });
     import getBlockchainAPI from "../../lib/blockchains/blockchainFactory";
@@ -16,13 +16,13 @@
         }
     });
 
-    onMounted(() => {
-        //console.log(props.request)
-    });
+    let visualizedParams = ref('');
+    let visualizedAccount = ref('');
 
-    let visualizedParams = computed(async () => {
+    watchEffect(async () => {
+
         if (!props.request) {
-            return '';
+            return;
         }
 
         let blockchain = getBlockchainAPI(props.request.payload.chain);
@@ -31,14 +31,15 @@
             visualisation = await blockchain.visualize(props.request.payload.params);
         } catch (error) {
             console.log(error);
+            return;
         }
 
-        return visualisation ?? '';
+        visualizedParams.value = visualisation;
     });
 
-    let visualizedAccount = computed(async () => {
+    watchEffect(async () => {
         if (!props.request) {
-            return '';
+            return;
         }
 
         let blockchain = getBlockchainAPI(props.request.payload.chain);
@@ -48,9 +49,10 @@
             visualisation = await blockchain.visualize(props.request.payload.account_id);
         } catch (error) {
             console.log(error);
+            return;
         }
 
-        return visualisation ?? '';
+        visualizedAccount.value = visualisation;
     });
 
     let tableTooltip = computed(() => {
