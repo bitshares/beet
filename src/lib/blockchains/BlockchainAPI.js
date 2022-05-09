@@ -9,8 +9,9 @@ const emitter = mitt();
 export default class BlockchainAPI {
 
     constructor(config, initNode) {
+        this._tempBanned = [];
         this._config = config;
-        this._node = initNode ?? config.nodeList[0].url;
+        this._node = initNode;
         this._isConnected = false;
         this._isConnectingInProgress = false;
         this._isConnectedToNode = null;
@@ -23,30 +24,34 @@ export default class BlockchainAPI {
      */
     ensureConnection(nodeToConnect = null) {
         return new Promise((resolve, reject) => {
-            if (nodeToConnect != null && this._isConnectedToNode !== nodeToConnect) {
+            if (nodeToConnect && this._isConnectedToNode !== nodeToConnect) {
                 // enforce connection to that node
                 this._isConnected = false;
-            }
-
-            if (this._isConnected && !this._needsReconnecting()) {
-              resolve();
+                this._isConnectedToNode = null;
             }
 
             if (this._isConnectingInProgress) {
                 // there should be a promise queue for pending connects, this is the lazy way
+                console.log("Queued connection - existing connection handshake in progress.");
                 setTimeout(() => {
                     if (this._isConnected) {
-                        this._connectionEstablished(resolve, nodeToConnect ?? this._node);
+                        this._connectionEstablished(resolve, this._node);
                     } else {
                         this._connectionFailed(
                           reject,
-                          nodeToConnect ?? this._node,
-                          "multiple connects, did not resolve in time"
+                          this._node,
+                          "Timeout"
                         );
                     }
-                }, 2000);
+                }, 4000);
                 return;
             }
+
+            if (!this._needsReconnecting()) {
+              console.log('Using existing connection');
+              return this._connectionEstablished(resolve, this._isConnectedToNode);
+            }
+
             this._isConnectingInProgress = true;
 
             emitter.emit(
@@ -58,21 +63,7 @@ export default class BlockchainAPI {
                 }
             );
 
-            // load last node from config
-            if (
-              !nodeToConnect
-              && !this._node
-              && store.state.SettingsStore.settings.selected_node[this._config.identifier]
-            ) {
-                nodeToConnect = store.state.SettingsStore.settings.selected_node[this._config.identifier].url;
-            }
-
-            if (!nodeToConnect && !this._node) {
-              console.log("No node to connect to")
-              reject();
-            }
-
-            this._connect(nodeToConnect ?? this._node).then(resolve).catch(reject);
+            this._connect(nodeToConnect).then(resolve).catch(reject);
         });
     }
 
@@ -108,8 +99,9 @@ export default class BlockchainAPI {
      * @returns {String} node
      */
     _connectionFailed(resolveCallback, node, error) {
-        logger.debug(this._config.name + ": Failed to connect to " + node, error);
-        console.log(this._config.name + ": Failed to connect to " + node, error);
+        logger.debug(this._config.name + " Failed to connect to " + node, error);
+        console.log(this._config.name + " Failed to connect to " + node, error);
+        this._tempBanned.push(node);
         this._isConnected = false;
         this._isConnectingInProgress = false;
         emitter.emit(

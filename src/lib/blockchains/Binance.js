@@ -255,9 +255,11 @@ export default class Bitcoin extends BlockchainAPI {
     }
 
     visualize(transaction) {
-        if (typeof transaction == "object"
-        && transaction.length == 3
-        && transaction[0] == "signAndBroadcast") {
+        if (
+          typeof transaction == "object"
+          && transaction.length == 3
+          && transaction[0] == "signAndBroadcast"
+        ) {
             let msg = JSON.parse(transaction[2]);
 
             if (msg.inputs.length > 1 || msg.outputs.length > 1 || msg.outputs[0].coins.length > 1) {
@@ -267,12 +269,7 @@ export default class Bitcoin extends BlockchainAPI {
             let from = msg.inputs[0].address;
             let to = msg.outputs[0].address;
             let toSend = formatAsset(msg.outputs[0].coins[0].amount, msg.outputs[0].coins[0].denom);
-            return `<pre class="text-left custom-content">
-<code>Transfer
-Sender: ${from}
-Recipient: ${to}
-Amount: ${toSend}
-</code></pre>`
+            return `Transfer\n Sender: ${from}\n Recipient: ${to}\n Amount: ${toSend}`
         } else {
             return false;
         }

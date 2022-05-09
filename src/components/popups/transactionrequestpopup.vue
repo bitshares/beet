@@ -20,7 +20,6 @@
     let visualizedAccount = ref('');
 
     watchEffect(async () => {
-
         if (!props.request) {
             return;
         }
@@ -150,8 +149,13 @@
     <div
         v-if="!!visualizedParams"
         class="text-left custom-content"
-        v-html="visualizedParams"
-    />
+    >
+        <pre class="text-left custom-content">
+        <code>
+          {{ visualizedParams }}
+        </code>
+      </pre>
+    </div>
     <pre
         v-else-if="!!props.request.params"
         class="text-left custom-content"

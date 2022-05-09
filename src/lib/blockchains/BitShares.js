@@ -1,4 +1,5 @@
 import BlockchainAPI from "./BlockchainAPI";
+import store from "../../store";
 import {Apis} from "bitsharesjs-ws";
 import {
     PrivateKey,
@@ -7,11 +8,213 @@ import {
     Signature,
     FetchChain
 } from "bitsharesjs";
+import * as Socket from "simple-websocket";
+
 import RendererLogger from "../RendererLogger";
 import {formatAsset, humanReadableFloat} from "../assetUtils";
 const logger = new RendererLogger();
 
 export default class BitShares extends BlockchainAPI {
+
+    /**
+     * Test a wss url for successful connection.
+     * @param {String} url
+     * @returns {Object}
+     */
+    _testConnection(url) {
+      return new Promise(async (resolve, reject) => {
+        let before = new Date();
+        let beforeTS = before.getTime();
+        let connected;
+
+        let socket = new Socket(url);
+        socket.on('connect', () => {
+          connected = true;
+          socket.destroy();
+        });
+
+        socket.on('error', (error) => {
+          socket.destroy();
+        });
+
+        socket.on('close', () => {
+          if (connected) {
+            let now = new Date();
+            let nowTS = now.getTime();
+            return resolve({ url: url, lag: nowTS - beforeTS });
+          } else {
+            return resolve(null);
+          }
+        });
+      });
+    }
+
+  /**
+   * Test the wss nodes, return latencies and fastest url.
+   * @returns {Promise}
+   */
+    async _testNodes() {
+      return new Promise(async (resolve, reject) => {
+
+          let urls = this.getNodes().map(node => node.url);
+
+          let filteredURLS = urls.filter(url => {
+            if (!this._tempBanned || !this._tempBanned.includes(url)) {
+              return true;
+            }
+          });
+
+          return Promise.all(filteredURLS.map(url => this._testConnection(url)))
+          .then((validNodes) => {
+            let filteredNodes = validNodes.filter(x => x);
+            if (filteredNodes.length) {
+              let sortedNodes = filteredNodes.sort((a, b) => a.lag - b.lag);
+              console.log(`Fastest node: ${sortedNodes[0].url}`);
+
+              let now = new Date();
+              return resolve({
+                node: sortedNodes[0].url,
+                latencies: sortedNodes,
+                timestamp: now.getTime()
+              });
+            } else {
+              console.error("No valid BTS WSS connections established; Please check your internet connection.")
+              return reject();
+            }
+          })
+          .catch(error => {
+            console.log(error);
+          })
+
+
+      });
+
+    }
+
+    /**
+     * Fetch a working node to connect to, using bitsharesws-js manager class
+     * Unused code - manager class failed to disconnect fast enough.
+     * @returns {Promise}
+     */
+     /*
+    _fetchValidNode() {
+        return new Promise((resolve, reject) => {
+            let urls = this.getNodes().map(node => node.url);
+
+            let filteredURLS = urls.filter(url => {
+              if (!this._tempBanned || !this._tempBanned.includes(url)) {
+                return true;
+              }
+            });
+
+            let connectionManager = new Manager({
+                url: filteredURLS[0],
+                urls: filteredURLS,
+                closeCb: res => {
+                  console.log(res);
+                },
+                optionalApis: {enableOrders: true},
+                urlChangeCallback: url => {
+                    console.log("urlChangeCallback:", url);
+                }
+            })
+
+            connectionManager
+            .checkConnections()
+            .then(res => {
+                let urls = Object.keys(res);
+                let ascLagNodes = urls.map(url => {
+                                    return { url: url, lag: res[url] };
+                                  }).sort((a, b) => a.lag - b.lag);
+                //console.log("best node: ", ascLagNodes[0]);
+                let now = new Date();
+                resolve({
+                  node: ascLagNodes[0].url,
+                  latencies: ascLagNodes,
+                  timestamp: now.getTime()
+                })
+            })
+            .catch(err => {
+                console.log("doLatencyUpdate error", err);
+                reject();
+            })
+        });
+    }
+    */
+
+    /*
+     * Check if the connection needs reestablished (placeholder replacement)
+     * @returns {Boolean}
+     */
+    _needsReconnecting() {
+
+        /*
+        console.log({
+          isConnected: this._isConnected ?? null,
+          isConnectedToNode: this._isConnectedToNode ?? null,
+          nodeLatencies: this._nodeLatencies ?? null
+        });
+        */
+
+        if (
+          !this._isConnected ||
+          !this._isConnectedToNode ||
+          !this._nodeLatencies
+        ) {
+          return true;
+        }
+
+        if (this._isTestnet()) {
+          let _isConnectedToTestnet = Apis.instance().url.indexOf("testnet") !== -1;
+          return _isConnectedToTestnet !== this._isTestnet();
+        }
+
+        if (this._nodeCheckTime) {
+          let now = new Date();
+          let nowTS = now.getTime();
+          let diff = Math.abs(Math.round((nowTS - this._nodeCheckTime) / 1000));
+          if (diff < 360) {
+            return this._nodeLatencies[0].url !== this._isConnectedToNode;
+          }
+        }
+
+        this._testNodes().then((res) => {
+          // Verify current node is fastest valid node
+          this._nodeCheckTime = res.timestamp;
+          return this._isConnectedToNode === res.node;
+        })
+        .catch(error => {
+          console.log(error);
+        })
+    }
+
+    /*
+     * Establish a connection
+     * @param {String} nodeToConnect
+     * @param {Promise} resolve
+     * @param {Promise} reject
+     * @returns {String}
+     */
+    _establishConnection(nodeToConnect, resolve, reject) {
+        if (!nodeToConnect) {
+          this._connectionFailed(reject, '', 'No node url')
+        }
+
+        Apis.instance(
+            nodeToConnect,
+            true,
+            4000,
+            {enableCrypto: false, enableOrders: false}
+        ).init_promise
+        .then((res) => {
+          console.log("established connection:", res[0].network);
+          this._connectionEstablished(resolve, nodeToConnect);
+        })
+        .catch(error => {
+          console.log(error);
+          this._connectionFailed(reject, nodeToConnect, error)
+        });
+    }
 
     /*
      * Connect to the Bitshares blockchain. (placeholder replacement)
@@ -20,49 +223,69 @@ export default class BitShares extends BlockchainAPI {
      */
     _connect(nodeToConnect = null) {
         return new Promise((resolve, reject) => {
-            if (nodeToConnect == null) {
-                nodeToConnect = this.getNodes()[0].url;
-            }
-            if (this._isConnected) {
-                Apis.close().then(() => {
-                    this._isConnected = false;
-                    Apis.instance(
-                        nodeToConnect,
-                        true,
-                        10000,
-                        {enableCrypto: false, enableOrders: false},
-                        // no use in firing reject because it might happen at any time in the future after connecting!
-                        this._connectionFailed.bind(this, null, nodeToConnect, "Connection closed")
-                    ).init_promise.then(() => {
-                        this._connectionEstablished(resolve, nodeToConnect);
-                    }).catch(this._connectionFailed.bind(this, reject, nodeToConnect));
-                });
-            } else {
-                Apis.instance(
-                    nodeToConnect,
-                    true,
-                    10000,
-                    {enableCrypto: false, enableOrders: false},
-                    // no use in firing reject because it might happen at any time in the future after connecting!
-                    this._connectionFailed.bind(this, null, nodeToConnect, "Connection closed")
-                ).init_promise.then(() => {
-                    this._connectionEstablished(resolve, nodeToConnect);
-                }).catch(this._connectionFailed.bind(this, reject, nodeToConnect));
-            }
-        });
-    }
 
-    /*
-     * Check if the connection needs reestablished (placeholder replacement)
-     * @returns {Boolean}
-     */
-    _needsReconnecting() {
-        if (this._isConnected) {
-            let _isConnectedToTestnet = Apis.instance().url.indexOf("testnet") !== -1;
-            return _isConnectedToTestnet !== this._isTestnet();
-        } else {
-            return false;
-        }
+            if (nodeToConnect) {
+              console.log("Connecting via nodeToConnect");
+              return this._establishConnection(nodeToConnect, resolve, reject);
+            }
+
+            if (this._isConnected && this._isConnectedToNode && !nodeToConnect) {
+                console.log("THIS SHOULDN'T RUN!")
+                return this._connectionEstablished(resolve, this._isConnectedToNode);
+            }
+
+            /*
+             else if () {
+                Apis.close().then(() => {
+                    if (
+                      !nodeToConnect
+                      && !this._node
+                    ) {
+                        let retrievedNode = store.getters['SettingsStore/getNode'];
+                        if (retrievedNode.BTS && !this._tempBanned.includes(retrievedNode.BTS)) {
+                          nodeToConnect = retrievedNode.BTS;
+                        }
+                    }
+
+                    console.log(`Closed previous connection. Opening new connection to ${nodeToConnect}`)
+                    this._isConnected = false;
+                    return this._establishConnection(nodeToConnect, resolve, reject);
+                });
+            }*/
+
+            if (!nodeToConnect && !this._nodeLatencies) {
+                // initializing the blockchain
+                this._testNodes().then((res) => {
+                  nodeToConnect = res.node;
+                  this._node = res.node;
+                  this._nodeLatencies = res.latencies;
+                  this._nodeCheckTime = res.timestamp;
+                })
+                .then(() => {
+                  console.log(`Establishing connection to ${nodeToConnect}`);
+                  return this._establishConnection(nodeToConnect, resolve, reject);
+                })
+                .catch(error => {
+                  console.log(error);
+                })
+            } else if (!nodeToConnect && this._nodeLatencies) {
+              // blockchain has previously been initialized
+              let filteredNodes = this._nodeLatencies
+                                  .filter(item => {
+                                    if (!this._tempBanned.includes(item.url)) {
+                                      return true;
+                                    }
+                                  });
+              this._nodeLatencies = filteredNodes;
+              if (!filteredNodes.length) {
+                return this._connectionFailed(reject, '', 'No working nodes');
+              }
+
+              this._node = filteredNodes[0].url;
+              return this._establishConnection(filteredNodes[0].url, resolve, reject);
+            }
+
+        });
     }
 
     /*
@@ -98,7 +321,9 @@ export default class BitShares extends BlockchainAPI {
     async getAccount(accountName) {
         return new Promise(async (resolve, reject) => {
               this.ensureConnection().then(() => {
-                Apis.instance().db_api().exec("get_full_accounts", [[accountName], false])
+                Apis.instance()
+                    .db_api()
+                    .exec("get_full_accounts", [[accountName], false])
                     .then(response => {
                         let parsedAccount = response[0][1].account;
                         parsedAccount.active.public_keys = parsedAccount.active.key_auths;
@@ -160,35 +385,36 @@ export default class BitShares extends BlockchainAPI {
      * @returns {Object}
      */
     getAsset(assetSymbolOrId) {
-        if (this._isTestnet()) {
-            if (assetSymbolOrId == "1.3.0") {
-                return {
-                    asset_id: "1.3.0",
-                    symbol: "TEST",
-                    precision: 5
-                };
-            } else {
-                // TODO: Provide testnet bitshares lookup
-                return null;
-            }
-        } else {
-            return new Promise((resolve, reject) => {
-                this.ensureConnection().then(() => {
-                    Apis.instance().db_api().exec("lookup_asset_symbols", [[assetSymbolOrId]]).then((asset_objects) => {
-                        if (!asset_objects.length || !asset_objects[0]) {
-                          return resolve(null);
-                        }
+        return new Promise((resolve, reject) => {
 
-                        let retrievedAsset = asset_objects[0];
-                        return resolve({
-                            asset_id: retrievedAsset.id,
-                            symbol: retrievedAsset.symbol,
-                            precision: retrievedAsset.precision
-                        });
-                    }).catch(reject);
-                }).catch(reject);
-            });
-        }
+          if (this._isTestnet()) {
+              if (assetSymbolOrId == "1.3.0") {
+                  return resolve({
+                      asset_id: "1.3.0",
+                      symbol: "TEST",
+                      precision: 5
+                  });
+              } else {
+                  // TODO: Provide testnet bitshares lookup
+                  return reject(null);
+              }
+          }
+
+          this.ensureConnection().then(() => {
+              Apis.instance().db_api().exec("lookup_asset_symbols", [[assetSymbolOrId]]).then((asset_objects) => {
+                  if (!asset_objects.length || !asset_objects[0]) {
+                    return resolve(null);
+                  }
+
+                  let retrievedAsset = asset_objects[0];
+                  return resolve({
+                      asset_id: retrievedAsset.id,
+                      symbol: retrievedAsset.symbol,
+                      precision: retrievedAsset.precision
+                  });
+              }).catch(reject);
+          }).catch(reject);
+        });
     }
 
     /*
@@ -577,6 +803,14 @@ export default class BitShares extends BlockchainAPI {
     }
 
     /*
+     * Returns the remaining nodes sorted by asc latency
+     * @returns {Array}
+     */
+    getLatencies() {
+      return this._nodeLatencies ?? [];
+    }
+
+    /*
      * Returns a visualization for the input data.
      * TODO: Requires refactor
      * @param {String||Class||Object} thing
@@ -711,10 +945,7 @@ export default class BitShares extends BlockchainAPI {
 
         let header = operations.length == 1 ? "" : "Transaction\n";
 
-
-        return `<pre class="text-left custom-content">
-<code>${header}${operations.join('\n')}
-</code></pre>`;
+        return `${header}${operations.join('\n')}`;
     }
 
 }

@@ -96,7 +96,9 @@ const actions = {
 }
 
 
-const getters = {};
+const getters = {
+  getNode: (state) => state.settings.selected_node
+};
 
 const initialState = {
     settings: {

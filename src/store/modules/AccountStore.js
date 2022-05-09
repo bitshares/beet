@@ -99,6 +99,7 @@ const actions = {
 
 const getters = {
     getAccount: state => state.accountlist[state.selectedIndex],
+    getChain: state => state.accountlist[state.selectedIndex].chain,
     getAccountList: state => state.accountlist,
     getSafeAccountList: state => state.accountlist.map(account => {
       return {

@@ -17,13 +17,12 @@ let bts,bts_test,tusc,steem,wls,eos,tlos,btc,btc_test,bnb,bnb_test;
 
 export default function getBlockchainAPI(chain = null, node = null) {
     if (chain == null) {
-        // ask store
-        chain = store.state.AccountStore.accountlist[store.state.AccountStore.selectedIndex].chain
+        chain = store.getters['AccountStore/getChain'];
     }
 
-    let blockchain;
+    let config;
     try {
-      blockchain = blockchains[chain];
+      config = blockchains[chain];
     } catch (error) {
       console.log(error);
       return;
@@ -33,7 +32,7 @@ export default function getBlockchainAPI(chain = null, node = null) {
     if (chain == "BTS") {
         if (!bts) {
             try {
-              bts = new BitShares(blockchain, node);
+              bts = new BitShares(config, node);
             } catch (error) {
               console.log(error);
               return;
@@ -43,7 +42,7 @@ export default function getBlockchainAPI(chain = null, node = null) {
     } else if (chain == "BTS_TEST") {
         if (!bts_test) {
             try {
-              bts_test = new BitShares(blockchain, node);
+              bts_test = new BitShares(config, node);
             } catch (error) {
               console.log(error);
               return;
@@ -53,7 +52,7 @@ export default function getBlockchainAPI(chain = null, node = null) {
     } else if (chain == "TUSC") {
         if (!tusc) {
             try {
-              tusc = new TUSC(blockchain, node);
+              tusc = new TUSC(config, node);
             } catch (error) {
               console.log(error);
               return;
@@ -63,7 +62,7 @@ export default function getBlockchainAPI(chain = null, node = null) {
     } else if (chain == "BTC") {
         if (!btc) {
             try {
-              btc = new Bitcoin(blockchain, node);
+              btc = new Bitcoin(config, node);
             } catch (error) {
               console.log(error);
               return;
@@ -73,7 +72,7 @@ export default function getBlockchainAPI(chain = null, node = null) {
     } else if (chain == "BTC_TEST") {
         if (!btc_test) {
             try {
-              btc_test = new Bitcoin(blockchain, node);
+              btc_test = new Bitcoin(config, node);
             } catch (error) {
               console.log(error);
               return;
@@ -83,7 +82,7 @@ export default function getBlockchainAPI(chain = null, node = null) {
     }/* else if (chain == "STEEM" || chain == "STM") {
         if (!steem) {
             try {
-              steem = new Steem(blockchain, node);
+              steem = new Steem(config, node);
             } catch (error) {
               console.log(error);
               return;
@@ -93,7 +92,7 @@ export default function getBlockchainAPI(chain = null, node = null) {
     } else if (chain == "WLS") {
         if (!wls) {
             try {
-              wls = new WhaleShares(blockchain, node);
+              wls = new WhaleShares(config, node);
             } catch (error) {
               console.log(error);
               return;
@@ -102,22 +101,22 @@ export default function getBlockchainAPI(chain = null, node = null) {
         return wls;
     } else if (chain == "EOS") {
         if (!apiCache.EOS) {
-            apiCache.EOS = new EOSmainnet(blockchain, node);
+            apiCache.EOS = new EOSmainnet(config, node);
         }
         return apiCache.EOS;
     } else if (chain == "TLOS") {
         if (!apiCache.TLOS) {
-            apiCache.TLOS = new TLOS(blockchain, node);
+            apiCache.TLOS = new TLOS(config, node);
         }
         return apiCache.TLOS;
     } else if (chain == "BNB") {
         if (!apiCache.BNB) {
-            apiCache.BNB = new Binance(blockchain, node);
+            apiCache.BNB = new Binance(config, node);
         }
         return apiCache.BNB;
     } else if (chain == "BNB_TEST") {
         if (!apiCache.BNB_TEST) {
-            apiCache.BNB_TEST = new Binance(blockchain, node);
+            apiCache.BNB_TEST = new Binance(config, node);
         }
         return apiCache.BNB_TEST;
     }*/

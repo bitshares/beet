@@ -43,11 +43,12 @@
 
     /*
      * Creating the select items
+     * @returns {Array}
      */
     let accountOptions = computed(() => {
         let accountList;
         try {
-            accountList = store.getters['AccountStore/getAccountList'];
+            accountList = store.getters['AccountStore/getSafeAccountList'];
         } catch (error) {
             console.log(error);
             return [];
@@ -65,25 +66,24 @@
         return options;
     });
 
+    /*
+     * Checking if the connection failed
+     * @returns {Boolean}
+     */
+    /*
     let connectionFailed = computed(() => {
         return !isConnecting.value || !isConnecting.value && !isConnected.value || !isConnected.value;
     });
 
-    let selectedNode = computed({
-        get: () => {
-            return store.state.SettingsStore.settings.selected_node[
-                selectedAccount.value.chain
-            ];
-        },
-        set: (newVal) => {
-            if (!selectedNode.value || selectedNode.value != newVal) {
-                blockchain.value
-                    .ensureConnection(newVal)
-                    .finally(() => {
-                        isConnected.value = blockchain.value.isConnected();
-                    });
-            }
-        }
+    let selectedNode = computed(() => {
+      let node;
+      try {
+          node = store.getters['SettingsStore/getNode'](selectedAccount.value.chain);
+      } catch (error) {
+          console.log(error);
+          node = "";
+      }
+      return node;
     });
 
     watch(blockchain, async (newVal, oldVal) => {
@@ -92,6 +92,7 @@
             isConnected.value = blockchain.value.isConnected();
         }
     }, {immediate: true});
+    */
 
     /*
      * User selected from the account drop down menu
@@ -111,33 +112,67 @@
      */
     watch(selectedAccount, async (newVal, oldVal) => {
         if (newVal && newVal !== oldVal) {
-            blockchain.value = getBlockchainAPI(newVal.chain);
+            //blockchain.value = getBlockchainAPI(newVal.chain);
             selectedChain.value = newVal.chain;
             accountName.value = newVal.accountName;
             accountID.value = newVal.accountID;
         }
     }, {immediate: true});
 
+    /*
     watch(selectedChain, async (newVal, oldVal) => {
         if (newVal && newVal !== oldVal) {
-            isConnected.value = false;
-            nodes.value = blockchain.value.getNodes();
-            isConnected.value = blockchain.value.isConnected();
-            if (!selectedNode.value || !selectedNode.value) {
-                selectedNode.value = nodes.value[0].url;
-            }
+            //isConnected.value = false;
+            //nodes.value = blockchain.value.getNodes();
+            //isConnected.value = blockchain.value.isConnected();
+            store.dispatch("SettingsStore/setNode", {
+                chain: selectedChain.value,
+                node: nodes.value[0].url
+            });
+                //selectedNode.value = ;
         }
     }, {immediate: true});
+    */
 
+    /*
     async function reconnect() {
         let _selectedNode = selectedNode.value;
         let idx = nodes.value.findIndex(item => item.url == _selectedNode);
         if (nodes.value.length == idx+1) {
             idx = -1;
         }
-
         selectedNode.value = nodes.value[idx+1].url;
+
+        if (!selectedNode.value || selectedNode.value != newVal) {
+            blockchain.value
+                .ensureConnection(newVal)
+                .finally(() => {
+                    isConnected.value = blockchain.value.isConnected();
+                });
+        }
     }
+
+    <ui-button
+        v-if="isConnecting"
+        disabled
+    >
+        Connecting ...
+    </ui-button>
+    <ui-button
+        v-if="isConnected"
+        disabled
+    >
+        Connected!
+    </ui-button>
+    <ui-button
+        v-else-if="connectionFailed"
+        outlined
+        @click="reconnect()"
+    >
+        Reconnect
+    </ui-button>
+
+    */
 
     // Is EventBus here necessary? Could this be a computed field and listen
     // to this.blockchain.isConnected?
@@ -164,26 +199,6 @@
         v-if="chosenAccount > -1 && selectedAccount"
         class="acc-info"
     >
-        <ui-button
-            v-if="isConnecting"
-            disabled
-        >
-            Connecting
-        </ui-button>
-        <ui-button
-            v-if="isConnected"
-            disabled
-        >
-            Connected!
-        </ui-button>
-        <ui-button
-            v-else-if="connectionFailed"
-            outlined
-            @click="reconnect()"
-        >
-            Reconnect
-        </ui-button>
-        <br>
         <AccountDetails :account="selectedAccount" />
         <br>
         <Balances :account="selectedAccount" />

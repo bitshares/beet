@@ -59,6 +59,7 @@
     "mitt": "^3.0.0",
     "otpauth": "^7.1.2",
     "query-string": "^7.1.1",
+    "simple-websocket": "^9.1.0",
     "socket.io": "^4.5.0",
     "typeface-rajdhani": "1.1.13",
     "typeface-roboto": "1.1.13",
