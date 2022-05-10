@@ -106,7 +106,7 @@
                 >
                     <ui-item-text-content>
                         <ui-item-text1>
-                          {{ assetText }}
+                            {{ assetText }}
                         </ui-item-text1>
                     </ui-item-text-content>
                     <ui-card-actions v-if="balances.length > 1">
@@ -135,13 +135,13 @@
                 <ui-item v-else>
                     <ui-item-text-content>
                         <ui-item-text1>
-                          {{ t('common.balances_error') }}
+                            {{ t('common.balances_error') }}
                         </ui-item-text1>
                     </ui-item-text-content>
                 </ui-item>
                 <ui-button
-                    class="step_btn"
                     v-if="fetched || !balances"
+                    class="step_btn"
                     @click="loadBalances()"
                 >
                     Refresh

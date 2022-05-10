@@ -529,7 +529,10 @@
                 </ui-button>
             </div>
         </div>
-        <Actionbar v-if="userHasWallet" />
+        <Actionbar
+            v-if="userHasWallet"
+            tab=1
+        />
         <p
             v-if="userHasWallet"
             class="mt-2 mb-2 small"

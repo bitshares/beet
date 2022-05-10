@@ -1,5 +1,6 @@
 <script setup>
-    import { onMounted, inject, ref, watch } from "vue";
+    import { onMounted, inject, ref, watchEffect, computed } from "vue";
+    import { useRoute } from 'vue-router'
     //import { useRouter, useRoute } from 'vue-router'
     import router from '../router/index.js';
     import store from '../store/index';
@@ -8,6 +9,16 @@
 
     import RendererLogger from "../lib/RendererLogger";
     const logger = new RendererLogger();
+
+    const props = defineProps({
+        tab: {
+            type: Number,
+            required: false,
+            default() {
+                return 0
+            }
+        }
+    });
 
     function logout() {
         console.log('logout')
@@ -21,53 +32,69 @@
         }
     })
 
-    onMounted(() => {
-        logger.debug("Action Bar mounted");
-    });
-
-    let active = ref(null);
+    let active = ref(props.tab.value ?? null);
 
     let items = ref([
         {
-            text: 'Home'
+            text: 'Home',
+            url: "/dashboard"
         },
         {
-            text: 'New'
+            text: 'New',
+            url: "/add-account"
         },
         {
-            text: 'Settings'
+            text: 'Settings',
+            url: "/settings"
         },
         {
-            text: 'Logout'
+            text: 'Logout',
+            url: "/"
         }
     ]);
 
-    watch(active, async (newVal, oldVal) => {
-        if (newVal !== oldVal) {
-            if (!newVal) {
-                return;
-            }
+    let currentURL = computed(() => {
+        const location = useRoute();
+        return location.path;
+    });
 
-            if (newVal === 0) {
-                router.replace("/dashboard");
-            } else  if (newVal === 1) {
-                router.replace("/add-account");
-            } else  if (newVal === 2) {
-                router.replace("/settings");
-            } else  if (newVal === 3) {
-                logout()
-            }
+    watchEffect(() => {
+        if (active.value === 3) {
+            logout();
         }
-    }, {immediate: true});
 
+        let targetURL = items.value[active.value].url;
+
+        if (currentURL.value !== targetURL) {
+            router.replace(targetURL);
+        }
+    });
+/*
+<ui-navigation-bar content-selector=".actionbarContainer" v-model="active">
+  <ui-tabs
+      v-model="active"
+      type="text"
+      :items="items"
+  />
+</ui-navigation-bar>
+*/
 </script>
 
 <template>
-    <div class="container">
-        <ui-tabs
+    <div
+        key="actionbar"
+        class="actionbarContainer"
+    >
+        <ui-tab-bar
             v-model="active"
-            :items="items"
-            stacked
-        />
+            content-selector=".actionbarContainer"
+        >
+            <ui-tab
+                v-for="(tab, index) in items"
+                :key="index"
+            >
+                {{ tab.text }}
+            </ui-tab>
+        </ui-tab-bar>
     </div>
 </template>

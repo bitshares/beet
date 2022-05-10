@@ -200,6 +200,8 @@ export default class BitShares extends BlockchainAPI {
           this._connectionFailed(reject, '', 'No node url')
         }
 
+        console.log(`Attempting connection to: ${nodeToConnect}`)
+
         Apis.instance(
             nodeToConnect,
             true,
@@ -230,7 +232,6 @@ export default class BitShares extends BlockchainAPI {
             }
 
             if (this._isConnected && this._isConnectedToNode && !nodeToConnect) {
-                console.log("THIS SHOULDN'T RUN!")
                 return this._connectionEstablished(resolve, this._isConnectedToNode);
             }
 
@@ -825,7 +826,6 @@ export default class BitShares extends BlockchainAPI {
         let operations = [];
         let tr = this._parseTransactionBuilder(thing);
 
-        //console.log("Visualizing " + tr);
         for (let i = 0; i < tr.operations.length; i++) {
             let operation = tr.operations[i];
             if (operation[0] == 0) {

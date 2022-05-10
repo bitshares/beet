@@ -178,7 +178,12 @@ export async function requestSignature(request) {
   return new Promise(async (resolve, reject) => {
     store.dispatch("WalletStore/notifyUser", {notify: "request", message: "request"});
 
-    ipcRenderer.send('createPopup', {request: request});
+    ipcRenderer.send(
+      'createPopup',
+      {
+        request: request
+      }
+    );
 
     ipcRenderer.once(`popupApproved_${request.id}`, async (event, result) => {
 
@@ -246,7 +251,43 @@ export async function injectedCall(request) {
   return new Promise(async (resolve, reject) => {
     store.dispatch("WalletStore/notifyUser", {notify: "request", message: "request"});
 
-    ipcRenderer.send('createPopup', {request: request});
+    if (!request || !request.payload) {
+      return _promptFail("injectedCall", 'injectedCall', request, reject);
+    }
+
+    let blockchain;
+    try {
+      blockchain = getBlockchainAPI(request.payload.chain);
+    } catch (error) {
+      console.log(error);
+      return _promptFail("injectedCall", request.id, request, reject);
+    }
+
+    let visualizedParams;
+    try {
+        visualizedParams = await blockchain.visualize(request.payload.params);
+    } catch (error) {
+        console.log(error);
+        return _promptFail("injectedCall", request.id, request, reject);
+    }
+
+    let visualizedAccount;
+    try {
+        visualizedAccount = await blockchain.visualize(request.payload.account_id);
+    } catch (error) {
+        console.log(error);
+        return _promptFail("injectedCall", request.id, request, reject);
+    }
+
+
+    ipcRenderer.send(
+      'createPopup',
+      {
+        request: request,
+        visualizedAccount: visualizedAccount,
+        visualizedParams: visualizedParams
+      }
+    );
 
     ipcRenderer.once(`popupApproved_${request.id}`, async (event, result) => {
         store.dispatch("WalletStore/notifyUser", {notify: "request", message: "Transaction successfully broadcast."});

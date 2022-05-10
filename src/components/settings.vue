@@ -146,6 +146,6 @@
                 </ui-grid>
             </div>
         </div>
-        <Actionbar />
+        <Actionbar tab=2 />
     </div>
 </template>

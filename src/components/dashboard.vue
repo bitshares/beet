@@ -67,34 +67,6 @@
     });
 
     /*
-     * Checking if the connection failed
-     * @returns {Boolean}
-     */
-    /*
-    let connectionFailed = computed(() => {
-        return !isConnecting.value || !isConnecting.value && !isConnected.value || !isConnected.value;
-    });
-
-    let selectedNode = computed(() => {
-      let node;
-      try {
-          node = store.getters['SettingsStore/getNode'](selectedAccount.value.chain);
-      } catch (error) {
-          console.log(error);
-          node = "";
-      }
-      return node;
-    });
-
-    watch(blockchain, async (newVal, oldVal) => {
-        if (newVal && newVal !== oldVal) {
-            nodes.value = blockchain.value.getNodes();
-            isConnected.value = blockchain.value.isConnected();
-        }
-    }, {immediate: true});
-    */
-
-    /*
      * User selected from the account drop down menu
      */
     watch(chosenAccount, async (newVal, oldVal) => {
@@ -118,61 +90,6 @@
             accountID.value = newVal.accountID;
         }
     }, {immediate: true});
-
-    /*
-    watch(selectedChain, async (newVal, oldVal) => {
-        if (newVal && newVal !== oldVal) {
-            //isConnected.value = false;
-            //nodes.value = blockchain.value.getNodes();
-            //isConnected.value = blockchain.value.isConnected();
-            store.dispatch("SettingsStore/setNode", {
-                chain: selectedChain.value,
-                node: nodes.value[0].url
-            });
-                //selectedNode.value = ;
-        }
-    }, {immediate: true});
-    */
-
-    /*
-    async function reconnect() {
-        let _selectedNode = selectedNode.value;
-        let idx = nodes.value.findIndex(item => item.url == _selectedNode);
-        if (nodes.value.length == idx+1) {
-            idx = -1;
-        }
-        selectedNode.value = nodes.value[idx+1].url;
-
-        if (!selectedNode.value || selectedNode.value != newVal) {
-            blockchain.value
-                .ensureConnection(newVal)
-                .finally(() => {
-                    isConnected.value = blockchain.value.isConnected();
-                });
-        }
-    }
-
-    <ui-button
-        v-if="isConnecting"
-        disabled
-    >
-        Connecting ...
-    </ui-button>
-    <ui-button
-        v-if="isConnected"
-        disabled
-    >
-        Connected!
-    </ui-button>
-    <ui-button
-        v-else-if="connectionFailed"
-        outlined
-        @click="reconnect()"
-    >
-        Reconnect
-    </ui-button>
-
-    */
 
     // Is EventBus here necessary? Could this be a computed field and listen
     // to this.blockchain.isConnected?
@@ -204,5 +121,5 @@
         <Balances :account="selectedAccount" />
     </div>
 
-    <Actionbar />
+    <Actionbar tab=0 />
 </template>

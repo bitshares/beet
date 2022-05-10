@@ -12,7 +12,7 @@
     import TransactionRequestPopup from "./popups/transactionrequestpopup";
     import TransferRequestPopup from "./popups/transferrequestpopup";
 
-    let type = computed(() => {
+    function handleProp(target) {
         if (!global || !global.location || !global.location.search) {
             return '';
         }
@@ -24,60 +24,33 @@
             console.log(error);
         }
 
-        return qs && qs.type
-            ? qs.type
+        return qs && qs[target]
+            ? qs[target]
             : '';
+    }
+
+    let type = computed(() => {
+        return handleProp('type');
+    });
+
+    let visualizedAccount = computed(() => {
+        return handleProp('visualizedAccount');
+    });
+
+    let visualizedParams = computed(() => {
+        return handleProp('visualizedParams');
     });
 
     let request = computed(() => {
-        if (!global || !global.location || !global.location.search) {
-            return [];
-        }
-
-        let qs;
-        try {
-            qs = queryString.parse(global.location.search);
-        } catch (error) {
-            console.log(error);
-        }
-
-        return qs && qs.request
-            ? JSON.parse(qs.request)
-            : {};
+        return JSON.parse(handleProp('request'));
     });
 
     let accounts = computed(() => {
-        if (!global || !global.location || !global.location.search) {
-            return [];
-        }
-
-        let qs;
-        try {
-            qs = queryString.parse(global.location.search);
-        } catch (error) {
-            console.log(error);
-        }
-
-        return qs && qs.accounts
-            ? JSON.parse(qs.accounts)
-            : [];
+        return JSON.parse(handleProp('accounts'));
     });
 
     let existingLinks = computed(() => {
-        if (!global || !global.location || !global.location.search) {
-            return [];
-        }
-
-        let qs;
-        try {
-            qs = queryString.parse(global.location.search);
-        } catch (error) {
-            console.log(error);
-        }
-
-        return qs && qs.existingLinks
-            ? JSON.parse(qs.existingLinks)
-            : [];
+        return JSON.parse(handleProp('existingLinks'));
     });
 </script>
 
@@ -114,6 +87,8 @@
         <TransactionRequestPopup
             v-else-if="type === Actions.REQUEST_SIGNATURE || type === Actions.INJECTED_CALL"
             :request="request"
+            :visualized-params="visualizedParams"
+            :visualized-account="visualizedAccount"
         />
     </div>
     <div v-else>

@@ -5,6 +5,7 @@ import mitt from 'mitt';
 
 import BalmUI from 'balm-ui'; // Official Google Material Components
 import BalmUIPlus from 'balm-ui/dist/balm-ui-plus'; // BalmJS Team Material Components
+import BalmUINext from 'balm-ui/dist/balm-ui-next';
 import 'balm-ui-css';
 
 import router from './router/index.js';
@@ -53,6 +54,12 @@ window.t = (key, params) => {
 app.use(VueRouter);
 app.use(BalmUI);
 app.use(BalmUIPlus);
+app.use(BalmUINext, {
+  // Optional. Overwrite `<ui-navigation-bar>` props with default value.
+  UiNavigationBar: {
+    // some props
+  }
+});
 
 app.use(router);
 app.use(store);

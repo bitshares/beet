@@ -1,9 +1,8 @@
 <script setup>
     import { ipcRenderer } from 'electron';
-    import { computed, ref, watchEffect } from "vue";
+    import { computed } from "vue";
     import { useI18n } from 'vue-i18n';
     const { t } = useI18n({ useScope: 'global' });
-    import getBlockchainAPI from "../../lib/blockchains/blockchainFactory";
     import {formatChain} from "../../lib/formatter";
 
     const props = defineProps({
@@ -13,45 +12,35 @@
             default() {
                 return {}
             }
+        },
+        visualizedAccount: {
+            type: String,
+            required: true,
+            default() {
+                return ''
+            }
+        },
+        visualizedParams: {
+            type: String, // md5
+            required: true,
+            default() {
+                return ''
+            }
         }
     });
 
-    let visualizedParams = ref('');
-    let visualizedAccount = ref('');
-
-    watchEffect(async () => {
-        if (!props.request) {
-            return;
+    let visualizedAccount = computed(() => {
+        if (!props.visualizedAccount) {
+            return '';
         }
-
-        let blockchain = getBlockchainAPI(props.request.payload.chain);
-        let visualisation;
-        try {
-            visualisation = await blockchain.visualize(props.request.payload.params);
-        } catch (error) {
-            console.log(error);
-            return;
-        }
-
-        visualizedParams.value = visualisation;
+        return atob(props.visualizedAccount);
     });
 
-    watchEffect(async () => {
-        if (!props.request) {
-            return;
+    let visualizedParams = computed(() => {
+        if (!props.visualizedParams) {
+            return '';
         }
-
-        let blockchain = getBlockchainAPI(props.request.payload.chain);
-
-        let visualisation;
-        try {
-            visualisation = await blockchain.visualize(props.request.payload.account_id);
-        } catch (error) {
-            console.log(error);
-            return;
-        }
-
-        visualizedAccount.value = visualisation;
+        return atob(props.visualizedParams);
     });
 
     let tableTooltip = computed(() => {
@@ -61,10 +50,11 @@
 
         return t(
             'operations.rawsig.request',
-            { appName: props.request.payload.appName,
-              origin: props.request.payload.origin,
-              chain: formatChain(props.request.payload.chain),
-              accountName: props.request.payload.account_id
+            {
+                appName: props.request.payload.appName,
+                origin: props.request.payload.origin,
+                chain: formatChain(props.request.payload.chain),
+                accountName: props.request.payload.account_id
             }
         );
     });
@@ -111,7 +101,7 @@
         <tbody>
             <tr>
                 <td class="text-left">
-                    Origin
+                    Origin:
                 </td>
                 <td class="text-right">
                     {{ props.request.payload.origin }}
@@ -119,7 +109,7 @@
             </tr>
             <tr>
                 <td class="text-left">
-                    App
+                    App:
                 </td>
                 <td class="text-right">
                     {{ props.request.payload.appName }}
@@ -127,7 +117,7 @@
             </tr>
             <tr>
                 <td class="text-left">
-                    Account
+                    Account:
                 </td>
                 <td class="text-right">
                     {{ formatChain(props.request.payload.chain) + ":" + (visualizedAccount) }}
@@ -135,7 +125,7 @@
             </tr>
             <tr>
                 <td class="text-left">
-                    Action
+                    Action:
                 </td>
                 <td class="text-right">
                     {{ buttonText }}
@@ -143,40 +133,59 @@
             </tr>
         </tbody>
     </table>
-    <p class="mb-1 font-weight-bold small">
-        {{ t('operations.general.content') }}
-    </p>
+
     <div
         v-if="!!visualizedParams"
         class="text-left custom-content"
     >
+        <h4 class="h4 beet-typo-small">
+            {{ t('operations.general.content') }}
+        </h4>
         <pre class="text-left custom-content">
         <code>
           {{ visualizedParams }}
         </code>
       </pre>
     </div>
-    <pre
-        v-else-if="!!props.request.params"
+    <div
+        v-else
         class="text-left custom-content"
     >
-      <code>
-        {
-          {{ props.request.payload.params }}
-        }
-      </code>
-    </pre>
-    {{ t('operations.rawsig.request_cta') }}
-    <ui-button
-        raised
-        @click="_clickedAllow()"
-    >
-        {{ buttonText }}
-    </ui-button>
-    <ui-button
-        raised
-        @click="_clickedDeny()"
-    >
-        {{ t('operations.rawsig.reject_btn') }}
-    </ui-button>
+        <pre>
+        Loading transaction details from blockchain, please wait.
+      </pre>
+    </div>
+
+    <h4 class="h4 beet-typo-small">
+        {{ t('operations.rawsig.request_cta') }}
+    </h4>
+
+    <span v-if="!!visualizedParams">
+        <ui-button
+            raised
+            @click="_clickedAllow()"
+        >
+            {{ buttonText }}
+        </ui-button>
+        <ui-button
+            raised
+            @click="_clickedDeny()"
+        >
+            {{ t('operations.rawsig.reject_btn') }}
+        </ui-button>
+    </span>
+    <span v-else>
+        <ui-button
+            raised
+            disabled
+        >
+            {{ buttonText }}
+        </ui-button>
+        <ui-button
+            raised
+            @click="_clickedDeny()"
+        >
+            {{ t('operations.rawsig.reject_btn') }}
+        </ui-button>
+    </span>
 </template>

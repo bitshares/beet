@@ -29,6 +29,7 @@ import Logger from '~/lib/Logger';
 import context_menu from '~/lib/electron_context_menu';
 import {initApplicationMenu} from '~/lib/applicationMenu';
 import { getBackup } from "./lib/SecureRemote";
+import * as Actions from './lib/Actions';
 
 var timeout;
 context_menu({
@@ -61,13 +62,13 @@ const createModal = async (arg, modalEvent) => {
 
     let request = arg.request;
     let id = request.id;
-    let type = request.type;
-    let accounts = arg.accounts;
-    let existingLinks = arg.existingLinks;
-
     if (modalWindows[id] || modalRequests[id]) {
         throw 'Modal exists already!';
     }
+
+    let type = request.type;
+    let accounts = arg.accounts;
+    let existingLinks = arg.existingLinks;
 
     modalRequests[id] = {request: request, event: modalEvent};
 
@@ -76,12 +77,19 @@ const createModal = async (arg, modalEvent) => {
                     + `&type=${type}`
                     + `&request=${JSON.stringify(request)}`;
 
-    if (type === 'link') {
+    if (type === Actions.REQUEST_LINK) {
         modalRequests[id]['existingLinks'] = existingLinks;
         targetURL += `&existingLinks=${JSON.stringify(existingLinks)}`;
     }
 
-    if (type === 'link' || type === 'relink' || type === 'identityReqModal') {
+    if (type === Actions.INJECTED_CALL || type === Actions.REQUEST_SIGNATURE) {
+      modalRequests[id]['visualizedAccount'] = arg.visualizedAccount;
+      modalRequests[id]['visualizedParams'] = arg.visualizedParams;
+      targetURL += `&visualizedAccount=${btoa(arg.visualizedAccount)}`;
+      targetURL += `&visualizedParams=${btoa(arg.visualizedParams)}`;
+    }
+
+    if (Actions.REQUEST_LINK || type === Actions.REQUEST_RELINK || type === Actions.GET_ACCOUNT) {
       modalRequests[id]['accounts'] = accounts;
       targetURL += `&accounts=${JSON.stringify(accounts)}`;
     }
