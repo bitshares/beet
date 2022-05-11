@@ -146,6 +146,16 @@
                 </ui-grid>
             </div>
         </div>
-        <Actionbar tab=2 />
+        <router-link
+            :to="'/dashboard'"
+            replace
+        >
+            <ui-button
+                outlined
+                class="step_btn"
+            >
+                Exit settings menu
+            </ui-button>
+        </router-link>
     </div>
 </template>

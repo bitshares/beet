@@ -176,20 +176,48 @@ export async function getAccount(request) {
 export async function requestSignature(request) {
   // transaction request popup
   return new Promise(async (resolve, reject) => {
-    store.dispatch("WalletStore/notifyUser", {notify: "request", message: "request"});
+    store.dispatch("WalletStore/notifyUser", {notify: "request", message: `Signature request type: ${request.params[0]}`});
+
+    if (!request || !request.payload) {
+      return _promptFail("injectedCall", 'injectedCall', request, reject);
+    }
+
+    let blockchain;
+    try {
+      blockchain = getBlockchainAPI(request.payload.chain);
+    } catch (error) {
+      console.log(error);
+      return _promptFail("injectedCall", request.id, request, reject);
+    }
+
+    let visualizedParams;
+    try {
+        visualizedParams = await blockchain.visualize(request.payload.params);
+    } catch (error) {
+        console.log(error);
+        return _promptFail("injectedCall", request.id, request, reject);
+    }
+
+    let visualizedAccount;
+    try {
+        visualizedAccount = await blockchain.visualize(request.payload.account_id);
+    } catch (error) {
+        console.log(error);
+        return _promptFail("injectedCall", request.id, request, reject);
+    }
 
     ipcRenderer.send(
       'createPopup',
       {
-        request: request
+        request: request,
+        visualizedAccount: visualizedAccount,
+        visualizedParams: visualizedParams
       }
     );
 
     ipcRenderer.once(`popupApproved_${request.id}`, async (event, result) => {
-
-        let blockchain = getBlockchainAPI(request.chain);
-        let txType = request.params[0];
         let finalResult;
+        let txType = request.params[0];
         if (txType == "sign") {
             let transaction;
             try {
@@ -279,7 +307,6 @@ export async function injectedCall(request) {
         return _promptFail("injectedCall", request.id, request, reject);
     }
 
-
     ipcRenderer.send(
       'createPopup',
       {
@@ -354,8 +381,6 @@ export async function voteFor(request) {
         } catch (error) {
           return reject();
         }
-
-        let blockchain = getBlockchainAPI(request.chain);
 
         let operation;
         try {

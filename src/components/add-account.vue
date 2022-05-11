@@ -529,15 +529,5 @@
                 </ui-button>
             </div>
         </div>
-        <Actionbar
-            v-if="userHasWallet"
-            tab=1
-        />
-        <p
-            v-if="userHasWallet"
-            class="mt-2 mb-2 small"
-        >
-            &copy; 2019-2022 BitShares
-        </p>
     </div>
 </template>

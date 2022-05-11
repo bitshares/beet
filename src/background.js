@@ -262,10 +262,12 @@ const createWindow = async () => {
       mainWindow = null;
   });
 
+  /*
   mainWindow.on('show', function () {
       //minimised = false;
   });
-
+  */
+  
   ipcMain.on('downloadBackup', async (event, arg) => {
     console.log("downloadBackup")
     let toLocalPath = path.resolve(

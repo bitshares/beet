@@ -121,5 +121,5 @@
         <Balances :account="selectedAccount" />
     </div>
 
-    <Actionbar tab=0 />
+    <Actionbar />
 </template>
