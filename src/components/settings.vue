@@ -27,11 +27,14 @@
     })
 
     async function downloadBackup() {
+        let walletName = btoa(store.getters['WalletStore/getWalletName']);
+        let accounts = btoa(JSON.stringify(store.getters['AccountStore/getAccountList'].slice()));
+
         ipcRenderer.send(
             "downloadBackup",
             {
-                walletName: store.state.WalletStore.wallet.name,
-                accounts: store.state.AccountStore.accountlist.slice()
+                walletName: walletName,
+                accounts: accounts
             }
         );
     }
@@ -134,13 +137,14 @@
                     </ui-grid-cell>
                     <ui-grid-cell columns="3" />
                     <ui-grid-cell columns="6">
-                        <button
-                            class="btn btn-sm btn-info btn-block"
+                        <ui-button
+                            class="step_btn"
                             type="button"
+                            outlined
                             @click="downloadBackup"
                         >
                             {{ t('common.backup_btn') }}
-                        </button>
+                        </ui-button>
                     </ui-grid-cell>
                     <ui-grid-cell columns="3" />
                 </ui-grid>

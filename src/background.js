@@ -2,7 +2,6 @@
 // app starts. It runs through entire life of your application.
 // It doesn't have any windows which you can see on screen, but we can open
 // window from here.
-
 import path from "path";
 import url from "url";
 import fs from 'fs';
@@ -18,7 +17,6 @@ import {
   ipcMain,
   Notification
 } from 'electron';
-//import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
 import mitt from 'mitt';
 import sha256 from "crypto-js/sha256.js";
 import aes from "crypto-js/aes.js";
@@ -26,29 +24,20 @@ import ENC from 'crypto-js/enc-utf8.js';
 import * as ed from '@noble/ed25519';
 
 import Logger from '~/lib/Logger';
-import context_menu from '~/lib/electron_context_menu';
 import {initApplicationMenu} from '~/lib/applicationMenu';
 import { getBackup } from "./lib/SecureRemote";
 import * as Actions from './lib/Actions';
-
-var timeout;
-context_menu({
-  prepend: (params, browserWindow) => [{
-      label: 'Beet',
-  }]
-});
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 let modalWindows = {};
 let modalRequests = {};
+var timeout;
 
 var isDevMode = process.execPath.match(/[\\/]electron/);
 const logger = new Logger(isDevMode ? 3 : 0);
-//let first = true;
 let tray = null;
-//let minimised = false;
 
 /*
  * On modal popup this runs to create child browser window
@@ -245,47 +234,6 @@ const createWindow = async () => {
       tray.popUpContextMenu(contextMenu);
   });
 
-  // Open the DevTools.
-  /*
-  if (isDevMode) {
-    installExtension(VUEJS_DEVTOOLS).then(() => {
-        mainWindow.webContents.openDevTools();
-    });
-  }
-  */
-
-  // Emitted when the window is closed.
-  mainWindow.on('closed', () => {
-      // Dereference the window object, usually you would store windows
-      // in an array if your app supports multi windows, this is the time
-      // when you should delete the corresponding element.
-      mainWindow = null;
-  });
-
-  /*
-  mainWindow.on('show', function () {
-      //minimised = false;
-  });
-  */
-  
-  ipcMain.on('downloadBackup', async (event, arg) => {
-    console.log("downloadBackup")
-    let toLocalPath = path.resolve(
-      app.getPath("desktop"),
-      `BeetBackup-${arg.walletName}-${new Date().toISOString().slice(0,10)}.beet`
-    );
-    let userChosenPath = dialog.showSaveDialog({ defaultPath: toLocalPath });
-    if (userChosenPath) {
-        let accounts = JSON.stringify({wallet: arg.walletName, accounts: arg.accounts});
-        return getBackup(accounts)
-        .then(result => {
-          if (result) {
-              fs.writeFileSync(userChosenPath, result);
-          }
-        })
-    }
-  });
-
   /*
    * Create modal popup & wait for user response
    */
@@ -293,27 +241,8 @@ const createWindow = async () => {
       await createModal(arg, event);
   })
 
-  /*
-  ipcMain.on('close', (event, arg) => {
-      if (first) {
-          tray.displayBalloon({
-              icon: __dirname + '/img/beet-notification.png',
-              title: "Beet is minimised.",
-              content: "It will run in the background until you quit."
-          });
-          if (arg == true) {
-              first = false;
-          }
-      }
-
-      minimised = true;
-      mainWindow.hide();
-  });
-  */
-
   ipcMain.on('notify', (event, arg) => {
       logger.debug("notify");
-
       const NOTIFICATION_TITLE = 'Beet wallet notification';
       const NOTIFICATION_BODY = arg == 'request' ? "Beet has received a new request." : arg;
 
@@ -332,19 +261,6 @@ const createWindow = async () => {
       }
 
       showNotification();
-
-
-      /*
-      if (minimised) {
-        tray.displayBalloon({
-            icon: __dirname + '/img/beet-tray.png',
-            title: arg == 'request'
-                    ? "Beet has received a new request."
-                    : arg,
-            content: "Click here to view"
-        });
-      }
-      */
   });
 
   let seed, key;
@@ -442,8 +358,30 @@ const createWindow = async () => {
       } else {
         console.log("No event || event.sender")
       }
+  });
 
+  ipcMain.on('downloadBackup', async (event, arg) => {
+    let walletName = atob(arg.walletName);
+    let accounts = JSON.parse(atob(arg.accounts));
+    let toLocalPath = path.resolve(
+      app.getPath("desktop"),
+      `BeetBackup-${walletName}-${new Date().toISOString().slice(0,10)}.beet`
+    );
+    let userChosenPath = dialog.showSaveDialog({ defaultPath: toLocalPath });
+    if (userChosenPath) {
+        let accounts = JSON.stringify({wallet: walletName, accounts: accounts});
 
+        return getBackup(accounts)
+        .then(result => {
+          if (result) {
+              logger.debug(result);
+              //fs.writeFileSync(userChosenPath, result);
+          }
+        })
+        .catch(error => {
+          console.log(error);
+        })
+    }
   });
 
   ipcMain.on('log', (event, arg) => {
@@ -455,7 +393,6 @@ const createWindow = async () => {
       mainWindow.show();
       mainWindow.focus();
       mainWindow.setAlwaysOnTop(false);
-      //minimised = false;
   });
 
   tray.on('balloon-click', () => {
@@ -463,11 +400,11 @@ const createWindow = async () => {
       mainWindow.show();
       mainWindow.focus();
       mainWindow.setAlwaysOnTop(false);
-      //minimised = false;
   });
 };
 
 app.disableHardwareAcceleration();
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.

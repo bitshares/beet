@@ -282,6 +282,7 @@ const actions = {
 
 const getters = {
     getWallet: state => state.wallet,
+    getWalletName: state => state.wallet.name,
     getHasWallet: state => state.hasWallet,
     getWalletList: state => state.walletlist
 };
