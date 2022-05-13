@@ -21,8 +21,6 @@ import mitt from 'mitt';
 import sha256 from "crypto-js/sha256.js";
 import aes from "crypto-js/aes.js";
 import ENC from 'crypto-js/enc-utf8.js';
-
-//import * as ed from '@noble/ed25519'; //REAPLCE!! TODO!
 import * as secp from "@noble/secp256k1";
 
 import Logger from '~/lib/Logger';

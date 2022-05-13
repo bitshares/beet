@@ -1,6 +1,6 @@
 import {ipcRenderer} from 'electron';
 import {v4 as uuid} from "uuid";
-import sha256 from "crypto-js/sha256.js";
+import sha512 from "crypto-js/sha512.js";
 import aes from "crypto-js/aes.js";
 import ENC from 'crypto-js/enc-utf8.js';
 
@@ -70,7 +70,7 @@ const actions = {
 
                     commit(GET_WALLET, public_wallets[0]);
                     let accountlist = decrypted_wallet;
-                    ipcRenderer.send('seeding',  payload.wallet_pass);
+                    ipcRenderer.send('seeding', sha512(payload.wallet_pass).toString());
                     dispatch('AccountStore/loadAccounts', accountlist, {
                         root: true
                     });
@@ -113,12 +113,17 @@ const actions = {
                     commit(SET_WALLET_STATUS, true);
                     commit(SET_WALLETLIST, wallets);
 
-                    let walletdata = aes.encrypt(JSON.stringify(payload.backup.accounts), payload.password).toString();
+                    let walletdata = aes.encrypt(
+                                      JSON.stringify(payload.backup.accounts),
+                                      sha512(payload.password).toString()
+                                    ).toString();
+
                     BeetDB.wallets_encrypted.put({
                         id: walletid,
                         data: walletdata
                     });
-                    ipcRenderer.send('seeding',  payload.password);
+
+                    ipcRenderer.send('seeding', sha512(payload.password).toString());
                     commit(GET_WALLET, newwallet);
                     dispatch('AccountStore/loadAccounts', payload.backup.walletdata, {
                         root: true
@@ -161,17 +166,17 @@ const actions = {
 
                     for (let keytype in payload.walletdata.keys) {
                         try {
-                            payload.walletdata.keys[keytype] = aes.encrypt(payload.walletdata.keys[keytype], payload.password).toString();
+                            payload.walletdata.keys[keytype] = aes.encrypt(payload.walletdata.keys[keytype], sha512(payload.password).toString()).toString();
                         } catch (e) {
                             reject('Wrong Password');
                         }
                     }
-                    let walletdata = aes.encrypt(JSON.stringify([payload.walletdata]), payload.password).toString();
+                    let walletdata = aes.encrypt(JSON.stringify([payload.walletdata]), sha512(payload.password).toString()).toString();
                     BeetDB.wallets_encrypted.put({
                         id: walletid,
                         data: walletdata
                     });
-                    ipcRenderer.send('seeding',  payload.password);
+                    ipcRenderer.send('seeding', sha512(payload.password).toString());
                     commit(GET_WALLET, newwallet);
                     dispatch('AccountStore/loadAccounts', [payload.walletdata], {
                         root: true
@@ -198,12 +203,12 @@ const actions = {
                 id: state.wallet.id
             }).then((wallet) => {
                 try {
-                    let bytes = aes.decrypt(wallet.data, payload.password);
+                    let bytes = aes.decrypt(wallet.data, sha512(payload.password).toString());
                     JSON.parse(bytes.toString(ENC));
                 } catch (e) {
                     throw ('invalid');
                 }
-                let encwalletdata = aes.encrypt(JSON.stringify(newwalletdata), payload.password).toString();
+                let encwalletdata = aes.encrypt(JSON.stringify(newwalletdata), sha512(payload.password).toString()).toString();
                 let updatedWallet = Object.assign({}, state.wallet);
                 updatedWallet.accounts.push({ accountID: payload.account.accountID, chain: payload.account.chain});
 

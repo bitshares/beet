@@ -6,6 +6,7 @@
     import ENC from 'crypto-js/enc-utf8.js';
     import fs from 'fs';
     import path from 'path';
+    import sha512 from "crypto-js/sha512.js";
 
     import store from '../store/index';
     import router from '../router/index.js';
@@ -46,7 +47,7 @@
 
             let decryptedData;
             try {
-              decryptedData = await aes.decrypt(data, backupPass.value);
+              decryptedData = await aes.decrypt(data, sha512(backupPass.value).toString());
             } catch (error) {
               console.log(error);
               document.getElementById('restoreWallet').classList.add("error");
