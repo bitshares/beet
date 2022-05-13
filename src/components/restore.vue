@@ -27,19 +27,19 @@
     });
 
     watchEffect(async () => {
-      if (fileError.value === false) {
-        document.getElementById('restoreWallet').classList.remove("error");
-      } else {
-        document.getElementById('restoreWallet').classList.add("error");
-      }
+        if (fileError.value === false) {
+            document.getElementById('restoreWallet').classList.remove("error");
+        } else {
+            document.getElementById('restoreWallet').classList.add("error");
+        }
     });
 
     watchEffect(async () => {
-      if (passError.value === false) {
-        document.getElementById('backupPass').classList.remove("error");
-      } else {
-        document.getElementById('backupPass').classList.add("error");
-      }
+        if (passError.value === false) {
+            document.getElementById('backupPass').classList.remove("error");
+        } else {
+            document.getElementById('backupPass').classList.add("error");
+        }
     });
 
     function restore() {
@@ -66,67 +66,67 @@
 
             let decryptedData;
             try {
-              decryptedData = await aes.decrypt(
-                data,
-                legacy.value
-                  ? backupPass.value
-                  : sha512(backupPass.value).toString()
-              );
+                decryptedData = await aes.decrypt(
+                    data,
+                    legacy.value
+                        ? backupPass.value
+                        : sha512(backupPass.value).toString()
+                );
             } catch (error) {
-              console.log(error);
-              fileError.value = true;
-              passError.value = true;
-              store.dispatch(
-                "WalletStore/notifyUser",
-                {notify: "request", message: "Account recovery error!"}
-              );
-              return;
+                console.log(error);
+                fileError.value = true;
+                passError.value = true;
+                store.dispatch(
+                    "WalletStore/notifyUser",
+                    {notify: "request", message: "Account recovery error!"}
+                );
+                return;
             }
 
             if (!decryptedData) {
-              console.log("Wallet restore failed");
-              fileError.value = true;
-              passError.value = true;
-              return;
+                console.log("Wallet restore failed");
+                fileError.value = true;
+                passError.value = true;
+                return;
             }
 
             let parsedData;
             try {
-              parsedData = JSON.parse(decryptedData.toString(ENC));
+                parsedData = JSON.parse(decryptedData.toString(ENC));
             } catch (error) {
-              console.log(`Invalid recovered wallet password: ${error}`);
-              passError.value = true;
-              store.dispatch(
-                "WalletStore/notifyUser",
-                {notify: "request", message: "Invalid recovered wallet password"}
-              );
-              return;
+                console.log(`Invalid recovered wallet password: ${error}`);
+                passError.value = true;
+                store.dispatch(
+                    "WalletStore/notifyUser",
+                    {notify: "request", message: "Invalid recovered wallet password"}
+                );
+                return;
             }
 
             let existingWalletNames = walletlist.value.slice().map(wallet => wallet.name);
             if (existingWalletNames.includes(parsedData.wallet)) {
-              fileError.value = true;
-              passError.value = true;
-              console.log("A wallet with the same name already exists, aborting wallet restoration");
-              store.dispatch(
-                "WalletStore/notifyUser",
-                {notify: "request", message: "A wallet with the same name already exists, aborting wallet restoration"}
-              );
-              return;
+                fileError.value = true;
+                passError.value = true;
+                console.log("A wallet with the same name already exists, aborting wallet restoration");
+                store.dispatch(
+                    "WalletStore/notifyUser",
+                    {notify: "request", message: "A wallet with the same name already exists, aborting wallet restoration"}
+                );
+                return;
             }
 
             try {
                 await store.dispatch(
-                  'WalletStore/restoreWallet',
-                  {
-                    backup: parsedData,
-                    password: backupPass.value
-                  }
+                    'WalletStore/restoreWallet',
+                    {
+                        backup: parsedData,
+                        password: backupPass.value
+                    }
                 );
                 router.replace("/");
             } catch (error) {
-              console.log(error);
-              return;
+                console.log(error);
+                return;
             }
         });
     }

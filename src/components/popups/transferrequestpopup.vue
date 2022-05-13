@@ -3,7 +3,6 @@
     import { onMounted, computed } from "vue";
     import { useI18n } from 'vue-i18n';
     const { t } = useI18n({ useScope: 'global' });
-    import getBlockchainAPI from "../../lib/blockchains/blockchainFactory";
     import RendererLogger from "../../lib/RendererLogger";
     const logger = new RendererLogger();
 
@@ -20,6 +19,13 @@
             required: true,
             default() {
                 return []
+            }
+        },
+        toSend: {
+            type: String,
+            required: true,
+            default() {
+                return ''
             }
         }
     });
@@ -58,11 +64,10 @@
     });
 
     let toSend = computed(() => {
-        if (!props.request) {
+        if (!props.toSend) {
             return '';
         }
-        let blockchain = getBlockchainAPI(props.request.chain);
-        return blockchain.format(props.request.params.amount);
+        return props.toSend;
     });
 
     let toSendFee = computed(() => {

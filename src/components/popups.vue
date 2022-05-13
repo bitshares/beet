@@ -33,6 +33,10 @@
         return handleProp('type');
     });
 
+    let toSend = computed(() => {
+        return handleProp('toSend');
+    });
+
     let visualizedAccount = computed(() => {
         return handleProp('visualizedAccount');
     });
@@ -83,6 +87,7 @@
         <TransferRequestPopup
             v-else-if="type === Actions.TRANSFER"
             :request="request"
+            :to-send="toSend"
         />
         <TransactionRequestPopup
             v-else-if="type === Actions.REQUEST_SIGNATURE || type === Actions.INJECTED_CALL"

@@ -497,13 +497,16 @@ export async function transfer(request) {
       return _promptFail("transfer.getSafeAccount", request.id, 'no account details', reject);
     }
 
+    let blockchain = getBlockchainAPI(request.chain);
+    let toSend = await blockchain.format(request.params.amount);
+
     let popupContents = {
       request: request,
       chain: accountDetails.chain,
-      accountName: accountDetails.accountName
+      accountName: accountDetails.accountName,
+      toSend: toSend
     };
 
-    let blockchain = getBlockchainAPI(request.chain);
     if (blockchain.supportsFeeCalculation() && request.chain === "BTC") {
         let activeKey;
         try {
