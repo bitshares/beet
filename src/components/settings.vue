@@ -28,7 +28,6 @@
 
     async function downloadBackup() {
         let walletName = store.getters['WalletStore/getWalletName'];
-        //let accounts = btoa(JSON.stringify(store.getters['AccountStore/getAccountList'].slice()));
         let accounts = JSON.stringify(store.getters['AccountStore/getAccountList'].slice());
 
         ipcRenderer.send(
@@ -44,10 +43,8 @@
         await store.dispatch('OriginStore/removeApp', dapp_id);
     }
 
-    function getDisplayString(accountID,chain) {
-        let account = store.state.AccountStore.accountlist.find(x => {
-            return (x.accountID == accountID && x.chain == chain);
-        });
+    function getDisplayString(accountID, chain) {
+        let account = store.getters['AccountStore/getSafeAccount']({account_id: accountID, chain: chain});
         return formatAccount(account, true);
     }
 </script>

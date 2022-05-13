@@ -1,5 +1,5 @@
 <script setup>
-    import { ref, onMounted, computed } from 'vue';
+    import { ref, onMounted, computed, watchEffect } from 'vue';
     import { useI18n } from 'vue-i18n';
     const { t } = useI18n({ useScope: 'global' });
     import aes from "crypto-js/aes.js";
@@ -14,6 +14,9 @@
     const logger = new RendererLogger();
 
     let backupPass = ref("");
+    let fileError = ref(false);
+    let passError = ref(false);
+    let legacy = ref(false);
 
     let walletlist = computed(() => {
         return store.getters['WalletStore/getWalletList'];
@@ -23,17 +26,33 @@
         logger.debug("Restore wizard Mounted");
     });
 
-    function restore() {
+    watchEffect(async () => {
+      if (fileError.value === false) {
         document.getElementById('restoreWallet').classList.remove("error");
+      } else {
+        document.getElementById('restoreWallet').classList.add("error");
+      }
+    });
+
+    watchEffect(async () => {
+      if (passError.value === false) {
         document.getElementById('backupPass').classList.remove("error");
+      } else {
+        document.getElementById('backupPass').classList.add("error");
+      }
+    });
+
+    function restore() {
+        fileError.value = false;
+        passError.value = false;
 
         if (!document.getElementById('restoreWallet').files[0]) {
-            document.getElementById('restoreWallet').classList.add("error");
+            fileError.value = true;
             return;
         }
 
         if (backupPass.value === "") {
-            document.getElementById('backupPass').classList.add("error");
+            passError.value = true;
             return;
         }
 
@@ -47,18 +66,27 @@
 
             let decryptedData;
             try {
-              decryptedData = await aes.decrypt(data, sha512(backupPass.value).toString());
+              decryptedData = await aes.decrypt(
+                data,
+                legacy.value
+                  ? backupPass.value
+                  : sha512(backupPass.value).toString()
+              );
             } catch (error) {
               console.log(error);
-              document.getElementById('restoreWallet').classList.add("error");
-              document.getElementById('backupPass').classList.add("error");
+              fileError.value = true;
+              passError.value = true;
+              store.dispatch(
+                "WalletStore/notifyUser",
+                {notify: "request", message: "Account recovery error!"}
+              );
               return;
             }
 
             if (!decryptedData) {
               console.log("Wallet restore failed");
-              document.getElementById('restoreWallet').classList.add("error");
-              document.getElementById('backupPass').classList.add("error");
+              fileError.value = true;
+              passError.value = true;
               return;
             }
 
@@ -67,15 +95,23 @@
               parsedData = JSON.parse(decryptedData.toString(ENC));
             } catch (error) {
               console.log(`Invalid recovered wallet password: ${error}`);
-              document.getElementById('backupPass').classList.add("error");
+              passError.value = true;
+              store.dispatch(
+                "WalletStore/notifyUser",
+                {notify: "request", message: "Invalid recovered wallet password"}
+              );
               return;
             }
 
             let existingWalletNames = walletlist.value.slice().map(wallet => wallet.name);
             if (existingWalletNames.includes(parsedData.wallet)) {
-              document.getElementById('restoreWallet').classList.add("error");
-              document.getElementById('backupPass').classList.add("error");
+              fileError.value = true;
+              passError.value = true;
               console.log("A wallet with the same name already exists, aborting wallet restoration");
+              store.dispatch(
+                "WalletStore/notifyUser",
+                {notify: "request", message: "A wallet with the same name already exists, aborting wallet restoration"}
+              );
               return;
             }
 
@@ -129,7 +165,10 @@
                 :placeholder="t('common.password_placeholder')"
                 required
             >
-
+            <ui-form-field>
+                <ui-checkbox v-model="legacy" />
+                <label>Legacy account restoration</label>
+            </ui-form-field>
             <ui-grid>
                 <ui-grid-cell columns="12">
                     <router-link
