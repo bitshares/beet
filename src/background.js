@@ -21,11 +21,13 @@ import mitt from 'mitt';
 import sha256 from "crypto-js/sha256.js";
 import aes from "crypto-js/aes.js";
 import ENC from 'crypto-js/enc-utf8.js';
-import * as ed from '@noble/ed25519';
+
+//import * as ed from '@noble/ed25519'; //REAPLCE!! TODO!
+import * as secp from "@noble/secp256k1";
 
 import Logger from '~/lib/Logger';
 import {initApplicationMenu} from '~/lib/applicationMenu';
-import { getBackup } from "./lib/SecureRemote";
+import { getSignature } from "./lib/SecureRemote";
 import * as Actions from './lib/Actions';
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -275,15 +277,6 @@ const createWindow = async () => {
       clearTimeout(timeout);
   }
 
-  ipcMain.on('key', (event, arg) => {
-      if (timeout) {
-          clearTimeout(timeout);
-      }
-      timeout = setTimeout(timeoutHandler, 300000);
-      if (key) return;
-      key = arg;
-  });
-
   ipcMain.on('seeding', (event, arg) => {
       if (timeout) {
           clearTimeout(timeout);
@@ -311,7 +304,7 @@ const createWindow = async () => {
 
       let isValid;
       try {
-        isValid = await ed.verify(sig, msgHash, key);
+        isValid = await secp.verify(sig, msgHash, key);
       } catch (error) {
         console.log(error);
         return;
@@ -329,59 +322,76 @@ const createWindow = async () => {
       }
   });
 
-  ipcMain.on('backup', async (event, arg) => {
-      const {data, sig} = arg;
-
-      let msgHash;
-      try {
-        msgHash = sha256('backup').toString();
-      } catch (error) {
-        console.log(error);
-        return;
-      }
-
-      let isValid;
-      try {
-        isValid = await ed.verify(sig, msgHash, key);
-      } catch (error) {
-        console.log(error);
-        return;
-      }
-
-      if (event && event.sender) {
-        event.sender.send(
-          'backup',
-          isValid
-            ? aes.encrypt(data, seed).toString()
-            : null
-        );
-      } else {
-        console.log("No event || event.sender")
-      }
-  });
-
   ipcMain.on('downloadBackup', async (event, arg) => {
-    let walletName = atob(arg.walletName);
-    let accounts = JSON.parse(atob(arg.accounts));
+    let walletName = arg.walletName;
+    //let accounts = JSON.parse(atob(arg.accounts));
+    let accounts = JSON.parse(arg.accounts);
     let toLocalPath = path.resolve(
       app.getPath("desktop"),
       `BeetBackup-${walletName}-${new Date().toISOString().slice(0,10)}.beet`
     );
-    let userChosenPath = dialog.showSaveDialog({ defaultPath: toLocalPath });
-    if (userChosenPath) {
-        let accounts = JSON.stringify({wallet: walletName, accounts: accounts});
+    dialog.showSaveDialog({ defaultPath: toLocalPath })
+          .then(async (result) => {
+            if (result.canceled) {
+              console.log("Cancelled saving backup.")
+              return;
+            }
 
-        return getBackup(accounts)
-        .then(result => {
-          if (result) {
-              logger.debug(result);
-              //fs.writeFileSync(userChosenPath, result);
-          }
-        })
-        .catch(error => {
-          console.log(error);
-        })
-    }
+            let msgHash;
+            try {
+              msgHash = await secp.utils.sha256('backup');
+            } catch (error) {
+              console.log(`msgHash: ${error}`);
+              return;
+            }
+
+            let response = await getSignature('backup');
+            if (!response) {
+              console.log("Error: No signature");
+              return;
+            }
+
+            let isValid;
+            try {
+              isValid = await secp.verify(
+                response.signedMessage,
+                response.msgHash,
+                response.pubk
+              );
+            } catch (error) {
+              console.log(error);
+              return;
+            }
+
+            if (!isValid) {
+              console.log("Failed to backup wallet (validation)");
+              return;
+            }
+
+            let encrypted;
+            try {
+              encrypted = await aes.encrypt(
+                JSON.stringify({wallet: walletName, accounts: accounts}),
+                seed
+              ).toString();
+            } catch (error) {
+              console.log(`encrypt: ${error}`);
+              return;
+            }
+
+            if (!encrypted) {
+              console.log("Failed to backup wallet (encryption)");
+              return;
+            }
+
+            if (encrypted) {
+              fs.writeFileSync(result.filePath, encrypted);
+            }
+
+          }).catch((error) => {
+            console.log(error)
+          });
+
   });
 
   ipcMain.on('log', (event, arg) => {

@@ -31,7 +31,6 @@ const actions = {
         commit,
         state
     }, payload) {
-
         return new Promise((resolve, reject) => {
             let index = -1;
             for (let i = 0; i < state.accountlist.length; i++) {
@@ -57,9 +56,8 @@ const actions = {
     loadAccounts({
         commit
     }, payload) {
-
         return new Promise((resolve, reject) => {
-            if (payload.length > 0) {
+            if (payload && payload.length > 0) {
                 commit(LOAD_ACCOUNTS, payload);
                 resolve('Accounts Loaded');
             } else {

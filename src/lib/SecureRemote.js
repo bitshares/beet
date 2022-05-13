@@ -1,5 +1,4 @@
 import { ipcRenderer } from 'electron';
-import sha256 from "crypto-js/sha256.js";
 import * as secp from "@noble/secp256k1";
 
 class proover {
@@ -9,7 +8,6 @@ class proover {
 
     async regen() {
         this.key = secp.utils.randomPrivateKey();
-
         let pubk;
         try {
           pubk = await secp.getPublicKey(this.key);
@@ -17,19 +15,13 @@ class proover {
           console.error(error);
           return;
         }
-
-        let encodedPubK = secp.utils.bytesToHex(pubk);
-        try {
-          ipcRenderer.send('key', encodedPubK);
-        } catch (error) {
-          console.log(error)
-        }
+        this.pubk = pubk;
     }
 
     async sign(data) {
         let msgHash;
         try {
-          msgHash = sha256(data).toString();
+          msgHash = await secp.utils.sha256(data);
         } catch (error) {
           console.log(error);
           return;
@@ -37,13 +29,21 @@ class proover {
 
         let signedMessage;
         try {
-          signedMessage = await secp.sign(msgHash, this.key, {der: true})
+          signedMessage = await secp.sign(
+            msgHash,
+            this.key,
+            {der: true, extraEntropy: true}
+          )
         } catch (error) {
           console.log(error);
           return;
         }
 
-        return signedMessage;
+        return {
+          msgHash: msgHash,
+          signedMessage: signedMessage,
+          pubk: this.pubk
+        };
     }
 }
 
@@ -62,15 +62,14 @@ export const getKey = (enc_key) => {
     })
 }
 
-export const getBackup = (data) => {
-    return new Promise(resolve => {
-        ipcRenderer.removeAllListeners('backup');
-        ipcRenderer.once('backup', (event, arg) => {
-            resolve(arg);
-        });
-        ipcRenderer.send('backup', {
-            data: data,
-            sig: proof.sign('backup')
-        })
-    })
+export const getSignature = async (data) => {
+  let signature;
+  try {
+    signature = await proof.sign(data);
+  } catch (error) {
+    console.log(error);
+    return;
+  }
+
+  return signature;
 }

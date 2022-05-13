@@ -27,8 +27,9 @@
     })
 
     async function downloadBackup() {
-        let walletName = btoa(store.getters['WalletStore/getWalletName']);
-        let accounts = btoa(JSON.stringify(store.getters['AccountStore/getAccountList'].slice()));
+        let walletName = store.getters['WalletStore/getWalletName'];
+        //let accounts = btoa(JSON.stringify(store.getters['AccountStore/getAccountList'].slice()));
+        let accounts = JSON.stringify(store.getters['AccountStore/getAccountList'].slice());
 
         ipcRenderer.send(
             "downloadBackup",

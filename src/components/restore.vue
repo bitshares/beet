@@ -1,5 +1,5 @@
 <script setup>
-    import { ref, onMounted } from 'vue';
+    import { ref, onMounted, computed } from 'vue';
     import { useI18n } from 'vue-i18n';
     const { t } = useI18n({ useScope: 'global' });
     import aes from "crypto-js/aes.js";
@@ -13,6 +13,10 @@
     const logger = new RendererLogger();
 
     let backupPass = ref("");
+
+    let walletlist = computed(() => {
+        return store.getters['WalletStore/getWalletList'];
+    })
 
     onMounted(() => {
         logger.debug("Restore wizard Mounted");
@@ -39,13 +43,53 @@
                 alert("An error ocurred reading the file :" + err.message);
                 return;
             }
+
+            let decryptedData;
             try {
-                let wallet = JSON.parse(aes.decrypt(data, backupPass.value).toString(ENC));
-                await store.dispatch('WalletStore/restoreWallet', { backup: wallet, password: backupPass.value});
+              decryptedData = await aes.decrypt(data, backupPass.value);
+            } catch (error) {
+              console.log(error);
+              document.getElementById('restoreWallet').classList.add("error");
+              document.getElementById('backupPass').classList.add("error");
+              return;
+            }
+
+            if (!decryptedData) {
+              console.log("Wallet restore failed");
+              document.getElementById('restoreWallet').classList.add("error");
+              document.getElementById('backupPass').classList.add("error");
+              return;
+            }
+
+            let parsedData;
+            try {
+              parsedData = JSON.parse(decryptedData.toString(ENC));
+            } catch (error) {
+              console.log(`Invalid recovered wallet password: ${error}`);
+              document.getElementById('backupPass').classList.add("error");
+              return;
+            }
+
+            let existingWalletNames = walletlist.value.slice().map(wallet => wallet.name);
+            if (existingWalletNames.includes(parsedData.wallet)) {
+              document.getElementById('restoreWallet').classList.add("error");
+              document.getElementById('backupPass').classList.add("error");
+              console.log("A wallet with the same name already exists, aborting wallet restoration");
+              return;
+            }
+
+            try {
+                await store.dispatch(
+                  'WalletStore/restoreWallet',
+                  {
+                    backup: parsedData,
+                    password: backupPass.value
+                  }
+                );
                 router.replace("/");
-            } catch(e) {
-                //Wrong  Password
-                //
+            } catch (error) {
+              console.log(error);
+              return;
             }
         });
     }
