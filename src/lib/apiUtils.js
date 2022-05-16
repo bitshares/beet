@@ -67,7 +67,7 @@ export async function linkRequest(request) {
         );
 
         ipcRenderer.once(`popupApproved_${request.id}`, (event, result) => {
-            store.dispatch("AccountStore/selectAccount", result.response);
+            store.dispatch("AccountStore/selectAccount", result.result);
             return resolve(result);
         })
 
@@ -169,6 +169,69 @@ export async function getAccount(request) {
 }
 
 /*
+ * sign or broadcast (REQUEST_SIGNATURE || INJECTED_CALL)
+ *
+ * @param {API} blockchain
+ * @param {Object} request
+ * @param {Promise} resolve
+ * @param {Promise} reject
+ * @returns {Object}
+ */
+async function _signOrBroadcast(
+  blockchain,
+  request,
+  resolve,
+  reject
+) {
+  let finalResult;
+  let notifyTXT = "";
+
+  console.log(request)
+
+  let txType = request.payload.params[0];
+
+  if (txType == "broadcast") {
+      try {
+        finalResult = await blockchain.broadcast(request.payload.params);
+      } catch (error) {
+        return _promptFail(txType, request.id, error, reject);
+      }
+      notifyTXT = "Transaction successfully broadcast.";
+      return resolve(finalResult);
+  }
+
+  let activeKey;
+  try {
+    activeKey = await getKey(store.getters['AccountStore/getActiveKey'](request.slice()));
+  } catch (error) {
+    return _promptFail(txType, request.id, error, reject);
+  }
+
+  let transaction;
+  try {
+    transaction = await blockchain.sign(request.payload.params, activeKey);
+  } catch (error) {
+    return _promptFail(txType, request.id, error, reject);
+  }
+
+  if (txType == "sign") {
+      finalResult = transaction.toObject();
+      notifyTXT = "Transaction successfully signed.";
+  } else if (txType == "signAndBroadcast") {
+      try {
+        finalResult = await blockchain.broadcast(transaction);
+      } catch (error) {
+        return _promptFail(txType + ".broadcast", request.id, error, reject);
+      }
+      notifyTXT = "Transaction successfully signed & broadcast.";;
+  }
+
+  store.dispatch("WalletStore/notifyUser", {notify: "request", message: notifyTXT});
+
+  return resolve(finalResult);
+}
+
+/*
  * Prompt the user to provide their signature.
  * @param {Object} request
  * @returns {Object}
@@ -216,50 +279,7 @@ export async function requestSignature(request) {
     );
 
     ipcRenderer.once(`popupApproved_${request.id}`, async (event, result) => {
-        let finalResult;
-        let txType = request.params[0];
-        if (txType == "sign") {
-            let transaction;
-            try {
-              transaction = await blockchain.sign(
-                  request.params,
-                  await getKey(store.getters['AccountStore/getActiveKey'](request))
-              );
-            } catch (error) {
-              return _promptFail("sigReq", request.id, error, reject);
-            }
-            if (transaction) {
-              finalResult = transaction.toObject();
-            }
-        } else if (txType == "broadcast") {
-            try {
-              finalResult = await blockchain.broadcast(request.params);
-            } catch (error) {
-              return _promptFail("sigReq", request.id, error, reject);
-            }
-        } else if (txType == "signAndBroadcast") {
-            let transaction;
-            try {
-              transaction = await blockchain.sign(
-                  request.params,
-                  await getKey(store.getters['AccountStore/getActiveKey'](request))
-              );
-            } catch (error) {
-              return _promptFail("sigReq", request.id, error, reject);
-            }
-
-            try {
-              finalResult = await blockchain.broadcast(transaction);
-            } catch (error) {
-              return _promptFail("sigReq", request.id, error, reject);
-            }
-        }
-
-        if (!finalResult) {
-          return _promptFail("sigReq", request.id, 'No blockchain transfer result', reject);
-        }
-
-        return resolve(finalResult);
+      return _signOrBroadcast(blockchain, request, resolve, reject);
     });
 
     ipcRenderer.once(`popupRejected_${request.id}`, (event, result) => {
@@ -317,11 +337,7 @@ export async function injectedCall(request) {
     );
 
     ipcRenderer.once(`popupApproved_${request.id}`, async (event, result) => {
-        store.dispatch("WalletStore/notifyUser", {notify: "request", message: "Transaction successfully broadcast."});
-
-        return result.response.success && result.request.id === request.id
-          ? resolve(result)
-          : _promptFail("injectedCall", request.id, 'Unsuccessful approval', reject);
+      return _signOrBroadcast(blockchain, request, resolve, reject);
     })
 
     ipcRenderer.once(`popupRejected_${request.id}`, (event, result) => {
@@ -391,7 +407,7 @@ export async function voteFor(request) {
 
         if (operation.nothingToDo) {
           return resolve({
-              response: {
+              result: {
                   name: approvedAccount.accountName,
                   chain: approvedAccount.chain,
                   id: approvedAccount.accountID
@@ -497,7 +513,14 @@ export async function transfer(request) {
       return _promptFail("transfer.getSafeAccount", request.id, 'no account details', reject);
     }
 
-    let blockchain = getBlockchainAPI(request.chain);
+    let blockchain;
+    try {
+      blockchain = getBlockchainAPI(request.chain);
+    } catch (error) {
+      console.log(error);
+      return _promptFail("injectedCall", request.id, request, reject);
+    }
+
     let toSend = await blockchain.format(request.params.amount);
 
     let popupContents = {
@@ -540,7 +563,7 @@ export async function transfer(request) {
         }
     }
 
-    ipcRenderer.send('createPopup', popupContents)
+    ipcRenderer.send('createPopup', popupContents);
 
     ipcRenderer.once(`popupApproved_${request.id}`, async (event, result) => {
       let approvedBlockchain = getBlockchainAPI(request.chain);
@@ -577,7 +600,6 @@ export async function transfer(request) {
       }
 
       store.dispatch("WalletStore/notifyUser", {notify: "request", message: 'Transaction `transfer` successfully broadcast.'});
-
       return resolve(transferResult);
     })
 

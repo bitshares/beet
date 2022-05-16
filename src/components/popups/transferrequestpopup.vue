@@ -92,7 +92,7 @@
         ipcRenderer.send(
             "clickedAllow",
             {
-                response: {success: true},
+                result: {success: true},
                 request: {id: props.request.id}
             }
         );
@@ -102,7 +102,7 @@
         ipcRenderer.send(
             "clickedDeny",
             {
-                response: {canceled: true},
+                result: {canceled: true},
                 request: {id: props.request.id}
             }
         );

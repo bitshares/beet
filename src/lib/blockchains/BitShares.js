@@ -200,13 +200,14 @@ export default class BitShares extends BlockchainAPI {
           this._connectionFailed(reject, '', 'No node url')
         }
 
-        console.log(`Attempting connection to: ${nodeToConnect}`)
+        //console.log(`Attempting connection to: ${nodeToConnect}`)
 
         Apis.instance(
             nodeToConnect,
             true,
             4000,
-            {enableCrypto: false, enableOrders: false}
+            {enableCrypto: false, enableOrders: false},
+            this._connectionFailed(reject, nodeToConnect, 'WS Connection closed')
         ).init_promise
         .then((res) => {
           console.log("established connection:", res[0].network);
@@ -227,32 +228,12 @@ export default class BitShares extends BlockchainAPI {
         return new Promise((resolve, reject) => {
 
             if (nodeToConnect) {
-              console.log("Connecting via nodeToConnect");
               return this._establishConnection(nodeToConnect, resolve, reject);
             }
 
             if (this._isConnected && this._isConnectedToNode && !nodeToConnect) {
                 return this._connectionEstablished(resolve, this._isConnectedToNode);
             }
-
-            /*
-             else if () {
-                Apis.close().then(() => {
-                    if (
-                      !nodeToConnect
-                      && !this._node
-                    ) {
-                        let retrievedNode = store.getters['SettingsStore/getNode'];
-                        if (retrievedNode.BTS && !this._tempBanned.includes(retrievedNode.BTS)) {
-                          nodeToConnect = retrievedNode.BTS;
-                        }
-                    }
-
-                    console.log(`Closed previous connection. Opening new connection to ${nodeToConnect}`)
-                    this._isConnected = false;
-                    return this._establishConnection(nodeToConnect, resolve, reject);
-                });
-            }*/
 
             if (!nodeToConnect && !this._nodeLatencies) {
                 // initializing the blockchain
@@ -505,7 +486,10 @@ export default class BitShares extends BlockchainAPI {
                                             incoming.params.id,
                                         vote_id: objdata[0].vote_id
                                     });
-                                }).catch(err => reject(err));
+                                }).catch(error => {
+                                  console.log(error);
+                                  reject(error)
+                                });
                                 break;
                             case "6":
                                 Apis.instance().db_api().exec(
@@ -520,7 +504,10 @@ export default class BitShares extends BlockchainAPI {
                                             incoming.params.id,
                                         vote_id: objdata[0].vote_id
                                     });
-                                }).catch(err => reject(err));
+                                }).catch(error => {
+                                  console.log(error);
+                                  reject(error)
+                                });
                                 break;
                             case "14":
                                 Apis.instance().db_api().exec(
@@ -540,10 +527,16 @@ export default class BitShares extends BlockchainAPI {
                                             objextradata[0].name,
                                         vote_id: objdata[0].vote_for
                                     });
-                                }).catch(err => reject(err));
+                                }).catch(error => {
+                                  console.log(error);
+                                  reject(error)
+                                });
                                 break;
                         }
-                    }).catch(err => reject(err));
+                    }).catch(error => {
+                      console.log(error);
+                      reject(error)
+                    });
                 }
             }).catch(reject);
         });
@@ -606,7 +599,10 @@ export default class BitShares extends BlockchainAPI {
                         resolve(tr);
                     }).catch(reject);
                 });
-            }).catch(err => reject(err));
+            }).catch(error => {
+              console.log(error);
+              reject(error)
+            });
         });
     }
 
@@ -621,7 +617,10 @@ export default class BitShares extends BlockchainAPI {
                 transaction = this._parseTransactionBuilder(transaction);
                 transaction.broadcast().then(id => {
                     resolve(id);
-                }).catch(err => reject(err));
+                }).catch(error => {
+                  console.log(error);
+                  reject(error)
+                });
             }).catch(reject);
         });
     }

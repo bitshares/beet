@@ -128,14 +128,14 @@ const linkHandler = async (req) => {
       return rejectRequest(req, 'User rejected request')
     }
 
-    if (!userResponse || !userResponse.response) {
+    if (!userResponse || !userResponse.result) {
       return rejectRequest(req, 'User rejected request');
     }
 
     let identityhash;
     try {
       identityhash = sha256(
-        req.browser + ' ' + req.origin + ' ' + req.appName + ' ' + userResponse.response.chain + ' ' + userResponse.response.id
+        req.browser + ' ' + req.origin + ' ' + req.appName + ' ' + userResponse.result.chain + ' ' + userResponse.result.id
       ).toString();
     } catch (error) {
       return rejectRequest(req, error);
@@ -164,8 +164,8 @@ const linkHandler = async (req) => {
           appName: req.appName,
           identityhash: identityhash,
           origin: req.origin,
-          account_id: userResponse.response.id,
-          chain: userResponse.response.chain,
+          account_id: userResponse.result.id,
+          chain: userResponse.result.chain,
           secret: ed.utils.bytesToHex(secret),
           next_hash: req.payload.next_hash
       });
@@ -235,6 +235,7 @@ export default class BeetServer {
 
       let msg = JSON.parse(decryptedValue);
       if (!Object.keys(Actions).map(key => Actions[key]).includes(msg.method)) {
+          console.log("Unsupported request type rejected");
           socket.emit("error", {id: data.id, error: true, payload: {code: 3, message: "Request type not supported."}});
           return;
       }
@@ -276,18 +277,14 @@ export default class BeetServer {
           status = await transfer(apiobj);
         }
       } catch (error) {
-        console.log(error)
+        console.log(error || "No status")
         logger.debug("incoming api req fail", error);
-        return;
-      }
-
-      if (!status) {
         socket.emit("error", {id: data.id, error: true, payload: {code: 4, message: "Negative user response"}})
         return;
       }
 
-      if (status.result.isError) {
-        console.log(status.result.error)
+      if (!status.result || status.result.isError || status.result.canceled) {
+        console.log("Issue occurred in approved prompt");
         socket.emit("error", {id: data.id, error: true, payload: {code: 7, message: "API request unsuccessful"}});
         return;
       }
@@ -295,7 +292,6 @@ export default class BeetServer {
       status.id = data.id;
       socket.otp.counter = status.id;
 
-      //var key = socket.otp.generate();
       let payload;
       try {
         payload = aes.encrypt(JSON.stringify(status.result), key).toString();

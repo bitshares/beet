@@ -47,7 +47,7 @@
         ipcRenderer.send(
             "clickedAllow",
             {
-                response: {
+                result: {
                     identityhash: props.request.payload.identityhash,
                     name: props.accounts[0].accountName,
                     chain: props.accounts[0].chain,
@@ -65,7 +65,7 @@
         ipcRenderer.send(
             "clickedDeny",
             {
-                response: {canceled: true},
+                result: {canceled: true},
                 request: {id: props.request.id}
             }
         );

@@ -79,7 +79,7 @@
         ipcRenderer.send(
             "clickedAllow",
             {
-                response: {
+                result: {
                     name: approvedAccount.accountName,
                     chain: approvedAccount.chain,
                     id: approvedAccount.accountID
@@ -95,7 +95,7 @@
         ipcRenderer.send(
             "clickedDeny",
             {
-                response: {canceled: true},
+                result: {canceled: true},
                 request: {id: props.request.id}
             }
         );
