@@ -29,6 +29,7 @@
     let walletpass = ref("");
     let selectedWallet = ref(0);
     let passincorrect = ref("");
+    let legacy = ref(false);
 
     onMounted(() => {
         logger.debug("Start screen mounted");
@@ -40,7 +41,8 @@
         store
             .dispatch("WalletStore/getWallet", {
                 wallet_id: walletlist.value[selectedWallet.value].id,
-                wallet_pass: walletpass.value
+                wallet_pass: walletpass.value,
+                legacy: legacy.value
             })
             .then(async () => {
                 try {
@@ -121,6 +123,10 @@
                 @focus="passincorrect=''"
             >
             <br>
+            <ui-form-field>
+                <ui-checkbox v-model="legacy" />
+                <label>Legacy account</label>
+            </ui-form-field>
             <br>
             <ui-button
                 v-if="hasWallet"

@@ -62,7 +62,10 @@ const actions = {
             BeetDB.wallets_encrypted.get({
                 id: payload.wallet_id
             }).then((wallet) => {
-                    let bytes = aes.decrypt(wallet.data, payload.wallet_pass);
+                    let bytes = aes.decrypt(
+                      wallet.data,
+                      payload.legacy ? payload.wallet_pass : sha512(payload.wallet_pass).toString()
+                    );
                     let decrypted_wallet = JSON.parse(bytes.toString(ENC));
                     let public_wallets = state.walletlist.filter((x) => {
                         return x.id == payload.wallet_id
