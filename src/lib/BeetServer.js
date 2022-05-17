@@ -294,7 +294,7 @@ export default class BeetServer {
 
       let payload;
       try {
-        payload = aes.encrypt(JSON.stringify(status.result), key).toString();
+        payload = aes.encrypt(status.result, key).toString();
       } catch (error) {
         console.log(error);
         socket.emit("error", {id: data.id, error: true, payload: {code: 3, message: "Could not encrypt api response"}});

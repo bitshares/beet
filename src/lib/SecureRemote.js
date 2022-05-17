@@ -1,5 +1,6 @@
 import { ipcRenderer } from 'electron';
 import * as secp from "@noble/secp256k1";
+import sha256 from "crypto-js/sha256.js";
 
 class proover {
     constructor() {
@@ -21,7 +22,7 @@ class proover {
     async sign(data) {
         let msgHash;
         try {
-          msgHash = await secp.utils.sha256(data);
+          msgHash = await sha256(data).toString();
         } catch (error) {
           console.log(error);
           return;
@@ -40,8 +41,8 @@ class proover {
         }
 
         return {
-          msgHash: msgHash,
           signedMessage: signedMessage,
+          msgHash: msgHash,
           pubk: this.pubk
         };
     }
@@ -49,16 +50,45 @@ class proover {
 
 const proof = new proover();
 
-export const getKey = (enc_key) => {
-    return new Promise(resolve => {
-        ipcRenderer.removeAllListeners('decrypt');
-        ipcRenderer.once('decrypt', (event, arg) => {
+export const getKey = async (enc_key) => {
+    return new Promise(async (resolve, reject) => {
+        ipcRenderer.removeAllListeners('decrypt_success');
+        ipcRenderer.removeAllListeners('decrypt_fail');
+
+        ipcRenderer.once('decrypt_success', (event, arg) => {
+            console.log('decrypt_success')
             resolve(arg);
         });
-        ipcRenderer.send('decrypt', {
-            data: enc_key,
-            sig: proof.sign('decrypt')
-        })
+
+        ipcRenderer.once('decrypt_fail', (event, arg) => {
+            console.log('decrypt_fail')
+            reject('decrypt_fail');
+        });
+
+        let signature = await getSignature('decrypt');
+        if (!signature) {
+          console.log('Signature failure')
+          reject('signature failure');
+        }
+
+        let isValid;
+        try {
+          isValid = await secp.verify(
+            signature.signedMessage,
+            signature.msgHash,
+            signature.pubk
+          );
+        } catch (error) {
+          console.log(error);
+        }
+
+        if (isValid) {
+          console.log("Was valid, proceeding to decrypt");
+          ipcRenderer.send('decrypt', {data: enc_key});
+        } else {
+          console.log('invalid signature')
+          reject('invalid signature');
+        }
     })
 }
 

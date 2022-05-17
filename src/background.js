@@ -263,7 +263,7 @@ const createWindow = async () => {
       showNotification();
   });
 
-  let seed, key;
+  let seed;
   function timeoutHandler() {
       seed = null;
       const emitter = mitt();
@@ -290,30 +290,20 @@ const createWindow = async () => {
           clearTimeout(timeout);
       }
       timeout = setTimeout(timeoutHandler, 300000);
-      const {data, sig} = arg;
 
-      let msgHash;
+      let dataToDecrypt = arg.data;
+
+      let decryptedData;
       try {
-        msgHash = sha256('decrypt').toString();
+        decryptedData = await aes.decrypt(dataToDecrypt, seed).toString(ENC);
       } catch (error) {
         console.log(error);
-        return;
-      }
-
-      let isValid;
-      try {
-        isValid = await secp.verify(sig, msgHash, key);
-      } catch (error) {
-        console.log(error);
-        return;
       }
 
       if (event && event.sender) {
         event.sender.send(
-          'decrypt',
-          isValid
-            ? aes.decrypt(data, seed).toString(ENC)
-            : null
+          decryptedData ? 'decrypt_success' : 'decrypt_fail',
+          decryptedData ?? 'decryption failure'
         );
       } else {
         console.log("No event || event.sender")
@@ -332,14 +322,6 @@ const createWindow = async () => {
           .then(async (result) => {
             if (result.canceled) {
               console.log("Cancelled saving backup.")
-              return;
-            }
-
-            let msgHash;
-            try {
-              msgHash = await secp.utils.sha256('backup');
-            } catch (error) {
-              console.log(`msgHash: ${error}`);
               return;
             }
 

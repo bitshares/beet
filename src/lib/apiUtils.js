@@ -11,15 +11,13 @@ import getBlockchainAPI from "./blockchains/blockchainFactory.js";
  * @returns Error
  */
 function _promptFail(method, id, error, reject) {
-    if (!error.canceled) {
-        console.log(error);
-    }
+    console.log(error);
     return reject({
         id: id,
         result: {
             isError: true,
             method: method,
-            error: error.canceled ? "User rejected" : (error.error ? error.error : error)
+            error: error
         }
     });
 }
@@ -186,32 +184,35 @@ async function _signOrBroadcast(
   let finalResult;
   let notifyTXT = "";
 
-  console.log(request)
-
   let txType = request.payload.params[0];
 
   if (txType == "broadcast") {
       try {
         finalResult = await blockchain.broadcast(request.payload.params);
       } catch (error) {
+        console.log(error)
         return _promptFail(txType, request.id, error, reject);
       }
       notifyTXT = "Transaction successfully broadcast.";
       return resolve(finalResult);
   }
 
-  let activeKey;
+  let activeKey = store.getters['AccountStore/getActiveKey'](request);
+
+  let signingKey;
   try {
-    activeKey = await getKey(store.getters['AccountStore/getActiveKey'](request.slice()));
+    signingKey = await getKey(activeKey);
   } catch (error) {
-    return _promptFail(txType, request.id, error, reject);
+    console.log(error)
+    return _promptFail(txType + '.getKey', request.id, error, reject);
   }
 
   let transaction;
   try {
-    transaction = await blockchain.sign(request.payload.params, activeKey);
+    transaction = await blockchain.sign(request.payload.params, signingKey);
   } catch (error) {
-    return _promptFail(txType, request.id, error, reject);
+    console.log(error)
+    return _promptFail(txType + '.blockchain.sign', request.id, error, reject);
   }
 
   if (txType == "sign") {
@@ -418,9 +419,11 @@ export async function voteFor(request) {
           });
         }
 
+        let activeKey = store.getters['AccountStore/getActiveKey'](request);
+
         let signingKey;
         try {
-          signingKey = await getKey(store.getters['AccountStore/getActiveKey'](request));
+          signingKey = await getKey(activeKey);
         } catch (error) {
           return _promptFail("voteFor.getKey", request.id, error, reject);
         }
@@ -531,18 +534,21 @@ export async function transfer(request) {
     };
 
     if (blockchain.supportsFeeCalculation() && request.chain === "BTC") {
-        let activeKey;
+
+        let activeKey = store.getters['AccountStore/getActiveKey'](request);
+
+        let signingKey;
         try {
-          activeKey = await getKey(store.getters['AccountStore/getActiveKey'](request));
+          signingKey = await getKey(activeKey);
         } catch (error) {
           return _promptFail("transfer.getKey", request.id, error, reject);
         }
 
-        if (activeKey) {
+        if (signingKey) {
           let transferResult;
           try {
               transferResult = await blockchain.transfer(
-                  activeKey, // Can we do this without the key?
+                  signingKey, // Can we do this without the key?
                   accountDetails.accountName,
                   request.params.to,
                   {
@@ -572,9 +578,11 @@ export async function transfer(request) {
         popupContents.request.params.amount = popupContents.request.params.satoshis;
       }
 
+      let activeKey = store.getters['AccountStore/getActiveKey'](request);
+
       let signingKey;
       try {
-        signingKey = await getKey(store.getters['AccountStore/getActiveKey'](request))
+        signingKey = await getKey(activeKey);
       } catch (error) {
         return _promptFail("transfer.getKey", request.id, error, reject);
       }

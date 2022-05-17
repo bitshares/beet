@@ -132,8 +132,8 @@ const getters = {
     getActiveKey: (state) => (request) => {
       let signing = state.accountlist.filter(account => {
           return (
-              account.accountID == request.account_id &&
-              account.chain == request.chain
+              account.accountID == request.payload.account_id &&
+              account.chain == request.payload.chain
           );
       });
 
@@ -141,17 +141,13 @@ const getters = {
           return;
       }
 
-      if (!signing[0].keys || !signing[0].keys.active) {
-          return;
-      }
-
-      return signing[0].keys.active;
+      return signing.slice()[0].keys.active;
     },
     getSigningKey: (state) => (request) => {
         let signing = state.accountlist.filter(account => {
             return (
-                account.accountID == request.account_id &&
-                account.chain == request.chain
+                account.accountID == request.payload.account_id &&
+                account.chain == request.payload.chain
             );
         });
 
@@ -159,9 +155,11 @@ const getters = {
             return;
         }
 
-        return signing[0].memo
-                ? signing[0].memo
-                : signing[0].active;
+        let keys = signing.slice()[0].keys;
+
+        return keys.memo
+                ? keys.memo
+                : keys.active;
     }
 };
 
