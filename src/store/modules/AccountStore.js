@@ -116,10 +116,9 @@ const getters = {
         });
 
         let requestedAccounts = safeAccounts.filter(account => {
-            return (
-                account.accountID == request.account_id &&
-                account.chain == request.chain
-            );
+            return account.accountID == request.account_id && account.chain == request.chain
+                    ? true
+                    : false;
         });
 
         if (!requestedAccounts || !requestedAccounts.length) {

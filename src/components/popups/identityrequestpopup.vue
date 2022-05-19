@@ -27,7 +27,7 @@
         if (!props.accounts || !props.accounts.length) {
             return '';
         }
-        return props.accounts[0].account_id;
+        return props.accounts[0].accountID;
     });
 
     let accountName = computed(() => {
@@ -41,6 +41,7 @@
         if (!props.accounts || !props.accounts.length) {
             return '';
         }
+
         return props.accounts[0].chain;
     });
 
@@ -48,28 +49,29 @@
         if (!props.request) {
             return '';
         }
+
         return t(
             'operations.account_id.request',
             {
-                appName: props.request.appName,
-                origin: props.request.origin,
-                chain: chain,
-                accountId: account_id,
-                accountName: accountName
+                appName: props.request.payload.appName,
+                origin: props.request.payload.origin,
+                chain: chain.value,
+                accountId: account_id.value,
+                accountName: accountName.value
             }
         );
     });
 
     onMounted(() => {
-        logger.debug("Link Popup initialised");
+        logger.debug("Identity request initialised");
     });
 
     function _clickedAllow() {
         ipcRenderer.send("clickedAllow", {
             result: {
-                name: accountName,
-                chain: chain,
-                id: account_id
+                name: accountName.value,
+                chain: chain.value,
+                id: account_id.value
             },
             request: {id: props.request.id}
         });

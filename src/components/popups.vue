@@ -83,11 +83,13 @@
         <SignMessageRequestPopup
             v-else-if="type === Actions.SIGN_MESSAGE"
             :request="request"
+            :accounts="accounts"
         />
         <TransferRequestPopup
             v-else-if="type === Actions.TRANSFER"
             :request="request"
             :to-send="toSend"
+            :accounts="accounts"
         />
         <TransactionRequestPopup
             v-else-if="type === Actions.REQUEST_SIGNATURE || type === Actions.INJECTED_CALL"

@@ -22,6 +22,7 @@ import {
   verifyMessage,
   transfer
 } from './apiUtils.js';
+import getBlockchainAPI from "./blockchains/blockchainFactory.js";
 
 import store from '../store/index.js';
 import * as Actions from './Actions';
@@ -259,22 +260,33 @@ export default class BeetServer {
           next_hash: apiobj.payload.next_hash
       });
 
+      let blockchain;
+      if ([Actions.REQUEST_LINK, Actions.REQUEST_RELINK, Actions.GET_ACCOUNT, Actions.SIGN_MESSAGE, Actions.TRANSFER].includes(apiobj.type)) {
+        try {
+          blockchain = getBlockchainAPI(apiobj.payload.chain);
+        } catch (error) {
+          console.log(error);
+          socket.emit("error", {id: data.id, error: true, payload: {code: 3, message: "Blockchain API failure"}});
+          return;
+        }
+      }
+
       let status;
       try {
         if (apiobj.type === Actions.GET_ACCOUNT) {
           status = await getAccount(apiobj);
         } else if (apiobj.type === Actions.REQUEST_SIGNATURE) {
-          status = await requestSignature(apiobj);
+          status = await requestSignature(apiobj, blockchain);
         } else if (apiobj.type === Actions.INJECTED_CALL) {
-          status = await injectedCall(apiobj);
+          status = await injectedCall(apiobj, blockchain);
         } else if (apiobj.type === Actions.VOTE_FOR) {
-          status = await voteFor(apiobj);
+          status = await voteFor(apiobj, blockchain);
         } else if (apiobj.type === Actions.SIGN_MESSAGE) {
-          status = await signMessage(apiobj);
+          status = await signMessage(apiobj, blockchain);
         } else if (apiobj.type === Actions.VERIFY_MESSAGE) {
-          status = await verifyMessage(apiobj);
+          status = await verifyMessage(apiobj, blockchain);
         } else if (apiobj.type === Actions.TRANSFER) {
-          status = await transfer(apiobj);
+          status = await transfer(apiobj, blockchain);
         }
       } catch (error) {
         console.log(error || "No status")
@@ -294,7 +306,7 @@ export default class BeetServer {
 
       let payload;
       try {
-        payload = aes.encrypt(status.result, key).toString();
+        payload = aes.encrypt(JSON.stringify(status.result), key).toString();
       } catch (error) {
         console.log(error);
         socket.emit("error", {id: data.id, error: true, payload: {code: 3, message: "Could not encrypt api response"}});

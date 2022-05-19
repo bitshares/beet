@@ -78,7 +78,13 @@ const createModal = async (arg, modalEvent) => {
       targetURL += `&visualizedParams=${btoa(arg.visualizedParams)}`;
     }
 
-    if (Actions.REQUEST_LINK || type === Actions.REQUEST_RELINK || type === Actions.GET_ACCOUNT) {
+    if (
+      type === Actions.REQUEST_LINK ||
+      type === Actions.REQUEST_RELINK ||
+      type === Actions.GET_ACCOUNT ||
+      type === Actions.SIGN_MESSAGE ||
+      type === Actions.TRANSFER
+    ) {
       modalRequests[id]['accounts'] = accounts;
       targetURL += `&accounts=${JSON.stringify(accounts)}`;
     }
