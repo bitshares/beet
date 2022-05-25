@@ -37,6 +37,14 @@
         return handleProp('toSend');
     });
 
+    let chain = computed(() => {
+        return handleProp('chain');
+    });
+
+    let accountName = computed(() => {
+        return handleProp('accountName');
+    });
+
     let visualizedAccount = computed(() => {
         return handleProp('visualizedAccount');
     });
@@ -48,6 +56,10 @@
     let request = computed(() => {
         return JSON.parse(handleProp('request'));
     });
+
+    let payload = computed(() => {
+      return JSON.parse(handleProp('payload'));
+    })
 
     let accounts = computed(() => {
         return JSON.parse(handleProp('accounts'));
@@ -77,8 +89,9 @@
             :accounts="accounts"
         />
         <GenericRequestPopup
-            v-else-if="type === Actions.VOTE_FOR"
+            v-else-if="type === Actions.VOTE_FOR || type === Actions.VERIFY_MESSAGE"
             :request="request"
+            :payload="payload"
         />
         <SignMessageRequestPopup
             v-else-if="type === Actions.SIGN_MESSAGE"
@@ -88,8 +101,9 @@
         <TransferRequestPopup
             v-else-if="type === Actions.TRANSFER"
             :request="request"
-            :to-send="toSend"
-            :accounts="accounts"
+            :chain="chain"
+            :accountName="accountName"
+            :toSend="toSend"
         />
         <TransactionRequestPopup
             v-else-if="type === Actions.REQUEST_SIGNATURE || type === Actions.INJECTED_CALL"

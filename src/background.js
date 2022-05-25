@@ -71,22 +71,40 @@ const createModal = async (arg, modalEvent) => {
         targetURL += `&existingLinks=${JSON.stringify(existingLinks)}`;
     }
 
-    if (type === Actions.INJECTED_CALL || type === Actions.REQUEST_SIGNATURE) {
+    if ([Actions.INJECTED_CALL, Actions.REQUEST_SIGNATURE].includes(type)) {
       modalRequests[id]['visualizedAccount'] = arg.visualizedAccount;
       modalRequests[id]['visualizedParams'] = arg.visualizedParams;
       targetURL += `&visualizedAccount=${btoa(arg.visualizedAccount)}`;
       targetURL += `&visualizedParams=${btoa(arg.visualizedParams)}`;
     }
 
-    if (
-      type === Actions.REQUEST_LINK ||
-      type === Actions.REQUEST_RELINK ||
-      type === Actions.GET_ACCOUNT ||
-      type === Actions.SIGN_MESSAGE ||
-      type === Actions.TRANSFER
-    ) {
+    if ([Actions.VOTE_FOR, Actions.VERIFY_MESSAGE].includes(type)) {
+      modalRequests[id]['payload'] = arg.payload;
+      targetURL += `&payload=${JSON.stringify(arg.payload)}`;
+    }
+
+    if ([
+      Actions.REQUEST_LINK,
+      Actions.REQUEST_RELINK,
+      Actions.GET_ACCOUNT,
+      Actions.SIGN_MESSAGE
+    ].includes(type)) {
       modalRequests[id]['accounts'] = accounts;
       targetURL += `&accounts=${JSON.stringify(accounts)}`;
+    }
+
+    if ([Actions.TRANSFER].includes(type)) {
+      let chain = arg.chain;
+      let accountName = arg.accountName;
+      let toSend = arg.toSend;
+
+      modalRequests[id]['chain'] = chain;
+      modalRequests[id]['accountName'] = accountName;
+      modalRequests[id]['toSend'] = toSend;
+
+      targetURL += `&chain=${chain}`;
+      targetURL += `&accountName=${btoa(accountName)}`;
+      targetURL += `&toSend=${btoa(toSend)}`;
     }
 
     modalWindows[id] = new BrowserWindow({

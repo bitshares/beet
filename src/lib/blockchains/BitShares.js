@@ -148,14 +148,6 @@ export default class BitShares extends BlockchainAPI {
      */
     _needsReconnecting() {
 
-        /*
-        console.log({
-          isConnected: this._isConnected ?? null,
-          isConnectedToNode: this._isConnectedToNode ?? null,
-          nodeLatencies: this._nodeLatencies ?? null
-        });
-        */
-
         if (
           !this._isConnected ||
           !this._isConnectedToNode ||
@@ -199,8 +191,6 @@ export default class BitShares extends BlockchainAPI {
         if (!nodeToConnect) {
           this._connectionFailed(reject, '', 'No node url')
         }
-
-        //console.log(`Attempting connection to: ${nodeToConnect}`)
 
         Apis.instance(
             nodeToConnect,
@@ -593,7 +583,9 @@ export default class BitShares extends BlockchainAPI {
                     tr.update_head_block()
                 ]).then(() => {
                     let privateKey = PrivateKey.fromWif(key);
-                    tr.add_signer(privateKey, privateKey.toPublicKey().toPublicKeyString(this._getCoreSymbol()));
+                    tr.add_signer(
+                      privateKey,
+                      privateKey.toPublicKey().toPublicKeyString(this._getCoreSymbol()));
                     tr.finalize().then(() => {
                         tr.sign();
                         resolve(tr);
@@ -632,58 +624,50 @@ export default class BitShares extends BlockchainAPI {
      * @returns {Object}
      */
     getOperation(data, account) {
-        let account_id = account.id;
         return new Promise((resolve, reject) => {
             this.ensureConnection().then(() => {
-                let operation = {
-                    type: null,
-                    data: null
-                };
-                let api = Apis.instance();
-                switch (data.action) {
-                    case 'vote': {
-                        operation.type = 'account_update';
-                        api.db_api().exec(
-                            "get_objects",
-                            [[account_id]]
-                        ).then((accounts) => {
-                            let updateObject = {
-                                account: account_id
-                            };
 
-                            let account = accounts[0];
+                if (data.action === 'vote') {
+                  let accountID;
+                  try {
+                    accountID = account.accountID;
+                  } catch (error) {
+                    console.log(error)
+                  }
 
-                            let new_options = account.options;
+                  Apis.instance().db_api().exec("get_objects", [[accountID]]).then((accounts) => {
 
-                            if (new_options.votes.findIndex(item => item == data.vote_id) !== -1) {
-                                resolve({
-                                   vote_id: data.vote_id,
-                                   nothingToDo: true
-                                });
-                            }
+                      let new_options = accounts[0].options;
+                      if (new_options.votes.findIndex(item => item == data.vote_id) !== -1) {
+                          resolve({
+                             vote_id: data.vote_id,
+                             nothingToDo: true
+                          });
+                      }
 
-                            new_options.votes.push(data.vote_id);
-                            new_options.votes = new_options.votes.sort((a, b) => {
-                                let a_split = a.split(":");
-                                let b_split = b.split(":");
-                                return (
-                                    parseInt(a_split[1], 10) - parseInt(b_split[1], 10)
-                                );
-                            });
-                            updateObject.new_options = new_options;
-                            operation.data = updateObject;
-                            resolve(operation);
-                        }).catch(err => {
-                            reject(err);
-                        });
+                      new_options.votes.push(data.vote_id);
+                      new_options.votes = new_options.votes.sort((a, b) => {
+                          let a_split = a.split(":");
+                          let b_split = b.split(":");
+                          return (
+                              parseInt(a_split[1], 10) - parseInt(b_split[1], 10)
+                          );
+                      });
+                      resolve({
+                        data: {
+                            account: accountID,
+                            new_options: new_options
+                        },
+                        type: 'account_update'
+                      });
 
-                    }
-                    break;
-                    default: {
-                        operation.type = 'transfer';
-                        operation.data = data;
-                        resolve(operation);
-                    }
+                  }).catch(error => {
+                      console.log(error)
+                      reject(error);
+                  });
+
+                } else {
+                  resolve({data: data, type: 'transfer'});
                 }
             }).catch(reject);
         });

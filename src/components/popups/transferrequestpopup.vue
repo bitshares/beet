@@ -14,11 +14,18 @@
                 return {}
             }
         },
-        accounts: {
-            type: Array,
+        chain: {
+            type: String,
             required: true,
             default() {
-                return []
+                return ''
+            }
+        },
+        accountName: {
+            type: String,
+            required: true,
+            default() {
+                return ''
             }
         },
         toSend: {
@@ -31,14 +38,14 @@
     });
 
     let message = computed(() => {
-        if (!props.request || !props.accounts) {
+        if (!props.request || !props.chain || !props.accountName) {
             return '';
         }
         return t("operations.transfer.request", {
-            appName: props.request.appName,
-            origin: props.request.origin,
-            chain: props.accounts[0].accountID.chain,
-            accountName: props.accounts[0].accountID.accountName
+            appName: props.request.payload.appName,
+            origin: props.request.payload.origin,
+            chain: props.chain,
+            accountName: atob(props.accountName)
         });
     });
 
@@ -46,42 +53,42 @@
         if (!props.request) {
             return '';
         }
-        return props.request.params.to;
+        return props.request.payload.params.to;
     });
 
     let satoshis = computed(() => {
         if (!props.request) {
             return '';
         }
-        return props.request.params.amount.satoshis;
+        return props.request.payload.params.amount.satoshis;
     });
 
     let asset_id = computed(() => {
         if (!props.request) {
             return '';
         }
-        return props.request.params.amount.asset_id;
+        return props.request.payload.params.amount.asset_id;
     });
 
     let toSend = computed(() => {
         if (!props.toSend) {
             return '';
         }
-        return props.toSend;
+        return atob(props.toSend);
     });
 
     let toSendFee = computed(() => {
         if (!props.request) {
             return '';
         }
-        return props.request.toSendFee ?? null;
+        return props.request.payload.params.toSendFee ?? null;
     });
 
     let feeInSatoshis = computed(() => {
         if (!props.request) {
             return '';
         }
-        return props.request.feeInSatoshis ?? null;
+        return props.request.payload.params.feeInSatoshis ?? null;
     });
 
     onMounted(() => {
@@ -109,7 +116,7 @@
     }
 </script>
 <template>
-    {{ message }}:
+    {{ message }}
     <br>
     <br>
     <pre class="text-left custom-content">

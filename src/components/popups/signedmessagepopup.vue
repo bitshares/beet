@@ -24,12 +24,12 @@
     });
 
     let requestText = computed(() => {
-        if (!props.request || !props.request.accounts) {
+        if (!props.request || !props.accounts) {
             return '';
         }
         return t("operations.message.request", {
-            appName: props.request.appName,
-            origin: props.request.origin,
+            appName: props.request.payload.appName,
+            origin: props.request.payload.origin,
             chain: props.accounts[0].chain, // FIX
             accountName: props.accounts[0].accountName
         });
@@ -61,10 +61,14 @@
 </script>
 
 <template>
-    {{ message }}:
+    {{ requestText }}:
     <br>
     <br>
-    <pre class="text-left custom-content"><code>{{ props.request.params }}</code></pre>
+    <pre class="text-left custom-content">
+      <code>
+        {{ props.request.payload.params }}
+      </code>
+    </pre>
     <ui-button
         raised
         @click="_clickedAllow()"

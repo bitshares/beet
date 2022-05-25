@@ -14,21 +14,28 @@
             default() {
                 return {}
             }
-        }
+        },
+        payload: {
+            type: Object,
+            required: true,
+            default() {
+                return {}
+            }
+        },
     });
 
     let acceptText = computed(() => {
-        if (!props.request) {
+        if (!props.payload) {
             return '';
         }
-        return props.request.generic.acceptText ?? t('operations.rawsig.accept_btn');
+        return props.payload.generic.acceptText ?? t('operations.rawsig.accept_btn');
     });
 
     let rejectText = computed(() => {
-        if (!props.request) {
+        if (!props.payload) {
             return '';
         }
-        return props.request.generic.rejectText ?? t('operations.rawsig.reject_btn');
+        return props.payload.generic.rejectText ?? t('operations.rawsig.reject_btn');
     });
 
     onMounted(() => {
@@ -58,11 +65,12 @@
 </script>
 
 <template>
-    <div v-if="_accept">
-        {{ props.request.generic.message }}:
+        {{ props.payload.generic.message }}:
         <br>
         <br>
-        <pre class="text-left custom-content"><code>{{ props.request.generic.details }}</code></pre>
+        <pre class="text-left custom-content">
+          <code>{{ props.payload.generic.details }}</code>
+        </pre>
 
         <ui-button
             raised
@@ -77,8 +85,4 @@
         >
             {{ rejectText }}
         </ui-button>
-    </div>
-    <div v-else>
-        Loading beet modal contents
-    </div>
 </template>

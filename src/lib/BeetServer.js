@@ -19,7 +19,7 @@ import {
   injectedCall,
   voteFor,
   signMessage,
-  verifyMessage,
+  messageVerification,
   transfer
 } from './apiUtils.js';
 import getBlockchainAPI from "./blockchains/blockchainFactory.js";
@@ -260,10 +260,20 @@ export default class BeetServer {
           next_hash: apiobj.payload.next_hash
       });
 
+      let blockchainActions = [
+        Actions.REQUEST_LINK,
+        Actions.REQUEST_RELINK,
+        Actions.GET_ACCOUNT,
+        Actions.SIGN_MESSAGE,
+        Actions.VERIFY_MESSAGE,        
+        Actions.TRANSFER,
+        Actions.VOTE_FOR
+      ];
+
       let blockchain;
-      if ([Actions.REQUEST_LINK, Actions.REQUEST_RELINK, Actions.GET_ACCOUNT, Actions.SIGN_MESSAGE, Actions.TRANSFER].includes(apiobj.type)) {
+      if (blockchainActions.includes(apiobj.type)) {
         try {
-          blockchain = getBlockchainAPI(apiobj.payload.chain);
+          blockchain = await getBlockchainAPI(apiobj.payload.chain);
         } catch (error) {
           console.log(error);
           socket.emit("error", {id: data.id, error: true, payload: {code: 3, message: "Blockchain API failure"}});
@@ -284,7 +294,7 @@ export default class BeetServer {
         } else if (apiobj.type === Actions.SIGN_MESSAGE) {
           status = await signMessage(apiobj, blockchain);
         } else if (apiobj.type === Actions.VERIFY_MESSAGE) {
-          status = await verifyMessage(apiobj, blockchain);
+          status = await messageVerification(apiobj, blockchain);
         } else if (apiobj.type === Actions.TRANSFER) {
           status = await transfer(apiobj, blockchain);
         }

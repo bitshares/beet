@@ -144,7 +144,6 @@ export default class BlockchainAPI {
             }
             message = JSON.stringify(message);
             try {
-
                 resolve({
                     signed: message,
                     payload: JSON.parse(message),
@@ -163,13 +162,12 @@ export default class BlockchainAPI {
      */
     verifyMessage(signedMessage) {
         return new Promise((resolve, reject) => {
-            if (typeof signedMessage.payload === "string" || signedMessage.payload instanceof String) {
-                signedMessage.signed = signedMessage.payload;
-                signedMessage.payload = JSON.parse(signedMessage.payload);
+            if (typeof signedMessage.payload.params === "string" || signedMessage.payload.params instanceof String) {
+                signedMessage.payload.params = JSON.parse(signedMessage.payload.params);
             }
             // parse payload
             let payload_dict = {};
-            let payload_list = signedMessage.payload;
+            let payload_list = signedMessage.payload.params.payload;
             if (payload_list[2] == "key") {
                 for (let i = 0; i < payload_list.length - 1; i = i+2) {
                     payload_dict[payload_list[i]] = payload_list[i + 1];
@@ -189,9 +187,30 @@ export default class BlockchainAPI {
                         reject("invalid user");
                     }
                     // verify message signed
-                    let verified = false;
+
+                    let signedParams = signedMessage.payload.params;
+
+                    let signature;
                     try {
-                        verified = this._verifyString(signedMessage.signature, payload_dict.key, signedMessage.signed);
+                      signature = signedParams.signature;
+                    } catch (error) {
+                      console.log(error);
+                    }
+
+                    let signed;
+                    try {
+                      signed = signedParams.signed;
+                    } catch (error) {
+                      console.log(error);
+                    }
+
+                    let verified;
+                    try {
+                        verified = this._verifyString(
+                          signature,
+                          payload_dict.key,
+                          signed
+                        );
                     } catch (err) {
                         // wrap message that could be raised from Signature
                         reject("Error verifying signature", err);
@@ -199,7 +218,7 @@ export default class BlockchainAPI {
                     if (!verified) {
                         reject("Invalid signature");
                     }
-                    return resolve(signedMessage);
+                    return resolve({result: verified});
                 }
             ).catch(err => {
                 reject(err);
