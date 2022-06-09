@@ -434,7 +434,7 @@ export default class BeetServer {
 
             if (!status.authenticate) {
               socket.emit(
-                "error",
+                "api",
                 {
                     id: status.id,
                     error: true,
