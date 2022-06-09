@@ -219,7 +219,7 @@ export default class BeetServer {
       let hash = await sha256('' + data.id).toString();
 
       if (!hash == socket.next_hash) {
-        socket.emit("error", {id: data.id, error: true, payload: {code: 2, message: "Unexpected request hash. Please relink then resubmit api request."}})
+        socket.emit("api", {id: data.id, error: true, payload: {code: 2, message: "Unexpected request hash. Please relink then resubmit api request."}})
         return;
       }
 
@@ -230,14 +230,14 @@ export default class BeetServer {
         decryptedValue = aes.decrypt(data.payload, key).toString(ENC);
       } catch (error) {
         console.log(error);
-        socket.emit("error", {id: data.id, error: true, payload: {code: 3, message: "Could not decrypt message"}});
+        socket.emit("api", {id: data.id, error: true, payload: {code: 3, message: "Could not decrypt message"}});
         return;
       }
 
       let msg = JSON.parse(decryptedValue);
       if (!Object.keys(Actions).map(key => Actions[key]).includes(msg.method)) {
           console.log("Unsupported request type rejected");
-          socket.emit("error", {id: data.id, error: true, payload: {code: 3, message: "Request type not supported."}});
+          socket.emit("api", {id: data.id, error: true, payload: {code: 3, message: "Request type not supported."}});
           return;
       }
 
@@ -265,7 +265,7 @@ export default class BeetServer {
         Actions.REQUEST_RELINK,
         Actions.GET_ACCOUNT,
         Actions.SIGN_MESSAGE,
-        Actions.VERIFY_MESSAGE,        
+        Actions.VERIFY_MESSAGE,
         Actions.TRANSFER,
         Actions.VOTE_FOR
       ];
@@ -276,7 +276,7 @@ export default class BeetServer {
           blockchain = await getBlockchainAPI(apiobj.payload.chain);
         } catch (error) {
           console.log(error);
-          socket.emit("error", {id: data.id, error: true, payload: {code: 3, message: "Blockchain API failure"}});
+          socket.emit("api", {id: data.id, error: true, payload: {code: 3, message: "Blockchain API failure"}});
           return;
         }
       }
@@ -301,13 +301,13 @@ export default class BeetServer {
       } catch (error) {
         console.log(error || "No status")
         logger.debug("incoming api req fail", error);
-        socket.emit("error", {id: data.id, error: true, payload: {code: 4, message: "Negative user response"}})
+        socket.emit("api", {id: data.id, error: true, payload: {code: 4, message: "Negative user response"}})
         return;
       }
 
       if (!status.result || status.result.isError || status.result.canceled) {
         console.log("Issue occurred in approved prompt");
-        socket.emit("error", {id: data.id, error: true, payload: {code: 7, message: "API request unsuccessful"}});
+        socket.emit("api", {id: data.id, error: true, payload: {code: 7, message: "API request unsuccessful"}});
         return;
       }
 
@@ -319,7 +319,7 @@ export default class BeetServer {
         payload = aes.encrypt(JSON.stringify(status.result), key).toString();
       } catch (error) {
         console.log(error);
-        socket.emit("error", {id: data.id, error: true, payload: {code: 3, message: "Could not encrypt api response"}});
+        socket.emit("api", {id: data.id, error: true, payload: {code: 3, message: "Could not encrypt api response"}});
         return;
       }
 
@@ -364,13 +364,13 @@ export default class BeetServer {
       } catch (error) {
         console.log(error)
         logger.debug("incoming relink req fail", error);
-        socket.emit("error", {id: data.id, error: true, payload: {code: 7, message: "API request unsuccessful"}});
+        socket.emit("api", {id: data.id, error: true, payload: {code: 7, message: "API request unsuccessful"}});
         return;
       }
 
       if (!status || status.result && status.result.isError) {
         console.log("No linkhandler status");
-        socket.emit("error", {id: data.id, error: true, payload: {code: 7, message: "API request unsuccessful"}});
+        socket.emit("api", {id: data.id, error: true, payload: {code: 7, message: "API request unsuccessful"}});
         return;
       }
 
@@ -414,7 +414,7 @@ export default class BeetServer {
 
             if (!store.state.WalletStore.isUnlocked) {
               console.log(`locked wallet: ${store.state.WalletStore.isUnlocked}`)
-              socket.emit("error", {id: data.id, error: true, payload: {code: 7, message: "Beet wallet authentication error."}});
+              socket.emit("api", {id: data.id, error: true, payload: {code: 7, message: "Beet wallet authentication error."}});
               return;
             }
 
@@ -493,7 +493,7 @@ export default class BeetServer {
           socket.on("linkRequest", async (data) => {
             if (!socket.isAuthenticated || !store.state.WalletStore.isUnlocked) {
               logger.debug("Rejected link: locked wallet");
-              socket.emit("error", {id: data.id, error: true, payload: {code: 5, message: "Beet wallet authentication error."}});
+              socket.emit("api", {id: data.id, error: true, payload: {code: 5, message: "Beet wallet authentication error."}});
               return;
             }
             logger.debug("processing link");
@@ -502,7 +502,7 @@ export default class BeetServer {
             } catch (error) {
               console.log(error);
               if (socket) {
-                socket.emit("error", {id: data.id, error: true, payload: {code: 7, message: "Link request unsuccessful."}});
+                socket.emit("api", {id: data.id, error: true, payload: {code: 7, message: "Link request unsuccessful."}});
               }
             }
           });
@@ -512,7 +512,7 @@ export default class BeetServer {
            */
           socket.on("relinkRequest", async (data) => {
             if (!socket.isAuthenticated || !store.state.WalletStore.isUnlocked) {
-              socket.emit("error", {id: data.id, error: true, payload: {code: 5, message: "Beet wallet authentication error."}});
+              socket.emit("api", {id: data.id, error: true, payload: {code: 5, message: "Beet wallet authentication error."}});
               return;
             }
             logger.debug("processing relink");
@@ -521,7 +521,7 @@ export default class BeetServer {
             } catch (error) {
               console.log(error);
               if (socket) {
-                socket.emit("error", {id: data.id, error: true, payload: {code: 7, message: "Relink request unsuccessful."}});
+                socket.emit("api", {id: data.id, error: true, payload: {code: 7, message: "Relink request unsuccessful."}});
               }
             }
           });
@@ -531,12 +531,12 @@ export default class BeetServer {
            */
           socket.on("api", async (data) => {
             if (!socket.isAuthenticated || !store.state.WalletStore.isUnlocked) {
-              socket.emit("error", {id: data.id, error: true, payload: {code: 5, message: "Beet wallet authentication error."}});
+              socket.emit("api", {id: data.id, error: true, payload: {code: 5, message: "Beet wallet authentication error."}});
               return;
             }
 
             if (!socket.isLinked) {
-              socket.emit("error", {id: data.id, error: true, payload: {code: 4, message: "This app is not yet linked. Link then try again."}})
+              socket.emit("api", {id: data.id, error: true, payload: {code: 4, message: "This app is not yet linked. Link then try again."}})
               return;
             }
 
@@ -547,7 +547,7 @@ export default class BeetServer {
             } catch (error) {
               console.log(error);
               if (socket) {
-                socket.emit("error", {id: data.id, error: true, payload: {code: 7, message: "API request unsuccessful."}});
+                socket.emit("api", {id: data.id, error: true, payload: {code: 7, message: "API request unsuccessful."}});
               }
             }
           });
