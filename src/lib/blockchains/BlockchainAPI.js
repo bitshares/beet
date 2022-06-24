@@ -48,22 +48,20 @@ export default class BlockchainAPI {
             }
 
             if (!this._needsReconnecting()) {
-              console.log('Using existing connection');
+              console.log(`Using existing connection: ${this._isConnectedToNode}`);
               return this._connectionEstablished(resolve, this._isConnectedToNode);
             }
 
             this._isConnectingInProgress = true;
 
-            emitter.emit(
-                'blockchainStatus',
-                {
-                    chain: this._config.identifier,
-                    status: this._isConnected,
-                    connecting: this._isConnectingInProgress
-                }
-            );
-
-            this._connect(nodeToConnect).then(resolve).catch(reject);
+            this._connect(nodeToConnect).then((res) => {
+                this._isConnectingInProgress = false;
+                this._isConnected = true;
+                resolve(res);
+            }).catch((error) => {
+                console.log(error);
+                reject(error);
+            });
         });
     }
 
@@ -77,14 +75,6 @@ export default class BlockchainAPI {
         this._isConnectedToNode = node;
         this._isConnected = true;
         this._isConnectingInProgress = false;
-        emitter.emit(
-            'blockchainStatus',
-            {
-                chain: this._config.identifier,
-                status: this._isConnected,
-                connecting: this._isConnectingInProgress
-            }
-        );
         store.dispatch("SettingsStore/setNode", {
             chain: this._config.identifier,
             node: node
@@ -104,15 +94,6 @@ export default class BlockchainAPI {
         this._tempBanned.push(node);
         this._isConnected = false;
         this._isConnectingInProgress = false;
-        emitter.emit(
-            'blockchainStatus',
-            {
-                chain: this._config.identifier,
-                status: this._isConnected,
-                connecting: this._isConnectingInProgress,
-                error: error
-            }
-        );
         if (resolveCallback != null) {
             resolveCallback(node);
         }

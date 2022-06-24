@@ -65,24 +65,24 @@
 </script>
 
 <template>
-        {{ props.payload.generic.message }}:
-        <br>
-        <br>
-        <pre class="text-left custom-content">
+    {{ props.payload.generic.message }}:
+    <br>
+    <br>
+    <pre class="text-left custom-content">
           <code>{{ props.payload.generic.details }}</code>
         </pre>
 
-        <ui-button
-            raised
-            @click="_clickedAllow()"
-        >
-            {{ acceptText }}
-        </ui-button>
+    <ui-button
+        raised
+        @click="_clickedAllow()"
+    >
+        {{ acceptText }}
+    </ui-button>
 
-        <ui-button
-            outlined
-            @click="_clickedDeny()"
-        >
-            {{ rejectText }}
-        </ui-button>
+    <ui-button
+        outlined
+        @click="_clickedDeny()"
+    >
+        {{ rejectText }}
+    </ui-button>
 </template>

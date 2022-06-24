@@ -28,7 +28,6 @@ export default function getBlockchainAPI(chain = null, node = null) {
       return;
     }
 
-    let requiredLibrary;
     if (chain == "BTS") {
         if (!bts) {
             try {

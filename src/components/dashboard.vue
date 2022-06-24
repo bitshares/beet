@@ -1,25 +1,17 @@
 <script setup>
     import { watch, ref, computed, inject } from "vue";
-    const emitter = inject('emitter');
     import { useI18n } from 'vue-i18n';
-    const { t } = useI18n({ useScope: 'global' });
-
     import Actionbar from "./actionbar";
     import Balances from "./balances";
     import AccountDetails from "./accountdetails";
 
     import store from '../store/index';
-    import getBlockchainAPI from "../lib/blockchains/blockchainFactory";
     import {formatChain, formatAccount} from "../lib/formatter";
     import RendererLogger from "../lib/RendererLogger";
-
+    const emitter = inject('emitter');
+    const { t } = useI18n({ useScope: 'global' });
     const logger = new RendererLogger();
 
-    let nodes = ref([]);
-    let isConnected = ref(false);
-    let isConnecting = ref(false);
-
-    let blockchain = ref(null);
     let selectedChain = ref(null);
     let accountName = ref('');
     let accountID = ref('');
@@ -84,21 +76,11 @@
      */
     watch(selectedAccount, async (newVal, oldVal) => {
         if (newVal && newVal !== oldVal) {
-            //blockchain.value = getBlockchainAPI(newVal.chain);
             selectedChain.value = newVal.chain;
             accountName.value = newVal.accountName;
             accountID.value = newVal.accountID;
         }
     }, {immediate: true});
-
-    // Is EventBus here necessary? Could this be a computed field and listen
-    // to this.blockchain.isConnected?
-    emitter.on("blockchainStatus", what => {
-        if (what.chain == selectedChain.value) {
-            isConnected.value = what.status;
-            isConnecting.value = !!what.connecting;
-        }
-    });
 </script>
 
 <template>
@@ -117,7 +99,6 @@
         class="acc-info"
     >
         <AccountDetails :account="selectedAccount" />
-        <br>
         <Balances :account="selectedAccount" />
     </div>
 

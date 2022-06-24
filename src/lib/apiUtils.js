@@ -207,7 +207,7 @@ async function _signOrBroadcast(
       } catch (error) {
         return _promptFail(txType + ".broadcast", request.id, error, reject);
       }
-      notifyTXT = "Transaction successfully signed & broadcast.";;
+      notifyTXT = "Transaction successfully signed & broadcast.";
   }
 
   store.dispatch("WalletStore/notifyUser", {notify: "request", message: notifyTXT});

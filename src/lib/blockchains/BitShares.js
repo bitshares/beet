@@ -197,7 +197,7 @@ export default class BitShares extends BlockchainAPI {
             true,
             4000,
             {enableCrypto: false, enableOrders: false},
-            this._connectionFailed(reject, nodeToConnect, 'WS Connection closed')
+            console.log('Initial WSS Connection closed')
         ).init_promise
         .then((res) => {
           console.log("established connection:", res[0].network);
@@ -227,18 +227,17 @@ export default class BitShares extends BlockchainAPI {
 
             if (!nodeToConnect && !this._nodeLatencies) {
                 // initializing the blockchain
+                console.log('Checking node connections')
                 this._testNodes().then((res) => {
-                  nodeToConnect = res.node;
                   this._node = res.node;
                   this._nodeLatencies = res.latencies;
                   this._nodeCheckTime = res.timestamp;
-                })
-                .then(() => {
-                  console.log(`Establishing connection to ${nodeToConnect}`);
-                  return this._establishConnection(nodeToConnect, resolve, reject);
+                  console.log(`Establishing connection to ${res.node}`);
+                  return this._establishConnection(res.node, resolve, reject);
                 })
                 .catch(error => {
                   console.log(error);
+                  return this._connectionFailed(reject, '', 'Node test fail');
                 })
             } else if (!nodeToConnect && this._nodeLatencies) {
               // blockchain has previously been initialized
@@ -249,7 +248,7 @@ export default class BitShares extends BlockchainAPI {
                                     }
                                   });
               this._nodeLatencies = filteredNodes;
-              if (!filteredNodes.length) {
+              if (!filteredNodes || !filteredNodes.length) {
                 return this._connectionFailed(reject, '', 'No working nodes');
               }
 
@@ -427,7 +426,10 @@ export default class BitShares extends BlockchainAPI {
                     }
                     resolve(balances);
                 });
-            }).catch(reject);
+            }).catch((error) => {
+                console.log(error);
+                reject(error);
+            });
         });
     }
 

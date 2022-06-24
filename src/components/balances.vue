@@ -1,12 +1,12 @@
 <script setup>
     import { watch, watchEffect, ref, computed, onMounted, inject } from "vue";
-    const emitter = inject('emitter');
     import { useI18n } from 'vue-i18n';
-    const { t } = useI18n({ useScope: 'global' });
     import getBlockchainAPI from "../lib/blockchains/blockchainFactory";
     import store from '../store/index';
-
     import RendererLogger from "../lib/RendererLogger";
+
+    const emitter = inject('emitter');
+    const { t } = useI18n({ useScope: 'global' });
     const logger = new RendererLogger();
 
     const props = defineProps({
@@ -19,8 +19,10 @@
         }
     });
 
-    let balances = ref([]);
-    let fetched = ref(false);
+    let balances = ref();
+    let isConnected = ref();
+    let isConnecting = ref();
+
     let token = ref(0);
     let assetText = ref('');
 
@@ -29,23 +31,19 @@
      * @returns {Array}
      */
     async function fetchBalances(chain, name) {
-        fetched.value = false;
-        let blockchain;
-        try {
-            blockchain = await getBlockchainAPI(chain);
-        } catch (error) {
-            console.error(error);
-            return;
-        }
-
-        let retrievedBalance;
-        try {
-            retrievedBalance = await blockchain.getBalances(name);
-        } catch (error) {
-            console.error(error);
-        }
-
-        return retrievedBalance;
+        isConnecting.value = true;
+        return getBlockchainAPI(chain).getBalances(name)
+            .then(result => {
+                console.log(result);
+                isConnected.value = true;
+                isConnecting.value = false;
+                return result;
+            })
+            .catch(error => {
+                console.log(error);
+                isConnected.value = false;
+                isConnecting.value = false;
+            });
     }
 
     /**
@@ -54,9 +52,6 @@
     async function loadBalances() {
         if (selectedChain.value !== '' && accountName.value !== '') {
             balances.value = await fetchBalances(selectedChain.value, accountName.value)
-            if (balances.value) {
-                fetched.value = true;
-            }
         }
     }
 
@@ -74,11 +69,7 @@
 
     watchEffect(async () => {
         if (selectedChain.value !== '' && accountName.value !== '') {
-            //console.log(`watch effect: ${selectedChain.value} ${accountName.value}`)
-            balances.value = await fetchBalances(selectedChain.value, accountName.value);
-            if (balances.value) {
-                fetched.value = true;
-            }
+            balances.value = await fetchBalances(selectedChain.value, accountName.value)
         }
     });
 
@@ -118,14 +109,14 @@
                         />
                     </ui-card-actions>
                 </ui-item>
-                <ui-item v-else-if="fetched && !balances.length">
+                <ui-item v-else-if="balances && !balances.length">
                     <ui-item-text-content>
                         <ui-item-text1>
                             No balances in account
                         </ui-item-text1>
                     </ui-item-text-content>
                 </ui-item>
-                <ui-item v-else-if="!fetched">
+                <ui-item v-else-if="isConnecting || !balances">
                     <ui-item-text-content>
                         <ui-item-text1>
                             Connecting to blockchain
@@ -140,11 +131,18 @@
                     </ui-item-text-content>
                 </ui-item>
                 <ui-button
-                    v-if="fetched || !balances"
+                    v-if="isConnected || balances"
                     class="step_btn"
                     @click="loadBalances()"
                 >
-                    Refresh
+                    Refresh balances
+                </ui-button>
+                <ui-button
+                    v-else-if="!isConnected && !isConnecting"
+                    class="step_btn"
+                    @click="loadBalances()"
+                >
+                    Reconnect
                 </ui-button>
             </ui-list>
         </ui-card>

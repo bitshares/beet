@@ -58,7 +58,7 @@
     });
 
     let payload = computed(() => {
-      return JSON.parse(handleProp('payload'));
+        return JSON.parse(handleProp('payload'));
     })
 
     let accounts = computed(() => {
@@ -102,8 +102,8 @@
             v-else-if="type === Actions.TRANSFER"
             :request="request"
             :chain="chain"
-            :accountName="accountName"
-            :toSend="toSend"
+            :account-name="accountName"
+            :to-send="toSend"
         />
         <TransactionRequestPopup
             v-else-if="type === Actions.REQUEST_SIGNATURE || type === Actions.INJECTED_CALL"
