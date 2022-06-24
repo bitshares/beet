@@ -10,12 +10,7 @@
             type: String,
             required: true,
             default: ''
-        }/*,
-        node: {
-            type: String,
-            required: true,
-            default: ''
-        }*/
+        }
     });
 
     let accountname = ref("");

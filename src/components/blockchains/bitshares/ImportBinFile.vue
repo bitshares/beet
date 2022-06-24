@@ -13,12 +13,7 @@
             type: String,
             required: true,
             default: ''
-        }/*,
-        node: {
-            type: String,
-            required: true,
-            default: ''
-        }*/
+        }
     });
 
     onMounted(() => {

@@ -1,12 +1,8 @@
 <script setup>
     import { watch, ref, computed, onMounted, inject } from "vue";
     import { ipcRenderer } from 'electron';
-    const emitter = inject('emitter');
-
     import { useI18n } from 'vue-i18n';
-    const { t } = useI18n({ useScope: 'global' });
 
-    import Actionbar from "./actionbar";
     import ImportCloudPass from "./blockchains/bitshares/ImportCloudPass";
     import ImportBinFile from "./blockchains/bitshares/ImportBinFile";
     import ImportMemo from "./blockchains/bitshares/ImportMemo";
@@ -18,7 +14,10 @@
     import { blockchains } from "../config/config.js";
     import getBlockchainAPI from "../lib/blockchains/blockchainFactory";
     import RendererLogger from "../lib/RendererLogger";
+
     const logger = new RendererLogger();
+    const { t } = useI18n({ useScope: 'global' });
+    const emitter = inject('emitter');
 
     let importMethod = ref(null);
     let walletname = ref("");
@@ -35,7 +34,6 @@
     let s1c = ref("");
     let selectedChain = ref(0);
     let selectedImport = ref(0);
-    let selectedNode = ref(0);
 
     let accounts_to_import = ref(null);
     let import_accounts = ref(null);
@@ -84,6 +82,13 @@
     });
 
     /*
+     * Array of supported blockchains for select menu
+     */
+    let createNewWallet = computed(() => {
+        return !store.state.WalletStore.isUnlocked;
+    });
+
+    /*
      * Array of chain import methods for select menu
      */
     let selectedImportOptions = computed(() => {
@@ -103,34 +108,6 @@
             selectedNode.value = 0;
         }
     }, {immediate: true});
-
-    /*
-     * Ui select node options
-     */
-    let selectedNodeOptions = computed(() => {
-        if (!selectedChain.value || !selectedChain.value) {
-            return [];
-        }
-
-        return blockchains[selectedChain.value].nodeList.map((node, i) => {
-            if (node.url.includes('ws')) {
-                try {
-                    let socket = new WebSocket(node.url);
-                    socket.onopen = (e) => {
-                        return {url: node.url, id: i}
-                    };
-                    socket.onerror = (error) => {
-                        console.log(error);
-                        return null;
-                    };
-                } catch (error) {
-                    console.log(error);
-                    return null;
-                }
-            }
-            return {url: node.url, id: i};
-        }).filter(x => !!x);
-    });
 
     /*
      * Returns the selected import type
@@ -347,40 +324,10 @@
                     </select>
                 </div>
 
-                <div>
-                    <p class="my-3 font-weight-bold">
-                        {{ t('common.node_header') }}
-                    </p>
-                    <select
-                        id="node-select"
-                        v-model="selectedNode"
-                        class="form-control mb-3"
-                        :class="s1c"
-                        :placeholder="t('common.node_placeholder')"
-                        required
-                    >
-                        <option
-                            key="0"
-                            selected
-                            disabled
-                            value="0"
-                        >
-                            {{ t('common.node_placeholder') }}
-                        </option>
-                        <option
-                            v-for="node in selectedNodeOptions"
-                            :key="node.id"
-                            :value="node"
-                        >
-                            {{ node.url }}
-                        </option>
-                    </select>
-                </div>
-
                 <ui-grid>
                     <ui-grid-cell columns="12">
                         <router-link
-                            :to="!userHasWallet ? '/' : '/dashboard'"
+                            :to="createNewWallet ? '/' : '/dashboard'"
                             replace
                         >
                             <ui-button
@@ -413,7 +360,7 @@
                             </span>
                         </span>
                         <span v-else>
-                            <span v-if="walletname !== '' && selectedChain !== 0 && selectedNode !== 0">
+                            <span v-if="walletname !== '' && selectedChain !== 0">
                                 <ui-button
                                     raised
                                     class="step_btn"
@@ -444,37 +391,31 @@
                     v-if="selectedImportOption.type == 'address/ImportAddressBased'"
                     v-model="importMethod"
                     :chain="selectedChain"
-                    :node="selectedNode.url"
                 />
                 <ImportAddressBased
                     v-else-if="selectedImportOption.type == 'ImportAddressBased'"
                     v-model="importMethod"
                     :chain="selectedChain"
-                    :node="selectedNode.url"
                 />
                 <ImportKeys
                     v-else-if="selectedImportOption.type == 'ImportKeys'"
                     v-model="importMethod"
                     :chain="selectedChain"
-                    :node="selectedNode.url"
                 />
                 <ImportCloudPass
                     v-else-if="selectedImportOption.type == 'bitshares/ImportCloudPass'"
                     v-model="importMethod"
                     :chain="selectedChain"
-                    :node="selectedNode.url"
                 />
                 <ImportBinFile
                     v-else-if="selectedImportOption.type == 'bitshares/ImportBinFile'"
                     v-model="importMethod"
                     :chain="selectedChain"
-                    :node="selectedNode.url"
                 />
                 <ImportMemo
                     v-else-if="selectedImportOption.type == 'bitshares/ImportMemo'"
                     v-model="importMethod"
                     :chain="selectedChain"
-                    :node="selectedNode.url"
                 />
                 <div v-else>
                     No import option found
