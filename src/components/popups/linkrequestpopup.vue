@@ -1,12 +1,12 @@
 <script setup>
     import { ipcRenderer } from 'electron';
     import { ref, onMounted, computed } from "vue";
+    import RendererLogger from "../../lib/RendererLogger";
+    import {formatChain, formatAccount} from "../../lib/formatter";
 
     import { useI18n } from 'vue-i18n';
     const { t } = useI18n({ useScope: 'global' });
-    import RendererLogger from "../../lib/RendererLogger";
     const logger = new RendererLogger();
-    import {formatChain, formatAccount} from "../../lib/formatter";
 
     let chosenAccount = ref(-1);
 
@@ -59,6 +59,12 @@
         if (!props.accounts || !props.accounts.length) {
             return [];
         }
+        
+        let filteredAccounts = props.accounts.filter(account => props.request.chain === account.chain);
+        if (!filteredAccounts.length) {
+            return [];
+        }
+
         return props.accounts.map((account, i) => {
             return {
                 label: !account.accountID && account.trackId == 0
@@ -112,29 +118,34 @@
             {{ secondText }}
         </div>
         <br>
-        <select
-            id="account_select"
-            v-model="chosenAccount"
-            class="form-control mb-3"
-            required
-        >
-            <option
-                selected
-                disabled
-                value=""
+        <div v-if="accountOptions && accountOptions.length > 0">
+            <select
+                id="account_select"
+                v-model="chosenAccount"
+                class="form-control mb-3"
+                required
             >
-                Account select
-            </option>
-            <option
-                v-for="account in accountOptions"
-                :key="account.value"
-                :value="account.value"
-            >
-                <span>
-                    {{ account.label }}
-                </span>
-            </option>
-        </select>
+                <option
+                    selected
+                    disabled
+                    value=""
+                >
+                    Account select
+                </option>
+                <option
+                    v-for="account in accountOptions"
+                    :key="account.value"
+                    :value="account.value"
+                >
+                    <span>
+                        {{ account.label }}
+                    </span>
+                </option>
+            </select>
+        </div>
+        <div v-else>
+            Requested account not present in this Beet wallet.
+        </div>
         <br>
         <div v-if="chosenAccount == -1">
             <ui-button disabled>
