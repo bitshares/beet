@@ -29,13 +29,6 @@ function _promptFail(method, id, error, reject) {
  */
 export async function linkRequest(request) {
     return new Promise(async (resolve, reject) => {
-
-        /*
-        let alertmsg = request.type === "link"
-            ? window.t("common.link_alert", request)
-            : window.t("common.access_alert", request.payload);
-        */
-
         let linkReq = {appName: request.appName, origin: request.origin, chain: request.chain};
 
         store.dispatch(
@@ -509,13 +502,13 @@ export async function transfer(request, blockchain) {
 
     let toSend;
     try {
-      toSend = await blockchain.format(request.payload.params.amount, accountDetails.chain);
+      toSend = await blockchain.format(request.payload.params.amount);
     } catch (error) {
       console.log(error);
       return _promptFail("transfer", request.id, 'No toSend', reject);
     }
 
-    //console.log(popupContents)
+    //console.log(`amount: ${request.payload.params.amount} chain: ${accountDetails.chain}`)
 
     /*
     {

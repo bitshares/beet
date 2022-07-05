@@ -1,9 +1,9 @@
 <script setup>
     import { ipcRenderer } from 'electron';
     import { onMounted, computed } from "vue";
+    import RendererLogger from "../../lib/RendererLogger";
     import { useI18n } from 'vue-i18n';
     const { t } = useI18n({ useScope: 'global' });
-    import RendererLogger from "../../lib/RendererLogger";
     const logger = new RendererLogger();
 
     const props = defineProps({

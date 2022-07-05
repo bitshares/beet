@@ -313,20 +313,23 @@ export default class BlockchainAPI {
 
     /*
      * Prettifying amounts of crypto for display
+     * @params {Object} amount
      * @returns {String}
      */
-    format(amount) {
+    async format(amount) {
         let asset = null;
-        if (typeof amount.asset_id == "string" && amount.asset_id.substring(0,1) == "1") {
-            asset = this.getAsset(amount.asset_id);
-        } else if (Number.isInteger(amount.asset_id)) {
-            asset = this.getAsset(amount.asset_id);
+        if (
+            typeof amount.asset_id == "string" && amount.asset_id.substring(0,1) == "1"
+            || (Number.isInteger(amount.asset_id))
+        ) {
+            return this.getAsset(amount.asset_id).then((asset) => {
+                return !asset || asset == null
+                    ? formatAsset(amount.satoshis, amount.asset_id)
+                    : formatAsset(amount.satoshis, asset.symbol, asset.precision)
+            });
         }
-        if (asset == null) {
-            return formatAsset(amount.satoshis, amount.asset_id);
-        } else {
-            return formatAsset(amount.satoshis, asset.symbol, asset.precision);
-        }
+
+        return formatAsset(amount.satoshis, amount.asset_id);
     }
 
     /*

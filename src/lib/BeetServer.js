@@ -57,7 +57,6 @@ async function _establishLink(socket, target) {
  * @returns {object}
  */
 function _getLinkResponse(result) {
-    // todo: unify! isLinked comes from linkHandler, link from authHandler.
     if (!result.isLinked == true) {
       return {
           id: result.id,
@@ -261,13 +260,12 @@ export default class BeetServer {
       });
 
       let blockchainActions = [
-        Actions.REQUEST_LINK,
-        Actions.REQUEST_RELINK,
-        Actions.GET_ACCOUNT,
         Actions.SIGN_MESSAGE,
         Actions.VERIFY_MESSAGE,
         Actions.TRANSFER,
-        Actions.VOTE_FOR
+        Actions.VOTE_FOR,
+        Actions.INJECTED_CALL,
+        Actions.REQUEST_SIGNATURE
       ];
 
       let blockchain;
@@ -407,9 +405,8 @@ export default class BeetServer {
 
           /*
            * Wallet handshake with client.
-           * TODO: Prompt user to approve authentication prior to link prompt?
            */
-          socket.on("authenticate", async (data) => {
+          socket.on("authenticate", async (data, ackCallback) => {
             logger.debug("incoming authenticate request", data);
 
             if (!store.state.WalletStore.isUnlocked) {
@@ -472,9 +469,7 @@ export default class BeetServer {
               return;
             }
 
-            socket.emit(
-              "authenticated",
-              {
+            ackCallback({
                 id: status.id,
                 error: false,
                 payload: {
@@ -482,8 +477,7 @@ export default class BeetServer {
                     link: false,
                     pub_key: ed.utils.bytesToHex(pubk),
                 }
-              }
-            );
+            })
 
           });
 
