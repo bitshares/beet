@@ -396,19 +396,15 @@ export default class BeetServer {
         io.on("connection", async (socket) => {
           socket.isAuthenticated = false;
 
-          socket.emit("connected", socket.id);
-
-          socket.on("ping", (callback) => {
-            console.log("ping")
-            callback(true)
+          socket.on("ping", (data) => {
+            socket.emit("pong", data);
           });
 
           /*
            * Wallet handshake with client.
            */
-          socket.on("authenticate", async (data, ackCallback) => {
+          socket.on("authenticate", async (data) => {
             logger.debug("incoming authenticate request", data);
-
             if (!store.state.WalletStore.isUnlocked) {
               console.log(`locked wallet: ${store.state.WalletStore.isUnlocked}`)
               socket.emit("api", {id: data.id, error: true, payload: {code: 7, message: "Beet wallet authentication error."}});
@@ -469,16 +465,18 @@ export default class BeetServer {
               return;
             }
 
-            ackCallback({
-                id: status.id,
-                error: false,
-                payload: {
-                    authenticate: true,
-                    link: false,
-                    pub_key: ed.utils.bytesToHex(pubk),
+            socket.emit(
+                'authenticated',
+                {
+                    id: status.id,
+                    error: false,
+                    payload: {
+                        authenticate: true,
+                        link: false,
+                        pub_key: ed.utils.bytesToHex(pubk),
+                    }
                 }
-            })
-
+            )
           });
 
           /*
