@@ -440,6 +440,8 @@ export async function signMessage(request, blockchain) {
 
     ipcRenderer.once(`popupApproved_${request.id}`, async (event, result) => {
 
+        //console.log(request)
+
         let retrievedKey;
         try {
           retrievedKey = store.getters['AccountStore/getSigningKey'](request);

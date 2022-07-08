@@ -141,17 +141,6 @@ const linkHandler = async (req) => {
       return rejectRequest(req, error);
     }
 
-    let app = store.getters['OriginStore/getBeetApp']({payload: {identityhash: identityhash}});
-    if (app) {
-      console.log('relink');
-      return Object.assign(req, {
-          isLinked: true, // todo: can this also be called link?
-          identityhash: identityhash,
-          app: app,
-          existing: true
-      });
-    }
-
     let secret;
     try {
       secret = await ed.getSharedSecret(req.key, req.payload.pubkey);
@@ -159,6 +148,7 @@ const linkHandler = async (req) => {
       return rejectRequest(req, error);
     }
 
+    let app;
     try {
       app = await store.dispatch('OriginStore/addApp', {
           appName: req.appName,
@@ -226,9 +216,12 @@ export default class BeetServer {
 
       let decryptedValue;
       try {
-        decryptedValue = aes.decrypt(data.payload, key).toString(ENC);
+        decryptedValue = aes.decrypt((data.payload).toString(), key).toString(ENC);
       } catch (error) {
         console.log(error);
+      }
+
+      if (!decryptedValue) {
         socket.emit("api", {id: data.id, error: true, payload: {code: 3, message: "Could not decrypt message"}});
         return;
       }
@@ -532,12 +525,12 @@ export default class BeetServer {
               return;
             }
 
-            logger.debug("processing api request");
+            //logger.debug("processing api request");
 
             try {
               await this.respondAPI(socket, data);
             } catch (error) {
-              console.log(error);
+              //console.log(error);
               if (socket) {
                 socket.emit("api", {id: data.id, error: true, payload: {code: 7, message: "API request unsuccessful."}});
               }
