@@ -84,23 +84,19 @@
 </script>
 
 <template>
-    <ui-select
-        id="account_select"
-        v-model="chosenAccount"
-        :options="accountOptions"
-        required
-        full-bleed
-    >
-        Account
-    </ui-select>
-
-    <div
-        v-if="chosenAccount > -1 && selectedAccount"
-        class="acc-info"
-    >
+    <div v-if="accountOptions.length">
+        <ui-select
+            id="account_select"
+            style="width:100%"
+            v-model="chosenAccount"
+            :options="accountOptions"
+            required
+            full-bleed
+        >
+            Account
+        </ui-select>
         <AccountDetails :account="selectedAccount" />
         <Balances :account="selectedAccount" />
     </div>
-
     <Actionbar />
 </template>

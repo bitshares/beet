@@ -17,7 +17,6 @@ import {i18n} from './lib/i18n.js';
 import 'typeface-roboto';
 import 'typeface-rajdhani';
 
-//import './css/style.css';
 import './scss/beet.scss';
 
 const logger = new RendererLogger;
@@ -52,7 +51,11 @@ window.t = (key, params) => {
 }
 
 app.use(VueRouter);
-app.use(BalmUI);
+app.use(BalmUI, {
+    $theme: {
+        primary: '#C7088E'
+    }
+});
 app.use(BalmUIPlus);
 app.use(BalmUINext, {
   // Optional. Overwrite `<ui-navigation-bar>` props with default value.

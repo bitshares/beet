@@ -206,8 +206,8 @@ ipcMain.on('modalError', (event, arg) => {
  * Creating the primary window, only runs once.
  */
 const createWindow = async () => {
-  let width = 600;
-  let height = 850;
+  let width = 480;
+  let height = 695;
   mainWindow = new BrowserWindow({
       width: width,
       height: height,

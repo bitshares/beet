@@ -96,11 +96,10 @@
                     {{ t('common.restore_cta') }}
                 </ui-button>
             </router-link>
-
-            <br>
             <section :dir="null">
                 <ui-select
                     v-if="hasWallet"
+                    style="width:100%"
                     id="wallet-select"
                     v-model="selectedWallet"
                     :options="walletOptions"
@@ -110,10 +109,10 @@
                     Beet wallet name
                 </ui-select>
             </section>
-            <br>
             <input
                 v-if="hasWallet"
                 id="inputPassword"
+                style="width:97%; margin-top: 5px;"
                 v-model="walletpass"
                 type="password"
                 class="form-control mb-4 px-3"
@@ -122,7 +121,6 @@
                 :class="passincorrect"
                 @focus="passincorrect=''"
             >
-            <br>
             <ui-form-field>
                 <ui-checkbox v-model="legacy" />
                 <label>Legacy account</label>
@@ -131,7 +129,7 @@
             <ui-button
                 v-if="hasWallet"
                 type="submit"
-                outlined
+                raised
                 @click="unlockWallet"
             >
                 {{ t('common.unlock_cta') }}
@@ -144,10 +142,7 @@
                 to="/create"
                 replace
             >
-                <ui-button
-                    class="step_btn"
-                    outlined
-                >
+                <ui-button class="step_btn" raised>
                     {{ t('common.create_cta') }}
                 </ui-button>
             </router-link>
@@ -156,10 +151,7 @@
                 to="/restore"
                 replace
             >
-                <ui-button
-                    class="step_btn"
-                    outlined
-                >
+                <ui-button class="step_btn" raised>
                     {{ t('common.restore_cta') }}
                 </ui-button>
             </router-link>

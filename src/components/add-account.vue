@@ -105,7 +105,6 @@
     watch(selectedChain, async (newVal, oldVal) => {
         if (newVal !== oldVal) {
             selectedImport.value = 0;
-            selectedNode.value = 0;
         }
     }, {immediate: true});
 
@@ -331,7 +330,7 @@
                             replace
                         >
                             <ui-button
-                                outlined
+                                raised
                                 class="step_btn"
                             >
                                 {{ t('common.cancel_btn') }}
@@ -339,7 +338,7 @@
                         </router-link>
 
                         <span v-if="selectedImportOptions.length > 1">
-                            <span v-if="selectedImport != 0 && selectedNode !== 0">
+                            <span v-if="selectedImport != 0">
                                 <ui-button
                                     raised
                                     class="step_btn"

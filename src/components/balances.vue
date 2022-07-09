@@ -34,7 +34,6 @@
         isConnecting.value = true;
         return getBlockchainAPI(chain).getBalances(name)
             .then(result => {
-                console.log(result);
                 isConnected.value = true;
                 isConnecting.value = false;
                 return result;
@@ -52,6 +51,22 @@
     async function loadBalances() {
         if (selectedChain.value !== '' && accountName.value !== '') {
             balances.value = await fetchBalances(selectedChain.value, accountName.value)
+        }
+    }
+
+    function incrementPagination(balances) {
+        if (token.value + 1 > balances.length - 1) {
+            token.value = 0;
+        } else {
+            token.value += 1;
+        }
+    }
+
+    function decreasePagination(balances) {
+        if (token.value - 1 < 0) {
+            token.value = balances.length -1;
+        } else {
+            token.value -= 1;
         }
     }
 
@@ -82,14 +97,26 @@
 </script>
 
 <template>
-    <div>
-        <p class="mb-1 font-weight-bold small">
+    <div style="padding:5px">
+        <group>
             {{ t('common.balances_lbl') }}
-        </p>
-        <ui-card
-            elevated
-            class="wideCard"
-        >
+            <ui-button
+                v-if="isConnected || balances"
+                class="step_btn"
+                @click="loadBalances()"
+            >
+                Refresh
+            </ui-button>
+            <ui-button
+                v-else-if="!isConnected && !isConnecting"
+                class="step_btn"
+                @click="loadBalances()"
+            >
+                Reconnect
+            </ui-button>
+        </group>
+
+        <ui-card outlined>
             <ui-list>
                 <ui-item
                     v-if="balances && balances.length > 0"
@@ -100,14 +127,6 @@
                             {{ assetText }}
                         </ui-item-text1>
                     </ui-item-text-content>
-                    <ui-card-actions v-if="balances.length > 1">
-                        <ui-pagination
-                            v-model="token"
-                            :total="balances.length"
-                            show-total
-                            mini
-                        />
-                    </ui-card-actions>
                 </ui-item>
                 <ui-item v-else-if="balances && !balances.length">
                     <ui-item-text-content>
@@ -118,7 +137,7 @@
                 </ui-item>
                 <ui-item v-else-if="isConnecting || !balances">
                     <ui-item-text-content>
-                        <ui-item-text1>
+                        <ui-item-text1 style="padding:5px">
                             Connecting to blockchain
                         </ui-item-text1>
                     </ui-item-text-content>
@@ -130,21 +149,26 @@
                         </ui-item-text1>
                     </ui-item-text-content>
                 </ui-item>
+            </ui-list>
+            <group v-if="balances && balances.length > 1" style="text-align: center;">
                 <ui-button
                     v-if="isConnected || balances"
                     class="step_btn"
-                    @click="loadBalances()"
+                    @click="decreasePagination(balances)"
                 >
-                    Refresh balances
+                    <i class="material-icons">chevron_left</i>
                 </ui-button>
+                {{
+                    `${token} of ${balances.length}`
+                }}
                 <ui-button
-                    v-else-if="!isConnected && !isConnecting"
+                    v-if="isConnected || balances"
                     class="step_btn"
-                    @click="loadBalances()"
+                    @click="incrementPagination(balances)"
                 >
-                    Reconnect
+                    <i class="material-icons">chevron_right</i>
                 </ui-button>
-            </ui-list>
+            </group>
         </ui-card>
     </div>
 </template>

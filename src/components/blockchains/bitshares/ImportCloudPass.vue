@@ -16,7 +16,7 @@
     });
 
     onMounted(() => {
-        if (!["BTS", "TUSC"].includes(props.chain)) {
+        if (!["BTS", "BTS_TEST", "TUSC"].includes(props.chain)) {
             throw "Unsupported chain!";
         }
     })

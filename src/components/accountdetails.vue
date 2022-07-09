@@ -39,14 +39,11 @@
 </script>
 
 <template>
-    <div>
+    <div style="padding:5px">
         <p>
             {{ t('common.account_details_lbl') }}
         </p>
-        <ui-card
-            elevated
-            class="wideCard"
-        >
+        <ui-card outlined>
             <ui-list v-if="account">
                 <ui-item :key="chainLabel">
                     <ui-item-text-content>
@@ -80,14 +77,8 @@
                 </ui-item>
             </ui-list>
 
-            <ui-card-actions
-                v-if="explorer"
-                full-bleed
-            >
-                <ui-button
-                    class="step_btn"
-                    @click="openExplorer(account)"
-                >
+            <ui-card-actions v-if="explorer">
+                <ui-button class="step_btn" raised @click="openExplorer(account)">
                     {{ t('common.account_details_explorer_lbl') }}
                 </ui-button>
             </ui-card-actions>
