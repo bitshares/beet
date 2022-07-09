@@ -41,6 +41,10 @@ window.t = (key, params) => {
     return i18n.global.t(key, params)
 }
 
-app.use(BalmUI);
+app.use(BalmUI, {
+    $theme: {
+        primary: '#C7088E'
+    }
+});
 app.use(BalmUIPlus);
 app.mount('#modal');
