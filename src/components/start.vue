@@ -99,9 +99,9 @@
             <section :dir="null">
                 <ui-select
                     v-if="hasWallet"
-                    style="width:100%"
                     id="wallet-select"
                     v-model="selectedWallet"
+                    style="width:100%"
                     :options="walletOptions"
                     full-bleed
                     @change="passincorrect=''"
@@ -112,8 +112,8 @@
             <input
                 v-if="hasWallet"
                 id="inputPassword"
-                style="width:97%; margin-top: 5px;"
                 v-model="walletpass"
+                style="width:97%; margin-top: 5px;"
                 type="password"
                 class="form-control mb-4 px-3"
                 :placeholder=" t('common.password_placeholder')"
@@ -142,7 +142,10 @@
                 to="/create"
                 replace
             >
-                <ui-button class="step_btn" raised>
+                <ui-button
+                    class="step_btn"
+                    raised
+                >
                     {{ t('common.create_cta') }}
                 </ui-button>
             </router-link>
@@ -151,7 +154,10 @@
                 to="/restore"
                 replace
             >
-                <ui-button class="step_btn" raised>
+                <ui-button
+                    class="step_btn"
+                    raised
+                >
                     {{ t('common.restore_cta') }}
                 </ui-button>
             </router-link>

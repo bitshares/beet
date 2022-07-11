@@ -218,17 +218,19 @@ export default class BitShares extends BlockchainAPI {
         return new Promise((resolve, reject) => {
 
             if (nodeToConnect) {
-              return this._establishConnection(nodeToConnect, resolve, reject);
+                //console.log(`nodetoconnect: ${nodeToConnect}`)
+                return this._establishConnection(nodeToConnect, resolve, reject);
             }
 
             if (this._isConnected && this._isConnectedToNode && !nodeToConnect) {
+                //console.log(`isConnected: ${this._isConnectedToNode}`)
                 return this._connectionEstablished(resolve, this._isConnectedToNode);
             }
 
             if (!nodeToConnect && !this._nodeLatencies) {
                 // initializing the blockchain
                 console.log('Checking node connections')
-                this._testNodes().then((res) => {
+                return this._testNodes().then((res) => {
                   this._node = res.node;
                   this._nodeLatencies = res.latencies;
                   this._nodeCheckTime = res.timestamp;

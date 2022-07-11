@@ -1,19 +1,29 @@
 <script setup>
-    import { onMounted, computed } from 'vue';
+    import { onMounted, watchEffect, watch, ref, computed } from 'vue';
     import { useI18n } from 'vue-i18n';
-    const { t } = useI18n({ useScope: 'global' });
     import { ipcRenderer } from "electron";
     import store from '../store/index';
     import RendererLogger from "../lib/RendererLogger";
     import {formatAccount} from "../lib/formatter";
-    import Actionbar from "./actionbar";
 
+    const { t } = useI18n({ useScope: 'global' });
     const logger = new RendererLogger();
+    let tableData = ref();
 
     onMounted(() => {
         logger.debug("Settings Mounted");
-        //await store.dispatch("OriginStore/loadApps");
     });
+
+    function fetchDapps() {
+        let storedDapps = [];
+        for (let i = 0; i < store.state.AccountStore.accountlist.length; i++) {
+            let apps = store.getters['OriginStore/walletAccessibleDapps'](store.state.AccountStore.accountlist[i].accountID, store.state.AccountStore.accountlist[i].chain);
+            if (typeof apps != 'undefined') {
+                storedDapps = storedDapps.concat(apps);
+            }
+        }
+        return storedDapps;
+    }
 
     let dapps = computed(() => {
         let storedDapps = [];
@@ -25,6 +35,35 @@
         }
         return storedDapps;
     })
+
+    function getDisplayString(accountID, chain) {
+        let account = store.getters['AccountStore/getSafeAccount']({account_id: accountID, chain: chain});
+        return formatAccount(account);
+    }
+
+    watchEffect(() => {
+        if (dapps.value && dapps.value.length) {
+            tableData.value = {
+                data: dapps.value.map(dapp => {
+                    return {
+                        appName: dapp.appName,
+                        origin: dapp.origin,
+                        displayString: getDisplayString(dapp.account_id, dapp.chain),
+                        chain: dapp.chain,
+                        actions: dapp.id
+                    }
+                }),
+                thead: [
+                        t('common.appname_lbl'),
+                        t('common.origin_lbl'),
+                        t('common.account_lbl'),
+                        t('common.chain_lbl'),
+                        t('common.actions_lbl')
+                ],
+                tbody: ['appName', 'origin', 'displayString', 'chain', {slot: 'actions'}]
+            };
+        }
+    });
 
     async function downloadBackup() {
         let walletName = store.getters['WalletStore/getWalletName'];
@@ -41,11 +80,7 @@
 
     async function deleteDapp(dapp_id) {
         await store.dispatch('OriginStore/removeApp', dapp_id);
-    }
-
-    function getDisplayString(accountID, chain) {
-        let account = store.getters['AccountStore/getSafeAccount']({account_id: accountID, chain: chain});
-        return formatAccount(account, true);
+        dapps.value = fetchDapps();
     }
 </script>
 
@@ -61,64 +96,24 @@
                 <p class="mb-2 font-weight-bold small">
                     <u>{{ t('common.dapps_lbl') }}</u>
                 </p>
-                <table>
-                    <thead>
-                        <tr>
-                            <th class="align-middle">
-                                {{ t('common.appname_lbl') }}
-                            </th>
-                            <th class="align-middle">
-                                {{ t('common.origin_lbl') }}
-                            </th>
-                            <th class="align-middle">
-                                {{ t('common.account_lbl') }}
-                            </th>
-                            <th class="align-middle">
-                                {{ t('common.chain_lbl') }}
-                            </th>
-                            <th class="align-middle">
-                                {{ t('common.actions_lbl') }}
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-if="dapps.length==0">
-                            <td
-                                colspan="6"
-                                class="align-center"
-                            >
-                                <em>{{ t('common.no_dapps_linked') }}</em>
-                            </td>
-                        </tr>
-                        <tr
-                            v-for="dapp in dapps"
-                            :key="dapp.id"
-                        >
-                            <td class="align-middle">
-                                {{ dapp.appName }}
-                            </td>
-                            <td class="align-middle">
-                                {{ dapp.origin }}
-                            </td>
-                            <td
-                                class="align-middle"
-                                v-html="getDisplayString(dapp.account_id, dapp.chain)"
-                            />
-                            <td class="align-middle">
-                                {{ dapp.chain }}
-                            </td>
-                            <td class="align-middle">
-                                <button
-                                    class="btn btn-sm btn-danger btn-block"
-                                    type="button"
-                                    @click="deleteDapp(dapp.id)"
-                                >
-                                    {{ t('common.delete_btn') }}
-                                </button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <span v-if="tableData">
+                    <ui-table
+                        :data="tableData.data"
+                        :thead="tableData.thead"
+                        :tbody="tableData.tbody"
+                        style="height: 180px; overflow-y: scroll;"
+                    >
+                        <template #actions="{ data }">
+                            <ui-button raised @click="deleteDapp(data.actions)">
+                                {{ t('common.delete_btn') }}
+                            </ui-button>
+                            <p>{{data.actions}}</p>
+                        </template>
+                    </ui-table>
+                </span>
+                <span v-else>
+                    <em>{{ t('common.no_dapps_linked') }}</em>
+                </span>
             </div>
             <div class="backup mt-2 mb-4">
                 <p class="mb-2 font-weight-bold small">

@@ -40,12 +40,17 @@
 
 <template>
     <div style="padding:5px">
-        <group>
+        <span>
             {{ t('common.account_details_lbl') }}
-            <ui-button  v-if="explorer" class="step_btn" outline @click="openExplorer(account)">
+            <ui-button
+                v-if="explorer"
+                class="step_btn"
+                outline
+                @click="openExplorer(account)"
+            >
                 {{ t('common.account_details_explorer_lbl') }}
             </ui-button>
-        </group>
+        </span>
         <ui-card outlined>
             <ui-list v-if="account">
                 <ui-item :key="chainLabel">

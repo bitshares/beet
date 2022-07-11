@@ -87,8 +87,8 @@
     <div v-if="accountOptions.length">
         <ui-select
             id="account_select"
-            style="width:100%"
             v-model="chosenAccount"
+            style="width:100%"
             :options="accountOptions"
             required
             full-bleed

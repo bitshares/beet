@@ -32,6 +32,7 @@
         isConnecting.value = true;
         return getBlockchainAPI(chain).getBalances(name)
             .then(result => {
+                console.log(result)
                 isConnected.value = true;
                 isConnecting.value = false;
                 return result;
@@ -41,15 +42,6 @@
                 isConnected.value = false;
                 isConnecting.value = false;
             });
-    }
-
-    /**
-     * On demand load the balances
-     */
-    async function loadBalances() {
-        if (selectedChain.value !== '' && accountName.value !== '') {
-            balances.value = await fetchBalances(selectedChain.value, accountName.value)
-        }
     }
 
     let selectedChain = computed(() => {
@@ -64,8 +56,21 @@
         return props.account.accountID;
     });
 
-    watchEffect(async () => {
+    /**
+     * On demand load the balances
+     */
+    async function loadBalances() {
         if (selectedChain.value !== '' && accountName.value !== '') {
+            balances.value = await fetchBalances(selectedChain.value, accountName.value)
+        }
+    }
+
+    watchEffect(async () => {
+        if (
+            selectedChain.value && selectedChain.value !== '' &&
+            accountName.value && accountName.value !== ''
+        ) {
+            console.log(`watch effect triggered ${selectedChain.value} ${accountName.value}`)
             balances.value = await fetchBalances(selectedChain.value, accountName.value)
         }
     });
@@ -104,19 +109,31 @@
             Reconnect
         </ui-button>
 
-        <ui-table v-if="tableData"
+        <ui-table
+            v-if="tableData"
             :data="tableData.data"
             :thead="tableData.thead"
             :tbody="tableData.tbody"
             style="height: 180px; overflow-y: scroll;"
-        ></ui-table>
-        <ui-card outlined v-if="balances && !balances.length">
+        />
+        <ui-card
+            v-if="balances && !balances.length"
+            outlined
+        >
             No balances in account
         </ui-card>
-        <ui-card outlined v-if="isConnecting" style="padding:5px">
+        <ui-card
+            v-if="isConnecting"
+            outlined
+            style="padding:5px"
+        >
             Connecting to blockchain
         </ui-card>
-        <ui-card outlined v-if="!isConnected && !isConnecting" style="padding:5px">
+        <ui-card
+            v-if="!isConnected && !isConnecting"
+            outlined
+            style="padding:5px"
+        >
             Couldn't to connect to blockchain
         </ui-card>
     </div>

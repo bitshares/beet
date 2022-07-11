@@ -30,6 +30,11 @@ export default class BlockchainAPI {
                 this._isConnectedToNode = null;
             }
 
+            if (!this._needsReconnecting()) {
+                console.log(`Using existing connection: ${this._isConnectedToNode}`);
+                return this._connectionEstablished(resolve, this._isConnectedToNode);
+            }
+
             if (this._isConnectingInProgress) {
                 // there should be a promise queue for pending connects, this is the lazy way
                 console.log("Queued connection - existing connection handshake in progress.");
@@ -45,14 +50,9 @@ export default class BlockchainAPI {
                     }
                 }, 4000);
                 return;
+            } else {
+                this._isConnectingInProgress = true;
             }
-
-            if (!this._needsReconnecting()) {
-              console.log(`Using existing connection: ${this._isConnectedToNode}`);
-              return this._connectionEstablished(resolve, this._isConnectedToNode);
-            }
-
-            this._isConnectingInProgress = true;
 
             this._connect(nodeToConnect).then((res) => {
                 this._isConnectingInProgress = false;
