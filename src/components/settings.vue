@@ -107,7 +107,6 @@
                             <ui-button raised @click="deleteDapp(data.actions)">
                                 {{ t('common.delete_btn') }}
                             </ui-button>
-                            <p>{{data.actions}}</p>
                         </template>
                     </ui-table>
                 </span>
