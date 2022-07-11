@@ -22,9 +22,7 @@
     let balances = ref();
     let isConnected = ref();
     let isConnecting = ref();
-
-    let token = ref(0);
-    let assetText = ref('');
+    let tableData = ref();
 
     /**
      * Fetch blockchain account balances
@@ -54,22 +52,6 @@
         }
     }
 
-    function incrementPagination(balances) {
-        if (token.value + 1 > balances.length - 1) {
-            token.value = 0;
-        } else {
-            token.value += 1;
-        }
-    }
-
-    function decreasePagination(balances) {
-        if (token.value - 1 < 0) {
-            token.value = balances.length -1;
-        } else {
-            token.value -= 1;
-        }
-    }
-
     let selectedChain = computed(() => {
         return props.account.chain;
     });
@@ -89,86 +71,53 @@
     });
 
     watchEffect(() => {
-        assetText.value = balances.value && balances.value.length
-            ? `${balances.value[token.value].balance} ${balances.value[token.value].prefix} ${balances.value[token.value].asset_name}`
-            : `???`;
-    }
-    );
+        if (balances.value && balances.value.length) {
+            tableData.value = {
+                data: balances.value.map(balance => {
+                    return {
+                        balance: balance.balance,
+                        asset_name: balance.asset_name
+                    }
+                }),
+                thead: ['Asset name', 'Balance'],
+                tbody: ['asset_name', 'balance']
+            };
+        }
+    });
 </script>
 
 <template>
     <div style="padding:5px">
-        <group>
-            {{ t('common.balances_lbl') }}
-            <ui-button
-                v-if="isConnected || balances"
-                class="step_btn"
-                @click="loadBalances()"
-            >
-                Refresh
-            </ui-button>
-            <ui-button
-                v-else-if="!isConnected && !isConnecting"
-                class="step_btn"
-                @click="loadBalances()"
-            >
-                Reconnect
-            </ui-button>
-        </group>
+        {{ t('common.balances_lbl') }}
+        <ui-button
+            v-if="isConnected || balances"
+            class="step_btn"
+            @click="loadBalances()"
+        >
+            Refresh
+        </ui-button>
+        <ui-button
+            v-else-if="!isConnected && !isConnecting"
+            class="step_btn"
+            @click="loadBalances()"
+        >
+            Reconnect
+        </ui-button>
 
-        <ui-card outlined>
-            <ui-list>
-                <ui-item
-                    v-if="balances && balances.length > 0"
-                    :key="balances[token]"
-                >
-                    <ui-item-text-content>
-                        <ui-item-text1>
-                            {{ assetText }}
-                        </ui-item-text1>
-                    </ui-item-text-content>
-                </ui-item>
-                <ui-item v-else-if="balances && !balances.length">
-                    <ui-item-text-content>
-                        <ui-item-text1>
-                            No balances in account
-                        </ui-item-text1>
-                    </ui-item-text-content>
-                </ui-item>
-                <ui-item v-else-if="isConnecting || !balances">
-                    <ui-item-text-content>
-                        <ui-item-text1 style="padding:5px">
-                            Connecting to blockchain
-                        </ui-item-text1>
-                    </ui-item-text-content>
-                </ui-item>
-                <ui-item v-else>
-                    <ui-item-text-content>
-                        <ui-item-text1>
-                            {{ t('common.balances_error') }}
-                        </ui-item-text1>
-                    </ui-item-text-content>
-                </ui-item>
-            </ui-list>
-            <group v-if="balances && balances.length > 1" style="text-align: center;">
-                <ui-button
-                    v-if="isConnected || balances"
-                    class="step_btn"
-                    @click="decreasePagination(balances)"
-                >
-                    <i class="material-icons">chevron_left</i>
-                </ui-button>
-                {{
-                    `${token} of ${balances.length}`
-                }}
-                <ui-button
-                    v-if="isConnected || balances"
-                    class="step_btn"
-                    @click="incrementPagination(balances)"
-                >
-                    <i class="material-icons">chevron_right</i>
-                </ui-button>
-            </group>
+        <ui-table v-if="tableData"
+            :data="tableData.data"
+            :thead="tableData.thead"
+            :tbody="tableData.tbody"
+            style="height: 180px; overflow-y: scroll;"
+        ></ui-table>
+        <ui-card outlined v-if="balances && !balances.length">
+            No balances in account
+        </ui-card>
+        <ui-card outlined v-if="isConnecting" style="padding:5px">
+            Connecting to blockchain
+        </ui-card>
+        <ui-card outlined v-if="!isConnected && !isConnecting" style="padding:5px">
+            Couldn't to connect to blockchain
         </ui-card>
     </div>
 </template>

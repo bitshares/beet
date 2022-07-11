@@ -296,16 +296,21 @@ export default class BitShares extends BlockchainAPI {
                     .db_api()
                     .exec("get_full_accounts", [[accountName], false])
                     .then(response => {
+                        if (!response || !response.length || !response[0].length) {
+                            console.log('Failed to query BTS blockchain');
+                            return reject('Failed to query BTS blockchain');
+                        }
+
                         let parsedAccount = response[0][1].account;
                         parsedAccount.active.public_keys = parsedAccount.active.key_auths;
                         parsedAccount.owner.public_keys = parsedAccount.owner.key_auths;
                         parsedAccount.memo = {public_key: parsedAccount.options.memo_key};
                         parsedAccount.balances = response[0][1].balances;
-                        resolve(parsedAccount);
+                        return resolve(parsedAccount);
                     })
                     .catch(error => {
                         console.log(`get_full_accounts: ${error}`);
-                        reject(error);
+                        return reject(error);
                     })
               })
               .catch(error => {

@@ -40,48 +40,39 @@
 
 <template>
     <div style="padding:5px">
-        <p>
+        <group>
             {{ t('common.account_details_lbl') }}
-        </p>
+            <ui-button  v-if="explorer" class="step_btn" outline @click="openExplorer(account)">
+                {{ t('common.account_details_explorer_lbl') }}
+            </ui-button>
+        </group>
         <ui-card outlined>
             <ui-list v-if="account">
                 <ui-item :key="chainLabel">
                     <ui-item-text-content>
-                        <ui-item-text1>
-                            {{ t('common.account_details_chaim_lbl') }}
-                        </ui-item-text1>
-                        <ui-item-text2>
-                            {{ chainLabel }}
-                        </ui-item-text2>
+                        {{ t('common.account_details_chaim_lbl') }}
                     </ui-item-text-content>
+                    <ui-item-last-content>
+                        {{ chainLabel }}
+                    </ui-item-last-content>
                 </ui-item>
                 <ui-item :key="account.accountName">
                     <ui-item-text-content>
-                        <ui-item-text1>
-                            {{ accessType }}
-                        </ui-item-text1>
-                        <ui-item-text2>
-                            {{ account.accountName }}
-                        </ui-item-text2>
+                        {{ accessType }}
                     </ui-item-text-content>
+                    <ui-item-last-content>
+                        {{ account.accountName }}
+                    </ui-item-last-content>
                 </ui-item>
                 <ui-item :key="account.accountID">
                     <ui-item-text-content v-if="account.accountName != account.accountID">
-                        <ui-item-text1>
-                            {{ t('common.account_details_id_lbl') }}
-                        </ui-item-text1>
-                        <ui-item-text2>
-                            {{ account.accountID }}
-                        </ui-item-text2>
+                        {{ t('common.account_details_id_lbl') }}
                     </ui-item-text-content>
+                    <ui-item-last-content>
+                        {{ account.accountID }}
+                    </ui-item-last-content>
                 </ui-item>
             </ui-list>
-
-            <ui-card-actions v-if="explorer">
-                <ui-button class="step_btn" raised @click="openExplorer(account)">
-                    {{ t('common.account_details_explorer_lbl') }}
-                </ui-button>
-            </ui-card-actions>
         </ui-card>
     </div>
 </template>
