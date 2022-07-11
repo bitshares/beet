@@ -136,16 +136,17 @@
      * Second step of account wizard
      */
     function step2() {
-        if (userHasWallet.value) {
+
+        if (userHasWallet.value) { // add to logged in wallet
             step.value = 2;
             let fetchedName;
             try {
-                fetchedName = store.getters['WalletStore/getWallet'];
+                fetchedName = store.getters['WalletStore/getWalletName'];
             } catch (error) {
                 console.log(error);
                 return;
             }
-            walletname.value = fetchedName.walletname;
+            walletname.value = fetchedName;
             return;
         }
 
@@ -155,20 +156,15 @@
             return;
         }
 
-        // todo use WalletStore
-        let wallets = JSON.parse(localStorage.getItem("wallets"));
-        if (
-            wallets &&
-            wallets.filter(wallet => wallet.name === walletname.value.trim())
-                .length > 0
-        ) {
+        let walletList = store.getters['WalletStore/getWalletList'];
+        if (walletList.map(wallet => wallet.name).includes(walletname.value.trim())) {
             ipcRenderer.send("notify", t("common.duplicate_wallet_error"));
             s1c.value = "is-invalid";
             return;
-        } else {
-            walletname.value = walletname.value.trim();
-            step.value = 2;
         }
+
+        walletname.value = walletname.value.trim();
+        step.value = 2;
     }
 
     /*
@@ -195,16 +191,19 @@
             return;
         }
 
-        if (!userHasWallet.value) {
-            if (password.value == "" || password.value !== confirmPassword.value) {
-                ipcRenderer.send("notify", t(`common.confirm_pass_error`));
-                return;
-            }
+        if (password.value == "") {
+            ipcRenderer.send("notify", t(`common.confirm_pass_error`));
+            return;
+        }
+
+        if (!userHasWallet.value && password.value !== confirmPassword.value) {
+            ipcRenderer.send("notify", t(`common.confirm_pass_error`));
+            return;
         }
 
         for (let i in accounts_to_import.value) {
             let account = accounts_to_import.value[i];
-            if (i == 0 && !userHasWallet.value) {
+            if (!userHasWallet.value) {
                 try {
                     await store.dispatch("WalletStore/saveWallet", {
                         walletname: walletname.value,
@@ -216,7 +215,7 @@
                     _handleError(error);
                 }
             } else {
-                account.password = password;
+                account.password = password.value;
                 account.walletname = walletname.value;
                 try {
                     await store.dispatch("AccountStore/addAccount", account);

@@ -169,12 +169,21 @@ const actions = {
 
                     for (let keytype in payload.walletdata.keys) {
                         try {
-                            payload.walletdata.keys[keytype] = aes.encrypt(payload.walletdata.keys[keytype], sha512(payload.password).toString()).toString();
-                        } catch (e) {
-                            reject('Wrong Password');
+                            payload.walletdata.keys[keytype] = aes.encrypt(
+                                payload.walletdata.keys[keytype],
+                                sha512(payload.password).toString()
+                            ).toString();
+                        } catch (error) {
+                            console.log(error)
+                            reject('AES encryption failure');
                         }
                     }
-                    let walletdata = aes.encrypt(JSON.stringify([payload.walletdata]), sha512(payload.password).toString()).toString();
+                    
+                    let walletdata = aes.encrypt(
+                        JSON.stringify([payload.walletdata]),
+                        sha512(payload.password).toString()
+                    ).toString();
+
                     BeetDB.wallets_encrypted.put({
                         id: walletid,
                         data: walletdata
@@ -200,37 +209,55 @@ const actions = {
     }, payload) {
         return new Promise(async (resolve, reject) => {
             let walletdata =  rootState.AccountStore.accountlist.slice();
-            let newwalletdata=walletdata;
+            let newwalletdata = walletdata;
             newwalletdata.push(payload.account);
+
             await BeetDB.wallets_encrypted.get({
                 id: state.wallet.id
-            }).then((wallet) => {
+            }).then(async (wallet) => {
+                console.log(wallet)
                 try {
                     let bytes = aes.decrypt(wallet.data, sha512(payload.password).toString());
                     JSON.parse(bytes.toString(ENC));
-                } catch (e) {
+                } catch (error) {
+                    console.log(error)
                     throw ('invalid');
                 }
-                let encwalletdata = aes.encrypt(JSON.stringify(newwalletdata), sha512(payload.password).toString()).toString();
-                let updatedWallet = Object.assign({}, state.wallet);
-                updatedWallet.accounts.push({ accountID: payload.account.accountID, chain: payload.account.chain});
 
-                BeetDB.wallets_encrypted.update(updatedWallet.id, {
-                    data: encwalletdata
-                }).then(() => {
-                    BeetDB.wallets_public.update(updatedWallet.id, {
-                        accounts: updatedWallet.accounts
+                let encryptedSTR = sha512(payload.password).toString();
+                let encwalletdata = aes.encrypt(
+                    JSON.stringify(newwalletdata),
+                    encryptedSTR
+                ).toString();
+
+                let updatedWallet = JSON.parse(JSON.stringify(state.wallet))
+                updatedWallet.accounts.push({
+                    accountID: payload.account.accountID,
+                    chain: payload.account.chain
+                });
+                
+                let docID = updatedWallet.id;
+                let newAccounts = updatedWallet.accounts;
+
+                await BeetDB.wallets_encrypted.update(docID, {
+                    "data": encwalletdata
+                }).then(async () => {
+                    await BeetDB.wallets_public.update(docID, {
+                        "accounts": newAccounts
                     }).then(() => {
                         commit(GET_WALLET, updatedWallet);
                         resolve('Account saved');
-                    }).catch(() => {
+                    }).catch((error) => {
+                        console.log(error);
                         reject('update_failed');
                     });
-                }).catch((e) => {
-                    reject(e);
+                }).catch((error) => {
+                    console.log(error)
+                    reject(error);
                 });
-            }).catch((e) => {
-                reject(e);
+            }).catch((error) => {
+                console.log(error)
+                reject(error);
             });
 
         });

@@ -1,11 +1,11 @@
 <script setup>
     import {ref, onMounted, inject} from "vue";
-    const emitter = inject('emitter');
-
     import { useI18n } from 'vue-i18n';
-    const { t } = useI18n({ useScope: 'global' });
     import {PrivateKey} from "bitsharesjs";
     import getBlockchainAPI from "../../../lib/blockchains/blockchainFactory";
+
+    const emitter = inject('emitter');
+    const { t } = useI18n({ useScope: 'global' });
 
     const props = defineProps({
         chain: {
@@ -25,11 +25,11 @@
     let bitshares_cloud_login_password = ref("");
     let legacy = ref(false);
 
-    function getAuthoritiesFromPass(legacy=false) {
+    function getAuthoritiesFromPass(legacyMode=false) {
         let active_seed = accountname.value + 'active' + bitshares_cloud_login_password.value;
         let owner_seed = accountname.value + 'owner' + bitshares_cloud_login_password.value;
         let memo_seed = accountname.value + 'memo' + bitshares_cloud_login_password.value;
-        return legacy
+        return legacyMode
             ? {
                 active: PrivateKey.fromSeed(active_seed).toWif(),
                 memo: PrivateKey.fromSeed(active_seed).toWif(), // legacy wallets improperly used active key for memo

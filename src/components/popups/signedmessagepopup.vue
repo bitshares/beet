@@ -30,7 +30,7 @@
         return t("operations.message.request", {
             appName: props.request.payload.appName,
             origin: props.request.payload.origin,
-            chain: props.accounts[0].chain, // FIX
+            chain: props.accounts[0].chain,
             accountName: props.accounts[0].accountName
         });
     });
@@ -61,7 +61,7 @@
 </script>
 
 <template>
-    {{ requestText }}:
+    {{ requestText }}
     <br>
     <br>
     <pre class="text-left custom-content">

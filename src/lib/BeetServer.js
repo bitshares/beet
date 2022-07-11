@@ -125,18 +125,19 @@ const linkHandler = async (req) => {
         userResponse = await relinkRequest(Object.assign(req, {}));
       }
     } catch (error) {
-      return rejectRequest(req, 'User rejected request')
+      return rejectRequest(req, 'User rejected request');
     }
 
     if (!userResponse || !userResponse.result) {
       return rejectRequest(req, 'User rejected request');
     }
 
+    let hashContents = `${req.browser} ${req.origin} ${req.appName} ${userResponse.result.chain} ${userResponse.result.id}`;
+    console.log(hashContents);
+
     let identityhash;
     try {
-      identityhash = sha256(
-        req.browser + ' ' + req.origin + ' ' + req.appName + ' ' + userResponse.result.chain + ' ' + userResponse.result.id
-      ).toString();
+      identityhash = sha256(hashContents).toString();
     } catch (error) {
       return rejectRequest(req, error);
     }
@@ -404,6 +405,20 @@ export default class BeetServer {
               return;
             }
 
+            /*
+                {
+                origin: this.origin,
+                appName: this.appName,
+                browser: this.browser,
+                identityhash: identity.identityhash,
+                }
+            :   {
+                origin: this.origin,
+                appName: this.appName,
+                browser: this.browser,
+                }
+            */
+            
             let status;
             try {
               status = await authHandler({

@@ -1,5 +1,6 @@
 import aes from "crypto-js/aes.js";
 import RendererLogger from "../../lib/RendererLogger";
+import sha512 from "crypto-js/sha512.js";
 
 const logger = new RendererLogger();
 const LOAD_ACCOUNTS = 'LOAD_ACCOUNTS';
@@ -38,19 +39,22 @@ const actions = {
                     reject('Account already exists');
                 }
             }
-
+          
             for (let keytype in payload.account.keys) {
-                payload.account.keys[keytype] = aes.encrypt(payload.account.keys[keytype], payload.password).toString();
+                payload.account.keys[keytype] = aes.encrypt(
+                    payload.account.keys[keytype],
+                    sha512(payload.password).toString()
+                ).toString();
             }
 
-            dispatch('WalletStore/saveAccountToWallet', payload, {
-                root: true
-            }).then(() => {
-                commit(ADD_ACCOUNT, payload.account);
-                resolve('Account added');
-            }).catch((error) => {
-                reject(error);
-            });
+            dispatch('WalletStore/saveAccountToWallet', payload, {root: true})
+                .then(() => {
+                    commit(ADD_ACCOUNT, payload.account);
+                    resolve('Account added');
+                }).catch((error) => {
+                    console.log(error)
+                    reject(error);
+                });
         });
     },
     loadAccounts({

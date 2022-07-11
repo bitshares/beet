@@ -157,6 +157,7 @@ async function _signOrBroadcast(
   resolve,
   reject
 ) {
+  console.log(request)
   let finalResult;
   let notifyTXT = "";
 
@@ -166,28 +167,30 @@ async function _signOrBroadcast(
       try {
         finalResult = await blockchain.broadcast(request.payload.params);
       } catch (error) {
-        console.log(error)
         return _promptFail(txType, request.id, error, reject);
       }
       notifyTXT = "Transaction successfully broadcast.";
       return resolve(finalResult);
   }
 
-  let activeKey = store.getters['AccountStore/getActiveKey'](request);
+  let activeKey;
+  try {
+    activeKey = store.getters['AccountStore/getActiveKey'](request);
+  } catch (error) {
+    return _promptFail(txType + '.getActiveKey', request.id, error, reject);
+  }
 
   let signingKey;
   try {
     signingKey = await getKey(activeKey);
   } catch (error) {
-    console.log(error)
-    return _promptFail(txType + '.getKey', request.id, error, reject);
+    return _promptFail(txType + '.getKey', request.id, {error: error, key: activeKey, req: request}, reject);
   }
 
   let transaction;
   try {
     transaction = await blockchain.sign(request.payload.params, signingKey);
   } catch (error) {
-    console.log(error)
     return _promptFail(txType + '.blockchain.sign', request.id, error, reject);
   }
 
@@ -428,6 +431,7 @@ export async function signMessage(request, blockchain) {
     if (!shownBeetApp) {
       return _promptFail("REQUEST_RELINK", request.id, 'No beetApp', reject);
     }
+
     let account = store.getters['AccountStore/getSafeAccount'](JSON.parse(JSON.stringify(shownBeetApp)));
 
     ipcRenderer.send(
@@ -439,8 +443,6 @@ export async function signMessage(request, blockchain) {
     );
 
     ipcRenderer.once(`popupApproved_${request.id}`, async (event, result) => {
-
-        //console.log(request)
 
         let retrievedKey;
         try {
