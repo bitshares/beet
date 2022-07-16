@@ -32,7 +32,7 @@
         isConnecting.value = true;
         return getBlockchainAPI(chain).getBalances(name)
             .then(result => {
-                console.log(result)
+                //console.log(result)
                 isConnected.value = true;
                 isConnecting.value = false;
                 return result;
@@ -70,7 +70,7 @@
             selectedChain.value && selectedChain.value !== '' &&
             accountName.value && accountName.value !== ''
         ) {
-            console.log(`watch effect triggered ${selectedChain.value} ${accountName.value}`)
+            //console.log(`watch effect triggered ${selectedChain.value} ${accountName.value}`)
             balances.value = await fetchBalances(selectedChain.value, accountName.value)
         }
     });
