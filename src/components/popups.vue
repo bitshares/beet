@@ -89,7 +89,7 @@
             :accounts="accounts"
         />
         <GenericRequestPopup
-            v-else-if="type === Actions.VOTE_FOR || type === Actions.VERIFY_MESSAGE"
+            v-else-if="type === Actions.VOTE_FOR"
             :request="request"
             :payload="payload"
         />

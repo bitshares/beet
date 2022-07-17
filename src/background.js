@@ -78,7 +78,7 @@ const createModal = async (arg, modalEvent) => {
       targetURL += `&visualizedParams=${btoa(arg.visualizedParams)}`;
     }
 
-    if ([Actions.VOTE_FOR, Actions.VERIFY_MESSAGE].includes(type)) {
+    if ([Actions.VOTE_FOR].includes(type)) {
       modalRequests[id]['payload'] = arg.payload;
       targetURL += `&payload=${JSON.stringify(arg.payload)}`;
     }

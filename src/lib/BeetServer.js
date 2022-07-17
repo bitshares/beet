@@ -8,7 +8,10 @@ import aes from "crypto-js/aes.js";
 import ENC from 'crypto-js/enc-utf8.js';
 import * as ed from '@noble/ed25519';
 
-import { createServer } from "http";
+import https from 'https';
+import http from 'http';
+
+//import { createServer } from "http";
 import { Server } from "socket.io";
 
 import {
@@ -376,12 +379,67 @@ export default class BeetServer {
     }
 
     /**
+     * Fetch/store SSL certs. Return HTTPS or HTTP instance.
+     * @returns {Server} HTTP||HTTPS
+     */
+    static async _getServer() {
+        return new Promise(async (resolve, reject) => {
+            let db = BeetDB.ssl_data;
+
+            let ssl;
+            try {
+                ssl = await db.toArray();
+            } catch (error) {
+                console.log(error);                
+            }
+
+            if (ssl && ssl.length > 0) {
+                console.log('HTTPS Server established again');
+                return resolve(https.createServer({key: ssl[0].key, cert: ssl[0].cert}));
+            }
+
+            let key;
+            try {
+                key = await fetch('https://raw.githubusercontent.com/beetapp/beet-certs/master/beet.key')
+                            .then(res => res.text());
+            } catch (error) {
+                console.log(error);
+            }
+
+            let cert;
+            try {
+                cert = await fetch('https://raw.githubusercontent.com/beetapp/beet-certs/master/beet.cert')
+                             .then(res => res.text());
+            } catch (error) {
+                console.log(error);
+            }
+
+            if (!key || !cert) {
+                console.log('HTTP Server established');
+                return resolve(http.createServer()); // http
+            }
+
+            db.toArray().then((res) => {
+                if (res.length == 0) {
+                    db.add({key: key, cert: cert});
+                } else {
+                    db.update(res[0].id, {key: key, cert: cert});
+                }
+            });
+
+            console.log('HTTPS Server established');
+            return resolve(https.createServer({key: key, cert: cert}));
+        });   
+    }
+
+    /**
      * @parameter {Vue} vue
      * @parameter {number} port
      * @returns {BeetServer}
      */
     static async initialize(vue, port) {
-        const httpServer = createServer();
+        const httpServer = await this._getServer();
+        
         const io = new Server(
           httpServer,
           {cors: {origin: "*", methods: ["GET", "POST"]}}

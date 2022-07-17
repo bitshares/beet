@@ -648,36 +648,13 @@ export async function messageVerification(request, blockchain) {
   return new Promise(async (resolve, reject) => {
     store.dispatch("WalletStore/notifyUser", {notify: "request", message: "Message verification"});
 
-    let payloadParams = JSON.parse(request.payload.params);
-
-    ipcRenderer.send(
-      'createPopup',
-      {
-        request: request,
-        payload: {
-          generic: {
-            acceptText: 'Verify',
-            rejectText: 'Reject verification',
-            message: 'Verify the following signature was created by this account?',
-            details: payloadParams.signature
-          }
-        }
-      }
-    );
-
-    ipcRenderer.once(`popupApproved_${request.id}`, async (event, result) => {
-        blockchain
-        .verifyMessage(request)
-        .then(result => {
-            return resolve(result);
-        })
-        .catch((error) => {
-            return _promptFail("blockchain.verifyMessage", request.id, error, reject);
-        });
+    blockchain
+    .verifyMessage(request)
+    .then(result => {
+        return resolve(result);
     })
-
-    ipcRenderer.once(`popupRejected_${request.id}`, (event, result) => {
-      return _promptFail("verifyMessage.reject", request.id, result, reject);
-    })
+    .catch((error) => {
+        return _promptFail("blockchain.verifyMessage", request.id, error, reject);
+    });
   });
 }
