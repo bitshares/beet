@@ -8,8 +8,8 @@ import aes from "crypto-js/aes.js";
 import ENC from 'crypto-js/enc-utf8.js';
 import * as ed from '@noble/ed25519';
 
-import https from 'https';
-import http from 'http';
+import https from 'node:https';
+import http from 'node:http';
 
 //import { createServer } from "http";
 import { Server } from "socket.io";
@@ -136,7 +136,6 @@ const linkHandler = async (req) => {
     }
 
     let hashContents = `${req.browser} ${req.origin} ${req.appName} ${userResponse.result.chain} ${userResponse.result.id}`;
-    console.log(hashContents);
 
     let identityhash;
     try {
@@ -380,9 +379,10 @@ export default class BeetServer {
 
     /**
      * Fetch/store SSL certs. Return HTTPS or HTTP instance.
+     * @param {Number} port
      * @returns {Server} HTTP||HTTPS
      */
-    static async _getServer() {
+    static async _getServer(port) {
         return new Promise(async (resolve, reject) => {
             let db = BeetDB.ssl_data;
 
@@ -394,8 +394,24 @@ export default class BeetServer {
             }
 
             if (ssl && ssl.length > 0) {
-                console.log('HTTPS Server established again');
-                return resolve(https.createServer({key: ssl[0].key, cert: ssl[0].cert}));
+                let httpsServer;
+                try {
+                    httpsServer = https.createServer({
+                                        key: ssl[0].key,
+                                        cert: ssl[0].cert,
+                                        rejectUnauthorized: false
+                                    })
+                                    .listen(port, ()=>{
+                                        console.log(`HTTPS server listening on port: ${port}`);
+                                    });
+                } catch (error) {
+                    console.log(error);
+                }
+
+                if (httpsServer) {
+                    console.log('HTTPS Server established again');
+                    return resolve(httpsServer);
+                }
             }
 
             let key;
@@ -416,7 +432,11 @@ export default class BeetServer {
 
             if (!key || !cert) {
                 console.log('HTTP Server established');
-                return resolve(http.createServer()); // http
+                const httpServer = http.createServer()
+                                        .listen(port, ()=>{
+                                            console.log(`HTTP server listening on port: ${port}`);
+                                        });
+                return resolve(httpServer);
             }
 
             db.toArray().then((res) => {
@@ -428,28 +448,53 @@ export default class BeetServer {
             });
 
             console.log('HTTPS Server established');
-            return resolve(https.createServer({key: key, cert: cert}));
+            let httpsServer;
+            try {
+                httpsServer = https.createServer({
+                                    key: key,
+                                    cert: cert,
+                                    rejectUnauthorized: false
+                                })
+                                .listen(port, ()=>{
+                                    console.log(`HTTPS server listening on port: ${port}`);
+                                });
+            } catch (error) {
+                console.log(error);
+                const httpServer = http.createServer()
+                                        .listen(port, ()=>{
+                                            console.log(`HTTP server listening on port: ${port}`);
+                                        });
+                return resolve(httpServer);
+            }
+            return resolve(httpsServer);
         });   
     }
 
     /**
-     * @parameter {Vue} vue
      * @parameter {number} port
      * @returns {BeetServer}
      */
-    static async initialize(vue, port) {
-        const httpServer = await this._getServer();
+    static async initialize(port) {
+        const chosenServer = await this._getServer(60555);
         
         const io = new Server(
-          httpServer,
-          {cors: {origin: "*", methods: ["GET", "POST"]}}
+            chosenServer,
+            {cors: {origin: "*", methods: ["GET", "POST"]}}
         );
+
+        io.on("connection_error", (error) => {
+            console.log(error)
+        });
 
         io.on("connection", async (socket) => {
           socket.isAuthenticated = false;
 
           socket.on("ping", (data) => {
-            socket.emit("pong", data);
+            socket.emit("pong", chosenServer.cert ? 'HTTPS' : 'HTTP');
+          });
+
+          socket.on("connection_error", (error) => {
+            console.log(error)
           });
 
           /*
@@ -458,7 +503,7 @@ export default class BeetServer {
           socket.on("authenticate", async (data) => {
             logger.debug("incoming authenticate request", data);
             if (!store.state.WalletStore.isUnlocked) {
-              console.log(`locked wallet: ${store.state.WalletStore.isUnlocked}`)
+              //console.log(`locked wallet: ${store.state.WalletStore.isUnlocked}`)
               socket.emit("api", {id: data.id, error: true, payload: {code: 7, message: "Beet wallet authentication error."}});
               return;
             }
@@ -611,9 +656,6 @@ export default class BeetServer {
           });
 
         });
-        httpServer.listen(port);
-
-        console.info("WebSocket server listening on port ", port);
     }
 
 }
