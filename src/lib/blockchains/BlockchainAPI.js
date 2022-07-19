@@ -103,10 +103,10 @@ export default class BlockchainAPI {
      * Signing a string with a key
      * @param {string} key
      * @param {String} accountName
-     * @param {String} randomString
+     * @param {String} messageText
      * @returns {Promise}
      */
-    signMessage(key, accountName, randomString) {
+    signMessage(key, accountName, messageText) {
         return new Promise((resolve,reject) => {
             // do as a list, to preserve order
             let message = [
@@ -117,7 +117,7 @@ export default class BlockchainAPI {
                 "time",
                 new Date().toUTCString(),
                 "text",
-                randomString
+                messageText
             ];
             if (this._config.identifier !== message[2].substring(0, 3)) {
                 message.push("chain");

@@ -467,7 +467,11 @@ export async function signMessage(request, blockchain) {
 
         let signedMessage;
         try {
-          signedMessage = await blockchain.signMessage(processedKey, accountName, request.params);
+            signedMessage = await blockchain.signMessage(
+                                processedKey,
+                                accountName,
+                                request.payload.params
+                            );
         } catch (error) {
           return _promptFail("blockchain.signMessage", request.id, error, reject);
         }
