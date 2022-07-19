@@ -22,10 +22,13 @@ export default class BitShares extends BlockchainAPI {
      */
     signNFT(key, nft_object) {
         return new Promise((resolve,reject) => {
+            let updatedObject = JSON.parse(nft_object);
+            updatedObject.sig_pubkey_or_address = this.getPublicKey(key);
             try {
                 resolve({
-                    pubKey: this.getPublicKey(key),
-                    signature: this._signString(key, nft_object)
+                    key: this.getPublicKey(key),
+                    signed: updatedObject,
+                    signature: this._signString(key, JSON.stringify(updatedObject))
                 });
             } catch (error) {
                 console.log(error)

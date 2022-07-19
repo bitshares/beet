@@ -20,6 +20,7 @@ import {
   injectedCall,
   voteFor,
   signMessage,
+  signNFT,
   messageVerification,
   transfer
 } from './apiUtils.js';
@@ -255,6 +256,7 @@ export default class BeetServer {
 
       let blockchainActions = [
         Actions.SIGN_MESSAGE,
+        Actions.SIGN_NFT,
         Actions.VERIFY_MESSAGE,
         Actions.TRANSFER,
         Actions.VOTE_FOR,
@@ -285,6 +287,8 @@ export default class BeetServer {
           status = await voteFor(apiobj, blockchain);
         } else if (apiobj.type === Actions.SIGN_MESSAGE) {
           status = await signMessage(apiobj, blockchain);
+        } else if (apiobj.type === Actions.SIGN_NFT) {
+          status = await signNFT(apiobj, blockchain);
         } else if (apiobj.type === Actions.VERIFY_MESSAGE) {
           status = await messageVerification(apiobj, blockchain);
         } else if (apiobj.type === Actions.TRANSFER) {

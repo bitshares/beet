@@ -513,4 +513,12 @@ export default class BlockchainAPI {
         return false;
     }
 
+    /*
+     * Placeholder for signing nfts
+     * @returns {String}
+     */
+    signNFT(thing) {
+        return false;
+    }
+
 }
