@@ -94,7 +94,7 @@
             :payload="payload"
         />
         <SignMessageRequestPopup
-            v-else-if="type === Actions.SIGN_MESSAGE"
+            v-else-if="type === Actions.SIGN_MESSAGE || type === Actions.SIGN_NFT"
             :request="request"
             :accounts="accounts"
         />

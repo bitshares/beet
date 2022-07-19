@@ -54,11 +54,11 @@
                     }
                 }),
                 thead: [
-                        t('common.appname_lbl'),
-                        t('common.origin_lbl'),
-                        t('common.account_lbl'),
-                        t('common.chain_lbl'),
-                        t('common.actions_lbl')
+                    t('common.appname_lbl'),
+                    t('common.origin_lbl'),
+                    t('common.account_lbl'),
+                    t('common.chain_lbl'),
+                    t('common.actions_lbl')
                 ],
                 tbody: ['appName', 'origin', 'displayString', 'chain', {slot: 'actions'}]
             };
@@ -104,7 +104,10 @@
                         style="height: 180px; overflow-y: scroll;"
                     >
                         <template #actions="{ data }">
-                            <ui-button raised @click="deleteDapp(data.actions)">
+                            <ui-button
+                                raised
+                                @click="deleteDapp(data.actions)"
+                            >
                                 {{ t('common.delete_btn') }}
                             </ui-button>
                         </template>

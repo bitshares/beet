@@ -68,7 +68,7 @@ app.use(router);
 app.use(store);
 app.mount('#app');
 
-BeetServer.initialize(60555);
+BeetServer.initialize(60554, 60555);
 
 emitter.on('i18n', (data) => {
   console.log(data)

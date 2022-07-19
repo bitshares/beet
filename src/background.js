@@ -87,7 +87,8 @@ const createModal = async (arg, modalEvent) => {
       Actions.REQUEST_LINK,
       Actions.REQUEST_RELINK,
       Actions.GET_ACCOUNT,
-      Actions.SIGN_MESSAGE
+      Actions.SIGN_MESSAGE,
+      Actions.SIGN_NFT
     ].includes(type)) {
       modalRequests[id]['accounts'] = accounts;
       targetURL += `&accounts=${JSON.stringify(accounts)}`;

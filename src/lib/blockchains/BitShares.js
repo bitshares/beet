@@ -1,12 +1,10 @@
 import BlockchainAPI from "./BlockchainAPI";
-import store from "../../store";
 import {Apis} from "bitsharesjs-ws";
 import {
     PrivateKey,
     PublicKey,
     TransactionBuilder,
-    Signature,
-    FetchChain
+    Signature
 } from "bitsharesjs";
 import * as Socket from "simple-websocket";
 
@@ -15,6 +13,26 @@ import {formatAsset, humanReadableFloat} from "../assetUtils";
 const logger = new RendererLogger();
 
 export default class BitShares extends BlockchainAPI {
+
+    /*
+     * Signing a Bitshares NFT with the user's account.
+     * @param {string} key
+     * @param {String} nft_object
+     * @returns {Promise}
+     */
+    signNFT(key, nft_object) {
+        return new Promise((resolve,reject) => {
+            try {
+                resolve({
+                    pubKey: this.getPublicKey(key),
+                    signature: this._signString(key, nft_object)
+                });
+            } catch (error) {
+                console.log(error)
+                reject(error);
+            }
+        });
+    }
 
     /**
      * Test a wss url for successful connection.

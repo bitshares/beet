@@ -418,6 +418,63 @@ export async function voteFor(request, blockchain) {
 }
 
 /*
+ * Sign a Bitshares NFT
+ * @param {Object} request
+ * @returns {Object}
+ */
+export async function signNFT(request, blockchain) {
+    //signed NFT popup
+    return new Promise(async (resolve, reject) => {
+      store.dispatch("WalletStore/notifyUser", {notify: "request", message: "Request for an NFT signature"});
+  
+      let shownBeetApp = store.getters['OriginStore/getBeetApp'](request);
+      if (!shownBeetApp) {
+        return _promptFail("REQUEST_RELINK", request.id, 'No beetApp', reject);
+      }
+  
+      let account = store.getters['AccountStore/getSafeAccount'](JSON.parse(JSON.stringify(shownBeetApp)));
+  
+      ipcRenderer.send(
+        'createPopup',
+        {
+          request: request,
+          accounts: [account]
+        }
+      );
+  
+      ipcRenderer.once(`popupApproved_${request.id}`, async (event, result) => {
+  
+          let retrievedKey;
+          try {
+            retrievedKey = store.getters['AccountStore/getSigningKey'](request);
+          } catch (error) {
+            return _promptFail("signNFT.getSigningKey", request.id, error, reject);
+          }
+  
+          let processedKey;
+          try {
+            processedKey = await getKey(retrievedKey)
+          } catch (error) {
+            return _promptFail("signNFT.getKey", request.id, error, reject);
+          }
+  
+          let signedNFT;
+          try {
+              signedNFT = await blockchain.signNFT(processedKey, request.payload.params);
+          } catch (error) {
+            return _promptFail("blockchain.signNFT", request.id, error, reject);
+          }
+  
+          return resolve({result: signedNFT});
+      })
+  
+      ipcRenderer.once(`popupRejected_${request.id}`, (event, result) => {
+        return _promptFail("signNFT.reject", request.id, result, reject);
+      })
+    });
+  }
+
+/*
  * Sign a message
  * @param {Object} request
  * @returns {Object}

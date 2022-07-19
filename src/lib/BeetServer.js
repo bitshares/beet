@@ -10,8 +10,6 @@ import * as ed from '@noble/ed25519';
 
 import https from 'node:https';
 import http from 'node:http';
-
-//import { createServer } from "http";
 import { Server } from "socket.io";
 
 import {
@@ -379,13 +377,18 @@ export default class BeetServer {
 
     /**
      * Fetch/store SSL certs. Return HTTPS or HTTP instance.
-     * @param {Number} port
-     * @returns {Server} HTTP||HTTPS
+     * @param {Number} httpsPort
+     * @param {Number} httpPort
+     * @returns {Object} server instances
      */
-    static async _getServer(port) {
+    static async _getServer(httpsPort, httpPort) {
         return new Promise(async (resolve, reject) => {
-            let db = BeetDB.ssl_data;
+            const httpServer = http.createServer()
+                                    .listen(httpPort, () => {
+                                        console.log(`HTTP server listening on port: ${httpPort}`);
+                                    });
 
+            let db = BeetDB.ssl_data;
             let ssl;
             try {
                 ssl = await db.toArray();
@@ -401,16 +404,15 @@ export default class BeetServer {
                                         cert: ssl[0].cert,
                                         rejectUnauthorized: false
                                     })
-                                    .listen(port, ()=>{
-                                        console.log(`HTTPS server listening on port: ${port}`);
+                                    .listen(httpsPort, () => {
+                                        console.log(`HTTPS server listening on port: ${httpsPort}`);
                                     });
                 } catch (error) {
                     console.log(error);
                 }
 
                 if (httpsServer) {
-                    console.log('HTTPS Server established again');
-                    return resolve(httpsServer);
+                    return resolve({http: httpServer, https: httpsServer});
                 }
             }
 
@@ -431,12 +433,7 @@ export default class BeetServer {
             }
 
             if (!key || !cert) {
-                console.log('HTTP Server established');
-                const httpServer = http.createServer()
-                                        .listen(port, ()=>{
-                                            console.log(`HTTP server listening on port: ${port}`);
-                                        });
-                return resolve(httpServer);
+                return resolve({http: httpServer});
             }
 
             db.toArray().then((res) => {
@@ -447,7 +444,6 @@ export default class BeetServer {
                 }
             });
 
-            console.log('HTTPS Server established');
             let httpsServer;
             try {
                 httpsServer = https.createServer({
@@ -455,35 +451,31 @@ export default class BeetServer {
                                     cert: cert,
                                     rejectUnauthorized: false
                                 })
-                                .listen(port, ()=>{
-                                    console.log(`HTTPS server listening on port: ${port}`);
+                                .listen(httpsPort, ()=>{
+                                    console.log(`HTTPS server listening on port: ${httpsPort}`);
                                 });
             } catch (error) {
                 console.log(error);
-                const httpServer = http.createServer()
-                                        .listen(port, ()=>{
-                                            console.log(`HTTP server listening on port: ${port}`);
-                                        });
-                return resolve(httpServer);
-            }
-            return resolve(httpsServer);
+                return resolve({http: httpServer});
+            } 
+
+            return resolve({http: httpServer, https: httpsServer});
         });   
     }
 
     /**
-     * @parameter {number} port
-     * @returns {BeetServer}
+     * Use a http|https server to create a new socketio server instance 
+     * @param {Server} chosenServer 
      */
-    static async initialize(port) {
-        const chosenServer = await this._getServer(60555);
-        
+    static async newSocket(chosenServer) {
         const io = new Server(
             chosenServer,
             {cors: {origin: "*", methods: ["GET", "POST"]}}
         );
 
         io.on("connection_error", (error) => {
-            console.log(error)
+            console.log(`io connection_error: ${error}`);
+            io.close();
         });
 
         io.on("connection", async (socket) => {
@@ -494,7 +486,8 @@ export default class BeetServer {
           });
 
           socket.on("connection_error", (error) => {
-            console.log(error)
+            console.log(`socket connection_error: ${error}`)
+            socket.disconnect();
           });
 
           /*
@@ -503,25 +496,10 @@ export default class BeetServer {
           socket.on("authenticate", async (data) => {
             logger.debug("incoming authenticate request", data);
             if (!store.state.WalletStore.isUnlocked) {
-              //console.log(`locked wallet: ${store.state.WalletStore.isUnlocked}`)
               socket.emit("api", {id: data.id, error: true, payload: {code: 7, message: "Beet wallet authentication error."}});
               return;
             }
-
-            /*
-                {
-                origin: this.origin,
-                appName: this.appName,
-                browser: this.browser,
-                identityhash: identity.identityhash,
-                }
-            :   {
-                origin: this.origin,
-                appName: this.appName,
-                browser: this.browser,
-                }
-            */
-            
+           
             let status;
             try {
               status = await authHandler({
@@ -656,6 +634,25 @@ export default class BeetServer {
           });
 
         });
+    }
+
+    /**
+     * @parameter {number} httpPort
+     * @parameter {number} httpsPort
+     * @returns {BeetServer}
+     */
+    static async initialize(httpPort, httpsPort) {
+        let servers = await this._getServer(60554, 60555);
+        
+        let httpsSocket;
+        if (servers.https) {
+            httpsSocket = await this.newSocket(servers.https);
+        }
+
+        let httpSocket;
+        if (servers.http) { 
+            httpSocket = await this.newSocket(servers.http);
+        }
     }
 
 }
