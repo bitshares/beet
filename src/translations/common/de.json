@@ -39,6 +39,8 @@
     "select_chain": "Kette auswählen:",
     "cancel_btn": "Abbrechen",
     "next_btn": "Weiter",
+    "next2_btn": "Versuchen Sie es nochmal",
+    "error_text": "Ein Fehler ist aufgetreten, überprüfen Sie Ihr Passwort und versuchen Sie es erneut.",
     "import_btn": "Ausgewählte importieren",
     "back_btn": "Zurück",
     "account": "Konto:",

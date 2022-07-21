@@ -61,6 +61,7 @@
      */
     async function loadBalances() {
         if (selectedChain.value !== '' && accountName.value !== '') {
+            tableData.value = null;
             balances.value = await fetchBalances(selectedChain.value, accountName.value)
         }
     }
@@ -70,8 +71,7 @@
             selectedChain.value && selectedChain.value !== '' &&
             accountName.value && accountName.value !== ''
         ) {
-            //console.log(`watch effect triggered ${selectedChain.value} ${accountName.value}`)
-            balances.value = await fetchBalances(selectedChain.value, accountName.value)
+            loadBalances();
         }
     });
 
@@ -125,9 +125,13 @@
         <ui-card
             v-if="isConnecting"
             outlined
-            style="padding:5px"
+            style="padding:5px; text-align: center;"
         >
-            Connecting to blockchain
+            <figure>
+                <ui-progress indeterminate></ui-progress>
+                <br/>
+                <figcaption>Connecting to blockchain</figcaption>
+            </figure>
         </ui-card>
         <ui-card
             v-if="!isConnected && !isConnecting"
