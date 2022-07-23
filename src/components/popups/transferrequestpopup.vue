@@ -116,34 +116,39 @@
     }
 </script>
 <template>
-    {{ message }}
-    <br>
-    <br>
-    <pre class="text-left custom-content">
-      <span v-if="toSendFee">
-        <code>
-          Recipient: {{ to }}
-          Amount: {{ toSend }}
-          Fee: {{ toSendFee }}
-        </code>
-      </span>
-      <span v-else>
-        <code>
-          Recipient: {{ to }}
-          Amount: {{ toSend }}
-        </code>
-      </span>
-    </pre>
-    <ui-button
-        raised
-        @click="_clickedAllow()"
-    >
-        {{ t("operations.transfer.accept_btn") }}
-    </ui-button>
-    <ui-button
-        raised
-        @click="_clickedDeny()"
-    >
-        {{ t("operations.transfer.reject_btn") }}
-    </ui-button>
+    <div style="padding:5px">
+        <Text>
+            {{ message }}
+        </Text>
+        <ui-list>
+            <ui-item key="Recipient">
+                <ui-item-text-content>
+                    Recipient: {{ to }}
+                </ui-item-text-content>
+            </ui-item>
+            <ui-item key="Amount">
+                <ui-item-text-content>
+                    Amount: {{ toSend }}
+                </ui-item-text-content>
+            </ui-item>
+            <ui-item key="Fee" v-if="toSendFee">
+                <ui-item-text-content>
+                    Fee: {{ toSendFee }}
+                </ui-item-text-content>
+            </ui-item>
+        </ui-list>
+        <ui-button
+            raised
+            style="margin-right:5px"
+            @click="_clickedAllow()"
+        >
+            {{ t("operations.transfer.accept_btn") }}
+        </ui-button>
+        <ui-button
+            raised
+            @click="_clickedDeny()"
+        >
+            {{ t("operations.transfer.reject_btn") }}
+        </ui-button>
+    </div>
 </template>

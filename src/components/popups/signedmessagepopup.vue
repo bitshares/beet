@@ -61,24 +61,31 @@
 </script>
 
 <template>
-    {{ requestText }}
-    <br>
-    <br>
-    <pre class="text-left custom-content">
-      <code>
-        {{ props.request.payload.params }}
-      </code>
-    </pre>
-    <ui-button
-        raised
-        @click="_clickedAllow()"
-    >
-        {{ t("operations.message.accept_btn") }}
-    </ui-button>
-    <ui-button
-        raised
-        @click="_clickedDeny()"
-    >
-        {{ t("operations.message.reject_btn") }}
-    </ui-button>
+    <div style="padding:5px">
+        <Text size="md">
+            {{ requestText }}
+        </Text>
+        <ui-textfield
+            input-type="textarea"
+            v-model="props.request.payload.params"
+            fullwidth
+            disabled
+            rows="5"
+        >
+        </ui-textfield>
+        <br/>
+        <ui-button
+            raised
+            style="margin-right:5px"
+            @click="_clickedAllow()"
+        >
+            {{ t("operations.message.accept_btn") }}
+        </ui-button>
+        <ui-button
+            raised
+            @click="_clickedDeny()"
+        >
+            {{ t("operations.message.reject_btn") }}
+        </ui-button>
+    </div>
 </template>

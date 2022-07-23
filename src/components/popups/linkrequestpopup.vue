@@ -109,7 +109,7 @@
 </script>
 
 <template>
-    <div>
+    <div style="padding:5px">
         <div v-tooltip="t('operations.link.request_tooltip')">
             {{ requestText }}
         </div>
@@ -148,7 +148,7 @@
         </div>
         <br>
         <div v-if="chosenAccount == -1">
-            <ui-button disabled>
+            <ui-button style="margin-right:5px" disabled>
                 {{ t('operations.link.accept_btn') }}
             </ui-button>
             <ui-button
@@ -161,6 +161,7 @@
         <div v-else>
             <ui-button
                 raised
+                style="margin-right:5px"
                 @click="_clickedAllow()"
             >
                 {{ t('operations.link.accept_btn') }}

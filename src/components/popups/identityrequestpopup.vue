@@ -89,19 +89,22 @@
 </script>
 
 <template>
-    <div v-tooltip="t('operations.identity.request_tooltip')">
-        {{ requestText }} &#10068;
+    <div style="padding:5px">
+        <div v-tooltip="t('operations.identity.request_tooltip')">
+            {{ requestText }} &#10068;
+        </div>
+        <ui-button
+            raised
+            style="margin-right:5px"
+            @click="_clickedAllow()"
+        >
+            {{ t('operations.account_id.accept_btn') }}
+        </ui-button>
+        <ui-button
+            raised
+            @click="_clickedDeny()"
+        >
+            {{ t('operations.account_id.reject_btn') }}
+        </ui-button>
     </div>
-    <ui-button
-        raised
-        @click="_clickedAllow()"
-    >
-        {{ t('operations.account_id.accept_btn') }}
-    </ui-button>
-    <ui-button
-        raised
-        @click="_clickedDeny()"
-    >
-        {{ t('operations.account_id.reject_btn') }}
-    </ui-button>
 </template>

@@ -73,13 +73,14 @@
 </script>
 
 <template>
-    <div v-if="props.request && props.accounts">
+    <div v-if="props.request && props.accounts" style="padding:5px">
         <div v-tooltip="t('operations.relink.request_tooltip')">
             {{ requestText }} &#10068;
         </div>
         <br>
         <ui-button
             raised
+            style="margin-right:5px"
             @click="_clickedAllow()"
         >
             {{ t('operations.link.accept_btn') }}
@@ -91,7 +92,7 @@
             {{ t('operations.link.reject_btn') }}
         </ui-button>
     </div>
-    <div v-else>
+    <div v-else style="padding:5px">
         <div>
             Error showing prompt
         </div>
