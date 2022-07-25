@@ -22,15 +22,16 @@ export default class BlockchainAPI {
      * @param {String||Null} nodeToConnect
      * @returns {Promise} connection
      */
-    ensureConnection(nodeToConnect = null) {
-        return new Promise((resolve, reject) => {
+    async ensureConnection(nodeToConnect = null) {
+        return new Promise(async (resolve, reject) => {
             if (nodeToConnect && this._isConnectedToNode !== nodeToConnect) {
                 // enforce connection to that node
                 this._isConnected = false;
                 this._isConnectedToNode = null;
             }
 
-            if (!this._needsReconnecting()) {
+            let badConnection = await this._needsNewConnection();
+            if (!nodeToConnect && !badConnection) {
                 console.log(`Using existing connection: ${this._isConnectedToNode}`);
                 return this._connectionEstablished(resolve, this._isConnectedToNode);
             }
@@ -57,10 +58,10 @@ export default class BlockchainAPI {
             this._connect(nodeToConnect).then((res) => {
                 this._isConnectingInProgress = false;
                 this._isConnected = true;
-                resolve(res);
+                return resolve(res);
             }).catch((error) => {
                 console.log(error);
-                reject(error);
+                return reject(error);
             });
         });
     }
@@ -397,7 +398,7 @@ export default class BlockchainAPI {
      * Placeholder for blockchain specific reconnection
      * @returns {Boolean} connection
      */
-    _needsReconnecting() {
+    _needsNewConnection() {
         return false;
     }
 

@@ -46,26 +46,19 @@ export default class BitShares extends BlockchainAPI {
       return new Promise(async (resolve, reject) => {
         let before = new Date();
         let beforeTS = before.getTime();
-        let connected;
 
         let socket = new Socket(url);
         socket.on('connect', () => {
-          connected = true;
+          let now = new Date();
+          let nowTS = now.getTime();
           socket.destroy();
+          return resolve({ url: url, lag: nowTS - beforeTS });
         });
 
         socket.on('error', (error) => {
+          console.log(error);
           socket.destroy();
-        });
-
-        socket.on('close', () => {
-          if (connected) {
-            let now = new Date();
-            let nowTS = now.getTime();
-            return resolve({ url: url, lag: nowTS - beforeTS });
-          } else {
-            return resolve(null);
-          }
+          return resolve(null);
         });
       });
     }
@@ -167,38 +160,25 @@ export default class BitShares extends BlockchainAPI {
      * Check if the connection needs reestablished (placeholder replacement)
      * @returns {Boolean}
      */
-    _needsReconnecting() {
-
-        if (
-          !this._isConnected ||
-          !this._isConnectedToNode ||
-          !this._nodeLatencies
-        ) {
-          return true;
-        }
-
-        if (this._isTestnet()) {
-          let _isConnectedToTestnet = Apis.instance().url.indexOf("testnet") !== -1;
-          return _isConnectedToTestnet !== this._isTestnet();
-        }
-
-        if (this._nodeCheckTime) {
-          let now = new Date();
-          let nowTS = now.getTime();
-          let diff = Math.abs(Math.round((nowTS - this._nodeCheckTime) / 1000));
-          if (diff < 360) {
-            return this._nodeLatencies[0].url !== this._isConnectedToNode;
-          }
-        }
-
-        this._testNodes().then((res) => {
-          // Verify current node is fastest valid node
-          this._nodeCheckTime = res.timestamp;
-          return this._isConnectedToNode === res.node;
-        })
-        .catch(error => {
-          console.log(error);
-        })
+    async _needsNewConnection() {
+        return new Promise(async (resolve, reject) => {
+            if (
+                !this._isConnected ||
+                !this._isConnectedToNode ||
+                !this._nodeLatencies
+            ) {
+                return resolve(true);
+            }
+      
+            if (this._isTestnet()) {
+                let _isConnectedToTestnet = Apis.instance().url.indexOf("testnet") !== -1;
+                return resolve(_isConnectedToTestnet !== this._isTestnet());
+            }
+    
+            let testConnection = await this._testConnection(this._isConnectedToNode);
+            let connectionResult = testConnection && testConnection.url ? false : true;
+            return resolve(connectionResult);
+        });
     }
 
     /*
@@ -248,7 +228,14 @@ export default class BitShares extends BlockchainAPI {
                 return this._connectionEstablished(resolve, this._isConnectedToNode);
             }
 
-            if (!nodeToConnect && !this._nodeLatencies) {
+            let diff;
+            if (this._nodeCheckTime) {
+                let now = new Date();
+                let nowTS = now.getTime();
+                diff = Math.abs(Math.round((nowTS - this._nodeCheckTime) / 1000));
+            }
+
+            if (!nodeToConnect && (!this._nodeLatencies || diff && diff > 360)) {
                 // initializing the blockchain
                 console.log('Checking node connections')
                 return this._testNodes().then((res) => {
@@ -270,6 +257,7 @@ export default class BitShares extends BlockchainAPI {
                                       return true;
                                     }
                                   });
+
               this._nodeLatencies = filteredNodes;
               if (!filteredNodes || !filteredNodes.length) {
                 return this._connectionFailed(reject, '', 'No working nodes');

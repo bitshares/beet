@@ -37,14 +37,14 @@ export default class TUSC extends BitShares {
         });
     }
 
-    _needsReconnecting() {
+    _needsNewConnection() {
         if (this._isConnected) {
             // is this tusc node?
             if (Apis.instance().url.indexOf("testnet") === -1) {
                 return true;
             }
         }
-        return super._needsReconnecting();
+        return super._needsNewConnection();
     }
 
     getAsset(assetSymbolOrId) {
