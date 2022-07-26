@@ -321,7 +321,7 @@ export default class BitShares extends BlockchainAPI {
                     })
                     .catch(error => {
                         console.log(`get_full_accounts: ${error}`);
-                        return _connectionFailed(reject, this._node, error)
+                        return this._connectionFailed(reject, this._node, error)
                     })
               })
               .catch(error => {
