@@ -45,7 +45,7 @@
             appName: props.request.payload.appName,
             origin: props.request.payload.origin,
             chain: props.chain,
-            accountName: atob(props.accountName)
+            accountName: props.accountName
         });
     });
 
@@ -74,7 +74,7 @@
         if (!props.toSend) {
             return '';
         }
-        return atob(props.toSend);
+        return props.toSend;
     });
 
     let toSendFee = computed(() => {
@@ -131,7 +131,10 @@
                     Amount: {{ toSend }}
                 </ui-item-text-content>
             </ui-item>
-            <ui-item key="Fee" v-if="toSendFee">
+            <ui-item
+                v-if="toSendFee"
+                key="Fee"
+            >
                 <ui-item-text-content>
                     Fee: {{ toSendFee }}
                 </ui-item-text-content>

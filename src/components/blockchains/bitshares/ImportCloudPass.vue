@@ -155,14 +155,14 @@
                     >
                         {{ t('common.next2_btn') }}
                     </ui-button>
-                    <br/>
+                    <br>
                     <Text size="md">
                         {{ t('common.error_text') }}
                     </Text>
                 </span>
                 <figure v-if="accountname !== '' && bitshares_cloud_login_password !== '' && inProgress">
-                    <ui-progress indeterminate></ui-progress>
-                    <br/>
+                    <ui-progress indeterminate />
+                    <br>
                     <figcaption>Connecting to blockchain</figcaption>
                 </figure>
                 <ui-button

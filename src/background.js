@@ -46,41 +46,60 @@ const createModal = async (arg, modalEvent) => {
     let modalHeight = 400;
     let modalWidth = 600;
     if (!mainWindow) {
+        logger.debug(`No window`);
         throw 'No main window';
     }
 
     let request = arg.request;
     let id = request.id;
+    if (!request || !request.id) {
+        logger.debug(`No request`);
+        throw 'No request';
+    }
+
     if (modalWindows[id] || modalRequests[id]) {
         throw 'Modal exists already!';
     }
 
     let type = request.type;
-    let accounts = arg.accounts;
-    let existingLinks = arg.existingLinks;
+    if (!type) {
+        throw 'No modal type'
+    }
 
     modalRequests[id] = {request: request, event: modalEvent};
 
     let targetURL = `file://${__dirname}/modal.html?`
-                    + `id=${id}`
-                    + `&type=${type}`
-                    + `&request=${JSON.stringify(request)}`;
+                    + `id=${encodeURIComponent(id)}`
+                    + `&type=${encodeURIComponent(type)}`
+                    + `&request=${encodeURIComponent(JSON.stringify(request))}`;
 
     if (type === Actions.REQUEST_LINK) {
-        modalRequests[id]['existingLinks'] = existingLinks;
-        targetURL += `&existingLinks=${JSON.stringify(existingLinks)}`;
+        let existingLinks = arg.existingLinks;
+        if (existingLinks) {
+            modalRequests[id]['existingLinks'] = existingLinks;
+            targetURL += `&existingLinks=${encodeURIComponent(JSON.stringify(existingLinks))}`;
+        }
     }
 
     if ([Actions.INJECTED_CALL, Actions.REQUEST_SIGNATURE].includes(type)) {
-      modalRequests[id]['visualizedAccount'] = arg.visualizedAccount;
-      modalRequests[id]['visualizedParams'] = arg.visualizedParams;
-      targetURL += `&visualizedAccount=${btoa(arg.visualizedAccount)}`;
-      targetURL += `&visualizedParams=${btoa(arg.visualizedParams)}`;
+      let visualizedAccount = arg.visualizedAccount;
+      let visualizedParams = arg.visualizedParams;
+      if (!visualizedAccount || !visualizedParams) {
+        throw 'Missing required visualized fields'
+      }
+      modalRequests[id]['visualizedAccount'] = visualizedAccount;
+      modalRequests[id]['visualizedParams'] = visualizedParams;
+      targetURL += `&visualizedAccount=${encodeURIComponent(visualizedAccount)}`;
+      targetURL += `&visualizedParams=${encodeURIComponent(visualizedParams)}`;
     }
 
     if ([Actions.VOTE_FOR].includes(type)) {
-      modalRequests[id]['payload'] = arg.payload;
-      targetURL += `&payload=${JSON.stringify(arg.payload)}`;
+      let payload = arg.payload;
+      if (!payload) {
+        throw 'Missing required payload field'
+      }
+      modalRequests[id]['payload'] = payload;
+      targetURL += `&payload=${encodeURIComponent(JSON.stringify(payload))}`;
     }
 
     if ([
@@ -90,8 +109,12 @@ const createModal = async (arg, modalEvent) => {
       Actions.SIGN_MESSAGE,
       Actions.SIGN_NFT
     ].includes(type)) {
+      let accounts = arg.accounts;
+      if (!accounts) {
+        throw 'Missing required accounts field'
+      }
       modalRequests[id]['accounts'] = accounts;
-      targetURL += `&accounts=${JSON.stringify(accounts)}`;
+      targetURL += `&accounts=${encodeURIComponent(JSON.stringify(accounts))}`;
     }
 
     if ([Actions.TRANSFER].includes(type)) {
@@ -99,13 +122,17 @@ const createModal = async (arg, modalEvent) => {
       let accountName = arg.accountName;
       let toSend = arg.toSend;
 
+      if (!chain || !accountName || !toSend) {
+        throw 'Missing required fields'
+      }
+
       modalRequests[id]['chain'] = chain;
       modalRequests[id]['accountName'] = accountName;
       modalRequests[id]['toSend'] = toSend;
 
-      targetURL += `&chain=${chain}`;
-      targetURL += `&accountName=${btoa(accountName)}`;
-      targetURL += `&toSend=${btoa(toSend)}`;
+      targetURL += `&chain=${encodeURIComponent(chain)}`;
+      targetURL += `&accountName=${encodeURIComponent(accountName)}`;
+      targetURL += `&toSend=${encodeURIComponent(toSend)}`;
     }
 
     modalWindows[id] = new BrowserWindow({
@@ -263,7 +290,11 @@ const createWindow = async () => {
    * Create modal popup & wait for user response
    */
   ipcMain.on('createPopup', async (event, arg) => {
-      await createModal(arg, event);
+      try {
+        await createModal(arg, event);
+      } catch (error) {
+        console.log(error);
+      }
   })
 
   ipcMain.on('notify', (event, arg) => {
@@ -337,7 +368,6 @@ const createWindow = async () => {
 
   ipcMain.on('downloadBackup', async (event, arg) => {
     let walletName = arg.walletName;
-    //let accounts = JSON.parse(atob(arg.accounts));
     let accounts = JSON.parse(arg.accounts);
     let toLocalPath = path.resolve(
       app.getPath("desktop"),

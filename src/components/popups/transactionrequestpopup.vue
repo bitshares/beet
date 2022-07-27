@@ -33,7 +33,7 @@
         if (!props.visualizedParams) {
             return '';
         }
-        return atob(props.visualizedParams);
+        return props.visualizedParams;
     });
 
     let tableTooltip = computed(() => {
@@ -47,7 +47,7 @@
                 appName: props.request.payload.appName,
                 origin: props.request.payload.origin,
                 chain: formatChain(props.request.payload.chain),
-                accountName: props.visualizedAccount ? atob(props.visualizedAccount) : props.request.payload.account_id
+                accountName: props.visualizedAccount ? props.visualizedAccount : props.request.payload.account_id
             }
         );
     });
@@ -89,7 +89,7 @@
 <template>
     <div style="padding:5px">
         <Text>
-            {{tableTooltip}}
+            {{ tableTooltip }}
         </Text>
         <div
             v-if="!!visualizedParams"

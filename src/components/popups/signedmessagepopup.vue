@@ -23,6 +23,10 @@
         }
     });
 
+    let textFieldContents = computed(() => {
+        return props.request.payload.params;
+    });
+
     let requestText = computed(() => {
         if (!props.request || !props.accounts) {
             return '';
@@ -66,14 +70,13 @@
             {{ requestText }}
         </Text>
         <ui-textfield
+            v-model="textFieldContents"
             input-type="textarea"
-            v-model="props.request.payload.params"
             fullwidth
             disabled
             rows="5"
-        >
-        </ui-textfield>
-        <br/>
+        />
+        <br>
         <ui-button
             raised
             style="margin-right:5px"

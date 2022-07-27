@@ -22,11 +22,17 @@
             qs = queryString.parse(global.location.search);
         } catch (error) {
             console.log(error);
+            return;
         }
 
-        return qs && qs[target]
-            ? qs[target]
-            : '';
+        if (!qs[target]) {
+            console.log('Invalid prop')
+            return;
+        }
+
+        let qsTarget = qs[target];
+        let decoded = decodeURIComponent(qsTarget);
+        return decoded;
     }
 
     let type = computed(() => {
@@ -54,19 +60,23 @@
     });
 
     let request = computed(() => {
-        return JSON.parse(handleProp('request'));
+        let req = handleProp('request');
+        return req ? JSON.parse(req) : null;
     });
 
     let payload = computed(() => {
-        return JSON.parse(handleProp('payload'));
-    })
+        let req = handleProp('payload');
+        return req ? JSON.parse(req) : null;
+    });
 
     let accounts = computed(() => {
-        return JSON.parse(handleProp('accounts'));
+        let req = handleProp('accounts');
+        return req ? JSON.parse(req) : null;
     });
 
     let existingLinks = computed(() => {
-        return JSON.parse(handleProp('existingLinks'));
+        let req = handleProp('existingLinks');
+        return req ? JSON.parse(req) : null;
     });
 </script>
 

@@ -77,9 +77,12 @@
         </Text>
 
         <ui-list>
-            <ui-item v-for="item in votePrompt" :key="item">
+            <ui-item
+                v-for="item in votePrompt"
+                :key="item"
+            >
                 <ui-item-text-content>
-                    {{item}}
+                    {{ item }}
                 </ui-item-text-content>
             </ui-item>
         </ui-list>

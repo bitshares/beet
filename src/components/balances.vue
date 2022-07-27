@@ -128,8 +128,8 @@
             style="padding:5px; text-align: center;"
         >
             <figure>
-                <ui-progress indeterminate></ui-progress>
-                <br/>
+                <ui-progress indeterminate />
+                <br>
                 <figcaption>Connecting to blockchain</figcaption>
             </figure>
         </ui-card>

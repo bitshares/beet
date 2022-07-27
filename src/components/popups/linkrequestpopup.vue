@@ -148,7 +148,10 @@
         </div>
         <br>
         <div v-if="chosenAccount == -1">
-            <ui-button style="margin-right:5px" disabled>
+            <ui-button
+                style="margin-right:5px"
+                disabled
+            >
                 {{ t('operations.link.accept_btn') }}
             </ui-button>
             <ui-button
