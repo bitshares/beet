@@ -59,11 +59,6 @@
         if (!props.accounts || !props.accounts.length) {
             return [];
         }
-        
-        let filteredAccounts = props.accounts.filter(account => props.request.chain === account.chain);
-        if (!filteredAccounts.length) {
-            return [];
-        }
 
         return props.accounts.map((account, i) => {
             return {

@@ -71,7 +71,13 @@
 
     let accounts = computed(() => {
         let req = handleProp('accounts');
-        return req ? JSON.parse(req) : null;
+        let parsedReq = req ? JSON.parse(req) : null;
+
+        let request = handleProp('request')
+        let parsedRequest = request ? JSON.parse(request) : null;
+
+        let filteredAccounts = parsedReq.filter(account => parsedRequest.payload.chain === account.chain);
+        return filteredAccounts;
     });
 
     let existingLinks = computed(() => {

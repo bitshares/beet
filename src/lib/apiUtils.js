@@ -170,8 +170,8 @@ async function _signOrBroadcast(
         return _promptFail(txType, request.id, error, reject);
       }
       notifyTXT = "Transaction successfully broadcast.";
-      return resolve(finalResult);
-  }
+      return resolve({result: finalResult});
+    }
 
   let activeKey;
   try {
@@ -208,7 +208,7 @@ async function _signOrBroadcast(
 
   store.dispatch("WalletStore/notifyUser", {notify: "request", message: notifyTXT});
 
-  return resolve(finalResult);
+  return resolve({result: finalResult});
 }
 
 /*
@@ -408,7 +408,7 @@ export async function voteFor(request, blockchain) {
 
         return !broadcastResult
           ? _promptFail("voteFor.broadcast", request.id, 'no broadcast', reject)
-          : resolve(broadcastResult);
+          : resolve({result: broadcastResult});
     })
 
     ipcRenderer.once(`popupRejected_${request.id}`, (event, result) => {
@@ -573,38 +573,6 @@ export async function transfer(request, blockchain) {
       return _promptFail("transfer", request.id, 'No toSend', reject);
     }
 
-    //console.log(`amount: ${request.payload.params.amount} chain: ${accountDetails.chain}`)
-
-    /*
-    {
-        "request": {
-            "client": "SOyHVIuiT9p9XyohAAAD",
-            "id": "d7b66d78-e1f4-419e-b2e1-9e0807a9d970",
-            "type": "transfer",
-            "payload": {
-                "method": "transfer",
-                "params": {
-                    "to": "1.2.5",
-                    "amount": {
-                        "satoshis": "1",
-                        "asset_id": "1.3.0"
-                    }
-                },
-                "next_hash": "8024c279e0bf3bb725571c90bc63ee5e2e0e3c2701e10ecc79af36b476d9ba85",
-                "origin": "nftea.gallery",
-                "appName": "NFTEA Gallery",
-                "identityhash": "85ff4474e8e5a8183f774c11501cfcc592364b67bb244cb93a1cee63ce0b495a",
-                "chain": "BTS",
-                "account_id": "1.2.1808745"
-            }
-        },
-        "chain": "BTS",
-        "accountName": "beettester1",
-        "toSend": "1sat of undefined"
-    }
-    */
-
-
     /*
     if (!request.payload.params.amount && request.payload.params.satoshis) {
       popupContents.request.payload.params.amount = request.payload.params.satoshis;
@@ -712,7 +680,7 @@ export async function messageVerification(request, blockchain) {
     blockchain
     .verifyMessage(request)
     .then(result => {
-        return resolve(result);
+        return resolve({result: result});
     })
     .catch((error) => {
         return _promptFail("blockchain.verifyMessage", request.id, error, reject);

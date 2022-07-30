@@ -1106,12 +1106,12 @@ export default class BitShares extends BlockchainAPI {
                 
                 if (isBitasset) {
                     operationString += `Bitasset info: \n`;
-                    operationString += `feed_lifetime_sec: ${bitasset_opts.feed_lifetime_sec}\n`;
-                    operationString += `force_settlement_delay_sec: ${bitasset_opts.force_settlement_delay_sec}\n`;
-                    operationString += `force_settlement_offset_percent: ${bitasset_opts.force_settlement_offset_percent}\n`;
-                    operationString += `maximum_force_settlement_volume: ${bitasset_opts.maximum_force_settlement_volume}\n`;
-                    operationString += `minimum_feeds: ${bitasset_opts.minimum_feeds}\n`;
-                    operationString += `short_backing_asset: ${bitasset_opts.short_backing_asset}\n`;
+                    operationString += `feed_lifetime_sec: ${op.bitasset_opts.feed_lifetime_sec}\n`;
+                    operationString += `force_settlement_delay_sec: ${op.bitasset_opts.force_settlement_delay_sec}\n`;
+                    operationString += `force_settlement_offset_percent: ${op.bitasset_opts.force_settlement_offset_percent}\n`;
+                    operationString += `maximum_force_settlement_volume: ${op.bitasset_opts.maximum_force_settlement_volume}\n`;
+                    operationString += `minimum_feeds: ${op.bitasset_opts.minimum_feeds}\n`;
+                    operationString += `short_backing_asset: ${op.bitasset_opts.short_backing_asset}\n`;
                 }
 
                 if (nft_object) {
