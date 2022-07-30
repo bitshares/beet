@@ -98,11 +98,13 @@
             <h4 class="h4 beet-typo-small">
                 {{ t('operations.general.content') }}
             </h4>
-            <pre class="text-left custom-content">
-                <code>
-                {{ visualizedParams }}
-                </code>
-            </pre>
+            <ui-textfield
+                v-model="visualizedParams"
+                input-type="textarea"
+                fullwidth
+                disabled
+                rows="5"
+            />
         </div>
         <div
             v-else

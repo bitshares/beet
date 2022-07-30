@@ -231,7 +231,7 @@ export async function requestSignature(request, blockchain) {
         visualizedParams = await blockchain.visualize(request.payload.params);
     } catch (error) {
         console.log(error);
-        return _promptFail("requestSignature", request.id, request, reject);
+        return _promptFail("requestSignature.visualizedParams", request.id, request, reject);
     }
 
     let visualizedAccount;
@@ -239,7 +239,7 @@ export async function requestSignature(request, blockchain) {
         visualizedAccount = await blockchain.visualize(request.payload.account_id);
     } catch (error) {
         console.log(error);
-        return _promptFail("requestSignature", request.id, request, reject);
+        return _promptFail("requestSignature.visualizedAccount", request.id, request, reject);
     }
 
     ipcRenderer.send(
@@ -561,7 +561,7 @@ export async function transfer(request, blockchain) {
     try {
       accountDetails = store.getters['AccountStore/getSafeAccount'](JSON.parse(JSON.stringify(shownBeetApp)));
     } catch (error) {
-      console.log(accountDetails);
+      console.log(error);
       return _promptFail("transfer", request.id, 'getSafeAccount', reject);
     }
 

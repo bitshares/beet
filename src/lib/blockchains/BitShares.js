@@ -12,6 +12,91 @@ import RendererLogger from "../RendererLogger";
 import {formatAsset, humanReadableFloat} from "../assetUtils";
 const logger = new RendererLogger();
 
+
+const permission_flags = {
+    charge_market_fee: 0x01 /**< an issuer-specified percentage of all market trades in this asset is paid to the issuer */,
+    white_list: 0x02 /**< accounts must be whitelisted in order to hold this asset */,
+    override_authority: 0x04 /**< issuer may transfer asset back to himself */,
+    transfer_restricted: 0x08 /**< require the issuer to be one party to every transfer */,
+    disable_force_settle: 0x10 /**< disable force settling */,
+    global_settle: 0x20 /**< allow the bitasset issuer to force a global settling -- this may be set in permissions, but not flags */,
+    disable_confidential: 0x40 /**< allow the asset to be used with confidential transactions */,
+    witness_fed_asset: 0x80 /**< allow the asset to be fed by witnesses */,
+    committee_fed_asset: 0x100 /**< allow the asset to be fed by the committee */,
+    lock_max_supply: 0x200, ///< the max supply of the asset can not be updated
+    disable_new_supply: 0x400, ///< unable to create new supply for the asset
+    disable_mcr_update: 0x800, ///< the bitasset owner can not update MCR, permission only
+    disable_icr_update: 0x1000, ///< the bitasset owner can not update ICR, permission only
+    disable_mssr_update: 0x2000, ///< the bitasset owner can not update MSSR, permission only
+    disable_bsrm_update: 0x4000, ///< the bitasset owner can not update BSRM, permission only
+    disable_collateral_bidding: 0x8000 ///< Can not bid collateral after a global settlement
+};
+
+const uia_permission_mask = [
+    "charge_market_fee",
+    "white_list",
+    "override_authority",
+    "transfer_restricted",
+    "disable_confidential"
+];
+
+/**
+ * 
+ * @param {String} mask 
+ * @param {Boolean} isBitAsset 
+ * @returns Object
+ */
+function getFlagBooleans(mask, isBitAsset = false) {
+    let booleans = {
+        charge_market_fee: false,
+        white_list: false,
+        override_authority: false,
+        transfer_restricted: false,
+        disable_force_settle: false,
+        global_settle: false,
+        disable_confidential: false,
+        witness_fed_asset: false,
+        committee_fed_asset: false,
+        lock_max_supply: false,
+        disable_new_supply: false,
+        disable_mcr_update: false,
+        disable_icr_update: false,
+        disable_mssr_update: false,
+        disable_bsrm_update: false,
+        disable_collateral_bidding: false
+    };
+    
+    if (mask === "all") {
+        for (let flag in booleans) {
+            if (
+                !isBitAsset &&
+                uia_permission_mask.indexOf(flag) === -1
+            ) {
+                delete booleans[flag];
+            } else {
+                booleans[flag] = true;
+            }
+        }
+        return booleans;
+    }
+    
+    for (let flag in booleans) {
+        if (
+            !isBitAsset &&
+            uia_permission_mask.indexOf(flag) === -1
+        ) {
+            delete booleans[flag];
+        } else {
+            if (mask & permission_flags[flag]) {
+                booleans[flag] = true;
+            }
+        }
+    }
+    
+    return booleans;
+}
+
+
 export default class BitShares extends BlockchainAPI {
 
     /*
@@ -827,6 +912,8 @@ export default class BitShares extends BlockchainAPI {
         let operations = [];
         let tr = this._parseTransactionBuilder(thing);
 
+        console.log(tr.operations)
+
         for (let i = 0; i < tr.operations.length; i++) {
             let operation = tr.operations[i];
             if (operation[0] == 0) {
@@ -937,6 +1024,110 @@ export default class BitShares extends BlockchainAPI {
                     " Buy: " + formatAsset(operation[1].min_to_receive.amount, buy.symbol, buy.precision) + "\n" +
                     " Price: " + price.toPrecision(6) + " " + sell.symbol + "/" +  buy.symbol
                 )
+            } else if (operation[0] == 10 || operation[0] == 11) {
+                // Create or Update an asset
+
+
+                let op = operation[1];
+
+                let asset;
+                if (operation[0] == 11) {
+                    // fetch asset to update
+                    try {
+                      asset = await this._resolveAsset(operation[1].asset_to_update);
+                    } catch (error) {
+                      console.log(error);
+                      return;
+                    }
+                }
+
+                let symbol = asset ? asset.symbol : op.symbol;
+                let precision = asset ? asset.precision : op.precision;
+                let is_prediction_market = asset ? asset.is_prediction_market : op.is_prediction_market;
+
+                let options = operation[0] == 10 ? op.common_options : op.new_options;
+
+                let max_supply = options.max_supply;
+                let market_fee_percent = options.market_fee_percent;
+                let max_market_fee = options.max_market_fee;
+                let isBitasset = op.bitasset_opts ? true : false;
+
+                let issuer_permissions = getFlagBooleans(options.issuer_permissions, isBitasset);
+                let flags = getFlagBooleans(options.flags, isBitasset);
+
+                let cer_base_amount = options.core_exchange_rate.base.amount;
+                let cer_base_asset_id = options.core_exchange_rate.base.asset_id;
+                let cer_quote_amount = options.core_exchange_rate.quote.amount;
+                let cer_quote_asset_id = options.core_exchange_rate.quote.asset_id; 
+
+                let whitelist_authorities = options.whitelist_authorities;
+                let blacklist_authorities = options.blacklist_authorities;
+                let whitelist_markets = options.whitelist_markets;
+                let blacklist_markets = options.blacklist_markets;
+
+                let description = JSON.parse(options.description);
+                let nft_object = description ? description.nft_object : null;
+
+                let initialString = operation[0] == 10 ? "Issuing an asset \n" : "Updating an asset \n"
+                let operationString =  initialString +
+                                        `Symbol: ${symbol}\n` +
+                                        `main: ${description.main}\n` +
+                                        `market: ${description.market}\n` +
+                                        `short_name: ${description.short_name}\n` +
+                                        `Precision: ${precision}\n` +
+                                        `max supply: ${max_supply}\n` +
+                                        `market_fee_percent: ${market_fee_percent}\n` +
+                                        `max_market_fee: ${max_market_fee}\n\n` +
+                                        //
+                                        `Core exchange rates:\n` +
+                                        `Base amount: ${cer_base_amount}\n` +
+                                        `Base asset id: ${cer_base_asset_id}\n` +
+                                        `Quote amount: ${cer_quote_amount}\n` +
+                                        `Quote asset id: ${cer_quote_asset_id}\n` +
+                                        `whitelist_authorities: ${whitelist_authorities}\n` +
+                                        `blacklist_authorities: ${blacklist_authorities}\n` +
+                                        `whitelist_markets: ${whitelist_markets}\n` +
+                                        `blacklist_markets: ${blacklist_markets}\n` +
+                                        `is_prediction_market: ${is_prediction_market}\n\n` +
+                                        //
+                                        `Permissions:\n` + 
+                                        `charge_market_fee: ${issuer_permissions["charge_market_fee"]}\n` +
+                                        `white_list: ${issuer_permissions["white_list"]}\n` +
+                                        `override_authority: ${issuer_permissions["override_authority"]}\n` +
+                                        `transfer_restricted: ${issuer_permissions["transfer_restricted"]}\n` +
+                                        `disable_confidential: ${issuer_permissions["disable_confidential"]}\n\n` +
+                                        //
+                                        `Flags:\n` +
+                                        `charge_market_fee: ${flags["charge_market_fee"]}\n` +
+                                        `white_list: ${flags["white_list"]}\n` +
+                                        `override_authority: ${flags["override_authority"]}\n` +
+                                        `transfer_restricted: ${flags["transfer_restricted"]}\n` +
+                                        `disable_confidential: ${flags["disable_confidential"]}\n\n`;
+                
+                if (isBitasset) {
+                    operationString += `Bitasset info: \n`;
+                    operationString += `feed_lifetime_sec: ${bitasset_opts.feed_lifetime_sec}\n`;
+                    operationString += `force_settlement_delay_sec: ${bitasset_opts.force_settlement_delay_sec}\n`;
+                    operationString += `force_settlement_offset_percent: ${bitasset_opts.force_settlement_offset_percent}\n`;
+                    operationString += `maximum_force_settlement_volume: ${bitasset_opts.maximum_force_settlement_volume}\n`;
+                    operationString += `minimum_feeds: ${bitasset_opts.minimum_feeds}\n`;
+                    operationString += `short_backing_asset: ${bitasset_opts.short_backing_asset}\n`;
+                }
+
+                if (nft_object) {
+                    operationString += `NFT Contents: \n`;
+                    operationString += `acknowledgements: ${nft_object.acknowledgements}\n`;
+                    operationString += `artist: ${nft_object.artist}\n`;
+                    operationString += `attestation: ${nft_object.attestation}\n`;
+                    operationString += `holder_license: ${nft_object.holder_license}\n`;
+                    operationString += `license: ${nft_object.license}\n`;
+                    operationString += `narrative: ${nft_object.narrative}\n`;
+                    operationString += `title: ${nft_object.title}\n`;
+                    operationString += `tags: ${nft_object.tags}\n`;
+                    operationString += `type: ${nft_object.type}\n`;
+                }
+
+                operations.push(operationString);
             }
         }
 
