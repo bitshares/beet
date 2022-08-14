@@ -1,75 +1,71 @@
-<template>
-    <div class="row node-selector">
-        <div class="col-12 p-0 text-center d-flex justify-content-center">
-            <router-link
-                to="/dashboard"
-                tag="a"
-                class=" status align-self-center"
-                :class="{active: $route.path=='/dashboard'}"
-                replace
-            >
-                <span class="icon-stats-bars" />
-            </router-link>
-            <router-link
-                to="/add-account"
-                tag="a"
-                class=" status align-self-center"
-                :class="{active: $route.path=='/add-account'}"
-                replace
-            >
-                <span class="icon-user-plus" />
-            </router-link>
-            <router-link
-                to="/settings"
-                tag="a"
-                class=" status align-self-center"
-                :class="{active: $route.path=='/settings'}"
-                replace
-            >
-                <span class="icon-settings" />
-            </router-link>
-            <a
-                v-b-tooltip.hover
-                v-b-tooltip.d500
-                :title="$t('common:tooltip_lock')"
-                href="#"
-                class=" status align-self-center"
-                @click="logout()"
-            >
-                <span class="icon-unlock" />
-            </a>
-        </div>
-    </div>
-</template>
-
-<script>
+<script setup>
+    const emitter = inject('emitter');
+    import { onMounted, inject, ref, watchEffect, computed } from "vue";
+    import router from '../router/index.js';
+    import store from '../store/index';
     import RendererLogger from "../lib/RendererLogger";
-    import { EventBus } from "../lib/event-bus.js";
     const logger = new RendererLogger();
 
-    export default {
-        name: "Actionbar",
-        i18nOptions: { namespaces: "common" },
-        data() {
-            return {};
+    let active = ref(0);
+    let items = ref([
+        {
+            text: 'Home',
+            url: "/dashboard"
         },
-        computed: {},
-        watch: {},
-        created() {
-            EventBus.$on('timeout', (data)=>{
-                if(data=='logout') {
-                    this.logout();
-                }
-            })
+        {
+            text: 'New',
+            url: "/add-account"
         },
-        mounted() {
-            logger.debug("Action Bar mounted");
+        {
+            text: 'Settings',
+            url: "/settings"
         },
-        methods: {
-            logout: function() {
-                this.$store.dispatch("WalletStore/logout");
-                this.$router.replace("/");
-            }
+        {
+            text: 'Logout',
+            url: "/"
         }
-    };
+    ]);
+
+    function logout() {
+        console.log('logout')
+        store.dispatch("WalletStore/logout");
+        router.replace("/");
+    }
+
+    watchEffect(() => {
+        if (!active.value) {
+            return;
+        }
+
+        if (active.value === 3) {
+            logout();
+        }
+
+        router.replace(items.value[active.value].url);
+    });
+
+    emitter.on('timeout', (data)=>{
+        if (data == 'logout') {
+            logout();
+        }
+    })
 </script>
+
+<template>
+    <div
+        key="actionbar"
+        class="actionbarContainer"
+    >
+        <ui-tab-bar
+            v-model="active"
+            content-selector=".actionbarContainer"
+        >
+            <ui-tab
+                v-for="(tab, index) in items"
+                :key="index"
+            >
+                {{ tab.text }}
+            </ui-tab>
+        </ui-tab-bar>
+    </div>
+</template>

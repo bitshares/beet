@@ -1,4 +1,3 @@
-import Vue from 'vue';
 import {
     defaultLocale
 } from '../../config/i18n.js'
@@ -12,10 +11,10 @@ const ADD_WHITELIST = 'ADD_WHITELIST';
 
 const mutations = {
     [LOAD_WHITELIST](state, whitelist) {
-        Vue.set(state, 'whitelist', whitelist);
+        state['whitelist'] = whitelist;
     },
     [LOAD_AVAILABLE](state, whitelistable) {
-        Vue.set(state, 'available', whitelistable);
+        state['available'] = whitelistable;
     },
     [ADD_WHITELIST](state, whitelisted) {
         state.whitelist.push(whitelisted);

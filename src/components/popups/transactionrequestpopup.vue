@@ -1,164 +1,153 @@
-<template>
-    <b-modal
-        id="type"
-        ref="modalComponent"
-        centered
-        no-close-on-esc
-        no-close-on-backdrop
-        hide-header-close
-        hide-footer
-        :title="$t('operations:rawsig.title')"
-    >
-        <table
-            v-b-tooltip.hover
-            :title="$t('operations:rawsig.request',
-                { appName: incoming.appName,
-                  origin: incoming.origin,
-                  chain: getChainLabel(incoming.chain),
-                  accountName: incoming.account_id
-                }
-            )"
-            class="table small table-striped table-sm"
-        >
-            <tbody>
-                <tr>
-                    <td class="text-left">
-                        Origin
-                    </td>
-                    <td class="text-right">
-                        {{incoming.origin}}
-                    </td>
-                </tr>
-                <tr>
-                    <td class="text-left">
-                        App
-                    </td>
-                    <td class="text-right">
-                        {{incoming.appName}}
-                    </td>
-                </tr>
-                <tr>
-                    <td class="text-left">
-                        Account
-                    </td>
-                    <td class="text-right">
-                        {{getChainLabel(incoming.chain) + ":" + (incoming.account_name ? incoming.account_name : incoming.account_id)}}
-                    </td>
-                </tr>
-                <tr>
-                    <td class="text-left">
-                        Action
-                    </td>
-                    <td class="text-right">
-                        {{getRequestType() ? $t('operations:rawsig.sign_btn') : $t('operations:rawsig.sign_and_broadcast_btn') }}
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <p class="mb-1 font-weight-bold small">
-            {{ $t('operations:general.content') }}
-        </p>
-        <div
-            v-if="!!incoming.visualized"
-            class="text-left custom-content"
-            v-html="incoming.visualized"
-        />
-        <pre
-            v-else-if="!!incoming.params"
-            class="text-left custom-content"
-        >
-<code>
-{
-{{ incoming.params }}
-}
-</code>
-        </pre>
-        {{ $t('operations:rawsig.request_cta') }}
-        <b-btn
-            class="mt-3"
-            variant="success"
-            block
-            @click="_clickedAllow"
-        >
-            {{ getRequestType() == "sign" ? $t('operations:rawsig.sign_btn') : $t('operations:rawsig.sign_and_broadcast_btn') }}
-        </b-btn>
-        <b-btn
-            class="mt-1"
-            variant="danger"
-            block
-            @click="_clickedDeny"
-        >
-            {{ $t('operations:rawsig.reject_btn') }}
-        </b-btn>
-    </b-modal>
-</template>
-<script>
-    import AbstractPopup from "./abstractpopup";
-    import RendererLogger from "../../lib/RendererLogger";
-    import getBlockchain from "../../lib/blockchains/blockchainFactory";
-    import {getKey} from '../../lib/SecureRemote';
+<script setup>
+    import { ipcRenderer } from 'electron';
+    import { computed } from "vue";
+    import { useI18n } from 'vue-i18n';
+    const { t } = useI18n({ useScope: 'global' });
     import {formatChain} from "../../lib/formatter";
-    const logger = new RendererLogger();
 
-    export default {
-        name: "TransactionRequestPopup",
-        extends: AbstractPopup,
-        data() {
-            return {
-                type: "TransactionRequestPopup",
-                incoming: {
-                    signingAccount: {},
-                    visualized: null
-                }
-            };
+    const props = defineProps({
+        request: {
+            type: Object,
+            required: true,
+            default() {
+                return {}
+            }
         },
-        mounted() {
-            logger.debug("Tx Popup initialised");
+        visualizedAccount: {
+            type: String,
+            required: true,
+            default() {
+                return ''
+            }
         },
-        methods: {
-            getChainLabel: function(chain) {
-                return formatChain(chain);
-            },
-            getRequestType: function() {
-                if (this.incoming.params && this.incoming.params.length > 0 && this.incoming.params[0] == "sign") {
-                    return "sign"
-                } else {
-                    return "sign_and_broadcast";
-                }
-            },
-            _onShow() {
-                let blockchain = getBlockchain(this.incoming.chain);
-                blockchain.visualize(this.incoming.params).then(result => {
-                    this.incoming.visualized = result;
-                    this.incoming = Object.assign({}, this.incoming);
-                    blockchain.visualize(this.incoming.account_id).then(account_name => {
-                        this.incoming.account_name = account_name;
-                        this.incoming = Object.assign({}, this.incoming);
-                    });
-                })
-
-            },
-            getSuccessNotification(result) {
-                return {msg: 'Transaction successfully broadcast.', link: '' };
-            },
-            _execute: async function () {
-                let blockchain = getBlockchain(this.incoming.chain);
-                if (this.incoming.params[0] == "sign") {
-                    let tr = await blockchain.sign(
-                        this.incoming.params,
-                        await getKey(this.$store.getters['AccountStore/getSigningKey'](this.incoming).keys.active)
-                    );
-                    return tr.toObject();
-                } else if (this.incoming.params[0] == "broadcast") {
-                    return await blockchain.broadcast(this.incoming.params);
-                } else if (this.incoming.params[0] == "signAndBroadcast") {
-                    let transaction = await blockchain.sign(
-                        this.incoming.params,
-                        await getKey(this.$store.getters['AccountStore/getSigningKey'](this.incoming).keys.active)
-                    );
-                    return await blockchain.broadcast(transaction);
-                }
+        visualizedParams: {
+            type: String, // md5
+            required: true,
+            default() {
+                return ''
             }
         }
-    };
+    });
+
+    let visualizedParams = computed(() => {
+        if (!props.visualizedParams) {
+            return '';
+        }
+        return props.visualizedParams;
+    });
+
+    let tableTooltip = computed(() => {
+        if (!props.request) {
+            return '';
+        }
+
+        return t(
+            'operations.rawsig.request',
+            {
+                appName: props.request.payload.appName,
+                origin: props.request.payload.origin,
+                chain: formatChain(props.request.payload.chain),
+                accountName: props.visualizedAccount ? props.visualizedAccount : props.request.payload.account_id
+            }
+        );
+    });
+
+    let buttonText = computed(() => {
+        if (!props.request) {
+            return '';
+        }
+
+        return props.request.payload.params &&
+            props.request.payload.params.length > 0 &&
+            props.request.payload.params[0] == "sign"
+            ? t('operations.rawsig.sign_btn')
+            : t('operations.rawsig.sign_and_broadcast_btn')
+    })
+
+    function _clickedAllow() {
+        ipcRenderer.send(
+            "clickedAllow",
+            {
+                result: {success: true},
+                request: {id: props.request.id}
+            }
+        );
+    }
+
+    function _clickedDeny() {
+        ipcRenderer.send(
+            "clickedDeny",
+            {
+                result: {canceled: true},
+                request: {id: props.request.id}
+            }
+        );
+    }
+
+
 </script>
+<template>
+    <div style="padding:5px">
+        <Text>
+            {{ tableTooltip }}
+        </Text>
+        <div
+            v-if="!!visualizedParams"
+            class="text-left custom-content"
+        >
+            <h4 class="h4 beet-typo-small">
+                {{ t('operations.general.content') }}
+            </h4>
+            <ui-textfield
+                v-model="visualizedParams"
+                input-type="textarea"
+                fullwidth
+                disabled
+                rows="5"
+            />
+        </div>
+        <div
+            v-else
+            class="text-left custom-content"
+        >
+            <pre>
+                Loading transaction details from blockchain, please wait.
+            </pre>
+        </div>
+
+        <h4 class="h4 beet-typo-small">
+            {{ t('operations.rawsig.request_cta') }}
+        </h4>
+
+        <span v-if="!!visualizedParams">
+            <ui-button
+                raised
+                style="margin-right:5px"
+                @click="_clickedAllow()"
+            >
+                {{ buttonText }}
+            </ui-button>
+            <ui-button
+                raised
+                @click="_clickedDeny()"
+            >
+                {{ t('operations.rawsig.reject_btn') }}
+            </ui-button>
+        </span>
+        <span v-else>
+            <ui-button
+                raised
+                style="margin-right:5px"
+                disabled
+            >
+                {{ buttonText }}
+            </ui-button>
+            <ui-button
+                raised
+                @click="_clickedDeny()"
+            >
+                {{ t('operations.rawsig.reject_btn') }}
+            </ui-button>
+        </span>
+    </div>
+</template>

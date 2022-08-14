@@ -2,8 +2,6 @@ import BlockchainAPI from "./BlockchainAPI";
 import RendererLogger from "../RendererLogger";
 const logger = new RendererLogger();
 
-const fetch = require('node-fetch');
-
 import * as bitcoin from "bitcoinjs-lib";
 
 import {formatAsset} from "../assetUtils";
@@ -132,7 +130,7 @@ export default class Bitcoin extends BlockchainAPI {
                 throw result
             }
             let json = await result.json();
-            if (!!json.success) {
+            if (json.success) {
                 return json;
             } else {
                 throw json;
@@ -305,7 +303,7 @@ export default class Bitcoin extends BlockchainAPI {
     getImportOptions() {
         return [
             {
-                type: "ImportAdressBased",
+                type: "ImportAddressBased",
                 translate_key: "import_address"
             }
         ];

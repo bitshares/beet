@@ -1,63 +1,53 @@
-<template>
-    <multiselect
-        v-model="selectLang"
-        :options="locales"
-        :value="this.$store.state.SettingsStore.settings.locale"
-        :searchable="false"
-        :allow-empty="false"
-        label="name"
-        track-by="iso"
-        class="lang-select"
-    >
-        <template
-            slot="singleLabel"
-            slot-scope="props"
-        >
-            <span class="option__desc">
-                <span class="option__title singleLabel">{{ props.option.iso }}</span>
-            </span>
-        </template>
-        <template
-            slot="option"
-            slot-scope="props"
-        >
-            <span class="option__desc">
-                <span class="option__title options">
-                    <span class="isoCode">{{ props.option.iso }}</span>
-                    - {{ props.option.name }}
-                </span>
-            </span>
-        </template>
-    </multiselect>
-</template>
-
-<script>
-    import { locales } from "../config/i18n.js";
-    import Multiselect from "vue-multiselect";
-    import i18next from "i18next";
+<script setup>
+    import { ref, onMounted, computed } from 'vue';
+    import { locales, defaultLocale, selectLocales, menuLocales } from "../config/i18n.js";
     import RendererLogger from "../lib/RendererLogger";
+    import store from '../store/index';
+
     const logger = new RendererLogger();
 
-    export default {
-        name: "LangSelect",
-        i18nOptions: { namespaces: "common" },
-        components: { Multiselect },
-        data() {
-            return {
-                locales: locales,
-                selectLang: this.$store.state.SettingsStore.settings.locale
-            };
-        },
-        watch: {
-            selectLang: function() {
-                this.$store.dispatch("SettingsStore/setLocale", {
-                    locale: this.selectLang
-                });
-                i18next.changeLanguage(this.selectLang.iso);
-            }
-        },
-        mounted() {
-            logger.debug("Language Selector mounted");
-        }
-    };
+    let localesRef = computed(() => {
+        return menuLocales;
+    });
+
+    let selected = ref(
+        store.state.SettingsStore.settings.locale.iso ?? defaultLocale.iso
+    );
+
+    let open = ref(false);
+
+    onMounted(() => {
+        logger.debug("Language Selector mounted");
+    });
+
+    function menuClick() {
+        open.value = true;
+    }
+
+    function onCancel() {
+        open.value = false;
+    }
+
+    function onSelected(locale) {
+        console.log(`selected: ${locale}`);
+        store.dispatch("SettingsStore/setLocale", {locale: locale});
+        selected.value = locale.value;
+        open.value = false;
+    }
 </script>
+
+
+<template>
+    <ui-button
+        raised
+        @click="menuClick"
+    >
+        {{ selected }}
+    </ui-button>
+    <ui-menu
+        v-model="open"
+        :items="menuLocales"
+        @selected="onSelected"
+        @cancel="onCancel"
+    />
+</template>

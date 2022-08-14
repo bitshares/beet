@@ -1,27 +1,24 @@
-import Vue from 'vue';
+import aes from "crypto-js/aes.js";
 import RendererLogger from "../../lib/RendererLogger";
-import CryptoJS from 'crypto-js';
+import sha512 from "crypto-js/sha512.js";
+
 const logger = new RendererLogger();
 const LOAD_ACCOUNTS = 'LOAD_ACCOUNTS';
 const CHOOSE_ACCOUNT = 'CHOOSE_ACCOUNT';
 const ADD_ACCOUNT = 'ADD_ACCOUNT';
 const CLEAR_ACCOUNTS = 'CLEAR_ACCOUNTS';
 
-const accountlist = [];
-
 const mutations = {
     [LOAD_ACCOUNTS](state, accounts) {
-        Vue.set(state, 'accountlist', accounts);
-        Vue.set(state, 'selectedIndex', 0);
+        state.accountlist = accounts;
+        state.selectedIndex = 0;
     },
     [CHOOSE_ACCOUNT](state, accountIndex) {
-
-        Vue.set(state, 'selectedIndex', accountIndex);
+        state.selectedIndex = accountIndex;
     },
     [ADD_ACCOUNT](state, account) {
-
         state.accountlist.push(account);
-        Vue.set(state, 'selectedIndex', state.accountlist.length - 1);
+        state.selectedIndex = state.accountlist.length - 1;
     },
     [CLEAR_ACCOUNTS](state) {
         state.selectedIndex = null;
@@ -35,40 +32,36 @@ const actions = {
         commit,
         state
     }, payload) {
-
         return new Promise((resolve, reject) => {
             let index = -1;
             for (let i = 0; i < state.accountlist.length; i++) {
-                if ((payload.account.chain == state.accountlist[i].chain) && (payload.account.accountID == state.accountlist[i].accountID)) {
-                    index = i;
-                    break;
+                if (payload.account.chain == state.accountlist[i].chain && payload.account.accountID == state.accountlist[i].accountID) {
+                    reject('Account already exists');
                 }
             }
-            if (index >= 0) {
-                reject('Account already exists');
-            } else {
+          
+            for (let keytype in payload.account.keys) {
+                payload.account.keys[keytype] = aes.encrypt(
+                    payload.account.keys[keytype],
+                    sha512(payload.password).toString()
+                ).toString();
+            }
 
-                for (let keytype in payload.account.keys) {
-                    payload.account.keys[keytype] = CryptoJS.AES.encrypt(payload.account.keys[keytype], payload.password).toString();
-                }
-                dispatch('WalletStore/saveAccountToWallet', payload, {
-                    root: true
-                }).then(() => {
-
+            dispatch('WalletStore/saveAccountToWallet', payload, {root: true})
+                .then(() => {
                     commit(ADD_ACCOUNT, payload.account);
                     resolve('Account added');
-                }).catch((e) => {
-                    reject(e);
+                }).catch((error) => {
+                    console.log(error)
+                    reject(error);
                 });
-            }
         });
     },
     loadAccounts({
         commit
     }, payload) {
-
         return new Promise((resolve, reject) => {
-            if (payload.length > 0) {
+            if (payload && payload.length > 0) {
                 commit(LOAD_ACCOUNTS, payload);
                 resolve('Accounts Loaded');
             } else {
@@ -80,13 +73,10 @@ const actions = {
     logout({
         commit
     }) {
-
         return new Promise((resolve, reject) => {
-
             commit(CLEAR_ACCOUNTS);
             resolve();
         });
-
     },
     selectAccount({
         commit,
@@ -100,37 +90,85 @@ const actions = {
                     break;
                 }
             }
-            if (index >= 0) {
+
+            if (index != -1) {
                 commit(CHOOSE_ACCOUNT, index);
                 resolve('Account found');
-            } else {
-                reject('Account not found');
             }
         });
     }
 }
 
-
 const getters = {
     getAccount: state => state.accountlist[state.selectedIndex],
+    getChain: state => state.accountlist[state.selectedIndex].chain,
     getAccountList: state => state.accountlist,
+    getSafeAccountList: state => state.accountlist.map(account => {
+      return {
+        accountID: account.accountID,
+        accountName: account.accountName,
+        chain: account.chain
+      };
+    }),
+    getSafeAccount: state => (request) => {
+        let safeAccounts = state.accountlist.map(account => {
+          return {
+            accountID: account.accountID,
+            accountName: account.accountName,
+            chain: account.chain
+          };
+        });
+
+        let requestedAccounts = safeAccounts.filter(account => {
+            return account.accountID == request.account_id && account.chain == request.chain
+                    ? true
+                    : false;
+        });
+
+        if (!requestedAccounts || !requestedAccounts.length) {
+            console.log("Couldn't retrieve account safely.");
+            return;
+        }
+
+        return requestedAccounts[0];
+    },
+    getActiveKey: (state) => (request) => {
+      let signing = state.accountlist.filter(account => {
+          return (
+              account.accountID == request.payload.account_id &&
+              account.chain == request.payload.chain
+          );
+      });
+
+      if (!signing || !signing.length) {
+          return;
+      }
+
+      return signing.slice()[0].keys.active;
+    },
     getSigningKey: (state) => (request) => {
-        let signing = state.accountlist.filter(x => {
+        let signing = state.accountlist.filter(account => {
             return (
-                x.accountID == request.account_id &&
-                x.chain == request.chain
+                account.accountID == request.payload.account_id &&
+                account.chain == request.payload.chain
             );
         });
-        if (signing.length !== 1) {
-            throw "Invalid signing accounts count";
+
+        if (!signing || !signing.length) {
+            return;
         }
-        return signing[0];
+
+        let keys = signing.slice()[0].keys;
+
+        return keys.memo
+                ? keys.memo
+                : keys.active;
     }
 };
 
 const initialState = {
     selectedIndex: null,
-    accountlist: accountlist
+    accountlist: []
 };
 
 export default {

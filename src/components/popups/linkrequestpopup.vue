@@ -1,105 +1,175 @@
-<template>
-    <b-modal
-        id="type"
-        ref="modalComponent"
-        class="linkStyle"
-        centered
-        no-close-on-esc
-        no-close-on-backdrop
-        hide-header-close
-        hide-footer
-        :title="$t('operations:account_id.title')"
-    >
-        <div
-            v-b-tooltip.hover
-            :title="$t('operations:link.request_tooltip')"
-        >
-            {{ $t('operations:link.request', {appName: incoming.appName, origin: incoming.origin, chain: incoming.chain }) }} &#10068;
-        </div>
-        <br>
-        <div v-if="existingLinks.length>0">
-            {{ $t('operations:link.request_fresh', {chain: incoming.chain }) }}
-        </div>
-        <br>
-        <AccountSelect
-            v-if="incoming.chain"
-            v-model="chosenAccount"
-            :chain="incoming.chain"
-            :existing="existingLinks"
-            :cta="$t('operations:link.request_cta')"
-            extraclass="accountProvide"
-        />
-        <b-btn
-            class="mt-3"
-            variant="success"
-            block
-            @click="clickedAllow"
-        >
-            {{ $t('operations:link.accept_btn') }}
-        </b-btn>
-        <b-btn
-            class="mt-1"
-            variant="danger"
-            block
-            @click="_clickedDeny"
-        >
-            {{ $t('operations:link.reject_btn') }}
-        </b-btn>
-    </b-modal>
-</template>
-<script>
-    import AbstractPopup from "./abstractpopup";
+<script setup>
+    import { ipcRenderer } from 'electron';
+    import { ref, onMounted, computed } from "vue";
     import RendererLogger from "../../lib/RendererLogger";
-    import AccountSelect from "../account-select";
+    import {formatChain, formatAccount} from "../../lib/formatter";
+
+    import { useI18n } from 'vue-i18n';
+    const { t } = useI18n({ useScope: 'global' });
     const logger = new RendererLogger();
 
-    export default {
-        name: "LinkRequestPopup",
-        components: { AccountSelect },
-        extends: AbstractPopup,
-        data() {
-            return {
-                type: "LinkRequestPopup",
-                chosenAccount: {trackId: 0},
-            };
-        },
-        computed: {
-            existingLinks() {
-                return this.$store.state.OriginStore.apps.filter(
-                    (x) => {
-                        return x.appName == this.incoming.appName
-                            && x.origin==this.incoming.origin
-                            && (
-                                this.incoming.chain == "ANY"
-                            || x.chain==this.incoming.chain
-                            )
-                    }
-                );
+    let chosenAccount = ref(-1);
+
+    const props = defineProps({
+        request: {
+            type: Object,
+            required: true,
+            default() {
+                return {}
             }
         },
-        mounted() {
-            logger.debug("Link Popup initialised");
+        accounts: {
+            type: Array,
+            required: true,
+            default() {
+                return []
+            }
         },
-        methods: {
-            _onShow: function () {
-                this.error=false;                
-                this.chosenAccount={trackId: 0};
-            },
-            _execute: function () {
-                return {
-                    name: this.chosenAccount.accountName,
-                    chain: this.chosenAccount.chain,
-                    id: this.chosenAccount.accountID
-                };
-            },
-            clickedAllow: function() {
-                if (this.chosenAccount.trackId==0) {
-                    this.error=true;
-                }else{
-                    this.error=false;
-                    this._clickedAllow();
-                }
+        existingLinks: {
+            type: Array,
+            required: false,
+            default() {
+                return []
             }
         }
-    };
-</script> 
+    });
+
+    let requestText = computed(() => {
+        if (!props.request) {
+            return '';
+        }
+        return t(
+            'operations.link.request',
+            {
+                appName: props.request.appName,
+                origin: props.request.origin,
+                chain: props.request.chain
+            }
+        );
+    });
+
+    let secondText = computed(() => {
+        return t('operations.link.request_fresh', {chain: props.request.chain });
+    });
+
+    /*
+     * Creating the select items
+     */
+    let accountOptions = computed(() => {
+        if (!props.accounts || !props.accounts.length) {
+            return [];
+        }
+
+        return props.accounts.map((account, i) => {
+            return {
+                label: !account.accountID && account.trackId == 0
+                    ? `account ${i}` // TODO: Replace placeholder!
+                    : `${formatChain(account.chain)}: ${formatAccount(account)}`,
+                value: i
+            };
+        });
+    });
+
+    onMounted(() => {
+        logger.debug("Link Popup initialised");
+    })
+
+    function _clickedAllow() {
+        let approvedAccount = props.accounts[chosenAccount.value];
+
+        ipcRenderer.send(
+            "clickedAllow",
+            {
+                result: {
+                    name: approvedAccount.accountName,
+                    chain: approvedAccount.chain,
+                    id: approvedAccount.accountID
+                },
+                request: {
+                    id: props.request.id
+                }
+            }
+        );
+    }
+
+    function _clickedDeny() {
+        ipcRenderer.send(
+            "clickedDeny",
+            {
+                result: {canceled: true},
+                request: {id: props.request.id}
+            }
+        );
+    }
+</script>
+
+<template>
+    <div style="padding:5px">
+        <div v-tooltip="t('operations.link.request_tooltip')">
+            {{ requestText }}
+        </div>
+        <br>
+        <div v-if="existingLinks.length > 0">
+            {{ secondText }}
+        </div>
+        <br>
+        <div v-if="accountOptions && accountOptions.length > 0">
+            <select
+                id="account_select"
+                v-model="chosenAccount"
+                class="form-control mb-3"
+                required
+            >
+                <option
+                    selected
+                    disabled
+                    value=""
+                >
+                    Account select
+                </option>
+                <option
+                    v-for="account in accountOptions"
+                    :key="account.value"
+                    :value="account.value"
+                >
+                    <span>
+                        {{ account.label }}
+                    </span>
+                </option>
+            </select>
+        </div>
+        <div v-else>
+            Requested account not present in this Beet wallet.
+        </div>
+        <br>
+        <div v-if="chosenAccount == -1">
+            <ui-button
+                style="margin-right:5px"
+                disabled
+            >
+                {{ t('operations.link.accept_btn') }}
+            </ui-button>
+            <ui-button
+                raised
+                @click="_clickedDeny()"
+            >
+                {{ t('operations.link.reject_btn') }}
+            </ui-button>
+        </div>
+        <div v-else>
+            <ui-button
+                raised
+                style="margin-right:5px"
+                @click="_clickedAllow()"
+            >
+                {{ t('operations.link.accept_btn') }}
+            </ui-button>
+            <ui-button
+                raised
+                @click="_clickedDeny()"
+            >
+                {{ t('operations.link.reject_btn') }}
+            </ui-button>
+        </div>
+    </div>
+</template>

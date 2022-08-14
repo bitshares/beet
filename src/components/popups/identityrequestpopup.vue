@@ -1,78 +1,110 @@
-<template>
-    <b-modal
-        id="type"
-        ref="modalComponent"
-        class="linkStyle"
-        centered
-        no-close-on-esc
-        no-close-on-backdrop
-        hide-header-close
-        hide-footer
-        :title="$t('operations:account_id.title')"
-    >
-        <div
-            v-b-tooltip.hover
-            :title="$t('operations:identity.request_tooltip')"
-        >
-            {{ $t('operations:account_id.request', {appName: incoming.appName, origin: incoming.origin, chain: incoming.chain, accountId: beetapp.account_id, accountName: idaccount.accountName }) }} &#10068;
-        </div>
-        <b-btn
-            class="mt-3"
-            variant="success"
-            block
-            @click="_clickedAllow"
-        >
-            {{ $t('operations:account_id.accept_btn') }}
-        </b-btn>
-        <b-btn
-            class="mt-1"
-            variant="danger"
-            block
-            @click="_clickedDeny"
-        >
-            {{ $t('operations:account_id.reject_btn') }}
-        </b-btn>
-    </b-modal>
-</template>
-<script>
-    import AbstractPopup from "./abstractpopup";
+<script setup>
+    import { ipcRenderer } from 'electron';
+    import { onMounted, computed } from "vue";
+    import { useI18n } from 'vue-i18n';
+    const { t } = useI18n({ useScope: 'global' });
     import RendererLogger from "../../lib/RendererLogger";
     const logger = new RendererLogger();
 
-    export default {
-        name: "IdentityRequestPopup",
-        components: {},
-        extends: AbstractPopup,
-        data() {
-            return {
-                type: "IdentityRequestPopup",
-                beetapp: {},
-                idaccount: {}
-            };
+    const props = defineProps({
+        request: {
+            type: Object,
+            required: true,
+            default() {
+                return {}
+            }
         },
-        computed: {},
-        mounted() {
-            logger.debug("Link Popup initialised");
-        },
-        methods: {
-            _onShow: function() {
-                
-                let beetapp = this.$store.state.OriginStore.apps.filter(
-                    x => x.identityhash == this.incoming.identityhash
-                )[0];
-                
-                this.idaccount = this.$store.state.AccountStore.accountlist.filter(
-                    x => {  return  x.accountID == beetapp.account_id && x.chain == beetapp.chain; }
-                )[0];
-                this.beetapp=beetapp;
-            },
-            _execute: function() {
-                return {
-                    name: this.idaccount.accountName,
-                    chain: this.beetapp.chain,
-                    id: this.beetapp.account_id
-                };
+        accounts: {
+            type: Array,
+            required: true,
+            default() {
+                return []
             }
         }
-    };
-</script> 
+    });
+
+    let account_id = computed(() => {
+        if (!props.accounts || !props.accounts.length) {
+            return '';
+        }
+        return props.accounts[0].accountID;
+    });
+
+    let accountName = computed(() => {
+        if (!props.accounts || !props.accounts.length) {
+            return '';
+        }
+        return props.accounts[0].accountName;
+    });
+
+    let chain = computed(() => {
+        if (!props.accounts || !props.accounts.length) {
+            return '';
+        }
+
+        return props.accounts[0].chain;
+    });
+
+    let requestText = computed(() => {
+        if (!props.request) {
+            return '';
+        }
+
+        return t(
+            'operations.account_id.request',
+            {
+                appName: props.request.payload.appName,
+                origin: props.request.payload.origin,
+                chain: chain.value,
+                accountId: account_id.value,
+                accountName: accountName.value
+            }
+        );
+    });
+
+    onMounted(() => {
+        logger.debug("Identity request initialised");
+    });
+
+    function _clickedAllow() {
+        ipcRenderer.send("clickedAllow", {
+            result: {
+                name: accountName.value,
+                chain: chain.value,
+                id: account_id.value
+            },
+            request: {id: props.request.id}
+        });
+    }
+
+    function _clickedDeny() {
+        ipcRenderer.send(
+            "clickedDeny",
+            {
+                result: {canceled: true},
+                request: {id: props.request.id}
+            }
+        );
+    }
+</script>
+
+<template>
+    <div style="padding:5px">
+        <div v-tooltip="t('operations.identity.request_tooltip')">
+            {{ requestText }} &#10068;
+        </div>
+        <ui-button
+            raised
+            style="margin-right:5px"
+            @click="_clickedAllow()"
+        >
+            {{ t('operations.account_id.accept_btn') }}
+        </ui-button>
+        <ui-button
+            raised
+            @click="_clickedDeny()"
+        >
+            {{ t('operations.account_id.reject_btn') }}
+        </ui-button>
+    </div>
+</template>

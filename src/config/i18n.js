@@ -1,6 +1,11 @@
-let localelist = [{
+let localeList = [{
         iso: 'en',
         name: 'English',
+        dir: 'ltr',
+    },
+    {
+        iso: 'de',
+        name: 'German',
         dir: 'ltr',
     }
     //,
@@ -11,5 +16,9 @@ let localelist = [{
     //}
 ];
 
-export const locales = localelist;
-export const defaultLocale = localelist[0];
+export const locales = localeList;
+export const defaultLocale = localeList[0];
+export const selectLocales = localeList.map(locale => {
+  return {label: locale.name, value: locale.iso}
+});
+export const menuLocales = localeList.map(locale => locale.iso);

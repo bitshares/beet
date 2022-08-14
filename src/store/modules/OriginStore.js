@@ -1,4 +1,3 @@
-import Vue from 'vue';
 import BeetDB from '../../lib/BeetDB.js';
 import RendererLogger from "../../lib/RendererLogger";
 const logger = new RendererLogger();
@@ -9,7 +8,7 @@ const NEW_REQUEST = 'NEW_REQUEST';
 
 const mutations = {
     [LOAD_APPS](state, apps) {
-        Vue.set(state, 'apps', apps);
+        state['apps'] = apps;
     },
     [ADD_APP](state, app) {
         state.apps.push(app);
@@ -20,10 +19,10 @@ const mutations = {
                 state.apps[i] = app;
             }
         });
-    },
+    }/*,
     [NEW_REQUEST]() {
 
-    }
+    }*/
 };
 
 const actions = {
@@ -48,7 +47,7 @@ const actions = {
                 next_hash: payload.next_hash
             }).then(() => {
                 dispatch('loadApps');
-                commit(NEW_REQUEST, payload);
+                //commit(NEW_REQUEST, payload);
                 resolve();
             }).catch((e) => {
                 reject(e);
@@ -100,8 +99,24 @@ const actions = {
 
 
 const getters = {
-    walletAccessibleDapps: (state) => (account_id,chain) => {
-        return state.apps.filter( x => { return x.chain==chain && x.account_id==account_id});
+    walletAccessibleDapps: (state) => (account_id, chain) => {
+        return state.apps.filter( x => { return x.chain == chain && x.account_id == account_id});
+    },
+    getExistingLinks: (state) => (appName, origin, chain) => {
+        return state.apps.filter((x) => {
+            return x.appName == appName && x.origin == origin && chain == "ANY" || x.chain == chain
+        })
+    },
+    getBeetApp: (state) => (request) => {
+        let matchingApps = state.apps.filter((x) => {
+            return x.identityhash == request.payload.identityhash
+        })
+
+        if (!matchingApps || !matchingApps.length) {
+            return;
+        }
+
+        return matchingApps[0];
     }
 };
 

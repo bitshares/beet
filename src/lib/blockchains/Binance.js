@@ -3,11 +3,8 @@ import BlockchainAPI from "./BlockchainAPI";
 import binancejs from "@binance-chain/javascript-sdk";
 import Transaction from "@binance-chain/javascript-sdk/lib/tx";
 import {formatAsset, humanReadableFloat} from "../assetUtils";
-const fetch = require('node-fetch');
 
 export default class Bitcoin extends BlockchainAPI {
-
-    // https://github.com/steemit/steem-js/tree/master/doc#broadcast-api
 
     _connect(nodeToConnect) {
         return new Promise((resolve, reject) => {
@@ -151,9 +148,9 @@ export default class Bitcoin extends BlockchainAPI {
     broadcast(transaction) {
         return new Promise((resolve, reject) => {
             this.ensureConnection().then(() => {
-                if (typeof operation == "object"
-                    && operation.length == 2
-                    && operation[0] == "broadcast") {
+                if (typeof transaction == "object"
+                    && transaction.length == 2
+                    && transaction[0] == "broadcast") {
                     this.client.sendTransaction(this._stringToTx(transaction[1])).then(resolve).catch(reject);
                 } else if (typeof transaction == "object" && !!transaction.type) {
                     this.client.sendTransaction(transaction).then(resolve).catch(reject);
@@ -241,7 +238,7 @@ export default class Bitcoin extends BlockchainAPI {
 
         let result = await fetch(sequenceURL);
         result = await result.json();
-        const sequence = (!!result.data ? result.data.sequence : 0) || (!!result.sequence ? result.sequence : 0);
+        const sequence = (result.data ? result.data.sequence : 0) || (result.sequence ? result.sequence : 0);
         let transaction = await this.sign(["transfer", "inject_wif", from.name, to.name, newAmount.amount, newAmount.asset_id, memo, sequence], key);
         return await this.broadcast(transaction);
     }
@@ -258,9 +255,11 @@ export default class Bitcoin extends BlockchainAPI {
     }
 
     visualize(transaction) {
-        if (typeof transaction == "object"
-        && transaction.length == 3
-        && transaction[0] == "signAndBroadcast") {
+        if (
+          typeof transaction == "object"
+          && transaction.length == 3
+          && transaction[0] == "signAndBroadcast"
+        ) {
             let msg = JSON.parse(transaction[2]);
 
             if (msg.inputs.length > 1 || msg.outputs.length > 1 || msg.outputs[0].coins.length > 1) {
@@ -270,12 +269,7 @@ export default class Bitcoin extends BlockchainAPI {
             let from = msg.inputs[0].address;
             let to = msg.outputs[0].address;
             let toSend = formatAsset(msg.outputs[0].coins[0].amount, msg.outputs[0].coins[0].denom);
-            return `<pre class="text-left custom-content">
-<code>Transfer
-Sender: ${from}
-Recipient: ${to}
-Amount: ${toSend}
-</code></pre>`
+            return `Transfer\n Sender: ${from}\n Recipient: ${to}\n Amount: ${toSend}`
         } else {
             return false;
         }
@@ -284,7 +278,7 @@ Amount: ${toSend}
     getImportOptions() {
         return [
             {
-                type: "ImportAdressBased",
+                type: "ImportAddressBased",
                 translate_key: "import_address"
             }
         ];

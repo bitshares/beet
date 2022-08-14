@@ -1,3 +1,65 @@
+<script setup>
+    import { ref, onMounted, computed } from 'vue';
+    import {ipcRenderer} from 'electron';
+
+    import { useI18n } from 'vue-i18n';
+    const { t } = useI18n({ useScope: 'global' });
+
+    import store from '../store/index';
+    import router from '../router/index.js';
+    import RendererLogger from "../lib/RendererLogger";
+    const logger = new RendererLogger();
+
+    let hasWallet = computed(() => {
+        return store.getters['WalletStore/getHasWallet'];
+    })
+
+    let walletlist = computed(() => {
+        return store.getters['WalletStore/getWalletList'];
+    })
+
+    let walletOptions = computed(() => {
+        let wallets = store.getters['WalletStore/getWalletList'];
+
+        return wallets.map((wallet, i) => {
+            return {label: wallet.name, value: i}
+        });
+    })
+
+    let walletpass = ref("");
+    let selectedWallet = ref(0);
+    let passincorrect = ref("");
+    let legacy = ref(false);
+
+    onMounted(() => {
+        logger.debug("Start screen mounted");
+        store.dispatch("WalletStore/loadWallets", {}).catch(() => {});
+        store.dispatch("OriginStore/loadApps");
+    });
+
+    function unlockWallet() {
+        store
+            .dispatch("WalletStore/getWallet", {
+                wallet_id: walletlist.value[selectedWallet.value].id,
+                wallet_pass: walletpass.value,
+                legacy: legacy.value
+            })
+            .then(async () => {
+                try {
+                    await store.dispatch("WalletStore/confirmUnlock");
+                } catch (error) {
+                    console.log(error);
+                }
+                walletpass.value = "";
+                router.replace("/dashboard");
+            })
+            .catch(() => {
+                passincorrect.value = "is-invalid";
+                ipcRenderer.send("notify", 'An attempt to unlock the Beet wallet was made with an invalid password.');
+            });
+    }
+</script>
+
 <template>
     <div class="bottom">
         <div class="content">
@@ -5,166 +67,103 @@
                 v-if="!hasWallet"
                 class="mt-3 mb-3 font-weight-normal"
             >
-                <em>{{ $t('no_wallet') }}</em>
+                <em>{{ t('common.no_wallet') }}</em>
             </p>
+
             <router-link
                 v-if="!hasWallet"
                 to="/create"
-                tag="button"
-                class="btn btn-lg btn-primary btn-block"
                 replace
             >
-                {{ $t('start_cta') }}
+                <ui-button raised>
+                    {{ t('common.start_cta') }}
+                </ui-button>
             </router-link>
+
             <p
                 v-if="!hasWallet"
                 class="my-2 font-weight-normal"
             >
-                <em>{{ $t('or') }}</em>
+                <em>{{ t('common.restore_lbl') }}</em>
             </p>
+
             <router-link
                 v-if="!hasWallet"
                 to="/restore"
-                tag="button"
-                class="btn btn-lg btn-secondary btn-block"
                 replace
             >
-                {{ $t('restore_cta') }}
+                <ui-button raised>
+                    {{ t('common.restore_cta') }}
+                </ui-button>
             </router-link>
-
-            <span
-                v-if="hasWallet"
-                class="icon-account"
-            />
-            <multiselect
-                v-if="hasWallet"
-                id="wallet-select"
-                v-model="selectedWallet"
-                :class="'form-control my-3 accountProvide text-left'"
-                :searchable="false"
-                :placeholder="$t('select_wallet')"
-                label="name"
-                :allow-empty="false"
-                :options="walletlist"
-                track-by="id"
-                @change="passincorrect=''"
-            />
-            <br>
-            <span
-                v-if="hasWallet"
-                class="icon-lock1"
-            />
+            <section :dir="null">
+                <ui-select
+                    v-if="hasWallet"
+                    id="wallet-select"
+                    v-model="selectedWallet"
+                    style="width:100%"
+                    :options="walletOptions"
+                    full-bleed
+                    @change="passincorrect=''"
+                >
+                    Beet wallet name
+                </ui-select>
+            </section>
             <input
                 v-if="hasWallet"
                 id="inputPassword"
                 v-model="walletpass"
+                style="width:97%; margin-top: 5px;"
                 type="password"
                 class="form-control mb-4 px-3"
-                :placeholder=" $t('password_placeholder')"
+                :placeholder=" t('common.password_placeholder')"
                 required
-
                 :class="passincorrect"
                 @focus="passincorrect=''"
             >
-            <button
+            <ui-form-field>
+                <ui-checkbox v-model="legacy" />
+                <label>Legacy account</label>
+            </ui-form-field>
+            <br>
+            <ui-button
                 v-if="hasWallet"
-                class="btn btn-lg btn-primary btn-block"
                 type="submit"
+                raised
                 @click="unlockWallet"
             >
-                {{ $t('unlock_cta') }}
-            </button>
-            <p
+                {{ t('common.unlock_cta') }}
+            </ui-button>
+
+            <ui-divider class="divider" />
+
+            <router-link
                 v-if="hasWallet"
-                class="my-2 font-weight-normal"
+                to="/create"
+                replace
             >
-                <em>{{ $t('or') }}</em>
-            </p>
-            <div class="row">
-                <div class="col-6">
-                    <router-link
-                        v-if="hasWallet"
-                        to="/create"
-                        tag="button"
-                        class="btn btn-lg btn-primary btn-block"
-                        replace
-                    >
-                        {{ $t('create_cta') }}
-                    </router-link>
-                </div>
-                <div class="col-6">
-                    <router-link
-                        v-if="hasWallet"
-                        to="/restore"
-                        tag="button"
-                        class="btn btn-lg btn-secondary btn-block"
-                        replace
-                    >
-                        {{ $t('restore_cta') }}
-                    </router-link>
-                </div>
-            </div>
+                <ui-button
+                    class="step_btn"
+                    raised
+                >
+                    {{ t('common.create_cta') }}
+                </ui-button>
+            </router-link>
+            <router-link
+                v-if="hasWallet"
+                to="/restore"
+                replace
+            >
+                <ui-button
+                    class="step_btn"
+                    raised
+                >
+                    {{ t('common.restore_cta') }}
+                </ui-button>
+            </router-link>
         </div>
-        <b-modal
-            id="error"
-            ref="errorModal"
-            centered
-            hide-footer
-            title="Error"
-        >
-            {{ errorMsg }}
-        </b-modal>
         <p class="mt-2 mb-2 small">
-            &copy; 2019-2021 BitShares
+            &copy; 2019-2022 BitShares
         </p>
     </div>
 </template>
-<script>
-    import RendererLogger from "../lib/RendererLogger";
-    import Multiselect from "vue-multiselect";
-    const logger = new RendererLogger();
-
-    export default {
-        name: "Start",
-        components: { Multiselect },
-        i18nOptions: { namespaces: "common" },
-        data() {
-            return {
-                walletpass: "",
-                selectedWallet: null,
-                passincorrect: "",
-                errorMsg: ""
-            };
-        },
-        computed: {
-            hasWallet() {
-                return this.$store.state.WalletStore.hasWallet;
-            },
-            walletlist() {
-                return this.$store.state.WalletStore.walletlist;
-            }
-        },
-        mounted() {
-            logger.debug("Start screen mounted");
-            this.$store.dispatch("WalletStore/loadWallets", {}).catch(() => {});
-            this.$store.dispatch("OriginStore/loadApps");
-        },
-        methods: {
-            unlockWallet() {
-                this.$store
-                    .dispatch("WalletStore/getWallet", {
-                        wallet_id: this.selectedWallet.id,
-                        wallet_pass: this.walletpass
-                    })
-                    .then(() => {
-                        this.$router.replace("/dashboard");
-                    })
-                    .catch(() => {
-                        this.passincorrect = "is-invalid";
-                        this.errorMsg = "Invalid Password.";
-                        this.$refs.errorModal.show();
-                    });
-            }
-        }
-    };
-</script>

@@ -1,14 +1,13 @@
-import Vue from 'vue';
-import {
-    ipcRenderer,
-} from 'electron';
-import {
-    v4 as uuid
-} from "uuid";
-import CryptoJS from 'crypto-js';
+import {ipcRenderer} from 'electron';
+import {v4 as uuid} from "uuid";
+import sha512 from "crypto-js/sha512.js";
+import aes from "crypto-js/aes.js";
+import ENC from 'crypto-js/enc-utf8.js';
+
 import BeetDB from '../../lib/BeetDB.js';
 import RendererLogger from "../../lib/RendererLogger";
 const logger = new RendererLogger();
+
 const GET_WALLET = 'GET_WALLET';
 const CREATE_WALLET = 'CREATE_WALLET';
 const CONFIRM_UNLOCK = 'CONFIRM_UNLOCK';
@@ -20,43 +19,36 @@ const CLOSE_WALLET = 'CLOSE_WALLET';
 
 const wallet = {};
 
-
 const mutations = {
     [GET_WALLET](state, wallet) {
-
-
-        Vue.set(state, 'wallet', wallet);
+        state.wallet = wallet;
     },
     [CONFIRM_UNLOCK](state) {
         state.unlocked.resolve();
-        Vue.set(state, 'isUnlocked', true);
+        state.isUnlocked = true;
     },
     [CLOSE_WALLET](state) {
-        state.wallet={};
-        state.hasWallet=false;
-        state.walletlist=[];
-        state.unlocked={};
-        state.isUnlocked=false;
+        state.wallet = {};
+        state.hasWallet = false;
+        state.walletlist = [];
+        state.unlocked = {};
+        state.isUnlocked = false;
         ipcRenderer.send('seeding',  '');
     },
     [SET_WALLET_STATUS](state, status) {
-
-        Vue.set(state, 'hasWallet', status);
+        state.hasWallet = status;
     },
-
     [SET_WALLET_UNLOCKED](state, unlocked) {
-
-        Vue.set(state, 'unlocked', unlocked);
+        state.unlocked = unlocked;
     },
     [SET_WALLETLIST](state, walletlist) {
-
-        Vue.set(state, 'walletlist', walletlist);
+        state.walletlist = walletlist;
     },
     [REQ_NOTIFY](state, notify) {
         state.ipc.send("notify", notify);
     },
     [CREATE_WALLET](state, wallet) {
-        Vue.set(state, 'wallet', wallet);
+        state.wallet = wallet;
     }
 };
 
@@ -70,31 +62,31 @@ const actions = {
             BeetDB.wallets_encrypted.get({
                 id: payload.wallet_id
             }).then((wallet) => {
-                try {
-                    let bytes = CryptoJS.AES.decrypt(wallet.data, payload.wallet_pass);
-                    let decrypted_wallet = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+                    let bytes = aes.decrypt(
+                      wallet.data,
+                      payload.legacy ? payload.wallet_pass : sha512(payload.wallet_pass).toString()
+                    );
+                    let decrypted_wallet = JSON.parse(bytes.toString(ENC));
                     let public_wallets = state.walletlist.filter((x) => {
                         return x.id == payload.wallet_id
                     });
+
                     commit(GET_WALLET, public_wallets[0]);
                     let accountlist = decrypted_wallet;
-                    ipcRenderer.send('seeding',  payload.wallet_pass);                    
+                    ipcRenderer.send('seeding', sha512(payload.wallet_pass).toString());
                     dispatch('AccountStore/loadAccounts', accountlist, {
                         root: true
                     });
                     resolve();
-                } catch (e) {
-                    throw (e);
-                }
             }).catch((e) => {
                 reject(e);
             });
         });
     },
-    
     confirmUnlock({
         commit
     }) {
+        console.log('Unlocked wallet!');
         commit(CONFIRM_UNLOCK);
     },
     restoreWallet({
@@ -123,13 +115,18 @@ const actions = {
                     });
                     commit(SET_WALLET_STATUS, true);
                     commit(SET_WALLETLIST, wallets);
-                    
-                    let walletdata = CryptoJS.AES.encrypt(JSON.stringify(payload.backup.accounts), payload.password).toString();
+
+                    let walletdata = aes.encrypt(
+                                      JSON.stringify(payload.backup.accounts),
+                                      sha512(payload.password).toString()
+                                    ).toString();
+
                     BeetDB.wallets_encrypted.put({
                         id: walletid,
                         data: walletdata
-                    });                    
-                    ipcRenderer.send('seeding',  payload.password);   
+                    });
+
+                    ipcRenderer.send('seeding', sha512(payload.password).toString());
                     commit(GET_WALLET, newwallet);
                     dispatch('AccountStore/loadAccounts', payload.backup.walletdata, {
                         root: true
@@ -169,20 +166,29 @@ const actions = {
                     });
                     commit(SET_WALLET_STATUS, true);
                     commit(SET_WALLETLIST, wallets);
-                    
+
                     for (let keytype in payload.walletdata.keys) {
                         try {
-                            payload.walletdata.keys[keytype] = CryptoJS.AES.encrypt(payload.walletdata.keys[keytype], payload.password).toString();
-                        } catch (e) {
-                            reject('Wrong Password');
+                            payload.walletdata.keys[keytype] = aes.encrypt(
+                                payload.walletdata.keys[keytype],
+                                sha512(payload.password).toString()
+                            ).toString();
+                        } catch (error) {
+                            console.log(error)
+                            reject('AES encryption failure');
                         }
                     }
-                    let walletdata = CryptoJS.AES.encrypt(JSON.stringify([payload.walletdata]), payload.password).toString();
+                    
+                    let walletdata = aes.encrypt(
+                        JSON.stringify([payload.walletdata]),
+                        sha512(payload.password).toString()
+                    ).toString();
+
                     BeetDB.wallets_encrypted.put({
                         id: walletid,
                         data: walletdata
-                    });                    
-                    ipcRenderer.send('seeding',  payload.password);   
+                    });
+                    ipcRenderer.send('seeding', sha512(payload.password).toString());
                     commit(GET_WALLET, newwallet);
                     dispatch('AccountStore/loadAccounts', [payload.walletdata], {
                         root: true
@@ -203,45 +209,62 @@ const actions = {
     }, payload) {
         return new Promise(async (resolve, reject) => {
             let walletdata =  rootState.AccountStore.accountlist.slice();
-            let newwalletdata=walletdata;            
+            let newwalletdata = walletdata;
             newwalletdata.push(payload.account);
+
             await BeetDB.wallets_encrypted.get({
                 id: state.wallet.id
-            }).then((wallet) => {
+            }).then(async (wallet) => {
+                console.log(wallet)
                 try {
-                    let bytes = CryptoJS.AES.decrypt(wallet.data, payload.password);
-                    JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-                } catch (e) {
+                    let bytes = aes.decrypt(wallet.data, sha512(payload.password).toString());
+                    JSON.parse(bytes.toString(ENC));
+                } catch (error) {
+                    console.log(error)
                     throw ('invalid');
                 }
-                let encwalletdata = CryptoJS.AES.encrypt(JSON.stringify(newwalletdata), payload.password).toString();
-                let updatedWallet = Object.assign({}, state.wallet);
-                updatedWallet.accounts.push({ accountID: payload.account.accountID, chain: payload.account.chain});
-               
-                BeetDB.wallets_encrypted.update(updatedWallet.id, {
-                    data: encwalletdata
-                }).then(() => {
-                    BeetDB.wallets_public.update(updatedWallet.id, {
-                        accounts: updatedWallet.accounts
+
+                let encryptedSTR = sha512(payload.password).toString();
+                let encwalletdata = aes.encrypt(
+                    JSON.stringify(newwalletdata),
+                    encryptedSTR
+                ).toString();
+
+                let updatedWallet = JSON.parse(JSON.stringify(state.wallet))
+                updatedWallet.accounts.push({
+                    accountID: payload.account.accountID,
+                    chain: payload.account.chain
+                });
+                
+                let docID = updatedWallet.id;
+                let newAccounts = updatedWallet.accounts;
+
+                await BeetDB.wallets_encrypted.update(docID, {
+                    "data": encwalletdata
+                }).then(async () => {
+                    await BeetDB.wallets_public.update(docID, {
+                        "accounts": newAccounts
                     }).then(() => {
                         commit(GET_WALLET, updatedWallet);
                         resolve('Account saved');
-                    }).catch(() => {
+                    }).catch((error) => {
+                        console.log(error);
                         reject('update_failed');
                     });
-                }).catch((e) => {
-                    reject(e);
+                }).catch((error) => {
+                    console.log(error)
+                    reject(error);
                 });
-            }).catch((e) => {
-                reject(e);
+            }).catch((error) => {
+                console.log(error)
+                reject(error);
             });
-            
+
         });
     },
     loadWallets({
         commit
     }) {
-
         return new Promise((resolve, reject) => {
             BeetDB.wallets_public.toArray().then((wallets) => {
                 if (wallets && wallets.length > 0) {
@@ -294,6 +317,7 @@ const actions = {
 
 const getters = {
     getWallet: state => state.wallet,
+    getWalletName: state => state.wallet.name,
     getHasWallet: state => state.hasWallet,
     getWalletList: state => state.walletlist
 };

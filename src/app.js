@@ -1,59 +1,77 @@
-import store from './store/index';
-import Vue from 'vue';
-
-import BootstrapVue from 'bootstrap-vue';
-import Popups from './components/popups';
-import Beetframe from './components/beetframe';
+import { createApp } from 'vue';
+import { createI18n } from 'vue-i18n';
 import VueRouter from 'vue-router';
+import mitt from 'mitt';
+
+import BalmUI from 'balm-ui'; // Official Google Material Components
+import BalmUIPlus from 'balm-ui/dist/balm-ui-plus'; // BalmJS Team Material Components
+import BalmUINext from 'balm-ui/dist/balm-ui-next';
+import 'balm-ui-css';
+
 import router from './router/index.js';
-import i18next from 'i18next';
-import Backend from "i18next-node-fs-backend";
-import VueI18Next from '@panter/vue-i18next';
-import BeetServer from "./lib/BeetServer";
-import RendererLogger from "./lib/RendererLogger";
+import store from './store/index';
+import BeetServer from './lib/BeetServer';
+import RendererLogger from './lib/RendererLogger';
+import {i18n} from './lib/i18n.js';
+
 import 'typeface-roboto';
 import 'typeface-rajdhani';
 
-import "./css/style.css";
 import './scss/beet.scss';
 
 const logger = new RendererLogger;
-Vue.config.errorHandler = function (err, vm, info) {
-  logger.error(err, vm, info);
-  console.log("error");
-};
+
 window.onerror = function (msg, url, lineNo, columnNo, error) {
   logger.error(error);
   console.log(error);
   return false;
 };
+
 process.on('unhandledRejection', (reason, p) => {
   console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
   // application specific logging, throwing an error, or other logic here
 });
-Vue.use(VueI18Next);
-Vue.use(BootstrapVue);
-Vue.use(VueRouter);
-Vue.config.devtools = true;
-Vue.component('Popups', Popups);
-Vue.component('Beetframe', Beetframe);
+
 store.dispatch("SettingsStore/loadSettings");
 store.dispatch("WhitelistStore/loadWhitelist");
 
-i18next.use(Backend).init({
-  lng: store.state.SettingsStore.settings.locale.iso,
-  ns: ['common', 'operations'],
-  defaultNS: 'common',
-  backend: {
-    loadPath: `${__dirname}/translations/{{ns}}/{{lng}}.json`,
+const emitter = mitt();
+const app = createApp({});
+app.provide('emitter', emitter);
+
+app.config.errorHandler = function (err, vm, info) {
+  logger.error(err, vm, info);
+  console.log(err);
+};
+
+app.use(i18n);
+
+window.t = (key, params) => {
+    return i18n.global.t(key, params)
+}
+
+app.use(VueRouter);
+app.use(BalmUI, {
+    $theme: {
+        primary: '#C7088E'
+    }
+});
+app.use(BalmUIPlus);
+app.use(BalmUINext, {
+  // Optional. Overwrite `<ui-navigation-bar>` props with default value.
+  UiNavigationBar: {
+    // some props
   }
 });
-const i18n = new VueI18Next(i18next);
 
-const app = new Vue({
-  router,
-  store,
-  i18n: i18n
-}).$mount('#app');
+app.use(router);
+app.use(store);
+app.mount('#app');
 
-BeetServer.initialize(app);
+BeetServer.initialize(60554, 60555);
+
+emitter.on('i18n', (data) => {
+  console.log(data)
+  i18n.global.locale = data;
+  console.log(i18n.global.locale)
+});

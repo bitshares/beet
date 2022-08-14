@@ -1,11 +1,12 @@
 module.exports = {
     root: true,
     env: {
-      node: true
+      node: true,
+      'vue/setup-compiler-macros': true
     },
-    extends: [        
+    extends: [
         "eslint:recommended",
-        'plugin:vue/recommended'
+        'plugin:vue/vue3-recommended'
     ],
     plugins: [
         'vue'
@@ -16,11 +17,10 @@ module.exports = {
         }],
         'vue/html-indent': ['error', 4, {
           'baseIndent': 1
-        }],        
-        "no-console": 0
-    },
-    parserOptions: {
-      parser: 'babel-eslint'
+        }],
+        "no-console": 0,
+        "no-unused-vars": "off",
+        "no-async-promise-executor": "off",
+        "vue/multi-word-component-names": "off"
     }
   }
-  

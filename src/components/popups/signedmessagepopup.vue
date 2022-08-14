@@ -1,89 +1,94 @@
-<template>
-    <b-modal
-        id="type"
-        ref="modalComponent"
-        centered
-        no-close-on-esc
-        no-close-on-backdrop
-        hide-header-close
-        hide-footer
-        :title="$t('operations:message.title')"
-    >
-        {{ message }}:
-        <br>
-        <br>
-        <pre class="text-left custom-content"><code>{{ incoming.params }}</code></pre>
-        <b-form-checkbox
-            v-if="askWhitelist"
-            v-model="allowWhitelist"
-        >
-            {{ $t('operations:whitelist.prompt', { method: incoming.method }) }}
-        </b-form-checkbox>
-        <b-btn
-            class="mt-3"
-            variant="success"
-            block
-            @click="_clickedAllow"
-        >
-            {{ $t("operations:message.accept_btn") }}
-        </b-btn>
-        <b-btn
-            class="mt-1"
-            variant="danger"
-            block
-            @click="_clickedDeny"
-        >
-            {{ $t("operations:message.reject_btn") }}
-        </b-btn>
-    </b-modal>
-</template>
-<script>
-    import AbstractPopup from "./abstractpopup";
+<script setup>
+    import { ipcRenderer } from 'electron';
+    import { onMounted, computed } from "vue";
+    import { useI18n } from 'vue-i18n';
+    const { t } = useI18n({ useScope: 'global' });
     import RendererLogger from "../../lib/RendererLogger";
-    import getBlockchain from "../../lib/blockchains/blockchainFactory";
     const logger = new RendererLogger();
-    import {getKey} from '../../lib/SecureRemote';
 
-    export default {
-        name: "SignMessageRequestPopup",
-        extends: AbstractPopup,
-        data() {
-            return {
-                type: "SignMessageRequestPopup",
-                askWhitelist: false,
-                message: null
-            };
+    const props = defineProps({
+        request: {
+            type: Object,
+            required: true,
+            default() {
+                return {}
+            }
         },
-        methods: {
-            _onShow() {
-                this.message = this.$t("operations:message.request", {
-                    appName: this.incoming.appName,
-                    origin: this.incoming.origin,
-                    chain: this.$store.getters['AccountStore/getSigningKey'](this.incoming).chain,
-                    accountName: this.$store.getters['AccountStore/getSigningKey'](this.incoming).accountName
-                });
-            },
-            getSuccessNotification(result) {
-                return {msg: 'Message successfully signed.', link: '' };
-            },
-            _execute: async function () {
-                let blockchain = getBlockchain(this.incoming.chain);
-
-                let keys = this.$store.getters['AccountStore/getSigningKey'](this.incoming).keys;
-
-                let signatureKey = null;
-                if (keys.memo) {
-                    signatureKey = keys.memo;
-                } else {
-                    signatureKey = keys.active;
-                }
-
-                return await blockchain.signMessage(
-                    await getKey(signatureKey),
-                    this.$store.getters['AccountStore/getSigningKey'](this.incoming).accountName,
-                    this.incoming.params
-                );
+        accounts: {
+            type: Array,
+            required: true,
+            default() {
+                return []
             }
         }
-    };
+    });
+
+    let textFieldContents = computed(() => {
+        return props.request.payload.params;
+    });
+
+    let requestText = computed(() => {
+        if (!props.request || !props.accounts) {
+            return '';
+        }
+        return t("operations.message.request", {
+            appName: props.request.payload.appName,
+            origin: props.request.payload.origin,
+            chain: props.accounts[0].chain,
+            accountName: props.accounts[0].accountName
+        });
+    });
+
+    function _clickedAllow() {
+        ipcRenderer.send(
+            "clickedAllow",
+            {
+                result: {success: true},
+                request: {id: props.request.id}
+            }
+        );
+    }
+
+    function _clickedDeny() {
+        ipcRenderer.send(
+            "clickedDeny",
+            {
+                result: {canceled: true},
+                request: {id: props.request.id}
+            }
+        );
+    }
+
+    onMounted(() => {
+        logger.debug("Signed message popup initialised");
+    });
 </script>
+
+<template>
+    <div style="padding:5px">
+        <Text size="md">
+            {{ requestText }}
+        </Text>
+        <ui-textfield
+            v-model="textFieldContents"
+            input-type="textarea"
+            fullwidth
+            disabled
+            rows="5"
+        />
+        <br>
+        <ui-button
+            raised
+            style="margin-right:5px"
+            @click="_clickedAllow()"
+        >
+            {{ t("operations.message.accept_btn") }}
+        </ui-button>
+        <ui-button
+            raised
+            @click="_clickedDeny()"
+        >
+            {{ t("operations.message.reject_btn") }}
+        </ui-button>
+    </div>
+</template>
