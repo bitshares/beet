@@ -362,7 +362,6 @@ export default class BeetServer {
             appName: socket.appName,
             browser: socket.browser,
             key: socket.keypair ?? null,
-            relinkSecret: socket.otp ? socket.otp.secret : null,
             type: linkType
         });
       } catch (error) {
