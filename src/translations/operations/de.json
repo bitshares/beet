@@ -4,7 +4,7 @@
     },
     "link": {
          "title": "Anfrage zur Kontoverknüpfung",
-         "request": "Die Anwendung `{appName}` von `{origin}` fordert Zugriff auf ein {chain}-Konto an.",
+         "request": "Die Anwendung '{appName}' von '{origin}' fordert Zugriff auf ein {chain}-Konto an.",
          "request_fresh": "Die Anwendung hat bereits zuvor ein {chain}-Konto verknüpft, wie in der Liste unten markiert.",
          "request_tooltip": "Die Anwendung erhält Ihre Kontodaten (Name und ID) und einen Link zu Beet.",
          "request_cta": "Wählen Sie das bereitzustellende Konto aus.",
@@ -13,33 +13,33 @@
     },
     "relink": {
          "title": "Anfrage zur Neuverknüpfung des Kontos",
-         "request": "Die Anwendung `{appName}` von `{origin}` fordert an, das zuvor verknüpfte {chain}-Konto neu zu verknüpfen: {accountId}. Dies liegt normalerweise daran, dass Sie den Cache Ihres Browsers gelöscht haben. In seltenen Fällen ist dies der Fall könnte ein Phishing-Versuch sein, also überprüfen Sie bitte die Website, die Sie besuchen.",
+         "request": "Die Anwendung '{appName}' von '{origin}' fordert an, das zuvor verknüpfte {chain}-Konto neu zu verknüpfen: {accountId}. Dies liegt normalerweise daran, dass Sie den Cache Ihres Browsers gelöscht haben. In seltenen Fällen ist dies der Fall könnte ein Phishing-Versuch sein, also überprüfen Sie bitte die Website, die Sie besuchen.",
          "request_tooltip": "Die vorherige Verknüpfung zwischen der Anwendung und der Kontoreferenzc wird zurückgesetzt."
     },
     "account_id": {
          "title": "Kontodetails anfordern",
-         "request": "App: `{appName}` von `{origin}` fordert Zugriff auf die verknüpfte Identität (Konto-ID und Kontoname) von Konto an: {chain}: {accountName} ({accountId}).",
-         "request_tooltip": "Standardmäßig stellt Beet einen anonymen Link bereit. Bestimmte Apps/Websites erfordern Zugriff auf Ihre Konto-ID/Ihren Namen (z. B. für Anmeldezwecke). Wenn dies der Fall ist, können Sie hier problemlos `Erlauben`." ,
+         "request": "App: '{appName}' von '{origin}' fordert Zugriff auf die verknüpfte Identität (Konto-ID und Kontoname) von Konto an: {chain}: {accountName} ({accountId}).",
+         "request_tooltip": "Standardmäßig stellt Beet einen anonymen Link bereit. Bestimmte Apps/Websites erfordern Zugriff auf Ihre Konto-ID/Ihren Namen (z. B. für Anmeldezwecke). Wenn dies der Fall ist, können Sie hier problemlos 'Erlauben'." ,
          "accept_btn": "Zulassen",
          "reject_btn": "Verweigern"
     },
     "any_account_id": {
          "title": "Kontodetails anfordern",
-         "request": "App: `{appName}` von `{origin}` fordert Zugriff auf ein Konto an.",
+         "request": "App: '{appName}' von '{origin}' fordert Zugriff auf ein Konto an.",
          "request_cta": "Wählen Sie das bereitzustellende Konto aus.",
          "accept_btn": "Zulassen",
          "reject_btn": "Verweigern"
     },
     "transfer": {
          "title": "Übertragungsanfrage",
-         "request": "App: `{appName}` von `{origin}` möchte eine Übertragung von {chain}:{accountName} initiieren.",
+         "request": "App: '{appName}' von '{origin}' möchte eine Übertragung von {chain}:{accountName} initiieren.",
          "request_cta": "Möchten Sie es ausführen?",
          "accept_btn": "Signieren & Senden",
          "reject_btn": "Ignorieren"
     },
     "rawsig": {
          "title": "Anfrage",
-         "request": "App: `{appName}` von `{origin}` hat die folgende Transaktion für Konto {chain} übermittelt: {accountName}.",
+         "request": "App: '{appName}' von '{origin}' hat die folgende Transaktion für Konto {chain} übermittelt: {accountName}.",
          "request_cta": "Möchten Sie es ausführen?",
          "accept_btn": "Signieren & Senden",
          "sign_and_broadcast_btn": "Signieren & Broadcasten",
@@ -47,18 +47,18 @@
          "reject_btn": "Ignorieren"
     },
     "whitelist": {
-         "prompt": "Weitere `{method}`-Anfragen von dieser App auf Whitelist setzen?"
+         "prompt": "Weitere '{method}'-Anfragen von dieser App auf Whitelist setzen?"
     },
     "vote": {
          "title": "Abstimmungsanfrage",
-         "request": "App: `{appName}` von `{origin}` möchte, dass Sie für die folgende {entity} mit dem Konto { chain } stimmen:{ accountName }",
+         "request": "App: '{appName}' von '{origin}' möchte, dass Sie für die folgende {entity} mit dem Konto { chain } stimmen:{ accountName }",
          "request_cta": "",
          "accept_btn": "Genehmigen",
          "reject_btn": "Ignorieren"
      },
     "message": {
          "title": "Anfrage zum Signieren einer Nachricht",
-         "request": "App: `{appName}` von `{origin}` möchte, dass Sie den folgenden Text mit Konto {chain} signieren:{accountName}",
+         "request": "App: '{appName}' von '{origin}' möchte, dass Sie den folgenden Text mit Konto {chain} signieren:{accountName}",
          "request_cta": "",
          "accept_btn": "Genehmigen",
          "reject_btn": "Ignorieren"
