@@ -135,7 +135,6 @@ const linkHandler = async (req) => {
     }
 
     let identityhash;
-    ;
     let app;
     if (req.type == 'link') {
         let hashContents = `${req.browser} ${req.origin} ${req.appName} ${userResponse.result.chain} ${userResponse.result.id}`;
@@ -169,7 +168,6 @@ const linkHandler = async (req) => {
     } else {
         identityhash = userResponse.result.identityhash
         app = store.getters['OriginStore/getBeetApp']({payload: {identityhash: identityhash}});
-        console.log({app})
     }
 
     // todo: why copy content of request?
@@ -588,7 +586,6 @@ export default class BeetServer {
               socket.emit("api", {id: data.id, error: true, payload: {code: 5, message: "Beet wallet authentication error."}});
               return;
             }
-            console.log({socket, data})
             logger.debug("processing link");
             try {
               await this.respondLink("link", socket, data);
