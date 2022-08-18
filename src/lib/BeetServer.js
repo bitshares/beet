@@ -625,19 +625,15 @@ export default class BeetServer {
               return;
             }
 
-            console.log(socket)
-
             if (!socket.isLinked) {
               socket.emit("api", {id: data.id, error: true, payload: {code: 4, message: "This app is not yet linked. Link then try again."}})
               return;
             }
 
-            //logger.debug("processing api request");
-
             try {
               await this.respondAPI(socket, data);
             } catch (error) {
-              //console.log(error);
+              console.log(error);
               if (socket) {
                 socket.emit("api", {id: data.id, error: true, payload: {code: 7, message: "API request unsuccessful."}});
               }

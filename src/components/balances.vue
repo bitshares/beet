@@ -32,7 +32,6 @@
         isConnecting.value = true;
         return getBlockchainAPI(chain).getBalances(name)
             .then(result => {
-                //console.log(result)
                 isConnected.value = true;
                 isConnecting.value = false;
                 return result;

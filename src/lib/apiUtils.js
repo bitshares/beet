@@ -157,7 +157,6 @@ async function _signOrBroadcast(
   resolve,
   reject
 ) {
-  console.log(request)
   let finalResult;
   let notifyTXT = "";
 

@@ -215,7 +215,6 @@ const actions = {
             await BeetDB.wallets_encrypted.get({
                 id: state.wallet.id
             }).then(async (wallet) => {
-                console.log(wallet)
                 try {
                     let bytes = aes.decrypt(wallet.data, sha512(payload.password).toString());
                     JSON.parse(bytes.toString(ENC));
