@@ -84,7 +84,7 @@ export async function relinkRequest(request) {
 
     store.dispatch(
       "WalletStore/notifyUser",
-      {notify: "request", message: window.t("common.link_alert", linkReq)}
+      {notify: "request", message: window.t("common.relink_alert", linkReq)}
     );
 
     let account = store.getters['AccountStore/getSafeAccount'](JSON.parse(JSON.stringify(shownBeetApp)));
@@ -157,7 +157,6 @@ async function _signOrBroadcast(
   resolve,
   reject
 ) {
-  console.log(request)
   let finalResult;
   let notifyTXT = "";
 

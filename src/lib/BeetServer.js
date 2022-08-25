@@ -59,7 +59,7 @@ async function _establishLink(socket, target) {
  * @returns {object}
  */
 function _getLinkResponse(result) {
-    if (!result.isLinked == true) {
+    if (!result.isLinked == true && !result.link == true) {
       return {
           id: result.id,
           error: true,
@@ -134,35 +134,40 @@ const linkHandler = async (req) => {
       return rejectRequest(req, 'User rejected request');
     }
 
-    let hashContents = `${req.browser} ${req.origin} ${req.appName} ${userResponse.result.chain} ${userResponse.result.id}`;
-
     let identityhash;
-    try {
-      identityhash = sha256(hashContents).toString();
-    } catch (error) {
-      return rejectRequest(req, error);
-    }
-
-    let secret;
-    try {
-      secret = await ed.getSharedSecret(req.key, req.payload.pubkey);
-    } catch (error) {
-      return rejectRequest(req, error);
-    }
-
     let app;
-    try {
-      app = await store.dispatch('OriginStore/addApp', {
-          appName: req.appName,
-          identityhash: identityhash,
-          origin: req.origin,
-          account_id: userResponse.result.id,
-          chain: userResponse.result.chain,
-          secret: ed.utils.bytesToHex(secret),
-          next_hash: req.payload.next_hash
-      });
-    } catch (error) {
-      return rejectRequest(req, error);
+    if (req.type == 'link') {
+        let hashContents = `${req.browser} ${req.origin} ${req.appName} ${userResponse.result.chain} ${userResponse.result.id}`;
+        try {
+          identityhash = sha256(hashContents).toString();
+        } catch (error) {
+          return rejectRequest(req, error);
+        }
+
+        let tempSecret;
+        try {
+            tempSecret = await ed.getSharedSecret(req.key, req.payload.pubkey);
+        } catch (error) {
+            return rejectRequest(req, error);
+        }
+        let secret = ed.utils.bytesToHex(tempSecret)
+
+        try {
+            app = await store.dispatch('OriginStore/addApp', {
+                appName: req.appName,
+                identityhash: identityhash,
+                origin: req.origin,
+                account_id: userResponse.result.id,
+                chain: userResponse.result.chain,
+                secret: secret,
+                next_hash: req.payload.next_hash
+            });
+          } catch (error) {
+            return rejectRequest(req, error);
+          }
+    } else {
+        identityhash = userResponse.result.identityhash
+        app = store.getters['OriginStore/getBeetApp']({payload: {identityhash: identityhash}});
     }
 
     // todo: why copy content of request?
@@ -354,7 +359,7 @@ export default class BeetServer {
             origin: socket.origin,
             appName: socket.appName,
             browser: socket.browser,
-            key: socket.keypair,
+            key: socket.keypair ?? null,
             type: linkType
         });
       } catch (error) {
@@ -372,7 +377,7 @@ export default class BeetServer {
 
       if (status.isLinked == true) {
           // link has successfully established
-          _establishLink(socket, status);
+          await _establishLink(socket, status);
       }
 
       socket.emit("link", _getLinkResponse(status));
@@ -539,8 +544,8 @@ export default class BeetServer {
             socket.appName = status.appName;
             socket.browser = status.browser;
 
-            if (status.link == true) {
-              _establishLink(socket.id, status);
+            if (status.link == true) { 
+              await _establishLink(socket, status);
               let linkResponse = _getLinkResponse(status);
               console.log("Existing link");
               socket.emit('authenticated', linkResponse);
@@ -625,12 +630,10 @@ export default class BeetServer {
               return;
             }
 
-            //logger.debug("processing api request");
-
             try {
               await this.respondAPI(socket, data);
             } catch (error) {
-              //console.log(error);
+              console.log(error);
               if (socket) {
                 socket.emit("api", {id: data.id, error: true, payload: {code: 7, message: "API request unsuccessful."}});
               }

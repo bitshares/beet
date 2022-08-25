@@ -912,8 +912,6 @@ export default class BitShares extends BlockchainAPI {
         let operations = [];
         let tr = this._parseTransactionBuilder(thing);
 
-        console.log(tr.operations)
-
         for (let i = 0; i < tr.operations.length; i++) {
             let operation = tr.operations[i];
             if (operation[0] == 0) {
