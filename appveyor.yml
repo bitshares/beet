@@ -16,7 +16,6 @@ init:
   - git config --global core.autocrlf input
 install:
   - ps: Install-Product node 16
-  - ps: npm cache clean
   - ps: npm install -g npm@latest
   - ps: npm install -g yarn@latest
   - ps: $env:package_version = (Get-Content -Raw -Path package.json | ConvertFrom-Json).version
