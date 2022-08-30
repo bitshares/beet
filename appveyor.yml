@@ -16,9 +16,9 @@ init:
   - git config --global core.autocrlf input
 install:
   - ps: Install-Product node 16
-  - ps: npm cache clean --force
-  - ps: npm install -g npm@latest --force
-  - ps: npm install -g yarn@latest --force
+  - ps: npm cache clean
+  - ps: npm install -g npm@latest
+  - ps: npm install -g yarn@latest
   - ps: $env:package_version = (Get-Content -Raw -Path package.json | ConvertFrom-Json).version
   - ps: Update-AppveyorBuild -Version "$env:package_version-$env:APPVEYOR_BUILD_NUMBER"
   - yarn
