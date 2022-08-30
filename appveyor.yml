@@ -1,7 +1,7 @@
 version: Beet-{build}
 pull_requests:
   do_not_increment_build_number: true
-image: Visual Studio 2017
+image: Visual Studio 2022
 max_jobs: 3
 platform:
   - x64
