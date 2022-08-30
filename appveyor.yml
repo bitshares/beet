@@ -19,7 +19,7 @@ install:
   - ps: npm install -g npm@latest
   - ps: npm install -g yarn@latest
   - ps: $env:package_version = (Get-Content -Raw -Path package.json | ConvertFrom-Json).version
-  - ps: Update-AppveyorBuild -Version "$env:package_version-$env:APPVEYOR_BUILD_NUMBER"
+  - ps: Update-AppveyorBuild -Version "$env:package_version-$env:APPVEYOR_BUILD_NUMBER-test"
   - yarn
 build_script:
   - yarn dist
