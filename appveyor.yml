@@ -16,7 +16,8 @@ init:
 install:
   - ps: Install-Product node 'Current'
   - ps: $env:package_version = (Get-Content -Raw -Path package.json | ConvertFrom-Json).version
-  - ps: Update-AppveyorBuild -Version "$env:package_version-$env:APPVEYOR_BUILD_NUMBER-test"
+  - ps: $env:ts = (New-TimeSpan -Start (Get-Date "01/01/1970") -End (Get-Date)).TotalSeconds
+  - ps: Update-AppveyorBuild -Version "$env:package_version-$env:APPVEYOR_BUILD_NUMBER-$env:ts"
   - yarn
 build_script:
   - yarn dist
