@@ -18,7 +18,7 @@ install:
   - ps: $env:package_version = (Get-Content -Raw -Path package.json | ConvertFrom-Json).version
   - ps: $env:ts = (New-TimeSpan -Start (Get-Date "01/01/1970") -End (Get-Date)).TotalSeconds
   - ps: yarn cache clean --mirror
-  - ps: npm cache clean
+  - ps: npm cache verify
   - ps: Update-AppveyorBuild -Version "$env:package_version-$env:APPVEYOR_BUILD_NUMBER-$env:ts"
   - yarn
 build_script:
