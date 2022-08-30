@@ -50,7 +50,7 @@
     "@noble/secp256k1": "^1.6.3",
     "balm-ui": "^10.9.3",
     "bitcoinjs-lib": "^6.0.1",
-    "bitsharesjs": "github:bitshares/bitsharesjs#develop",
+    "bitsharesjs": "https://github.com/bitshares/bitsharesjs#develop",
     "crypto-js": "^4.1.1",
     "dexie": "^3.2.2",
     "electron-devtools-installer": "^3.2.0",
