@@ -190,6 +190,40 @@ export default class BitShares extends BlockchainAPI {
 
     }
 
+    /*
+    * Fetch account/address list to warn users about
+    * @param {String} targetAccount
+    * @returns {Array}
+    */
+    getBlockedAccounts(targetAccount) {
+        return new Promise(async (resolve, reject) => {
+            let targetAccountContents;
+            try {
+                targetAccountContents = await this.getAccount(targetAccount);
+            } catch (error) {
+                console.log(error);
+                return resolve({id: '', blocked: false, error: true});
+            }
+
+            let committeeAccountDetails;
+            try {
+                committeeAccountDetails = await this.getAccount('committee-blacklist-manager');
+            } catch (error) {
+                console.log(error);
+                return resolve({id: '', blocked: false, error: true});
+            }
+            
+            if (!targetAccountContents || !committeeAccountDetails) {
+                return resolve({id: '', blocked: false, error: true});
+            }
+
+            let blockedAccounts = committeeAccountDetails.blacklisted_accounts;
+            let targetID = targetAccountContents.id;
+            let isBlocked = blockedAccounts.find(x => x === targetID);
+            return resolve({id: targetID, blocked: isBlocked ? true : false, found: isBlocked, accounts: blockedAccounts});
+        });
+    }
+
     /**
      * Fetch a working node to connect to, using bitsharesws-js manager class
      * Unused code - manager class failed to disconnect fast enough.

@@ -556,6 +556,15 @@ export async function transfer(request, blockchain) {
       return _promptFail("transfer", request.id, 'No beetApp', reject);
     }
 
+    let targetAccount = request.payload.params.to;
+
+    let blockedAccounts;
+    try {
+        blockedAccounts = await blockchain.getBlockedAccounts(targetAccount);
+    } catch (error) {
+        console.log(error);
+    }
+
     let accountDetails;
     try {
       accountDetails = store.getters['AccountStore/getSafeAccount'](JSON.parse(JSON.stringify(shownBeetApp)));
@@ -614,14 +623,15 @@ export async function transfer(request, blockchain) {
     }
     */
 
-
     ipcRenderer.send(
       'createPopup',
       {
-        request: request,
         chain: accountDetails.chain,
         accountName: accountDetails.accountName,
-        toSend: toSend
+        request: request,
+        toSend: toSend,
+        target: blockedAccounts.id,
+        isBlockedAccount: blockedAccounts.blocked
       }
     );
 

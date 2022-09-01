@@ -26,7 +26,6 @@
         }
 
         if (!qs[target]) {
-            console.log('Invalid prop')
             return;
         }
 
@@ -49,6 +48,15 @@
 
     let accountName = computed(() => {
         return handleProp('accountName');
+    });
+
+    let target = computed(() => {
+        return handleProp('target');
+    });
+
+    let warning = computed(() => {
+        let thisWarning = handleProp('warning');
+        return thisWarning
     });
 
     let visualizedAccount = computed(() => {
@@ -119,6 +127,8 @@
             :request="request"
             :chain="chain"
             :account-name="accountName"
+            :target="target"
+            :warning="warning"
             :to-send="toSend"
         />
         <TransactionRequestPopup
