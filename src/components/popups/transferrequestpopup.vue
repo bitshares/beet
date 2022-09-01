@@ -84,6 +84,13 @@
         return props.request.payload.params.toSendFee ?? null;
     });
 
+    let memo = computed(() => {
+        if (!props.request) {
+            return '';
+        }
+        return props.request.payload.params.memo ?? null;
+    });
+
     let feeInSatoshis = computed(() => {
         if (!props.request) {
             return '';
@@ -129,6 +136,11 @@
             <ui-item key="Amount">
                 <ui-item-text-content>
                     Amount: {{ toSend }}
+                </ui-item-text-content>
+            </ui-item>
+            <ui-item v-if="memo" key="Memo">
+                <ui-item-text-content>
+                    Memo: {{ memo }}
                 </ui-item-text-content>
             </ui-item>
             <ui-item
