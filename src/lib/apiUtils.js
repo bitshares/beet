@@ -556,20 +556,10 @@ export async function transfer(request, blockchain) {
       return _promptFail("transfer", request.id, 'No beetApp', reject);
     }
 
-    let targetAccount = request.payload.params.to;
-
-    let blockedAccounts;
-    try {
-        blockedAccounts = await blockchain.getBlockedAccounts(targetAccount);
-    } catch (error) {
-        console.log(error);
-    }
-
     let accountDetails;
     try {
       accountDetails = store.getters['AccountStore/getSafeAccount'](JSON.parse(JSON.stringify(shownBeetApp)));
     } catch (error) {
-      console.log(error);
       return _promptFail("transfer", request.id, 'getSafeAccount', reject);
     }
 
@@ -579,6 +569,14 @@ export async function transfer(request, blockchain) {
     } catch (error) {
       console.log(error);
       return _promptFail("transfer", request.id, 'No toSend', reject);
+    }
+
+    let targetAccount = request.payload.params.to;
+    let blockedAccounts;
+    try {
+        blockedAccounts = await blockchain.getBlockedAccounts(targetAccount);
+    } catch (error) {
+        console.log(error);
     }
 
     /*
@@ -637,18 +635,32 @@ export async function transfer(request, blockchain) {
 
     ipcRenderer.once(`popupApproved_${request.id}`, async (event, result) => {
       let activeKey = store.getters['AccountStore/getActiveKey'](request);
-
-      let signingKey;
+      let liveActiveKey;
       try {
-        signingKey = await getKey(activeKey);
+        liveActiveKey = await getKey(activeKey);
       } catch (error) {
         return _promptFail("transfer.getKey", request.id, error, reject);
+      }
+      
+      let memoInput;
+      if (!!request.payload.params.memo) {
+        let liveMemoKey;
+        try {
+            liveMemoKey = await getKey(accountDetails.memoKey);
+        } catch (error) {
+            console.log(error);
+        }
+
+        memoInput = {
+            key: liveMemoKey,
+            memo: request.payload.params.memo
+        }
       }
 
       let transferResult;
       try {
         transferResult = await blockchain.transfer(
-            signingKey,
+            liveActiveKey,
             accountDetails.accountName,
             request.payload.params.to,
             {
@@ -656,7 +668,9 @@ export async function transfer(request, blockchain) {
                         request.payload.params.amount.satoshis,
                 asset_id: request.payload.params.amount.asset_id
             },
-            request.payload.params.memo ?? null,
+            memoInput ?? undefined,
+            request.payload.params.optionalNonce ?? undefined,
+            request.payload.params.encryptMemo ?? undefined
         );
       } catch (error) {
         return _promptFail("blockchain.transfer", request.id, error, reject);

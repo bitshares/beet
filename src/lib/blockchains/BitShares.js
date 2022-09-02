@@ -1,6 +1,8 @@
 import BlockchainAPI from "./BlockchainAPI";
 import {Apis} from "bitsharesjs-ws";
 import {
+    Aes,
+    TransactionHelper,
     PrivateKey,
     PublicKey,
     TransactionBuilder,
@@ -11,7 +13,6 @@ import * as Socket from "simple-websocket";
 import RendererLogger from "../RendererLogger";
 import {formatAsset, humanReadableFloat} from "../assetUtils";
 const logger = new RendererLogger();
-
 
 const permission_flags = {
     charge_market_fee: 0x01 /**< an issuer-specified percentage of all market trades in this asset is paid to the issuer */,
@@ -168,8 +169,6 @@ export default class BitShares extends BlockchainAPI {
             let filteredNodes = validNodes.filter(x => x);
             if (filteredNodes.length) {
               let sortedNodes = filteredNodes.sort((a, b) => a.lag - b.lag);
-              console.log(`Fastest node: ${sortedNodes[0].url}`);
-
               let now = new Date();
               return resolve({
                 node: sortedNodes[0].url,
@@ -192,6 +191,7 @@ export default class BitShares extends BlockchainAPI {
 
     /*
     * Fetch account/address list to warn users about
+    * List is maintained by the Bitshares committee
     * @param {String} targetAccount
     * @returns {Array}
     */
@@ -203,6 +203,11 @@ export default class BitShares extends BlockchainAPI {
             } catch (error) {
                 console.log(error);
                 return resolve({id: '', blocked: false, error: true});
+            }
+            let targetID = targetAccountContents.id;
+
+            if (this._config.identifier === "BTS_TEST") {
+                return resolve({id: targetID, blocked: false});
             }
 
             let committeeAccountDetails;
@@ -218,9 +223,12 @@ export default class BitShares extends BlockchainAPI {
             }
 
             let blockedAccounts = committeeAccountDetails.blacklisted_accounts;
-            let targetID = targetAccountContents.id;
             let isBlocked = blockedAccounts.find(x => x === targetID);
-            return resolve({id: targetID, blocked: isBlocked ? true : false, found: isBlocked, accounts: blockedAccounts});
+            
+            return resolve({
+                id: targetID,
+                blocked: isBlocked ? true : false
+            });
         });
     }
 
@@ -356,7 +364,6 @@ export default class BitShares extends BlockchainAPI {
 
             if (!nodeToConnect && (!this._nodeLatencies || diff && diff > 360)) {
                 // initializing the blockchain
-                console.log('Checking node connections')
                 return this._testNodes().then((res) => {
                   this._node = res.node;
                   this._nodeLatencies = res.latencies;
@@ -841,6 +848,41 @@ export default class BitShares extends BlockchainAPI {
         );
     }
 
+    /**
+     * Create an encrypted memo for transfer operations
+     * @param {Object} from 
+     * @param {Object} to 
+     * @param {Object} memo 
+     * @param {String} optionalNonce
+     * @param {Boolean} encryptMemo
+     * @returns {Object}
+     */
+    _createMemoObject(
+        from,
+        to,
+        memo,
+        optionalNonce = null,
+        encryptMemo = true
+    ) {
+        let nonce = optionalNonce ?? TransactionHelper.unique_nonce_uint64();
+    
+        return {
+            from: from.memo.public_key,
+            to: to.memo.public_key,
+            nonce,
+            message: encryptMemo
+                ? Aes.encrypt_with_checksum(
+                        PrivateKey.fromWif(memo.key),
+                        to.memo.public_key,
+                        nonce,
+                        memo.memo
+                    )
+                : Buffer.isBuffer(memo)
+                    ? memo.toString("utf-8")
+                    : memo.memo
+        };
+    }
+
     /*
      * Broadcast a transfer operation on the Bitshares blockchain.
      * @param {String} key
@@ -850,12 +892,45 @@ export default class BitShares extends BlockchainAPI {
      * @param {String} memo
      * @returns {Object} transfer result
      */
-    async transfer(key, from, to, amount, memo = null) {
+    async transfer(
+        key,
+        from,
+        to,
+        amount,
+        memo = null,
+        optionalNonce = null,
+        encryptMemo = true
+    ) {
         if (!amount.amount || !amount.asset_id) {
             throw "Amount must be a dict with amount and asset_id as keys"
         }
-        from = await this.getAccount(from);
-        to = await this.getAccount(to);
+
+        try {
+            from = await this.getAccount(from);
+        } catch (error) {
+            console.log(error);
+        }
+
+        try {
+            to = await this.getAccount(to);
+        } catch (error) {
+            console.log(error);
+        }
+
+        let memoObject;
+        if (memo) {
+            try {
+                memoObject = this._createMemoObject(
+                    from,
+                    to,
+                    memo,
+                    optionalNonce,
+                    encryptMemo
+                );
+            } catch (error) {
+                console.log(error);
+            }
+        }
 
         let transaction;
         try {
@@ -870,7 +945,7 @@ export default class BitShares extends BlockchainAPI {
                     from: from.id,
                     to: to.id,
                     amount: amount,
-                    memo: memo == null ? undefined : memo
+                    memo: memoObject ?? undefined
                 }
             },
             key
