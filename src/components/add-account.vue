@@ -137,7 +137,7 @@
      */
     function step2() {
 
-        if (userHasWallet.value) { // add to logged in wallet
+        if (!userHasWallet.value || !createNewWallet.value) { // add to logged in wallet
             step.value = 2;
             let fetchedName;
             try {
@@ -196,14 +196,14 @@
             return;
         }
 
-        if (!userHasWallet.value && password.value !== confirmPassword.value) {
+        if (!userHasWallet.value || createNewWallet.value && password.value !== confirmPassword.value) {
             ipcRenderer.send("notify", t(`common.confirm_pass_error`));
             return;
         }
 
         for (let i in accounts_to_import.value) {
             let account = accounts_to_import.value[i];
-            if (!userHasWallet.value) {
+            if (!userHasWallet.value || createNewWallet.value) {
                 try {
                     await store.dispatch("WalletStore/saveWallet", {
                         walletname: walletname.value,
@@ -240,7 +240,7 @@
                 v-if="step == 1"
                 id="step1"
             >
-                <template v-if="!userHasWallet">
+                <template v-if="createNewWallet">
                     <p
                         v-tooltip="t('common.tooltip_friendly_cta')"
                         class="my-3 font-weight-bold"
@@ -428,7 +428,7 @@
                         v-tooltip="t('common.tooltip_password_cta')"
                         class="mb-2 font-weight-bold"
                     >
-                        <span v-if="!userHasWallet">
+                        <span v-if="createNewWallet">
                             {{ t('common.password_cta') }} &#10068;
                         </span>
                         <span v-else>
@@ -443,7 +443,7 @@
                         :placeholder="t('common.password_placeholder')"
                         required
                     >
-                    <template v-if="!userHasWallet">
+                    <template v-if="createNewWallet">
                         <p class="mb-2 font-weight-bold">
                             {{ t('common.confirm_cta') }}
                         </p>
