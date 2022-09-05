@@ -1,30 +1,35 @@
 <script setup>
-    const emitter = inject('emitter');
     import { onMounted, inject, ref, watchEffect, computed } from "vue";
+    import { useI18n } from 'vue-i18n';
     import router from '../router/index.js';
     import store from '../store/index';
     import RendererLogger from "../lib/RendererLogger";
     const logger = new RendererLogger();
+    const emitter = inject('emitter');
+    const { t } = useI18n({ useScope: 'global' });
 
     let active = ref(0);
-    let items = ref([
-        {
-            text: 'Home',
-            url: "/dashboard"
-        },
-        {
-            text: 'New',
-            url: "/add-account"
-        },
-        {
-            text: 'Settings',
-            url: "/settings"
-        },
-        {
-            text: 'Logout',
-            url: "/"
-        }
-    ]);
+
+    let items = computed(() => {
+        return [
+            {
+                text: t("common.abHome"),
+                url: "/dashboard"
+            },
+            {
+                text: t("common.abNew"),
+                url: "/add-account"
+            },
+            {
+                text: t("common.abSettings"),
+                url: "/settings"
+            },
+            {
+                text: t("common.abLogout"),
+                url: "/"
+            }
+        ]
+    });
 
     function logout() {
         console.log('logout')

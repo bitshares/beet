@@ -1,8 +1,10 @@
 <script setup>
     import { onMounted } from 'vue';
     import { useI18n } from 'vue-i18n';
-    const { t } = useI18n({ useScope: 'global' });
     import RendererLogger from "../lib/RendererLogger";
+    import langSelect from "./lang-select.vue";
+
+    const { t } = useI18n({ useScope: 'global' });
     const logger = new RendererLogger();
 
     onMounted(() => {
@@ -17,6 +19,7 @@
                 class="smallHeader"
                 columns="12"
             >
+                <langSelect />
                 <img
                     class="logo-small"
                     src="img/beet.png"

@@ -1,16 +1,23 @@
 import { createI18n } from 'vue-i18n';
 
-const locales = ['en'];
+const locales = ['en', 'de'];
 const namespaces = ['common', 'operations'];
 
 import enCommon from '../translations/common/en.json';
 import enOperations from '../translations/operations/en.json';
+
+import deCommon from '../translations/common/de.json';
+import deOperations from '../translations/operations/de.json';
 
 function fetchMessages() {
   return {
     'en': {
       'common': enCommon,
       'operations': enOperations
+    },
+    'de': {
+        'common': deCommon,
+        'operations': deOperations
     }
   }
 }

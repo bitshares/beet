@@ -1,9 +1,10 @@
 <script setup>
     import { onMounted } from 'vue';
     import { useI18n } from 'vue-i18n';
-    const { t } = useI18n({ useScope: 'global' });
+    import langSelect from "./lang-select.vue";
     import RendererLogger from "../lib/RendererLogger";
     const logger = new RendererLogger();
+    const { t } = useI18n({ useScope: 'global' });
 
     onMounted(() => {
         logger.debug("Standard Header mounted");
@@ -17,6 +18,7 @@
                 class="largeHeader"
                 columns="12"
             >
+                <langSelect />
                 <img
                     src="img/beet.png"
                     alt

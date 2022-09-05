@@ -71,5 +71,6 @@ app.mount('#app');
 BeetServer.initialize(60554, 60555);
 
 emitter.on('i18n', (data) => {
-  i18n.global.locale = data;
+  i18n.global.locale.value = data
+
 });
