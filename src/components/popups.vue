@@ -11,6 +11,7 @@
     import SignMessageRequestPopup from "./popups/signedmessagepopup";
     import TransactionRequestPopup from "./popups/transactionrequestpopup";
     import TransferRequestPopup from "./popups/transferrequestpopup";
+    import langSelect from "./lang-select.vue";
 
     function handleProp(target) {
         if (!global || !global.location || !global.location.search) {
@@ -137,6 +138,10 @@
             :visualized-params="visualizedParams"
             :visualized-account="visualizedAccount"
         />
+        <br />
+        <div style="padding:10px">
+            <langSelect />
+        </div>
     </div>
     <div v-else>
         Error: Unable to load prompt.
