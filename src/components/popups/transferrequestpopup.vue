@@ -185,8 +185,8 @@
         <ui-alert v-if="warning" state="warning">
             {{
                 warning === "serverError"
-                    ? "Couldn't check if account is safe, proceed with caution."
-                    : "The Bitshares committee advises you not to transfer anything to this recipient scam account."
+                    ? "The list of known scammers could not be loaded for checking, proceed with caution."
+                    : "The recipient is a known scammer, advice to abort."
             }}
         </ui-alert>
 
