@@ -35,7 +35,9 @@
          "request": "App: '{appName}' von '{origin}' möchte eine Übertragung von {chain}:{accountName} initiieren.",
          "request_cta": "Möchten Sie es ausführen?",
          "accept_btn": "Signieren & Senden",
-         "reject_btn": "Ignorieren"
+         "reject_btn": "Ignorieren",
+         "server_error": "Die Liste bekannter Betrüger konnte zur Überprüfung nicht geladen werden, seien Sie vorsichtig.",
+         "detected_scammer": "Der Empfänger ist ein bekannter Betrüger, Abbruchempfehlung."
     },
     "rawsig": {
          "title": "Anfrage",

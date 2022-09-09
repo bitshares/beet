@@ -1,6 +1,7 @@
 <script setup>
     import { ipcRenderer } from 'electron';
     import { onMounted, computed } from "vue";
+
     import RendererLogger from "../../lib/RendererLogger";
     import { useI18n } from 'vue-i18n';
     const { t } = useI18n({ useScope: 'global' });
@@ -28,9 +29,23 @@
                 return ''
             }
         },
+        target: {
+            type: String,
+            required: true,
+            default() {
+                return ''
+            }
+        },
         toSend: {
             type: String,
             required: true,
+            default() {
+                return ''
+            }
+        },
+        warning: {
+            type: String,
+            required: false,
             default() {
                 return ''
             }
@@ -54,6 +69,13 @@
             return '';
         }
         return props.request.payload.params.to;
+    });
+
+    let target = computed(() => {
+        if (!props.target) {
+            return '';
+        }
+        return props.target;
     });
 
     let satoshis = computed(() => {
@@ -82,6 +104,20 @@
             return '';
         }
         return props.request.payload.params.toSendFee ?? null;
+    });
+
+    let memo = computed(() => {
+        if (!props.request) {
+            return '';
+        }
+        return props.request.payload.params.memo ?? null;
+    });
+
+    let warning = computed(() => {
+        if (!props.warning || !props.warning.length) {
+            return;
+        }
+        return props.warning;
     });
 
     let feeInSatoshis = computed(() => {
@@ -123,12 +159,17 @@
         <ui-list>
             <ui-item key="Recipient">
                 <ui-item-text-content>
-                    Recipient: {{ to }}
+                    Recipient: {{ to }} ({{ target }})
                 </ui-item-text-content>
             </ui-item>
             <ui-item key="Amount">
                 <ui-item-text-content>
-                    Amount: {{ toSend }}
+                    Amount: {{ toSend }} ({{ asset_id }})
+                </ui-item-text-content>
+            </ui-item>
+            <ui-item v-if="memo" key="Memo">
+                <ui-item-text-content>
+                    Memo: {{ memo }}
                 </ui-item-text-content>
             </ui-item>
             <ui-item
@@ -140,6 +181,15 @@
                 </ui-item-text-content>
             </ui-item>
         </ui-list>
+        
+        <ui-alert v-if="warning" state="warning">
+            {{
+                warning === "serverError"
+                    ? t("operations.transfer.server_error")
+                    : t("operations.transfer.detected_scammer")
+            }}
+        </ui-alert>
+
         <ui-button
             raised
             style="margin-right:5px"

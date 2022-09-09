@@ -5,15 +5,9 @@ let localeList = [{
     },
     {
         iso: 'de',
-        name: 'German',
+        name: 'Deutsch',
         dir: 'ltr',
     }
-    //,
-    // {
-    //    iso: 'de',
-    //    name: 'Deutsch',
-    //    dir: 'ltr',
-    //}
 ];
 
 export const locales = localeList;

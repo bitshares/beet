@@ -115,7 +115,8 @@ const getters = {
           return {
             accountID: account.accountID,
             accountName: account.accountName,
-            chain: account.chain
+            chain: account.chain,
+            memoKey: account.keys.memo
           };
         });
 

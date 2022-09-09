@@ -119,19 +119,29 @@ const createModal = async (arg, modalEvent) => {
 
     if ([Actions.TRANSFER].includes(type)) {
       let chain = arg.chain;
-      let accountName = arg.accountName;
       let toSend = arg.toSend;
+      let accountName = arg.accountName;
 
       if (!chain || !accountName || !toSend) {
         throw 'Missing required fields'
       }
 
       modalRequests[id]['chain'] = chain;
-      modalRequests[id]['accountName'] = accountName;
       modalRequests[id]['toSend'] = toSend;
+      modalRequests[id]['accountName'] = accountName;
+
+      let target = arg.target;
+      modalRequests[id]['target'] = target;
+
+      let isBlockedAccount = arg.isBlockedAccount;
+      if (isBlockedAccount) {
+        modalRequests[id]['warning'] = true;
+        targetURL += isBlockedAccount ? `&warning=blockedAccount` : `&warning=serverError`;
+      }
 
       targetURL += `&chain=${encodeURIComponent(chain)}`;
       targetURL += `&accountName=${encodeURIComponent(accountName)}`;
+      targetURL += `&target=${encodeURIComponent(target)}`;
       targetURL += `&toSend=${encodeURIComponent(toSend)}`;
     }
 

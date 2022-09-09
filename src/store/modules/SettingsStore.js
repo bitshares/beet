@@ -81,12 +81,12 @@ const actions = {
                 reject(error);
             }
 
-            if (!settings && !initialState.settings) {
-              console.log(`no settings state`)
-              reject();
-            } else if (!settings && initialState.settings) {
-              settings = initialState.settings;
+            if (settings && settings.length > 0) {
+                settings = JSON.parse(settings)
+            } else {
+                settings = initialState.settings;
             }
+
             settings.locale = payload.locale;
             localStorage.setItem("settings", JSON.stringify(settings));
             commit(LOAD_SETTINGS, settings);
@@ -97,7 +97,8 @@ const actions = {
 
 
 const getters = {
-  getNode: (state) => state.settings.selected_node
+    getNode: (state) => state.settings.selected_node,
+    getLocale: (state) => state.settings.locale
 };
 
 const initialState = {

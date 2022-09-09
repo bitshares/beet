@@ -15,6 +15,7 @@ export default class BlockchainAPI {
         this._isConnected = false;
         this._isConnectingInProgress = false;
         this._isConnectedToNode = null;
+        this._blockedAddresses = [];
     }
 
     /*
@@ -496,6 +497,14 @@ export default class BlockchainAPI {
      */
     getAsset(assetSymbolOrId) {
         throw "Needs implementation!";
+    }
+
+    /*
+    * Fetch account/address list to warn users about
+    * @returns {Array}
+    */
+    getBlockedAccounts() {
+        return false;
     }
 
     /*

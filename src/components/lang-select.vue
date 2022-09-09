@@ -1,9 +1,9 @@
 <script setup>
-    import { ref, onMounted, computed } from 'vue';
+    import { ref, onMounted, computed, inject } from 'vue';
     import { locales, defaultLocale, selectLocales, menuLocales } from "../config/i18n.js";
     import RendererLogger from "../lib/RendererLogger";
     import store from '../store/index';
-
+    const emitter = inject('emitter');
     const logger = new RendererLogger();
 
     let localesRef = computed(() => {
@@ -28,9 +28,9 @@
         open.value = false;
     }
 
-    function onSelected(locale) {
-        console.log(`selected: ${locale}`);
-        store.dispatch("SettingsStore/setLocale", {locale: locale});
+    function onSelected(locale) {       
+        emitter.emit('i18n', locale.value);
+        store.dispatch("SettingsStore/setLocale", {locale: locale.value});
         selected.value = locale.value;
         open.value = false;
     }
@@ -38,16 +38,20 @@
 
 
 <template>
-    <ui-button
-        raised
-        @click="menuClick"
-    >
-        {{ selected }}
-    </ui-button>
-    <ui-menu
-        v-model="open"
-        :items="menuLocales"
-        @selected="onSelected"
-        @cancel="onCancel"
-    />
+    <ui-menu-anchor absolute position="TOP_RIGHT">
+        <ui-button
+            outlined
+            position="TOP_RIGHT"
+            @click="menuClick"
+        >
+            {{ selected }}
+        </ui-button>
+        <ui-menu
+            v-model="open"
+            position="TOP_RIGHT"
+            :items="localesRef"
+            @selected="onSelected"
+            @cancel="onCancel"
+        />
+    </ui-menu-anchor>
 </template>

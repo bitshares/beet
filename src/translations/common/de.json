@@ -1,4 +1,9 @@
+
 {
+    "abHome": "Zuhause",
+    "abNew": "Neu",
+    "abSettings": "Einstellungen",
+    "abLogout": "Abmelden",
     "appName": "beet",
     "slogan": "Dein Blockchain-Begleiter",
     "welcome": "Willkommen bei Beet!",

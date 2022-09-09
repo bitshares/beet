@@ -11,6 +11,7 @@
     import SignMessageRequestPopup from "./popups/signedmessagepopup";
     import TransactionRequestPopup from "./popups/transactionrequestpopup";
     import TransferRequestPopup from "./popups/transferrequestpopup";
+    import langSelect from "./lang-select.vue";
 
     function handleProp(target) {
         if (!global || !global.location || !global.location.search) {
@@ -26,7 +27,6 @@
         }
 
         if (!qs[target]) {
-            console.log('Invalid prop')
             return;
         }
 
@@ -49,6 +49,15 @@
 
     let accountName = computed(() => {
         return handleProp('accountName');
+    });
+
+    let target = computed(() => {
+        return handleProp('target');
+    });
+
+    let warning = computed(() => {
+        let thisWarning = handleProp('warning');
+        return thisWarning
     });
 
     let visualizedAccount = computed(() => {
@@ -119,6 +128,8 @@
             :request="request"
             :chain="chain"
             :account-name="accountName"
+            :target="target"
+            :warning="warning"
             :to-send="toSend"
         />
         <TransactionRequestPopup
@@ -127,6 +138,10 @@
             :visualized-params="visualizedParams"
             :visualized-account="visualizedAccount"
         />
+        <br />
+        <div style="padding:10px">
+            <langSelect />
+        </div>
     </div>
     <div v-else>
         Error: Unable to load prompt.
