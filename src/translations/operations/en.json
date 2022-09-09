@@ -35,7 +35,9 @@
         "request": "App: '{appName}' from '{origin}' wants to initiate a transfer from { chain }:{ accountName }.",
         "request_cta": "Do you want to execute it?",
         "accept_btn": "Sign & Broadcast",
-        "reject_btn": "Ignore"
+        "reject_btn": "Ignore",
+        "server_error": "The list of known scammers could not be loaded for checking, proceed with caution.",
+        "detected_scammer": "The recipient is a known scammer, advice to abort."
     },
     "rawsig": {
         "title": "Request",

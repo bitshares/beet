@@ -185,8 +185,8 @@
         <ui-alert v-if="warning" state="warning">
             {{
                 warning === "serverError"
-                    ? "The list of known scammers could not be loaded for checking, proceed with caution."
-                    : "The recipient is a known scammer, advice to abort."
+                    ? t("operations.transfer.server_error")
+                    : t("operations.transfer.detected_scammer")
             }}
         </ui-alert>
 
