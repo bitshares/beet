@@ -1,17 +1,22 @@
 # Introduction
 
-Interacting with any blockchain can be cumbersome if you are not familiar with how a blockchain works (private keys and signatures) and
-haven't dug through the plentiful features that each blockchain offers. In general, every action on a blockchain requires a cryptographic signature of the required private keys of the action,
-and when you are using third party tools (especially closed source ones), the question about trust quickly arises ("Are they gonna steal my private keys?"). Being closed source can be a business model,
-but should not hinder adoption. Beet aims to solve that, while additionally facilitating private key managament for the everyday user.
+Interacting with any blockchain can be cumbersome if you are not familiar with how a blockchain works (private keys and signatures) and haven't dug through the plentiful features that each blockchain offers.
+
+In general, every action on a blockchain requires a cryptographic signature of the required private keys for the action, and when you are using third party tools (especially closed source ones), the question about trust quickly arises ("Are they gonna steal my private keys?").
+
+Beet aims to solve these trust concerns, whilst additionally facilitating private key managament for the everyday user.
 
 A general rule of thumb for the inexperienced: Never ever expose your private keys on the internet, and if that is ever needed, stay vigilant and do your due diligence.
 
 # Beet - Your blockchain companion
 
-Beet is a stand-alone key and identity manager and signing app for blockchains, originally evolved from the BitShares Blockchains and influenced by Scatter (https://get-scatter.com/).
-Beet is installed locally on your computer. It allows separate account management while being in full control of what data to expose to third parties.
-Private keys are locally stored and encrypted, protected by a wallet master password. All transactions suggested by third parties must be confirmed before being broadcast.
+Beet is a locally installed stand-alone key and identity manager and signing app for blockchains, originally evolved from the BitShares Blockchains and influenced by the [Scatter wallet](https://github.com/GetScatter).
+
+Beet allows separate account management while being in full control of what data to expose to third parties.
+
+Private keys are locally stored and encrypted, protected by a wallet master password.
+
+All transactions suggested by third parties must be confirmed before being broadcast.
 
 Telegram channel: https://t.me/beetapp
 
@@ -25,23 +30,17 @@ The app will generate your public keys from those private keys and verify them a
 
 Once your keys and account are verified, you will be redirected to the dashboard view which currently displays your account details and balances.
 
-While logged-in, Beet exposes a websocket API **LOCALLY** that can only be accessed by applications running on your computer (internet browser or any other third party application installed on your computer),
+While logged-in, Beet exposes a socket.io server **LOCALLY** that can only be accessed by applications running on your computer (internet browser or any other third party application installed on your computer),
 as long as it includes our client-side javascript library [BeetJS](https://github.com/bitshares/beet-js).
 
 BeetJS allows any web-page to send requests to Beet in order to retrieve identity (account id / address) or ask for an action to be taken (sign a transaction, vote or others).
 Of-course, any incoming request has to be **explicitly** approved by the user inside the Beet app and is clearly displayed.
 
-Many blockchains have their native
-javascript library that can be used
-(e.g. [bitcoinjs](https://github.com/bitcoinjs/bitcoinjs-lib) for the Bitcoin blockchain,
-[bitsharesjs](https://github.com/bitshares/bitsharesjs) for the BitShares Blockchain or [eosjs](https://github.com/EOSIO/eosjs) for EOSIO blockchains). BeetJS allows to inject itself into such a native library
-which automatically redirect all signature and broadcast requests to Beet, i.e. you can simply use the native javascript library and inject BeetJS when starting your application, and voila, Beet is integrated.
-
-The app lives on your system tray and will only quit if explicitly done via right-click on the system tray icon. While minimized it will provide balloon notifications when requests are made to prompt the user to take action.
+Many blockchains have their native javascript library that can be used (e.g. [bitcoinjs](https://github.com/bitcoinjs/bitcoinjs-lib) for the Bitcoin blockchain or [bitsharesjs](https://github.com/bitshares/bitsharesjs) for the BitShares Blockchain. BeetJS can be injected into such native libraries to redirect all signature and broadcast requests to Beet, i.e. you can simply use the native javascript library and inject BeetJS when starting your application, and voila, Beet is integrated.
 
 ## For end users
 
-Releases are bundled as installers for OS X, Windows and Linux (Snap included) and are available at https://github.com/bitshares/beet/releases.
+Releases are bundled as installers and are available at https://github.com/bitshares/beet/releases.
 
     ATTENTION
 
@@ -49,7 +48,7 @@ Beet binaries will never be hosted anywhere but within GitHub releases. If you f
 
 ## For developers
 
-Beet is an electron-based app for cross-platform compatibility, utilising the VueJS framework, Bootstrap CSS framework and the socket.io libraries.
+Beet is an [electron-based app](https://www.electronjs.org) for [cross-platform compatibility](https://www.electron.build), utilising the [VueJS framework](https://blog.vuejs.org/posts/vue-3-as-the-new-default.html), [BalmUI design system](https://material.balmjs.com) and the [Socket.IO](https://socket.io) libraries.
 
 To run Beet it's simply a case of
 
@@ -69,22 +68,33 @@ If you are in linux you may need to do: `sudo apt-get install libudev-dev` befor
 
 ## Supported apps and web pages
 
- - Voting Showcase www.bitsharesvotes.com
- - Inter-blockchain communication via Beet Trollbox www.bitsharesvotes.com
+ - [Bitshares NFT Viewer](https://github.com/BTS-CM/NFT_Viewer)
+ - [Bitshares NFT Issuance Tool](https://github.com/BTS-CM/Bitshares_NFT_Issuance_Tool)
 
 ## Current Limitations
 
 Beet currently only supports single-sig accounts (one private key to unlock the blockchain action), and depending on the blockchain different import options may be available.
 Please open an issue to add support for your desired way.
 
-## Funding
+## For businesses
 
-The development of Beet originated from within the
-BitShares community and is currently funded through the [BitShares UI worker](https://www.bitshares.foundation/workers/2019-02-bitshares-ui) and is thus this dependant on it.
-If said worker would go inactive there is no buffer available to further Beet development, and we are also bound to the restrictions of the worker (which is mainly to only fund development tasks).
+You are running a business and want to facilitate the interaction of your users with a blockchain (e.g. paying subscription fees or purchases)?
+Or maybe you simply have an idea for Beet?
 
-We have plans for marketing and promotional campaigns for Beet which will bring massive synergetic effects for all blockchains involved. nevertheless, those plans our out-of-scope of the UI worker and are thus
-on hold at the moment.
+Feel free to contact us directly and discuss opportunities. Best way is either through github, in our telegram channel https://t.me/beetapp or via carrier pigeon.
+
+## Open milestones
+
+ - Support other blockchains
+ - Support hardware wallets
+ - Additional locale translations
+ - Port to mobile
+
+## Encountered an issue? Want a new feature?
+
+Open a [new issue](https://github.com/bitshares/beet/issues/new/choose) and fill out the template.
+
+If you're skilled in Vue, electron or even just want to help localize the wallet, then fork the repo, create a new branch for your idea/task and submit a pull request for peer review.
 
 ### Donations
 
@@ -98,39 +108,3 @@ BitShares Blockchain
 Bitcoin Blockchain
 
     Address: 1GquUmypi1mKg696qRsmM24xmgwVqGGMdA
-
-### For businesses
-
-You are running a business and want to facilitate the interaction of your users with a blockchain (e.g. paying subscription fees or purchases)?
-Or maybe you simply have an idea for Beet?
-
-Feel free to contact us directly and discuss opportunities. Best way is either through github, in our telegram channel https://t.me/beetapp or via carrier pigeon.
-
-## Open milestones
-
-The following are in no particular order and may or may not be picked up by us
-
- - Support Peerplays blockchain
- - Support BEOS blockchain
- - Support Ethereum blockchain
- - Support Hardware wallets (Ledger and Keybox in the making)
- - Localisation
- - Extra information & features on dashboard as needed
- - Port to mobile
-
-# Can I trust this code?
-
-    Don't trust. Verify!
-
-We will pursue a code review and audit
-by an external and independent party as soon as our budget allows to show that we take this serious.
-In the meantime we recommend every user to audit and verify any underlying code for its validity and suitability,
-including reviewing any and all of your project's dependencies.
-
-    DISCLAIMER
-
-Beet is in *BETA* stage and there is no guarantee of a bug free product. Beet is delivered as is in accordance to the MIT license.
-There is no fear of your keys being exposed / compromised.
-
-You are however welcome to try it out, submit bugs and feature requests as an issue.
-
