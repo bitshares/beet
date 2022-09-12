@@ -41,11 +41,12 @@
     "compile": "webpack --config=build/webpack.app.config.js --env=production",
     "build": "webpack --config=build/webpack.app.config.js --env=production && electron-builder --publish never",
     "release": "webpack --config=build/webpack.app.config.js --env=production && electron-builder --publish never",
-    "dist": "yarn compile && electron-builder --publish never",
-    "lint": "yarn run eslint --ext .js,.vue src",
-    "lintFix": "yarn run eslint --ext .js,.vue src --fix"
+    "dist": "npm run-script compile && electron-builder --publish never",
+    "lint": "npm run-script eslint --ext .js,.vue src",
+    "lintFix": "npm run-script eslint --ext .js,.vue src --fix"
   },
   "dependencies": {
+    "@babel/runtime": "^7.19.0",
     "@noble/ed25519": "^1.6.1",
     "@noble/secp256k1": "^1.6.3",
     "balm-ui": "^10.9.3",
