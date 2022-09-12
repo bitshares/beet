@@ -95,16 +95,3 @@ Feel free to contact us directly and discuss opportunities. Best way is either t
 Open a [new issue](https://github.com/bitshares/beet/issues/new/choose) and fill out the template.
 
 If you're skilled in Vue, electron or even just want to help localize the wallet, then fork the repo, create a new branch for your idea/task and submit a pull request for peer review.
-
-### Donations
-
-If you like what we are doing and want to support us, donations are much welcomed and will be used to further Beet integration, adoption and development. Donations can be done to following
-accounts / addresses
-
-BitShares Blockchain
-
-    Account Name: beet Id: 1.2.1152309
-
-Bitcoin Blockchain
-
-    Address: 1GquUmypi1mKg696qRsmM24xmgwVqGGMdA
