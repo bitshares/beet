@@ -6,7 +6,7 @@ updates:
       directory: "/"
       schedule:
           interval: "weekly"
-          # Check for npm updates on Sundays
+          # Check for npm updates on Wednesdays
           day: "wednesday"
       target-branch: "develop"
       # Disable version updates (this option should have no impact on security updates)
