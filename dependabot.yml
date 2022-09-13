@@ -1,0 +1,14 @@
+# Specify a non-default branch for pull requests by dependabot
+
+version: 2
+updates:
+    - package-ecosystem: "npm"
+      directory: "/"
+      schedule:
+          interval: "weekly"
+          # Check for npm updates on Sundays
+          day: "tuesday"
+      target-branch: "develop"
+      # Labels on pull requests for security and version updates
+      labels:
+          - "dependencies"
