@@ -3,7 +3,7 @@
   "productName": "Beet Blockchain Companion",
   "version": "0.2.0-rc1",
   "apiversion": 3,
-  "description": "Beet is a stand-alone key-manager and signing app for blockchains like BitShares, Steem and EOS, as well as BTC, BinanceChain and others.",
+  "description": "Beet is a stand-alone key-manager and signing app for blockchains like BitShares, Bitcoin and others.",
   "author": "clockworkgr <alex@clockwork.gr>",
   "license": "MIT",
   "homepage": "https://github.com/bitshares/beet",
