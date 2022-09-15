@@ -66,9 +66,9 @@
 
 <template>
     <div style="padding:5px">
-        <Text size="md">
+        <p>
             {{ requestText }}
-        </Text>
+        </p>
         <ui-textfield
             v-model="textFieldContents"
             input-type="textarea"

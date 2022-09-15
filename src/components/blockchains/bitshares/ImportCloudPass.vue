@@ -156,9 +156,9 @@
                         {{ t('common.next2_btn') }}
                     </ui-button>
                     <br>
-                    <Text size="md">
+                    <ui-alert state="warning">
                         {{ t('common.error_text') }}
-                    </Text>
+                    </ui-alert>
                 </span>
                 <figure v-if="accountname !== '' && bitshares_cloud_login_password !== '' && inProgress">
                     <ui-progress indeterminate />

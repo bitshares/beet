@@ -33,28 +33,27 @@ const actions = {
         state
     }, payload) {
         return new Promise((resolve, reject) => {
-            let index = -1;
-            for (let i = 0; i < state.accountlist.length; i++) {
-                if (payload.account.chain == state.accountlist[i].chain && payload.account.accountID == state.accountlist[i].accountID) {
-                    reject('Account already exists');
-                }
-            }
-          
-            for (let keytype in payload.account.keys) {
-                payload.account.keys[keytype] = aes.encrypt(
-                    payload.account.keys[keytype],
-                    sha512(payload.password).toString()
-                ).toString();
-            }
+            let existingAccount = state.accountlist.find(x => x.chain == payload.account.chain && x.accountID == payload.account.accountID)
 
-            dispatch('WalletStore/saveAccountToWallet', payload, {root: true})
+            if (!existingAccount) {
+                for (let keytype in payload.account.keys) {
+                    payload.account.keys[keytype] = aes.encrypt(
+                        payload.account.keys[keytype],
+                        sha512(payload.password).toString()
+                    ).toString();
+                }
+
+                dispatch('WalletStore/saveAccountToWallet', payload, {root: true})
                 .then(() => {
                     commit(ADD_ACCOUNT, payload.account);
-                    resolve('Account added');
+                    return resolve('Account added');
                 }).catch((error) => {
                     console.log(error)
-                    reject(error);
+                    return reject(error);
                 });
+            } else {
+                return reject('Account already exists');
+            }
         });
     },
     loadAccounts({

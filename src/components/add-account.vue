@@ -137,7 +137,8 @@
      */
     function step2() {
 
-        if (!userHasWallet.value || !createNewWallet.value) { // add to logged in wallet
+        if (userHasWallet.value == true && createNewWallet.value == false) { // add to logged in wallet
+            console.log('adding to existing wallet')
             step.value = 2;
             let fetchedName;
             try {
@@ -196,7 +197,7 @@
             return;
         }
 
-        if (!userHasWallet.value || createNewWallet.value && password.value !== confirmPassword.value) {
+        if ((!userHasWallet.value || createNewWallet.value) && password.value !== confirmPassword.value) {
             ipcRenderer.send("notify", t(`common.confirm_pass_error`));
             return;
         }
@@ -217,6 +218,7 @@
             } else {
                 account.password = password.value;
                 account.walletname = walletname.value;
+
                 try {
                     await store.dispatch("AccountStore/addAccount", account);
                 } catch (error) {

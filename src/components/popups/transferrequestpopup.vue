@@ -153,9 +153,9 @@
 </script>
 <template>
     <div style="padding:5px">
-        <Text>
+        <p>
             {{ message }}
-        </Text>
+        </p>
         <ui-list>
             <ui-item key="Recipient">
                 <ui-item-text-content>

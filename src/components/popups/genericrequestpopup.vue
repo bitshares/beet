@@ -72,9 +72,9 @@
 
 <template>
     <div style="padding:5px">
-        <Text size="md">
+        <p>
             {{ props.payload.generic.message }}:
-        </Text>
+        </p>
 
         <ui-list>
             <ui-item

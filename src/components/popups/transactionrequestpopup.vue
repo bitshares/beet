@@ -88,9 +88,9 @@
 </script>
 <template>
     <div style="padding:5px">
-        <Text>
+        <p>
             {{ tableTooltip }}
-        </Text>
+        </p>
         <div
             v-if="!!visualizedParams"
             class="text-left custom-content"
