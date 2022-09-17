@@ -123,23 +123,6 @@ let _blockchains = {
             }
         ]
     },
-    /*
-    WLS: {
-        coreSymbol: 'WLS',
-        name: 'WhaleShares',
-        chainId: '0',
-        nodeList: [
-            {
-                url: "https://wls.kennybll.com/",
-                location: "Unknown",
-                region: "Unknown",
-                country: "Unknown",
-                operator: "Beyond Bitcoin",
-                contact: "Discord Channel"
-            }
-        ]
-    },
-    */
     EOS: {
         coreSymbol: 'EOS',
         name: 'EOSmainnet',
@@ -169,7 +152,8 @@ let _blockchains = {
                 contact: "Greymass"
             }
         ]
-    },
+    }
+    /*,
     BNB_TEST: {
         coreSymbol: 'BNB',
         name: 'BinanceChain',
@@ -202,7 +186,23 @@ let _blockchains = {
                 contact: "Binance.org"
             }
         ]
-    }
+    },
+    WLS: {
+        coreSymbol: 'WLS',
+        name: 'WhaleShares',
+        chainId: '0',
+        nodeList: [
+            {
+                url: "https://wls.kennybll.com/",
+                location: "Unknown",
+                region: "Unknown",
+                country: "Unknown",
+                operator: "Beyond Bitcoin",
+                contact: "Discord Channel"
+            }
+        ]
+    },
+    */
 };
 
 Object.keys(_blockchains).forEach(key => {

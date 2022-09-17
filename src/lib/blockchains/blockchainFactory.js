@@ -7,10 +7,10 @@ import Bitcoin from "./Bitcoin";
 
 import Steem from "./Steem"
 import Hive from "./Hive"
-//import WhaleShares from "./WhaleShares";
 import EOSmainnet from "./EOSmainnet";
 import TLOS from "./TLOS";
-import Binance from "./Binance";
+//import Binance from "./Binance";
+//import WhaleShares from "./WhaleShares";
 
 let bts,bts_test,tusc,steem,hive,wls,eos,tlos,btc,btc_test,bnb,bnb_test;
 
@@ -97,18 +97,6 @@ export default function getBlockchainAPI(chain = null, node = null) {
             }
         }
         return hive;
-    /*
-    } else if (chain == "WLS") {
-        if (!wls) {
-            try {
-              wls = new WhaleShares(config, node);
-            } catch (error) {
-              console.log(error);
-              return;
-            }
-        }
-        return wls;
-    */
     } else if (chain == "EOS") {
         if (!apiCache.EOS) {
             apiCache.EOS = new EOSmainnet(config, node);
@@ -119,16 +107,28 @@ export default function getBlockchainAPI(chain = null, node = null) {
             apiCache.TLOS = new TLOS(config, node);
         }
         return apiCache.TLOS;
-    } else if (chain == "BNB") {
-        if (!apiCache.BNB) {
-            apiCache.BNB = new Binance(config, node);
+    }
+    /*
+        } else if (chain == "WLS") {
+            if (!wls) {
+                try {
+                wls = new WhaleShares(config, node);
+                } catch (error) {
+                console.log(error);
+                return;
+                }
+            }
+            return wls;
+        } else if (chain == "BNB") {
+            if (!apiCache.BNB) {
+                apiCache.BNB = new Binance(config, node);
+            }
+            return apiCache.BNB;
+        } else if (chain == "BNB_TEST") {
+            if (!apiCache.BNB_TEST) {
+                apiCache.BNB_TEST = new Binance(config, node);
+            }
+            return apiCache.BNB_TEST;
         }
-        return apiCache.BNB;
-    } else if (chain == "BNB_TEST") {
-        if (!apiCache.BNB_TEST) {
-            apiCache.BNB_TEST = new Binance(config, node);
-        }
-        return apiCache.BNB_TEST;
-    }*/
-
+    */
 }
