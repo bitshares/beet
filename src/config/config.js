@@ -92,8 +92,8 @@ let _blockchains = {
                 contact: "https://www.blockchain.com"
             }
         ]
-    }
-    /*STEEM: {
+    },
+    STEEM: {
         coreSymbol: 'STM',
         name: 'Steem',
         chainId: '0',
@@ -108,6 +108,22 @@ let _blockchains = {
             }
         ]
     },
+    HIVE: {
+        coreSymbol: 'HIVE',
+        name: 'Hive',
+        chainId: '0',
+        nodeList: [
+            {
+                url: "https://api.hive.blog	",
+                location: "Unknown",
+                region: "Unknown",
+                country: "Unknown",
+                operator: "Blocktrades.us",
+                contact: "https://hive.blog"
+            }
+        ]
+    },
+    /*
     WLS: {
         coreSymbol: 'WLS',
         name: 'WhaleShares',
@@ -123,6 +139,7 @@ let _blockchains = {
             }
         ]
     },
+    */
     EOS: {
         coreSymbol: 'EOS',
         name: 'EOSmainnet',
@@ -185,7 +202,7 @@ let _blockchains = {
                 contact: "Binance.org"
             }
         ]
-    }*/
+    }
 };
 
 Object.keys(_blockchains).forEach(key => {

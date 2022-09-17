@@ -5,15 +5,14 @@ import TUSC from "./TUSC"
 import store from "../../store";
 import Bitcoin from "./Bitcoin";
 
-/*
 import Steem from "./Steem"
-import WhaleShares from "./WhaleShares";
+import Hive from "./Hive"
+//import WhaleShares from "./WhaleShares";
 import EOSmainnet from "./EOSmainnet";
 import TLOS from "./TLOS";
 import Binance from "./Binance";
-*/
 
-let bts,bts_test,tusc,steem,wls,eos,tlos,btc,btc_test,bnb,bnb_test;
+let bts,bts_test,tusc,steem,hive,wls,eos,tlos,btc,btc_test,bnb,bnb_test;
 
 export default function getBlockchainAPI(chain = null, node = null) {
     if (chain == null) {
@@ -78,7 +77,7 @@ export default function getBlockchainAPI(chain = null, node = null) {
             }
         }
         return btc_test;
-    }/* else if (chain == "STEEM" || chain == "STM") {
+    } else if (chain == "STEEM" || chain == "STM") {
         if (!steem) {
             try {
               steem = new Steem(config, node);
@@ -88,6 +87,17 @@ export default function getBlockchainAPI(chain = null, node = null) {
             }
         }
         return steem;
+    } else if (chain == "HIVE") {
+        if (!hive) {
+            try {
+              steem = new Hive(config, node);
+            } catch (error) {
+              console.log(error);
+              return;
+            }
+        }
+        return hive;
+    /*
     } else if (chain == "WLS") {
         if (!wls) {
             try {
@@ -98,6 +108,7 @@ export default function getBlockchainAPI(chain = null, node = null) {
             }
         }
         return wls;
+    */
     } else if (chain == "EOS") {
         if (!apiCache.EOS) {
             apiCache.EOS = new EOSmainnet(config, node);
