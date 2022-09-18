@@ -1021,9 +1021,11 @@ export default class BitShares extends BlockchainAPI {
         let operations = [];
         let tr = this._parseTransactionBuilder(thing);
 
+        //  https://github.com/bitshares/bitsharesjs/blob/master/lib/serializer/src/operations.js#L1551
         for (let i = 0; i < tr.operations.length; i++) {
             let operation = tr.operations[i];
             if (operation[0] == 0) {
+                // transfer
                 let from;
                 try {
                   from = await this._getAccountName(operation[1].from);
@@ -1051,51 +1053,8 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(
                     from + " &#9657; " + formatAsset(operation[1].amount.amount, asset.symbol, asset.precision) + " &#9657; " + to
                 )
-            } else if (operation[0] == 25) {
-                let to;
-                try {
-                  to = await this._getAccountName(operation[1].authorized_account);
-                } catch (error) {
-                  console.log(error);
-                  return;
-                }
-
-                let asset;
-                try {
-                  asset = await this._resolveAsset(operation[1].withdrawal_limit.asset_id);
-                } catch (error) {
-                  console.log(error);
-                  return;
-                }
-
-                let period = operation[1].withdrawal_period_sec / 60 / 60 / 24;
-                operations.push(
-                    "Direct Debit Authorization\n" +
-                    " Recipient: " + to + "\n" +
-                    " Take " + formatAsset(operation[1].withdrawal_limit.amount, asset.symbol, asset.precision) + " every " + period + " days, for " + operation[1].periods_until_expiration + " periods"
-                )
-            } else if (operation[0] == 33) {
-                let owner;
-                try {
-                  owner = await this._getAccountName(operation[1].owner);
-                } catch (error) {
-                  console.log(error);
-                  return;
-                }
-
-                let asset;
-                try {
-                  asset = await this._resolveAsset(operation[1].amount.asset_id);
-                } catch (error) {
-                  console.log(error);
-                  return;
-                }
-
-                operations.push(
-                    "Vesting Balance\n" +
-                    " Claim " + formatAsset(operation[1].amount.amount, asset.symbol, asset.precision) + " from balance " + operation[1].vesting_balance
-                )
             } else if (operation[0] == 1) {
+                // limit_order_create
                 let seller;
                 try {
                   seller = await this._getAccountName(operation[1].seller);
@@ -1131,6 +1090,22 @@ export default class BitShares extends BlockchainAPI {
                     " Buy: " + formatAsset(operation[1].min_to_receive.amount, buy.symbol, buy.precision) + "\n" +
                     " Price: " + price.toPrecision(6) + " " + sell.symbol + "/" +  buy.symbol
                 )
+            } else if (operation[0] == 2) {
+                // limit_order_cancel
+            } else if (operation[0] == 3) {
+                // call_order_update
+            } else if (operation[0] == 4) {
+                // fill_order
+            } else if (operation[0] == 5) {
+                // account_create
+            } else if (operation[0] == 6) {
+                // account_update
+            } else if (operation[0] == 7) {
+                // account_whitelist
+            } else if (operation[0] == 8) {
+                // account_upgrade
+            } else if (operation[0] == 9) {
+                // account_transfer
             } else if (operation[0] == 10 || operation[0] == 11) {
                 // Create or Update an asset
 
@@ -1235,6 +1210,173 @@ export default class BitShares extends BlockchainAPI {
                 }
 
                 operations.push(operationString);
+            } else if (operation[0] == 12) {
+                // asset_update_bitasset
+            } else if (operation[0] == 13) {
+                // asset_update_feed_producers
+            } else if (operation[0] == 14) {
+                // asset_issue
+            } else if (operation[0] == 15) {
+                // asset_reserve
+            } else if (operation[0] == 16) {
+                // asset_fund_fee_pool
+            } else if (operation[0] == 17) {
+                // asset_settle
+            } else if (operation[0] == 18) {
+                // asset_global_settle
+            } else if (operation[0] == 19) {
+                // asset_publish_feed
+            } else if (operation[0] == 20) {
+                // witness_create
+            } else if (operation[0] == 21) {
+                // witness_update
+            } else if (operation[0] == 22) {
+                // proposal_create
+            } else if (operation[0] == 23) {
+                // proposal_update
+            } else if (operation[0] == 24) {
+                // proposal_delete
+            } else if (operation[0] == 25) {
+                //
+                let to;
+                try {
+                  to = await this._getAccountName(operation[1].authorized_account);
+                } catch (error) {
+                  console.log(error);
+                  return;
+                }
+
+                let asset;
+                try {
+                  asset = await this._resolveAsset(operation[1].withdrawal_limit.asset_id);
+                } catch (error) {
+                  console.log(error);
+                  return;
+                }
+
+                let period = operation[1].withdrawal_period_sec / 60 / 60 / 24;
+                operations.push(
+                    "Direct Debit Authorization\n" +
+                    " Recipient: " + to + "\n" +
+                    " Take " + formatAsset(operation[1].withdrawal_limit.amount, asset.symbol, asset.precision) + " every " + period + " days, for " + operation[1].periods_until_expiration + " periods"
+                )
+            } else if (operation[0] == 26) {
+                // withdraw_permission_update
+            } else if (operation[0] == 27) {
+                // withdraw_permission_claim
+            } else if (operation[0] == 28) {
+                // withdraw_permission_delete
+            } else if (operation[0] == 29) {
+                // committee_member_create
+            } else if (operation[0] == 30) {
+                // committee_member_update
+            } else if (operation[0] == 31) {
+                // committee_member_update_global_parameters
+            } else if (operation[0] == 32) {
+                // vesting_balance_create
+            } else if (operation[0] == 33) {
+                let owner;
+                try {
+                  owner = await this._getAccountName(operation[1].owner);
+                } catch (error) {
+                  console.log(error);
+                  return;
+                }
+
+                let asset;
+                try {
+                  asset = await this._resolveAsset(operation[1].amount.asset_id);
+                } catch (error) {
+                  console.log(error);
+                  return;
+                }
+
+                operations.push(
+                    "Vesting Balance\n" +
+                    " Claim " + formatAsset(operation[1].amount.amount, asset.symbol, asset.precision) + " from balance " + operation[1].vesting_balance
+                )
+            } else if (operation[0] == 34) {
+                // worker_create
+            } else if (operation[0] == 35) {
+                // custom
+            } else if (operation[0] == 36) {
+                // assert
+            } else if (operation[0] == 37) {
+                // balance_claim
+            } else if (operation[0] == 38) {
+                // override_transfer
+            } else if (operation[0] == 39) {
+                // transfer_to_blind
+            } else if (operation[0] == 40) {
+                // blind_transfer
+            } else if (operation[0] == 41) {
+                // transfer_from_blind
+            } else if (operation[0] == 42) {
+                // asset_settle_cancel
+            } else if (operation[0] == 43) {
+                // asset_claim_fees
+            } else if (operation[0] == 44) {
+                // fba_distribute
+            } else if (operation[0] == 45) {
+                // bid_collateral
+            } else if (operation[0] == 46) {
+                // execute_bid
+            } else if (operation[0] == 47) {
+                // asset_claim_pool
+            } else if (operation[0] == 48) {
+                // asset_update_issuer
+            } else if (operation[0] == 49) {
+                // htlc_create
+            } else if (operation[0] == 50) {
+                // htlc_redeem
+            } else if (operation[0] == 51) {
+                // htlc_redeemed
+            } else if (operation[0] == 52) {
+                // htlc_extend
+            } else if (operation[0] == 53) {
+                // htlc_refund
+            } else if (operation[0] == 54) {
+                // custom_authority_create
+            } else if (operation[0] == 55) {
+                // custom_authority_update
+            } else if (operation[0] == 56) {
+                // custom_authority_delete
+            } else if (operation[0] == 57) {
+                // ticket_create
+            } else if (operation[0] == 58) {
+                // ticket_update
+            } else if (operation[0] == 59) {
+                // liquidity_pool_create
+            } else if (operation[0] == 60) {
+                // liquidity_pool_delete
+            } else if (operation[0] == 61) {
+                // liquidity_pool_deposit
+            } else if (operation[0] == 62) {
+                // liquidity_pool_withdraw
+            } else if (operation[0] == 63) {
+                // liquidity_pool_exchange
+            } else if (operation[0] == 64) {
+                // samet_fund_create
+            } else if (operation[0] == 65) {
+                // samet_fund_delete
+            } else if (operation[0] == 66) {
+                // samet_fund_update
+            } else if (operation[0] == 67) {
+                // samet_fund_borrow
+            } else if (operation[0] == 68) {
+                // samet_fund_repay
+            } else if (operation[0] == 69) {
+                // credit_offer_create
+            } else if (operation[0] == 70) {
+                // credit_offer_delete
+            } else if (operation[0] == 71) {
+                // credit_offer_update
+            } else if (operation[0] == 72) {
+                // credit_offer_accept
+            } else if (operation[0] == 73) {
+                // credit_deal_repay
+            } else if (operation[0] == 74) {
+                // credit_deal_expired
             }
         }
 
