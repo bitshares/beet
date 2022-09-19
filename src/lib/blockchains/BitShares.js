@@ -1024,11 +1024,13 @@ export default class BitShares extends BlockchainAPI {
         //  https://github.com/bitshares/bitsharesjs/blob/master/lib/serializer/src/operations.js#L1551
         for (let i = 0; i < tr.operations.length; i++) {
             let operation = tr.operations[i];
-            if (operation[0] == 0) {
+            const operationType = operation[0];
+            const op = operation[1];
+            if (operationType == 0) {
                 // transfer
                 let from;
                 try {
-                  from = await this._getAccountName(operation[1].from);
+                  from = await this._getAccountName(op.from);
                 } catch (error) {
                   console.log(error);
                   return;
@@ -1036,7 +1038,7 @@ export default class BitShares extends BlockchainAPI {
 
                 let to;
                 try {
-                  to = await this._getAccountName(operation[1].to);
+                  to = await this._getAccountName(op.to);
                 } catch (error) {
                   console.log(error);
                   return;
@@ -1044,20 +1046,20 @@ export default class BitShares extends BlockchainAPI {
 
                 let asset;
                 try {
-                  asset = await this._resolveAsset(operation[1].amount.asset_id);
+                  asset = await this._resolveAsset(op.amount.asset_id);
                 } catch (error) {
                   console.log(error);
                   return;
                 }
 
                 operations.push(
-                    from + " &#9657; " + formatAsset(operation[1].amount.amount, asset.symbol, asset.precision) + " &#9657; " + to
+                    from + " &#9657; " + formatAsset(op.amount.amount, asset.symbol, asset.precision) + " &#9657; " + to
                 )
-            } else if (operation[0] == 1) {
+            } else if (operationType == 1) {
                 // limit_order_create
                 let seller;
                 try {
-                  seller = await this._getAccountName(operation[1].seller);
+                  seller = await this._getAccountName(op.seller);
                 } catch (error) {
                   console.log(error);
                   return;
@@ -1065,7 +1067,7 @@ export default class BitShares extends BlockchainAPI {
 
                 let buy;
                 try {
-                  buy = await this._resolveAsset(operation[1].min_to_receive.asset_id);
+                  buy = await this._resolveAsset(op.min_to_receive.asset_id);
                 } catch (error) {
                   console.log(error);
                   return;
@@ -1073,50 +1075,106 @@ export default class BitShares extends BlockchainAPI {
 
                 let sell;
                 try {
-                  sell = await this._resolveAsset(operation[1].amount_to_sell.asset_id);
+                  sell = await this._resolveAsset(op.amount_to_sell.asset_id);
                 } catch (error) {
                   console.log(error);
                   return;
                 }
 
-                let fillOrKill = operation[1].amount_to_sell.fill_or_kill;
+                let fillOrKill = op.amount_to_sell.fill_or_kill;
 
-                let price = humanReadableFloat(operation[1].amount_to_sell.amount, sell.precision)
-                    / humanReadableFloat(operation[1].min_to_receive.amount, buy.precision);
+                let price = humanReadableFloat(op.amount_to_sell.amount, sell.precision)
+                    / humanReadableFloat(op.min_to_receive.amount, buy.precision);
 
                 operations.push(
                     "Trade" + (fillOrKill ? "(Fill or Kill)" : "") + "\n" +
-                    " Sell: " + formatAsset(operation[1].amount_to_sell.amount, sell.symbol, sell.precision) + "\n" +
-                    " Buy: " + formatAsset(operation[1].min_to_receive.amount, buy.symbol, buy.precision) + "\n" +
+                    " Sell: " + formatAsset(op.amount_to_sell.amount, sell.symbol, sell.precision) + "\n" +
+                    " Buy: " + formatAsset(op.min_to_receive.amount, buy.symbol, buy.precision) + "\n" +
                     " Price: " + price.toPrecision(6) + " " + sell.symbol + "/" +  buy.symbol
                 )
-            } else if (operation[0] == 2) {
+            } else if (operationType == 2) {
                 // limit_order_cancel
-            } else if (operation[0] == 3) {
+                operations.push(
+                    "Cancel the following limit order?\n" +
+                    "Order ID: " + op.order + "\n" + 
+                    "Estimated fee: " + op.fee + "\n" +
+                    "Fee paying account:" + op.fee_paying_account
+                )
+            } else if (operationType == 3) {
                 // call_order_update
-            } else if (operation[0] == 4) {
+                operations.push(
+                    "Update your call order to the following?\n" +
+                    "funding_account: " + op.funding_account + "\n" +
+                    "delta_collateral" + op.delta_collateral + "\n" +
+                    "delta_debt" + op.delta_debt + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 4) {
                 // fill_order
-            } else if (operation[0] == 5) {
+                operations.push(
+                    "Fill order: \n" +
+                    "order_id: " + op.order_id + "\n" +
+                    "account_id: " + op.account_id + "\n" +
+                    "pays: " + op.pays + "\n" +
+                    "receives: " + op.receives + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 5) {
                 // account_create
-            } else if (operation[0] == 6) {
+                operations.push(
+                    "Do you want to create the following account? \n" +
+                    "registrar: " + op.registrar + "\n" +
+                    "referrer: " + op.referrer + "\n" +
+                    "referrer_percent: " + op.referrer_percent + "\n" +
+                    "name " + op.name + "\n" +
+                    "owner: " + op.owner + "\n" +
+                    "active: " + op.active + "\n" +
+                    "options: " + op.options + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 6) {
                 // account_update
-            } else if (operation[0] == 7) {
+                operations.push(
+                    "Do you want to approve this account update? \n" +
+                    "Warning: This action is irreversible. \n" +
+                    "authorizing_account: " + op.authorizing_account + "\n" +
+                    "account_to_list: " + op.account_to_list + "\n" +
+                    "new_listing: " + op.new_listing + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 7) {
                 // account_whitelist
-            } else if (operation[0] == 8) {
+                operations.push(
+                    "Account whitelist details: \n" +
+                    "authorizing_account: " + op.authorizing_account + "\n" +
+                    "account_to_list: " + op.account_to_list + "\n" +
+                    "new_listing: " + op.new_listing + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 8) {
                 // account_upgrade
-            } else if (operation[0] == 9) {
+                operations.push(
+                    "Update account to lifetime member? \n" +
+                    "account_to_upgrade: " + op.account_to_upgrade + "\n" +
+                    "upgrade_to_lifetime_member: " + op.upgrade_to_lifetime_member + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 9) {
                 // account_transfer
-            } else if (operation[0] == 10 || operation[0] == 11) {
+                operations.push(
+                    "Transfer account to a new owner? \n" +
+                    "Warning: This action is irreversible. \n" +
+                    "account_id: " + op.account_id + "\n" +
+                    "new_owner: " + op.new_owner + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 10 || operationType == 11) {
                 // Create or Update an asset
-
-
-                let op = operation[1];
-
                 let asset;
-                if (operation[0] == 11) {
+                if (operationType == 11) {
                     // fetch asset to update
                     try {
-                      asset = await this._resolveAsset(operation[1].asset_to_update);
+                      asset = await this._resolveAsset(op.asset_to_update);
                     } catch (error) {
                       console.log(error);
                       return;
@@ -1210,37 +1268,132 @@ export default class BitShares extends BlockchainAPI {
                 }
 
                 operations.push(operationString);
-            } else if (operation[0] == 12) {
+            } else if (operationType == 12) {
                 // asset_update_bitasset
-            } else if (operation[0] == 13) {
+                operations.push(
+                    "Approve bitasset update? \n" +
+                    "issuer: " + op.issuer + "\n" +
+                    "asset_to_update: " + op.asset_to_update + "\n" +
+                    "new_options: " + op.new_options + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 13) {
                 // asset_update_feed_producers
-            } else if (operation[0] == 14) {
+                operations.push(
+                    "Approve change to bitasset feed producers? \n" +
+                    "issuer: " + op.issuer + "\n" +
+                    "asset_to_update: " + op.asset_to_update + "\n" +
+                    "new_feed_producers: " + op.new_feed_producers + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 14) {
                 // asset_issue
-            } else if (operation[0] == 15) {
+                operations.push(
+                    "Issue asset to the following user? \n" +
+                    "issuer: " + op.issuer + "\n" +
+                    "asset_to_issue: " + op.asset_to_issue + "\n" +
+                    "issue_to_account: " + op.issue_to_account + "\n" +
+                    "memo: " + op.memo + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 15) {
                 // asset_reserve
-            } else if (operation[0] == 16) {
+                operations.push(
+                    "Approve the following asset reservation? \n" +
+                    "payer: " + op.payer + "\n" +
+                    "amount_to_reserve: " + op.amount_to_reserve + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 16) {
                 // asset_fund_fee_pool
-            } else if (operation[0] == 17) {
+                operations.push(
+                    "Fund the following asset's fee pool? \n" +
+                    "from_account: " + op.from_account + "\n" +
+                    "asset_id: " + op.asset_id + "\n" +
+                    "amount: " + op.amount + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 17) {
                 // asset_settle
-            } else if (operation[0] == 18) {
+                operations.push(
+                    "Settle the following asset for its backing collateral? \n" +
+                    "account: " + op.account + "\n" +
+                    "amount: " + op.amount + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 18) {
                 // asset_global_settle
-            } else if (operation[0] == 19) {
+                operations.push(
+                    "Perform global settlement on the following asset? \n" +
+                    "issuer: " + op.issuer + "\n" +
+                    "asset_to_settle: " + op.asset_to_settle + "\n" +
+                    "settle_price: " + op.settle_price + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 19) {
                 // asset_publish_feed
-            } else if (operation[0] == 20) {
+                operations.push(
+                    "Publish a price feed for the following asset? \n" +
+                    "publisher: " + op.publisher + "\n" +
+                    "asset_id: " + op.asset_id + "\n" +
+                    "feed: " + op.feed + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 20) {
                 // witness_create
-            } else if (operation[0] == 21) {
+                operations.push(
+                    "Create a witness with the following details? \n" +
+                    "witness_account: " + op.witness_account + "\n" +
+                    "url: " + op.url + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 21) {
                 // witness_update
-            } else if (operation[0] == 22) {
+                operations.push(
+                    "Update witness details to the following? \n" +
+                    "witness: " + op.witness + "\n" +
+                    "witness_account: " + op.witness_account + "\n" +
+                    "new_url: " + op.new_url + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 22) {
                 // proposal_create
-            } else if (operation[0] == 23) {
+                operations.push(
+                    "Create the following proposal? \n" +
+                    "expiration_time: " + op.expiration_time + "\n" +
+                    "proposed_ops: " + op.proposed_ops + "\n" +
+                    "review_period_seconds: " + op.review_period_seconds + "\n" +
+                    "fee_paying_account: " + op.fee_paying_account + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 23) {
                 // proposal_update
-            } else if (operation[0] == 24) {
+                operations.push(
+                    "Update the following proposal details? \n" +
+                    "proposal: " + op.proposal + "\n" +
+                    "active_approvals_to_add: " + op.active_approvals_to_add + "\n" +
+                    "active_approvals_to_remove: " + op.active_approvals_to_remove + "\n" +
+                    "owner_approvals_to_add: " + op.owner_approvals_to_add + "\n" +
+                    "owner_approvals_to_remove: " + op.owner_approvals_to_remove + "\n" +
+                    "key_approvals_to_add: " + op.key_approvals_to_add + "\n" +
+                    "key_approvals_to_remove: " + op.key_approvals_to_remove + "\n" +
+                    "fee_paying_account: " + op.fee_paying_account + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 24) {
                 // proposal_delete
-            } else if (operation[0] == 25) {
+                operations.push(
+                    "Delete the following proposal? \n" +
+                    "using_owner_authority: " + op.using_owner_authority + "\n" +
+                    "proposal: " + op.proposal + "\n" +
+                    "fee_paying_account: " + op.fee_paying_account + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 25) {
                 //
                 let to;
                 try {
-                  to = await this._getAccountName(operation[1].authorized_account);
+                  to = await this._getAccountName(op.authorized_account);
                 } catch (error) {
                   console.log(error);
                   return;
@@ -1248,36 +1401,87 @@ export default class BitShares extends BlockchainAPI {
 
                 let asset;
                 try {
-                  asset = await this._resolveAsset(operation[1].withdrawal_limit.asset_id);
+                  asset = await this._resolveAsset(op.withdrawal_limit.asset_id);
                 } catch (error) {
                   console.log(error);
                   return;
                 }
 
-                let period = operation[1].withdrawal_period_sec / 60 / 60 / 24;
+                let period = op.withdrawal_period_sec / 60 / 60 / 24;
                 operations.push(
                     "Direct Debit Authorization\n" +
                     " Recipient: " + to + "\n" +
-                    " Take " + formatAsset(operation[1].withdrawal_limit.amount, asset.symbol, asset.precision) + " every " + period + " days, for " + operation[1].periods_until_expiration + " periods"
+                    " Take " + formatAsset(op.withdrawal_limit.amount, asset.symbol, asset.precision) + " every " + period + " days, for " + op.periods_until_expiration + " periods"
                 )
-            } else if (operation[0] == 26) {
+            } else if (operationType == 26) {
                 // withdraw_permission_update
-            } else if (operation[0] == 27) {
+                operations.push(
+                    "Update witness permissions to the following? \n" +
+                    "withdraw_from_account: " + op.withdraw_from_account + "\n" +
+                    "authorized_account: " + op.authorized_account + "\n" +
+                    "permission_to_update: " + op.permission_to_update + "\n" +
+                    "withdrawal_limit: " + op.withdrawal_limit + "\n" +
+                    "withdrawal_period_sec: " + op.withdrawal_period_sec + "\n" +
+                    "period_start_time: " + op.period_start_time + "\n" +
+                    "periods_until_expiration: " + op.periods_until_expiration + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 27) {
                 // withdraw_permission_claim
-            } else if (operation[0] == 28) {
+                operations.push(
+                    "Claim the following withdrawal permission? \n" +
+                    "withdraw_permission: " + op.withdraw_permission + "\n" +
+                    "withdraw_from_account: " + op.withdraw_from_account + "\n" +
+                    "withdraw_to_account: " + op.withdraw_to_account + "\n" +
+                    "amount_to_withdraw: " + op.amount_to_withdraw + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 28) {
                 // withdraw_permission_delete
-            } else if (operation[0] == 29) {
+                operations.push(
+                    "Delete the following withdraw permission? \n" +
+                    "withdraw_from_account: " + op.withdraw_from_account + "\n" +
+                    "authorized_account: " + op.authorized_account + "\n" +
+                    "withdrawal_permission: " + op.withdrawal_permission + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 29) {
                 // committee_member_create
-            } else if (operation[0] == 30) {
+                operations.push(
+                    "Create a committee member? \n" +
+                    "committee_member_account: " + op.committee_member_account + "\n" +
+                    "url: " + op.url + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 30) {
                 // committee_member_update
-            } else if (operation[0] == 31) {
+                operations.push(
+                    "Update the following committee member's details? \n" +
+                    "committee_member: " + op.committee_member + "\n" +
+                    "committee_member_account: " + op.committee_member_account + "\n" +
+                    "new_url: " + op.new_url + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 31) {
                 // committee_member_update_global_parameters
-            } else if (operation[0] == 32) {
+                operations.push(
+                    "Approve of following global parameters as a committee? \n" +
+                    "new_parameters: " + op.new_parameters + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 32) {
                 // vesting_balance_create
-            } else if (operation[0] == 33) {
+                operations.push(
+                    "Create the following vesting balance? \n" +
+                    "vesting_balance: " + op.vesting_balance + "\n" +
+                    "owner: " + op.owner + "\n" +
+                    "amount: " + op.amount + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 33) {
                 let owner;
                 try {
-                  owner = await this._getAccountName(operation[1].owner);
+                  owner = await this._getAccountName(op.owner);
                 } catch (error) {
                   console.log(error);
                   return;
@@ -1285,7 +1489,7 @@ export default class BitShares extends BlockchainAPI {
 
                 let asset;
                 try {
-                  asset = await this._resolveAsset(operation[1].amount.asset_id);
+                  asset = await this._resolveAsset(op.amount.asset_id);
                 } catch (error) {
                   console.log(error);
                   return;
@@ -1293,90 +1497,425 @@ export default class BitShares extends BlockchainAPI {
 
                 operations.push(
                     "Vesting Balance\n" +
-                    " Claim " + formatAsset(operation[1].amount.amount, asset.symbol, asset.precision) + " from balance " + operation[1].vesting_balance
+                    " Claim " + formatAsset(op.amount.amount, asset.symbol, asset.precision) + " from balance " + op.vesting_balance
                 )
-            } else if (operation[0] == 34) {
+            } else if (operationType == 34) {
                 // worker_create
-            } else if (operation[0] == 35) {
+                operations.push(
+                    "Create the following worker proposal? \n" +
+                    "owner: " + op.owner + "\n" +
+                    "work_begin_date: " + op.work_begin_date + "\n" +
+                    "work_end_date: " + op.work_end_date + "\n" +
+                    "daily_pay: " + op.daily_pay + "\n" +
+                    "name: " + op.name + "\n" +
+                    "url: " + op.url + "\n" +
+                    "initializer: " + op.initializer + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 35) {
                 // custom
-            } else if (operation[0] == 36) {
+                operations.push(
+                    "Custom operation: \n" +
+                    "payer: " + op.payer + "\n" +
+                    "required_auths: " + op.required_auths + "\n" +
+                    "id: " + op.id + "\n" +
+                    "data: " + op.data + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 36) {
                 // assert
-            } else if (operation[0] == 37) {
+                operations.push(
+                    "Assert operation: \n" +
+                    "deposit_to_account: " + op.deposit_to_account + "\n" +
+                    "balance_to_claim: " + op.balance_to_claim + "\n" +
+                    "balance_owner_key: " + op.balance_owner_key + "\n" +
+                    "total_claimed: " + op.total_claimed + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 37) {
                 // balance_claim
-            } else if (operation[0] == 38) {
+                operations.push(
+                    "Claim the following balance? \n" +
+                    "deposit_to_account: " + op.deposit_to_account + "\n" +
+                    "balance_to_claim: " + op.balance_to_claim + "\n" +
+                    "balance_owner_key: " + op.balance_owner_key + "\n" +
+                    "total_claimed: " + op.total_claimed + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 38) {
                 // override_transfer
-            } else if (operation[0] == 39) {
+                operations.push(
+                    "Override the following transfer? \n" +
+                    "issuer: " + op.issuer + "\n" +
+                    "from: " + op.from + "\n" +
+                    "to: " + op.to + "\n" +
+                    "amount: " + op.amount + "\n" +
+                    "memo: " + op.memo + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 39) {
                 // transfer_to_blind
-            } else if (operation[0] == 40) {
+                operations.push(
+                    "Transfer the following to blind? \n" +
+                    "amount: " + op.amount + "\n" +
+                    "from: " + op.from + "\n" +
+                    "blinding_factor: " + op.blinding_factor + "\n" +
+                    "outputs: " + op.outputs + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 40) {
                 // blind_transfer
-            } else if (operation[0] == 41) {
+                operations.push(
+                    "Approve the following blind transfer? \n" +
+                    "inputs: " + op.inputs + "\n" +
+                    "outputs: " + op.outputs + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 41) {
                 // transfer_from_blind
-            } else if (operation[0] == 42) {
+                operations.push(
+                    "Transfer from blind? \n" +
+                    "amount: " + op.amount + "\n" +
+                    "to: " + op.to + "\n" +
+                    "blinding_factor: " + op.blinding_factor + "\n" +
+                    "inputs: " + op.inputs + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 42) {
                 // asset_settle_cancel
-            } else if (operation[0] == 43) {
+                operations.push(
+                    "Cancel the following asset settlement? \n" +
+                    "settlement: " + op.settlement + "\n" +
+                    "account: " + op.account + "\n" +
+                    "amount: " + op.amount + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 43) {
                 // asset_claim_fees
-            } else if (operation[0] == 44) {
+                operations.push(
+                    "Withdraw the fees from the following asset? \n" +
+                    "issuer: " + op.issuer + "\n" +
+                    "amount_to_claim: " + op.amount_to_claim + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 44) {
                 // fba_distribute
-            } else if (operation[0] == 45) {
+                operations.push(
+                    "Approve the following FBA Distribution? \n" +
+                    "account_id: " + op.account_id + "\n" +
+                    "fba_id: " + op.fba_id + "\n" +
+                    "amount: " + op.amount + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 45) {
                 // bid_collateral
-            } else if (operation[0] == 46) {
+                operations.push(
+                    "Approve the following collateral bid? \n" +
+                    "bidder: " + op.bidder + "\n" +
+                    "additional_collateral: " + op.additional_collateral + "\n" +
+                    "debt_covered: " + op.debt_covered + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 46) {
                 // execute_bid
-            } else if (operation[0] == 47) {
+                operations.push(
+                    "Approve the following collateral bid execution? \n" +
+                    "bidder: " + op.bidder + "\n" +
+                    "debt: " + op.debt + "\n" +
+                    "collateral: " + op.collateral + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 47) {
                 // asset_claim_pool
-            } else if (operation[0] == 48) {
+                operations.push(
+                    "Claim assets from pool? \n" +
+                    "issuer: " + op.issuer + "\n" +
+                    "asset_id: " + op.asset_id + "\n" +
+                    "amount_to_claim: " + op.amount_to_claim + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 48) {
                 // asset_update_issuer
-            } else if (operation[0] == 49) {
+                operations.push(
+                    "Update asset issuer? \n" +
+                    "issuer: " + op.issuer + "\n" +
+                    "asset_to_update: " + op.asset_to_update + "\n" +
+                    "new_issuer: " + op.new_issuer + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 49) {
                 // htlc_create
-            } else if (operation[0] == 50) {
+                operations.push(
+                    "Create the following HTLC operaton? \n" +
+                    "from: " + op.from + "\n" +
+                    "to: " + op.to + "\n" +
+                    "amount: " + op.amount + "\n" +
+                    "preimage_hash: " + op.preimage_hash + "\n" +
+                    "preimage_size: " + op.preimage_size + "\n" +
+                    "claim_period_seconds: " + op.claim_period_seconds + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 50) {
                 // htlc_redeem
-            } else if (operation[0] == 51) {
+                operations.push(
+                    "Redeem the following HTLC operation? \n" +
+                    "htlc_id: " + op.htlc_id + "\n" +
+                    "redeemer: " + op.redeemer + "\n" +
+                    "preimage: " + op.preimage + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 51) {
                 // htlc_redeemed
-            } else if (operation[0] == 52) {
+                operations.push(
+                    "Redeeming the following HTLC operation \n" +
+                    "htlc_id: " + op.htlc_id + "\n" +
+                    "from: " + op.from + "\n" +
+                    "to: " + op.to + "\n" +
+                    "amount: " + op.amount + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 52) {
                 // htlc_extend
-            } else if (operation[0] == 53) {
+                operations.push(
+                    "Approve the following HTLC extension? \n" +
+                    "htlc_id: " + op.htlc_id + "\n" +
+                    "update_issuer: " + op.update_issuer + "\n" +
+                    "seconds_to_add: " + op.seconds_to_add + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 53) {
                 // htlc_refund
-            } else if (operation[0] == 54) {
+                operations.push(
+                    "Approve the following HTLC refund? \n" +
+                    "htlc_id: " + op.htlc_id + "\n" +
+                    "to: " + op.to + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 54) {
                 // custom_authority_create
-            } else if (operation[0] == 55) {
+                operations.push(
+                    "Create the following custom authority? \n" +
+                    "account: " + op.account + "\n" +
+                    "enabled: " + op.enabled + "\n" +
+                    "valid_from: " + op.valid_from + "\n" +
+                    "valid_to: " + op.valid_to + "\n" +
+                    "operation_type: " + op.operation_type + "\n" +
+                    "auth: " + op.auth + "\n" +
+                    "restrictions: " + op.restrictions + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 55) {
                 // custom_authority_update
-            } else if (operation[0] == 56) {
+                operations.push(
+                    "Update the following custom authority? \n" +
+                    "account: " + op.account + "\n" +
+                    "authority_to_update: " + op.authority_to_update + "\n" +
+                    "new_enabled: " + op.new_enabled + "\n" +
+                    "new_valid_from: " + op.new_valid_from + "\n" +
+                    "new_valid_to: " + op.new_valid_to + "\n" +
+                    "new_auth: " + op.new_auth + "\n" +
+                    "restrictions_to_remove: " + op.restrictions_to_remove + "\n" +
+                    "restrictions_to_add: " + op.restrictions_to_add + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 56) {
                 // custom_authority_delete
-            } else if (operation[0] == 57) {
+                operations.push(
+                    "Delete the following custom authority? \n" +
+                    "account: " + op.account + "\n" +
+                    "authority_to_delete: " + op.authority_to_delete + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 57) {
                 // ticket_create
-            } else if (operation[0] == 58) {
+                operations.push(
+                    "Create the following ticket? \n" +
+                    "account: " + op.account + "\n" +
+                    "target_type: " + op.target_type + "\n" +
+                    "amount: " + op.amount + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 58) {
                 // ticket_update
-            } else if (operation[0] == 59) {
+                operations.push(
+                    "Update the following ticket? \n" +
+                    "ticket: " + op.ticket + "\n" +
+                    "account: " + op.account + "\n" +
+                    "target_type: " + op.target_type + "\n" +
+                    "amount_for_new_target: " + op.amount_for_new_target + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 59) {
                 // liquidity_pool_create
-            } else if (operation[0] == 60) {
+                operations.push(
+                    "Create a liquidity pool with the following details? \n" +
+                    "account: " + op.account + "\n" +
+                    "asset_a: " + op.asset_a + "\n" +
+                    "asset_b: " + op.asset_b + "\n" +
+                    "share_asset: " + op.share_asset + "\n" +
+                    "taker_fee_percent: " + op.taker_fee_percent + "\n" +
+                    "withdrawal_fee_percent: " + op.withdrawal_fee_percent + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 60) {
                 // liquidity_pool_delete
-            } else if (operation[0] == 61) {
+                operations.push(
+                    "Delete the following liquidity pool? \n" +
+                    "account: " + op.account + "\n" +
+                    "pool: " + op.pool + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 61) {
                 // liquidity_pool_deposit
-            } else if (operation[0] == 62) {
+                operations.push(
+                    "Deposit into the following liquidity pool? \n" +
+                    "account: " + op.account + "\n" +
+                    "pool: " + op.pool + "\n" +
+                    "amount_a: " + op.amount_a + "\n" +
+                    "amount_b: " + op.amount_b + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 62) {
                 // liquidity_pool_withdraw
-            } else if (operation[0] == 63) {
+                operations.push(
+                    "Withdraw from the following liquidity pool? \n" +
+                    "account: " + op.account + "\n" +
+                    "pool: " + op.pool + "\n" +
+                    "share_amount: " + op.share_amount + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 63) {
                 // liquidity_pool_exchange
-            } else if (operation[0] == 64) {
+                operations.push(
+                    "Approve of the following liquidity pool exchange? \n" +
+                    "account: " + op.account + "\n" +
+                    "pool: " + op.pool + "\n" +
+                    "amount_to_sell: " + op.amount_to_sell + "\n" +
+                    "min_to_receive: " + op.min_to_receive + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 64) {
                 // samet_fund_create
-            } else if (operation[0] == 65) {
+                operations.push(
+                    "Approve of the following samet fund creation? \n" +
+                    "owner_account: " + op.owner_account + "\n" +
+                    "asset_type: " + op.asset_type + "\n" +
+                    "balance: " + op.balance + "\n" +
+                    "fee_rate: " + op.fee_rate + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 65) {
                 // samet_fund_delete
-            } else if (operation[0] == 66) {
+                operations.push(
+                    "Deleting the following samet fund \n" +
+                    "owner_account: " + op.owner_account + "\n" +
+                    "fund_id: " + op.fund_id + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 66) {
                 // samet_fund_update
-            } else if (operation[0] == 67) {
+                operations.push(
+                    "Update the following samet fund? \n" +
+                    "owner_account: " + op.owner_account + "\n" +
+                    "fund_id: " + op.fund_id + "\n" +
+                    "delta_amount: " + op.delta_amount + "\n" +
+                    "new_fee_rate: " + op.new_fee_rate + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 67) {
                 // samet_fund_borrow
-            } else if (operation[0] == 68) {
+                operations.push(
+                    "Borrow from the folling samet fund? \n" +
+                    "borrower: " + op.borrower + "\n" +
+                    "fund_id: " + op.fund_id + "\n" +
+                    "borrow_amount: " + op.borrow_amount + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 68) {
                 // samet_fund_repay
-            } else if (operation[0] == 69) {
+                operations.push(
+                    "Repay the following samet fund? \n" +
+                    "account: " + op.account + "\n" +
+                    "fund_id: " + op.fund_id + "\n" +
+                    "repay_amount: " + op.repay_amount + "\n" +
+                    "fund_fee: " + op.fund_fee + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 69) {
                 // credit_offer_create
-            } else if (operation[0] == 70) {
+                operations.push(
+                    "Approve the creation of the following credit offer? \n" +
+                    "owner_account: " + op.owner_account + "\n" +
+                    "asset_type: " + op.asset_type + "\n" +
+                    "balance: " + op.balance + "\n" +
+                    "fee_rate: " + op.fee_rate + "\n" +
+                    "max_duration_seconds: " + op.max_duration_seconds + "\n" +
+                    "min_deal_amount: " + op.min_deal_amount + "\n" +
+                    "enabled: " + op.enabled + "\n" +
+                    "auto_disable_time: " + op.auto_disable_time + "\n" +
+                    "acceptable_collateral: " + op.acceptable_collateral + "\n" +
+                    "acceptable_borrowers: " + op.acceptable_borrowers + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 70) {
                 // credit_offer_delete
-            } else if (operation[0] == 71) {
+                operations.push(
+                    "Delete the following credit offer? \n" +
+                    "owner_account: " + op.owner_account + "\n" +
+                    "offer_id: " + op.offer_id + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 71) {
                 // credit_offer_update
-            } else if (operation[0] == 72) {
+                operations.push(
+                    "Update the following credit offer? \n" +
+                    "owner_account: " + op.owner_account + "\n" +
+                    "offer_id: " + op.offer_id + "\n" +
+                    "delta_amount: " + op.delta_amount + "\n" +
+                    "fee_rate: " + op.fee_rate + "\n" +
+                    "max_duration_seconds: " + op.max_duration_seconds + "\n" +
+                    "min_deal_amount: " + op.min_deal_amount + "\n" +
+                    "enabled: " + op.enabled + "\n" +
+                    "auto_disable_time: " + op.auto_disable_time + "\n" +
+                    "acceptable_collateral: " + op.acceptable_collateral + "\n" +
+                    "acceptable_borrowers: " + op.acceptable_borrowers + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 72) {
                 // credit_offer_accept
-            } else if (operation[0] == 73) {
+                operations.push(
+                    "Approve of the following credit offer? \n" +
+                    "borrower: " + op.borrower + "\n" +
+                    "offer_id: " + op.offer_id + "\n" +
+                    "borrow_amount: " + op.borrow_amount + "\n" +
+                    "collateral: " + op.collateral + "\n" +
+                    "max_fee_rate: " + op.max_fee_rate + "\n" +
+                    "min_duration_seconds: " + op.min_duration_seconds + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 73) {
                 // credit_deal_repay
-            } else if (operation[0] == 74) {
+                operations.push(
+                    "Repay the following credit deal? \n" +
+                    "account: " + op.account + "\n" +
+                    "deal_id: " + op.deal_id + "\n" +
+                    "repay_amount: " + op.repay_amount + "\n" +
+                    "credit_fee: " + op.credit_fee + "\n" +
+                    "Estimated fee: " + op.fee
+                )
+            } else if (operationType == 74) {
                 // credit_deal_expired
+                operations.push(
+                    "Acknowledge credit deal expiration? \n" +
+                    "deal_id: " + op.deal_id + "\n" +
+                    "offer_id: " + op.offer_id + "\n" +
+                    "offer_owner: " + op.offer_owner + "\n" +
+                    "borrower: " + op.borrower + "\n" +
+                    "unpaid_amount: " + op.unpaid_amount + "\n" +
+                    "collateral: " + op.collateral + "\n" +
+                    "fee_rate: " + op.fee_rate + "\n" +
+                    "Estimated fee: " + op.fee
+                )
             }
         }
 
