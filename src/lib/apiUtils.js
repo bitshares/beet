@@ -275,12 +275,52 @@ export async function injectedCall(request, blockchain) {
       return _promptFail("injectedCall", 'injectedCall', request, reject);
     }
 
+    // extract account_ids from request.payload.params
+    let stringifiedPayload = JSON.stringify(request.payload.params);
+    let regex = /1.2.\d+/g
+    let regexMatches = stringifiedPayload.matchAll(regex);
+    let foundIDs = [];
+    for (const match of regexMatches) {foundIDs.push(match[0]);}
+    
+    let isBlocked;
+    let blockedAccounts;
+    if (foundIDs.length) {
+        // Won't catch account names, only account IDs
+        try {
+            blockedAccounts = await blockchain.getBlockedAccounts();
+        } catch (error) {
+            console.log(error);
+        }
+
+        const isBadActor = (actor) => blockedAccounts.find(x => x === actor) ? true : false;
+        isBlocked = foundIDs.some(isBadActor);
+    }
+
     let visualizedParams;
     try {
         visualizedParams = await blockchain.visualize(request.payload.params);
     } catch (error) {
         console.log(error);
         return _promptFail("injectedCall", request.id, request, reject);
+    }
+
+    if (!isBlocked && visualizedParams) {
+        // account names will have 1.2.x in parenthesis now - check again
+        if (!blockedAccounts) {
+            try {
+                blockedAccounts = await blockchain.getBlockedAccounts();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
+        let strVirtParams = JSON.stringify(visualizedParams);
+        let regexMatches = strVirtParams.matchAll(regex);
+    
+        for (const match of regexMatches) {foundIDs.push(match[0]);}
+
+        const isBadActor = (actor) => blockedAccounts.find(x => x === actor) ? true : false;
+        isBlocked = foundIDs.some(isBadActor);
     }
 
     let visualizedAccount;
@@ -291,17 +331,55 @@ export async function injectedCall(request, blockchain) {
         return _promptFail("injectedCall", request.id, request, reject);
     }
 
-    ipcRenderer.send(
-      'createPopup',
-      {
+    let popupContents = {
         request: request,
         visualizedAccount: visualizedAccount,
         visualizedParams: visualizedParams
-      }
-    );
+    };
+
+    if (foundIDs.length) {
+        popupContents['isBlockedAccount'] = isBlocked;
+    }
+
+    if (!blockedAccounts || !blockedAccounts.length) {
+        popupContents['serverError'] = true,
+    }
+
+    ipcRenderer.send('createPopup', popupContent);
 
     ipcRenderer.once(`popupApproved_${request.id}`, async (event, result) => {
-      return _signOrBroadcast(blockchain, request, resolve, reject);
+        let memoObject;
+        let reference = request;
+        if (request.payload.memo) {
+            let from;
+            let to;
+            if (request.payload.from) {
+                from = request.payload.from;
+                to = request.payload.to;
+            } else if (request.payload.withdraw_from_account) {
+                from = request.payload.withdraw_from_account;
+                to = request.payload.withdraw_to_account;
+            } else if (request.payload.issuer) {
+                from = request.payload.issuer;
+                to = request.payload.issue_to_account;
+            }
+
+            try {
+                memoObject = blockchain._createMemoObject(
+                    from,
+                    to,
+                    request.payload.memo,
+                    optionalNonce,
+                    encryptMemo
+                );
+            } catch (error) {
+                console.log(error);
+            }
+
+            reference.payload.memo = memoObject;
+        }
+
+        return _signOrBroadcast(blockchain, reference, resolve, reject);
     })
 
     ipcRenderer.once(`popupRejected_${request.id}`, (event, result) => {
@@ -571,55 +649,30 @@ export async function transfer(request, blockchain) {
       return _promptFail("transfer", request.id, 'No toSend', reject);
     }
 
+    let targetID;
     let targetAccount = request.payload.params.to;
+    if (!targetAccount.includes("1.2.")) {
+        let targetAccountContents;
+        try {
+            targetAccountContents = await this.getAccount(targetAccount);
+        } catch (error) {
+            console.log(error);
+            return reject();
+        }
+        
+        targetID = targetAccountContents.id;
+    } else {
+        targetID = targetAccount;
+    }
+
     let blockedAccounts;
     try {
-        blockedAccounts = await blockchain.getBlockedAccounts(targetAccount);
+        blockedAccounts = await blockchain.getBlockedAccounts();
     } catch (error) {
         console.log(error);
     }
 
-    /*
-    if (!request.payload.params.amount && request.payload.params.satoshis) {
-      popupContents.request.payload.params.amount = request.payload.params.satoshis;
-    }
-
-    if (blockchain.supportsFeeCalculation() && request.chain === "BTC") {
-
-        let activeKey = store.getters['AccountStore/getActiveKey'](request);
-
-        let signingKey;
-        try {
-          signingKey = await getKey(activeKey);
-        } catch (error) {
-          return _promptFail("transfer.getKey", request.id, error, reject);
-        }
-
-        if (signingKey) {
-          let transferResult;
-          try {
-              transferResult = await blockchain.transfer(
-                  signingKey, // Can we do this without the key?
-                  accountDetails.accountName,
-                  request.params.to,
-                  {
-                      amount: request.params.amount.satoshis || request.params.amount.amount,
-                      asset_id: request.params.amount.asset_id
-                  },
-                  request.params.memo,
-                  false // PREVENTS SENDING!
-              );
-          } catch (error) {
-              return _promptFail("transfer.falseTransfer", request.id, error, reject);
-          }
-
-          if (transferResult) {
-              popupContents['feeInSatoshis'] = transferResult.feeInSatoshis;
-              popupContents['toSendFee'] = blockchain.format(transferResult.feeInSatoshis);
-          }
-        }
-    }
-    */
+    let isBlocked = blockedAccounts.find(x => x === targetID) ? true : false;
 
     ipcRenderer.send(
       'createPopup',
@@ -628,8 +681,9 @@ export async function transfer(request, blockchain) {
         accountName: accountDetails.accountName,
         request: request,
         toSend: toSend,
-        target: blockedAccounts.id,
-        isBlockedAccount: blockedAccounts.blocked
+        target: targetID,
+        serverError: !blockedAccounts || !blockedAccounts.length ? true : false,
+        isBlockedAccount: isBlocked
       }
     );
 
@@ -687,6 +741,48 @@ export async function transfer(request, blockchain) {
     ipcRenderer.once(`popupRejected_${request.id}`, (event, result) => {
       return _promptFail("Transfer.reject", request.id, result, reject);
     })
+
+  /*
+    if (!request.payload.params.amount && request.payload.params.satoshis) {
+        popupContents.request.payload.params.amount = request.payload.params.satoshis;
+    }
+
+    if (blockchain.supportsFeeCalculation() && request.chain === "BTC") {
+
+        let activeKey = store.getters['AccountStore/getActiveKey'](request);
+
+        let signingKey;
+        try {
+            signingKey = await getKey(activeKey);
+        } catch (error) {
+            return _promptFail("transfer.getKey", request.id, error, reject);
+        }
+
+        if (signingKey) {
+            let transferResult;
+            try {
+                transferResult = await blockchain.transfer(
+                    signingKey, // Can we do this without the key?
+                    accountDetails.accountName,
+                    request.params.to,
+                    {
+                        amount: request.params.amount.satoshis || request.params.amount.amount,
+                        asset_id: request.params.amount.asset_id
+                    },
+                    request.params.memo,
+                    false // PREVENTS SENDING!
+                );
+            } catch (error) {
+                return _promptFail("transfer.falseTransfer", request.id, error, reject);
+            }
+
+            if (transferResult) {
+                popupContents['feeInSatoshis'] = transferResult.feeInSatoshis;
+                popupContents['toSendFee'] = blockchain.format(transferResult.feeInSatoshis);
+            }
+        }
+    }
+  */  
   });
 }
 

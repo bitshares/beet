@@ -22,6 +22,13 @@
                 return {}
             }
         },
+        warning: {
+            type: String,
+            required: false,
+            default() {
+                return ''
+            }
+        }
     });
 
     let acceptText = computed(() => {
@@ -43,6 +50,13 @@
             return '';
         }
         return props.payload.generic.details.split(/\r?\n/);
+    });
+
+    let warning = computed(() => {
+        if (!props.warning || !props.warning.length) {
+            return;
+        }
+        return props.warning;
     });
 
     onMounted(() => {
@@ -86,6 +100,14 @@
                 </ui-item-text-content>
             </ui-item>
         </ui-list>
+        
+        <ui-alert v-if="warning" state="warning">
+            {{
+                warning === "serverError"
+                    ? t("operations.transfer.server_error")
+                    : t("operations.transfer.detected_scammer")
+            }}
+        </ui-alert>
 
         <ui-button
             raised

@@ -197,38 +197,31 @@ export default class BitShares extends BlockchainAPI {
     */
     getBlockedAccounts(targetAccount) {
         return new Promise(async (resolve, reject) => {
-            let targetAccountContents;
-            try {
-                targetAccountContents = await this.getAccount(targetAccount);
-            } catch (error) {
-                console.log(error);
-                return resolve({id: '', blocked: false, error: true});
-            }
-            let targetID = targetAccountContents.id;
-
             if (this._config.identifier === "BTS_TEST") {
-                return resolve({id: targetID, blocked: false});
+                return resolve([]);
             }
 
-            let committeeAccountDetails;
-            try {
-                committeeAccountDetails = await this.getAccount('committee-blacklist-manager');
-            } catch (error) {
-                console.log(error);
-                return resolve({id: '', blocked: false, error: true});
-            }
-            
-            if (!targetAccountContents || !committeeAccountDetails) {
-                return resolve({id: '', blocked: false, error: true});
+            let blockedAccounts;
+            if (this._blockedAddresses && this._blockedAddresses.length) {
+                blockedAccounts = this._blockedAddresses;
+            } else {
+                let committeeAccountDetails;
+                try {
+                    committeeAccountDetails = await this.getAccount('committee-blacklist-manager');
+                } catch (error) {
+                    console.log(error);
+                    return reject();
+                }
+                
+                if (!targetAccountContents || !committeeAccountDetails) {
+                    return reject();
+                }
+    
+                blockedAccounts = committeeAccountDetails.blacklisted_accounts;
+                this._blockedAddresses = committeeAccountDetails.blacklisted_accounts
             }
 
-            let blockedAccounts = committeeAccountDetails.blacklisted_accounts;
-            let isBlocked = blockedAccounts.find(x => x === targetID);
-            
-            return resolve({
-                id: targetID,
-                blocked: isBlocked ? true : false
-            });
+            return resolve(blockedAccounts)            
         });
     }
 
@@ -1892,7 +1885,7 @@ export default class BitShares extends BlockchainAPI {
 
                 let amount;
                 try {
-                    amount = await this._resolveAsset(op.amount.account_id);
+                    amount = await this._resolveAsset(op.amount.asset_id);
                 } catch (error) {
                   console.log(error);
                 }
@@ -2017,7 +2010,7 @@ export default class BitShares extends BlockchainAPI {
                     "deposit_to_account: " + depositToAccount + "(" + op.deposit_to_account + ")\n" +
                     "balance_to_claim: " + op.balance_to_claim + "\n" +
                     "balance_owner_key: " + op.balance_owner_key + "\n" +
-                    "total_claimed: " + formatAsset(op.amount.amount, claimedAsset.symbol, claimedAsset.precision) + "(" + op.amount.account_id + ")\n" +
+                    "total_claimed: " + formatAsset(op.amount.amount, claimedAsset.symbol, claimedAsset.precision) + "(" + op.amount.asset_id + ")\n" +
                     "Estimated fee: " + op.fee
                 )
             } else if (opType == 38) {
@@ -2055,7 +2048,7 @@ export default class BitShares extends BlockchainAPI {
                     "issuer: " + issuer + "(" + op.issuer + ")\n" +
                     "from: " + from + "(" +  op.from + ")\n" +
                     "to: " + to + "(" +  op.to + ")\n" +
-                    "amount: " + formatAsset(op.amount.account_id, overridenAsset.symbol, overridenAsset.precision) + "(" + op.amount + ")\n" +
+                    "amount: " + formatAsset(op.amount.amount, overridenAsset.symbol, overridenAsset.precision) + "(" + op.amount.asset_id + ")\n" +
                     "memo: " + op.memo + "\n" +
                     "Estimated fee: " + op.fee
                 )
