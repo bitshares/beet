@@ -124,6 +124,288 @@ export default class BitShares extends BlockchainAPI {
     }
 
     /**
+     * Returning the list of injectable operations
+     * @returns {Array}
+     */
+    getOperationTypes() {
+        // No virtual operations included
+        return [
+            {
+                id: 0,
+                method: "transfer"
+            },
+            {
+                id: 1,
+                method: "limit_order_create"
+            },
+            {
+                id: 2,
+                method: "limit_order_cancel"
+            },
+            {
+                id: 3,
+                method: "call_order_update"
+            },
+            {
+                id: 5,
+                method: "account_create"
+            },
+            {
+                id: 6,
+                method: "account_update"
+            },
+            {
+                id: 7,
+                method: "account_whitelist"
+            },
+            {
+                id: 8,
+                method: "account_upgrade"
+            },
+            {
+                id: 9,
+                method: "account_transfer"
+            },
+            {
+                id: 10,
+                method: "asset_create"
+            },
+            {
+                id: 11,
+                method: "asset_update"
+            },
+            {
+                id: 12,
+                method: "asset_update_bitasset"
+            },
+            {
+                id: 13,
+                method: "asset_update_feed_producers"
+            },
+            {
+                id: 14,
+                method: "asset_issue"
+            },
+            {
+                id: 15,
+                method: "asset_reserve"
+            },
+            {
+                id: 16,
+                method: "asset_fund_fee_pool"
+            },
+            {
+                id: 17,
+                method: "asset_settle"
+            },
+            {
+                id: 18,
+                method: "asset_global_settle"
+            },
+            {
+                id: 19,
+                method: "asset_publish_feed"
+            },
+            {
+                id: 20,
+                method: "witness_create"
+            },
+            {
+                id: 21,
+                method: "witness_update"
+            },
+            {
+                id: 22,
+                method: "proposal_create"
+            },
+            {
+                id: 23,
+                method: "proposal_update"
+            },
+            {
+                id: 24,
+                method: "proposal_delete"
+            },
+            {
+                id: 25,
+                method: "withdraw_permission_create"
+            },
+            {
+                id: 26,
+                method: "withdraw_permission_update"
+            },
+            {
+                id: 27,
+                method: "withdraw_permission_claim"
+            },
+            {
+                id: 28,
+                method: "withdraw_permission_delete"
+            },
+            {
+                id: 29,
+                method: "committee_member_create"
+            },
+            {
+                id: 30,
+                method: "committee_member_update"
+            },
+            {
+                id: 31,
+                method: "committee_member_update_global_parameters"
+            },
+            {
+                id: 32,
+                method: "vesting_balance_create"
+            },
+            {
+                id: 33,
+                method: "vasting_balance_withdraw"
+            },
+            {
+                id: 34,
+                method: "worker_create"
+            },
+            {
+                id: 35,
+                method: "custom"
+            },
+            {
+                id: 36,
+                method: "assert"
+            },
+            {
+                id: 37,
+                method: "balance_claim"
+            },
+            {
+                id: 38,
+                method: "override_transfer"
+            },
+            {
+                id: 39,
+                method: "transfer_to_blind"
+            },
+            {
+                id: 40,
+                method: "blind_transfer"
+            },
+            {
+                id: 41,
+                method: "transfer_from_blind"
+            },
+            {
+                id: 43,
+                method: "asset_claim_fees"
+            },
+            {
+                id: 45,
+                method: "bid_collateral"
+            },
+            {
+                id: 47,
+                method: "asset_claim_pool"
+            },
+            {
+                id: 48,
+                method: "asset_update_issuer"
+            },
+            {
+                id: 49,
+                method: "htlc_create"
+            },
+            {
+                id: 50,
+                method: "htlc_redeem"
+            },
+            {
+                id: 52,
+                method: "htlc_extend"
+            },
+            {
+                id: 54,
+                method: "custom_authority_create"
+            },
+            {
+                id: 55,
+                method: "custom_authority_update"
+            },
+            {
+                id: 56,
+                method: "custom_authority_delete"
+            },
+            {
+                id: 57,
+                method: "ticket_create"
+            },
+            {
+                id: 58,
+                method: "ticket_update"
+            },
+            {
+                id: 59,
+                method: "liquidity_pool_create"
+            },
+            {
+                id: 60,
+                method: "liquidity_pool_delete"
+            },
+            {
+                id: 61,
+                method: "liquidity_pool_deposit"
+            },
+            {
+                id: 62,
+                method: "liquidity_pool_withdraw"
+            },
+            {
+                id: 63,
+                method: "liquidity_pool_exchange"
+            },
+            {
+                id: 64,
+                method: "samet_fund_create"
+            },
+            {
+                id: 65,
+                method: "samet_fund_delete"
+            },
+            {
+                id: 66,
+                method: "samet_fund_update"
+            },
+            {
+                id: 67,
+                method: "samet_fund_borrow"
+            },
+            {
+                id: 68,
+                method: "samt_fund_repay"
+            },
+            {
+                id: 69,
+                method: "credit_offer_create"
+            },
+            {
+                id: 70,
+                method: "credit_offer_delete"
+            },
+            {
+                id: 71,
+                method: "credit_offer_update"
+            },
+            {
+                id: 72,
+                method: "credit_offer_accept"
+            },
+            {
+                id: 73,
+                method: "credit_deal_repay"
+            }
+        ]
+    }
+
+    /**
      * Test a wss url for successful connection.
      * @param {String} url
      * @returns {Object}

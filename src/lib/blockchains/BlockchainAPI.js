@@ -403,6 +403,14 @@ export default class BlockchainAPI {
         return false;
     }
 
+    /**
+     * Returning the list of injectable operations
+     * @returns {Array}
+     */
+     getOperationTypes() {
+        return [];
+    }
+
     /*
      * Placeholder for blockchain specific connection.
      * @returns {String}

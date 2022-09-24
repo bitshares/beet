@@ -3,6 +3,8 @@
     import { ref, onMounted, computed } from "vue";
     import RendererLogger from "../../lib/RendererLogger";
     import {formatChain, formatAccount} from "../../lib/formatter";
+    import getBlockchainAPI from "../lib/blockchains/blockchainFactory";
+    import sha512 from "crypto-js/sha512.js";
 
     import { useI18n } from 'vue-i18n';
     const { t } = useI18n({ useScope: 'global' });
@@ -31,6 +33,13 @@
             default() {
                 return []
             }
+        },
+        injectables: {
+            type: Array,
+            required: false,
+            default() {
+                return []
+            }
         }
     });
 
@@ -50,6 +59,14 @@
 
     let secondText = computed(() => {
         return t('operations.link.request_fresh', {chain: props.request.chain });
+    });
+
+    let chainOperations = computed(() => {
+        let types = getBlockchainAPI(props.request.chain).getOperationTypes();
+        if (!props.injectables.length) {
+            return [];
+        }
+        return props.injectables.map(op => `${types[op].id}: ${types[op].method.replaceAll("_", " ")}`);
     });
 
     /*
@@ -113,6 +130,16 @@
             {{ secondText }}
         </div>
         <br>
+        <div v-if="chainOperations.length">
+            <ui-chips id="input-chip-set" type="input" :items="list">
+                <ui-chip
+                    v-for="item in chainOperations"
+                    :key="sha512(item).toString()"
+                >
+                    {{ item }}
+                </ui-chip>
+            </ui-chips>
+        </div>
         <div v-if="accountOptions && accountOptions.length > 0">
             <select
                 id="account_select"
