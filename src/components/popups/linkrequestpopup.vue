@@ -33,13 +33,6 @@
             default() {
                 return []
             }
-        },
-        injectables: {
-            type: Array,
-            required: false,
-            default() {
-                return []
-            }
         }
     });
 
@@ -62,11 +55,25 @@
     });
 
     let chainOperations = computed(() => {
-        let types = getBlockchainAPI(props.request.chain).getOperationTypes();
-        if (!props.injectables.length) {
+        if (!props.request.injectables.length) {
             return [];
         }
-        return props.injectables.map(op => `${types[op].id}: ${types[op].method.replaceAll("_", " ")}`);
+
+        let types = getBlockchainAPI(props.request.chain).getOperationTypes();
+        let injectChips = [];
+        for (let i = 0; i < props.request.injectables.length; i++) {
+            if (!types[props.request.injectables[i]]) {
+                break;
+            } else {
+                injectChips.push(
+                    `${types[props.request.injectables[i]].id}: ${types[props.request.injectables[i]].method.replaceAll("_", " ")}`
+                )
+            }
+        }
+        if (!injectChips.length) {
+            return null;
+        }
+        return injectChips;
     });
 
     /*
@@ -130,7 +137,7 @@
             {{ secondText }}
         </div>
         <br>
-        <div v-if="chainOperations.length">
+        <div v-if="chainOperations && chainOperations.length">
             <ui-chips id="input-chip-set" type="input" :items="list">
                 <ui-chip
                     v-for="item in chainOperations"
@@ -172,6 +179,7 @@
         <div v-if="chosenAccount == -1">
             <ui-button
                 style="margin-right:5px"
+                v-if="chainOperations"
                 disabled
             >
                 {{ t('operations.link.accept_btn') }}

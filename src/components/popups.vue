@@ -93,11 +93,6 @@
         let req = handleProp('existingLinks');
         return req ? JSON.parse(req) : null;
     });
-
-    let injectables = computed(() => {
-        let req = handleProp('injectables');
-        return req ? JSON.parse(req) : null;
-    });
 </script>
 
 <template>
@@ -107,7 +102,6 @@
             :request="request"
             :accounts="accounts"
             :existing-links="existingLinks"
-            :injectables="injectables"
         />
         <ReLinkRequestPopup
             v-else-if="type === Actions.REQUEST_RELINK"
