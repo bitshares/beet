@@ -176,10 +176,9 @@
             Requested account not present in this Beet wallet.
         </div>
         <br>
-        <div v-if="chosenAccount == -1">
+        <div v-if="chosenAccount == -1 || !chainOperations">
             <ui-button
                 style="margin-right:5px"
-                v-if="chainOperations"
                 disabled
             >
                 {{ t('operations.link.accept_btn') }}
