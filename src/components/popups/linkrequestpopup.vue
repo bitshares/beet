@@ -3,7 +3,7 @@
     import { ref, onMounted, computed } from "vue";
     import RendererLogger from "../../lib/RendererLogger";
     import {formatChain, formatAccount} from "../../lib/formatter";
-    import getBlockchainAPI from "../lib/blockchains/blockchainFactory";
+    import getBlockchainAPI from "../../lib/blockchains/blockchainFactory";
     import sha512 from "crypto-js/sha512.js";
 
     import { useI18n } from 'vue-i18n';
