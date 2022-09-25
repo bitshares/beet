@@ -65,6 +65,7 @@
         for (let i = 0; i < props.request.injectables.length; i++) {
             // Subset of operations are required
             if (!types[props.request.injectables[i]]) {
+                injectChips = []; // invalid op will nullify link request
                 break;
             } else {
                 injectChips.push(
