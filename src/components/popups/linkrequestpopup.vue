@@ -55,13 +55,15 @@
     });
 
     let chainOperations = computed(() => {
+        let types = getBlockchainAPI(props.request.chain).getOperationTypes();
         if (!props.request.injectables.length) {
-            return [];
+            // All operations are required
+            return types.map(type => `${type.id}: ${type.method.method.replaceAll("_", " ")}`);
         }
 
-        let types = getBlockchainAPI(props.request.chain).getOperationTypes();
         let injectChips = [];
         for (let i = 0; i < props.request.injectables.length; i++) {
+            // Subset of operations are required
             if (!types[props.request.injectables[i]]) {
                 break;
             } else {
@@ -71,6 +73,7 @@
             }
         }
         if (!injectChips.length) {
+            // Avoid rendering warning
             return null;
         }
         return injectChips;
