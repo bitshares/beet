@@ -43,6 +43,8 @@
 
     watchEffect(() => {
         if (dapps.value && dapps.value.length) {
+            let types = getBlockchainAPI(props.request.chain).getOperationTypes();
+
             tableData.value = {
                 data: dapps.value.map(dapp => {
                     return {
@@ -50,7 +52,19 @@
                         origin: dapp.origin,
                         displayString: getDisplayString(dapp.account_id, dapp.chain),
                         chain: dapp.chain,
-                        actions: dapp.id
+                        actions: dapp.id,
+                        injectables: <ui-chips id="input-chip-set" type="input" items="list">
+                                        {
+                                            dapp.injectables.map(op => {
+                                                <ui-chip
+                                                    key={sha512(types[op].method).toString()}
+                                                    v-tooltip={t(`operations.injected.BTS.${types[op].tooltip}`)}
+                                                >
+                                                    {types[op].id}: {t(`operations.injected.BTS.${types[op].method}`)}
+                                                </ui-chip>
+                                            })
+                                        }
+                                    </ui-chips>
                     }
                 }),
                 thead: [
@@ -58,9 +72,10 @@
                     t('common.origin_lbl'),
                     t('common.account_lbl'),
                     t('common.chain_lbl'),
-                    t('common.actions_lbl')
+                    t('common.actions_lbl'),
+                    t('common.operations_lbl')
                 ],
-                tbody: ['appName', 'origin', 'displayString', 'chain', {slot: 'actions'}]
+                tbody: ['appName', 'origin', 'displayString', 'chain', {slot: 'actions'}, 'injectables']
             };
         }
     });

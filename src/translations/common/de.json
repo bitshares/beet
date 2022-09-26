@@ -123,6 +123,7 @@
     "access_alert": "App: '{appName}' von '{origin}' möchte mit dem verknüpften Konto {chain}:{account_id} interagieren.",
     "dapps_lbl": "Ihre verknüpften dApps",
     "appname_lbl": "App-Name",
+    "operations_lbl": "Erlaubte Operationen",
     "origin_lbl": "Host/Domäne",
     "account_lbl": "Konto/Adresse",
     "chain_lbl": "Blockchain",
