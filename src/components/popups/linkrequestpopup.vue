@@ -64,13 +64,15 @@
         let injectChips = [];
         for (let i = 0; i < props.request.injectables.length; i++) {
             // Subset of operations are required
-            if (!types[props.request.injectables[i]]) {
+            const currentInjection = props.request.injectables[i]; // id
+            let foundCurrent = types.find(type => type.id === currentInjection.id);
+            if (!foundCurrent) {
                 injectChips = []; // invalid op will nullify link request
                 break;
             } else {
                 injectChips.push({
-                    text: `${types[props.request.injectables[i]].id}: ` + t(`operations.injected.BTS.${types[props.request.injectables[i]].method}`),
-                    tooltip: t(`operations.injected.BTS.${types[props.request.injectables[i]].tooltip}`)
+                    text: `${foundCurrent.id}: ` + t(`operations.injected.BTS.${foundCurrent.method}`),
+                    tooltip: t(`operations.injected.BTS.${foundCurrent.method}.tooltip`)
                 })
             }   
         }

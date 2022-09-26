@@ -75,6 +75,34 @@
      },
      "injected": {
         "BTS": {
+            "getAccount": {
+                "method": "getAccount",
+                "tooltip": "Beet nach Blockchain-Kontodaten fragen"
+            },
+            "requestSignature": {
+                "method": "requestSignature",
+                "tooltip": "Beet nach Blockchain-Signaturen fragen"
+            },
+            "injectedCall": {
+                "method": "injectedCall",
+                "tooltip": "Beet handhabt eine injizierte Blockchain-Operation"
+            },
+            "voteFor": {
+                "method": "voteFor",
+                "tooltip": "Blockchain-Abstimmung mit Rübenhandhabung"
+            },
+            "signMessage": {
+                "method": "signMessage",
+                "tooltip": "Beet signiert eine Nachricht"
+            },
+            "signNFT": {
+                "method": "signNFT",
+                "tooltip": "Beet unterschreibt NFT"
+            },
+            "verifyMessage": {
+                "method": "verifyMessage",
+                "tooltip": "Beet verifiziert eine Nachricht"
+            },
             "transfer": {
               "method": "Übertragen",
               "tooltip": "Assets von einem Konto an ein anderes senden"

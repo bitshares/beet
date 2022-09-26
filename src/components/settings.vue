@@ -56,12 +56,13 @@
                         injectables: <ui-chips id="input-chip-set" type="input" items="list">
                                         {
                                             dapp.injectables.map(op => {
-                                                <ui-chip
-                                                    key={sha512(types[op].method).toString()}
-                                                    v-tooltip={t(`operations.injected.BTS.${types[op].tooltip}`)}
-                                                >
-                                                    {types[op].id}: {t(`operations.injected.BTS.${types[op].method}`)}
-                                                </ui-chip>
+                                                let current = types.find(type => type.id === op);
+                                                return <ui-chip
+                                                            key={sha512(current.method).toString()}
+                                                            v-tooltip={t(`operations.injected.BTS.${current.method}.tooltip`)}
+                                                        >
+                                                            {current.id}: {t(`operations.injected.BTS.${current.method}`)}
+                                                        </ui-chip>
                                             })
                                         }
                                     </ui-chips>

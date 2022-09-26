@@ -277,7 +277,6 @@ export default class BeetServer {
       }
 
       if (blockchain && blockchain.getOperationTypes().length) {
-        if (msg.method === Actions.INJECTED_CALL) {
             // Check injected operation types are allowed
             let app = store.getters['OriginStore/getBeetApp'](req);
             if (!app || (!req.payload.origin == app.origin && !req.payload.appName == app.appName)) {
@@ -300,7 +299,6 @@ export default class BeetServer {
                 socket.emit("api", {id: data.id, error: true, payload: {code: 3, message: "Unauthorized blockchain operations detected."}});
                 return;
             }
-          }
       }
 
       store.dispatch('OriginStore/newRequest', {
