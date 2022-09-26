@@ -159,17 +159,17 @@
         <ui-list>
             <ui-item key="Recipient">
                 <ui-item-text-content>
-                    Recipient: {{ to }} ({{ target }})
+                    {{ t("operations.transfer.to") }}: {{ to }} ({{ target }})
                 </ui-item-text-content>
             </ui-item>
             <ui-item key="Amount">
                 <ui-item-text-content>
-                    Amount: {{ toSend }} ({{ asset_id }})
+                    {{ t("operations.transfer.amount") }}: {{ toSend }} ({{ asset_id }})
                 </ui-item-text-content>
             </ui-item>
             <ui-item v-if="memo" key="Memo">
                 <ui-item-text-content>
-                    Memo: {{ memo }}
+                    {{ t("operations.transfer.memo") }}: {{ memo }}
                 </ui-item-text-content>
             </ui-item>
             <ui-item

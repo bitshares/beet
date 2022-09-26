@@ -4,15 +4,19 @@
     },
     "link": {
          "title": "Anfrage zur Kontoverknüpfung",
+         "account_select": "Konto auswählen",
+         "account_missing": "Das angeforderte Konto ist in dieser Beet-Wallet nicht vorhanden.",
          "request": "Die Anwendung '{appName}' von '{origin}' fordert Zugriff auf ein {chain}-Konto an.",
          "request_fresh": "Die Anwendung hat bereits zuvor ein {chain}-Konto verknüpft, wie in der Liste unten markiert.",
          "request_tooltip": "Die Anwendung erhält Ihre Kontodaten (Name und ID) und einen Link zu Beet.",
          "request_cta": "Wählen Sie das bereitzustellende Konto aus.",
          "accept_btn": "Zulassen",
-         "reject_btn": "Verweigern"
+         "reject_btn": "Verweigern",
+         "invalid_operations": "Falsche Verknüpfungsanforderung - ungültige(r) Vorgang(e)."
     },
     "relink": {
          "title": "Anfrage zur Neuverknüpfung des Kontos",
+         "error": "Fehler beim Anzeigen der Eingabeaufforderung",
          "request": "Die Anwendung '{appName}' von '{origin}' fordert an, das zuvor verknüpfte {chain}-Konto neu zu verknüpfen: {accountId}. Dies liegt normalerweise daran, dass Sie den Cache Ihres Browsers gelöscht haben. In seltenen Fällen ist dies der Fall könnte ein Phishing-Versuch sein, also überprüfen Sie bitte die Website, die Sie besuchen.",
          "request_tooltip": "Die vorherige Verknüpfung zwischen der Anwendung und der Kontoreferenzc wird zurückgesetzt."
     },
@@ -32,6 +36,9 @@
     },
     "transfer": {
          "title": "Übertragungsanfrage",
+         "to": "Empfänger",
+         "amount": "Betrag",
+         "memo": "Memo",
          "request": "App: '{appName}' von '{origin}' möchte eine Übertragung von {chain}:{accountName} initiieren.",
          "request_cta": "Möchten Sie es ausführen?",
          "accept_btn": "Signieren & Senden",
@@ -41,6 +48,7 @@
     },
     "rawsig": {
          "title": "Anfrage",
+         "loading": "Transaktionsdetails werden aus der Blockchain geladen, bitte warten.",
          "request": "App: '{appName}' von '{origin}' hat die folgende Transaktion für Konto {chain} übermittelt: {accountName}.",
          "request_cta": "Möchten Sie es ausführen?",
          "accept_btn": "Signieren & Senden",

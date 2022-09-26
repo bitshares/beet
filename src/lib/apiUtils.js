@@ -115,14 +115,13 @@ export async function relinkRequest(request) {
 export async function getAccount(request) {
   // identify request popup
   return new Promise(async (resolve, reject) => {
-    store.dispatch("WalletStore/notifyUser", {notify: "request", message: "request"});
-
     let shownBeetApp = store.getters['OriginStore/getBeetApp'](request);
     if (!shownBeetApp) {
       return _promptFail("getAccount", request.id, 'No beetApp', reject);
     }
 
     let account = store.getters['AccountStore/getSafeAccount'](JSON.parse(JSON.stringify(shownBeetApp)));
+    store.dispatch("WalletStore/notifyUser", {notify: "request", message: window.t('common.apiUtils.getAccount')});
 
     ipcRenderer.send(
       'createPopup',
@@ -168,7 +167,8 @@ async function _signOrBroadcast(
       } catch (error) {
         return _promptFail(txType, request.id, error, reject);
       }
-      notifyTXT = "Transaction successfully broadcast.";
+
+      notifyTXT = window.t('common.apiUtils.broadcast');
       return resolve({result: finalResult});
     }
 
@@ -195,14 +195,14 @@ async function _signOrBroadcast(
 
   if (txType == "sign") {
       finalResult = transaction.toObject();
-      notifyTXT = "Transaction successfully signed.";
+      notifyTXT = window.t('common.apiUtils.sign');
   } else if (txType == "signAndBroadcast") {
       try {
         finalResult = await blockchain.broadcast(transaction);
       } catch (error) {
         return _promptFail(txType + ".broadcast", request.id, error, reject);
       }
-      notifyTXT = "Transaction successfully signed & broadcast.";
+      notifyTXT = window.t('common.apiUtils.signAndBroadcast');
   }
 
   store.dispatch("WalletStore/notifyUser", {notify: "request", message: notifyTXT});
@@ -269,8 +269,6 @@ export async function requestSignature(request, blockchain) {
 export async function injectedCall(request, blockchain) {
   // transaction request popup
   return new Promise(async (resolve, reject) => {
-    store.dispatch("WalletStore/notifyUser", {notify: "request", message: "request"});
-
     if (!request || !request.payload) {
       return _promptFail("injectedCall", 'injectedCall', request, reject);
     }
@@ -290,6 +288,8 @@ export async function injectedCall(request, blockchain) {
         console.log(error);
         return _promptFail("injectedCall", request.id, request, reject);
     }
+
+    store.dispatch("WalletStore/notifyUser", {notify: "request", message: window.t('common.apiUtils.inject')});
 
     ipcRenderer.send(
       'createPopup',
@@ -318,8 +318,6 @@ export async function injectedCall(request, blockchain) {
 export async function voteFor(request, blockchain) {
   // generic request popup
   return new Promise(async (resolve, reject) => {
-    store.dispatch("WalletStore/notifyUser", {notify: "request", message: "Vote prompt"});
-
     let payload = request.payload;
 
     payload.action = "vote";
@@ -344,6 +342,8 @@ export async function voteFor(request, blockchain) {
         rejectText: window.t("operations.vote.reject_btn")
     };
     payload.vote_id = mappedData.vote_id;
+
+    store.dispatch("WalletStore/notifyUser", {notify: "request", message: window.t('common.apiUtils.vote')});
 
     ipcRenderer.send(
       'createPopup',
@@ -423,9 +423,7 @@ export async function voteFor(request, blockchain) {
  */
 export async function signNFT(request, blockchain) {
     //signed NFT popup
-    return new Promise(async (resolve, reject) => {
-      store.dispatch("WalletStore/notifyUser", {notify: "request", message: "Request for an NFT signature"});
-  
+    return new Promise(async (resolve, reject) => { 
       let shownBeetApp = store.getters['OriginStore/getBeetApp'](request);
       if (!shownBeetApp) {
         return _promptFail("REQUEST_RELINK", request.id, 'No beetApp', reject);
@@ -433,6 +431,7 @@ export async function signNFT(request, blockchain) {
   
       let account = store.getters['AccountStore/getSafeAccount'](JSON.parse(JSON.stringify(shownBeetApp)));
   
+      store.dispatch("WalletStore/notifyUser", {notify: "request", message: window.t('common.apiUtils.signNFT')});
       ipcRenderer.send(
         'createPopup',
         {
@@ -481,14 +480,13 @@ export async function signNFT(request, blockchain) {
 export async function signMessage(request, blockchain) {
   //signed message popup
   return new Promise(async (resolve, reject) => {
-    store.dispatch("WalletStore/notifyUser", {notify: "request", message: "Request for signed message"});
-
     let shownBeetApp = store.getters['OriginStore/getBeetApp'](request);
     if (!shownBeetApp) {
       return _promptFail("REQUEST_RELINK", request.id, 'No beetApp', reject);
     }
 
     let account = store.getters['AccountStore/getSafeAccount'](JSON.parse(JSON.stringify(shownBeetApp)));
+    store.dispatch("WalletStore/notifyUser", {notify: "request", message: window.t('common.apiUtils.signMessage')});
 
     ipcRenderer.send(
       'createPopup',
@@ -549,8 +547,7 @@ export async function signMessage(request, blockchain) {
 export async function transfer(request, blockchain) {
   // transfer req popup
   return new Promise(async (resolve, reject) => {
-    store.dispatch("WalletStore/notifyUser", {notify: "request", message: "Token transfer request"});
-
+    
     let shownBeetApp = store.getters['OriginStore/getBeetApp'](request);
     if (!shownBeetApp) {
       return _promptFail("transfer", request.id, 'No beetApp', reject);
@@ -620,6 +617,7 @@ export async function transfer(request, blockchain) {
         }
     }
     */
+    store.dispatch("WalletStore/notifyUser", {notify: "request", message: window.t('common.apiUtils.transfer')});
 
     ipcRenderer.send(
       'createPopup',
@@ -680,7 +678,7 @@ export async function transfer(request, blockchain) {
         return _promptFail("blockchain.transfer", request.id, 'No blockchain transfer result', reject);
       }
 
-      store.dispatch("WalletStore/notifyUser", {notify: "request", message: 'Transaction `transfer` successfully broadcast.'});
+      store.dispatch("WalletStore/notifyUser", {notify: "request", message: window.t('common.apiUtils.transferComplete')});
       return resolve({result: transferResult});
     })
 
@@ -698,7 +696,7 @@ export async function transfer(request, blockchain) {
  */
 export async function messageVerification(request, blockchain) {
   return new Promise(async (resolve, reject) => {
-    store.dispatch("WalletStore/notifyUser", {notify: "request", message: "Message verification"});
+    store.dispatch("WalletStore/notifyUser", {notify: "request", message: window.t('common.apiUtils.msgVerify')});
 
     blockchain
     .verifyMessage(request)

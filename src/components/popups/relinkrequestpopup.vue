@@ -99,9 +99,9 @@
         v-else
         style="padding:5px"
     >
-        <div>
-            Error showing prompt
-        </div>
+        <ui-alert v-if="!chainOperations" state="error">
+                {{ t('operations.relink.error') }}
+        </ui-alert>
         <br>
         <ui-button
             raised

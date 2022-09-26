@@ -1,4 +1,39 @@
 {
+    "addAccount": {
+        "none_selected": "No account selected!"
+    },
+    "balances": {
+        "refresh": "Refresh",
+        "reconnect": "Reconnect",
+        "empty": "No balances in account",
+        "connecting": "Connecting to blockchain",
+        "error": "Couldn't to connect to blockchain"
+    },
+    "settings": {
+        "exit": "Exit settings menu"
+    },
+    "start": {
+        "wallet_name": "Beet wallet name",
+        "invalid_password": "An attempt to unlock the Beet wallet was made with an invalid password."
+    },
+    "apiUtils": {
+        "broadcast": "Transaction successfully broadcast.",
+        "sign": "Transaction successfully signed.",
+        "signAndBroadcast": "Transaction successfully signed & broadcast.",
+        "inject": "Request to perform a specific blockchain operation",
+        "vote": "Vote prompt",
+        "signNFT": "Request for an NFT signature",
+        "signMessage": "Request for signed message",
+        "transfer": "Token transfer request",
+        "transferComplete": "Transaction `transfer` successfully broadcast.",
+        "msgVerify": "Message verification",
+        "getAccount": "App requesting info regarding one of your accounts."
+    },
+    "recovery": {
+        "decryptError": "Account recovery error!",
+        "invalidPassword": "Invalid recovered wallet password",
+        "duplicate": "A wallet with the same name already exists, aborting wallet restoration" 
+    },
     "abHome": "Home",
     "abNew": "New",
     "abSettings": "Settings",

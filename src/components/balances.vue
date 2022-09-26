@@ -98,14 +98,14 @@
             class="step_btn"
             @click="loadBalances()"
         >
-            Refresh
+            {{ t('common.balances.refresh') }}
         </ui-button>
         <ui-button
             v-else-if="!isConnected && !isConnecting"
             class="step_btn"
             @click="loadBalances()"
         >
-            Reconnect
+            {{ t('common.balances.reconnect') }}
         </ui-button>
 
         <ui-table
@@ -119,7 +119,7 @@
             v-if="balances && !balances.length"
             outlined
         >
-            No balances in account
+            {{ t('common.balances.empty') }}
         </ui-card>
         <ui-card
             v-if="isConnecting"
@@ -129,7 +129,7 @@
             <figure>
                 <ui-progress indeterminate />
                 <br>
-                <figcaption>Connecting to blockchain</figcaption>
+                <figcaption>{{ t('common.balances.connecting') }}</figcaption>
             </figure>
         </ui-card>
         <ui-card
@@ -137,7 +137,7 @@
             outlined
             style="padding:5px"
         >
-            Couldn't to connect to blockchain
+            {{ t('common.balances.error') }}
         </ui-card>
     </div>
 </template>

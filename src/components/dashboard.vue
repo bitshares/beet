@@ -93,7 +93,7 @@
             required
             full-bleed
         >
-            Account
+            {{ t('common.account') }}
         </ui-select>
         <AccountDetails :account="selectedAccount" />
         <Balances :account="selectedAccount" />

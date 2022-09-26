@@ -165,7 +165,7 @@
                     disabled
                     value=""
                 >
-                    Account select
+                    {{ t('operations.link.account_select') }}
                 </option>
                 <option
                     v-for="account in accountOptions"
@@ -179,10 +179,13 @@
             </select>
         </div>
         <div v-else>
-            Requested account not present in this Beet wallet.
+            {{ t('operations.link.account_missing') }}
         </div>
         <br>
         <div v-if="chosenAccount == -1 || !chainOperations">
+            <ui-alert v-if="!chainOperations" state="error">
+                {{ t('operations.link.invalid_operations') }}
+            </ui-alert>
             <ui-button
                 style="margin-right:5px"
                 disabled

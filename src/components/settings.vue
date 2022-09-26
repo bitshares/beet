@@ -153,7 +153,7 @@
                 outlined
                 class="step_btn"
             >
-                Exit settings menu
+                {{ t('common.settings.exit') }}
             </ui-button>
         </router-link>
     </div>

@@ -111,7 +111,7 @@
             class="text-left custom-content"
         >
             <pre>
-                Loading transaction details from blockchain, please wait.
+                {{ t('operations.rawsig.loading') }}
             </pre>
         </div>
 

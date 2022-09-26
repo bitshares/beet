@@ -187,7 +187,7 @@
      */
     async function addAccounts() {
         if (!accounts_to_import.value) {
-            ipcRenderer.send("notify", "No account selected!");
+            ipcRenderer.send("notify", t(`common.addAccount.none_selected`));
             return;
         }
 
