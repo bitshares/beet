@@ -260,7 +260,7 @@ export default class BitShares extends BlockchainAPI {
             },
             {
                 id: 33,
-                method: "vasting_balance_withdraw"
+                method: "vesting_balance_withdraw"
             },
             {
                 id: 34,
