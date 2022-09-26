@@ -133,36 +133,36 @@ export default class BitShares extends BlockchainAPI {
         return [
             // Beet based
             {
-                "id": Actions.GET_ACCOUNT,
-                "method": Actions.GET_ACCOUNT
+                id: Actions.GET_ACCOUNT,
+                method: Actions.GET_ACCOUNT
             },
             {
-                "id": Actions.REQUEST_SIGNATURE,
-                "method": Actions.REQUEST_SIGNATURE
+                id: Actions.REQUEST_SIGNATURE,
+                method: Actions.REQUEST_SIGNATURE
             },
             {
-                "id": Actions.INJECTED_CALL,
-                "method": Actions.INJECTED_CALL
+                id: Actions.INJECTED_CALL,
+                method: Actions.INJECTED_CALL
             },
             {
-                "id": Actions.VOTE_FOR,
-                "method": Actions.VOTE_FOR
+                id: Actions.VOTE_FOR,
+                method: Actions.VOTE_FOR
             },
             {
-                "id": Actions.SIGN_MESSAGE,
-                "method": Actions.SIGN_MESSAGE
+                id: Actions.SIGN_MESSAGE,
+                method: Actions.SIGN_MESSAGE
             },
             {
-                "id": Actions.SIGN_NFT,
-                "method": Actions.SIGN_NFT
+                id: Actions.SIGN_NFT,
+                method: Actions.SIGN_NFT
             },
             {
-                "id": Actions.VERIFY_MESSAGE,
-                "method": Actions.VERIFY_MESSAGE
+                id: Actions.VERIFY_MESSAGE,
+                method: Actions.VERIFY_MESSAGE
             },
             {
-                "id": Actions.TRANSFER,
-                "method": Actions.TRANSFER
+                id: Actions.TRANSFER,
+                method: Actions.TRANSFER
             },
             // Blockchain based:
             {
