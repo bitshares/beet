@@ -68,10 +68,11 @@
                 injectChips = []; // invalid op will nullify link request
                 break;
             } else {
-                injectChips.push(
-                    `${types[props.request.injectables[i]].id}: ${types[props.request.injectables[i]].method.replaceAll("_", " ")}`
-                )
-            }
+                injectChips.push({
+                    text: `${types[props.request.injectables[i]].id}: ` + t(`operations.injected.BTS.${types[props.request.injectables[i]].method}`),
+                    tooltip: t(`operations.injected.BTS.${types[props.request.injectables[i]].tooltip}`)
+                })
+            }   
         }
         if (!injectChips.length) {
             // Avoid rendering warning
@@ -145,9 +146,10 @@
             <ui-chips id="input-chip-set" type="input" :items="list">
                 <ui-chip
                     v-for="item in chainOperations"
-                    :key="sha512(item).toString()"
+                    :key="sha512(item.text).toString()"
+                    v-tooltip="item.tooltip"
                 >
-                    {{ item }}
+                    {{ item.text }}
                 </ui-chip>
             </ui-chips>
         </div>
