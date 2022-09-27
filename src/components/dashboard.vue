@@ -81,6 +81,33 @@
             accountID.value = newVal.accountID;
         }
     }, {immediate: true});
+
+    ipcRenderer.on('deeplink', (event, arg) => {
+        /**
+         * Deeplink
+         */
+        let qs = arg;
+        let request = arg.request ?? null
+        let auth = qs.auth ?? null; // check auth
+        if (auth && request) {
+
+            //let shownBeetApp = store.getters['OriginStore/getBeetApp'](request);
+            //let account = store.getters['AccountStore/getSafeAccount'](JSON.parse(JSON.stringify(shownBeetApp)));
+
+            console.log("deeplink triggered")
+
+            // prompt the user with deeplinked action request
+            /*
+            ipcRenderer.send(
+                'createPopup',
+                {
+                    request: request,
+                    accounts: [account]
+                }
+            );
+            */
+        }
+    })
 </script>
 
 <template>

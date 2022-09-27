@@ -478,9 +478,7 @@ if (currentOS == 'win32') {
                 if (mainWindow.isMinimized()) mainWindow.restore()
                 mainWindow.focus()
                 
-                // beet://querystring
                 if (process.platform == 'win32' && args.length > 2) {
-                    // Keep only command line / deep linked arguments
                     let deeplinkingUrl = args[2].replace('beet://api/', '');
 
                     let qs;
@@ -491,13 +489,9 @@ if (currentOS == 'win32') {
                         return;
                     }
 
-                    dialog.showMessageBox(
-                        mainWindow,
-                        {
-                            title: 'secondInstance',
-                            message: JSON.stringify(qs)
-                        }
-                    )
+                    if (qs) {
+                        mainWindow.webContents.send('deeplink', qs);
+                    }
                 }
 
             }
@@ -525,13 +519,19 @@ if (currentOS == 'win32') {
     
     // Handle the protocol. In this case, we choose to show an Error Box.
     app.on('open-url', (event, url) => {
-        dialog.showMessageBox(
-            mainWindow,
-            {
-                title: 'beet protocol',
-                message: url
-            }
-        )
+        let deeplinkingUrl = url.replace('beet://api/', '');
+
+        let qs;
+        try {
+            qs = queryString.parse(deeplinkingUrl);
+        } catch (error) {
+            console.log(error);
+            return;
+        }
+
+        if (qs) {
+            mainWindow.webContents.send('deeplink', qs);
+        }
     })
 
     // This method will be called when Electron has finished
