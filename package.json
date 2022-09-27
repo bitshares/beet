@@ -21,6 +21,15 @@
     "directories": {
       "buildResources": "resources"
     },
+    "protocols": [
+        {
+            "name": "beet",
+            "role": "Viewer",
+            "schemes": [
+                "beet"
+            ]
+        }
+    ],
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true
