@@ -58,7 +58,7 @@
         let types = getBlockchainAPI(props.request.chain).getOperationTypes();
         if (!props.request.injectables.length) {
             // All operations are required
-            return types.map(type => `${type.id}: ${type.method.method.replaceAll("_", " ")}`);
+            return types.map(type => `${type.id}: ${type.method.replaceAll("_", " ")}`);
         }
 
         let injectChips = [];
