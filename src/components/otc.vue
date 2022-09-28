@@ -8,6 +8,13 @@
     import getBlockchainAPI from "../lib/blockchains/blockchainFactory";
 
     const { t } = useI18n({ useScope: 'global' });
+    let timestamp = ref();
+
+    let newCodeRequested = ref(false);
+    function requestCode() {
+        newCodeRequested.value = true;
+        timestamp.value = new Date();
+    }
 
     let id = ref();
     let thead = ref(['ID', 'Method', 'Info'])
@@ -47,20 +54,6 @@
         let types = getBlockchainAPI(chain).getOperationTypes();
         return types;
     });
-
-    let timestamp = ref();
-    watchEffect(() => {
-        if (!timestamp.value) {
-            timestamp.value = new Date();
-        }
-
-        setInterval(
-            () => {
-                timestamp.value = new Date();
-            },
-            45000
-        );
-    });
     
     let progress = ref(0);
     watchEffect(() => {
@@ -70,6 +63,8 @@
                     return;
                 } else if (progress.value >= 45) {
                     progress.value = 0;
+                    newCodeRequested.value = false;
+                    timestamp.value = null;
                 } else {
                     let currentTimestamp = new Date();
                     var seconds = (currentTimestamp.getTime() - timestamp.value.getTime()) / 1000;
@@ -116,8 +111,11 @@
             }
 
             if (!blockchain) {
+                console.log('no blockchain')
                 return;
             }
+
+            // injected call || beet op
 
             let tr = blockchain._parseTransactionBuilder(request.payload.params);
             let authorizedUse = true;
@@ -168,7 +166,7 @@
                     :thead="thead"
                     :tbody="tbody"
                     :default-col-width="200"
-                    style="height: 250px; overflow-y: scroll;"
+                    style="height: 250px;"
                     row-checkbox
                     selected-key="id"
                 >
@@ -186,13 +184,19 @@
                             <ui-chip icon="security">
                                 {{ selectedRows.length }} operations chosen
                             </ui-chip>
-                            <ui-chip icon="access_time">
+                            <ui-chip v-if="!newCodeRequested && selectedRows.length > 0" icon="generating_tokens" @click="requestCode">
+                                Request passcode
+                            </ui-chip>
+                            <ui-chip v-if="!newCodeRequested && !selectedRows.length" icon="arrow_upward">
+                                Insufficient operations
+                            </ui-chip>
+                            <ui-chip v-else-if="selectedRows.length && newCodeRequested" icon="access_time">
                                 Time remaining: {{ 45 - progress.toFixed(0) }}s
                             </ui-chip>
                         </ui-chips>
                     </ui-item>
                 </ui-list>
-                <ui-textfield v-if="currentCode" v-model="currentCode" outlined :attrs="{ readonly: true }">
+                <ui-textfield v-if="currentCode && newCodeRequested" style="margin:5px;" v-model="currentCode" outlined :attrs="{ readonly: true }">
                     <template #after>
                         <ui-textfield-icon v-copy="copyContents">content_copy</ui-textfield-icon>
                     </template>
