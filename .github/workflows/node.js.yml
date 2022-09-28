@@ -1,0 +1,151 @@
+name: Build/release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  create_release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+    - name: Create Release
+      id: create_release
+      uses: BTS-CM/action-gh-release@cd28b0f5ee8571b76cfdaa62a30d51d752317477
+      with:
+        name: ${{ github.ref_name }}
+        draft: false
+        prerelease: false
+        generate_release_notes: false
+
+  build:
+    name: build_release
+    needs: create_release
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
+        include:
+          - os: windows-latest
+            release_suffix: windows
+            release_format: exe
+          - os: ubuntu-latest
+            release_suffix: ubuntu
+            release_format: deb
+          - os: macos-latest
+            release_suffix: macos
+            release_format: dmg
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Use Node.js 18.x
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18.x
+        cache: 'npm'
+    
+    - run: npm install
+    - run: npm run-script dist:${{ matrix.os }}
+
+    - name: Upload .${{ matrix.release_format }} file
+      uses: actions/upload-artifact@v3
+      with:
+        name: BeetSetup.${{ matrix.release_format }}
+        path: dist/BeetSetup.${{ matrix.release_format }}
+
+    - name: Upload linux appimage
+      if: matrix.os == 'ubuntu-latest'
+      uses: actions/upload-artifact@v3
+      with:
+        name: BeetSetup.AppImage
+        path: dist/BeetSetup.AppImage
+
+    - name: Upload .exe.blockmap
+      if: matrix.release_format == 'exe'
+      uses: actions/upload-artifact@v3
+      with:
+        name: BeetSetup.exe.blockmap
+        path: dist/BeetSetup.exe.blockmap
+
+    - name: Upload latest.yml file
+      if: matrix.release_format == 'exe'
+      uses: actions/upload-artifact@v3
+      with:
+        name: latest.yml
+        path: dist/latest.yml
+
+    - run: ls dist
+
+  generate:
+    name: generate files
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Download exe
+      uses: actions/download-artifact@v3
+      with:
+        name: BeetSetup.exe
+        path: ~/
+    - name: Download exe blockmap
+      uses: actions/download-artifact@v3
+      with:
+        name: BeetSetup.exe.blockmap
+        path: ~/
+    - name: Download latest yml
+      uses: actions/download-artifact@v3
+      with:
+        name: latest.yml
+        path: ~/
+    - name: Download dmg
+      uses: actions/download-artifact@v3
+      with:
+        name: BeetSetup.dmg
+        path: ~/
+    - name: Download deb
+      uses: actions/download-artifact@v3
+      with:
+        name: BeetSetup.deb
+        path: ~/
+    - name: Download AppImage
+      uses: actions/download-artifact@v3
+      with:
+        name: BeetSetup.AppImage
+        path: ~/
+    - name: Calculate hashes
+      id: calc_hash
+      run: |
+          echo "::set-output name=blockmaphash::$(sha256sum /home/runner/BeetSetup.exe.blockmap|cut -c-64)"
+          echo "::set-output name=ymlhash::$(sha256sum /home/runner/latest.yml|cut -c-64)"
+          echo "::set-output name=exehash::$(sha256sum /home/runner/BeetSetup.exe|cut -c-64)"
+          echo "::set-output name=dmghash::$(sha256sum /home/runner/BeetSetup.dmg|cut -c-64)"
+          echo "::set-output name=debhash::$(sha256sum /home/runner/BeetSetup.deb|cut -c-64)"
+          echo "::set-output name=apphash::$(sha256sum /home/runner/BeetSetup.AppImage|cut -c-64)"
+    - name: Perform release
+      uses: BTS-CM/action-gh-release@cd28b0f5ee8571b76cfdaa62a30d51d752317477
+      with:
+        files: |
+            /home/runner/BeetSetup.exe
+            /home/runner/BeetSetup.dmg
+            /home/runner/BeetSetup.deb
+            /home/runner/BeetSetup.AppImage
+            /home/runner/BeetSetup.exe.blockmap
+            /home/runner/latest.yml
+        tag_name: ${{ needs.create_release.outputs.tag-name }}
+        body: |
+                Release Notes
+                _________________________________
+                Binaries for download
+                --------
+                | Platform | SHA256 Checksum |
+                |---|---|
+                |[Microsoft Windows](https://github.com/bitshares/beet/releases/download/${{ github.ref_name }}/BeetSetup.exe)|`${{steps.calc_hash.outputs.exehash}}`|
+                |[MacOS](https://github.com/bitshares/beet/releases/download/${{ github.ref_name }}/BeetSetup.dmg)|`${{steps.calc_hash.outputs.dmghash}}`|
+                |[Linux Deb](https://github.com/bitshares/beet/releases/download/${{ github.ref_name }}/BeetSetup.deb)|`${{steps.calc_hash.outputs.debhash}}`|
+                |[Linux AppImage](https://github.com/bitshares/beet/releases/download/${{ github.ref_name }}/BeetSetup.AppImage)|`${{steps.calc_hash.outputs.apphash}}`|
+                |[EXE blockmap](https://github.com/bitshares/beet/releases/download/${{ github.ref_name }}/BeetSetup.exe.blockmap)|`${{steps.calc_hash.outputs.blockmaphash}}`|
+                |[Latest.yml](https://github.com/bitshares/beet/releases/download/${{ github.ref_name }}/latest.yml)|`${{steps.calc_hash.outputs.ymlhash}}`|
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

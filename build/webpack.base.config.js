@@ -20,7 +20,7 @@ module.exports = env => {
     },
     externals: [nodeExternals({
       // this WILL include `jquery` and `webpack/hot/dev-server` in the bundle, as well as `lodash/*`
-      allowlist: ['vue','typeface-roboto','typeface-rajdhani']
+      allowlist: ['vue','typeface-roboto','typeface-rajdhani', '@babel/runtime']
     })],
     resolve: {
       extensions: ['*', '.js', '.vue', '.json', '.css', '.scss'],
@@ -59,7 +59,14 @@ module.exports = env => {
         {
           test: /\.js$/,
           exclude: /node_modules/,
-          use: ["babel-loader"]
+          use: {
+            loader: 'babel-loader',
+            options: {
+              presets: [
+                ['@babel/preset-env', { targets: "defaults" }]
+              ]
+            }
+          }
         },
         {
           test: /\.css$/i,

@@ -1,7 +1,7 @@
 {
   "name": "beet",
   "productName": "Beet Blockchain Companion",
-  "version": "0.2.0-rc1",
+  "version": "0.3.0-rc1",
   "apiversion": 3,
   "description": "Beet is a stand-alone key-manager and signing app for blockchains like BitShares, Bitcoin and others.",
   "author": "clockworkgr <alex@clockwork.gr>",
@@ -30,7 +30,8 @@
     },
     "linux": {
       "target": [
-        "AppImage"
+        "AppImage",
+        "deb"
       ],
       "category": "Utility"
     }
@@ -41,11 +42,14 @@
     "compile": "webpack --config=build/webpack.app.config.js --env=production",
     "build": "webpack --config=build/webpack.app.config.js --env=production && electron-builder --publish never",
     "release": "webpack --config=build/webpack.app.config.js --env=production && electron-builder --publish never",
-    "dist": "yarn compile && electron-builder --publish never",
-    "lint": "yarn run eslint --ext .js,.vue src",
-    "lintFix": "yarn run eslint --ext .js,.vue src --fix"
+    "dist:macos-latest": "npm run-script compile && electron-builder -m --publish never",
+    "dist:windows-latest": "npm run-script compile && electron-builder -w --publish never",
+    "dist:ubuntu-latest": "npm run-script compile && electron-builder -l --publish never",
+    "lint": "npm run-script eslint --ext .js,.vue src",
+    "lintFix": "npm run-script eslint --ext .js,.vue src --fix"
   },
   "dependencies": {
+    "@babel/runtime": "^7.19.0",
     "@noble/ed25519": "^1.6.1",
     "@noble/secp256k1": "^1.6.3",
     "balm-ui": "^10.9.3",
