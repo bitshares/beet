@@ -19,15 +19,7 @@
                 class="smallHeader"
                 columns="12"
             >
-                <langSelect />
-                <router-link
-                    :to="'/otc'"
-                    replace
-                >
-                    <ui-button raised>
-                        OTC
-                    </ui-button>
-                </router-link>
+                <langSelect location="small" />
                 <img
                     class="logo-small"
                     src="img/beet.png"

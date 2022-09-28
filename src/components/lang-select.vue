@@ -6,8 +6,23 @@
     const emitter = inject('emitter');
     const logger = new RendererLogger();
 
+    const props = defineProps({
+        location: {
+            type: String,
+            required: true,
+            default() {
+                return 'guest'
+            }
+        }
+    });
+
+
     let localesRef = computed(() => {
         return menuLocales;
+    });
+
+    let location = computed(() => {
+        return props.location;
     });
 
     let selected = ref(
@@ -46,6 +61,18 @@
         >
             {{ selected }}
         </ui-button>
+        <router-link
+            v-if="location == 'small'"
+            :to="'/otc'"
+            replace
+        >
+            <ui-button
+                outlined
+                position="TOP_RIGHT"
+            >
+                TOTP
+            </ui-button>
+        </router-link>
         <ui-menu
             v-model="open"
             position="TOP_RIGHT"
