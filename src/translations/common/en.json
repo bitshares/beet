@@ -81,6 +81,7 @@
     "balances_lbl": "Balances",
     "balances_error": "Error loading balances",
     "settings_lbl": "Settings",
+    "otc_lbl": "One time counter for deeplinks",
     "error_lbl": "Error",
     "node_lbl": "Node:",
     "link_alert": "App: '{appName}' from '{origin}' wants to link to a {chain} chain.",

@@ -82,6 +82,7 @@
     "balances_lbl": "Guthaben",
     "balances_error": "Fehler beim Laden der Salden",
     "settings_lbl": "Einstellungen",
+    "otc_lbl": "Einmaliger Zähler für Deeplinks",
     "error_lbl": "Fehler",
     "node_lbl": "Knoten:",
     "link_alert": "App: '{appName}' von '{origin}' möchte mit einer {chain}-Kette verknüpfen.",

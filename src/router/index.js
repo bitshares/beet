@@ -7,6 +7,7 @@ import Dashboard from "../components/dashboard";
 import Restore from "../components/restore";
 import AddAccount from "../components/add-account";
 import Settings from "../components/settings";
+import Otc from "../components/otc";
 import Popups from "../components/popups";
 
 const router = createRouter({
@@ -21,6 +22,13 @@ const router = createRouter({
       path: '/settings',
       components: {
         default: Settings,
+        header: HeaderSmall
+      }
+    },
+    {
+      path: '/otc',
+      components: {
+        default: Otc,
         header: HeaderSmall
       }
     },
