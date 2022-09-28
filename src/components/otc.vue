@@ -84,15 +84,15 @@
         copyContents.value = {text: shaMSG, success: () => {console.log('copied code')}};
     });
 
-    ipcRenderer.on('deeplink', (event, arg) => {
+    ipcRenderer.on('deeplink', (event, args) => {
         /**
          * Deeplink
          */
-        let qs = arg;
-        let auth = qs.auth ?? null; // check auth
+        let auth = args.auth ?? null;
         if (auth === currentCode.value) {
-            let request = arg.request ?? null
+            let request = args.request ? decodeURIComponent(args.request) : null
             if (!request) {
+                console.log('No request in deeplink')
                 return;
             }
 
@@ -115,29 +115,37 @@
                 return;
             }
 
-            // injected call || beet op
+            let type = request.type;
+            if (!selectedRows.includes(type)) {
+                console.log("Unauthorized beet operation")
+            }
 
-            let tr = blockchain._parseTransactionBuilder(request.payload.params);
-            let authorizedUse = true;
-            for (let i = 0; i < tr.operations.length; i++) {
-                let operation = tr.operations[i];
-                if (!selectedRows.includes(operation[0])) {
-                    authorizedUse = false;
-                    break;
+            if (type === Actions.INJECTED_CALL) {
+                let tr = blockchain._parseTransactionBuilder(request.payload.params);
+                let authorizedUse = true;
+                for (let i = 0; i < tr.operations.length; i++) {
+                    let operation = tr.operations[i];
+                    if (!selectedRows.includes(operation[0])) {
+                        authorizedUse = false;
+                        break;
+                    }
+                }
+
+                if (!authorizedUse) {
+                    console.log(`Unauthorized use of deeplinked ${chain} blockchain operation`);
+                    return;
                 }
             }
 
-            if (!authorizedUse) {
-                console.log('Unauthorized use of deeplink');
+            let shownBeetApp = store.getters['OriginStore/getBeetApp'](request);
+            let account = store.getters['AccountStore/getSafeAccount'](JSON.parse(JSON.stringify(shownBeetApp)));
+            
+            if (!account) {
+                console.log('No account')
                 return;
             }
 
-            //let shownBeetApp = store.getters['OriginStore/getBeetApp'](request);
-            //let account = store.getters['AccountStore/getSafeAccount'](JSON.parse(JSON.stringify(shownBeetApp)));
-            console.log("deeplink triggered")
-
             // prompt the user with deeplinked action request
-            /*
             ipcRenderer.send(
                 'createPopup',
                 {
@@ -145,7 +153,16 @@
                     accounts: [account]
                 }
             );
-            */
+
+            ipcRenderer.once(`popupApproved_${request.id}`, (event, result) => {
+                console.log('User approved deeplink')
+            })
+
+            ipcRenderer.once(`popupRejected_${request.id}`, (event, result) => {
+                console.log('User rejected deeplink')
+            })
+        } else {
+            console.log('invalid deeplink')
         }
     })
 </script>

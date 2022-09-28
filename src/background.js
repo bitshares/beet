@@ -479,7 +479,7 @@ if (currentOS == 'win32') {
                 mainWindow.focus()
                 
                 if (process.platform == 'win32' && args.length > 2) {
-                    let deeplinkingUrl = args[2].replace('beet://api/', '');
+                    let deeplinkingUrl = args[3].replace('beet://api/', '');
 
                     let qs;
                     try {
