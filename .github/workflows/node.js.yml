@@ -1,5 +1,8 @@
 name: Build/release
 
+permissions:
+  contents: write
+
 on:
   push:
     tags:
@@ -13,10 +16,12 @@ jobs:
     - name: Create Release
       id: create_release
       uses: BTS-CM/action-gh-release@cd28b0f5ee8571b76cfdaa62a30d51d752317477
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
       with:
         name: ${{ github.ref_name }}
-        draft: false
-        prerelease: false
+        draft: true
+        prerelease: endsWith(github.ref_name, 'rc1') || endsWith(github.ref_name, 'rc2') || endsWith(github.ref_name, 'rc3')
         generate_release_notes: false
 
   build:
