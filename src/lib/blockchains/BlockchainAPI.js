@@ -1,6 +1,8 @@
 import store from "../../store";
 import {formatAsset, humanReadableFloat} from "../assetUtils";
 import RendererLogger from "../RendererLogger";
+import * as Actions from '../Actions';
+
 const logger = new RendererLogger();
 
 import mitt from 'mitt';
@@ -401,6 +403,47 @@ export default class BlockchainAPI {
      */
     _needsNewConnection() {
         return false;
+    }
+
+    /**
+     * Returning the list of injectable operations
+     * @returns {Array}
+     */
+     getOperationTypes() {
+        return [
+            {
+                id: Actions.GET_ACCOUNT,
+                method: Actions.GET_ACCOUNT
+            },
+            {
+                id: Actions.REQUEST_SIGNATURE,
+                method: Actions.REQUEST_SIGNATURE
+            },
+            {
+                id: Actions.INJECTED_CALL,
+                method: Actions.INJECTED_CALL
+            },
+            {
+                id: Actions.VOTE_FOR,
+                method: Actions.VOTE_FOR
+            },
+            {
+                id: Actions.SIGN_MESSAGE,
+                method: Actions.SIGN_MESSAGE
+            },
+            {
+                id: Actions.SIGN_NFT,
+                method: Actions.SIGN_NFT
+            },
+            {
+                id: Actions.VERIFY_MESSAGE,
+                method: Actions.VERIFY_MESSAGE
+            },
+            {
+                id: Actions.TRANSFER,
+                method: Actions.TRANSFER
+            }
+        ];
     }
 
     /*
