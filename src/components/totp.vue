@@ -15,38 +15,6 @@
         newCodeRequested.value = true;
         timestamp.value = new Date();
     }
-
-    let settingsRows = computed(() => {
-        // last approved TOTP rows for this chain
-        let chain = store.getters['AccountStore/getChain']
-        let rememberedRows = store.getters['SettingsStore/getChainTOTP'](chain);
-        if (!rememberedRows || !rememberedRows.length) {
-            return [];
-        }
-
-        return rememberedRows;
-    });
-
-    let selectedRows = ref(
-        settingsRows && settingsRows.value.length
-            ? settingsRows.value
-            : []
-    );
-
-    let hasSelectedNewRows = ref(false)
-    watchEffect(() => {
-        console.log({
-            settingsRows: settingsRows.value ?? [],
-            selectedRows: selectedRows.value ?? []
-        })
-        if (!settingsRows.value || !selectedRows.value) {
-            hasSelectedNewRows.value = false;
-        } else if (settingsRows.value.join('') === selectedRows.value.join('')) {
-            hasSelectedNewRows.value = false;
-        } else {
-            hasSelectedNewRows.value = true;
-        }
-    });
  
     function saveRows() {
         if (selectedRows.value && selectedRows.value.length) {
@@ -112,10 +80,45 @@
         );
     });
 
+    let settingsRows = computed(() => {
+        // last approved TOTP rows for this chain
+        let chain = store.getters['AccountStore/getChain']
+        let rememberedRows = store.getters['SettingsStore/getChainTOTP'](chain);
+        if (!rememberedRows || !rememberedRows.length) {
+            return [];
+        }
+
+        return rememberedRows;
+    });
+
+    let hasSelectedNewRows = ref(false);
+    let selectedRows = ref([]);
+    onMounted(() => {
+        console.log('mounted')
+        selectedRows.value = settingsRows && settingsRows.value
+                                ? JSON.parse(JSON.stringify(settingsRows.value))
+                                : []
+    })
+
+    watchEffect(() => {
+        if (selectedRows && settingsRows) {
+            if (
+                selectedRows.value && selectedRows.value.join('') === settingsRows.value.join('')
+            ) {
+                // initial setting of settingsrows
+                console.log('Existing TOTP settings applied')
+                hasSelectedNewRows.value = false;
+            } else if (selectedRows.value && selectedRows.value.join('') !== settingsRows.value.join('')) {
+                console.log('Selected a new row')
+                hasSelectedNewRows.value = true;
+            }
+        }
+    });
+
     let currentCode = ref();
     let copyContents = ref();
     watchEffect(() => {
-        if (timestamp.value) {
+        if (timestamp && timestamp.value) {
             let msg = uuidv4();
             let shaMSG = sha512(msg + timestamp.value.getTime()).toString().substring(0, 15);
             currentCode.value = shaMSG;
