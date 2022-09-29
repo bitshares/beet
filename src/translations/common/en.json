@@ -1,4 +1,14 @@
 {
+    "totp": {
+        "label": "Time-based one-time passwords",
+        "prompt": "Select your required operations below",
+        "chosen": "operations chosen",
+        "request": "Request passcode",
+        "default": "Insufficient operations",
+        "time": "Time remaining",
+        "exit": "Exit TOTP page",
+        "save": "Remember selection"
+    },
     "abHome": "Home",
     "abNew": "New",
     "abSettings": "Settings",
@@ -81,7 +91,6 @@
     "balances_lbl": "Balances",
     "balances_error": "Error loading balances",
     "settings_lbl": "Settings",
-    "otc_lbl": "Time-based one-time passwords",
     "error_lbl": "Error",
     "node_lbl": "Node:",
     "link_alert": "App: '{appName}' from '{origin}' wants to link to a {chain} chain.",

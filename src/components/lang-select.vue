@@ -63,7 +63,7 @@
         </ui-button>
         <router-link
             v-if="location == 'small'"
-            :to="'/otc'"
+            :to="'/totp'"
             replace
         >
             <ui-button

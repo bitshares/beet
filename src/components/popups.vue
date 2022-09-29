@@ -140,7 +140,7 @@
         />
         <br />
         <div style="padding:10px">
-            <langSelect />
+            <langSelect location="prompt" />
         </div>
     </div>
     <div v-else>

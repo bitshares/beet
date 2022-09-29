@@ -1,5 +1,15 @@
 
 {
+    "totp": {
+        "label": "Zeitbasierte Einmalpasswörter",
+        "prompt": "Wählen Sie unten Ihre erforderlichen Operationen aus",
+        "chosen": "operations chosen",
+        "request": "Passwort anfordern",
+        "default": "Unzureichende Operationen",
+        "time": "Verbleibende Zeit",
+        "exit": "TOTP-Seite verlassen",
+        "save": "Auswahl merken"
+    },
     "abHome": "Zuhause",
     "abNew": "Neu",
     "abSettings": "Einstellungen",
@@ -82,7 +92,6 @@
     "balances_lbl": "Guthaben",
     "balances_error": "Fehler beim Laden der Salden",
     "settings_lbl": "Einstellungen",
-    "otc_lbl": "Zeitbasierte Einmalpasswörter",
     "error_lbl": "Fehler",
     "node_lbl": "Knoten:",
     "link_alert": "App: '{appName}' von '{origin}' möchte mit einer {chain}-Kette verknüpfen.",

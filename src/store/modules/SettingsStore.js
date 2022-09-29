@@ -92,19 +92,62 @@ const actions = {
             commit(LOAD_SETTINGS, settings);
             resolve();
         });
+    },
+    setChainTOTP({
+        commit
+    }, payload) {
+        return new Promise(async (resolve, reject) => {
+            let settings;
+            try {
+                settings = localStorage.getItem("settings");
+            } catch (error) {
+                console.log(error)
+                reject(error);
+            }
+
+            if (settings && settings.length > 0) {
+                settings = JSON.parse(settings)
+            } else {
+                settings = initialState.settings;
+            }
+
+            if (!settings.hasOwnProperty('totp')) {
+                settings['totp'] = {
+                    BTS: [],
+                    BTS_TEST: [],
+                    TUSC: [],
+                    BTC: [],
+                    BTC_TEST: []
+                }
+            }
+            settings.totp[payload.chain] = payload.rows;
+            localStorage.setItem("settings", JSON.stringify(settings));
+            commit(LOAD_SETTINGS, settings);
+            resolve();
+        });
     }
 }
 
 
 const getters = {
     getNode: (state) => state.settings.selected_node,
-    getLocale: (state) => state.settings.locale
+    getLocale: (state) => state.settings.locale,
+    getChainTOTP: (state) => (chain) => {
+        return state.settings.totp[chain];
+    }
 };
 
 const initialState = {
     settings: {
         locale: defaultLocale,
-        selected_node: {}
+        selected_node: {},
+        totp: {
+            BTS: [],
+            BTS_TEST: [],
+            TUSC: [],
+            BTC: [],
+            BTC_TEST: []
+        }
     }
 };
 

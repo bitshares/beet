@@ -18,7 +18,7 @@
                 class="largeHeader"
                 columns="12"
             >
-                <langSelect />
+                <langSelect location="guest" />
                 <img
                     src="img/beet.png"
                     alt

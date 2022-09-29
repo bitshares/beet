@@ -67,7 +67,6 @@ const actions = {
                 reject('Empty Account list');
             }
         });
-
     },
     logout({
         commit

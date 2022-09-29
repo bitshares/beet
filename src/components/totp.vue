@@ -16,7 +16,21 @@
         timestamp.value = new Date();
     }
 
-    let id = ref();
+    let selectedRows = ref([]);
+    function saveRows() {
+        if (selectedRows.value && selectedRows.value.length) {
+            // save rows to account
+            let chain = store.getters['AccountStore/getChain']
+            store.dispatch(
+                "SettingsStore/setChainTOTP",
+                {
+                    chain: chain,
+                    rows: selectedRows.value
+                }
+            );
+        }
+    }
+
     let thead = ref(['ID', 'Method', 'Info'])
 
     let tbody = ref([
@@ -40,20 +54,26 @@
         }
     ]);
 
-    let selectedRows = ref([]);
-
-    watchEffect(() => {
-        if (selectedRows.value.length) {
-            console.log(JSON.stringify(selectedRows.value))
-        }
-    });
-
     let data = computed(() => {
         // get operations
         let chain = store.getters['AccountStore/getChain'];
         let types = getBlockchainAPI(chain).getOperationTypes();
         return types;
     });
+
+    let currentChain = computed(() => {
+        let chain = store.getters['AccountStore/getChain'];
+        return chain;
+    });
+
+    watchEffect(() => {
+        // last approved TOTP rows for this chain
+        let rememberedRows = store.getters['SettingsStore/getChainTOTP', currentChain];
+        if (!rememberedRows || !rememberedRows.length) {
+            selectedRows.value = rememberedRows;
+        }
+    });
+
     
     let progress = ref(0);
     watchEffect(() => {
@@ -78,10 +98,12 @@
     let currentCode = ref();
     let copyContents = ref();
     watchEffect(() => {
-        let msg = uuidv4();
-        let shaMSG = sha512(msg + timestamp.value.getTime()).toString().substring(0, 15);
-        currentCode.value = shaMSG;
-        copyContents.value = {text: shaMSG, success: () => {console.log('copied code')}};
+        if (timestamp.value) {
+            let msg = uuidv4();
+            let shaMSG = sha512(msg + timestamp.value.getTime()).toString().substring(0, 15);
+            currentCode.value = shaMSG;
+            copyContents.value = {text: shaMSG, success: () => {console.log('copied code')}};
+        }
     });
 
     ipcRenderer.on('deeplink', (event, args) => {
@@ -171,10 +193,9 @@
     <div class="bottom p-0">
         <span>
             <p style="marginBottom:0px;">
-                {{ t('common.otc_lbl') }}<br/>
-                Select your required operations below
+                {{ t('common.totp.label') }}<br/>
+                {{ t('common.totp.prompt') }}
             </p>
-
             <ui-card outlined style="marginTop: 5px;">
                 <ui-table
                     v-model="selectedRows"
@@ -196,21 +217,30 @@
                     </template>
                 </ui-table>
                 <ui-list>
-                    <ui-item :key="chips">
-                        <ui-chips id="input-chip-set" type="input" :items="list">
+                    <ui-item>
+                        <ui-chips id="input-chip-set" type="input">
                             <ui-chip icon="security">
-                                {{ selectedRows.length }} operations chosen
+                                {{ selectedRows ? selectedRows.length : 0 }} {{ t('common.totp.chosen') }}
                             </ui-chip>
-                            <ui-chip v-if="!newCodeRequested && selectedRows.length > 0" icon="generating_tokens" @click="requestCode">
-                                Request passcode
+                            <ui-chip v-if="!newCodeRequested && selectedRows && selectedRows.length > 0" icon="generating_tokens" @click="requestCode">
+                                {{ t('common.totp.request') }}
                             </ui-chip>
-                            <ui-chip v-if="!newCodeRequested && !selectedRows.length" icon="arrow_upward">
-                                Insufficient operations
+                            <ui-chip v-if="!newCodeRequested && !selectedRows || !selectedRows.length" icon="arrow_upward">
+                                {{ t('common.totp.default') }}
                             </ui-chip>
-                            <ui-chip v-else-if="selectedRows.length && newCodeRequested" icon="access_time">
-                                Time remaining: {{ 45 - progress.toFixed(0) }}s
+                            <ui-chip v-else-if="selectedRows && selectedRows.length && newCodeRequested" icon="access_time">
+                                {{ t('common.totp.time') }}: {{ 45 - progress.toFixed(0) }}s
                             </ui-chip>
                         </ui-chips>
+                    </ui-item>
+                </ui-list>
+                <ui-list v-if="selectedRows && selectedRows.length > 0">
+                    <ui-item>
+                        <ui-chips id="input-chip-set" type="input">
+                            <ui-chip  icon="save" @click="saveRows">
+                                {{ t('common.totp.save') }}
+                            </ui-chip>
+                       </ui-chips>
                     </ui-item>
                 </ui-list>
                 <ui-textfield v-if="currentCode && newCodeRequested" style="margin:5px;" v-model="currentCode" outlined :attrs="{ readonly: true }">
@@ -228,7 +258,7 @@
                     outlined
                     class="step_btn"
                 >
-                    Exit TOTP page
+                    {{ t('common.totp.exit') }}
                 </ui-button>
             </router-link>
         </span>
