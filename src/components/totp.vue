@@ -16,7 +16,38 @@
         timestamp.value = new Date();
     }
 
-    let selectedRows = ref([]);
+    let settingsRows = computed(() => {
+        // last approved TOTP rows for this chain
+        let chain = store.getters['AccountStore/getChain']
+        let rememberedRows = store.getters['SettingsStore/getChainTOTP'](chain);
+        if (!rememberedRows || !rememberedRows.length) {
+            return [];
+        }
+
+        return rememberedRows;
+    });
+
+    let selectedRows = ref(
+        settingsRows && settingsRows.value.length
+            ? settingsRows.value
+            : []
+    );
+
+    let hasSelectedNewRows = ref(false)
+    watchEffect(() => {
+        console.log({
+            settingsRows: settingsRows.value ?? [],
+            selectedRows: selectedRows.value ?? []
+        })
+        if (!settingsRows.value || !selectedRows.value) {
+            hasSelectedNewRows.value = false;
+        } else if (settingsRows.value.join('') === selectedRows.value.join('')) {
+            hasSelectedNewRows.value = false;
+        } else {
+            hasSelectedNewRows.value = true;
+        }
+    });
+ 
     function saveRows() {
         if (selectedRows.value && selectedRows.value.length) {
             // save rows to account
@@ -61,20 +92,6 @@
         return types;
     });
 
-    let currentChain = computed(() => {
-        let chain = store.getters['AccountStore/getChain'];
-        return chain;
-    });
-
-    watchEffect(() => {
-        // last approved TOTP rows for this chain
-        let rememberedRows = store.getters['SettingsStore/getChainTOTP', currentChain];
-        if (!rememberedRows || !rememberedRows.length) {
-            selectedRows.value = rememberedRows;
-        }
-    });
-
-    
     let progress = ref(0);
     watchEffect(() => {
         setInterval(
@@ -233,9 +250,7 @@
                             </ui-chip>
                         </ui-chips>
                     </ui-item>
-                </ui-list>
-                <ui-list v-if="selectedRows && selectedRows.length > 0">
-                    <ui-item>
+                    <ui-item v-if="hasSelectedNewRows">
                         <ui-chips id="input-chip-set" type="input">
                             <ui-chip  icon="save" @click="saveRows">
                                 {{ t('common.totp.save') }}
