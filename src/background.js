@@ -337,7 +337,7 @@ const createWindow = async () => {
       seed = null;
       const emitter = mitt();
       try {
-        emitter.emit('timeout', 'logout');
+        mainWindow.webContents.send('timeout', 'logout');
       } catch (error) {
         console.log(error);
       }

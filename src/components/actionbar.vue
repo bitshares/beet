@@ -1,5 +1,6 @@
 <script setup>
     import { onMounted, inject, ref, watchEffect, computed } from "vue";
+    import { ipcRenderer } from 'electron';
     import { useI18n } from 'vue-i18n';
     import router from '../router/index.js';
     import store from '../store/index';
@@ -49,10 +50,8 @@
         router.replace(items.value[active.value].url);
     });
 
-    emitter.on('timeout', (data)=>{
-        if (data == 'logout') {
+    ipcRenderer.on('timeout', async (event, args) => {
             logout();
-        }
     })
 </script>
 
