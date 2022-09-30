@@ -8,7 +8,10 @@
         "default": "Unzureichende Operationen",
         "time": "Verbleibende Zeit",
         "exit": "TOTP-Seite verlassen",
-        "save": "Auswahl merken"
+        "save": "Auswahl merken",
+        "unsupported": "TOTP wird für diese Kette noch nicht unterstützt, tut mir leid.",
+        "warning": "Teilen Sie den obigen Code mit niemandem",
+        "inProgress": "Ein Deeplink wird verarbeitet"
     },
     "abHome": "Zuhause",
     "abNew": "Neu",
