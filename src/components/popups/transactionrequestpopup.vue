@@ -21,7 +21,7 @@
             }
         },
         visualizedParams: {
-            type: String, // md5
+            type: String,
             required: true,
             default() {
                 return ''

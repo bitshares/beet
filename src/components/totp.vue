@@ -6,6 +6,17 @@
     import sha512 from "crypto-js/sha512.js";
     import store from '../store/index';
     import getBlockchainAPI from "../lib/blockchains/blockchainFactory";
+    import aes from "crypto-js/aes.js";
+    import ENC from 'crypto-js/enc-utf8.js';
+    import Base64 from 'crypto-js/enc-base64';
+    import * as Actions from '../lib/Actions';
+
+    import {
+        injectedCall,
+        voteFor,
+        transfer
+    } from '../lib/apiUtils.js';
+
     const { t } = useI18n({ useScope: 'global' });
 
     let timestamp = ref();
@@ -23,7 +34,7 @@
     function saveRows() {
         if (selectedRows && selectedRows.value) {
             // save rows to account
-            let chain = store.getters['AccountStore/getChain']
+            let chain = store.getters['AccountStore/getChain'];
             store.dispatch(
                 "SettingsStore/setChainTOTP",
                 {
@@ -138,6 +149,11 @@
         /**
          * Deeplink
          */
+        if (!store.state.WalletStore.isUnlocked) {
+            console.log("Wallet must be unlocked for deeplinks to work.")
+            return;
+        }
+
         deepLinkInProgress.value = true;
         if (!currentCode.value) {
             console.log('No auth key')
@@ -145,16 +161,44 @@
             return;
         }
 
-        let requestData = args.request ?? null;
-        if (!requestData) {
-            console.log('No request in deeplink')
+        let requestedChain = args.chain ?? null;       
+        let chain = store.getters['AccountStore/getChain'];
+        if (!requestedChain || !chain === requestedChain) {
+            console.log("Invalid deeplink prompt");
+            deepLinkInProgress.value = false;
+            return;
+        }
+        
+        let processedRequest;
+        try {
+            processedRequest = decodeURIComponent(args.request);
+        } catch (error) {
+            console.log('Processing request failed')
+            deepLinkInProgress.value = false;
+            return;
+        }
+        
+        let parsedRequest;
+        try {
+            parsedRequest = Base64.parse(processedRequest).toString(ENC)
+        } catch (error) {
+            console.log('Parsing request failed')
+            deepLinkInProgress.value = false;
+            return;
+        }
+
+        let decryptedBytes;
+        try {
+            decryptedBytes = aes.decrypt(parsedRequest, currentCode.value);
+        } catch (error) {
+            console.log(error);
             deepLinkInProgress.value = false;
             return;
         }
 
         let decryptedData;
         try {
-            decryptedData = await aes.decrypt(requestData, currentCode.value).toString(ENC);
+            decryptedData = decryptedBytes.toString(ENC);
         } catch (error) {
             console.log(error);
             deepLinkInProgress.value = false;
@@ -163,7 +207,7 @@
 
         let request;
         try {
-            request = decodeURIComponent(decryptedData);
+            request = JSON.parse(decryptedData);
         } catch (error) {
             console.log(error);
             deepLinkInProgress.value = false;
@@ -175,21 +219,33 @@
             deepLinkInProgress.value = false;
             return;
         }
-        
-        let chain = store.getters['AccountStore/getChain'];
-        if (!chain === request.payload.chain) {
-            console.log("Invalid deeplink prompt");
-            deepLinkInProgress.value = false;
+
+        if (!Object.keys(Actions).map(key => Actions[key]).includes(request.payload.method)) {
+            console.log("Unsupported request type rejected");
             return;
         }
 
+        let blockchainActions = [
+            Actions.TRANSFER,
+            Actions.VOTE_FOR,
+            Actions.INJECTED_CALL
+        ];
+
+        let apiobj = {
+            id: request.id,
+            type: request.payload.method,
+            payload: request.payload
+        };
+
         let blockchain;
-        try {
-            blockchain = getBlockchainAPI(chain);
-        } catch (error) {
-            console.log(error);
-            deepLinkInProgress.value = false;
-            return;
+        if (blockchainActions.includes(apiobj.type)) {
+            try {
+                blockchain = await getBlockchainAPI(chain);
+            } catch (error) {
+                console.log(error);
+                deepLinkInProgress.value = false;
+                return;
+            }
         }
 
         if (!blockchain) {
@@ -198,20 +254,25 @@
             return;
         }
 
-        let type = request.type;
-        if (!selectedRows.includes(type)) {
+        if (!selectedRows.value.includes(apiobj.type)) {
             console.log("Unauthorized beet operation")
             deepLinkInProgress.value = false;
             return;
         }
 
-        if (type === Actions.INJECTED_CALL) {
-            let tr = blockchain._parseTransactionBuilder(request.payload.params);
-            let authorizedUse = true;
+        if (apiobj.type === Actions.INJECTED_CALL) {
+            let tr;
+            try {
+                tr = blockchain._parseTransactionBuilder(request.payload.params);
+            } catch (error) {
+                console.log(error)
+            }
+
+            let authorizedUse = false;
             for (let i = 0; i < tr.operations.length; i++) {
                 let operation = tr.operations[i];
-                if (!selectedRows.includes(operation[0])) {
-                    authorizedUse = false;
+                if (selectedRows.value.includes(operation[0])) {
+                    authorizedUse = true;
                     break;
                 }
             }
@@ -221,35 +282,39 @@
                 deepLinkInProgress.value = false;
                 return;
             }
+            console.log("Authorized use of deeplinks")
         }
 
-        let shownBeetApp = store.getters['OriginStore/getBeetApp'](request);
-        let account = store.getters['AccountStore/getSafeAccount'](JSON.parse(JSON.stringify(shownBeetApp)));
-        
+        let account = store.getters['AccountStore/getCurrentSafeAccount']();
         if (!account) {
             console.log('No account')
             deepLinkInProgress.value = false;
             return;
         }
 
-        // prompt the user with deeplinked action request
-        ipcRenderer.send(
-            'createPopup',
-            {
-                request: request,
-                accounts: [account]
+        let status;
+        try {
+            if (apiobj.type === Actions.INJECTED_CALL) {
+                status = await injectedCall(apiobj, blockchain);
+            } else if (apiobj.type === Actions.VOTE_FOR) {
+                status = await voteFor(apiobj, blockchain);
+            } else if (apiobj.type === Actions.TRANSFER) {
+                status = await transfer(apiobj, blockchain);
             }
-        );
-
-        ipcRenderer.once(`popupApproved_${request.id}`, (event, result) => {
-            console.log('User approved deeplink')
+        } catch (error) {
+            console.log(error || "No status")
             deepLinkInProgress.value = false;
-        })
+            return;
+        }
 
-        ipcRenderer.once(`popupRejected_${request.id}`, (event, result) => {
-            console.log('User rejected deeplink')
+        if (!status || !status.result || status.result.isError || status.result.canceled) {
+            console.log("Issue occurred in approved prompt");
             deepLinkInProgress.value = false;
-        })
+            return;
+        }
+
+        console.log(status);
+        deepLinkInProgress.value = false;
     })
 </script>
 

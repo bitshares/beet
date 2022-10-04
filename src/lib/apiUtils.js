@@ -174,7 +174,9 @@ async function _signOrBroadcast(
 
   let activeKey;
   try {
-    activeKey = store.getters['AccountStore/getActiveKey'](request);
+    activeKey = request.payload.account_id
+                    ? store.getters['AccountStore/getActiveKey'](request)
+                    : store.getters['AccountStore/getCurrentActiveKey']();
   } catch (error) {
     return _promptFail(txType + '.getActiveKey', request.id, error, reject);
   }
@@ -283,19 +285,24 @@ export async function injectedCall(request, blockchain) {
         return _promptFail("injectedCall", request.id, request, reject);
     }
 
+    let account;
     let visualizedAccount;
-    try {
-        visualizedAccount = await blockchain.visualize(request.payload.account_id);
-    } catch (error) {
-        console.log(error);
-        return _promptFail("injectedCall", request.id, request, reject);
+    if (!request.payload.account_id) {
+        account = store.getters['AccountStore/getCurrentSafeAccount']();
+    } else {
+        try {
+            visualizedAccount = await blockchain.visualize(request.payload.account_id);
+        } catch (error) {
+            console.log(error);
+            return _promptFail("injectedCall", request.id, request, reject);
+        }
     }
 
     ipcRenderer.send(
       'createPopup',
       {
         request: request,
-        visualizedAccount: visualizedAccount,
+        visualizedAccount: visualizedAccount ?? account.accountName,
         visualizedParams: visualizedParams
       }
     );

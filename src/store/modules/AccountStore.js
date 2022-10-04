@@ -99,6 +99,14 @@ const actions = {
 
 const getters = {
     getAccount: state => state.accountlist[state.selectedIndex],
+    getCurrentSafeAccount: state => () => {
+        let currentAccount = state.accountlist[state.selectedIndex];
+        return {
+            accountID: currentAccount.accountID,
+            accountName: currentAccount.accountName,
+            chain: currentAccount.chain
+        }
+    },
     getChain: state => state.accountlist[state.selectedIndex].chain,
     getAccountList: state => state.accountlist,
     getSafeAccountList: state => state.accountlist.map(account => {
@@ -130,6 +138,10 @@ const getters = {
         }
 
         return requestedAccounts[0];
+    },
+    getCurrentActiveKey: (state) => () => {
+        let currentAccount = state.accountlist[state.selectedIndex];
+        return currentAccount.keys.active;
     },
     getActiveKey: (state) => (request) => {
       let signing = state.accountlist.filter(account => {
