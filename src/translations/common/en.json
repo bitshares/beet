@@ -12,6 +12,14 @@
         "warning": "Do not share the code above with anyone",
         "inProgress": "A deeplink is being processed"
     },
+    "actionBar": {
+        "Home": "Home",
+        "New": "New",
+        "TOTP": "TOTP",
+        "QR": "QR",
+        "Settings": "Settings",
+        "Logout": "Logout"
+    },
     "abHome": "Home",
     "abNew": "New",
     "abSettings": "Settings",

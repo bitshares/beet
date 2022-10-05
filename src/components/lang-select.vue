@@ -54,25 +54,7 @@
 
 <template>
     <ui-menu-anchor absolute position="TOP_RIGHT">
-        <ui-button
-            outlined
-            position="TOP_RIGHT"
-            @click="menuClick"
-        >
-            {{ selected }}
-        </ui-button>
-        <router-link
-            v-if="location == 'small'"
-            :to="'/totp'"
-            replace
-        >
-            <ui-button
-                outlined
-                position="TOP_RIGHT"
-            >
-                TOTP
-            </ui-button>
-        </router-link>
+        <ui-fab icon="translate" @click="menuClick" mini></ui-fab>
         <ui-menu
             v-model="open"
             position="TOP_RIGHT"

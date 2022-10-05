@@ -13,6 +13,14 @@
         "warning": "Teilen Sie den obigen Code mit niemandem",
         "inProgress": "Ein Deeplink wird verarbeitet"
     },
+    "actionBar": {
+        "Home": "Zuhause",
+        "New": "Neu",
+        "TOTP": "TOTP",
+        "QR": "QR",
+        "Settings": "Einstellungen",
+        "Logout": "Abmelden"
+    },
     "abHome": "Zuhause",
     "abNew": "Neu",
     "abSettings": "Einstellungen",

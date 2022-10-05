@@ -1,7 +1,6 @@
 <script setup>
     import { watch, ref, computed, inject } from "vue";
     import { useI18n } from 'vue-i18n';
-    import Actionbar from "./actionbar";
     import Balances from "./balances";
     import AccountDetails from "./accountdetails";
 
@@ -84,19 +83,20 @@
 </script>
 
 <template>
-    <div v-if="accountOptions.length">
-        <ui-select
-            id="account_select"
-            v-model="chosenAccount"
-            style="width:100%"
-            :options="accountOptions"
-            required
-            full-bleed
-        >
-            Account
-        </ui-select>
-        <AccountDetails :account="selectedAccount" />
-        <Balances :account="selectedAccount" />
-    </div>
-    <Actionbar />
+    <span class="container">
+        <div v-if="accountOptions.length" style="margin-bottom: 10px;">
+            <ui-select
+                id="account_select"
+                v-model="chosenAccount"
+                style="width:100%"
+                :options="accountOptions"
+                required
+                full-bleed
+            >
+                Account
+            </ui-select>
+            <AccountDetails :account="selectedAccount" />
+            <Balances :account="selectedAccount" />
+        </div>
+    </span>
 </template>

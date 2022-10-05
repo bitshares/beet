@@ -8,6 +8,7 @@ import Restore from "../components/restore";
 import AddAccount from "../components/add-account";
 import Settings from "../components/settings";
 import Totp from "../components/totp";
+import Qr from "../components/qr";
 import Popups from "../components/popups";
 
 const router = createRouter({
@@ -29,6 +30,13 @@ const router = createRouter({
       path: '/totp',
       components: {
         default: Totp,
+        header: HeaderSmall
+      }
+    },
+    {
+      path: '/qr',
+      components: {
+        default: Qr,
         header: HeaderSmall
       }
     },
