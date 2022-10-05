@@ -13,6 +13,25 @@
         "warning": "Teilen Sie den obigen Code mit niemandem",
         "inProgress": "Ein Deeplink wird verarbeitet"
     },
+    "qr": {
+        "main": {
+            "title": "QR-Scanner-Methoden",
+            "scan": "Scanne einen QR-Code",
+            "drag": "QR-Bild ziehen und ablegen",
+            "upload": "Lade ein QR-Bild hoch"
+        },
+        "scan": {
+            "title": "Scannen Sie einen QR-Code mit Ihrer Webcam"
+        },
+        "drag": {
+            "title": "Ziehe ein Bild, das einen QR-Code enthält, per Drag-and-Drop"
+        }, 
+        "upload": {
+            "title": "Laden Sie eine Bilddatei hoch, um nach QR-Codes zu scannen"
+        },
+        "exit": "QR-Seite verlassen",
+        "back": "Der Rücken"
+    },
     "actionBar": {
         "Home": "Zuhause",
         "New": "Neu",

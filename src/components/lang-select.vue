@@ -53,11 +53,12 @@
 
 
 <template>
-    <ui-menu-anchor absolute position="TOP_RIGHT">
+    <ui-menu-anchor absolute position="BOTTOM_START">
         <ui-fab icon="translate" @click="menuClick" mini></ui-fab>
         <ui-menu
             v-model="open"
-            position="TOP_RIGHT"
+            style="border: 1px solid #C7088E;"
+            position="BOTTOM_START"
             :items="localesRef"
             @selected="onSelected"
             @cancel="onCancel"

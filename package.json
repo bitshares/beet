@@ -22,13 +22,13 @@
       "buildResources": "resources"
     },
     "protocols": [
-        {
-            "name": "beet",
-            "role": "Viewer",
-            "schemes": [
-                "beet"
-            ]
-        }
+      {
+        "name": "beet",
+        "role": "Viewer",
+        "schemes": [
+          "beet"
+        ]
+      }
     ],
     "nsis": {
       "oneClick": false,
@@ -79,6 +79,7 @@
     "uuid": "^8.3.2",
     "vue": "^3.2.37",
     "vue-i18n": "9",
+    "vue-qrcode-reader": "^3.1.0",
     "vue-router": "^4.1.2",
     "vuex": "^4.0.2"
   },
