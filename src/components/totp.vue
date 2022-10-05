@@ -119,12 +119,12 @@
     watchEffect(() => {
         if (selectedRows && settingsRows) {
             if (
-                selectedRows.value && selectedRows.value.join('') === settingsRows.value.join('')
+                selectedRows.value && selectedRows.value.sort().join('') === settingsRows.value.sort().join('')
             ) {
                 // initial setting of settingsrows
                 console.log('Existing TOTP settings applied')
                 hasSelectedNewRows.value = false;
-            } else if (selectedRows.value && selectedRows.value.join('') !== settingsRows.value.join('')) {
+            } else if (selectedRows.value && selectedRows.value.sort().join('') !== settingsRows.value.sort().join('')) {
                 console.log('Selected a new row')
                 hasSelectedNewRows.value = true;
             }
@@ -342,7 +342,6 @@
                 <ui-card v-else outlined style="marginTop: 5px;">
                     <ui-table
                         v-model="selectedRows"
-                        fullwidth
                         :data="data"
                         :thead="thead"
                         :tbody="tbody"
@@ -370,34 +369,47 @@
                                 <ui-chip icon="security">
                                     {{ selectedRows ? selectedRows.length : 0 }} {{ t('common.totp.chosen') }}
                                 </ui-chip>
-                                <ui-chip icon="save" @click="saveRows">
+                                <ui-button raised style="margin-right:5px" icon="save" @click="saveRows">
                                     {{ t('common.totp.save') }}
-                                </ui-chip>
+                                </ui-button>
                             </ui-chips>
                         </ui-item>
                         <ui-item>
-                            <ui-chips style="padding-left: 25%;" v-if="!newCodeRequested && selectedRows && selectedRows.length > 0 && !timeLimit" id="input-chip-set" type="input">
-                                <ui-chip @click="setTime(60)">
+                            <span style="padding-left: 22%;" v-if="!newCodeRequested && selectedRows && selectedRows.length > 0 && !timeLimit">
+                                <ui-button raised style="margin-right:5px" @click="setTime(60)">
                                     60s
-                                </ui-chip>
-                                <ui-chip @click="setTime(180)">
+                                </ui-button>
+                                <ui-button raised style="margin-right:5px" @click="setTime(180)">
                                     3m
-                                </ui-chip>
-                                <ui-chip @click="setTime(600)">
+                                </ui-button>
+                                <ui-button raised style="margin-right:5px" @click="setTime(600)">
                                     10m
-                                </ui-chip>
-                            </ui-chips>
-                            <ui-chips style="padding-left: 25%;" id="input-chip-set" type="input">
-                                <ui-chip v-if="!newCodeRequested && !selectedRows || !selectedRows.length" icon="arrow_upward">
+                                </ui-button>
+                            </span>
+                            <span style="padding-left: 22%;">
+                                <ui-button
+                                    v-if="!newCodeRequested && !selectedRows || !selectedRows.length"
+                                    icon="arrow_upward"
+                                    raised
+                                    style="margin-right:5px"
+                                >
                                     {{ t('common.totp.default') }}
-                                </ui-chip>
-                                <ui-chip v-if="!newCodeRequested && selectedRows && selectedRows.length > 0 && timeLimit" icon="generating_tokens" @click="requestCode">
+                                </ui-button>
+                                <ui-button
+                                    v-if="!newCodeRequested && selectedRows && selectedRows.length > 0 && timeLimit"
+                                    icon="generating_tokens"
+                                    @click="requestCode"
+                                    raised
+                                    style="margin-right:5px"
+                                >
                                     {{ t('common.totp.request') }}
-                                </ui-chip>
-                                <ui-chip v-else-if="selectedRows && selectedRows.length && newCodeRequested" icon="access_time">
-                                    {{ t('common.totp.time') }}: {{ timeLimit - progress.toFixed(0) }}s
-                                </ui-chip>
-                        </ui-chips>
+                                </ui-button>
+                                <ui-chips v-else-if="selectedRows && selectedRows.length && newCodeRequested" id="input-chip-set" type="input">
+                                    <ui-chip icon="access_time">
+                                        {{ t('common.totp.time') }}: {{ timeLimit - progress.toFixed(0) }}s
+                                    </ui-chip>
+                                </ui-chips>
+                            </span>
                         </ui-item>
                     </ui-list>
                     <ui-textfield v-if="currentCode && newCodeRequested" style="margin:5px;" v-model="currentCode" outlined :attrs="{ readonly: true }">

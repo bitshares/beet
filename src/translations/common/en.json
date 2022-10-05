@@ -7,7 +7,7 @@
         "default": "Insufficient operations",
         "time": "Time remaining",
         "exit": "Exit TOTP page",
-        "save": "Remember selection",
+        "save": "Save",
         "unsupported": "TOTP is not yet supported for this chain, sorry.",
         "warning": "Do not share the code above with anyone",
         "inProgress": "A deeplink is being processed"

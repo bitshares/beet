@@ -53,7 +53,8 @@ window.t = (key, params) => {
 app.use(VueRouter);
 app.use(BalmUI, {
     $theme: {
-        primary: '#C7088E'
+        primary: '#C7088E',
+        secondary: '#960069'
     }
 });
 app.use(BalmUIPlus);
