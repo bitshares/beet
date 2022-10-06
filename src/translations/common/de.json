@@ -30,7 +30,8 @@
             "title": "Laden Sie eine Bilddatei hoch, um nach QR-Codes zu scannen"
         },
         "exit": "QR-Seite verlassen",
-        "back": "Der Rücken"
+        "back": "Der Rücken",
+        "progress": "QR-Code wird verarbeitet"
     },
     "actionBar": {
         "Home": "Zuhause",

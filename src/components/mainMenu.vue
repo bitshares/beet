@@ -43,7 +43,6 @@
     });
 
     function onChange(data) {
-        console.log(data.index)
         if (data.index === 5) {
             console.log('logout')
             store.dispatch("WalletStore/logout");
@@ -51,10 +50,6 @@
         }
 
         router.replace(items.value[data.index].url);
-    }
-
-    function onSelected(data) {
-        console.log({data})
     }
 
     ipcRenderer.on('timeout', async (event, args) => {
@@ -75,7 +70,6 @@
                 position="BOTTOM_START"
                 v-model="open"
                 @selected="onChange"
-                @cancel="onCancel"
             >
                 <ui-menuitem nested>
                     <ui-menuitem v-for="item in items" :key="item.icon">

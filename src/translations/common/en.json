@@ -29,7 +29,8 @@
             "title": "Upload an image file to scan for QR codes"
         },
         "exit": "Exit QR page",
-        "back": "Back"
+        "back": "Back",
+        "progress": "Processing QR code"
     },
     "actionBar": {
         "Home": "Home",

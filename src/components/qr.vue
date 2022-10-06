@@ -1,26 +1,15 @@
 <script setup>
-    import { onMounted, watchEffect, watch, ref, computed } from 'vue';
+    import { ref } from 'vue';
     import { useI18n } from 'vue-i18n';
-
-    import { ipcRenderer } from "electron";
-    import store from '../store/index';
-
-    import {
-        injectedCall,
-        voteFor,
-        transfer
-    } from '../lib/apiUtils.js';
 
     import QRDrag from "./qrDrag";
     import QRScan from "./qrScan";
     import QRUpload from "./qrUpload";
 
     const { t } = useI18n({ useScope: 'global' });
-    let qrInProgress = ref(false);
     let qrChoice = ref();
 
     function goBack() {
-        qrInProgress.value = false;
         qrChoice.value = null;
     }
 
@@ -32,18 +21,12 @@
 <template>
     <div class="bottom p-0">
         <span>
-            <span v-if="qrInProgress">
-                <p style="marginBottom:0px;">
-                    {{ t('common.totp.inProgress') }}
-                </p>
-                <ui-card outlined style="marginTop: 5px;">
-                    <br/>
-                    <ui-progress indeterminate />
-                    <br/>
-                </ui-card>
-            </span>
-            <span v-else-if="qrChoice && qrChoice === 'Scan'">
+            <span v-if="qrChoice && qrChoice === 'Scan'">
                 <QRScan />
+                <br/>
+                <ui-button @click="goBack()">
+                    {{ t('common.qr.back') }}
+                </ui-button>
             </span>
             <span v-else-if="qrChoice && qrChoice === 'Drag'">
                 <QRDrag />

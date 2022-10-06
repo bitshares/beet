@@ -39,11 +39,7 @@
         open.value = true;
     }
 
-    function onCancel() {
-        open.value = false;
-    }
-
-    function onSelected(locale) {       
+    function onSelected(locale) {
         emitter.emit('i18n', locale.value);
         store.dispatch("SettingsStore/setLocale", {locale: locale.value});
         selected.value = locale.value;
@@ -61,7 +57,6 @@
             position="BOTTOM_START"
             :items="localesRef"
             @selected="onSelected"
-            @cancel="onCancel"
         />
     </ui-menu-anchor>
 </template>

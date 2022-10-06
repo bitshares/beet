@@ -1,7 +1,7 @@
 <script setup>
     import { onMounted, watchEffect, watch, ref, computed } from 'vue';
     import { useI18n } from 'vue-i18n';
-    import { QrcodeStream, QrcodeDropZone, QrcodeCapture } from 'vue-qrcode-reader'
+    import { QrcodeStream, QrcodeDropZone, QrcodeCapture } from 'qrcode-reader-vue3'
 
     import { ipcRenderer } from "electron";
     import store from '../store/index';
@@ -39,10 +39,6 @@
                 <p>
                     {{ t('common.qr.upload.title') }}
                 </p>
-
-                <ui-button @click="goBack()">
-                    {{ t('common.qr.back') }}
-                </ui-button>
             </span>
             <br/>
             <router-link
