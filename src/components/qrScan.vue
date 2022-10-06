@@ -38,6 +38,7 @@
         promise
         .catch((error) => {
             console.log(error)
+            camera.value = 'off';
             cameraError.value = true;
             cameraInitializing.value = false;
         })
@@ -52,16 +53,24 @@
      */
     async function onDecode (content) {
         qrInProgress.value = true;
+        await timeout(1000)
         QRresult.value = content;
         camera.value = 'off';
         qrInProgress.value = false;
         console.log({content})
     }
 
+    /**
+     * Try to switch between front/back camera
+     * If camera is off -> turn it on
+     */
     async function switchCamera () {
       switch (camera.value) {
         case 'off':
           camera.value = 'auto'
+          cameraInitializing.value = false;
+          cameraError.value = undefined;
+          QRresult.value = undefined;
           break
         case 'front' || 'auto':
           camera.value = 'rear'
@@ -70,6 +79,46 @@
           camera.value = 'front'
           break
       }
+    }
+
+    /**
+     * Overlaying branding on detected qr
+     * @param {Array} detectedCodes
+     * @param {Canvas} ctx
+     */
+    function paintQR (detectedCodes, ctx) {
+      for (const detectedCode of detectedCodes) {
+        const [ firstPoint, ...otherPoints ] = detectedCode.cornerPoints
+
+        ctx.textAlign = "center"
+        var img = document.getElementById("beetScan");
+        ctx.drawImage(img, firstPoint.x + 25, firstPoint.y + 10);
+      }
+
+      for (const detectedCode of detectedCodes) {
+        const [ firstPoint, ...otherPoints ] = detectedCode.cornerPoints
+
+        ctx.strokeStyle = "#C7088E";
+
+        ctx.beginPath();
+        ctx.moveTo(firstPoint.x, firstPoint.y);
+        for (const { x, y } of otherPoints) {
+          ctx.lineTo(x, y);
+        }
+        ctx.lineTo(firstPoint.x, firstPoint.y);
+        ctx.closePath();
+        ctx.stroke();
+      }
+    }
+
+    /**
+     * Waiting to paint branding
+     * @param {Number} ms 
+     */
+    function timeout (ms) {
+      return new Promise(resolve => {
+        window.setTimeout(resolve, ms)
+      })
     }
 
 </script>
@@ -84,16 +133,22 @@
                     </p>
                     <ui-card
                         outlined
+                        v-shadow="5"
                         style="height: 250px; border: 1px solid #C7088E;"
                     >
                         <qrcode-stream
                             :camera="camera"
+                            :track="paintQR"
                             @init="onInit"
                             @decode="onDecode"
                         >
-                        <span v-if="cameraInitializing">
-                            <ui-spinner style="padding-top: 65px;" active></ui-spinner>
-                        </span>
+                            <span v-if="cameraInitializing">
+                                <ui-spinner style="padding-top: 65px;" active></ui-spinner>
+                            </span>
+
+                            <div style="display:none;">
+                                <img id="beetScan" src="img/beetSmall.png" />
+                            </div>
                         </qrcode-stream>
                     </ui-card>
                     <ui-button v-if="videoDevices.length > 1" @click="switchCamera">

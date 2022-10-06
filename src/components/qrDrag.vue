@@ -15,43 +15,79 @@
     const { t } = useI18n({ useScope: 'global' });
     let qrInProgress = ref(false);
     let qrChoice = ref();
+    let result = ref();
+    let error = ref();
+    let dragover = ref(false);
 
-    function goBack() {
-        qrInProgress.value = false;
-        qrChoice.value = null;
+    /**
+     * Dragged image QR attempt
+     * @param {Promise} promise 
+     */
+    async function onDetect (promise) {
+      try {
+        const { content } = await promise
+
+        result.value = content
+        error.value = null
+      } catch (error) {
+        if (error.name === 'DropImageFetchError') {
+          error.value = "Cross-origin images like this are unsupported.";
+        } else if (error.name === 'DropImageDecodeError') {
+          error.value = "Couldn't decode QR in image.";
+        } else {
+          error.value = 'QR detection error';
+        }
+      }
+    }
+
+    /**
+     * @param {Boolean} isDraggingOver 
+     */
+    function onDragOver (isDraggingOver) {
+      dragover.value = isDraggingOver;
+    }
+
+    /**
+     * @param {Promise} promise 
+     */
+    function logErrors (promise) {
+      promise.catch(console.error);
     }
 </script>
 
 <template>
-    <div class="bottom p-0">
-        <span>
-            <span v-if="qrInProgress">
-                <p style="marginBottom:0px;">
-                    {{ t('common.totp.inProgress') }}
-                </p>
-                <ui-card outlined style="marginTop: 5px;">
-                    <br/>
-                    <ui-progress indeterminate />
-                    <br/>
-                </ui-card>
-            </span>
-            <span v-else>
-                <p>
-                    {{ t('common.qr.drag.title') }}
-                </p>
-            </span>
-            <br/>
-            <router-link
-                :to="'/dashboard'"
-                replace
+    <div>
+        <span v-if="qrInProgress">
+            <p style="marginBottom:0px;">
+                {{ t('common.totp.inProgress') }}
+            </p>
+            
+            <ui-progress indeterminate />
+        </span>
+        <span v-else>
+            <p>
+                {{ t('common.qr.drag.title') }}
+            </p>
+
+            <ui-card
+                outlined
+                v-shadow="5"
+                style="height: 250px; border: 1px solid #C7088E;"
             >
-                <ui-button
-                    outlined
-                    class="step_btn"
+                <qrcode-drop-zone
+                    @detect="onDetect"
+                    @dragover="onDragOver"
+                    @init="logErrors"
                 >
-                    {{ t('common.qr.exit') }}
-                </ui-button>
-            </router-link>
+                    <div
+                        class="drop-area"
+                        style="padding-top: 110px;"
+                        :class="{ 'dragover': dragover }"
+                    >
+                        DROP YOUR IMAGE HERE
+                    </div>
+                </qrcode-drop-zone>
+            </ui-card>
         </span>
     </div>
 </template>
