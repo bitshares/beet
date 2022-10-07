@@ -134,307 +134,383 @@ export default class BitShares extends BlockchainAPI {
             // Beet based
             {
                 id: Actions.GET_ACCOUNT,
+                from: '',
                 method: Actions.GET_ACCOUNT
             },
             {
                 id: Actions.REQUEST_SIGNATURE,
+                from: '',
                 method: Actions.REQUEST_SIGNATURE
             },
             {
                 id: Actions.INJECTED_CALL,
+                from: '',
                 method: Actions.INJECTED_CALL
             },
             {
                 id: Actions.VOTE_FOR,
+                from: '',
                 method: Actions.VOTE_FOR
             },
             {
                 id: Actions.SIGN_MESSAGE,
+                from: '',
                 method: Actions.SIGN_MESSAGE
             },
             {
                 id: Actions.SIGN_NFT,
+                from: '',
                 method: Actions.SIGN_NFT
             },
             {
                 id: Actions.VERIFY_MESSAGE,
+                from: '',
                 method: Actions.VERIFY_MESSAGE
             },
             {
                 id: Actions.TRANSFER,
+                from: '',
                 method: Actions.TRANSFER
             },
             // Blockchain based:
             {
                 id: 0,
+                from: '',
                 method: "transfer"
             },
             {
                 id: 1,
+                from: 'seller',
                 method: "limit_order_create"
             },
             {
                 id: 2,
+                from: 'fee_paying_account',
                 method: "limit_order_cancel"
             },
             {
                 id: 3,
+                from: 'funding_account',
                 method: "call_order_update"
             },
             {
                 id: 5,
+                from: 'registrar',
                 method: "account_create"
             },
             {
                 id: 6,
+                from: 'account',
                 method: "account_update"
             },
             {
                 id: 7,
+                from: 'authorizing_account',
                 method: "account_whitelist"
             },
             {
                 id: 8,
+                from: 'account_to_upgrade',
                 method: "account_upgrade"
             },
             {
                 id: 9,
+                from: 'account_id',
                 method: "account_transfer"
             },
             {
                 id: 10,
+                from: 'issuer',
                 method: "asset_create"
             },
             {
                 id: 11,
+                from: 'issuer',
                 method: "asset_update"
             },
             {
                 id: 12,
+                from: 'issuer',
                 method: "asset_update_bitasset"
             },
             {
                 id: 13,
+                from: 'issuer',
                 method: "asset_update_feed_producers"
             },
             {
                 id: 14,
+                from: 'issuer',
                 method: "asset_issue"
             },
             {
                 id: 15,
+                from: 'payer',
                 method: "asset_reserve"
             },
             {
                 id: 16,
+                from: 'from_account',
                 method: "asset_fund_fee_pool"
             },
             {
                 id: 17,
+                from: 'account',
                 method: "asset_settle"
             },
             {
                 id: 18,
+                from: 'issuer',
                 method: "asset_global_settle"
             },
             {
                 id: 19,
+                from: 'publisher',
                 method: "asset_publish_feed"
             },
             {
                 id: 20,
+                from: 'witness_account',
                 method: "witness_create"
             },
             {
                 id: 21,
+                from: 'witness_account',
                 method: "witness_update"
             },
             {
                 id: 22,
+                from: 'fee_paying_account',
                 method: "proposal_create"
             },
             {
                 id: 23,
+                from: 'fee_paying_account',
                 method: "proposal_update"
             },
             {
                 id: 24,
+                from: 'fee_paying_account',
                 method: "proposal_delete"
             },
             {
                 id: 25,
+                from: 'withdraw_from_account',
                 method: "withdraw_permission_create"
             },
             {
                 id: 26,
+                from: 'withdraw_from_account',
                 method: "withdraw_permission_update"
             },
             {
                 id: 27,
+                from: 'withdraw_from_account',
                 method: "withdraw_permission_claim"
             },
             {
                 id: 28,
+                from: 'withdraw_from_account',
                 method: "withdraw_permission_delete"
             },
             {
                 id: 29,
+                from: 'committee_member_account',
                 method: "committee_member_create"
             },
             {
                 id: 30,
+                from: '',
                 method: "committee_member_update"
             },
             {
                 id: 31,
+                from: 'committee_member_account',
                 method: "committee_member_update_global_parameters"
             },
             {
                 id: 32,
+                from: '',
                 method: "vesting_balance_create"
             },
             {
                 id: 33,
+                from: 'owner',
                 method: "vesting_balance_withdraw"
             },
             {
                 id: 34,
+                from: 'owner',
                 method: "worker_create"
             },
             {
                 id: 35,
+                from: 'payer',
                 method: "custom"
             },
             {
                 id: 36,
+                from: 'fee_paying_account',
                 method: "assert"
             },
             {
                 id: 37,
+                from: 'deposit_to_account',
                 method: "balance_claim"
             },
             {
                 id: 38,
+                from: 'from',
                 method: "override_transfer"
             },
             {
                 id: 39,
+                from: 'from',
                 method: "transfer_to_blind"
             },
             {
                 id: 40,
+                from: '',
                 method: "blind_transfer"
             },
             {
                 id: 41,
+                from: '',
                 method: "transfer_from_blind"
             },
             {
                 id: 43,
+                from: 'issuer',
                 method: "asset_claim_fees"
             },
             {
                 id: 45,
+                from: 'bidder',
                 method: "bid_collateral"
             },
             {
                 id: 47,
+                from: 'issuer',
                 method: "asset_claim_pool"
             },
             {
                 id: 48,
+                from: 'issuer',
                 method: "asset_update_issuer"
             },
             {
                 id: 49,
+                from: 'from',
                 method: "htlc_create"
             },
             {
                 id: 50,
+                from: 'redeemer',
                 method: "htlc_redeem"
             },
             {
                 id: 52,
+                from: 'update_issuer',
                 method: "htlc_extend"
             },
             {
                 id: 54,
+                from: 'account',
                 method: "custom_authority_create"
             },
             {
                 id: 55,
+                from: 'account',
                 method: "custom_authority_update"
             },
             {
                 id: 56,
+                from: 'account',
                 method: "custom_authority_delete"
             },
             {
                 id: 57,
+                from: 'account',
                 method: "ticket_create"
             },
             {
                 id: 58,
+                from: 'account',
                 method: "ticket_update"
             },
             {
                 id: 59,
+                from: 'account',
                 method: "liquidity_pool_create"
             },
             {
                 id: 60,
+                from: 'account',
                 method: "liquidity_pool_delete"
             },
             {
                 id: 61,
+                from: 'account',
                 method: "liquidity_pool_deposit"
             },
             {
                 id: 62,
+                from: 'account',
                 method: "liquidity_pool_withdraw"
             },
             {
                 id: 63,
+                from: 'account',
                 method: "liquidity_pool_exchange"
             },
             {
                 id: 64,
+                from: 'owner_account',
                 method: "samet_fund_create"
             },
             {
                 id: 65,
+                from: 'owner_account',
                 method: "samet_fund_delete"
             },
             {
                 id: 66,
+                from: 'owner_account',
                 method: "samet_fund_update"
             },
             {
                 id: 67,
+                from: 'borrower',
                 method: "samet_fund_borrow"
             },
             {
                 id: 68,
+                from: 'account',
                 method: "samt_fund_repay"
             },
             {
                 id: 69,
+                from: 'owner_account',
                 method: "credit_offer_create"
             },
             {
                 id: 70,
+                from: 'owner_account',
                 method: "credit_offer_delete"
             },
             {
                 id: 71,
+                from: 'owner_account',
                 method: "credit_offer_update"
             },
             {
                 id: 72,
+                from: 'borrower',
                 method: "credit_offer_accept"
             },
             {
                 id: 73,
+                from: 'account',
                 method: "credit_deal_repay"
             }
         ]

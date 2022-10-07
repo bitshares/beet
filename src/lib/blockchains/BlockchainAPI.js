@@ -413,34 +413,42 @@ export default class BlockchainAPI {
         return [
             {
                 id: Actions.GET_ACCOUNT,
+                from: '',
                 method: Actions.GET_ACCOUNT
             },
             {
                 id: Actions.REQUEST_SIGNATURE,
+                from: '',
                 method: Actions.REQUEST_SIGNATURE
             },
             {
                 id: Actions.INJECTED_CALL,
+                from: '',
                 method: Actions.INJECTED_CALL
             },
             {
                 id: Actions.VOTE_FOR,
+                from: '',
                 method: Actions.VOTE_FOR
             },
             {
                 id: Actions.SIGN_MESSAGE,
+                from: '',
                 method: Actions.SIGN_MESSAGE
             },
             {
                 id: Actions.SIGN_NFT,
+                from: '',
                 method: Actions.SIGN_NFT
             },
             {
                 id: Actions.VERIFY_MESSAGE,
+                from: '',
                 method: Actions.VERIFY_MESSAGE
             },
             {
                 id: Actions.TRANSFER,
+                from: '',
                 method: Actions.TRANSFER
             }
         ];
