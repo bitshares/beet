@@ -1,10 +1,11 @@
 <script setup>
-    import { onMounted, watchEffect, ref, computed } from 'vue';
+    import { onMounted, watchEffect, ref, computed, inject } from 'vue';
     import { useI18n } from 'vue-i18n';
-    import store from '../store/index';
-    import getBlockchainAPI from "../lib/blockchains/blockchainFactory";
+    import store from '../../store/index';
+    import getBlockchainAPI from "../../lib/blockchains/blockchainFactory";
 
     const { t } = useI18n({ useScope: 'global' });
+    const emitter = inject('emitter');
 
     function saveRows() {
         if (selectedRows && selectedRows.value) {
@@ -18,7 +19,12 @@
                 }
             );
             selectedRows.value = JSON.parse(JSON.stringify(settingsRows.value))
+            emitter.emit('selectedRows', true);
         }
+    }
+
+    function goBack() {
+        emitter.emit('exitOperations', true);
     }
 
     let thead = ref(['ID', 'Method', 'Info'])
@@ -92,42 +98,43 @@
         <span>
             <span>
                 <p style="marginBottom:0px;">
-                    {{ t('common.totp.label') }}<br/>
                     {{ t('common.totp.prompt') }}
                 </p>
-                <ui-card v-if="!data || !data.length" outlined style="marginTop: 5px;">
+                <p v-if="!data || !data.length" outlined style="marginTop: 5px;">
                     {{ t('common.totp.unsupported') }}
-                </ui-card>
-                <ui-card v-else outlined style="marginTop: 5px;">
-                    <ui-table
-                        v-model="selectedRows"
-                        :data="data"
-                        :thead="thead"
-                        :tbody="tbody"
-                        :default-col-width="200"
-                        style="height: 250px;"
-                        row-checkbox
-                        selected-key="id"
-                    >
-                        <template #method="{ data }">
-                            <div class="method">{{ data.method }}</div>
-                        </template>
+                </p>
+                <ui-table
+                    v-else 
+                    v-model="selectedRows"
+                    :data="data"
+                    :thead="thead"
+                    :tbody="tbody"
+                    :default-col-width="200"
+                    style="height: 250px;"
+                    row-checkbox
+                    selected-key="id"
+                >
+                    <template #method="{ data }">
+                        <div class="method">{{ data.method }}</div>
+                    </template>
 
-                        <template #info="{ data }">
-                            <div class="info">{{ data.info }}</div>
-                        </template>
-                    </ui-table>
-                    <ui-list>
-                        <ui-item>
-                            <ui-button raised style="margin-right:5px" icon="save" @click="saveRows">
-                                {{ t('common.qr.back') }}
-                            </ui-button>
-                            <ui-button raised style="margin-right:5px" icon="save" @click="saveRows">
-                                {{ t('common.totp.save') }}
-                            </ui-button>
-                        </ui-item>
-                    </ui-list>
-                </ui-card>
+                    <template #info="{ data }">
+                        <div class="info">{{ data.info }}</div>
+                    </template>
+                </ui-table>
+                <ui-list>
+                    <ui-item style="padding-left:100px;">
+                        <ui-button raised style="margin-right:5px" icon="arrow_back_ios" @click="goBack">
+                            {{ t('common.qr.back') }}
+                        </ui-button>
+                        <ui-button v-if="selectedRows && selectedRows.length" raised style="margin-right:5px" icon="save" @click="saveRows">
+                            {{ t('common.totp.save') }}
+                        </ui-button>
+                        <ui-button v-else raised style="margin-right:5px" icon="save" disabled>
+                            {{ t('common.totp.save') }}
+                        </ui-button>
+                    </ui-item>
+                </ui-list>
             </span>
         </span>
     </div>

@@ -1,5 +1,5 @@
 <script setup>
-    import { onMounted, watchEffect, watch, ref, computed } from 'vue';
+    import { onMounted, watchEffect, watch, ref, computed, inject } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { ipcRenderer } from "electron";
     import { v4 as uuidv4 } from 'uuid';
@@ -20,10 +20,47 @@
     import Operations from "./blockchains/operations";
 
     const { t } = useI18n({ useScope: 'global' });
+    const emitter = inject('emitter');
+
+    let settingsRows = computed(() => {
+        // last approved TOTP rows for this chain
+        let chain = store.getters['AccountStore/getChain']
+        let rememberedRows = store.getters['SettingsStore/getChainTOTP'](chain);
+        if (!rememberedRows || !rememberedRows.length) {
+            return [];
+        }
+
+        return rememberedRows;
+    });
+    let selectedRows = ref();
+    emitter.on('selectedRows', (data) => {
+        selectedRows.value = data;
+    })
 
     let opPermissions = ref();
     function setScope(newValue) {
         opPermissions.value = newValue;
+        if (newValue === 'AllowAll') {
+            selectedRows.value = true;
+            let chain = store.getters['AccountStore/getChain'];
+            let types = getBlockchainAPI(chain).getOperationTypes();
+            store.dispatch(
+                "SettingsStore/setChainTOTP",
+                {
+                    chain: chain,
+                    rows: types.map(type => type.id)
+                }
+            );
+        }
+    }
+    emitter.on('exitOperations', () => {
+        opPermissions.value = null;
+        selectedRows.value = null;
+    })
+
+    function goBack() {
+        opPermissions.value = null;
+        selectedRows.value = null;
     }
 
     let timestamp = ref();
@@ -179,7 +216,7 @@
             return;
         }
 
-        if (!selectedRows.value.includes(apiobj.type)) {
+        if (!settingsRows.value.includes(apiobj.type)) {
             console.log("Unauthorized beet operation")
             deepLinkInProgress.value = false;
             return;
@@ -196,7 +233,7 @@
             let authorizedUse = false;
             for (let i = 0; i < tr.operations.length; i++) {
                 let operation = tr.operations[i];
-                if (selectedRows.value.includes(operation[0])) {
+                if (settingsRows.value.includes(operation[0])) {
                     authorizedUse = true;
                     break;
                 }
@@ -258,10 +295,9 @@
             </span>
             <span v-else>
                 <p style="marginBottom:0px;">
-                    {{ t('common.totp.label') }}<br/>
-                    {{ t('common.totp.prompt') }}
+                    {{ t('common.totp.label') }}
                 </p>
-                <ui-card v-if="!selectedRows" outlined style="marginTop: 5px;">
+                <ui-card v-if="!settingsRows || !settingsRows.length" outlined style="marginTop: 5px;">
                     {{ t('common.totp.unsupported') }}
                 </ui-card>
                 <ui-card v-else outlined style="marginTop: 5px;">
@@ -269,29 +305,28 @@
                         <p>
                             Do you wish to configure the scope of incoming deeplinks?
                         </p>
-                        <ui-button raised style="margin-right:5px" @click="setScope('Configure')">
+                        <ui-button raised style="margin-right:5px; margin-bottom: 5px;" @click="setScope('Configure')">
                             Yes - customize scope
                         </ui-button>
-                        <ui-button raised @click="setScope('AllowAll')">
+                        <ui-button raised style="margin-right:5px; margin-bottom: 5px;" @click="setScope('AllowAll')">
                             No - allow all operations
                         </ui-button>
                     </span>
-                    <span v-else-if="opPermissions == 'Configure'">
+                    <span v-else-if="opPermissions == 'Configure' && !selectedRows">
                         <Operations />
-                        // back and next button
                     </span>
 
-                    <span v-if="opPermissions && selectedRows">
+                    <span v-if="opPermissions && settingsRows && selectedRows">
                         <ui-list>
                             <ui-item>
                                 <ui-chips style="padding-left: 24%;" id="input-chip-set" type="input">
                                     <ui-chip icon="security">
-                                        {{ selectedRows ? selectedRows.length : 0 }} {{ t('common.totp.chosen') }}
+                                        {{ settingsRows ? settingsRows.length : 0 }} {{ t('common.totp.chosen') }}
                                     </ui-chip>
                                 </ui-chips>
                             </ui-item>
                             <ui-item>
-                                <span style="padding-left: 22%;" v-if="!newCodeRequested && selectedRows && selectedRows.length > 0 && !timeLimit">
+                                <span style="padding-left: 22%;" v-if="!newCodeRequested && settingsRows && settingsRows.length > 0 && !timeLimit">
                                     <ui-button raised style="margin-right:5px" @click="setTime(60)">
                                         60s
                                     </ui-button>
@@ -304,7 +339,7 @@
                                 </span>
                                 <span style="padding-left: 22%;">
                                     <ui-button
-                                        v-if="!newCodeRequested && !selectedRows || !selectedRows.length"
+                                        v-if="!newCodeRequested && !settingsRows || !settingsRows.length"
                                         icon="arrow_upward"
                                         raised
                                         style="margin-right:5px"
@@ -312,7 +347,7 @@
                                         {{ t('common.totp.default') }}
                                     </ui-button>
                                     <ui-button
-                                        v-if="!newCodeRequested && selectedRows && selectedRows.length > 0 && timeLimit"
+                                        v-if="!newCodeRequested && settingsRows && settingsRows.length > 0 && timeLimit"
                                         icon="generating_tokens"
                                         @click="requestCode"
                                         raised
@@ -320,7 +355,7 @@
                                     >
                                         {{ t('common.totp.request') }}
                                     </ui-button>
-                                    <ui-chips v-else-if="selectedRows && selectedRows.length && newCodeRequested" id="input-chip-set" type="input">
+                                    <ui-chips v-else-if="settingsRows && settingsRows.length && newCodeRequested" id="input-chip-set" type="input">
                                         <ui-chip icon="access_time">
                                             {{ t('common.totp.time') }}: {{ timeLimit - progress.toFixed(0) }}s
                                         </ui-chip>
@@ -340,6 +375,14 @@
                 </ui-card>
             </span>
 
+            <ui-button
+                v-if="opPermissions && selectedRows"
+                style="margin-right:5px"
+                icon="arrow_back_ios"
+                @click="goBack"
+            >
+                {{ t('common.qr.back') }}
+            </ui-button>
             <router-link
                 :to="'/dashboard'"
                 replace
