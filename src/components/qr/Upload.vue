@@ -4,11 +4,11 @@
     import { QrcodeCapture } from 'qrcode-reader-vue3'
 
     import { ipcRenderer } from "electron";
-    import store from '../store/index';
+    import store from '../../store/index';
 
     import {
         injectedCall
-    } from '../lib/apiUtils.js';
+    } from '../../lib/apiUtils.js';
 
     const { t } = useI18n({ useScope: 'global' });
     let qrInProgress = ref(false);

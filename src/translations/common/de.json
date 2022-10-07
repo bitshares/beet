@@ -39,6 +39,8 @@
         "TOTP": "TOTP",
         "QR": "QR",
         "Settings": "Einstellungen",
+        "Backup": "Sicherung",
+        "dapps": "DAAPs",
         "Logout": "Abmelden"
     },
     "abHome": "Zuhause",

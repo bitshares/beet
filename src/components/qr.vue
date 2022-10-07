@@ -2,9 +2,9 @@
     import { ref } from 'vue';
     import { useI18n } from 'vue-i18n';
 
-    import QRDrag from "./qrDrag";
-    import QRScan from "./qrScan";
-    import QRUpload from "./qrUpload";
+    import QRDrag from "./qr/Drag";
+    import QRScan from "./qr/Scan";
+    import QRUpload from "./qr/Upload";
 
     const { t } = useI18n({ useScope: 'global' });
     let qrChoice = ref();

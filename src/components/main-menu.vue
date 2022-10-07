@@ -40,14 +40,20 @@
                 url: "/qr"
             },
             {
-                text: t("common.actionBar.Settings"),
+                text: t("common.actionBar.dapps"),
                 index: 4,
-                icon: "settings",
-                url: "/settings"
+                icon: "app_registration",
+                url: "/dapps"
+            },
+            {
+                text: t("common.actionBar.Backup"),
+                index: 5,
+                icon: "download",
+                url: "/backup"
             },
             {
                 text: t("common.actionBar.Logout"),
-                index: 5,
+                index: 6,
                 icon: "logout",
                 url: "/"
             }
@@ -57,7 +63,7 @@
     function onChange(data) {
         currentSelection.value = data.index;
 
-        if (data.index === 5) {
+        if (data.index === 6) {
             console.log('logout')
             store.dispatch("WalletStore/logout");
             router.replace("/");

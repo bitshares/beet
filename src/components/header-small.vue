@@ -3,7 +3,7 @@
     import { useI18n } from 'vue-i18n';
     import RendererLogger from "../lib/RendererLogger";
     import langSelect from "./lang-select.vue";
-    import mainMenu from "./mainMenu.vue";
+    import MainMenu from "./main-menu.vue";
 
     const { t } = useI18n({ useScope: 'global' });
     const logger = new RendererLogger();
@@ -29,7 +29,7 @@
                 class="smallHeader"
                 columns="6"
             >
-                <mainMenu />
+                <MainMenu />
             </ui-grid-cell>
 
             <ui-grid-cell

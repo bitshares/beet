@@ -1,83 +1,16 @@
 <script setup>
-    import { watch, ref, computed, inject, onMounted } from "vue";
-    import { useI18n } from 'vue-i18n';
+    import { computed, inject, onMounted } from "vue";
     import Balances from "./balances";
-    import AccountDetails from "./accountdetails";
+    import AccountDetails from "./account-details";
+    import AccountSelect from "./account-select";
 
     import store from '../store/index';
-    import {formatChain, formatAccount} from "../lib/formatter";
-    const { t } = useI18n({ useScope: 'global' });
+
     const emitter = inject('emitter');
 
-    let selectedChain = ref(null);
-    let accountName = ref('');
-    let accountID = ref('');
-
-    let chosenAccount = ref(store.getters["AccountStore/getCurrentIndex"]);
-    let selectedAccount = ref()
-
-    /*
-     * Retrieve the list of accounts for allocation to prop
-     */
-    let accounts = computed(() => {
-        let accountList;
-        try {
-            accountList = store.getters['AccountStore/getSafeAccountList'];
-        } catch (error) {
-            console.log(error);
-            return [];
-        }
-        return accountList;
-    });
-
-    /*
-     * Creating the select items
-     * @returns {Array}
-     */
-    let accountOptions = computed(() => {
-        let accountList;
-        try {
-            accountList = store.getters['AccountStore/getSafeAccountList'];
-        } catch (error) {
-            console.log(error);
-            return [];
-        }
-
-        let options = accountList.map((account, i) => {
-            return {
-                label: !account.accountID && account.trackId == 0
-                    ? 'cta' // TODO: Replace
-                    : `${formatChain(account.chain)}: ${formatAccount(account)}`,
-                value: i
-            };
-        });
-
-        return options;
-    });
-
-    /*
-     * User selected from the account drop down menu
-     */
-    watch(chosenAccount, async (newVal, oldVal) => {
-        if (newVal !== -1) {
-            selectedAccount.value = accounts.value[newVal];
-            store.dispatch(
-                "AccountStore/selectAccount",
-                {chain: accounts.value[newVal].chain, accountID: accounts.value[newVal].accountID}
-            );
-        }
-    }, {immediate: true});
-
-    /*
-     * Account data has changed
-     */
-    watch(selectedAccount, async (newVal, oldVal) => {
-        if (newVal && newVal !== oldVal) {
-            selectedChain.value = newVal.chain;
-            accountName.value = newVal.accountName;
-            accountID.value = newVal.accountID;
-        }
-    }, {immediate: true});
+    let selectedAccount = computed(() => {
+        return store.getters["AccountStore/getCurrentSafeAccount"]()
+    })
 
     /**
      * Set the initial menu value
@@ -89,19 +22,8 @@
 
 <template>
     <span class="container">
-        <div v-if="accountOptions.length" style="margin-bottom: 10px;">
-            <ui-select
-                id="account_select"
-                v-model="chosenAccount"
-                style="width:100%"
-                :options="accountOptions"
-                required
-                full-bleed
-            >
-                Account
-            </ui-select>
-            <AccountDetails :account="selectedAccount" />
-            <Balances :account="selectedAccount" />
-        </div>
+        <AccountSelect />
+        <AccountDetails :account="selectedAccount" />
+        <Balances :account="selectedAccount" />
     </span>
 </template>

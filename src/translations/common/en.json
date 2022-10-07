@@ -38,6 +38,8 @@
         "TOTP": "TOTP",
         "QR": "QR",
         "Settings": "Settings",
+        "Backup": "Backup",
+        "dapps": "DAAPs",
         "Logout": "Logout"
     },
     "abHome": "Home",

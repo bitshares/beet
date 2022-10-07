@@ -17,7 +17,14 @@
         transfer
     } from '../lib/apiUtils.js';
 
+    import Operations from "./blockchains/operations";
+
     const { t } = useI18n({ useScope: 'global' });
+
+    let opPermissions = ref();
+    function setScope(newValue) {
+        opPermissions.value = newValue;
+    }
 
     let timestamp = ref();
     let newCodeRequested = ref(false);
@@ -30,51 +37,6 @@
     function setTime(time) {
         timeLimit.value = time;
     }
-
-    function saveRows() {
-        if (selectedRows && selectedRows.value) {
-            // save rows to account
-            let chain = store.getters['AccountStore/getChain'];
-            store.dispatch(
-                "SettingsStore/setChainTOTP",
-                {
-                    chain: chain,
-                    rows: selectedRows.value
-                }
-            );
-            selectedRows.value = JSON.parse(JSON.stringify(settingsRows.value))
-        }
-    }
-
-    let thead = ref(['ID', 'Method', 'Info'])
-
-    let tbody = ref([
-        {
-          field: 'id',
-          fn: data => {
-            return data.id
-          }
-        },
-        {
-          field: 'method',
-          fn: data => {
-            return t(`operations.injected.BTS.${data.method}.method`)
-          }
-        },
-        {
-          field: 'info',
-          fn: data => {
-            return t(`operations.injected.BTS.${data.method}.tooltip`)
-          }
-        }
-    ]);
-
-    let data = computed(() => {
-        // get operations
-        let chain = store.getters['AccountStore/getChain'];
-        let types = getBlockchainAPI(chain).getOperationTypes();
-        return types;
-    });
 
     let progress = ref(0);
     watchEffect(() => {
@@ -94,43 +56,6 @@
             },
             1000
         );
-    });
-
-    let settingsRows = computed(() => {
-        // last approved TOTP rows for this chain
-        let chain = store.getters['AccountStore/getChain']
-        let rememberedRows = store.getters['SettingsStore/getChainTOTP'](chain);
-        if (!rememberedRows || !rememberedRows.length) {
-            return [];
-        }
-
-        return rememberedRows;
-    });
-
-    let hasSelectedNewRows = ref(false);
-    let selectedRows = ref([]);
-    onMounted(() => {
-        console.log('mounted')
-        selectedRows.value = settingsRows && settingsRows.value
-                                ? JSON.parse(JSON.stringify(settingsRows.value))
-                                : []
-    })
-
-    watchEffect(() => {
-        if (selectedRows && settingsRows) {
-            if (
-                selectedRows.value && selectedRows.value.sort().join('') === settingsRows.value.sort().join('')
-            ) {
-                // initial setting of settingsrows
-                console.log('Existing TOTP settings applied')
-                hasSelectedNewRows.value = false;
-            } else if (selectedRows.value && selectedRows.value.sort().join('') !== settingsRows.value.sort().join('')) {
-                console.log('Selected a new row')
-                hasSelectedNewRows.value = true;
-            }
-        } else {
-            hasSelectedNewRows.value = false;
-        }
     });
 
     let currentCode = ref();
@@ -336,90 +261,82 @@
                     {{ t('common.totp.label') }}<br/>
                     {{ t('common.totp.prompt') }}
                 </p>
-                <ui-card v-if="!data || !data.length" outlined style="marginTop: 5px;">
+                <ui-card v-if="!selectedRows" outlined style="marginTop: 5px;">
                     {{ t('common.totp.unsupported') }}
                 </ui-card>
                 <ui-card v-else outlined style="marginTop: 5px;">
-                    <ui-table
-                        v-model="selectedRows"
-                        :data="data"
-                        :thead="thead"
-                        :tbody="tbody"
-                        :default-col-width="200"
-                        style="height: 250px;"
-                        row-checkbox
-                        selected-key="id"
-                    >
-                        <template #method="{ data }">
-                            <div class="method">{{ data.method }}</div>
-                        </template>
+                    <span v-if="!opPermissions">
+                        <p>
+                            Do you wish to configure the scope of incoming deeplinks?
+                        </p>
+                        <ui-button raised style="margin-right:5px" @click="setScope('Configure')">
+                            Yes - customize scope
+                        </ui-button>
+                        <ui-button raised @click="setScope('AllowAll')">
+                            No - allow all operations
+                        </ui-button>
+                    </span>
+                    <span v-else-if="opPermissions == 'Configure'">
+                        <Operations />
+                        // back and next button
+                    </span>
 
-                        <template #info="{ data }">
-                            <div class="info">{{ data.info }}</div>
-                        </template>
-                    </ui-table>
-                    <ui-list>
-                        <ui-item>
-                            <ui-chips v-if="!hasSelectedNewRows" style="padding-left: 24%;" id="input-chip-set" type="input">
-                                <ui-chip icon="security">
-                                    {{ selectedRows ? selectedRows.length : 0 }} {{ t('common.totp.chosen') }}
-                                </ui-chip>
-                            </ui-chips>
-                            <ui-chips v-else id="input-chip-set" type="input">
-                                <ui-chip icon="security">
-                                    {{ selectedRows ? selectedRows.length : 0 }} {{ t('common.totp.chosen') }}
-                                </ui-chip>
-                                <ui-button raised style="margin-right:5px" icon="save" @click="saveRows">
-                                    {{ t('common.totp.save') }}
-                                </ui-button>
-                            </ui-chips>
-                        </ui-item>
-                        <ui-item>
-                            <span style="padding-left: 22%;" v-if="!newCodeRequested && selectedRows && selectedRows.length > 0 && !timeLimit">
-                                <ui-button raised style="margin-right:5px" @click="setTime(60)">
-                                    60s
-                                </ui-button>
-                                <ui-button raised style="margin-right:5px" @click="setTime(180)">
-                                    3m
-                                </ui-button>
-                                <ui-button raised style="margin-right:5px" @click="setTime(600)">
-                                    10m
-                                </ui-button>
-                            </span>
-                            <span style="padding-left: 22%;">
-                                <ui-button
-                                    v-if="!newCodeRequested && !selectedRows || !selectedRows.length"
-                                    icon="arrow_upward"
-                                    raised
-                                    style="margin-right:5px"
-                                >
-                                    {{ t('common.totp.default') }}
-                                </ui-button>
-                                <ui-button
-                                    v-if="!newCodeRequested && selectedRows && selectedRows.length > 0 && timeLimit"
-                                    icon="generating_tokens"
-                                    @click="requestCode"
-                                    raised
-                                    style="margin-right:5px"
-                                >
-                                    {{ t('common.totp.request') }}
-                                </ui-button>
-                                <ui-chips v-else-if="selectedRows && selectedRows.length && newCodeRequested" id="input-chip-set" type="input">
-                                    <ui-chip icon="access_time">
-                                        {{ t('common.totp.time') }}: {{ timeLimit - progress.toFixed(0) }}s
+                    <span v-if="opPermissions && selectedRows">
+                        <ui-list>
+                            <ui-item>
+                                <ui-chips style="padding-left: 24%;" id="input-chip-set" type="input">
+                                    <ui-chip icon="security">
+                                        {{ selectedRows ? selectedRows.length : 0 }} {{ t('common.totp.chosen') }}
                                     </ui-chip>
                                 </ui-chips>
-                            </span>
-                        </ui-item>
-                    </ui-list>
-                    <ui-textfield v-if="currentCode && newCodeRequested" style="margin:5px;" v-model="currentCode" outlined :attrs="{ readonly: true }">
-                        <template #after>
-                            <ui-textfield-icon v-copy="copyContents">content_copy</ui-textfield-icon>
-                        </template>
-                    </ui-textfield>
-                    <ui-alert v-if="currentCode && newCodeRequested" state="warning" closable>
-                        {{ t('common.totp.warning') }}
-                    </ui-alert>
+                            </ui-item>
+                            <ui-item>
+                                <span style="padding-left: 22%;" v-if="!newCodeRequested && selectedRows && selectedRows.length > 0 && !timeLimit">
+                                    <ui-button raised style="margin-right:5px" @click="setTime(60)">
+                                        60s
+                                    </ui-button>
+                                    <ui-button raised style="margin-right:5px" @click="setTime(180)">
+                                        3m
+                                    </ui-button>
+                                    <ui-button raised style="margin-right:5px" @click="setTime(600)">
+                                        10m
+                                    </ui-button>
+                                </span>
+                                <span style="padding-left: 22%;">
+                                    <ui-button
+                                        v-if="!newCodeRequested && !selectedRows || !selectedRows.length"
+                                        icon="arrow_upward"
+                                        raised
+                                        style="margin-right:5px"
+                                    >
+                                        {{ t('common.totp.default') }}
+                                    </ui-button>
+                                    <ui-button
+                                        v-if="!newCodeRequested && selectedRows && selectedRows.length > 0 && timeLimit"
+                                        icon="generating_tokens"
+                                        @click="requestCode"
+                                        raised
+                                        style="margin-right:5px"
+                                    >
+                                        {{ t('common.totp.request') }}
+                                    </ui-button>
+                                    <ui-chips v-else-if="selectedRows && selectedRows.length && newCodeRequested" id="input-chip-set" type="input">
+                                        <ui-chip icon="access_time">
+                                            {{ t('common.totp.time') }}: {{ timeLimit - progress.toFixed(0) }}s
+                                        </ui-chip>
+                                    </ui-chips>
+                                </span>
+                            </ui-item>
+                        </ui-list>
+                        <ui-textfield v-if="currentCode && newCodeRequested" style="margin:5px;" v-model="currentCode" outlined :attrs="{ readonly: true }">
+                            <template #after>
+                                <ui-textfield-icon v-copy="copyContents">content_copy</ui-textfield-icon>
+                            </template>
+                        </ui-textfield>
+                        <ui-alert v-if="currentCode && newCodeRequested" state="warning" closable>
+                            {{ t('common.totp.warning') }}
+                        </ui-alert>
+                    </span>
                 </ui-card>
             </span>
 
