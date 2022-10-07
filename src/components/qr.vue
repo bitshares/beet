@@ -30,9 +30,17 @@
             </span>
             <span v-else-if="qrChoice && qrChoice === 'Drag'">
                 <QRDrag />
+                <br/>
+                <ui-button @click="goBack()">
+                    {{ t('common.qr.back') }}
+                </ui-button>
             </span>
             <span v-else-if="qrChoice && qrChoice === 'Upload'">
                 <QRUpload />
+                <br/>
+                <ui-button @click="goBack()">
+                    {{ t('common.qr.back') }}
+                </ui-button>
             </span>
             <span v-else>
                 <p style="marginBottom:0px;">

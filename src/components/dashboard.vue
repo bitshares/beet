@@ -1,22 +1,20 @@
 <script setup>
-    import { watch, ref, computed, inject } from "vue";
+    import { watch, ref, computed, inject, onMounted } from "vue";
     import { useI18n } from 'vue-i18n';
     import Balances from "./balances";
     import AccountDetails from "./accountdetails";
 
     import store from '../store/index';
     import {formatChain, formatAccount} from "../lib/formatter";
-    import RendererLogger from "../lib/RendererLogger";
-    const emitter = inject('emitter');
     const { t } = useI18n({ useScope: 'global' });
-    const logger = new RendererLogger();
+    const emitter = inject('emitter');
 
     let selectedChain = ref(null);
     let accountName = ref('');
     let accountID = ref('');
 
-    let selectedAccount = ref();
-    let chosenAccount = ref(-1);
+    let chosenAccount = ref(store.getters["AccountStore/getCurrentIndex"]);
+    let selectedAccount = ref()
 
     /*
      * Retrieve the list of accounts for allocation to prop
@@ -80,6 +78,13 @@
             accountID.value = newVal.accountID;
         }
     }, {immediate: true});
+
+    /**
+     * Set the initial menu value
+     */
+    onMounted(() => {
+        emitter.emit('setMenuItem', 0);
+    });
 </script>
 
 <template>

@@ -24,11 +24,11 @@
      * @param {Promise} promise 
      */
     async function onDetect (promise) {
+      qrInProgress.value = true;
       try {
         const { content } = await promise
-
-        result.value = content
-        error.value = null
+        result.value = content;
+        error.value = null;
       } catch (error) {
         if (error.name === 'DropImageFetchError') {
           error.value = "Cross-origin images like this are unsupported.";
@@ -38,6 +38,7 @@
           error.value = 'QR detection error';
         }
       }
+      qrInProgress.value = false;
     }
 
     /**
@@ -51,18 +52,38 @@
      * @param {Promise} promise 
      */
     function logErrors (promise) {
-      promise.catch(console.error);
+      promise.catch((error) => {console.log(error)});
+    }
+
+    function tryAgain() {
+      result.value = null;
+      error.value = null;
     }
 </script>
 
 <template>
     <div>
         <span v-if="qrInProgress">
-            <p style="marginBottom:0px;">
-                {{ t('common.totp.inProgress') }}
+            <p>
+                {{ t('common.qr.progress') }}
             </p>
-            
-            <ui-progress indeterminate />
+            <ui-spinner active></ui-spinner>
+        </span>
+        <span v-else-if="result && !error">
+            <p>
+                Your result: {{ result }}
+            </p>           
+            <ui-button @click="tryAgain">
+                Scan another image
+            </ui-button>
+        </span>
+        <span v-else-if="!result && error">
+            <ui-alert state="warning" closable>
+                {{error}}
+            </ui-alert>           
+            <ui-button @click="tryAgain">
+                Scan another image
+            </ui-button>
         </span>
         <span v-else>
             <p>
@@ -72,7 +93,7 @@
             <ui-card
                 outlined
                 v-shadow="5"
-                style="height: 250px; border: 1px solid #C7088E;"
+                style="height: 100px; width: 200px; margin-left: 115px; border: 1px solid #C7088E;"
             >
                 <qrcode-drop-zone
                     @detect="onDetect"
@@ -81,7 +102,7 @@
                 >
                     <div
                         class="drop-area"
-                        style="padding-top: 110px;"
+                        style="height: 100px; width: 200px; padding-top: 40px;"
                         :class="{ 'dragover': dragover }"
                     >
                         DROP YOUR IMAGE HERE

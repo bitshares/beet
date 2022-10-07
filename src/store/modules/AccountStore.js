@@ -107,6 +107,7 @@ const getters = {
             chain: currentAccount.chain
         }
     },
+    getCurrentIndex: state => state.selectedIndex ?? -1,
     getChain: state => state.accountlist[state.selectedIndex].chain,
     getAccountList: state => state.accountlist,
     getSafeAccountList: state => state.accountlist.map(account => {

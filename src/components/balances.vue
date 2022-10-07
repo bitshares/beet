@@ -126,11 +126,7 @@
             outlined
             style="padding:5px; text-align: center;"
         >
-            <figure>
-                <ui-progress indeterminate />
-                <br>
-                <figcaption>Connecting to blockchain</figcaption>
-            </figure>
+            <ui-skeleton active></ui-skeleton>
         </ui-card>
         <ui-card
             v-if="!isConnected && !isConnecting"

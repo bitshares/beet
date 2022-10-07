@@ -124,65 +124,61 @@
 </script>
 
 <template>
-    <div class="bottom p-0">
-        <span>
-            <span>
-                <span v-if="!QRresult && camera !== 'off' && !cameraError" style="height: 250px;">
-                    <p>
-                        {{ t('common.qr.scan.title') }}
-                    </p>
-                    <ui-card
-                        outlined
-                        v-shadow="5"
-                        style="height: 250px; border: 1px solid #C7088E;"
-                    >
-                        <qrcode-stream
-                            :camera="camera"
-                            :track="paintQR"
-                            @init="onInit"
-                            @decode="onDecode"
-                        >
-                            <span v-if="cameraInitializing">
-                                <ui-spinner style="padding-top: 65px;" active></ui-spinner>
-                            </span>
-
-                            <div style="display:none;">
-                                <img id="beetScan" src="img/beetSmall.png" />
-                            </div>
-                        </qrcode-stream>
-                    </ui-card>
-                    <ui-button v-if="videoDevices.length > 1" @click="switchCamera">
-                        Switch camera
-                    </ui-button>
-                </span>
-                <span v-else>
-                    <span v-if="qrInProgress && camera === 'off' && !cameraError">
-                        <p style="marginBottom:0px;">
-                            {{ t('common.qr.progress') }}
-                        </p>
-                        <br/>
-                        <ui-spinner active></ui-spinner>
-                        <br/>
-                    </span>
-                    <span v-else-if="cameraError">
-                        <p>
-                            Your webcam failed to initialize, please try again.
-                        </p>
-                        <ui-button @click="switchCamera">
-                            Try again
-                        </ui-button>
-                    </span>
-                    <span v-else>
-                        <p>
-                            QR code scanned!
-                        </p>
-                        <ui-button @click="switchCamera">
-                            Scan another
-                        </ui-button>
+    <div>
+        <span v-if="!QRresult && camera !== 'off' && !cameraError" style="height: 250px;">
+            <p>
+                {{ t('common.qr.scan.title') }}
+            </p>
+            <ui-card
+                outlined
+                v-shadow="5"
+                style="height: 250px; border: 1px solid #C7088E;"
+            >
+                <qrcode-stream
+                    :camera="camera"
+                    :track="paintQR"
+                    @init="onInit"
+                    @decode="onDecode"
+                >
+                    <span v-if="cameraInitializing">
+                        <ui-spinner style="padding-top: 65px;" active></ui-spinner>
                     </span>
 
-                </span>
+                    <div style="display:none;">
+                        <img id="beetScan" src="img/beetSmall.png" />
+                    </div>
+                </qrcode-stream>
+            </ui-card>
+            <ui-button v-if="videoDevices.length > 1" @click="switchCamera">
+                Switch camera
+            </ui-button>
+        </span>
+        <span v-else>
+            <span v-if="qrInProgress && camera === 'off' && !cameraError">
+                <p style="marginBottom:0px;">
+                    {{ t('common.qr.progress') }}
+                </p>
+                <br/>
+                <ui-spinner active></ui-spinner>
+                <br/>
             </span>
+            <span v-else-if="cameraError">
+                <p>
+                    Your webcam failed to initialize, please try again.
+                </p>
+                <ui-button @click="switchCamera">
+                    Try again
+                </ui-button>
+            </span>
+            <span v-else>
+                <p>
+                    QR code scanned!
+                </p>
+                <ui-button @click="switchCamera">
+                    Scan another
+                </ui-button>
+            </span>
+
         </span>
     </div>
 </template>
