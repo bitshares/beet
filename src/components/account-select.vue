@@ -63,18 +63,23 @@
 </script>
 
 <template>
-    <span class="container">
-        <div v-if="accountOptions.length" style="margin-bottom: 10px;">
+    <div style="padding:5px">
+        <ui-card
+            outlined
+            v-shadow="1"
+            style="padding:5px; text-align: center;"
+        >
             <ui-select
                 id="account_select"
+                v-if="accountOptions.length"
                 v-model="chosenAccount"
-                style="width:100%"
+                style="width:100%;"
                 :options="accountOptions"
                 required
                 full-bleed
             >
                 Account
             </ui-select>
-        </div>
-    </span>
+        </ui-card>
+    </div>
 </template>

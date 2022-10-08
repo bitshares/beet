@@ -3,13 +3,16 @@
     import { useI18n } from 'vue-i18n';
     import { ipcRenderer } from "electron";
     import { v4 as uuidv4 } from 'uuid';
+
     import sha512 from "crypto-js/sha512.js";
-    import store from '../store/index';
-    import getBlockchainAPI from "../lib/blockchains/blockchainFactory";
     import aes from "crypto-js/aes.js";
     import ENC from 'crypto-js/enc-utf8.js';
     import Base64 from 'crypto-js/enc-base64';
+
+    import getBlockchainAPI from "../lib/blockchains/blockchainFactory";
+    import AccountSelect from "./account-select";
     import * as Actions from '../lib/Actions';
+    import store from '../store/index';
 
     import {
         injectedCall,
@@ -288,6 +291,7 @@
 <template>
     <div class="bottom p-0">
         <span>
+            <AccountSelect />
             <span v-if="deepLinkInProgress">
                 <p style="marginBottom:0px;">
                     {{ t('common.totp.inProgress') }}

@@ -21,7 +21,7 @@
 </script>
 
 <template>
-    <span class="container">
+    <span class="container" style="min-height:700px;">
         <AccountSelect />
         <AccountDetails :account="selectedAccount" />
         <Balances :account="selectedAccount" />

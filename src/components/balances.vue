@@ -113,10 +113,12 @@
             :data="tableData.data"
             :thead="tableData.thead"
             :tbody="tableData.tbody"
-            style="height: 180px; overflow-y: scroll;"
+            v-shadow="1"
+            style="height: 150px;"
         />
         <ui-card
             v-if="balances && !balances.length"
+            v-shadow="1"
             outlined
         >
             No balances in account
@@ -124,6 +126,7 @@
         <ui-card
             v-if="isConnecting"
             outlined
+            v-shadow="1"
             style="padding:5px; text-align: center;"
         >
             <ui-skeleton active></ui-skeleton>
@@ -131,6 +134,7 @@
         <ui-card
             v-if="!isConnected && !isConnecting"
             outlined
+            v-shadow="1"
             style="padding:5px"
         >
             Couldn't to connect to blockchain

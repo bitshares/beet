@@ -5,6 +5,7 @@
     import QRDrag from "./qr/Drag";
     import QRScan from "./qr/Scan";
     import QRUpload from "./qr/Upload";
+    import AccountSelect from "./account-select";
 
     const { t } = useI18n({ useScope: 'global' });
     let qrChoice = ref();
@@ -21,6 +22,7 @@
 <template>
     <div class="bottom p-0">
         <span>
+            <AccountSelect />
             <span v-if="qrChoice && qrChoice === 'Scan'">
                 <QRScan />
                 <br/>
