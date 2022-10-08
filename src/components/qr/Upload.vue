@@ -21,6 +21,12 @@
       qrContent.value = result
       qrInProgress.value = false;
     }
+
+    function uploadAnother () {
+        qrInProgress.value = false;
+        qrContent.value = null;
+        selected.value = null;
+    }
 </script>
 
 <template>
@@ -35,7 +41,12 @@
             </ui-card>
         </span>
         <span v-else-if="qrContent">
-            QR detected
+            <p>
+                QR detected
+            </p>
+            <ui-button @click="uploadAnother">
+                Upload another QR
+            </ui-button>
         </span>
         <span v-else>
             <p>

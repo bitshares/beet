@@ -14,7 +14,6 @@
 
     const { t } = useI18n({ useScope: 'global' });
     let qrInProgress = ref(false);
-    let qrChoice = ref();
     let result = ref();
     let error = ref();
     let dragover = ref(false);
