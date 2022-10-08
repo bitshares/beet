@@ -285,13 +285,16 @@ export async function injectedCall(request, blockchain) {
         return _promptFail("injectedCall", request.id, request, reject);
     }
 
+    let types = blockchain.getOperationTypes();
+    let fromField = types.find(type => type.method === request.type).from;
+
     let account;
     let visualizedAccount;
-    if (!request.payload.account_id) {
+    if (!fromField || !fromField.length) {
         account = store.getters['AccountStore/getCurrentSafeAccount']();
     } else {
         try {
-            visualizedAccount = await blockchain.visualize(request.payload.account_id);
+            visualizedAccount = await blockchain.visualize(request.payload[fromField]);
         } catch (error) {
             console.log(error);
             return _promptFail("injectedCall", request.id, request, reject);

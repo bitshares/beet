@@ -61,6 +61,11 @@
     function goBack() {
         opPermissions.value = null;
         selectedRows.value = null;
+        //
+        timestamp.value = null;
+        newCodeRequested.value = null;
+        timeLimit.value = null;
+        progress.value = 0;
     }
 
     let timestamp = ref();
