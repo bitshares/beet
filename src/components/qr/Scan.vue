@@ -1,19 +1,9 @@
 <script setup>
-    import { onMounted, watchEffect, watch, ref, computed } from 'vue';
+    import { ref, computed } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { QrcodeStream } from 'qrcode-reader-vue3'
 
-    import { ipcRenderer } from "electron";
-    import store from '../../store/index';
-
-    import {
-        injectedCall,
-        voteFor,
-        transfer
-    } from '../../lib/apiUtils.js';
-
     const { t } = useI18n({ useScope: 'global' });
-    let qrInProgress = ref(false);
 
     let camera = ref('auto');
     let cameraInitializing = ref(false);
@@ -52,12 +42,10 @@
      * @param {String} content
      */
     async function onDecode (content) {
-        qrInProgress.value = true;
-        await timeout(1000)
+        await timeout(1000);
         QRresult.value = content;
         camera.value = 'off';
-        qrInProgress.value = false;
-        console.log({content})
+        emitter.emit('detectedQR', content);
     }
 
     /**
@@ -154,15 +142,7 @@
             </ui-button>
         </span>
         <span v-else>
-            <span v-if="qrInProgress && camera === 'off' && !cameraError">
-                <p style="marginBottom:0px;">
-                    {{ t('common.qr.progress') }}
-                </p>
-                <br/>
-                <ui-spinner active></ui-spinner>
-                <br/>
-            </span>
-            <span v-else-if="cameraError">
+            <span v-if="cameraError">
                 <p>
                     Your webcam failed to initialize, please try again.
                 </p>

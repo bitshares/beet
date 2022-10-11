@@ -454,6 +454,22 @@ export default class BlockchainAPI {
         ];
     }
 
+    /**
+     * Placeholder for blockchain specific QR code processing
+     * @param {Object} contents 
+     */
+    handleQR(contents) {
+        throw "Needs implementation";
+    }
+
+    /**
+     * Placeholder for blockchain QR implementation
+     * @returns Boolean
+     */
+     supportsQR() {
+        return false;
+    }
+
     /*
      * Placeholder for blockchain specific connection.
      * @returns {String}

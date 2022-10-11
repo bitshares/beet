@@ -1069,6 +1069,31 @@ export default class BitShares extends BlockchainAPI {
         });
     }
 
+    /**
+     * Bitshares blockchain implementation of QR code scanning
+     * Supported QR codes: Bitshares-ui reference QRs
+     * @param {Object} contents 
+     */
+    handleQR(contents) {
+        let parsedTransaction;
+        try {
+            parsedTransaction = this._parseTransactionBuilder(contents)
+        } catch (error) {
+            console.log(error);
+            return;
+        }
+
+        return parsedTransaction;
+    }
+
+    /**
+     * Bitshares supports QR scanning
+     * @returns Boolean
+     */
+    supportsQR() {
+        return true;
+    }
+
     /*
      * Parse incoming and return a readied transaction builder instance
      * @param {Class||Object} incoming
@@ -1094,6 +1119,22 @@ export default class BitShares extends BlockchainAPI {
                 });
                 return tr;
             }
+        } else if (typeof incoming == "object" && incoming.operations) {
+            let tr = new TransactionBuilder();
+            tr.ref_block_num = incoming.ref_block_num;
+            tr.ref_block_prefix = incoming.ref_block_prefix;
+            tr.expiration = incoming.expiration;
+            tr.extensions = incoming.extensions;
+            tr.signatures = incoming.signatures;
+            let opTypes = this.getOperationTypes();
+
+            incoming.operations.forEach(op => {
+                let method = opTypes.find(x => x.id === op[0]);
+                if (method) {
+                    tr.add_operation(tr.get_type_operation(method, op[1]));
+                }
+            })
+            return tr;
         } else if (incoming.type) {
             let tr = new TransactionBuilder();
             tr.add_type_operation(

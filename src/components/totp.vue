@@ -35,6 +35,7 @@
 
         return rememberedRows;
     });
+    
     let selectedRows = ref();
     emitter.on('selectedRows', (data) => {
         selectedRows.value = data;

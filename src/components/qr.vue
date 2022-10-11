@@ -1,18 +1,53 @@
 <script setup>
     import { ref, computed, inject } from 'vue';
     import { useI18n } from 'vue-i18n';
+    import { ipcRenderer } from "electron";
 
+    import AccountSelect from "./account-select";
+    import Operations from "./blockchains/operations";
     import QRDrag from "./qr/Drag";
     import QRScan from "./qr/Scan";
     import QRUpload from "./qr/Upload";
-    import AccountSelect from "./account-select";
-    import Operations from "./blockchains/operations";
     
+    import { injectedCall } from '../lib/apiUtils.js';
     import getBlockchainAPI from "../lib/blockchains/blockchainFactory";
     import store from '../store/index';
 
     const { t } = useI18n({ useScope: 'global' });
     const emitter = inject('emitter');
+
+    let inProgress = ref(false);
+    let isValidQR = ref();
+    emitter.on('detectedQR', (data) => {
+        inProgress.value = true;
+        // check if valid operation in QR code
+        let chain = store.getters['AccountStore/getChain'];
+        let qrTX = getBlockchainAPI(chain).handleQR(data);
+        if (!qrTX) {
+            console.log("Couldn't process scanned QR code, sorry.")
+            return;
+        }
+
+        let authorizedUse = false;
+        for (let i = 0; i < tr.operations.length; i++) {
+            let operation = tr.operations[i];
+            if (settingsRows.value.includes(operation[0])) {
+                authorizedUse = true;
+                break;
+            }
+        }
+
+        if (!authorizedUse) {
+            console.log(`Unauthorized QR use of ${chain} blockchain operation`);              
+            inProgress.value = false;
+            return;
+        }
+
+        isValidQR.value = true;
+        console.log('Authorized use of QR codes');
+        // broadcast!
+        // status = await injectedCall(apiobj, blockchain);
+    })
 
     let qrChoice = ref();
     let opPermissions = ref();
@@ -51,6 +86,15 @@
         return rememberedRows;
     });
 
+    let supportsQR = computed(() => {
+        let chain = store.getters['AccountStore/getChain'];
+        return getBlockchainAPI(chain).supportsQR();
+    });
+
+    let currentChain = computed(() => {
+        return store.getters['AccountStore/getChain'];
+    });
+
     function setScope(newValue) {
         opPermissions.value = newValue;
         if (newValue === 'AllowAll') {
@@ -66,14 +110,20 @@
             );
         }
     }
+
 </script>
 
 <template>
     <div class="bottom p-0">
-        <span>
-            <AccountSelect />
-
-            <span v-if="!settingsRows || !settingsRows.length">
+        <AccountSelect />
+        <span v-if="supportsQR">
+            <span v-if="qrInProgress">
+                <p>
+                    {{ t('common.qr.progress') }}
+                </p>
+                <ui-spinner active></ui-spinner>
+            </span>
+            <span v-else-if="!settingsRows || !settingsRows.length">
                 <ui-card outlined style="marginTop: 5px;">
                     {{ t('common.totp.unsupported') }}
                 </ui-card>
@@ -154,6 +204,9 @@
                     {{ t('common.qr.exit') }}
                 </ui-button>
             </router-link>
+        </span>
+        <span v-else>
+            {{currentChain}} doesn't yet support QR codes.
         </span>
     </div>
 </template>

@@ -13,7 +13,6 @@
     } from '../../lib/apiUtils.js';
 
     const { t } = useI18n({ useScope: 'global' });
-    let qrInProgress = ref(false);
     let result = ref();
     let error = ref();
     let dragover = ref(false);
@@ -23,11 +22,9 @@
      * @param {Promise} promise 
      */
     async function onDetect (promise) {
-      qrInProgress.value = true;
+      let content;
       try {
-        const { content } = await promise
-        result.value = content;
-        error.value = null;
+        content = await promise
       } catch (error) {
         if (error.name === 'DropImageFetchError') {
           error.value = "Cross-origin images like this are unsupported.";
@@ -37,7 +34,10 @@
           error.value = 'QR detection error';
         }
       }
-      qrInProgress.value = false;
+      
+      //result.value = content;
+      error.value = null;
+      emitter.emit('detectedQR', content);
     }
 
     /**
@@ -62,15 +62,9 @@
 
 <template>
     <div>
-        <span v-if="qrInProgress">
+        <span v-if="result && !error">
             <p>
-                {{ t('common.qr.progress') }}
-            </p>
-            <ui-spinner active></ui-spinner>
-        </span>
-        <span v-else-if="result && !error">
-            <p>
-                Your result: {{ result }}
+                Successfully scanned image for QR
             </p>           
             <ui-button @click="tryAgain">
                 Scan another image

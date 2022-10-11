@@ -1,48 +1,25 @@
 <script setup>
-    import { ref, computed } from 'vue';
+    import { ref } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { QrcodeCapture } from 'qrcode-reader-vue3'
 
-    import { ipcRenderer } from "electron";
-    import store from '../../store/index';
-
-    import {
-        injectedCall
-    } from '../../lib/apiUtils.js';
-
     const { t } = useI18n({ useScope: 'global' });
-    let qrInProgress = ref(false);
-    let qrContent = ref();
     let selected = ref();
 
     function onDecode (result) {
-      qrInProgress.value = true;
-      console.log({result})
-      qrContent.value = result
-      qrInProgress.value = false;
+      emitter.emit('detectedQR', result);
     }
 
     function uploadAnother () {
-        qrInProgress.value = false;
         qrContent.value = null;
         selected.value = null;
     }
 </script>
 
 <template>
-        <span v-if="qrInProgress">
-            <p style="marginBottom:0px;">
-                {{ t('common.totp.inProgress') }}
-            </p>
-            <ui-card outlined style="marginTop: 5px;">
-                <br/>
-                <ui-progress indeterminate />
-                <br/>
-            </ui-card>
-        </span>
-        <span v-else-if="qrContent">
+        <span v-if="qrContent">
             <p>
-                QR detected
+                QR detected in upload
             </p>
             <ui-button @click="uploadAnother">
                 Upload another QR
