@@ -10,6 +10,7 @@ import {
 } from "bitsharesjs";
 import * as Socket from "simple-websocket";
 import * as Actions from '../Actions';
+import store from '../../store/index';
 
 import RendererLogger from "../RendererLogger";
 import {formatAsset, humanReadableFloat} from "../assetUtils";
@@ -1077,11 +1078,13 @@ export default class BitShares extends BlockchainAPI {
     handleQR(contents) {
         let parsedTransaction;
         try {
-            parsedTransaction = this._parseTransactionBuilder(contents)
+            parsedTransaction = this._parseTransactionBuilder(JSON.parse(contents))
         } catch (error) {
             console.log(error);
             return;
         }
+
+        store.dispatch("WalletStore/notifyUser", {notify: "request", message: "request"});
 
         return parsedTransaction;
     }
@@ -1127,13 +1130,20 @@ export default class BitShares extends BlockchainAPI {
             tr.extensions = incoming.extensions;
             tr.signatures = incoming.signatures;
             let opTypes = this.getOperationTypes();
+            tr.operations = incoming.operations;
 
+            /*
             incoming.operations.forEach(op => {
-                let method = opTypes.find(x => x.id === op[0]);
-                if (method) {
-                    tr.add_operation(tr.get_type_operation(method, op[1]));
+                let opType = opTypes.find(x => x.id === op[0]);
+                if (opType) {
+                    console.log({derp: op[1]})
+                    tr.add_type_operation(opType.method, op[1])
+                    //let type_operation = tr.get_type_operation(opType.method, op[1])
+                    //tr.add_operation(type_operation);
                 }
             })
+            */
+
             return tr;
         } else if (incoming.type) {
             let tr = new TransactionBuilder();
@@ -1449,6 +1459,7 @@ export default class BitShares extends BlockchainAPI {
     async visualize(thing) {
         if (typeof thing == "string" && thing.startsWith("1.2.")) {
             // resolve id to name
+            console.log('visualize 1')
             return await this._getAccountName(thing);
         }
 
@@ -1498,8 +1509,12 @@ export default class BitShares extends BlockchainAPI {
                 }
 
                 operations.push(
-                    from + " &#9657; " + formatAsset(op.amount.amount, asset.symbol, asset.precision) + " &#9657; " + to
+                    "Transfer request:\n" +
+                    " from: " + from + "(" + op.from + ")\n" +
+                    " to: " + to + "(" + op.to + ")\n" +
+                    " amount: " + formatAsset(op.amount.amount, asset.symbol, asset.precision)
                 )
+
             } else if (opType == 1) {
                 // limit_order_create
                 let seller;

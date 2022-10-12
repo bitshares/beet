@@ -1,9 +1,10 @@
 <script setup>
-    import { ref, computed } from 'vue';
+    import { ref, computed, inject } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { QrcodeStream } from 'qrcode-reader-vue3'
 
     const { t } = useI18n({ useScope: 'global' });
+    const emitter = inject('emitter');
 
     let camera = ref('auto');
     let cameraInitializing = ref(false);

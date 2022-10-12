@@ -2,13 +2,15 @@
     import { ref, computed, inject } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { ipcRenderer } from "electron";
+    import { v4 as uuidv4 } from 'uuid';
 
     import AccountSelect from "./account-select";
     import Operations from "./blockchains/operations";
     import QRDrag from "./qr/Drag";
     import QRScan from "./qr/Scan";
     import QRUpload from "./qr/Upload";
-    
+    import * as Actions from '../lib/Actions';
+
     import { injectedCall } from '../lib/apiUtils.js';
     import getBlockchainAPI from "../lib/blockchains/blockchainFactory";
     import store from '../store/index';
@@ -16,21 +18,32 @@
     const { t } = useI18n({ useScope: 'global' });
     const emitter = inject('emitter');
 
-    let inProgress = ref(false);
+    let opPermissions = ref();
+    let qrInProgress = ref(false);
     let isValidQR = ref();
-    emitter.on('detectedQR', (data) => {
-        inProgress.value = true;
+
+    emitter.on('detectedQR', async (data) => {
+        qrInProgress.value = true;
         // check if valid operation in QR code
-        let chain = store.getters['AccountStore/getChain'];
-        let qrTX = getBlockchainAPI(chain).handleQR(data);
+        let refChain = store.getters['AccountStore/getChain'];
+        let blockchain = getBlockchainAPI(refChain);
+
+        let qrTX;
+        try {
+            qrTX = await blockchain.handleQR(data);
+        } catch (error) {
+            console.log(error);
+        }
+
         if (!qrTX) {
-            console.log("Couldn't process scanned QR code, sorry.")
+            //console.log("Couldn't process scanned QR code, sorry.")
+            qrInProgress.value = false;
             return;
         }
 
         let authorizedUse = false;
-        for (let i = 0; i < tr.operations.length; i++) {
-            let operation = tr.operations[i];
+        for (let i = 0; i < qrTX.operations.length; i++) {
+            let operation = qrTX.operations[i];
             if (settingsRows.value.includes(operation[0])) {
                 authorizedUse = true;
                 break;
@@ -38,19 +51,46 @@
         }
 
         if (!authorizedUse) {
-            console.log(`Unauthorized QR use of ${chain} blockchain operation`);              
-            inProgress.value = false;
+            console.log(`Unauthorized QR use of ${refChain} blockchain operation`);
+            qrInProgress.value = false;
             return;
         }
 
         isValidQR.value = true;
         console.log('Authorized use of QR codes');
-        // broadcast!
-        // status = await injectedCall(apiobj, blockchain);
-    })
+
+        let apiobj = {
+            type: Actions.INJECTED_CALL,
+            id: await uuidv4(),
+            payload: {
+                origin: 'localhost',
+                appName: 'qr',
+                browser: qrChoice.value,
+                params: qrTX,
+                chain: refChain
+            }
+        }
+
+        let status;
+        try {
+            status = await injectedCall(apiobj, blockchain);
+        } catch (error) {
+            console.log(error)
+            qrInProgress.value = false;
+            return;
+        }
+
+        if (!status || !status.result || status.result.isError || status.result.canceled) {
+            console.log("Issue occurred in approved prompt");
+            qrInProgress.value = false;
+            return;
+        }
+
+        console.log(status);
+        qrInProgress.value = false;
+    });
 
     let qrChoice = ref();
-    let opPermissions = ref();
     let selectedRows = ref();
 
     emitter.on('selectedRows', (data) => {
@@ -115,7 +155,6 @@
 
 <template>
     <div class="bottom p-0">
-        <AccountSelect />
         <span v-if="supportsQR">
             <span v-if="qrInProgress">
                 <p>
@@ -129,6 +168,7 @@
                 </ui-card>
             </span>
             <span v-else-if="!opPermissions">
+                <AccountSelect />
                 <p>
                     Do you wish to configure the scope of scannable QR codes?
                 </p>

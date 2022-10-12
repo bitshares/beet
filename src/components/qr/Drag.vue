@@ -1,16 +1,9 @@
 <script setup>
-    import { onMounted, watchEffect, watch, ref, computed } from 'vue';
+    import { ref, inject } from 'vue';
     import { useI18n } from 'vue-i18n';
-    import { QrcodeStream, QrcodeDropZone, QrcodeCapture } from 'qrcode-reader-vue3'
+    import { QrcodeDropZone } from 'qrcode-reader-vue3'
 
-    import { ipcRenderer } from "electron";
-    import store from '../../store/index';
-
-    import {
-        injectedCall,
-        voteFor,
-        transfer
-    } from '../../lib/apiUtils.js';
+    const emitter = inject('emitter');
 
     const { t } = useI18n({ useScope: 'global' });
     let result = ref();
