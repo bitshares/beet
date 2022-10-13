@@ -30,7 +30,9 @@
         },
         "exit": "Exit QR page",
         "back": "Back",
-        "progress": "Processing QR code"
+        "progress": "Processing QR code",
+        "promptSuccess": "Successfully broadcast QR scanned operation",
+        "promptFailure": "Something went wrong with the scanned QR"
     },
     "actionBar": {
         "Home": "Home",

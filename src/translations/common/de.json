@@ -31,7 +31,9 @@
         },
         "exit": "QR-Seite verlassen",
         "back": "Der Rücken",
-        "progress": "QR-Code wird verarbeitet"
+        "progress": "QR-Code wird verarbeitet",
+        "promptSuccess": "QR-Scan-Vorgang erfolgreich übertragen",
+        "promptFailure": "Etwas ist mit dem gescannten QR schief gelaufen"
     },
     "actionBar": {
         "Home": "Zuhause",
