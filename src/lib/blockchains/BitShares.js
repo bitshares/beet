@@ -1084,8 +1084,6 @@ export default class BitShares extends BlockchainAPI {
             return;
         }
 
-        store.dispatch("WalletStore/notifyUser", {notify: "request", message: "request"});
-
         return parsedTransaction;
     }
 
@@ -1124,25 +1122,18 @@ export default class BitShares extends BlockchainAPI {
             }
         } else if (typeof incoming == "object" && incoming.operations) {
             let tr = new TransactionBuilder();
-            tr.ref_block_num = incoming.ref_block_num;
-            tr.ref_block_prefix = incoming.ref_block_prefix;
+
             tr.expiration = incoming.expiration;
             tr.extensions = incoming.extensions;
             tr.signatures = incoming.signatures;
-            let opTypes = this.getOperationTypes();
             tr.operations = incoming.operations;
 
-            /*
-            incoming.operations.forEach(op => {
-                let opType = opTypes.find(x => x.id === op[0]);
-                if (opType) {
-                    console.log({derp: op[1]})
-                    tr.add_type_operation(opType.method, op[1])
-                    //let type_operation = tr.get_type_operation(opType.method, op[1])
-                    //tr.add_operation(type_operation);
-                }
-            })
-            */
+            if (incoming.ref_block_num && incoming.ref_block_prefix) {
+                tr.ref_block_num = incoming.ref_block_num;
+                tr.ref_block_prefix = incoming.ref_block_prefix;
+            } else {
+                tr.finalize();
+            }
 
             return tr;
         } else if (incoming.type) {
