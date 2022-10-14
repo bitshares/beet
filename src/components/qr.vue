@@ -33,14 +33,14 @@
             qrTX = await blockchain.handleQR(data);
         } catch (error) {
             console.log(error);
-            ipcRenderer.send("notify", t("common.qr.prompt_failure"));
+            ipcRenderer.send("notify", t("common.qr.promptFailure"));
             qrInProgress.value = false;
             return;
         }
 
         if (!qrTX) {
             console.log("Couldn't process scanned QR code, sorry.")
-            ipcRenderer.send("notify", t("common.qr.prompt_failure"));
+            ipcRenderer.send("notify", t("common.qr.promptFailure"));
             qrInProgress.value = false;
             return;
         }
@@ -56,7 +56,7 @@
 
         if (!authorizedUse) {
             console.log(`Unauthorized QR use of ${refChain} blockchain operation`);
-            ipcRenderer.send("notify", t("common.qr.prompt_failure"));
+            ipcRenderer.send("notify", t("common.qr.promptFailure"));
             qrInProgress.value = false;
             return;
         }
@@ -81,14 +81,14 @@
             status = await injectedCall(apiobj, blockchain);
         } catch (error) {
             console.log(error)
-            ipcRenderer.send("notify", t("common.qr.prompt_failure"));
+            ipcRenderer.send("notify", t("common.qr.promptFailure"));
             qrInProgress.value = false;
             return;
         }
 
         if (!status || !status.result || status.result.isError || status.result.canceled) {
             console.log("Issue occurred in approved prompt");
-            ipcRenderer.send("notify", t("common.qr.prompt_failure"));
+            ipcRenderer.send("notify", t("common.qr.promptFailure"));
             qrInProgress.value = false;
             return;
         }

@@ -1,5 +1,5 @@
 <script setup>
-    import { ref, computed, inject } from 'vue';
+    import { ref, computed, inject, onMounted } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { QrcodeStream } from 'qrcode-reader-vue3'
 
@@ -9,13 +9,7 @@
     let camera = ref('auto');
     let cameraInitializing = ref(false);
     let cameraError = ref();
-
-    let QRresult = ref();
-
-    let videoDevices = computed(async () => {
-        let enumeratedDevices = await navigator.mediaDevices.enumerateDevices();
-        return enumeratedDevices.filter(device => device.kind === 'videoinput');
-    });
+    let videoDevices = ref();
 
     /**
      * Initializing the chosen camera
@@ -38,15 +32,18 @@
         })
     }
 
+    let QRresult = ref();
     /**
      * Parsing the contents of the scanned QR code
      * @param {String} content
      */
     async function onDecode (content) {
-        await timeout(1000);
-        QRresult.value = content;
-        camera.value = 'off';
-        emitter.emit('detectedQR', content);
+        if (!QRresult.value) {
+            await timeout(1000);
+            QRresult.value = content;
+            camera.value = 'off';
+            emitter.emit('detectedQR', content);
+        }
     }
 
     /**
@@ -54,20 +51,21 @@
      * If camera is off -> turn it on
      */
     async function switchCamera () {
-      switch (camera.value) {
-        case 'off':
-          camera.value = 'auto'
-          cameraInitializing.value = false;
-          cameraError.value = undefined;
-          QRresult.value = undefined;
-          break
-        case 'front' || 'auto':
-          camera.value = 'rear'
-          break
-        case 'rear':
-          camera.value = 'front'
-          break
-      }
+        if (camera.value === 'off') {
+            console.log('turning on camera')
+            camera.value = 'auto'
+            cameraInitializing.value = false;
+            cameraError.value = undefined;
+            QRresult.value = undefined;
+        } else if (camera.value === 'auto') {
+            console.log('setting to front')
+            camera.value = 'front'
+        } else if (camera.value === 'front') {
+            console.log('setting to rear')
+            camera.value = 'rear'
+        } else {
+            camera.value = 'front'
+        }
     }
 
     /**
@@ -110,6 +108,10 @@
       })
     }
 
+    onMounted(async () => {
+        let enumeratedDevices = await navigator.mediaDevices.enumerateDevices();
+        videoDevices.value = enumeratedDevices.filter(device => device.kind === 'videoinput');
+    });
 </script>
 
 <template>
@@ -138,7 +140,7 @@
                     </div>
                 </qrcode-stream>
             </ui-card>
-            <ui-button v-if="videoDevices.length > 1" @click="switchCamera">
+            <ui-button v-if="videoDevices && videoDevices.length > 1" @click="switchCamera">
                 Switch camera
             </ui-button>
         </span>
