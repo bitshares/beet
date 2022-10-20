@@ -44,6 +44,11 @@
         "dapps": "DAAPs",
         "Logout": "Logout"
     },
+    "popup": {
+        "preview": "Prompt preview",
+        "request": "View request JSON",
+        "payload": "View payload JSON"
+    },
     "abHome": "Home",
     "abNew": "New",
     "abSettings": "Settings",

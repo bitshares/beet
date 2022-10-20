@@ -25,6 +25,10 @@
         return props.location;
     });
 
+    let positioning = computed(() => {
+        return props.location === "prompt" ? 'top left' : 'bottom start';
+    });
+
     let selected = ref(
         store.state.SettingsStore.settings.locale.iso ?? defaultLocale.iso
     );
@@ -49,8 +53,28 @@
 
 
 <template>
-    <ui-menu-anchor absolute position="BOTTOM_START">
-        <ui-fab icon="translate" @click="menuClick" mini></ui-fab>
+    <ui-menu-anchor v-if="location === 'prompt'" absolute position='top left'>
+        <ui-fab
+            style="margin-top:50px;"
+            icon="translate"
+            @click="menuClick"
+            mini
+        />
+        <ui-menu
+            v-model="open"
+            style="border: 1px solid #C7088E;"
+            position="BOTTOM_START"
+            :items="localesRef"
+            @selected="onSelected"
+        />
+    </ui-menu-anchor>
+    <ui-menu-anchor v-else absolute position='bottom start'>
+        <ui-fab
+            style="margin-top:50px;"
+            icon="translate"
+            @click="menuClick"
+            mini
+        />
         <ui-menu
             v-model="open"
             style="border: 1px solid #C7088E;"

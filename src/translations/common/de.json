@@ -45,6 +45,11 @@
         "dapps": "DAAPs",
         "Logout": "Abmelden"
     },
+    "popup": {
+        "preview": "Sofortige Vorschau",
+        "request": "Anforderungs-JSON anzeigen",
+        "payload": "Payload-JSON anzeigen"
+    },
     "abHome": "Zuhause",
     "abNew": "Neu",
     "abSettings": "Einstellungen",

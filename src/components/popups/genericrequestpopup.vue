@@ -4,6 +4,8 @@
     import { useI18n } from 'vue-i18n';
     import RendererLogger from "../../lib/RendererLogger";
 
+    import langSelect from "../lang-select.vue";
+
     const { t } = useI18n({ useScope: 'global' });
     const logger = new RendererLogger();
 
@@ -101,5 +103,6 @@
         >
             {{ rejectText }}
         </ui-button>
+        <langSelect location="prompt" />
     </div>
 </template>

@@ -2,8 +2,10 @@
     import { ipcRenderer } from 'electron';
     import { computed } from "vue";
     import { useI18n } from 'vue-i18n';
-    const { t } = useI18n({ useScope: 'global' });
+    import langSelect from "../lang-select.vue";
     import {formatChain} from "../../lib/formatter";
+
+    const { t } = useI18n({ useScope: 'global' });
 
     const props = defineProps({
         request: {
@@ -133,6 +135,7 @@
             >
                 {{ t('operations.rawsig.reject_btn') }}
             </ui-button>
+            <langSelect location="prompt" />
         </span>
         <span v-else>
             <ui-button
@@ -148,6 +151,7 @@
             >
                 {{ t('operations.rawsig.reject_btn') }}
             </ui-button>
+            <langSelect location="prompt" />
         </span>
     </div>
 </template>
