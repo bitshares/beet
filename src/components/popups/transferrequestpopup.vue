@@ -1,9 +1,11 @@
 <script setup>
     import { ipcRenderer } from 'electron';
     import { onMounted, computed } from "vue";
+    import { useI18n } from 'vue-i18n';
 
     import RendererLogger from "../../lib/RendererLogger";
-    import { useI18n } from 'vue-i18n';
+    import langSelect from "../lang-select.vue";
+
     const { t } = useI18n({ useScope: 'global' });
     const logger = new RendererLogger();
 
@@ -203,5 +205,6 @@
         >
             {{ t("operations.transfer.reject_btn") }}
         </ui-button>
+        <langSelect location="prompt" />
     </div>
 </template>

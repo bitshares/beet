@@ -2,8 +2,10 @@
     import { ipcRenderer } from 'electron';
     import { onMounted, computed } from "vue";
     import { useI18n } from 'vue-i18n';
-    const { t } = useI18n({ useScope: 'global' });
+    import langSelect from "../lang-select.vue";
     import RendererLogger from "../../lib/RendererLogger";
+
+    const { t } = useI18n({ useScope: 'global' });
     const logger = new RendererLogger();
 
     const props = defineProps({
@@ -24,7 +26,7 @@
     });
 
     let textFieldContents = computed(() => {
-        return props.request.payload.params;
+        return JSON.stringify(JSON.parse(props.request.payload.params), undefined, 4)
     });
 
     let requestText = computed(() => {
@@ -66,9 +68,7 @@
 
 <template>
     <div style="padding:5px">
-        <p>
-            {{ requestText }}
-        </p>
+        {{ requestText }}
         <ui-textfield
             v-model="textFieldContents"
             input-type="textarea"
@@ -90,5 +90,6 @@
         >
             {{ t("operations.message.reject_btn") }}
         </ui-button>
+        <langSelect location="prompt" />
     </div>
 </template>

@@ -1,4 +1,54 @@
 {
+    "totp": {
+        "label": "Time-based one-time passwords",
+        "prompt": "Select your required operations below",
+        "chosen": "operations chosen",
+        "request": "Request passcode",
+        "default": "Insufficient operations",
+        "time": "Time remaining",
+        "exit": "Exit TOTP page",
+        "save": "Save",
+        "unsupported": "TOTP is not yet supported for this chain, sorry.",
+        "warning": "Do not share the code above with anyone",
+        "inProgress": "A deeplink is being processed"
+    },
+    "qr": {
+        "main": {
+            "title": "QR Scanner methods",
+            "scan": "Scan a QR code",
+            "drag": "Drag & drop a QR image",
+            "upload": "Upload a QR image"
+        },
+        "scan": {
+            "title": "Scan a QR code with your webcam"
+        },
+        "drag": {
+            "title": "Drag and drop an image containing a QR code"
+        }, 
+        "upload": {
+            "title": "Upload an image file to scan for QR codes"
+        },
+        "exit": "Exit QR page",
+        "back": "Back",
+        "progress": "Processing QR code",
+        "promptSuccess": "Successfully broadcast QR scanned operation",
+        "promptFailure": "Something went wrong with the scanned QR"
+    },
+    "actionBar": {
+        "Home": "Home",
+        "New": "New",
+        "TOTP": "TOTP",
+        "QR": "QR",
+        "Settings": "Settings",
+        "Backup": "Backup",
+        "dapps": "DAAPs",
+        "Logout": "Logout"
+    },
+    "popup": {
+        "preview": "Prompt preview",
+        "request": "View request JSON",
+        "payload": "View payload JSON"
+    },
     "abHome": "Home",
     "abNew": "New",
     "abSettings": "Settings",

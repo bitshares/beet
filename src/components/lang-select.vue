@@ -6,8 +6,27 @@
     const emitter = inject('emitter');
     const logger = new RendererLogger();
 
+    const props = defineProps({
+        location: {
+            type: String,
+            required: true,
+            default() {
+                return 'guest'
+            }
+        }
+    });
+
+
     let localesRef = computed(() => {
         return menuLocales;
+    });
+
+    let location = computed(() => {
+        return props.location;
+    });
+
+    let positioning = computed(() => {
+        return props.location === "prompt" ? 'top left' : 'bottom start';
     });
 
     let selected = ref(
@@ -24,11 +43,7 @@
         open.value = true;
     }
 
-    function onCancel() {
-        open.value = false;
-    }
-
-    function onSelected(locale) {       
+    function onSelected(locale) {
         emitter.emit('i18n', locale.value);
         store.dispatch("SettingsStore/setLocale", {locale: locale.value});
         selected.value = locale.value;
@@ -38,20 +53,34 @@
 
 
 <template>
-    <ui-menu-anchor absolute position="TOP_RIGHT">
-        <ui-button
-            outlined
-            position="TOP_RIGHT"
+    <ui-menu-anchor v-if="location === 'prompt'" absolute position='top left'>
+        <ui-fab
+            style="margin-top:50px;"
+            icon="translate"
             @click="menuClick"
-        >
-            {{ selected }}
-        </ui-button>
+            mini
+        />
         <ui-menu
             v-model="open"
-            position="TOP_RIGHT"
+            style="border: 1px solid #C7088E;"
+            position="BOTTOM_START"
             :items="localesRef"
             @selected="onSelected"
-            @cancel="onCancel"
+        />
+    </ui-menu-anchor>
+    <ui-menu-anchor v-else absolute position='bottom start'>
+        <ui-fab
+            style="margin-top:50px;"
+            icon="translate"
+            @click="menuClick"
+            mini
+        />
+        <ui-menu
+            v-model="open"
+            style="border: 1px solid #C7088E;"
+            position="BOTTOM_START"
+            :items="localesRef"
+            @selected="onSelected"
         />
     </ui-menu-anchor>
 </template>
