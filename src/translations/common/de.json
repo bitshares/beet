@@ -32,6 +32,7 @@
         "exit": "QR-Seite verlassen",
         "back": "Der Rücken",
         "progress": "QR-Code wird verarbeitet",
+        "unsupported": "QR-Codes werden für diese Kette noch nicht unterstützt, tut mir leid.",
         "promptSuccess": "QR-Scan-Vorgang erfolgreich übertragen",
         "promptFailure": "Etwas ist mit dem gescannten QR schief gelaufen"
     },

@@ -12,7 +12,7 @@
             // save rows to account
             let chain = store.getters['AccountStore/getChain'];
             store.dispatch(
-                "SettingsStore/setChainTOTP",
+                "SettingsStore/setChainPermissions",
                 {
                     chain: chain,
                     rows: selectedRows.value
@@ -31,22 +31,22 @@
 
     let tbody = ref([
         {
-          field: 'id',
-          fn: data => {
-            return data.id
-          }
+            field: 'id',
+            fn: data => {
+                return data.id
+            }
         },
         {
-          field: 'method',
-          fn: data => {
-            return t(`operations.injected.BTS.${data.method}.method`)
-          }
+            field: 'method',
+            fn: data => {
+                return t(`operations.injected.BTS.${data.method}.method`)
+            }
         },
         {
-          field: 'info',
-          fn: data => {
-            return t(`operations.injected.BTS.${data.method}.tooltip`)
-          }
+            field: 'info',
+            fn: data => {
+                return t(`operations.injected.BTS.${data.method}.tooltip`)
+            }
         }
     ]);
 
@@ -60,7 +60,7 @@
     let settingsRows = computed(() => {
         // last approved TOTP rows for this chain
         let chain = store.getters['AccountStore/getChain']
-        let rememberedRows = store.getters['SettingsStore/getChainTOTP'](chain);
+        let rememberedRows = store.getters['SettingsStore/getChainPermissions'](chain);
         if (!rememberedRows || !rememberedRows.length) {
             return [];
         }
@@ -72,8 +72,8 @@
     let selectedRows = ref([]);
     onMounted(() => {
         selectedRows.value = settingsRows && settingsRows.value
-                                ? JSON.parse(JSON.stringify(settingsRows.value))
-                                : []
+            ? JSON.parse(JSON.stringify(settingsRows.value))
+            : []
     })
 
     watchEffect(() => {
@@ -100,7 +100,11 @@
                 <p style="marginBottom:0px;">
                     {{ t('common.totp.prompt') }}
                 </p>
-                <p v-if="!data || !data.length" outlined style="marginTop: 5px;">
+                <p
+                    v-if="!data || !data.length"
+                    outlined
+                    style="marginTop: 5px;"
+                >
                     {{ t('common.totp.unsupported') }}
                 </p>
                 <ui-table
@@ -124,13 +128,30 @@
                 </ui-table>
                 <ui-list>
                     <ui-item style="padding-left:100px;">
-                        <ui-button raised style="margin-right:5px" icon="arrow_back_ios" @click="goBack">
+                        <ui-button
+                            raised
+                            style="margin-right:5px"
+                            icon="arrow_back_ios"
+                            @click="goBack"
+                        >
                             {{ t('common.qr.back') }}
                         </ui-button>
-                        <ui-button v-if="selectedRows && selectedRows.length" raised style="margin-right:5px" icon="save" @click="saveRows">
+                        <ui-button
+                            v-if="selectedRows && selectedRows.length"
+                            raised
+                            style="margin-right:5px"
+                            icon="save"
+                            @click="saveRows"
+                        >
                             {{ t('common.totp.save') }}
                         </ui-button>
-                        <ui-button v-else raised style="margin-right:5px" icon="save" disabled>
+                        <ui-button
+                            v-else
+                            raised
+                            style="margin-right:5px"
+                            icon="save"
+                            disabled
+                        >
                             {{ t('common.totp.save') }}
                         </ui-button>
                     </ui-item>

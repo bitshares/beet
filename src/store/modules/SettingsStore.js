@@ -93,7 +93,11 @@ const actions = {
             resolve();
         });
     },
-    setChainTOTP({
+    /**
+     * 
+     * @param {Object} payload
+     */
+    setChainPermissions({
         commit
     }, payload) {
         return new Promise(async (resolve, reject) => {
@@ -111,8 +115,8 @@ const actions = {
                 settings = initialState.settings;
             }
 
-            if (!settings.hasOwnProperty('totp')) {
-                settings['totp'] = {
+            if (!settings.hasOwnProperty('chainPermissions')) {
+                settings['chainPermissions'] = {
                     BTS: [],
                     BTS_TEST: [],
                     TUSC: [],
@@ -120,7 +124,7 @@ const actions = {
                     BTC_TEST: []
                 }
             }
-            settings.totp[payload.chain] = payload.rows;
+            settings.chainPermissions[payload.chain] = payload.rows;
             localStorage.setItem("settings", JSON.stringify(settings));
             commit(LOAD_SETTINGS, settings);
             resolve();
@@ -132,8 +136,11 @@ const actions = {
 const getters = {
     getNode: (state) => state.settings.selected_node,
     getLocale: (state) => state.settings.locale,
-    getChainTOTP: (state) => (chain) => {
-        return state.settings.totp[chain];
+    getChainPermissions: (state) => (chain) => {
+        if (!state.settings.hasOwnProperty('chainPermissions')) {
+            return [];
+        }
+        return state.settings.chainPermissions[chain];
     }
 };
 
@@ -141,7 +148,7 @@ const initialState = {
     settings: {
         locale: defaultLocale,
         selected_node: {},
-        totp: {
+        chainPermissions: {
             BTS: [],
             BTS_TEST: [],
             TUSC: [],

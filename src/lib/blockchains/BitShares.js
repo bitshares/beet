@@ -1088,6 +1088,14 @@ export default class BitShares extends BlockchainAPI {
     }
 
     /**
+     * Bitshares supports TOTP codes
+     * @returns Boolean
+     */
+    supportsTOTP() {
+        return true;
+    }
+
+    /**
      * Bitshares supports QR scanning
      * @returns Boolean
      */

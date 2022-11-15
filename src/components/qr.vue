@@ -123,10 +123,13 @@
         qrChoice.value = choice;
     }
 
-    let settingsRows = computed(() => {
-        // last approved operation rows for this chain
+    let settingsRows = computed(() => { // last approved operation rows for this chain
+        if (!store.state.WalletStore.isUnlocked) {
+            return;
+        }
+
         let chain = store.getters['AccountStore/getChain']
-        let rememberedRows = store.getters['SettingsStore/getChainTOTP'](chain);
+        let rememberedRows = store.getters['SettingsStore/getChainPermissions'](chain);
         if (!rememberedRows || !rememberedRows.length) {
             return [];
         }
@@ -150,7 +153,7 @@
             let chain = store.getters['AccountStore/getChain'];
             let types = getBlockchainAPI(chain).getOperationTypes();
             store.dispatch(
-                "SettingsStore/setChainTOTP",
+                "SettingsStore/setChainPermissions",
                 {
                     chain: chain,
                     rows: types.map(type => type.id)
@@ -162,53 +165,75 @@
 </script>
 
 <template>
-    <div class="bottom p-0">
+    <div
+        v-if="settingsRows"
+        class="bottom p-0"
+    >
         <span v-if="supportsQR">
             <span v-if="qrInProgress">
                 <p>
                     {{ t('common.qr.progress') }}
                 </p>
-                <ui-spinner active></ui-spinner>
+                <ui-spinner active />
             </span>
-            <span v-else-if="!settingsRows || !settingsRows.length">
-                <ui-card outlined style="marginTop: 5px;">
-                    {{ t('common.totp.unsupported') }}
+            <span v-else>
+                <AccountSelect />
+                <p
+                    v-if="!opPermissions"
+                    style="marginBottom:0px;"
+                >
+                    {{ t('common.qr.label') }}
+                </p>
+                <ui-card
+                    v-if="!selectedRows"
+                    v-shadow="3"
+                    outlined
+                    style="marginTop: 5px;"
+                >
+                    <span v-if="!opPermissions">
+                        <p>
+                            Do you wish to configure the scope of scannable QR codes?
+                        </p>
+                        <ui-button
+                            raised
+                            style="margin-right:5px; margin-bottom: 5px;"
+                            @click="setScope('Configure')"
+                        >
+                            Yes - customize scope
+                        </ui-button>
+                        <ui-button
+                            raised
+                            style="margin-right:5px; margin-bottom: 5px;"
+                            @click="setScope('AllowAll')"
+                        >
+                            No - allow all operations
+                        </ui-button>
+                    </span>
+                    <span v-else-if="opPermissions == 'Configure' && !selectedRows">
+                        <Operations />
+                    </span>
                 </ui-card>
             </span>
-            <span v-else-if="!opPermissions">
-                <AccountSelect />
-                <p>
-                    Do you wish to configure the scope of scannable QR codes?
-                </p>
-                <ui-button raised style="margin-right:5px; margin-bottom: 5px;" @click="setScope('Configure')">
-                    Yes - customize scope
-                </ui-button>
-                <ui-button raised style="margin-right:5px; margin-bottom: 5px;" @click="setScope('AllowAll')">
-                    No - allow all operations
-                </ui-button>
-            </span>
-            <span v-else-if="opPermissions == 'Configure' && !selectedRows">
-                <Operations />
-            </span>
+
             
             <span v-if="opPermissions && settingsRows && selectedRows">
                 <span v-if="qrChoice && qrChoice === 'Scan'">
                     <QRScan />
-                    <br/>
+                    <br>
                     <ui-button @click="undoQRChoice()">
                         {{ t('common.qr.back') }}
                     </ui-button>
                 </span>
                 <span v-else-if="qrChoice && qrChoice === 'Drag'">
                     <QRDrag />
-                    <br/>
+                    <br>
                     <ui-button @click="undoQRChoice()">
                         {{ t('common.qr.back') }}
                     </ui-button>
                 </span>
                 <span v-else-if="qrChoice && qrChoice === 'Upload'">
                     <QRUpload />
-                    <br/>
+                    <br>
                     <ui-button @click="undoQRChoice()">
                         {{ t('common.qr.back') }}
                     </ui-button>
@@ -217,22 +242,34 @@
                     <p style="marginBottom:0px;">
                         {{ t('common.qr.main.title') }}
                     </p>
-                    <br/>
-                    <ui-button raised style="margin-bottom: 10px;" @click="setChoice('Scan')">
+                    <br>
+                    <ui-button
+                        raised
+                        style="margin-bottom: 10px;"
+                        @click="setChoice('Scan')"
+                    >
                         {{ t('common.qr.main.scan') }}
                     </ui-button>
-                    <br/>
-                    <ui-button raised style="margin-bottom: 10px;" @click="setChoice('Drag')">
+                    <br>
+                    <ui-button
+                        raised
+                        style="margin-bottom: 10px;"
+                        @click="setChoice('Drag')"
+                    >
                         {{ t('common.qr.main.drag') }}
                     </ui-button>
-                    <br/>
-                    <ui-button raised style="margin-bottom: 10px;" @click="setChoice('Upload')">
+                    <br>
+                    <ui-button
+                        raised
+                        style="margin-bottom: 10px;"
+                        @click="setChoice('Upload')"
+                    >
                         {{ t('common.qr.main.upload') }}
                     </ui-button>
                 </span>
             </span>
 
-            <br/>
+            <br>
             <ui-button
                 v-if="opPermissions && selectedRows"
                 style="margin-right:5px"
@@ -254,7 +291,7 @@
             </router-link>
         </span>
         <span v-else>
-            {{currentChain}} doesn't yet support QR codes.
+            {{ t('common.qr.notSupported') }}
         </span>
     </div>
 </template>

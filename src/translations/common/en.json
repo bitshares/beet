@@ -13,6 +13,7 @@
         "inProgress": "A deeplink is being processed"
     },
     "qr": {
+        "label": "QR Code scanner",
         "main": {
             "title": "QR Scanner methods",
             "scan": "Scan a QR code",
@@ -31,6 +32,7 @@
         "exit": "Exit QR page",
         "back": "Back",
         "progress": "Processing QR code",
+        "unsupported": "QR codes are not yet supported for this chain, sorry.",
         "promptSuccess": "Successfully broadcast QR scanned operation",
         "promptFailure": "Something went wrong with the scanned QR"
     },
