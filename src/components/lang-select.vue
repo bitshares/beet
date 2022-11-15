@@ -53,12 +53,15 @@
 
 
 <template>
-    <ui-menu-anchor v-if="location === 'prompt'" absolute position='top left'>
+    <ui-menu-anchor
+        v-if="location === 'prompt'"
+        absolute
+        position="top left"
+    >
         <ui-fab
-            style="margin-top:50px;"
             icon="translate"
-            @click="menuClick"
             mini
+            @click="menuClick"
         />
         <ui-menu
             v-model="open"
@@ -68,12 +71,15 @@
             @selected="onSelected"
         />
     </ui-menu-anchor>
-    <ui-menu-anchor v-else absolute position='bottom start'>
+    <ui-menu-anchor
+        v-else
+        absolute
+        position="bottom start"
+    >
         <ui-fab
-            style="margin-top:50px;"
             icon="translate"
-            @click="menuClick"
             mini
+            @click="menuClick"
         />
         <ui-menu
             v-model="open"
