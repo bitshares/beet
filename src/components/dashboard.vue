@@ -9,6 +9,9 @@
     const emitter = inject('emitter');
 
     let selectedAccount = computed(() => {
+        if (!store.state.WalletStore.isUnlocked) {
+            return;
+        }
         return store.getters["AccountStore/getCurrentSafeAccount"]()
     })
 
@@ -21,9 +24,14 @@
 </script>
 
 <template>
-    <span class="container" style="min-height:700px;">
+    <span
+        class="container"
+        style="min-height:700px;"
+    >
         <AccountSelect />
-        <AccountDetails :account="selectedAccount" />
-        <Balances :account="selectedAccount" />
+        <span v-if="selectedAccount">
+            <AccountDetails :account="selectedAccount" />
+            <Balances :account="selectedAccount" />
+        </span>
     </span>
 </template>

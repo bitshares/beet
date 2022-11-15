@@ -51,7 +51,10 @@
                 {{ t('common.account_details_explorer_lbl') }}
             </ui-button>
         </span>
-        <ui-card outlined v-shadow="1">
+        <ui-card
+            v-shadow="1"
+            outlined
+        >
             <ui-list v-if="account">
                 <ui-item :key="chainLabel">
                     <ui-item-text-content>
