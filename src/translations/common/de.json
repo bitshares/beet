@@ -14,6 +14,7 @@
         "inProgress": "Ein Deeplink wird verarbeitet"
     },
     "qr": {
+        "label": "QR Code scanner",
         "main": {
             "title": "QR-Scanner-Methoden",
             "scan": "Scanne einen QR-Code",
