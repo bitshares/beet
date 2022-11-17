@@ -50,7 +50,8 @@
     "popup": {
         "preview": "Sofortige Vorschau",
         "request": "Anforderungs-JSON anzeigen",
-        "payload": "Payload-JSON anzeigen"
+        "payload": "Payload-JSON anzeigen",
+        "language": "Sprache"
     },
     "abHome": "Zuhause",
     "abNew": "Neu",

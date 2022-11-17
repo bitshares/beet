@@ -12,6 +12,7 @@
     import SignMessageRequestPopup from "./popups/signedmessagepopup";
     import TransactionRequestPopup from "./popups/transactionrequestpopup";
     import TransferRequestPopup from "./popups/transferrequestpopup";
+    import langSelect from "./lang-select.vue";
 
     const { t } = useI18n({ useScope: 'global' });
 
@@ -104,55 +105,61 @@
 
 <template>
     <div v-if="type && type !== '' && request">
-        <ui-collapse with-icon ripple modelValue={{True}}>
+        <ui-collapse
+            with-icon
+            ripple
+            model-value="{{True}}"
+        >
             <template #toggle>
                 <div>{{ t('common.popup.preview') }}</div>
             </template>
-            <div style="margin-bottom: 5px;">
-                <LinkRequestPopup
-                    v-if="type === Actions.REQUEST_LINK"
-                    :request="request"
-                    :accounts="accounts"
-                    :existing-links="existingLinks"
-                />
-                <ReLinkRequestPopup
-                    v-else-if="type === Actions.REQUEST_RELINK"
-                    :request="request"
-                    :accounts="accounts"
-                />
-                <IdentityRequestPopup
-                    v-else-if="type === Actions.GET_ACCOUNT"
-                    :request="request"
-                    :accounts="accounts"
-                />
-                <GenericRequestPopup
-                    v-else-if="type === Actions.VOTE_FOR"
-                    :request="request"
-                    :payload="payload"
-                />
-                <SignMessageRequestPopup
-                    v-else-if="type === Actions.SIGN_MESSAGE || type === Actions.SIGN_NFT"
-                    :request="request"
-                    :accounts="accounts"
-                />
-                <TransferRequestPopup
-                    v-else-if="type === Actions.TRANSFER"
-                    :request="request"
-                    :chain="chain"
-                    :account-name="accountName"
-                    :target="target"
-                    :warning="warning"
-                    :to-send="toSend"
-                />
-                <TransactionRequestPopup
-                    v-else-if="type === Actions.REQUEST_SIGNATURE || type === Actions.INJECTED_CALL"
-                    :request="request"
-                    :visualized-params="visualizedParams"
-                    :visualized-account="visualizedAccount"
-                />
-            </div>
+            <LinkRequestPopup
+                v-if="type === Actions.REQUEST_LINK"
+                :request="request"
+                :accounts="accounts"
+                :existing-links="existingLinks"
+            />
+            <ReLinkRequestPopup
+                v-else-if="type === Actions.REQUEST_RELINK"
+                :request="request"
+                :accounts="accounts"
+            />
+            <IdentityRequestPopup
+                v-else-if="type === Actions.GET_ACCOUNT"
+                :request="request"
+                :accounts="accounts"
+            />
+            <GenericRequestPopup
+                v-else-if="type === Actions.VOTE_FOR"
+                :request="request"
+                :payload="payload"
+            />
+            <SignMessageRequestPopup
+                v-else-if="type === Actions.SIGN_MESSAGE || type === Actions.SIGN_NFT"
+                :request="request"
+                :accounts="accounts"
+            />
+            <TransferRequestPopup
+                v-else-if="type === Actions.TRANSFER"
+                :request="request"
+                :chain="chain"
+                :account-name="accountName"
+                :target="target"
+                :warning="warning"
+                :to-send="toSend"
+            />
+            <TransactionRequestPopup
+                v-else-if="type === Actions.REQUEST_SIGNATURE || type === Actions.INJECTED_CALL"
+                :request="request"
+                :visualized-params="visualizedParams"
+                :visualized-account="visualizedAccount"
+            />
         </ui-collapse>
-        <ui-collapse v-if="moreRequest" with-icon ripple>
+        <ui-collapse
+            v-if="moreRequest"
+            with-icon
+            ripple
+        >
             <template #toggle>
                 <div>{{ t('common.popup.request') }}</div>
             </template>
@@ -166,7 +173,11 @@
                 />
             </div>
         </ui-collapse>
-        <ui-collapse v-if="payload" with-icon ripple>
+        <ui-collapse
+            v-if="payload"
+            with-icon
+            ripple
+        >
             <template #toggle>
                 <div>{{ t('common.popup.payload') }}</div>
             </template>
@@ -179,7 +190,16 @@
                     rows="8"
                 />
             </div>
-        </ui-collapse>       
+        </ui-collapse>
+        <ui-collapse
+            with-icon
+            ripple
+        >
+            <template #toggle>
+                <div>{{ t('common.abSettings') }}</div>
+            </template>
+            <langSelect location="prompt" />
+        </ui-collapse>
     </div>
     <div v-else>
         Error: Unable to load prompt.

@@ -1,8 +1,11 @@
 <script setup>
     import { ref, onMounted, computed, inject } from 'vue';
+    import { useI18n } from 'vue-i18n';
     import { locales, defaultLocale, selectLocales, menuLocales } from "../config/i18n.js";
     import RendererLogger from "../lib/RendererLogger";
     import store from '../store/index';
+
+    const { t } = useI18n({ useScope: 'global' });
     const emitter = inject('emitter');
     const logger = new RendererLogger();
 
@@ -56,13 +59,14 @@
     <ui-menu-anchor
         v-if="location === 'prompt'"
         absolute
-        position="top left"
     >
-        <ui-fab
+        <ui-button
+            raised
             icon="translate"
-            mini
             @click="menuClick"
-        />
+        >
+            {{ t('common.popup.language') }}
+        </ui-button>
         <ui-menu
             v-model="open"
             style="border: 1px solid #C7088E;"

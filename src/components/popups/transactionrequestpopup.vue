@@ -1,11 +1,12 @@
 <script setup>
     import { ipcRenderer } from 'electron';
-    import { computed } from "vue";
+    import { computed, onMounted } from "vue";
     import { useI18n } from 'vue-i18n';
-    import langSelect from "../lang-select.vue";
     import {formatChain} from "../../lib/formatter";
+    import RendererLogger from "../../lib/RendererLogger";
 
     const { t } = useI18n({ useScope: 'global' });
+    const logger = new RendererLogger();
 
     const props = defineProps({
         request: {
@@ -66,6 +67,11 @@
             : t('operations.rawsig.sign_and_broadcast_btn')
     })
 
+    onMounted(() => {
+        logger.debug("Transaction request popup initialised");
+        console.log({visualizedParams})
+    });
+
     function _clickedAllow() {
         ipcRenderer.send(
             "clickedAllow",
@@ -89,69 +95,66 @@
 
 </script>
 <template>
-    <div style="padding:5px">
-        <p>
-            {{ tableTooltip }}
-        </p>
-        <div
-            v-if="!!visualizedParams"
-            class="text-left custom-content"
-        >
-            <h4 class="h4 beet-typo-small">
-                {{ t('operations.general.content') }}
-            </h4>
-            <ui-textfield
-                v-model="visualizedParams"
-                input-type="textarea"
-                fullwidth
-                disabled
-                rows="5"
-            />
-        </div>
-        <div
-            v-else
-            class="text-left custom-content"
-        >
-            <pre>
+    <div style="padding-bottom:5px;">
+        {{ tableTooltip }}
+    </div>
+    <div
+        v-if="!!visualizedParams"
+        class="text-left custom-content"
+    >
+        {{ t('operations.general.content') }}
+        <ul>
+            <li
+                v-for="param in visualizedParams.split(/\r?\n/)"
+                :key="param"
+                style="list-style-type: none"
+            >
+                {{ param }}
+            </li>
+        </ul>
+    </div>
+    <div
+        v-else
+        class="text-left custom-content"
+    >
+        <pre>
                 Loading transaction details from blockchain, please wait.
             </pre>
-        </div>
-
-        <h4 class="h4 beet-typo-small">
-            {{ t('operations.rawsig.request_cta') }}
-        </h4>
-
-        <span v-if="!!visualizedParams">
-            <ui-button
-                raised
-                style="margin-right:5px"
-                @click="_clickedAllow()"
-            >
-                {{ buttonText }}
-            </ui-button>
-            <ui-button
-                raised
-                @click="_clickedDeny()"
-            >
-                {{ t('operations.rawsig.reject_btn') }}
-            </ui-button>
-            <langSelect location="prompt" />
-        </span>
-        <span v-else>
-            <ui-button
-                raised
-                style="margin-right:5px"
-                disabled
-            >
-                {{ buttonText }}
-            </ui-button>
-            <ui-button
-                raised
-                @click="_clickedDeny()"
-            >
-                {{ t('operations.rawsig.reject_btn') }}
-            </ui-button>
-            <langSelect location="prompt" />
-        </span>
     </div>
+
+    <h4 class="h4 beet-typo-small">
+        {{ t('operations.rawsig.request_cta') }}
+    </h4>
+
+    <span v-if="!!visualizedParams">
+        <ui-button
+            raised
+            style="margin-right:5px"
+            @click="_clickedAllow()"
+        >
+            {{ buttonText }}
+        </ui-button>
+        <ui-button
+            raised
+            @click="_clickedDeny()"
+        >
+            {{ t('operations.rawsig.reject_btn') }}
+        </ui-button>
+    </span>
+    <span v-else>
+        <ui-button
+            raised
+            style="margin-right:5px"
+            disabled
+        >
+            {{ buttonText }}
+        </ui-button>
+        <ui-button
+            raised
+            @click="_clickedDeny()"
+        >
+            {{ t('operations.rawsig.reject_btn') }}
+        </ui-button>
+        <langSelect location="prompt" />
+    </span>
 </template>
