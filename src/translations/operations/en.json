@@ -4,15 +4,19 @@
     },
     "link": {
         "title": "Account Link Request",
+        "account_select": "Account select",
+        "account_missing": "Requested account not present in this Beet wallet.",
         "request": "The application '{appName}' from '{origin}' is requesting access to a {chain} account.",
         "request_fresh": "The application has already linked a {chain} account before as marked in the list below.",
         "request_tooltip": "The application will receive your account details (name and id) and link to Beet.",
         "request_cta": "Select account to provide.",
         "accept_btn": "Allow",
-        "reject_btn": "Deny"
+        "reject_btn": "Deny",
+        "invalid_operations": "Malformed link request - invalid operation(s)."
     },
     "relink": {
         "title": "Account ReLink Request",
+        "error": "Error showing prompt",
         "request": "The application '{appName}' from '{origin}' is requesting to relink the previously linked {chain} account: {accountId}. This is usually due to having deleted your browser's cache. On rare ocassions, this may be a phishing attempt so please double check the site you are visiting.",
         "request_tooltip": "The previous link between the appplication and the account referencec will be reset."
     },
@@ -32,6 +36,9 @@
     },
     "transfer": {
         "title": "Transfer Request",
+        "to": "Recipient",
+        "amount": "Amount",
+        "memo": "Memo",
         "request": "App: '{appName}' from '{origin}' wants to initiate a transfer from { chain }:{ accountName }.",
         "request_cta": "Do you want to execute it?",
         "accept_btn": "Sign & Broadcast",
@@ -41,6 +48,7 @@
     },
     "rawsig": {
         "title": "Request",
+        "loading": "Loading transaction details from blockchain, please wait.",
         "request": "App: '{appName}' from '{origin}' has submitted the following transaction for account { chain }:{ accountName }.",
         "request_cta": "Do you want to execute it?",
         "accept_btn": "Sign & Broadcast",
@@ -64,5 +72,309 @@
         "request_cta": "",
         "accept_btn": "Approve",
         "reject_btn": "Ignore"
+    },
+    "injected": {
+        "BTS": {
+            "getAccount": {
+                "method": "getAccount",
+                "tooltip": "Ask Beet for blockchain account details"
+            },
+            "requestSignature": {
+                "method": "requestSignature",
+                "tooltip": "Ask Beet for blockchain signatures"
+            },
+            "injectedCall": {
+                "method": "injectedCall",
+                "tooltip": "Beet handles an injected blockchain operation"
+            },
+            "voteFor": {
+                "method": "voteFor",
+                "tooltip": "Beet handled blockchain vote"
+            },
+            "signMessage": {
+                "method": "signMessage",
+                "tooltip": "Beet signs a message"
+            },
+            "signNFT": {
+                "method": "signNFT",
+                "tooltip": "Beet signs an NFT"
+            },
+            "verifyMessage": {
+                "method": "verifyMessage",
+                "tooltip": "Beet verifies a message"
+            },
+            "transfer": {
+              "method": "Transfer",
+              "tooltip": "Send assets from one account to another"
+            },
+            "limit_order_create": {
+              "method": "Limit order create",
+              "tooltip": "An offer to sell an amount of an asset at a specified exchange rate by a certain time"
+            },
+            "limit_order_cancel": {
+              "method": "Limit order cancel",
+              "tooltip": "Cancelling a limit order operation"
+            },
+            "call_order_update": {
+              "method": "Call order update",
+              "tooltip": "Updating an existing call order"
+            },
+            "account_create": {
+              "method": "Account create",
+              "tooltip": "Creating a new account"
+            },
+            "asset_update": {
+              "method": "Asset update",
+              "tooltip": "Update created asset settings"
+            },
+            "asset_update_bitasset": {
+              "method": "Asset update bitasset",
+              "tooltip": "Update created bitasset settings"
+            },
+            "asset_update_feed_producers": {
+              "method": "Asset update feed producers",
+              "tooltip": "Update the list of approved feed producers for created bitasset"
+            },
+            "asset_issue": {
+              "method": "Asset issue",
+              "tooltip": "Issue your created assets to individuals"
+            },
+            "asset_reserve": {
+              "method": "Asset reserve",
+              "tooltip": "Reserve your created assets"
+            },
+            "asset_fund_fee_pool": {
+              "method": "Asset fund fee pool",
+              "tooltip": "Fund the fee pool for your created asset"
+            },
+            "asset_settle": {
+              "method": "Asset settle",
+              "tooltip": "Settle an asset in your portfolio"
+            },
+            "asset_global_settle": {
+              "method": "Asset global settle",
+              "tooltip": "Globally settle one of your created bitassets"
+            },
+            "asset_publish_feed": {
+              "method": "Asset publish feed",
+              "tooltip": "Publish a price feed for a bitasset"
+            },
+            "witness_create": {
+              "method": "Witness create",
+              "tooltip": "Create a witness account"
+            },
+            "witness_update": {
+              "method": "Witness update",
+              "tooltip": "Update your witness account"
+            },
+            "proposal_create": {
+              "method": "Proposal create",
+              "tooltip": "Create a blockchain operation proposal"
+            },
+            "proposal_update": {
+              "method": "Proposal update",
+              "tooltip": "Update a blockchain operation proposal"
+            },
+            "proposal_delete": {
+              "method": "Proposal delete",
+              "tooltip": "Delete a blockchain operation proposal"
+            },
+            "withdraw_permission_create": {
+              "method": "Withdraw permission create",
+              "tooltip": "Create a withdraw permission"
+            },
+            "withdraw_permission_update": {
+              "method": "Withdraw permission update",
+              "tooltip": "Update a withdraw permission"
+            },
+            "withdraw_permission_claim": {
+              "method": "Withdraw permission claim",
+              "tooltip": "Claim from a withdraw permission"
+            },
+            "withdraw_permission_delete": {
+              "method": "Withdraw permission delete",
+              "tooltip": "Delete a withdraw permission"
+            },
+            "committee_member_create": {
+              "method": "Committee member create",
+              "tooltip": "Create a committee member account"
+            },
+            "committee_member_update": {
+              "method": "Committee member update",
+              "tooltip": "Update your committee member account details"
+            },
+            "committee_member_update_global_parameters": {
+              "method": "Committee member update global parameters",
+              "tooltip": "Publish your committee member stance on Bitshares blockchain global parameter values"
+            },
+            "vesting_balance_create": {
+              "method": "Vesting balance create",
+              "tooltip": "Create a vesting balance"
+            },
+            "vesting_balance_withdraw": {
+              "method": "Vesting balance withdraw",
+              "tooltip": "Withdraw from a vesting balance"
+            },
+            "worker_create": {
+              "method": "Worker create",
+              "tooltip": "Create a worker proposal"
+            },
+            "balance_claim": {
+              "method": "Balance claim",
+              "tooltip": "Claim from a balance"
+            },
+            "override_transfer": {
+              "method": "Override transfer",
+              "tooltip": "Override a transfer operation"
+            },
+            "transfer_to_blind": {
+              "method": "Transfer to blind",
+              "tooltip": "Transfer assets to a blind destination"
+            },
+            "blind_transfer": {
+              "method": "Blind transfer",
+              "tooltip": "Transfer blind assets in a blind manner"
+            },
+            "transfer_from_blind": {
+              "method": "Transfer from blind",
+              "tooltip": "Withdraw assets from a blind balance"
+            },
+            "asset_claim_fees": {
+              "method": "Asset claim fees",
+              "tooltip": "Claim the fees from an asset"
+            },
+            "bid_collateral": {
+              "method": "Bid collateral",
+              "tooltip": "Bid on a bitassets backing collateral when globally settled"
+            },
+            "asset_claim_pool": {
+              "method": "Asset claim pool",
+              "tooltip": "Transfers BTS from the fee pool of a specified asset back to the issuer's balance"
+            },
+            "asset_update_issuer": {
+              "method": "Asset update issuer",
+              "tooltip": "Update issuer of an asset to a new administrator account."
+            },
+            "htlc_create": {
+              "method": "HTLC create",
+              "tooltip": "Create a HTLC operation"
+            },
+            "htlc_redeem": {
+              "method": "HTLC Redeem",
+              "tooltip": "Redeem the contents of a HTLC operation"
+            },
+            "htlc_extend": {
+              "method": "HTLC Extend",
+              "tooltip": "Extend the duration of an HTLC operation"
+            },
+            "custom_authority_create": {
+              "method": "Custom authority create",
+              "tooltip": "Create a new custom authority."
+            },
+            "custom_authority_update": {
+              "method": "Custom authority update",
+              "tooltip": "Update a custom authority."
+            },
+            "custom_authority_delete": {
+              "method": "Custom authority delete",
+              "tooltip": "Delete a custom authority."
+            },
+            "ticket_create": {
+              "method": "Ticket create",
+              "tooltip": "Create a new ticket."
+            },
+            "ticket_update": {
+              "method": "Ticket update",
+              "tooltip": "Update an existing ticket."
+            },
+            "liquidity_pool_create": {
+              "method": "Liquidity pool create",
+              "tooltip": "Create a liquidity pool"
+            },
+            "liquidity_pool_delete": {
+              "method": "Liquidity pool delete",
+              "tooltip": "Delete a liquidity pool"
+            },
+            "liquidity_pool_deposit": {
+              "method": "Liquidity pool deposit",
+              "tooltip": "Deposit funds into a liquidity pool"
+            },
+            "liquidity_pool_withdraw": {
+              "method": "Liquidity pool withdraw",
+              "tooltip": "Withdraw funds from a liquidity pool"
+            },
+            "liquidity_pool_exchange": {
+              "method": "Liquidity pool exchange",
+              "tooltip": "Exchange with a liquidity pool."
+            },
+            "samet_fund_create": {
+              "method": "SameT fund create",
+              "tooltip": "Create a new SameT Fund. A SameT Fund is a fund which can be used by a borrower and have to be repaid in the same transaction."
+            },
+            "samet_fund_delete": {
+              "method": "SameT fund delete",
+              "tooltip": "Delete a SameT fund object."
+            },
+            "samet_fund_update": {
+              "method": "SameT fund update",
+              "tooltip": "Update a SameT fund object."
+            },
+            "samet_fund_borrow": {
+              "method": "SameT fund borrow",
+              "tooltip": "Borrow from a SameT fund."
+            },
+            "samt_fund_repay": {
+              "method": "SameT fund repay",
+              "tooltip": "Repay debt to a SameT fund."
+            },
+            "credit_offer_create": {
+              "method": "Credit offer create",
+              "tooltip": "Create a new credit offer. A credit offer is a fund that can be used by other accounts who provide certain collateral."
+            },
+            "credit_offer_delete": {
+              "method": "Credit offer delete",
+              "tooltip": "Delete a credit offer."
+            },
+            "credit_offer_update": {
+              "method": "Credit offer update",
+              "tooltip": "Update a credit offer"
+            },
+            "credit_offer_accept": {
+              "method": "Credit offer accept",
+              "tooltip": "Accept a credit offer and create a credit deal."
+            },
+            "credit_deal_repay": {
+              "method": "Credit deal repay",
+              "tooltip": "Repay a credit deal."
+            },
+            "custom": {
+                "method": "Custom",
+                "tooltip": "Provides a generic way to add higher level protocols on top of witness consensus"
+            },
+            "assert": {
+                "method": "Assert",
+                "tooltip": "Assert that some conditions are true."
+            },
+            "account_update": {
+                "method": "Account update",
+                "tooltip": "This operation is used to update an existing account. It can be used to update the authorities, or adjust the options on the account."
+            },
+            "account_whitelist": {
+                "method": "Account whitelist",
+                "tooltip": "This operation is used to whitelist and blacklist accounts, primarily for transacting in whitelisted assets"
+            },
+            "account_upgrade": {
+                "method": "Account upgrade",
+                "tooltip": "This operation is used to upgrade an account to a member, or renew its subscription."
+            },
+            "account_transfer": {
+                "method": "Account transfer",
+                "tooltip": "Transfers the account to another account while clearing the white list"
+            },
+            "asset_create": {
+                "method": "Asset create",
+                "tooltip": "Creates an asset on the Bitshares blockchain"
+            }
+        }
     }
 }

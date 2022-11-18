@@ -6,7 +6,10 @@ import Start from "../components/start";
 import Dashboard from "../components/dashboard";
 import Restore from "../components/restore";
 import AddAccount from "../components/add-account";
-import Settings from "../components/settings";
+import Dapps from "../components/dapps";
+import Backup from "../components/backup";
+import Totp from "../components/totp";
+import Qr from "../components/qr";
 import Popups from "../components/popups";
 
 const router = createRouter({
@@ -18,9 +21,30 @@ const router = createRouter({
       }
     },
     {
-      path: '/settings',
+      path: '/backup',
       components: {
-        default: Settings,
+        default: Backup,
+        header: HeaderSmall
+      }
+    },
+    {
+      path: '/dapps',
+      components: {
+        default: Dapps,
+        header: HeaderSmall
+      }
+    },
+    {
+      path: '/totp',
+      components: {
+        default: Totp,
+        header: HeaderSmall
+      }
+    },
+    {
+      path: '/qr',
+      components: {
+        default: Qr,
         header: HeaderSmall
       }
     },

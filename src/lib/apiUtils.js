@@ -160,22 +160,25 @@ async function _signOrBroadcast(
   let finalResult;
   let notifyTXT = "";
 
-  let txType = request.payload.params[0];
-
+  let txType = request.payload.params[0] ?? "signAndBroadcast";
   if (txType == "broadcast") {
       try {
         finalResult = await blockchain.broadcast(request.payload.params);
       } catch (error) {
+        console.log(error)
         return _promptFail(txType, request.id, error, reject);
       }
       notifyTXT = "Transaction successfully broadcast.";
       return resolve({result: finalResult});
-    }
+  }
 
   let activeKey;
   try {
-    activeKey = store.getters['AccountStore/getActiveKey'](request);
+    activeKey = request.payload.account_id
+                    ? store.getters['AccountStore/getActiveKey'](request)
+                    : store.getters['AccountStore/getCurrentActiveKey']();
   } catch (error) {
+    console.log(error)
     return _promptFail(txType + '.getActiveKey', request.id, error, reject);
   }
 
@@ -183,6 +186,7 @@ async function _signOrBroadcast(
   try {
     signingKey = await getKey(activeKey);
   } catch (error) {
+    console.log(error)
     return _promptFail(txType + '.getKey', request.id, {error: error, key: activeKey, req: request}, reject);
   }
 
@@ -190,6 +194,7 @@ async function _signOrBroadcast(
   try {
     transaction = await blockchain.sign(request.payload.params, signingKey);
   } catch (error) {
+    console.log(error)
     return _promptFail(txType + '.blockchain.sign', request.id, error, reject);
   }
 
@@ -200,6 +205,7 @@ async function _signOrBroadcast(
       try {
         finalResult = await blockchain.broadcast(transaction);
       } catch (error) {
+        console.log(error)
         return _promptFail(txType + ".broadcast", request.id, error, reject);
       }
       notifyTXT = "Transaction successfully signed & broadcast.";
@@ -283,25 +289,33 @@ export async function injectedCall(request, blockchain) {
         return _promptFail("injectedCall", request.id, request, reject);
     }
 
+    let types = blockchain.getOperationTypes();
+    let fromField = types.find(type => type.method === request.type).from;
+
+    let account;
     let visualizedAccount;
-    try {
-        visualizedAccount = await blockchain.visualize(request.payload.account_id);
-    } catch (error) {
-        console.log(error);
-        return _promptFail("injectedCall", request.id, request, reject);
+    if (!fromField || !fromField.length) {
+        account = store.getters['AccountStore/getCurrentSafeAccount']();
+    } else {
+        try {
+            visualizedAccount = await blockchain.visualize(request.payload[fromField]);
+        } catch (error) {
+            console.log(error);
+            return _promptFail("injectedCall", request.id, request, reject);
+        }
     }
 
     ipcRenderer.send(
       'createPopup',
       {
-        request: request,
-        visualizedAccount: visualizedAccount,
+        request: JSON.parse(JSON.stringify(request)),
+        visualizedAccount: visualizedAccount ?? account.accountName,
         visualizedParams: visualizedParams
       }
     );
 
     ipcRenderer.once(`popupApproved_${request.id}`, async (event, result) => {
-      return _signOrBroadcast(blockchain, request, resolve, reject);
+      return _signOrBroadcast(blockchain, JSON.parse(JSON.stringify(request)), resolve, reject);
     })
 
     ipcRenderer.once(`popupRejected_${request.id}`, (event, result) => {

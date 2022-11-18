@@ -5,6 +5,9 @@
 import path from "path";
 import url from "url";
 import fs from 'fs';
+import os from 'os';
+import { argv } from 'node:process';
+import queryString from "query-string";
 
 // Special module holding environment variables which you declared
 // in config/env_xxx.json file.
@@ -312,7 +315,7 @@ const createWindow = async () => {
       const NOTIFICATION_TITLE = 'Beet wallet notification';
       const NOTIFICATION_BODY = arg == 'request' ? "Beet has received a new request." : arg;
 
-      if (process.platform === 'win32')
+      if (os.platform === 'win32')
       {
           app.setAppUserModelId(app.name);
       }
@@ -334,7 +337,7 @@ const createWindow = async () => {
       seed = null;
       const emitter = mitt();
       try {
-        emitter.emit('timeout', 'logout');
+        mainWindow.webContents.send('timeout', 'logout');
       } catch (error) {
         console.log(error);
       }
@@ -460,26 +463,95 @@ const createWindow = async () => {
 
 app.disableHardwareAcceleration();
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
-app.on('ready', async () => {
-    createWindow();
-});
+let currentOS = os.platform();
+if (currentOS == 'win32') {
+    // windows specific steps
+    const gotTheLock = app.requestSingleInstanceLock()
 
-// Quit when all windows are closed.
-app.on('window-all-closed', () => {
-  // On OS X it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
-  if (process.platform !== 'darwin') {
-      app.quit();
-  }
-});
+    if (!gotTheLock) {
+        app.quit()
+    } else {
+        // Handle the protocol. In this case, we choose to show an Error Box.
+        app.on('second-instance', (event, args) => {
+            // Someone tried to run a second instance, we should focus our window.
+            if (mainWindow) {
+                if (mainWindow.isMinimized()) mainWindow.restore()
+                mainWindow.focus()
+                
+                if (process.platform == 'win32' && args.length > 2) {
+                    let deeplinkingUrl = args[3].replace('beet://api/', '');
 
-app.on('activate', () => {
-  // On OS X it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (mainWindow === null) {
-      createWindow();
-  }
-});
+                    let qs;
+                    try {
+                        qs = queryString.parse(deeplinkingUrl);
+                    } catch (error) {
+                        console.log(error);
+                        return;
+                    }
+
+                    if (qs) {
+                        mainWindow.webContents.send('deeplink', qs);
+                    }
+                }
+
+            }
+        })
+    
+        let defaultPath;
+        try {
+            defaultPath = path.resolve(argv[1]);
+        } catch (error) {
+            console.log(error)
+        }
+        app.setAsDefaultProtocolClient('beet', process.execPath, [defaultPath])
+
+        app.whenReady().then(() => {
+            createWindow();
+        });       
+    }
+} else {
+    app.setAsDefaultProtocolClient('beet')
+
+    // mac or linux
+    app.whenReady().then(() => {
+        createWindow()
+    })
+    
+    // Handle the protocol. In this case, we choose to show an Error Box.
+    app.on('open-url', (event, url) => {
+        let deeplinkingUrl = url.replace('beet://api/', '');
+
+        let qs;
+        try {
+            qs = queryString.parse(deeplinkingUrl);
+        } catch (error) {
+            console.log(error);
+            return;
+        }
+
+        if (qs) {
+            mainWindow.webContents.send('deeplink', qs);
+        }
+    })
+
+    // This method will be called when Electron has finished
+    // initialization and is ready to create browser windows.
+    // Some APIs can only be used after this event occurs.
+    // Quit when all windows are closed.
+    app.on('window-all-closed', () => {
+        // On OS X it is common for applications and their menu bar
+        // to stay active until the user quits explicitly with Cmd + Q
+        if (process.platform !== 'darwin') {
+            app.quit();
+        }
+    });
+    
+    app.on('activate', () => {
+        // On OS X it's common to re-create a window in the app when the
+        // dock icon is clicked and there are no other windows open.
+        if (mainWindow === null) {
+            createWindow();
+        }
+    });
+}
+
