@@ -4,8 +4,6 @@
     import RendererLogger from "../../lib/RendererLogger";
     import {formatChain, formatAccount} from "../../lib/formatter";
 
-    import langSelect from "../lang-select.vue";
-
     import { useI18n } from 'vue-i18n';
     const { t } = useI18n({ useScope: 'global' });
     const logger = new RendererLogger();
@@ -127,7 +125,7 @@
                     disabled
                     value=""
                 >
-                    Account select
+                    {{ t('operations.link.account_select') }}
                 </option>
                 <option
                     v-for="account in accountOptions"
@@ -141,7 +139,7 @@
             </select>
         </div>
         <div v-else>
-            Requested account not present in this Beet wallet.
+            {{ t('operations.link.account_missing') }}
         </div>
         <br>
         <div v-if="chosenAccount == -1">
@@ -157,7 +155,6 @@
             >
                 {{ t('operations.link.reject_btn') }}
             </ui-button>
-            <langSelect location="prompt" />
         </div>
         <div v-else>
             <ui-button
@@ -173,7 +170,6 @@
             >
                 {{ t('operations.link.reject_btn') }}
             </ui-button>
-            <langSelect location="prompt" />
         </div>
     </div>
 </template>

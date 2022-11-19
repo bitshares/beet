@@ -596,12 +596,12 @@ export default class BitShares extends BlockchainAPI {
                 targetAccountContents = await this.getAccount(targetAccount);
             } catch (error) {
                 console.log(error);
-                return resolve({id: '', blocked: false, error: true});
+                return resolve([]);
             }
             let targetID = targetAccountContents.id;
 
             if (this._config.identifier === "BTS_TEST") {
-                return resolve({id: targetID, blocked: false});
+                return resolve([]);
             }
 
             let committeeAccountDetails;
@@ -609,20 +609,17 @@ export default class BitShares extends BlockchainAPI {
                 committeeAccountDetails = await this.getAccount('committee-blacklist-manager');
             } catch (error) {
                 console.log(error);
-                return resolve({id: '', blocked: false, error: true});
+                return reject();
             }
             
             if (!targetAccountContents || !committeeAccountDetails) {
-                return resolve({id: '', blocked: false, error: true});
+                return reject();
             }
 
             let blockedAccounts = committeeAccountDetails.blacklisted_accounts;
             let isBlocked = blockedAccounts.find(x => x === targetID);
             
-            return resolve({
-                id: targetID,
-                blocked: isBlocked ? true : false
-            });
+            return resolve(blockedAccounts);
         });
     }
 
@@ -1513,7 +1510,6 @@ export default class BitShares extends BlockchainAPI {
                     " to: " + to + "(" + op.to + ")\n" +
                     " amount: " + formatAsset(op.amount.amount, asset.symbol, asset.precision)
                 )
-
             } else if (opType == 1) {
                 // limit_order_create
                 let seller;
@@ -1735,34 +1731,26 @@ export default class BitShares extends BlockchainAPI {
                       return;
                     }
                 }
-
                 let symbol = asset ? asset.symbol : op.symbol;
                 let precision = asset ? asset.precision : op.precision;
                 let is_prediction_market = asset ? asset.is_prediction_market : op.is_prediction_market;
-
                 let options = operation[0] == 10 ? op.common_options : op.new_options;
-
                 let max_supply = options.max_supply;
                 let market_fee_percent = options.market_fee_percent;
                 let max_market_fee = options.max_market_fee;
                 let isBitasset = op.bitasset_opts ? true : false;
-
                 let issuer_permissions = getFlagBooleans(options.issuer_permissions, isBitasset);
                 let flags = getFlagBooleans(options.flags, isBitasset);
-
                 let cer_base_amount = options.core_exchange_rate.base.amount;
                 let cer_base_asset_id = options.core_exchange_rate.base.asset_id;
                 let cer_quote_amount = options.core_exchange_rate.quote.amount;
                 let cer_quote_asset_id = options.core_exchange_rate.quote.asset_id; 
-
                 let whitelist_authorities = options.whitelist_authorities;
                 let blacklist_authorities = options.blacklist_authorities;
                 let whitelist_markets = options.whitelist_markets;
                 let blacklist_markets = options.blacklist_markets;
-
                 let description = JSON.parse(options.description);
                 let nft_object = description ? description.nft_object : null;
-
                 let initialString = operation[0] == 10 ? "Issuing an asset \n" : "Updating an asset \n"
                 let operationString =  initialString +
                                         `Symbol: ${symbol}\n` +
@@ -1808,7 +1796,6 @@ export default class BitShares extends BlockchainAPI {
                     operationString += `minimum_feeds: ${op.bitasset_opts.minimum_feeds}\n`;
                     operationString += `short_backing_asset: ${op.bitasset_opts.short_backing_asset}\n`;
                 }
-
                 if (nft_object) {
                     operationString += `NFT Contents: \n`;
                     operationString += `acknowledgements: ${nft_object.acknowledgements}\n`;
@@ -2135,7 +2122,7 @@ export default class BitShares extends BlockchainAPI {
                 } catch (error) {
                     console.log(error);
                 }
-                
+
                 operations.push(
                     "Delete the following proposal? \n" +
                     "using_owner_authority: " + op.using_owner_authority + "\n" +
@@ -2219,7 +2206,7 @@ export default class BitShares extends BlockchainAPI {
                 } catch (error) {
                     console.log(error);
                 }
-                
+
                 let to;
                 try {
                   to = await this._getAccountName(op.withdraw_to_account);
@@ -2921,7 +2908,7 @@ export default class BitShares extends BlockchainAPI {
                 } catch (error) {
                   console.log(error);
                 }
-                
+
                 let amountA;
                 try {
                     amountA = await this._resolveAsset(op.amount_a.asset_id);
@@ -3206,7 +3193,7 @@ export default class BitShares extends BlockchainAPI {
                 } catch (error) {
                     console.log(error);
                 }
-                
+
                 let collateral;
                 try {
                     collateral = await this._resolveAsset(op.collateral.asset_id);

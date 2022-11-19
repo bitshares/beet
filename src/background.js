@@ -136,16 +136,20 @@ const createModal = async (arg, modalEvent) => {
       let target = arg.target;
       modalRequests[id]['target'] = target;
 
-      let isBlockedAccount = arg.isBlockedAccount;
-      if (isBlockedAccount) {
-        modalRequests[id]['warning'] = true;
-        targetURL += isBlockedAccount ? `&warning=blockedAccount` : `&warning=serverError`;
-      }
-
       targetURL += `&chain=${encodeURIComponent(chain)}`;
       targetURL += `&accountName=${encodeURIComponent(accountName)}`;
       targetURL += `&target=${encodeURIComponent(target)}`;
       targetURL += `&toSend=${encodeURIComponent(toSend)}`;
+    }
+
+    if ([Actions.INJECTED_CALL, Actions.TRANSFER].includes(type)) {
+        if (arg.isBlockedAccount) {
+            modalRequests[id]['warning'] = true;
+            targetURL += `&warning=blockedAccount`;
+        } else if (arg.serverError) {
+            modalRequests[id]['warning'] = true;
+            targetURL += `&warning=serverError`;
+        }
     }
 
     modalWindows[id] = new BrowserWindow({

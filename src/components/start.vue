@@ -55,7 +55,10 @@
             })
             .catch(() => {
                 passincorrect.value = "is-invalid";
-                ipcRenderer.send("notify", 'An attempt to unlock the Beet wallet was made with an invalid password.');
+                ipcRenderer.send(
+                    "notify",
+                    t('common.start.invalid_password')
+                );
             });
     }
 </script>
@@ -106,7 +109,7 @@
                     full-bleed
                     @change="passincorrect=''"
                 >
-                    Beet wallet name
+                    {{ t('common.start.wallet_name') }}
                 </ui-select>
             </section>
             <input

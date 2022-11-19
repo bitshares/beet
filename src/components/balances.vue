@@ -1,8 +1,7 @@
 <script setup>
-    import { watch, watchEffect, ref, computed, onMounted, inject } from "vue";
+    import { watchEffect, ref, computed, inject } from "vue";
     import { useI18n } from 'vue-i18n';
     import getBlockchainAPI from "../lib/blockchains/blockchainFactory";
-    import store from '../store/index';
     import RendererLogger from "../lib/RendererLogger";
 
     const emitter = inject('emitter');
@@ -98,22 +97,22 @@
             class="step_btn"
             @click="loadBalances()"
         >
-            Refresh
+            {{ t('common.balances.refresh') }}
         </ui-button>
         <ui-button
             v-else-if="!isConnected && !isConnecting"
             class="step_btn"
             @click="loadBalances()"
         >
-            Reconnect
+            {{ t('common.balances.reconnect') }}
         </ui-button>
 
         <ui-table
             v-if="tableData"
+            v-shadow="1"
             :data="tableData.data"
             :thead="tableData.thead"
             :tbody="tableData.tbody"
-            v-shadow="1"
             style="height: 150px;"
         />
         <ui-card
@@ -121,23 +120,23 @@
             v-shadow="1"
             outlined
         >
-            No balances in account
+            {{ t('common.balances.empty') }}
         </ui-card>
         <ui-card
             v-if="isConnecting"
-            outlined
             v-shadow="1"
+            outlined
             style="padding:5px; text-align: center;"
         >
-            <ui-skeleton active></ui-skeleton>
+            <ui-skeleton active />
         </ui-card>
         <ui-card
             v-if="!isConnected && !isConnecting"
-            outlined
             v-shadow="1"
+            outlined
             style="padding:5px"
         >
-            Couldn't to connect to blockchain
+            {{ t('common.balances.error') }}
         </ui-card>
     </div>
 </template>

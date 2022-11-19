@@ -159,6 +159,7 @@ const linkHandler = async (req) => {
                 origin: req.origin,
                 account_id: userResponse.result.id,
                 chain: userResponse.result.chain,
+                injectables: req.injectables ?? [],
                 secret: secret,
                 next_hash: req.payload.next_hash
             });
@@ -235,9 +236,9 @@ export default class BeetServer {
 
       let msg = JSON.parse(decryptedValue);
       if (!Object.keys(Actions).map(key => Actions[key]).includes(msg.method)) {
-          console.log("Unsupported request type rejected");
-          socket.emit("api", {id: data.id, error: true, payload: {code: 3, message: "Request type not supported."}});
-          return;
+        console.log("Unauthorized use of injected operation");
+        socket.emit("api", {id: data.id, error: true, payload: {code: 3, message: "Request type not supported."}});
+        return;
       }
 
       socket.next_hash = msg.next_hash;
@@ -253,11 +254,6 @@ export default class BeetServer {
         type: msg.method,
         payload: msg
       };
-
-      store.dispatch('OriginStore/newRequest', {
-          identityhash: apiobj.payload.identityhash,
-          next_hash: apiobj.payload.next_hash
-      });
 
       let blockchainActions = [
         Actions.SIGN_MESSAGE,
@@ -279,6 +275,36 @@ export default class BeetServer {
           return;
         }
       }
+
+      if (blockchain && blockchain.getOperationTypes().length) {
+        // Check injected operation types are allowed
+        let app = store.getters['OriginStore/getBeetApp'](apiobj);
+        if (!app || (!apiobj.payload.origin == app.origin && !apiobj.payload.appName == app.appName)) {
+            socket.emit("api", {id: data.id, error: true, payload: {code: 3, message: "Request format issue."}});
+            return;
+        }
+
+        // request.payload.params
+        let tr = blockchain._parseTransactionBuilder(msg.params);
+        let authorizedUse = true;
+        for (let i = 0; i < tr.operations.length; i++) {
+            let operation = tr.operations[i];
+            if (!app.injectables.includes(operation[0])) {
+                authorizedUse = false;
+                break;
+            }
+        }
+
+        if (!authorizedUse) {
+            socket.emit("api", {id: data.id, error: true, payload: {code: 3, message: "Unauthorized blockchain operations detected."}});
+            return;
+        }
+    }
+
+        store.dispatch('OriginStore/newRequest', {
+            identityhash: apiobj.payload.identityhash,
+            next_hash: apiobj.payload.next_hash
+        });
 
       let status;
       try {

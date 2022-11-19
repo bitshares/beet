@@ -2,9 +2,7 @@
     import { ipcRenderer } from 'electron';
     import { onMounted, computed } from "vue";
     import { useI18n } from 'vue-i18n';
-
     import RendererLogger from "../../lib/RendererLogger";
-    import langSelect from "../lang-select.vue";
 
     const { t } = useI18n({ useScope: 'global' });
     const logger = new RendererLogger();
@@ -161,17 +159,20 @@
         <ui-list>
             <ui-item key="Recipient">
                 <ui-item-text-content>
-                    Recipient: {{ to }} ({{ target }})
+                    {{ t("operations.transfer.to") }}: {{ to }} ({{ target }})
                 </ui-item-text-content>
             </ui-item>
             <ui-item key="Amount">
                 <ui-item-text-content>
-                    Amount: {{ toSend }} ({{ asset_id }})
+                    {{ t("operations.transfer.amount") }}: {{ toSend }} ({{ asset_id }})
                 </ui-item-text-content>
             </ui-item>
-            <ui-item v-if="memo" key="Memo">
+            <ui-item
+                v-if="memo"
+                key="Memo"
+            >
                 <ui-item-text-content>
-                    Memo: {{ memo }}
+                    {{ t("operations.transfer.memo") }}: {{ memo }}
                 </ui-item-text-content>
             </ui-item>
             <ui-item
@@ -184,7 +185,10 @@
             </ui-item>
         </ui-list>
         
-        <ui-alert v-if="warning" state="warning">
+        <ui-alert
+            v-if="warning"
+            state="warning"
+        >
             {{
                 warning === "serverError"
                     ? t("operations.transfer.server_error")
@@ -205,6 +209,5 @@
         >
             {{ t("operations.transfer.reject_btn") }}
         </ui-button>
-        <langSelect location="prompt" />
     </div>
 </template>

@@ -366,7 +366,7 @@
                 "method": "Konto-Upgrade",
                 "tooltip": "Dieser Vorgang wird verwendet, um ein Konto zu einem Mitglied hochzustufen oder sein Abonnement zu erneuern."
             },
-            "Kontoübertragung": {
+            "account_transfer": {
                 "method": "Kontoübertragung",
                 "tooltip": "Überträgt das Konto auf ein anderes Konto, während die weiße Liste gelöscht wird"
             },

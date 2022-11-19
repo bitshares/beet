@@ -78,7 +78,7 @@
                 passError.value = true;
                 store.dispatch(
                     "WalletStore/notifyUser",
-                    {notify: "request", message: "Account recovery error!"}
+                    {notify: "request", message: t('common.apiUtils.restore.decryptError')}
                 );
                 return;
             }
@@ -98,7 +98,7 @@
                 passError.value = true;
                 store.dispatch(
                     "WalletStore/notifyUser",
-                    {notify: "request", message: "Invalid recovered wallet password"}
+                    {notify: "request", message: t('common.apiUtils.restore.invalidPassword')}
                 );
                 return;
             }
@@ -110,7 +110,7 @@
                 console.log("A wallet with the same name already exists, aborting wallet restoration");
                 store.dispatch(
                     "WalletStore/notifyUser",
-                    {notify: "request", message: "A wallet with the same name already exists, aborting wallet restoration"}
+                    {notify: "request", message: t('common.apiUtils.restore.duplicate')}
                 );
                 return;
             }
