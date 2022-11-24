@@ -1,6 +1,5 @@
 <script setup>
     import { computed } from 'vue';
-    import getBlockchainAPI from "../lib/blockchains/blockchainFactory";
     import {formatChain} from "../lib/formatter";
     import { shell } from 'electron';
     import { useI18n } from 'vue-i18n';
@@ -8,6 +7,13 @@
 
     const props = defineProps({
         account: {
+            type: Object,
+            required: true,
+            default() {
+                return {}
+            }
+        },
+        blockchain: {
             type: Object,
             required: true,
             default() {
@@ -21,11 +27,17 @@
     });
 
     let explorer = computed(() => {
-        return getBlockchainAPI(props.account.chain).getExplorer(props.account);
+        if (!props.blockchain) {
+            return;
+        }
+        return props.blockchain.getExplorer(props.account);
     });
 
     let accessType = computed(() => {
-        let type = getBlockchainAPI(props.account.chain).getAccessType();
+        if (!props.blockchain) {
+            return;
+        }
+        let type = props.blockchain.getAccessType();
         return type == "account"
             ? t('common.account_details_name_lbl')
             : t('common.account_details_address_lbl');

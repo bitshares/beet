@@ -278,29 +278,30 @@ export async function injectedCall(request, blockchain) {
       return _promptFail("injectedCall", 'injectedCall', request, reject);
     }
 
-    store.dispatch("WalletStore/notifyUser", {notify: "request", message: window.t('common.apiUtils.inject')});
-
-    // extract account_ids from request.payload.params
-    let stringifiedPayload = JSON.stringify(request.payload.params);
     let regex = /1.2.\d+/g
-    let regexMatches = stringifiedPayload.matchAll(regex);
-    let foundIDs = [];
-    for (const match of regexMatches) {
-        foundIDs.push(match[0]);
-    }
-
-    let isBlocked;
+    let isBlocked = false;
     let blockedAccounts;
-    if (foundIDs.length) {
-        // Won't catch account names, only account IDs
-        try {
-            blockedAccounts = await blockchain.getBlockedAccounts();
-        } catch (error) {
-            console.log(error);
+    let foundIDs = [];
+
+    if (blockchain._config.identifier === "BTS") {
+        // extract account_ids from request.payload.params
+        let stringifiedPayload = JSON.stringify(request.payload.params);
+        let regexMatches = stringifiedPayload.matchAll(regex);
+        for (const match of regexMatches) {
+            foundIDs.push(match[0]);
         }
 
-        const isBadActor = (actor) => blockedAccounts.find(x => x === actor) ? true : false;
-        isBlocked = foundIDs.some(isBadActor);
+        if (foundIDs.length) {
+            // Won't catch account names, only account IDs
+            try {
+                blockedAccounts = await blockchain.getBlockedAccounts();
+            } catch (error) {
+                console.log(error);
+            }
+
+            const isBadActor = (actor) => blockedAccounts.find(x => x === actor) ? true : false;
+            isBlocked = foundIDs.some(isBadActor);
+        }
     }
     
     let visualizedParams;
@@ -310,26 +311,28 @@ export async function injectedCall(request, blockchain) {
         console.log(error);
         return _promptFail("injectedCall", request.id, request, reject);
     }
-
-    if (!isBlocked && visualizedParams) {
-        // account names will have 1.2.x in parenthesis now - check again
-        if (!blockedAccounts) {
-            try {
-                blockedAccounts = await blockchain.getBlockedAccounts();
-            } catch (error) {
-                console.log(error);
+    
+    if (blockchain._config.identifier === "BTS") {
+        if (!isBlocked && visualizedParams) {
+            // account names will have 1.2.x in parenthesis now - check again
+            if (!blockedAccounts) {
+                try {
+                    blockedAccounts = await blockchain.getBlockedAccounts();
+                } catch (error) {
+                    console.log(error);
+                }
             }
+
+            let strVirtParams = JSON.stringify(visualizedParams);
+            let regexMatches = strVirtParams.matchAll(regex);
+
+            for (const match of regexMatches) {
+                foundIDs.push(match[0]);
+            }
+
+            const isBadActor = (actor) => blockedAccounts.find(x => x === actor) ? true : false;
+            isBlocked = foundIDs.some(isBadActor);
         }
-
-        let strVirtParams = JSON.stringify(visualizedParams);
-        let regexMatches = strVirtParams.matchAll(regex);
-
-        for (const match of regexMatches) {
-            foundIDs.push(match[0]);
-        }
-
-        const isBadActor = (actor) => blockedAccounts.find(x => x === actor) ? true : false;
-        isBlocked = foundIDs.some(isBadActor);
     }
 
     let types = blockchain.getOperationTypes();
@@ -340,17 +343,23 @@ export async function injectedCall(request, blockchain) {
     if (!fromField || !fromField.length) {
         account = store.getters['AccountStore/getCurrentSafeAccount']();
     } else {
+        let visualizeContents = request.payload[fromField];
         try {
-            visualizedAccount = await blockchain.visualize(request.payload[fromField]);
+            visualizedAccount = await blockchain.visualize(visualizeContents);
         } catch (error) {
             console.log(error);
             return _promptFail("injectedCall", request.id, request, reject);
         }
     }
 
+    if ((!visualizedAccount && !account || !account.accountName) || !visualizedParams) {
+        console.log("Missing required fields for injected call");
+        return _promptFail("injectedCall", request.id, request, reject);
+    }
+
     let popupContents = {
         request: request,
-        visualizedAccount: visualizedAccount,
+        visualizedAccount: visualizedAccount || account.accountName,
         visualizedParams: visualizedParams
     };
 
@@ -358,9 +367,14 @@ export async function injectedCall(request, blockchain) {
         popupContents['isBlockedAccount'] = isBlocked;
     }
 
-    if (!blockedAccounts || !blockedAccounts.length) {
+    if (
+        blockchain._config.identifier === "BTS" &&
+        (!blockedAccounts || !blockedAccounts.length)
+    ) {
         popupContents['serverError'] = true;
     }
+
+    store.dispatch("WalletStore/notifyUser", {notify: "request", message: window.t('common.apiUtils.inject')});
 
     ipcRenderer.send('createPopup', popupContents);
 

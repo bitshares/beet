@@ -283,21 +283,23 @@ export default class BeetServer {
             socket.emit("api", {id: data.id, error: true, payload: {code: 3, message: "Request format issue."}});
             return;
         }
-
-        // request.payload.params
-        let tr = blockchain._parseTransactionBuilder(msg.params);
+        
         let authorizedUse = true;
-        for (let i = 0; i < tr.operations.length; i++) {
-            let operation = tr.operations[i];
-            if (!app.injectables.includes(operation[0])) {
-                authorizedUse = false;
-                break;
+        if (app.injectables.length) {
+            // request.payload.params
+            let tr = blockchain._parseTransactionBuilder(msg.params);
+            for (let i = 0; i < tr.operations.length; i++) {
+                let operation = tr.operations[i];
+                if (!app.injectables.includes(operation[0])) {
+                    authorizedUse = false;
+                    break;
+                }
             }
-        }
 
-        if (!authorizedUse) {
-            socket.emit("api", {id: data.id, error: true, payload: {code: 3, message: "Unauthorized blockchain operations detected."}});
-            return;
+            if (!authorizedUse) {
+                socket.emit("api", {id: data.id, error: true, payload: {code: 3, message: "Unauthorized blockchain operations detected."}});
+                return;
+            }
         }
     }
 

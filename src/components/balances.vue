@@ -15,6 +15,13 @@
             default() {
                 return {}
             }
+        },
+        blockchain: {
+            type: Object,
+            required: true,
+            default() {
+                return {}
+            }
         }
     });
 
@@ -28,8 +35,11 @@
      * @returns {Array}
      */
     async function fetchBalances(chain, name) {
+        if (!blockchain.value) {
+            return;
+        }
         isConnecting.value = true;
-        return getBlockchainAPI(chain).getBalances(name)
+        return blockchain.value.getBalances(name)
             .then(result => {
                 isConnected.value = true;
                 isConnecting.value = false;
@@ -50,15 +60,25 @@
         return props.account.accountName;
     });
 
+    /*
     let accountID = computed(() => {
         return props.account.accountID;
+    });
+    */
+    
+    let blockchain = computed(() => {
+        return props.blockchain;
     });
 
     /**
      * On demand load the balances
      */
     async function loadBalances() {
-        if (selectedChain.value !== '' && accountName.value !== '') {
+        if (
+            selectedChain.value !== '' &&
+            accountName.value !== '' &&
+            blockchain.value._config.identifier === selectedChain.value
+        ) {
             tableData.value = null;
             balances.value = await fetchBalances(selectedChain.value, accountName.value)
         }
@@ -67,7 +87,8 @@
     watchEffect(async () => {
         if (
             selectedChain.value && selectedChain.value !== '' &&
-            accountName.value && accountName.value !== ''
+            accountName.value && accountName.value !== ''  &&
+            blockchain.value._config.identifier === selectedChain.value
         ) {
             loadBalances();
         }

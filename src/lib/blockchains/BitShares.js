@@ -10,7 +10,6 @@ import {
 } from "bitsharesjs";
 import * as Socket from "simple-websocket";
 import * as Actions from '../Actions';
-import store from '../../store/index';
 
 import RendererLogger from "../RendererLogger";
 import {formatAsset, humanReadableFloat} from "../assetUtils";
@@ -523,24 +522,40 @@ export default class BitShares extends BlockchainAPI {
      * @returns {Object}
      */
     _testConnection(url) {
-      return new Promise(async (resolve, reject) => {
-        let before = new Date();
-        let beforeTS = before.getTime();
-
-        let socket = new Socket(url);
-        socket.on('connect', () => {
-          let now = new Date();
-          let nowTS = now.getTime();
-          socket.destroy();
-          return resolve({ url: url, lag: nowTS - beforeTS });
+        let timeoutPromise = new Promise((resolve) => {
+            setTimeout(() => {
+                resolve(null);
+            }, 2000);
         });
 
-        socket.on('error', (error) => {
-          console.log(error);
-          socket.destroy();
-          return resolve(null);
+        let connectionPromise = new Promise(async (resolve, reject) => {
+            //console.log(`Testing: ${url}`);
+            let before = new Date();
+            let beforeTS = before.getTime();
+
+            let socket = new Socket(url);
+            socket.on('connect', () => {
+                let now = new Date();
+                let nowTS = now.getTime();
+                socket.destroy();
+                //console.log(`Success: ${url} (${nowTS - beforeTS}ms)`);
+                return resolve({ url: url, lag: nowTS - beforeTS });
+            });
+
+            socket.on('error', (error) => {
+                //console.log(`Failure: ${url}`);
+                socket.destroy();
+                return resolve(null);
+            });
         });
-      });
+
+        const fastestPromise = Promise.race([connectionPromise, timeoutPromise]).catch(
+            (error) => {
+                return null;
+            }
+        );
+
+        return fastestPromise;
     }
 
   /**
@@ -549,7 +564,6 @@ export default class BitShares extends BlockchainAPI {
    */
     async _testNodes() {
       return new Promise(async (resolve, reject) => {
-
           let urls = this.getNodes().map(node => node.url);
 
           let filteredURLS = urls.filter(url => {
@@ -586,21 +600,12 @@ export default class BitShares extends BlockchainAPI {
     /*
     * Fetch account/address list to warn users about
     * List is maintained by the Bitshares committee
-    * @param {String} targetAccount
     * @returns {Array}
     */
-    getBlockedAccounts(targetAccount) {
+    getBlockedAccounts() {
         return new Promise(async (resolve, reject) => {
-            let targetAccountContents;
-            try {
-                targetAccountContents = await this.getAccount(targetAccount);
-            } catch (error) {
-                console.log(error);
-                return resolve([]);
-            }
-            let targetID = targetAccountContents.id;
-
             if (this._config.identifier === "BTS_TEST") {
+                console.log('testnet - no blocked accounts');
                 return resolve([]);
             }
 
@@ -612,13 +617,11 @@ export default class BitShares extends BlockchainAPI {
                 return reject();
             }
             
-            if (!targetAccountContents || !committeeAccountDetails) {
+            if (!committeeAccountDetails) {
                 return reject();
             }
 
             let blockedAccounts = committeeAccountDetails.blacklisted_accounts;
-            let isBlocked = blockedAccounts.find(x => x === targetID);
-            
             return resolve(blockedAccounts);
         });
     }
@@ -818,14 +821,25 @@ export default class BitShares extends BlockchainAPI {
      * @returns {Object} parsedAccount
      */
     async getAccount(accountName) {
-        return new Promise(async (resolve, reject) => {
-              this.ensureConnection().then(() => {
+        let timeoutPromise = new Promise((resolve) => {
+            setTimeout(() => {
+                resolve(null);
+            }, 3000);
+        });
+
+        let timeLimitedPromise = new Promise(async (resolve, reject) => {
+            this.ensureConnection().then(() => {
                 Apis.instance()
                     .db_api()
                     .exec("get_full_accounts", [[accountName], false])
                     .then(response => {
                         if (!response || !response.length || !response[0].length) {
-                            console.log('Failed to query BTS blockchain');
+                            console.log({
+                                error: 'Failed to query blockchain',
+                                apiURL: Apis.instance().url,
+                                response: response,
+                                accountName: accountName
+                            })
                             return reject('Failed to query BTS blockchain');
                         }
 
@@ -845,8 +859,15 @@ export default class BitShares extends BlockchainAPI {
                   console.log(`ensureConnection: ${error}`);
                   reject(error);
               })
-
         });
+
+        const fastestPromise = Promise.race([timeLimitedPromise, timeoutPromise]).catch(
+            (error) => {
+                return null;
+            }
+        );
+
+        return fastestPromise;
     }
 
     /*
@@ -872,15 +893,35 @@ export default class BitShares extends BlockchainAPI {
      * @returns {Object}
      */
     _resolveAsset(assetSymbolOrId) {
-        return new Promise((resolve, reject) => {
+        let timeoutPromise = new Promise((resolve) => {
+            setTimeout(() => {
+                resolve(null);
+            }, 3000);
+        });
+
+        let timeLimitedPromise = new Promise(async (resolve, reject) => {
             this.ensureConnection().then(() => {
                 Apis.instance().db_api().exec("lookup_asset_symbols", [[assetSymbolOrId]]).then((asset_objects) => {
                     if (asset_objects.length && asset_objects[0]) {
                         resolve(asset_objects[0]);
                     }
-                }).catch(reject);
-            }).catch(reject);
+                }).catch((error) => {
+                    console.log(error);
+                    reject(error)
+                });
+            }).catch((error) => {
+                console.log(error);
+                reject(error)
+            });
         });
+
+        const fastestPromise = Promise.race([timeLimitedPromise, timeoutPromise]).catch(
+            (error) => {
+                return null;
+            }
+        );
+
+        return fastestPromise;
     }
 
     /*
@@ -889,36 +930,55 @@ export default class BitShares extends BlockchainAPI {
      * @returns {Object}
      */
     getAsset(assetSymbolOrId) {
-        return new Promise((resolve, reject) => {
-
-          if (this._isTestnet()) {
-              if (assetSymbolOrId == "1.3.0") {
-                  return resolve({
-                      asset_id: "1.3.0",
-                      symbol: "TEST",
-                      precision: 5
-                  });
-              } else {
-                  // TODO: Provide testnet bitshares lookup
-                  return reject(null);
-              }
-          }
-
-          this.ensureConnection().then(() => {
-              Apis.instance().db_api().exec("lookup_asset_symbols", [[assetSymbolOrId]]).then((asset_objects) => {
-                  if (!asset_objects.length || !asset_objects[0]) {
-                    return resolve(null);
-                  }
-
-                  let retrievedAsset = asset_objects[0];
-                  return resolve({
-                      asset_id: retrievedAsset.id,
-                      symbol: retrievedAsset.symbol,
-                      precision: retrievedAsset.precision
-                  });
-              }).catch(reject);
-          }).catch(reject);
+        let timeoutPromise = new Promise((resolve) => {
+            setTimeout(() => {
+                resolve(null);
+            }, 3000);
         });
+
+        let timeLimitedPromise = new Promise(async (resolve, reject) => {
+            if (this._isTestnet()) {
+                if (assetSymbolOrId == "1.3.0") {
+                    return resolve({
+                        asset_id: "1.3.0",
+                        symbol: "TEST",
+                        precision: 5
+                    });
+                } else {
+                    // TODO: Provide testnet bitshares lookup
+                    return reject(null);
+                }
+            }
+  
+            this.ensureConnection().then(() => {
+                Apis.instance().db_api().exec("lookup_asset_symbols", [[assetSymbolOrId]]).then((asset_objects) => {
+                    if (!asset_objects.length || !asset_objects[0]) {
+                      return resolve(null);
+                    }
+  
+                    let retrievedAsset = asset_objects[0];
+                    return resolve({
+                        asset_id: retrievedAsset.id,
+                        symbol: retrievedAsset.symbol,
+                        precision: retrievedAsset.precision
+                    });
+                  }).catch((error) => {
+                      console.log(error);
+                      reject(error)
+                  });
+              }).catch((error) => {
+                  console.log(error);
+                  reject(error)
+              });
+        });
+
+        const fastestPromise = Promise.race([timeLimitedPromise, timeoutPromise]).catch(
+            (error) => {
+                return null;
+            }
+        );
+
+        return fastestPromise;
     }
 
     /*
@@ -927,7 +987,13 @@ export default class BitShares extends BlockchainAPI {
      * @returns {Array} balances
      */
     getBalances(accountName) {
-        return new Promise((resolve, reject) => {
+        let timeoutPromise = new Promise((resolve) => {
+            setTimeout(() => {
+                resolve(null);
+            }, 5000);
+        });
+
+        let timeLimitedPromise = new Promise(async (resolve, reject) => {
             // getAccount has already ensureConnection
             this.getAccount(accountName).then((account) => {
                 let neededAssets = [];
@@ -964,6 +1030,14 @@ export default class BitShares extends BlockchainAPI {
                 reject(error);
             });
         });
+
+        const fastestPromise = Promise.race([timeLimitedPromise, timeoutPromise]).catch(
+            (error) => {
+                return null;
+            }
+        );
+
+        return fastestPromise;
     }
 
     /*
@@ -1063,7 +1137,10 @@ export default class BitShares extends BlockchainAPI {
                       reject(error)
                     });
                 }
-            }).catch(reject);
+            }).catch((error) => {
+                console.log(error);
+                reject(error)
+            });
         });
     }
 
@@ -1173,7 +1250,10 @@ export default class BitShares extends BlockchainAPI {
                     tr.finalize().then(() => {
                         tr.sign();
                         resolve(tr);
-                    }).catch(reject);
+                    }).catch((error) => {
+                        console.log(error);
+                        reject(error)
+                    });
                 });
             }).catch(error => {
               console.log(error);
@@ -1197,7 +1277,10 @@ export default class BitShares extends BlockchainAPI {
                   console.log(error);
                   reject(error)
                 });
-            }).catch(reject);
+            }).catch((error) => {
+                console.log(error);
+                reject(error)
+            });
         });
     }
 
@@ -1208,7 +1291,13 @@ export default class BitShares extends BlockchainAPI {
      * @returns {Object}
      */
     getOperation(data, account) {
-        return new Promise((resolve, reject) => {
+        let timeoutPromise = new Promise((resolve) => {
+            setTimeout(() => {
+                resolve(null);
+            }, 5000);
+        });
+
+        let timeLimitedPromise = new Promise(async (resolve, reject) => {
             this.ensureConnection().then(() => {
 
                 if (data.action === 'vote') {
@@ -1253,8 +1342,19 @@ export default class BitShares extends BlockchainAPI {
                 } else {
                   resolve({data: data, type: 'transfer'});
                 }
-            }).catch(reject);
+            }).catch((error) => {
+                console.log(error);
+                reject(error)
+            });
         });
+
+        const fastestPromise = Promise.race([timeLimitedPromise, timeoutPromise]).catch(
+            (error) => {
+                return null;
+            }
+        );
+
+        return fastestPromise;
     }
 
     /*
@@ -1504,6 +1604,11 @@ export default class BitShares extends BlockchainAPI {
                   return;
                 }
 
+                if (!asset) {
+                    console.log('Asset not found');
+                    return;
+                }
+
                 operations.push(
                     "Transfer request:\n" +
                     " from: " + from + "(" + op.from + ")\n" +
@@ -1512,6 +1617,7 @@ export default class BitShares extends BlockchainAPI {
                 )
             } else if (opType == 1) {
                 // limit_order_create
+                console.log('limit_order_create 1')
                 let seller;
                 try {
                   seller = await this._getAccountName(op.seller);
@@ -1525,7 +1631,6 @@ export default class BitShares extends BlockchainAPI {
                   buy = await this._resolveAsset(op.min_to_receive.asset_id);
                 } catch (error) {
                   console.log(error);
-                  return;
                 }
 
                 let sell;
@@ -1533,7 +1638,11 @@ export default class BitShares extends BlockchainAPI {
                   sell = await this._resolveAsset(op.amount_to_sell.asset_id);
                 } catch (error) {
                   console.log(error);
-                  return;
+                }
+
+                if (!buy || !sell) {
+                    console.log('Could not resolve assets in limit_order_create');
+                    return;
                 }
 
                 let fillOrKill = op.amount_to_sell.fill_or_kill;
@@ -1584,6 +1693,11 @@ export default class BitShares extends BlockchainAPI {
                     deltaDebt = await this._resolveAsset(op.delta_debt.asset_id);
                 } catch (error) {
                     console.log(error);
+                    return;
+                }
+
+                if (!deltaCollateral || !deltaDebt) {
+                    console.log('Could not resolve delta fields');
                     return;
                 }
 
@@ -1820,6 +1934,11 @@ export default class BitShares extends BlockchainAPI {
                     return;
                 }
 
+                if (!shortBackingAsset) {
+                    console.log("shortBackingAsset issue");
+                    return;
+                }
+
                 operations.push(
                     "Approve bitasset update? \n" +
                     "issuer: " + op.issuer + "\n" +
@@ -1849,6 +1968,11 @@ export default class BitShares extends BlockchainAPI {
                     assetToUpdate = await this._resolveAsset(op.new_options.short_backing_asset);
                 } catch (error) {
                     console.log(error);
+                    return;
+                }
+
+                if (!assetToUpdate) {
+                    console.log("assetToUpdate issue");
                     return;
                 }
 
@@ -1884,6 +2008,11 @@ export default class BitShares extends BlockchainAPI {
                     return;
                 }
 
+                if (!assetToIssue) {
+                    console.log("assetToIssue issue");
+                    return;
+                }
+
                 operations.push(
                     "Issue asset to the following user? \n" +
                     "issuer: " + issuer ?? '' + "(" + op.issuer + ")\n" +
@@ -1906,6 +2035,11 @@ export default class BitShares extends BlockchainAPI {
                     assetToReserve = await this._resolveAsset(op.amount_to_reserve.asset_id);
                 } catch (error) {
                     console.log(error);
+                }
+
+                if (!assetToReserve) {
+                    console.log("assetToReserve issue");
+                    return;
                 }
 
                 operations.push(
@@ -1931,6 +2065,11 @@ export default class BitShares extends BlockchainAPI {
                     console.log(error);
                 }
 
+                if (!assetToFund) {
+                    console.log("assetToFund issue");
+                    return;
+                }
+
                 operations.push(
                     "Fund the following asset's fee pool? \n" +
                     "from_account: " + fromAccount.symbol + "(" + op.from_account + ")\n" +
@@ -1952,6 +2091,11 @@ export default class BitShares extends BlockchainAPI {
                     assetToSettle = await this._resolveAsset(op.amount.asset_id);
                 } catch (error) {
                     console.log(error);
+                }
+
+                if (!assetToSettle) {
+                    console.log("assetToSettle issue");
+                    return;
                 }
 
                 operations.push(
@@ -1990,6 +2134,11 @@ export default class BitShares extends BlockchainAPI {
                     console.log(error);
                 }
 
+                if (!assetToSettle || !baseAsset || !quoteAsset) {
+                    console.log("asset_global_settle param issue");
+                    return;
+                }
+
                 let price = humanReadableFloat(op.settle_price.base.amount, baseAsset.precision)
                     / humanReadableFloat(op.settle_price.quote.amount, quoteAsset.precision);
 
@@ -2021,6 +2170,11 @@ export default class BitShares extends BlockchainAPI {
                     quoteAsset = await this._resolveAsset(op.settle_price.quote.asset_id);
                 } catch (error) {
                     console.log(error);
+                }
+
+                if (!baseAsset || !quoteAsset) {
+                    console.log("asset_publish_feed param issue");
+                    return;
                 }
 
                 let coreExchangeRate = humanReadableFloat(op.feed.core_exchange_rate.base.amount, baseAsset.precision)
@@ -2155,13 +2309,18 @@ export default class BitShares extends BlockchainAPI {
                   return;
                 }
 
+                if (!asset) {
+                    console.log("withdraw_permission_create missing field");
+                    return;
+                }
+
                 let period = op.withdrawal_period_sec / 60 / 60 / 24;
                 operations.push(
                     "Direct Debit Authorization\n" +
                     " Recipient: " + to ?? '' + "(" + op.authorized_account + ")\n" +
                     " Account to withdraw from: " + from ?? '' + "(" + op.withdraw_from_account + ")\n" +
                     " Take " + formatAsset(op.withdrawal_limit.amount, asset.symbol, asset.precision) + " every " + period + " days, for " + op.periods_until_expiration + " periods" +
-                    " Starting : " + period_start_time // make more human readable?
+                    " Starting : " + op.period_start_time // make more human readable?
                 )
             } else if (opType == 26) {
                 // withdraw_permission_update
@@ -2185,6 +2344,11 @@ export default class BitShares extends BlockchainAPI {
                     withdrawalLimit = await this._resolveAsset(op.withdrawal_limit.asset_id);
                 } catch (error) {
                   console.log(error);
+                }
+
+                if (!withdrawalLimit) {
+                    console.log("withdraw_permission_update missing field");
+                    return;
                 }
 
                 operations.push(
@@ -2219,6 +2383,11 @@ export default class BitShares extends BlockchainAPI {
                     withdrawnAsset = await this._resolveAsset(op.amount_to_withdraw.asset_id);
                 } catch (error) {
                   console.log(error);
+                }
+
+                if (!withdrawnAsset) {
+                    console.log("withdraw_permission_claim missing field");
+                    return;
                 }
 
                 operations.push(
@@ -2343,6 +2512,11 @@ export default class BitShares extends BlockchainAPI {
                   console.log(error);
                 }
 
+                if (!amount) {
+                    console.log("vesting_balance_create: amount is null");
+                    return;
+                }
+
                 let policy = op.policy;
                 let policyRows = "";
                 if (policy[0] == 0) {
@@ -2380,6 +2554,11 @@ export default class BitShares extends BlockchainAPI {
                 } catch (error) {
                   console.log(error);
                   return;
+                }
+
+                if (!asset) {
+                    console.log("vesting_balance_withdraw: asset is null");
+                    return;
                 }
 
                 operations.push(
@@ -2458,6 +2637,11 @@ export default class BitShares extends BlockchainAPI {
                     console.log(error);
                 }
 
+                if (!claimedAsset) {
+                    console.log("balance_claim: claimedAsset is null");
+                    return;
+                }
+
                 operations.push(
                     "Claim the following balance? \n" +
                     "deposit_to_account: " + depositToAccount + "(" + op.deposit_to_account + ")\n" +
@@ -2496,6 +2680,11 @@ export default class BitShares extends BlockchainAPI {
                     console.log(error);
                 }
 
+                if (!overridenAsset) {
+                    console.log("override_transfer: overridenAsset is null");
+                    return;
+                }
+
                 operations.push(
                     "Override the following transfer? \n" +
                     "issuer: " + issuer + "(" + op.issuer + ")\n" +
@@ -2519,6 +2708,11 @@ export default class BitShares extends BlockchainAPI {
                     assetToTransfer = await this._resolveAsset(op.amount.asset_id);
                 } catch (error) {
                     console.log(error);
+                }
+
+                if (!assetToTransfer) {
+                    console.log("transfer_to_blind: assetToTransfer is null");
+                    return;
                 }
 
                 operations.push(
@@ -2553,6 +2747,11 @@ export default class BitShares extends BlockchainAPI {
                     console.log(error);
                 }
 
+                if (!assetToTransfer) {
+                    console.log("transfer_from_blind: assetToTransfer is null");
+                    return;
+                }
+
                 operations.push(
                     "Transfer from blind? \n" +
                     "amount: " + formatAsset(op.amount.amount, assetToTransfer.symbol, assetToTransfer.precision) + "\n" +
@@ -2575,6 +2774,11 @@ export default class BitShares extends BlockchainAPI {
                     assetToClaim = await this._resolveAsset(op.amount_to_claim.asset_id);
                 } catch (error) {
                     console.log(error);
+                }
+
+                if (!assetToClaim) {
+                    console.log("asset_claim_fees: assetToClaim is null");
+                    return;
                 }
 
                 operations.push(
@@ -2607,6 +2811,11 @@ export default class BitShares extends BlockchainAPI {
                     console.log(error);
                 }
 
+                if (!collateral || !debtCovered) {
+                    console.log("bid_collateral: collateral or debtCovered is null");
+                    return;
+                } 
+
                 operations.push(
                     "Approve the following collateral bid? \n" +
                     "bidder: " + bidder + "(" +  op.bidder + ")\n" +
@@ -2628,6 +2837,11 @@ export default class BitShares extends BlockchainAPI {
                     relevantAsset = await this._resolveAsset(op.asset_id);
                 } catch (error) {
                     console.log(error);
+                }
+
+                if (!relevantAsset) {
+                    console.log("asset_claim_pool: relevantAsset is null");
+                    return;
                 }
 
                 operations.push(
@@ -2660,6 +2874,11 @@ export default class BitShares extends BlockchainAPI {
                     console.log(error);
                 }
 
+                if (!assetToUpdate) {
+                    console.log("asset_update_issuer: assetToUpdate is null");
+                    return;
+                }
+
                 operations.push(
                     "Update asset issuer? \n" +
                     "issuer: " + issuer + "(" +  op.issuer + ")\n" +
@@ -2688,6 +2907,11 @@ export default class BitShares extends BlockchainAPI {
                     htlcAsset = await this._resolveAsset(op.amount.asset_id);
                 } catch (error) {
                     console.log(error);
+                }
+
+                if (!htlcAsset) {
+                    console.log("htlc_create: htlcAsset is null");
+                    return;
                 }
 
                 operations.push(
@@ -2810,6 +3034,11 @@ export default class BitShares extends BlockchainAPI {
                     console.log(error);
                 }
 
+                if (!ticketAsset) {
+                    console.log("ticket_create: ticketAsset is null");
+                    return;
+                }
+
                 operations.push(
                     "Create the following ticket? \n" +
                     "account: " + account + "(" +  op.account + ")\n" +
@@ -2832,6 +3061,11 @@ export default class BitShares extends BlockchainAPI {
                     ticketAsset = await this._resolveAsset(op.amount_for_new_target.asset_id);
                 } catch (error) {
                     console.log(error);
+                }
+
+                if (!ticketAsset) {
+                    console.log("ticket_update: ticketAsset is null");
+                    return;
                 }
 
                 operations.push(
@@ -2871,6 +3105,11 @@ export default class BitShares extends BlockchainAPI {
                     shareAsset = await this._resolveAsset(op.share_asset);
                 } catch (error) {
                     console.log(error);
+                }
+
+                if (!assetA || !assetB || !shareAsset) {
+                    console.log("liquidity_pool_create: assetA, assetB or shareAsset is null");
+                    return;
                 }
 
                 operations.push(
@@ -2923,6 +3162,11 @@ export default class BitShares extends BlockchainAPI {
                     console.log(error);
                 }
 
+                if (!amountA || !amountB) {
+                    console.log("liquidity_pool_deposit: amountA or amountB is null");
+                    return;
+                }
+
                 operations.push(
                     "Deposit into the following liquidity pool? \n" +
                     "account: " + account ?? '' + "(" +  op.account + ")\n" +
@@ -2946,6 +3190,11 @@ export default class BitShares extends BlockchainAPI {
                     shareAsset = await this._resolveAsset(op.share_amount.asset_id);
                 } catch (error) {
                     console.log(error);
+                }
+
+                if (!shareAsset) {
+                    console.log("liquidity_pool_withdraw: shareAsset is null");
+                    return;
                 }
 
                 operations.push(
@@ -2977,6 +3226,11 @@ export default class BitShares extends BlockchainAPI {
                     receivedAsset = await this._resolveAsset(op.min_to_receive.asset_id);
                 } catch (error) {
                     console.log(error);
+                }
+
+                if (!soldAsset || !receivedAsset) {
+                    console.log("liquidity_pool_exchange: soldAsset or receivedAsset is null");
+                    return;
                 }
 
                 operations.push(
@@ -3065,6 +3319,11 @@ export default class BitShares extends BlockchainAPI {
                     console.log(error);
                 }
 
+                if (!borrowAmount) {
+                    console.log("samet_fund_borrow: borrowAmount is null");
+                    return;
+                }
+
                 operations.push(
                     "Borrow from the folling samet fund? \n" +
                     "borrower: " + borrower ?? '' + "(" + op.borrower + ")\n" +
@@ -3094,6 +3353,11 @@ export default class BitShares extends BlockchainAPI {
                     fundFee = await this._resolveAsset(op.fund_fee.asset_id);
                 } catch (error) {
                     console.log(error);
+                }
+
+                if (!repayAmount || !fundFee) {
+                    console.log("samet_fund_repay: repayAmount or fundFee is null");
+                    return;
                 }
 
                 operations.push(
@@ -3163,6 +3427,11 @@ export default class BitShares extends BlockchainAPI {
                     }
                 }
 
+                if (!deltaAmount) {
+                    console.log("credit_offer_update: deltaAmount is null");
+                    return;
+                }
+
                 operations.push(
                     "Update the following credit offer? \n" +
                     "owner_account: " + ownerAccount + "(" + op.owner_account + ")\n" +
@@ -3201,6 +3470,11 @@ export default class BitShares extends BlockchainAPI {
                     console.log(error);
                 }
 
+                if (!borrowAmount || !collateral) {
+                    console.log("credit_offer_accept: borrowAmount or collateral is null");
+                    return;
+                }
+
                 operations.push(
                     "Approve of the following credit offer? \n" +
                     "borrower: " + borrower + "(" + op.borrower + ")\n" +
@@ -3233,6 +3507,11 @@ export default class BitShares extends BlockchainAPI {
                     creditFee = await this._resolveAsset(op.credit_fee.asset_id);
                 } catch (error) {
                     console.log(error);
+                }
+
+                if (!repayAmount || !creditFee) {
+                    console.log("credit_deal_repay: repayAmount or creditFee is null");
+                    return;
                 }
 
                 operations.push(
