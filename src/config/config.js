@@ -44,6 +44,9 @@ let _blockchains = {
             },
             {
                 url: "wss://testnet.bitshares.im/ws"
+            },
+            {
+                url: "wss://eu.nodes.testnet.bitshares.ws/"
             }
         ]
     },
