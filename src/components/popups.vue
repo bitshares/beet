@@ -2,6 +2,7 @@
     import { computed } from "vue";
     import queryString from "query-string";
     import { useI18n } from 'vue-i18n';
+    import getBlockchainAPI from "../lib/blockchains/blockchainFactory";
 
     import * as Actions from '../lib/Actions';
 
@@ -36,6 +37,24 @@
         let qsTarget = qs[target];
         let decoded = decodeURIComponent(qsTarget);
         return decoded;
+    }
+
+    function handleRequestProp(target) {
+        if (!global || !global.location || !global.location.search) {
+            return '';
+        }
+
+        let qs;
+        try {
+            qs = queryString.parse(global.location.search);
+        } catch (error) {
+            console.log(error);
+            return;
+        }
+
+        if (!qs['request'][target]) {
+            return;
+        }
     }
 
     let type = computed(() => {
@@ -101,6 +120,52 @@
         let req = handleProp('existingLinks');
         return req ? JSON.parse(req) : null;
     });
+
+    let chainOperations = computed(() => {
+
+        let thisType = type.value ?? payload.value?.type;
+        if (thisType !== Actions.REQUEST_LINK) {
+            return [];
+        }
+
+        let thisChain = chain.value ?? request.value.chain;
+        let thisRequest = request.value ?? payload.value.request;
+
+        let types = getBlockchainAPI(thisChain).getOperationTypes();
+        if (!thisRequest.injectables || !thisRequest.injectables.length) {
+            // All operations are required
+            return types.map(type => {
+                return {
+                    text: !type.id === type.method
+                        ? `${type.id}: ${type.method.replaceAll("_", " ")}`
+                        : type.method.replaceAll("_", " "),
+                    tooltip: t(`operations.injected.BTS.${type.method}.tooltip`)
+                }
+            });
+        }
+
+        let injectChips = [];
+        for (let i = 0; i < thisRequest.injectables.length; i++) {
+            // Subset of operations are required
+            const currentInjection = thisRequest.injectables[i]; // id
+            let foundCurrent = types.find(type => type.id === currentInjection.id);
+            if (!foundCurrent) {
+                injectChips = []; // invalid op will nullify link request
+                break;
+            } else {
+                injectChips.push({
+                    text: `${foundCurrent.id}: ` + t(`operations.injected.BTS.${foundCurrent.method}`),
+                    tooltip: t(`operations.injected.BTS.${foundCurrent.method}.tooltip`)
+                })
+            }   
+        }
+        if (!injectChips || !injectChips.length) {
+            // Avoid rendering warning
+            console.log('No valid operations found, skipping chain operations');
+            return null;
+        }
+        return injectChips;
+    });
 </script>
 
 <template>
@@ -154,6 +219,30 @@
                 :visualized-params="visualizedParams"
                 :visualized-account="visualizedAccount"
             />
+        </ui-collapse>
+        <ui-collapse
+            v-if="type === Actions.REQUEST_LINK && chainOperations"
+            with-icon
+            ripple
+        >
+            <template #toggle>
+                <div>{{ t('common.popup.chainOperations') }}</div>
+            </template>
+            <div style="overflow-y: auto; max-height: 200px;">
+                <ui-list :type="2">
+                    <ui-item
+                        v-for="item in chainOperations"
+                        :key="'ui-tooltip-' + chainOperations.indexOf(item)"
+                    >
+                        <ui-item-text-content>
+                            <ui-item-text1>{{ item.text }}</ui-item-text1>
+                            <ui-item-text2 style="overflow-wrap:break-word;">
+                                {{ item.tooltip }}
+                            </ui-item-text2>
+                        </ui-item-text-content>
+                    </ui-item>
+                </ui-list>
+            </div>
         </ui-collapse>
         <ui-collapse
             v-if="moreRequest"

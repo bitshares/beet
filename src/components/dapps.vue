@@ -4,6 +4,7 @@
     import store from '../store/index';
     import RendererLogger from "../lib/RendererLogger";
     import {formatAccount} from "../lib/formatter";
+    import getBlockchainAPI from '../lib/blockchains/blockchainFactory';
 
     const { t } = useI18n({ useScope: 'global' });
     const logger = new RendererLogger();
@@ -44,11 +45,16 @@
         if (dapps.value && dapps.value.length) {
             tableData.value = {
                 data: dapps.value.map(dapp => {
+                    let types = getBlockchainAPI(dapp.chain).getOperationTypes();
+
                     return {
                         appName: dapp.appName,
                         origin: dapp.origin,
                         displayString: getDisplayString(dapp.account_id, dapp.chain),
                         chain: dapp.chain,
+                        injectables: dapp.injectables && dapp.injectables.length
+                            ? dapp.injectables.length
+                            : types.length,
                         actions: dapp.id
                     }
                 }),
@@ -57,9 +63,10 @@
                     t('common.origin_lbl'),
                     t('common.account_lbl'),
                     t('common.chain_lbl'),
+                    t('common.actions_approvedOps'),
                     t('common.actions_lbl')
                 ],
-                tbody: ['appName', 'origin', 'displayString', 'chain', {slot: 'actions'}]
+                tbody: ['appName', 'origin', 'displayString', 'chain', 'injectables', {slot: 'actions'}]
             };
         }
     });
@@ -71,16 +78,19 @@
 </script>
 
 <template>
-    <div class="dapp-list mt-2" style="text-align: center; margin-top: auto; margin-bottom: auto;">
+    <div
+        class="dapp-list mt-2"
+        style="text-align: center; margin-top: auto; margin-bottom: auto;"
+    >
         <p>
             <u>{{ t('common.dapps_lbl') }}</u>
         </p>
         <span v-if="tableData">
             <ui-table
+                v-shadow="5"
                 :data="tableData.data"
                 :thead="tableData.thead"
                 :tbody="tableData.tbody"
-                v-shadow="5"
                 style="padding:5px;"
             >
                 <template #actions="{ data }">
@@ -95,6 +105,7 @@
         </span>
         <span v-else>
             <em>{{ t('common.no_dapps_linked') }}</em>
+            <br>
         </span>
         <router-link
             :to="'/dashboard'"

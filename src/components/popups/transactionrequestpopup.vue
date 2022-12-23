@@ -118,8 +118,8 @@
         class="text-left custom-content"
     >
         <pre>
-                Loading transaction details from blockchain, please wait.
-            </pre>
+            {{ t('operations.rawsig.loading') }}
+        </pre>
     </div>
 
     <h4 class="h4 beet-typo-small">
@@ -155,6 +155,5 @@
         >
             {{ t('operations.rawsig.reject_btn') }}
         </ui-button>
-        <langSelect location="prompt" />
     </span>
 </template>

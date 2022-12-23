@@ -4,8 +4,6 @@
     import { useI18n } from 'vue-i18n';
     import RendererLogger from "../../lib/RendererLogger";
 
-    import langSelect from "../lang-select.vue";
-
     const { t } = useI18n({ useScope: 'global' });
     const logger = new RendererLogger();
 
@@ -24,6 +22,13 @@
                 return {}
             }
         },
+        warning: {
+            type: String,
+            required: false,
+            default() {
+                return ''
+            }
+        }
     });
 
     let acceptText = computed(() => {
@@ -45,6 +50,13 @@
             return '';
         }
         return props.payload.generic.details.split(/\r?\n/);
+    });
+
+    let warning = computed(() => {
+        if (!props.warning || !props.warning.length) {
+            return;
+        }
+        return props.warning;
     });
 
     onMounted(() => {
@@ -89,6 +101,17 @@
             </ui-item>
         </ui-list>
 
+        <ui-alert
+            v-if="warning"
+            state="warning"
+        >
+            {{
+                warning === "serverError"
+                    ? t("operations.transfer.server_error")
+                    : t("operations.transfer.detected_scammer")
+            }}
+        </ui-alert>
+
         <ui-button
             raised
             style="margin-right:5px"
@@ -103,6 +126,5 @@
         >
             {{ rejectText }}
         </ui-button>
-        <langSelect location="prompt" />
     </div>
 </template>

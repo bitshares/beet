@@ -1,4 +1,39 @@
 {
+    "addAccount": {
+        "none_selected": "No account selected!"
+    },
+    "balances": {
+        "refresh": "Refresh",
+        "reconnect": "Reconnect",
+        "empty": "No balances in account",
+        "connecting": "Connecting to blockchain",
+        "error": "Couldn't to connect to blockchain"
+    },
+    "settings": {
+        "exit": "Exit settings menu"
+    },
+    "start": {
+        "wallet_name": "Beet wallet name",
+        "invalid_password": "An attempt to unlock the Beet wallet was made with an invalid password."
+    },
+    "apiUtils": {
+        "broadcast": "Transaction successfully broadcast.",
+        "sign": "Transaction successfully signed.",
+        "signAndBroadcast": "Transaction successfully signed & broadcast.",
+        "inject": "Request to perform a specific blockchain operation",
+        "vote": "Vote prompt",
+        "signNFT": "Request for an NFT signature",
+        "signMessage": "Request for signed message",
+        "transfer": "Token transfer request",
+        "transferComplete": "Transaction `transfer` successfully broadcast.",
+        "msgVerify": "Message verification",
+        "getAccount": "App requesting info regarding one of your accounts."
+    },
+    "recovery": {
+        "decryptError": "Account recovery error!",
+        "invalidPassword": "Invalid recovered wallet password",
+        "duplicate": "A wallet with the same name already exists, aborting wallet restoration" 
+    },
     "totp": {
         "label": "Time-based one-time passwords",
         "prompt": "Select your required operations below",
@@ -50,10 +85,12 @@
         "preview": "Prompt preview",
         "request": "View request JSON",
         "payload": "View payload JSON",
-        "language": "Language"
+        "language": "Language",
+        "chainOperations": "Chain operations"
     },
     "abHome": "Home",
     "abNew": "New",
+    "actions_approvedOps": "Approved operations",
     "abSettings": "Settings",
     "abLogout": "Logout",
     "appName": "beet",
@@ -141,6 +178,7 @@
     "access_alert": "App: '{appName}' from '{origin}' wants to interact with linked account {chain}:{account_id}.",
     "dapps_lbl": "Your linked dApps",
     "appname_lbl": "App Name",
+    "operations_lbl": "Allowed operations",
     "origin_lbl": "Host/Domain",
     "account_lbl": "Account/Address",
     "chain_lbl": "Blockchain",

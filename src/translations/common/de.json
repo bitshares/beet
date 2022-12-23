@@ -1,5 +1,40 @@
 
 {
+    "addAccount": {
+        "none_selected": "Kein Konto ausgewählt!"
+    },
+    "balances": {
+        "refresh": "Aktualisieren",
+        "reconnect": "Neu verbinden",
+        "empty": "Kein Guthaben auf dem Konto",
+        "connecting": "Verbindung zur Blockchain herstellen",
+        "error": "Verbindung zur Blockchain konnte nicht hergestellt werden"
+    },
+    "settings": {
+        "exit": "Einstellungsmenü verlassen"
+    },
+    "start": {
+        "wallet_name": "Beet-Wallet-Name",
+        "invalid_password": "Es wurde versucht, das Beet-Wallet mit einem ungültigen Passwort zu entsperren."
+    },
+    "apiUtils": {
+        "broadcast": "Transaktion erfolgreich gesendet.",
+        "sign": "Transaktion erfolgreich unterzeichnet.",
+        "signAndBroadcast": "Transaktion erfolgreich signiert und übertragen.",
+        "inject": "Anfrage zur Durchführung einer bestimmten Blockchain-Operation",
+        "vote": "Abstimmungsaufforderung",
+        "signNFT": "Anfrage einer NFT-Signatur",
+        "signMessage": "Anfrage nach signierter Nachricht",
+        "transfer": "Token-Übertragungsanforderung",
+        "transferComplete": "Transaktion `transfer` erfolgreich übertragen.",
+        "msgVerify": "Nachrichtenüberprüfung",
+        "getAccount": "App fordert Informationen zu einem Ihrer Konten an."
+    },
+    "recovery": {
+        "decryptError": "Kontowiederherstellungsfehler!",
+        "invalidPassword": "Ungültiges wiederhergestelltes Wallet-Passwort",
+        "duplicate": "Eine Wallet mit demselben Namen existiert bereits, Wallet-Wiederherstellung wird abgebrochen"
+    },
     "totp": {
         "label": "Zeitbasierte Einmalpasswörter",
         "prompt": "Wählen Sie unten Ihre erforderlichen Operationen aus",
@@ -51,10 +86,12 @@
         "preview": "Sofortige Vorschau",
         "request": "Anforderungs-JSON anzeigen",
         "payload": "Payload-JSON anzeigen",
-        "language": "Sprache"
+        "language": "Sprache",
+        "chainOperations": "Kettenoperationen"
     },
     "abHome": "Zuhause",
     "abNew": "Neu",
+    "actions_approvedOps": "Genehmigte Operationen",
     "abSettings": "Einstellungen",
     "abLogout": "Abmelden",
     "appName": "beet",
@@ -142,6 +179,7 @@
     "access_alert": "App: '{appName}' von '{origin}' möchte mit dem verknüpften Konto {chain}:{account_id} interagieren.",
     "dapps_lbl": "Ihre verknüpften dApps",
     "appname_lbl": "App-Name",
+    "operations_lbl": "Erlaubte Operationen",
     "origin_lbl": "Host/Domäne",
     "account_lbl": "Konto/Adresse",
     "chain_lbl": "Blockchain",

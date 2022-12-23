@@ -2,7 +2,6 @@
     import { ipcRenderer } from 'electron';
     import { onMounted, computed} from "vue";
     import { useI18n } from 'vue-i18n';
-    import langSelect from "../lang-select.vue";
     import RendererLogger from "../../lib/RendererLogger";
 
     const { t } = useI18n({ useScope: 'global' });
@@ -101,9 +100,12 @@
         v-else
         style="padding:5px"
     >
-        <div>
-            Error showing prompt
-        </div>
+        <ui-alert
+            v-if="!chainOperations"
+            state="error"
+        >
+            {{ t('operations.relink.error') }}
+        </ui-alert>
         <br>
         <ui-button
             raised
@@ -111,6 +113,5 @@
         >
             {{ t('operations.link.reject_btn') }}
         </ui-button>
-        <langSelect location="prompt" />
     </div>
 </template>

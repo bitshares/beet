@@ -2,8 +2,6 @@
     import { ipcRenderer } from 'electron';
     import { onMounted, computed } from "vue";
     import { useI18n } from 'vue-i18n';
-
-    import langSelect from "../lang-select.vue";
     import RendererLogger from "../../lib/RendererLogger";
 
     const { t } = useI18n({ useScope: 'global' });
@@ -109,6 +107,5 @@
         >
             {{ t('operations.account_id.reject_btn') }}
         </ui-button>
-        <langSelect location="prompt" />
     </div>
 </template>

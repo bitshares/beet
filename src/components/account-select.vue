@@ -65,20 +65,20 @@
 <template>
     <div style="padding:5px">
         <ui-card
-            outlined
             v-shadow="1"
+            outlined
             style="padding:5px; text-align: center;"
         >
             <ui-select
-                id="account_select"
                 v-if="accountOptions.length"
+                id="account_select"
                 v-model="chosenAccount"
                 style="width:100%;"
                 :options="accountOptions"
                 required
                 full-bleed
             >
-                Account
+                {{ t('common.account') }}
             </ui-select>
         </ui-card>
     </div>
