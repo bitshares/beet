@@ -895,6 +895,7 @@ export default class BitShares extends BlockchainAPI {
     _resolveAsset(assetSymbolOrId) {
         let timeoutPromise = new Promise((resolve) => {
             setTimeout(() => {
+                console.log('timed out');
                 resolve(null);
             }, 3000);
         });
@@ -2002,25 +2003,22 @@ export default class BitShares extends BlockchainAPI {
 
                 let assetToIssue;
                 try {
-                    assetToIssue = await this._resolveAsset(op.asset_to_issue);
+                    assetToIssue = await this._resolveAsset(op.asset_to_issue.asset_id);
                 } catch (error) {
                     console.log(error);
                     return;
                 }
 
                 if (!assetToIssue) {
-                    console.log("assetToIssue issue");
+                    console.log("No asset to issue found");
                     return;
                 }
 
                 operations.push(
-                    "Issue asset to the following user? \n" +
-                    "issuer: " + issuer ?? '' + "(" + op.issuer + ")\n" +
-                    "asset_to_issue: " + assetToIssue ?? '' + "(" + op.asset_to_issue + ")\n" +
-                    "issue_to_account: " + targetAccount ?? '' + "(" + op.issue_to_account + ")\n" +
-                    "memo: " + op.memo + "\n" +
-                    "Estimated fee: " + op.fee
-                )
+                    `Issue ${op.asset_to_issue.amount} ${assetToIssue.symbol} (${assetToIssue.id}) to ${targetAccount} (${op.issue_to_account})? \n`
+                    + "Estimated fee: " + op.fee.amount + " (" + op.fee.asset_id + ")\n"
+                );
+
             } else if (opType == 15) {
                 // asset_reserve
                 let payer;
