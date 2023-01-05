@@ -69,7 +69,6 @@
 
     onMounted(() => {
         logger.debug("Transaction request popup initialised");
-        console.log({visualizedParams})
     });
 
     function _clickedAllow() {

@@ -479,11 +479,18 @@ if (currentOS == 'win32') {
         app.on('second-instance', (event, args) => {
             // Someone tried to run a second instance, we should focus our window.
             if (mainWindow) {
-                if (mainWindow.isMinimized()) mainWindow.restore()
+                if (mainWindow.isMinimized()) {
+                    mainWindow.restore()
+                }
                 mainWindow.focus()
                 
                 if (process.platform == 'win32' && args.length > 2) {
-                    let deeplinkingUrl = args[3].replace('beet://api/', '');
+                    let urlType = args[3].includes('raw') ? 'rawdeeplink' : 'deeplink';
+
+                    let deeplinkingUrl = args[3].replace(
+                        urlType === 'deeplink' ? 'beet://api/' : 'rawbeet://api/',
+                        ''
+                    );
 
                     let qs;
                     try {
@@ -494,7 +501,7 @@ if (currentOS == 'win32') {
                     }
 
                     if (qs) {
-                        mainWindow.webContents.send('deeplink', qs);
+                        mainWindow.webContents.send(urlType, qs);
                     }
                 }
 
@@ -507,7 +514,9 @@ if (currentOS == 'win32') {
         } catch (error) {
             console.log(error)
         }
+        
         app.setAsDefaultProtocolClient('beet', process.execPath, [defaultPath])
+        app.setAsDefaultProtocolClient('rawbeet', process.execPath, [defaultPath])
 
         app.whenReady().then(() => {
             createWindow();
@@ -515,15 +524,21 @@ if (currentOS == 'win32') {
     }
 } else {
     app.setAsDefaultProtocolClient('beet')
-
+    app.setAsDefaultProtocolClient('rawbeet')
+    
     // mac or linux
     app.whenReady().then(() => {
         createWindow()
     })
     
     // Handle the protocol. In this case, we choose to show an Error Box.
-    app.on('open-url', (event, url) => {
-        let deeplinkingUrl = url.replace('beet://api/', '');
+    app.on('open-url', (event, urlString) => {
+        let urlType = urlString.contains('raw') ? 'rawdeeplink' : 'deeplink';
+
+        let deeplinkingUrl = urlString.replace(
+            urlType === 'deeplink' ? 'beet://api/' : 'rawbeet://api/',
+            ''
+        );
 
         let qs;
         try {
@@ -534,7 +549,7 @@ if (currentOS == 'win32') {
         }
 
         if (qs) {
-            mainWindow.webContents.send('deeplink', qs);
+            mainWindow.webContents.send(urlType, qs);
         }
     })
 

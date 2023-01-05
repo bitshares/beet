@@ -34,8 +34,13 @@
         "invalidPassword": "Invalid recovered wallet password",
         "duplicate": "A wallet with the same name already exists, aborting wallet restoration" 
     },
+    "raw": {
+        "label": "Raw deep link page",
+        "promptFailure": "A Raw deeplink was rejected. If intended, navigate to the Raw link page and try again."
+    },
     "totp": {
         "label": "Time-based one-time passwords",
+        "promptFailure": "A TOTP deeplink was rejected. If intended, navigate to the TOTP page and try again.",
         "prompt": "Select your required operations below",
         "chosen": "operations chosen",
         "request": "Request passcode",
@@ -75,6 +80,7 @@
         "Home": "Home",
         "New": "New",
         "TOTP": "TOTP",
+        "RAW": "Raw Link",
         "QR": "QR",
         "Settings": "Settings",
         "Backup": "Backup",

@@ -1,6 +1,8 @@
 <script setup>
     import { ipcRenderer } from 'electron';
     import { ref, computed, inject } from 'vue';
+    import { useI18n } from 'vue-i18n';
+
     import router from '../router/index.js';
     import store from '../store/index';
     import langSelect from "./lang-select.vue";
@@ -8,6 +10,7 @@
 
     let open = ref(false);
     let currentSelection = ref();
+    const { t } = useI18n({ useScope: 'global' });
 
     emitter.on('setMenuItem', response => {
         currentSelection.value = response;
@@ -34,26 +37,32 @@
                 url: "/totp"
             },
             {
-                text: t("common.actionBar.QR"),
+                text: t("common.actionBar.RAW"),
                 index: 3,
+                icon: "raw_on",
+                url: "/raw-link"
+            },
+            {
+                text: t("common.actionBar.QR"),
+                index: 4,
                 icon: "qr_code_2",
                 url: "/qr"
             },
             {
                 text: t("common.actionBar.dapps"),
-                index: 4,
+                index: 5,
                 icon: "app_registration",
                 url: "/dapps"
             },
             {
                 text: t("common.actionBar.Backup"),
-                index: 5,
+                index: 6,
                 icon: "download",
                 url: "/backup"
             },
             {
                 text: t("common.actionBar.Logout"),
-                index: 6,
+                index: 7,
                 icon: "logout",
                 url: "/"
             }
@@ -63,7 +72,7 @@
     function onChange(data) {
         currentSelection.value = data.index;
 
-        if (data.index === 6) {
+        if (data.index === 7) {
             console.log('logout')
             store.dispatch("WalletStore/logout");
             router.replace("/");
@@ -81,28 +90,47 @@
 
 <template>
     <div>
-        <ui-menu-anchor absolute position="BOTTOM_START">
-            <ui-fab style="margin-bottom: 10px;" icon="menu" @click="open = true" mini></ui-fab>
+        <ui-menu-anchor
+            absolute
+            position="BOTTOM_START"
+        >
+            <ui-fab
+                style="margin-bottom: 10px;"
+                icon="menu"
+                mini
+                @click="open = true"
+            />
             <langSelect location="small" />
 
             <ui-menu
+                v-model="open"
                 style="border: 1px solid #C7088E;"
                 position="BOTTOM_START"
-                v-model="open"
                 @selected="onChange"
             >
-                <ui-menuitem nested v-for="item in items" :key="item.icon">
-                    <ui-menuitem v-if="currentSelection === item.index" selected>
+                <ui-menuitem
+                    v-for="item in items"
+                    :key="item.icon"
+                    nested
+                >
+                    <ui-menuitem
+                        v-if="currentSelection === item.index"
+                        selected
+                    >
                         <ui-menuitem-icon>
-                            <ui-icon style="color: #707070;">{{item.icon}}</ui-icon>
+                            <ui-icon style="color: #707070;">
+                                {{ item.icon }}
+                            </ui-icon>
                         </ui-menuitem-icon>
-                        <ui-menuitem-text>{{item.text}}</ui-menuitem-text>
+                        <ui-menuitem-text>{{ item.text }}</ui-menuitem-text>
                     </ui-menuitem>
                     <ui-menuitem v-else>
                         <ui-menuitem-icon>
-                            <ui-icon style="color: #707070;">{{item.icon}}</ui-icon>
+                            <ui-icon style="color: #707070;">
+                                {{ item.icon }}
+                            </ui-icon>
                         </ui-menuitem-icon>
-                        <ui-menuitem-text>{{item.text}}</ui-menuitem-text>
+                        <ui-menuitem-text>{{ item.text }}</ui-menuitem-text>
                     </ui-menuitem>
                 </ui-menuitem>
             </ui-menu>
