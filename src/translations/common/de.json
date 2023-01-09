@@ -41,6 +41,7 @@
         "chosen": "operations chosen",
         "request": "Passwort anfordern",
         "default": "Unzureichende Operationen",
+        "failed": "Eingehende TOTP-Anfrage fehlgeschlagen. Überprüfen Sie, ob Sie das richtige Konto verwenden.",
         "time": "Verbleibende Zeit",
         "exit": "TOTP-Seite verlassen",
         "save": "Speichern",

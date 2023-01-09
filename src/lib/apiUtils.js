@@ -284,7 +284,8 @@ export async function injectedCall(request, blockchain) {
     let foundIDs = [];
 
     if (blockchain._config.identifier === "BTS") {
-        // extract account_ids from request.payload.params
+        // Decentralized warn list
+        
         let stringifiedPayload = JSON.stringify(request.payload.params);
         let regexMatches = stringifiedPayload.matchAll(regex);
         for (const match of regexMatches) {
@@ -299,11 +300,13 @@ export async function injectedCall(request, blockchain) {
                 console.log(error);
             }
 
-            const isBadActor = (actor) => blockedAccounts.find(x => x === actor) ? true : false;
-            isBlocked = foundIDs.some(isBadActor);
+            if (blockedAccounts) {
+                const isBadActor = (actor) => blockedAccounts.find(x => x === actor) ? true : false;
+                isBlocked = foundIDs.some(isBadActor);
+            }
         }
     }
-    
+
     let visualizedParams;
     try {
         visualizedParams = await blockchain.visualize(request.payload.params);
@@ -330,8 +333,10 @@ export async function injectedCall(request, blockchain) {
                 foundIDs.push(match[0]);
             }
 
-            const isBadActor = (actor) => blockedAccounts.find(x => x === actor) ? true : false;
-            isBlocked = foundIDs.some(isBadActor);
+            if (blockedAccounts) {
+                const isBadActor = (actor) => blockedAccounts.find(x => x === actor) ? true : false;
+                isBlocked = foundIDs.some(isBadActor);
+            }
         }
     }
 

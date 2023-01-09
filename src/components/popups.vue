@@ -39,24 +39,6 @@
         return decoded;
     }
 
-    function handleRequestProp(target) {
-        if (!global || !global.location || !global.location.search) {
-            return '';
-        }
-
-        let qs;
-        try {
-            qs = queryString.parse(global.location.search);
-        } catch (error) {
-            console.log(error);
-            return;
-        }
-
-        if (!qs['request'][target]) {
-            return;
-        }
-    }
-
     let type = computed(() => {
         return handleProp('type');
     });
