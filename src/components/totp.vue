@@ -130,7 +130,7 @@
          * Deeplink
          */
         if (!store.state.WalletStore.isUnlocked || router.currentRoute.value.path != "/totp") {
-            console.log("Wallet must be unlocked for deeplinks to work.")
+            console.log("Wallet must be unlocked for deeplinks to work.");
             ipcRenderer.send("notify", t("common.totp.promptFailure"));
             return;
         }
@@ -142,14 +142,6 @@
             return;
         }
 
-        let requestedChain = args.chain ?? null;       
-        let chain = store.getters['AccountStore/getChain'];
-        if (!requestedChain || !chain === requestedChain) {
-            console.log("Invalid deeplink prompt");
-            deepLinkInProgress.value = false;
-            return;
-        }
-        
         let processedRequest;
         try {
             processedRequest = decodeURIComponent(args.request);
@@ -200,6 +192,15 @@
             deepLinkInProgress.value = false;
             return;
         }
+        
+        let requestedChain = args.chain || request.payload.chain;
+        let chain = store.getters['AccountStore/getChain'];
+        if (!requestedChain || chain !== requestedChain) {
+            console.log("Incoming deeplink request for wrong chain");
+            ipcRenderer.send("notify", t("common.totp.failed"));
+            deepLinkInProgress.value = false;
+            return;
+        }
 
         if (!Object.keys(Actions).map(key => Actions[key]).includes(request.payload.method)) {
             console.log("Unsupported request type rejected");
@@ -227,6 +228,11 @@
                 deepLinkInProgress.value = false;
                 return;
             }
+        } else {
+            console.log({
+                msg: "Unsupported request type rejected",
+                apiobj
+            })
         }
 
         if (!blockchain) {
@@ -283,7 +289,7 @@
                 status = await transfer(apiobj, blockchain);
             }
         } catch (error) {
-            console.log(error || "No status")
+            console.log({error: error || "No status"});
             deepLinkInProgress.value = false;
             return;
         }

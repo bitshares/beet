@@ -82,15 +82,7 @@
         }
 
         deepLinkInProgress.value = true;
-
-        let requestedChain = args.chain ?? null;       
-        let chain = store.getters['AccountStore/getChain'];
-        if (!requestedChain || !chain === requestedChain) {
-            console.log("Invalid raw deeplink prompt");
-            deepLinkInProgress.value = false;
-            return;
-        }
-        
+       
         let processedRequest;
         try {
             processedRequest = decodeURIComponent(args.request);
@@ -111,6 +103,15 @@
 
         if (!request) {
             console.log({msg: 'invalid request format', request})
+            deepLinkInProgress.value = false;
+            return;
+        }
+
+        let requestedChain = args.chain || request.payload.chain;
+        let chain = store.getters['AccountStore/getChain'];
+        if (!requestedChain || chain !== requestedChain) {
+            console.log("Incoming deeplink request for wrong chain");
+            ipcRenderer.send("notify", t("common.raw.failed"));
             deepLinkInProgress.value = false;
             return;
         }

@@ -299,8 +299,10 @@ export async function injectedCall(request, blockchain) {
                 console.log(error);
             }
 
-            const isBadActor = (actor) => blockedAccounts.find(x => x === actor) ? true : false;
-            isBlocked = foundIDs.some(isBadActor);
+            if (blockedAccounts) {
+                const isBadActor = (actor) => blockedAccounts.find(x => x === actor) ? true : false;
+                isBlocked = foundIDs.some(isBadActor);
+            }
         }
     }
     
@@ -330,8 +332,10 @@ export async function injectedCall(request, blockchain) {
                 foundIDs.push(match[0]);
             }
 
-            const isBadActor = (actor) => blockedAccounts.find(x => x === actor) ? true : false;
-            isBlocked = foundIDs.some(isBadActor);
+            if (blockedAccounts) {
+                const isBadActor = (actor) => blockedAccounts.find(x => x === actor) ? true : false;
+                isBlocked = foundIDs.some(isBadActor);
+            }
         }
     }
 
