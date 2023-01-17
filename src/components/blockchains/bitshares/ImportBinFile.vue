@@ -1,12 +1,12 @@
 <script setup>
     import {ref, onMounted, inject} from "vue";
-    const emitter = inject('emitter');
     import { ipcRenderer } from 'electron';
-
     import { useI18n } from 'vue-i18n';
-    const { t } = useI18n({ useScope: 'global' });
+
     import getBlockchainAPI from "../../../lib/blockchains/blockchainFactory";
     import BTSWalletHandler from "../../../lib/blockchains/bitshares/BTSWalletHandler";
+    const emitter = inject('emitter');
+    const { t } = useI18n({ useScope: 'global' });
 
     const props = defineProps({
         chain: {
@@ -70,10 +70,9 @@
     }
 
     function _getPickedAccounts() {
-        let toImport = accounts.value.filter(x => picked.value.includes(x.id));
         let pickedAccounts = [];
-        for (let i in toImport) {
-            let account = toImport[i];
+        for (let i in accounts.value) {
+            let account = accounts.value[i];
             pickedAccounts.push({
                 account: {
                     accountName: account.name,
@@ -89,6 +88,7 @@
         }
         
         if (pickedAccounts && pickedAccounts.length) {
+            console.log('importing accounts');
             emitter.emit('accounts_to_import', pickedAccounts);
         }
     }
