@@ -1,12 +1,12 @@
 <script setup>
     import {ref, onMounted, inject} from "vue";
-    const emitter = inject('emitter');
     import { ipcRenderer } from 'electron';
-
     import { useI18n } from 'vue-i18n';
-    const { t } = useI18n({ useScope: 'global' });
+
     import getBlockchainAPI from "../../../lib/blockchains/blockchainFactory";
     import BTSWalletHandler from "../../../lib/blockchains/bitshares/BTSWalletHandler";
+    const emitter = inject('emitter');
+    const { t } = useI18n({ useScope: 'global' });
 
     const props = defineProps({
         chain: {
@@ -17,13 +17,12 @@
     });
 
     onMounted(() => {
-        if (!["BTS", "TUSC"].includes(props.chain)) {
+        if (!["BTS", "BTS_TEST", "TUSC"].includes(props.chain)) {
             throw "Unsupported chain!";
         }
     })
 
-    let accountname = ref("");
-    let accountID = ref("");
+    let inProgress = ref(false);
     let substep1 = ref(true);
     let substep2 = ref(false);
     let wallet_file = ref(null);
@@ -31,54 +30,9 @@
     let accounts = ref([]);
     let picked = ref([]);
 
-    //let BTSImportType = ref(null); // Where is this set?
-
-    async function step3() {
-        if (accountname.value == "") {
-            throw {
-                key: "missing_account_error",
-                args: {
-                    chain: props.chain
-                }
-            };
-        }
-
-        let blockchain = getBlockchainAPI(props.chain);
-        // abstract UI concept more
-        let authorities = blockchain.getAccessType() == "account"
-            ? {
-                active: this.activepk,
-                memo: this.memopk,
-                owner: this.includeOwner == 1 ? this.ownerpk : null
-            }
-            : {
-                active: this.activepk
-            };
-
-        let account;
-        try {
-            account = await blockchain.verifyAccount(accountname.value, authorities);
-
-            /*
-              if (blockchain.getAccessType() == "account" && this.BTSImportType == 2){
-                  authorities = this.getAuthoritiesFromPass(this.bitshares_cloud_login_password);
-                  try {
-                      account = await blockchain.verifyAccount(this.accountname, authorities);
-                  }catch(e)  {
-                      authorities = this.getAuthoritiesFromPass(this.bitshares_cloud_login_password,true);
-                      account = await blockchain.verifyAccount(this.accountname, authorities);
-                      //TODO: Should notify user of legacy/dangerous permissions (active==memo)
-                  }
-              }
-            */
-        } catch (error) {
-            accountID.value = "";
-            ipcRenderer.send(
-                "notify",
-                error.key ? t(`common.${error.key}`) : error.toString()
-            );
-        }
-        accountID.value = account.id;
+    // function to remove account from accounts given an account id
+    function removeAccount(id) {
+        accounts.value = accounts.value.filter(x => x.id !== id);
     }
 
     function handleWalletSelect(e) {
@@ -87,16 +41,26 @@
 
     async function _decryptBackup() {
         let loaderPromise = new Promise((resolve, reject) => {
+            inProgress.value = true;
             let reader = new FileReader();
             reader.onload = async evt => {
                 let wh = new BTSWalletHandler(evt.target.result);
-                let unlocked = await wh.unlock(bin_file_password.value);
+                let unlocked;
+                try {
+                    unlocked = await wh.unlock(bin_file_password.value);
+                } catch (e) {
+                    ipcRenderer.send("notify", t("common.error_text"));
+                    reject(e);
+                }
+
                 if (unlocked) {
                     accounts.value = await wh.lookupAccounts();
                     substep1.value = false;
                     substep2.value = true;
+                    inProgress.value = false;
                     resolve(null);
                 } else {
+                    inProgress.value = false;
                     reject("Wallet could not be unlocked");
                 }
             };
@@ -106,10 +70,9 @@
     }
 
     function _getPickedAccounts() {
-        let toImport = accounts.value.filter(x => picked.value.includes(x.id));
         let pickedAccounts = [];
-        for (let i in toImport) {
-            let account = toImport[i];
+        for (let i in accounts.value) {
+            let account = accounts.value[i];
             pickedAccounts.push({
                 account: {
                     accountName: account.name,
@@ -123,7 +86,11 @@
                 }
             });
         }
-        return accounts;
+        
+        if (pickedAccounts && pickedAccounts.length) {
+            console.log('importing accounts');
+            emitter.emit('accounts_to_import', pickedAccounts);
+        }
     }
 
     function back() {
@@ -131,15 +98,26 @@
     }
 
     async function next() {
-        return substep1.value ? await _decryptBackup() : _getPickedAccounts();
+        if (substep1.value) {
+            await _decryptBackup()
+        } else {
+            _getPickedAccounts();
+        }
     }
 </script>
 
 <template>
     <div id="step2">
-        <template v-if="substep1">
+        <template v-if="substep1 && inProgress">
+            <ui-progress indeterminate />
+            <br>
+            <figcaption>
+                {{ t('common.import_bin_progress') }}
+            </figcaption>
+        </template>
+        <template v-else-if="substep1">
             <p class="mb-2 font-weight-bold">
-                {{ t('common.Select your .bin backup file.') }}
+                {{ t('common.import_bin_file') }}
             </p>
             <input
                 type="file"
@@ -147,7 +125,7 @@
                 @change="handleWalletSelect"
             >
             <p class="mb-2 font-weight-bold">
-                {{ t('common.Enter your .bin file password.') }}
+                {{ t('common.import_bin_pass') }}
             </p>
             <input
                 v-model="bin_file_password"
@@ -155,6 +133,14 @@
                 class="form-control mb-3 small"
             >
             <br>
+            <ui-button
+                v-if="wallet_file && bin_file_password"
+                outlined
+                class="step_btn"
+                @click="next"
+            >
+                {{ t('common.next_btn') }}
+            </ui-button>
             <br>
             <ui-button
                 outlined
@@ -205,13 +191,7 @@
                                 Propose
                             </th>
                             <th class="align-middle">
-                                Transact
-                            </th>
-                            <th class="align-middle">
-                                Propose
-                            </th>
-                            <th class="align-middle">
-                                Transact
+                                Remove?
                             </th>
                         </tr>
                     </thead>
@@ -240,13 +220,13 @@
                                 {{ account.memo.canSend ? 'Y' : 'N' }}
                             </td>
                             <td class="text-center align-middle">
-                                <input
+                                <ui-icon-button
                                     v-if="account.importable"
-                                    :id="account.name"
-                                    v-model="picked"
-                                    type="checkbox"
-                                    :value="account.id"
-                                >
+                                    icon="clear"
+                                    outlined
+                                    class="step_btn"
+                                    @click="removeAccount(account.id)"
+                                />
                             </td>
                         </tr>
                     </tbody>
@@ -263,10 +243,29 @@
                         </ui-button>
 
                         <ui-button
+                            v-if="substep1 && (!wallet_file || !bin_file_password)"
+                            disabled
+                            class="step_btn"
+                            type="submit"
+                        >
+                            {{ t('common.next_btn') }}
+                        </ui-button>
+                        
+                        <ui-button
+                            v-if="accounts && accounts.length || (substep1 && wallet_file && bin_file_password)"
                             raised
                             class="step_btn"
                             type="submit"
                             @click="next"
+                        >
+                            {{ t('common.next_btn') }}
+                        </ui-button>
+
+                        <ui-button
+                            v-if="substep2 && (!accounts || !accounts.length)"
+                            disabled
+                            class="step_btn"
+                            type="submit"
                         >
                             {{ t('common.next_btn') }}
                         </ui-button>
