@@ -1,13 +1,7 @@
 <script setup>
-    import { onMounted, watchEffect, watch, ref, computed, inject } from 'vue';
+    import { ref, computed, inject } from 'vue';
     import { useI18n } from 'vue-i18n';
     import { ipcRenderer } from "electron";
-    import { v4 as uuidv4 } from 'uuid';
-
-    import sha512 from "crypto-js/sha512.js";
-    import aes from "crypto-js/aes.js";
-    import ENC from 'crypto-js/enc-utf8.js';
-    import Base64 from 'crypto-js/enc-base64';
 
     import getBlockchainAPI from "../lib/blockchains/blockchainFactory";
     import AccountSelect from "./account-select";
@@ -74,113 +68,33 @@
     function goBack() {
         opPermissions.value = null;
         selectedRows.value = null;
-        //
-        timestamp.value = null;
-        newCodeRequested.value = null;
-        timeLimit.value = null;
-        progress.value = 0;
     }
-
-    let timestamp = ref();
-    let newCodeRequested = ref(false);
-    function requestCode() {
-        newCodeRequested.value = true;
-        timestamp.value = new Date();
-    }
- 
-    let timeLimit = ref();
-    function setTime(time) {
-        timeLimit.value = time;
-    }
-
-    let progress = ref(0);
-    watchEffect(() => {
-        setInterval(
-            () => {
-                if (!timestamp.value) {
-                    return;
-                } else if (progress.value >= timeLimit.value) {
-                    progress.value = 0;
-                    newCodeRequested.value = false;
-                    timestamp.value = null;
-                } else {
-                    let currentTimestamp = new Date();
-                    var seconds = (currentTimestamp.getTime() - timestamp.value.getTime()) / 1000;
-                    progress.value = seconds;
-                }
-            },
-            1000
-        );
-    });
-
-    let currentCode = ref();
-    let copyContents = ref();
-    watchEffect(() => {
-        if (timestamp && timestamp.value) {
-            let msg = uuidv4();
-            let shaMSG = sha512(msg + timestamp.value.getTime()).toString().substring(0, 15);
-            currentCode.value = shaMSG;
-            copyContents.value = {text: shaMSG, success: () => {console.log('copied code')}};
-        }
-    });
 
     let deepLinkInProgress = ref(false);
-    ipcRenderer.on('deeplink', async (event, args) => {
+    ipcRenderer.on('rawdeeplink', async (event, args) => {
         /**
-         * Deeplink
+         * Raw Deeplink
          */
-        if (!store.state.WalletStore.isUnlocked || router.currentRoute.value.path != "/totp") {
-            console.log("Wallet must be unlocked for deeplinks to work.");
-            ipcRenderer.send("notify", t("common.totp.promptFailure"));
+        if (!store.state.WalletStore.isUnlocked || router.currentRoute.value.path != "/raw-link") {
+            console.log("Wallet must be unlocked for raw deeplinks to work.");
+            ipcRenderer.send("notify", t("common.raw.promptFailure"));
             return;
         }
 
         deepLinkInProgress.value = true;
-        if (!currentCode.value) {
-            console.log('No auth key')
-            deepLinkInProgress.value = false;
-            return;
-        }
-
+       
         let processedRequest;
         try {
             processedRequest = decodeURIComponent(args.request);
         } catch (error) {
-            console.log('Processing request failed')
-            deepLinkInProgress.value = false;
-            return;
-        }
-        
-        let parsedRequest;
-        try {
-            parsedRequest = Base64.parse(processedRequest).toString(ENC)
-        } catch (error) {
-            console.log('Parsing request failed')
-            deepLinkInProgress.value = false;
-            return;
-        }
-
-        let decryptedBytes;
-        try {
-            decryptedBytes = aes.decrypt(parsedRequest, currentCode.value);
-        } catch (error) {
-            console.log(error);
-            deepLinkInProgress.value = false;
-            return;
-        }
-
-        let decryptedData;
-        try {
-            decryptedData = decryptedBytes.toString(ENC);
-        } catch (error) {
-            console.log(error);
+            console.log('Processing request failed');
             deepLinkInProgress.value = false;
             return;
         }
 
         let request;
         try {
-            request = JSON.parse(decryptedData);
+            request = JSON.parse(processedRequest);
         } catch (error) {
             console.log(error);
             deepLinkInProgress.value = false;
@@ -188,16 +102,16 @@
         }
 
         if (!request) {
-            console.log('invalid request format')
+            console.log({msg: 'invalid request format', request})
             deepLinkInProgress.value = false;
             return;
         }
-        
+
         let requestedChain = args.chain || request.payload.chain;
         let chain = store.getters['AccountStore/getChain'];
         if (!requestedChain || chain !== requestedChain) {
             console.log("Incoming deeplink request for wrong chain");
-            ipcRenderer.send("notify", t("common.totp.failed"));
+            ipcRenderer.send("notify", t("common.raw.failed"));
             deepLinkInProgress.value = false;
             return;
         }
@@ -228,11 +142,6 @@
                 deepLinkInProgress.value = false;
                 return;
             }
-        } else {
-            console.log({
-                msg: "Unsupported request type rejected",
-                apiobj
-            })
         }
 
         if (!blockchain) {
@@ -265,11 +174,11 @@
             }
 
             if (!authorizedUse) {
-                console.log(`Unauthorized use of deeplinked ${chain} blockchain operation`);              
+                console.log(`Unauthorized use of raw deeplinked ${chain} blockchain operation`);              
                 deepLinkInProgress.value = false;
                 return;
             }
-            console.log("Authorized use of deeplinks")
+            console.log("Authorized use of raw deeplinks")
         }
 
         let account = store.getters['AccountStore/getCurrentSafeAccount']();
@@ -289,7 +198,7 @@
                 status = await transfer(apiobj, blockchain);
             }
         } catch (error) {
-            console.log({error: error || "No status"});
+            console.log(error || "No status")
             deepLinkInProgress.value = false;
             return;
         }
@@ -328,7 +237,7 @@
             </span>
             <span v-else>
                 <p style="marginBottom:0px;">
-                    {{ t('common.totp.label') }}
+                    {{ t('common.raw.label') }}
                 </p>
                 <ui-card
                     v-shadow="3"
@@ -337,7 +246,7 @@
                 >
                     <span v-if="!opPermissions">
                         <p>
-                            Do you wish to configure the scope of incoming deeplinks?
+                            Do you wish to configure the scope of incoming raw deeplinks?
                         </p>
                         <ui-button
                             raised
@@ -370,68 +279,11 @@
                                 {{ settingsRows ? settingsRows.length : 0 }} {{ t('common.totp.chosen') }}
                             </ui-chip>
                             <ui-chip
-                                v-if="settingsRows && settingsRows.length && newCodeRequested"
-                                icon="access_time"
+                                icon="thumb_up"
                             >
-                                {{ t('common.totp.time') }}: {{ timeLimit - progress.toFixed(0) }}s
+                                Ready for raw links!
                             </ui-chip>
                         </ui-chips>
-                        <span
-                            v-if="!newCodeRequested && settingsRows && settingsRows.length > 0 && !timeLimit"
-                            style="padding-left: 20px;"
-                        >
-                            <ui-button
-                                raised
-                                style="margin-right:10px; margin-bottom: 10px;"
-                                @click="setTime(60)"
-                            >
-                                60s
-                            </ui-button>
-                            <ui-button
-                                raised
-                                style="margin-right:10px; margin-bottom: 10px;"
-                                @click="setTime(180)"
-                            >
-                                3m
-                            </ui-button>
-                            <ui-button
-                                raised
-                                style="margin-bottom: 10px;"
-                                @click="setTime(600)"
-                            >
-                                10m
-                            </ui-button>
-                        </span>
-                        <span>
-                            <ui-button
-                                v-if="!newCodeRequested && settingsRows && settingsRows.length > 0 && timeLimit"
-                                icon="generating_tokens"
-                                raised
-                                style="margin-left: 30px; margin-right:5px; margin-bottom: 10px;"
-                                @click="requestCode"
-                            >
-                                {{ t('common.totp.request') }}
-                            </ui-button>
-                        </span>
-                        <ui-textfield
-                            v-if="currentCode && newCodeRequested"
-                            v-model="currentCode"
-                            style="margin:5px;"
-                            outlined
-                            :attrs="{ readonly: true }"
-                        >
-                            <template #after>
-                                <ui-textfield-icon v-copy="copyContents">content_copy</ui-textfield-icon>
-                            </template>
-                        </ui-textfield>
-                        <ui-alert
-                            v-if="currentCode && newCodeRequested"
-                            style="margin:10px;"
-                            state="warning"
-                            closable
-                        >
-                            {{ t('common.totp.warning') }}
-                        </ui-alert>
                     </span>
                 </ui-card>
             </span>

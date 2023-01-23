@@ -35,9 +35,14 @@
         "invalidPassword": "Ungültiges wiederhergestelltes Wallet-Passwort",
         "duplicate": "Eine Wallet mit demselben Namen existiert bereits, Wallet-Wiederherstellung wird abgebrochen"
     },
+    "raw": {
+        "label": "Rohe Deep-Link-Seite",
+        "promptFailure": "Ein Raw-Deeplink wurde abgelehnt. Navigieren Sie ggf. zur Raw-Link-Seite und versuchen Sie es erneut."
+    },
     "totp": {
         "label": "Zeitbasierte Einmalpasswörter",
         "prompt": "Wählen Sie unten Ihre erforderlichen Operationen aus",
+        "promptFailure": "Ein TOTP-Deeplink wurde abgelehnt. Navigieren Sie ggf. zur TOTP-Seite und versuchen Sie es erneut.",
         "chosen": "operations chosen",
         "request": "Passwort anfordern",
         "default": "Unzureichende Operationen",
@@ -77,6 +82,7 @@
         "Home": "Zuhause",
         "New": "Neu",
         "TOTP": "TOTP",
+        "RAW": "Rohe Verbindung",
         "QR": "QR",
         "Settings": "Einstellungen",
         "Backup": "Sicherung",
