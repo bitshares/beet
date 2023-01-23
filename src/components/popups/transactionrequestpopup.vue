@@ -102,8 +102,7 @@
         v-if="!!visualizedParams"
         class="text-left custom-content"
     >
-        {{ t('operations.general.content') }}
-        <ul>
+        <ul style="max-height: 150px; overflow: auto;">
             <li
                 v-for="param in visualizedParams.split(/\r?\n/)"
                 :key="param"

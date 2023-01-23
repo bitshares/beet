@@ -39,6 +39,7 @@
         "prompt": "Select your required operations below",
         "chosen": "operations chosen",
         "request": "Request passcode",
+        "failed": "Incoming TOTP request failed. Check you're using the right account.",
         "default": "Insufficient operations",
         "time": "Time remaining",
         "exit": "Exit TOTP page",

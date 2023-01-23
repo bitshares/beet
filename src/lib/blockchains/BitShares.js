@@ -614,11 +614,11 @@ export default class BitShares extends BlockchainAPI {
                 committeeAccountDetails = await this.getAccount('committee-blacklist-manager');
             } catch (error) {
                 console.log(error);
-                return reject();
+                return reject(error);
             }
             
             if (!committeeAccountDetails) {
-                return reject();
+                return reject('Committee account details not found');
             }
 
             let blockedAccounts = committeeAccountDetails.blacklisted_accounts;
@@ -895,6 +895,7 @@ export default class BitShares extends BlockchainAPI {
     _resolveAsset(assetSymbolOrId) {
         let timeoutPromise = new Promise((resolve) => {
             setTimeout(() => {
+                console.log('timed out');
                 resolve(null);
             }, 3000);
         });
@@ -1554,8 +1555,6 @@ export default class BitShares extends BlockchainAPI {
      */
     async visualize(thing) {
         if (typeof thing == "string" && thing.startsWith("1.2.")) {
-            // resolve id to name
-            console.log('visualize 1')
             return await this._getAccountName(thing);
         }
 
@@ -1578,6 +1577,7 @@ export default class BitShares extends BlockchainAPI {
             let operation = tr.operations[i];
             const opType = operation[0];
             const op = operation[1];
+
             if (opType == 0) {
                 // transfer
                 let from;
@@ -1609,12 +1609,11 @@ export default class BitShares extends BlockchainAPI {
                     return;
                 }
 
-                operations.push(
-                    "Transfer request:\n" +
-                    " from: " + from + "(" + op.from + ")\n" +
-                    " to: " + to + "(" + op.to + ")\n" +
-                    " amount: " + formatAsset(op.amount.amount, asset.symbol, asset.precision)
-                )
+                let opStr = "Transfer request:\n";
+                opStr += " from: " + from + "(" + op.from + ")\n";
+                opStr += " to: " + to + "(" + op.to + ")\n";
+                opStr += " amount: " + formatAsset(op.amount.amount, asset.symbol, asset.precision);
+                operations.push(opStr);
             } else if (opType == 1) {
                 // limit_order_create
                 console.log('limit_order_create 1')
@@ -1649,13 +1648,13 @@ export default class BitShares extends BlockchainAPI {
 
                 let price = humanReadableFloat(op.amount_to_sell.amount, sell.precision)
                     / humanReadableFloat(op.min_to_receive.amount, buy.precision);
-
-                operations.push(
-                    "Trade" + (fillOrKill ? "(Fill or Kill)" : "") + "\n" +
-                    " Sell: " + formatAsset(op.amount_to_sell.amount, sell.symbol, sell.precision) + "\n" +
-                    " Buy: " + formatAsset(op.min_to_receive.amount, buy.symbol, buy.precision) + "\n" +
-                    " Price: " + price.toPrecision(6) + " " + sell.symbol + "/" +  buy.symbol
-                )
+                
+                let opStr = "Trade request:\n"
+                opStr += "Trade" + (fillOrKill ? "(Fill or Kill)" : "") + "\n"
+                opStr += " Sell: " + formatAsset(op.amount_to_sell.amount, sell.symbol, sell.precision) + "\n"
+                opStr += " Buy: " + formatAsset(op.min_to_receive.amount, buy.symbol, buy.precision) + "\n"
+                opStr += " Price: " + price.toPrecision(6) + " " + sell.symbol + "/" +  buy.symbol
+                operations.push(opStr);
             } else if (opType == 2) {
                 // limit_order_cancel
                 let feePayingAccount;
@@ -1664,13 +1663,12 @@ export default class BitShares extends BlockchainAPI {
                 } catch (error) {
                     console.log(error);
                 }
-
-                operations.push(
-                    "Cancel the following limit order?\n" +
-                    "Order ID: " + op.order + "\n" + 
-                    "Estimated fee: " + op.fee + "\n" +
-                    "Fee paying account: " + feePayingAccount ?? '' + " (" + op.fee_paying_account + ")"
-                )
+                
+                let opStr = "Cancel the following limit order?\n";
+                opStr += "Order ID: " + op.order + "\n";
+                opStr += "Estimated fee: " + JSON.stringify(op.fee) + "\n";
+                opStr += "Fee paying account: " + feePayingAccount ?? '' + " (" + op.fee_paying_account + ")";
+                operations.push(opStr);
             } else if (opType == 3) {
                 // call_order_update
                 let fundingAccount;
@@ -1700,14 +1698,13 @@ export default class BitShares extends BlockchainAPI {
                     console.log('Could not resolve delta fields');
                     return;
                 }
-
-                operations.push(
-                    "Update your call order to the following?\n" +
-                    "funding_account: " + fundingAccount ?? '' + " (" + op.funding_account + ")\n" +
-                    "delta_collateral: " + formatAsset(op.delta_collateral.amount, deltaCollateral.symbol, deltaCollateral.precision) + " (" + op.delta_collateral.asset_id + ")\n" +
-                    "delta_debt: " + formatAsset(op.delta_debt.amount, deltaDebt.symbol, deltaDebt.precision) + "(" + op.delta_debt.asset_id + ")\n" +
-                    "Estimated fee: " + op.fee
-                )
+                
+                let opStr = "Update your call order to the following?\n";
+                opStr += "funding_account: " + fundingAccount ?? '' + " (" + op.funding_account + ")\n";
+                opStr += "delta_collateral: " + formatAsset(op.delta_collateral.amount, deltaCollateral.symbol, deltaCollateral.precision) + " (" + op.delta_collateral.asset_id + ")\n";
+                opStr += "delta_debt: " + formatAsset(op.delta_debt.amount, deltaDebt.symbol, deltaDebt.precision) + "(" + op.delta_debt.asset_id + ")\n";
+                opStr += "Estimated fee: " + JSON.stringify(op.fee);
+                operations.push(opStr);
             } else if (opType == 5) {
                 // account_create
 
@@ -1724,32 +1721,31 @@ export default class BitShares extends BlockchainAPI {
                 } catch (error) {
                     console.log(error);
                 }
-
-                operations.push(
-                    "Do you want to create the following account? \n" +
-                    "registrar: " + registrar + "(" + op.registrar + ")\n" +
-                    "referrer: " + referrer + "(" + op.referrer + ")\n" +
-                    "referrer_percent: " + op.referrer_percent + "\n" +
-                    "name " + op.name + "\n" +
-                    "Owner: \n" +
-                    "  weight_threshold: " + op.owner.weight_threshold + "\n",
-                    "  account_auths: " + JSON.stringify([{"1.2.x": 1}]) + "\n",
-                    "  key_auths: " + JSON.stringify([{"1.2.x": 1}]) + "\n",
-                    "  address_auths: " + JSON.stringify([{"1.2.x": 1}]) + "\n",
-                    "Active: \n" +
-                    "  weight_threshold: " + op.active.weight_threshold + "\n",
-                    "  account_auths: " + JSON.stringify([{"1.2.x": 1}]) + "\n",
-                    "  key_auths: " + JSON.stringify([{"1.2.x": 1}]) + "\n",
-                    "  address_auths: " + JSON.stringify([{"1.2.x": 1}]) + "\n",
-                    "Options: \n" +
-                    "  memo_key:" + op.options.memo_key + "\n",
-                    "  voting_account:" + op.options.voting_account + "\n",
-                    "  num_witness:" + op.options.num_witness + "\n",
-                    "  num_committee:" + op.options.num_committee + "\n",
-                    "  votes:" + JSON.stringify(op.options.votes) + "\n",
-                    "  extensions:" + JSON.stringify(op.options.extensions) + "\n",
-                    "Estimated fee: " + op.fee
-                )
+                
+                let opStr = "Do you want to create the following account? \n";
+                opStr += "registrar: " + registrar ?? '' + "(" + op.registrar + ")\n";
+                opStr += "referrer: " + referrer ?? '' + "(" + op.referrer + ")\n";
+                opStr += "referrer_percent: " + op.referrer_percent + "\n";
+                opStr += "name " + op.name + "\n";
+                opStr += "Owner: \n";
+                opStr += "  weight_threshold: " + op.owner.weight_threshold + "\n";
+                opStr += "  account_auths: " + JSON.stringify([{"1.2.x": 1}]) + "\n";
+                opStr += "  key_auths: " + JSON.stringify([{"1.2.x": 1}]) + "\n";
+                opStr += "  address_auths: " + JSON.stringify([{"1.2.x": 1}]) + "\n";
+                opStr += "Active: \n";
+                opStr += "  weight_threshold: " + op.active.weight_threshold + "\n";
+                opStr += "  account_auths: " + JSON.stringify([{"1.2.x": 1}]) + "\n";
+                opStr += "  key_auths: " + JSON.stringify([{"1.2.x": 1}]) + "\n";
+                opStr += "  address_auths: " + JSON.stringify([{"1.2.x": 1}]) + "\n";
+                opStr += "Options: \n";
+                opStr += "  memo_key: " + op.options.memo_key + "\n";
+                opStr += "  voting_account: " + op.options.voting_account + "\n";
+                opStr += "  num_witness: " + op.options.num_witness + "\n";
+                opStr += "  num_committee: " + op.options.num_committee + "\n";
+                opStr += "  votes: " + JSON.stringify(op.options.votes) + "\n";
+                opStr += "  extensions: " + JSON.stringify(op.options.extensions) + "\n";
+                opStr += "Estimated fee: " + JSON.stringify(op.fee)
+                operations.push(opStr);
             } else if (opType == 6) {
                 // account_update
                 let targetAccount;
@@ -1758,17 +1754,16 @@ export default class BitShares extends BlockchainAPI {
                 } catch (error) {
                     console.log(error);
                 }
-
-                operations.push(
-                    "Do you want to approve this account update? \n" +
-                    "Warning: This action is irreversible! \n" +
-                    "account:" + targetAccount + "(" + op.account + ")\n",
-                    "owner:" + JSON.stringify(op.owner) + "\n",
-                    "active:" + JSON.stringify(op.active) + "\n",
-                    "new_options:" + JSON.stringify(op.new_options) + "\n",
-                    "extensions:" + JSON.stringify(op.extensions) + "\n",
-                    "Estimated fee: " + op.fee
-                )
+                
+                let opStr = "Do you want to update the following account? \n";
+                opStr += "Warning: This action is irreversible! \n";
+                opStr += "account:" + targetAccount + "(" + op.account + ")\n";
+                opStr += "owner:" + JSON.stringify(op.owner) + "\n";
+                opStr += "active:" + JSON.stringify(op.active) + "\n";
+                opStr += "new_options:" + JSON.stringify(op.new_options) + "\n";
+                opStr += "extensions:" + JSON.stringify(op.extensions) + "\n";
+                opStr += "Estimated fee: " + JSON.stringify(op.fee);
+                operations.push(opStr);
             } else if (opType == 7) {
 
                 let authorizingAccount;
@@ -1784,16 +1779,14 @@ export default class BitShares extends BlockchainAPI {
                 } catch (error) {
                     console.log(error);
                 }
-
-                // account_whitelist
-                operations.push(
-                    "Account whitelist details: \n" +
-                    "authorizing_account: " + authorizingAccount + "(" + op.authorizing_account + ")\n" +
-                    "account_to_list: " + accountToList + "(" + op.account_to_list + ")\n" +
-                    "new_listing: " + op.new_listing + "\n" +
-                    "extensions: " + op.extensions ? JSON.stringify(op.extensions) : "[]" + "\n" +
-                    "Estimated fee: " + op.fee
-                )
+                
+                let opStr = "Account whitelist details: \n";
+                opStr += "authorizing_account: " + authorizingAccount + "(" + op.authorizing_account + ")\n";
+                opStr += "account_to_list: " + accountToList + "(" + op.account_to_list + ")\n";
+                opStr += "new_listing: " + op.new_listing + "\n";
+                opStr += "extensions: " + op.extensions ? JSON.stringify(op.extensions) : "[]" + "\n";
+                opStr += "Estimated fee: " + JSON.stringify(op.fee);
+                operations.push(opStr);
             } else if (opType == 8) {
                 // account_upgrade
                 let accountToUpgrade;
@@ -1802,14 +1795,13 @@ export default class BitShares extends BlockchainAPI {
                 } catch (error) {
                     console.log(error);
                 }
-
-                operations.push(
-                    "Update account to lifetime member? \n" +
-                    "account_to_upgrade: " + accountToUpgrade + "(" + op.account_to_upgrade + ")\n" +
-                    "upgrade_to_lifetime_member: " + op.upgrade_to_lifetime_member + "\n" +
-                    "extensions: " + op.extensions ? JSON.stringify(op.extensions) : "[]" + "\n" +
-                    "Estimated fee: " + op.fee
-                )
+                
+                let opStr = "Upgrade account to lifetime member? \n";
+                opStr += "account_to_upgrade: " + accountToUpgrade + "(" + op.account_to_upgrade + ")\n";
+                opStr += "upgrade_to_lifetime_member: " + op.upgrade_to_lifetime_member + "\n";
+                opStr += "extensions: " + op.extensions ? JSON.stringify(op.extensions) : "[]" + "\n";
+                opStr += "Estimated fee: " + JSON.stringify(op.fee);
+                operations.push(opStr);
             } else if (opType == 9) {
                 // account_transfer
                 let originalOwner;
@@ -1825,14 +1817,13 @@ export default class BitShares extends BlockchainAPI {
                 } catch (error) {
                     console.log(error);
                 }
-
-                operations.push(
-                    "Transfer account to a new owner? \n" +
-                    "Warning: This action is irreversible. \n" +
-                    "account_id: " + originalOwner + "(" + op.account_id + ")\n" +
-                    "new_owner: " + newOwner + "(" + op.new_owner + ")\n" +
-                    "Estimated fee: " + op.fee
-                )
+                
+                let opStr = "Transfer account to a new owner? \n";
+                opStr += "Warning: This action is irreversible. \n";
+                opStr += "account_id: " + originalOwner + "(" + op.account_id + ")\n";
+                opStr += "new_owner: " + newOwner + "(" + op.new_owner + ")\n";
+                opStr += "Estimated fee: " + JSON.stringify(op.fee);
+                operations.push(opStr);
             } else if (opType == 10 || opType == 11) {
                 // Create or Update an asset
                 let asset;
@@ -1939,20 +1930,20 @@ export default class BitShares extends BlockchainAPI {
                     return;
                 }
 
-                operations.push(
-                    "Approve bitasset update? \n" +
-                    "issuer: " + op.issuer + "\n" +
-                    "asset_to_update: " + op.asset_to_update + "\n" +
-                    "new_options:\n" +
-                    "  feed_lifetime_sec" + op.new_options.feed_lifetime_sec + "\n" +
-                    "  minimum_feeds" + op.new_options.minimum_feeds + "\n" +
-                    "  force_settlement_delay_sec" + op.new_options.force_settlement_delay_sec + "\n" +
-                    "  force_settlement_offset_percent" + op.new_options.force_settlement_offset_percent + "\n" +
-                    "  maximum_force_settlement_volume" + op.new_options.maximum_force_settlement_volume + "\n" +
-                    "  short_backing_asset" + shortBackingAsset ? shortBackingAsset.symbol : '' + "(" + op.new_options.short_backing_asset + ")\n" +
-                    "  extensions: " + op.new_options.extensions ? JSON.stringify(op.new_options.extensions) : "[]" + "\n" +
-                    "Estimated fee: " + op.fee
-                )
+                let opStr = "Approve bitasset update? \n";
+                opStr += "issuer: " + op.issuer + "\n";
+                opStr += "asset_to_update: " + op.asset_to_update + "\n";
+                opStr += "new_options:\n";
+                opStr += "  feed_lifetime_sec: " + op.new_options.feed_lifetime_sec + "\n";
+                opStr += "  minimum_feeds: " + op.new_options.minimum_feeds + "\n";
+                opStr += "  force_settlement_delay_sec: " + op.new_options.force_settlement_delay_sec + "\n";
+                opStr += "  force_settlement_offset_percent: " + op.new_options.force_settlement_offset_percent + "\n";
+                opStr += "  maximum_force_settlement_volume: " + op.new_options.maximum_force_settlement_volume + "\n";
+                opStr += "  short_backing_asset: " + shortBackingAsset.symbol + " (" + op.new_options.short_backing_asset + ")" + "\n";
+                opStr += "  extensions: " + "\n";
+                opStr += op.new_options.extensions ? JSON.stringify(op.new_options.extensions) : "No extensions";
+                opStr += "\nEst. fee: " + formatAsset(op.fee.amount, "BTS", 5) + " (" + op.fee.asset_id + ")";
+                operations.push(opStr);
             } else if (opType == 13) {
                 // asset_update_feed_producers
 
@@ -1976,13 +1967,12 @@ export default class BitShares extends BlockchainAPI {
                     return;
                 }
 
-                operations.push(
-                    "Approve change to bitasset feed producers? \n" +
-                    "issuer: " + issuer ?? '' + "(" + op.issuer + ")\n" +
-                    "asset_to_update: " + assetToUpdate.symbol + "(" + op.asset_to_update + ")\n" +
-                    "new_feed_producers: " + JSON.stringify(op.new_feed_producers) + "\n" +
-                    "Estimated fee: " + op.fee
-                )
+                let opStr = "Approve change to bitasset feed producers? \n";
+                opStr += "issuer: " + issuer ?? '' + "(" + op.issuer + ")\n";
+                opStr += "asset_to_update: " + assetToUpdate.symbol + "(" + op.asset_to_update + ")\n";
+                opStr += "new_feed_producers: " + JSON.stringify(op.new_feed_producers) + "\n";
+                opStr += "Estimated fee: " + JSON.stringify(op.fee);
+                operations.push(opStr);
             } else if (opType == 14) {
                 // asset_issue
 
@@ -2002,25 +1992,20 @@ export default class BitShares extends BlockchainAPI {
 
                 let assetToIssue;
                 try {
-                    assetToIssue = await this._resolveAsset(op.asset_to_issue);
+                    assetToIssue = await this._resolveAsset(op.asset_to_issue.asset_id);
                 } catch (error) {
                     console.log(error);
                     return;
                 }
 
                 if (!assetToIssue) {
-                    console.log("assetToIssue issue");
+                    console.log("No asset to issue found");
                     return;
                 }
-
-                operations.push(
-                    "Issue asset to the following user? \n" +
-                    "issuer: " + issuer ?? '' + "(" + op.issuer + ")\n" +
-                    "asset_to_issue: " + assetToIssue ?? '' + "(" + op.asset_to_issue + ")\n" +
-                    "issue_to_account: " + targetAccount ?? '' + "(" + op.issue_to_account + ")\n" +
-                    "memo: " + op.memo + "\n" +
-                    "Estimated fee: " + op.fee
-                )
+                
+                let opStr = `Issue ${op.asset_to_issue.amount} ${assetToIssue.symbol} (${assetToIssue.id}) to ${targetAccount} (${op.issue_to_account})? \n`;
+                opStr += "Estimated fee: " + JSON.stringify(op.fee).amount + " (" + op.fee.asset_id + ")"
+                operations.push(opStr);
             } else if (opType == 15) {
                 // asset_reserve
                 let payer;
@@ -2041,14 +2026,13 @@ export default class BitShares extends BlockchainAPI {
                     console.log("assetToReserve issue");
                     return;
                 }
-
-                operations.push(
-                    "Approve the following asset reservation? \n" +
-                    "payer: " + payer ?? '' + "(" + op.payer + ")\n" +
-                    "amount_to_reserve: " + formatAsset(op.amount_to_reserve.amount, assetToReserve.symbol, assetToReserve.precision) + " (" + op.amount_to_reserve.asset_id + ")\n" +
-                    "extensions: " + op.extensions ? JSON.stringify(op.extensions) : "[]" + "\n" +
-                    "Estimated fee: " + op.fee
-                )
+                
+                let opStr = "Approve the following asset reservation? \n";
+                opStr += "payer: " + payer ?? '' + "(" + op.payer + ")\n";
+                opStr += "amount_to_reserve: " + formatAsset(op.amount_to_reserve.amount, assetToReserve.symbol, assetToReserve.precision) + " (" + op.amount_to_reserve.asset_id + ")\n";
+                opStr += "extensions: " + op.extensions ? JSON.stringify(op.extensions) : "[]" + "\n";
+                opStr += "Estimated fee: " + JSON.stringify(op.fee);
+                operations.push(opStr);
             } else if (opType == 16) {
                 // asset_fund_fee_pool
                 let fromAccount;
@@ -2069,14 +2053,13 @@ export default class BitShares extends BlockchainAPI {
                     console.log("assetToFund issue");
                     return;
                 }
-
-                operations.push(
-                    "Fund the following asset's fee pool? \n" +
-                    "from_account: " + fromAccount.symbol + "(" + op.from_account + ")\n" +
-                    "asset: " + assetToFund.symbol + "(" + op.asset_id + ")\n" +
-                    "amount: " + formatAsset(op.amount, assetToFund.symbol, assetToFund.precision) + "\n" +
-                    "Estimated fee: " + op.fee
-                )
+                
+                let opStr = "Fund the following asset's fee pool? \n";
+                opStr += "from_account: " + fromAccount.symbol + "(" + op.from_account + ")\n";
+                opStr += "asset: " + assetToFund.symbol + "(" + op.asset_id + ")\n";
+                opStr += "amount: " + formatAsset(op.amount, assetToFund.symbol, assetToFund.precision) + "\n";
+                opStr += "Estimated fee: " + JSON.stringify(op.fee);
+                operations.push(opStr);
             } else if (opType == 17) {
                 // asset_settle
                 let account;
@@ -2097,13 +2080,12 @@ export default class BitShares extends BlockchainAPI {
                     console.log("assetToSettle issue");
                     return;
                 }
-
-                operations.push(
-                    "Settle the following asset for its backing collateral? \n" +
-                    "account: " + account + "(" + op.account + ")\n" +
-                    "amount: " + formatAsset(op.amount.amount, assetToSettle.symbol, assetToSettle.precision) + "\n" +
-                    "Estimated fee: " + op.fee
-                )
+                
+                let opStr = "Settle the following asset for its backing collateral? \n";
+                opStr += "account: " + account ?? '' + "(" + op.account + ")\n";
+                opStr += "amount: " + formatAsset(op.amount.amount, assetToSettle.symbol, assetToSettle.precision) + "\n";
+                opStr += "Estimated fee: " + JSON.stringify(op.fee);
+                operations.push(opStr);
             } else if (opType == 18) {
                 // asset_global_settle
                 let issuer;
@@ -2141,14 +2123,13 @@ export default class BitShares extends BlockchainAPI {
 
                 let price = humanReadableFloat(op.settle_price.base.amount, baseAsset.precision)
                     / humanReadableFloat(op.settle_price.quote.amount, quoteAsset.precision);
-
-                operations.push(
-                    "Perform global settlement on the following asset? \n" +
-                    "issuer: " + issuer + "(" + op.issuer + ")\n" +
-                    "asset_to_settle: " + assetToSettle + "(" + op.asset_to_settle + ")\n" +
-                    "settle_price: " + price + "\n" +
-                    "Estimated fee: " + op.fee
-                )
+                
+                let opStr = "Perform global settlement on the following asset? \n";
+                opStr += "issuer: " + issuer + "(" + op.issuer + ")\n";
+                opStr += "asset_to_settle: " + assetToSettle + "(" + op.asset_to_settle + ")\n";
+                opStr += "settle_price: " + price + "\n";
+                opStr += "Estimated fee: " + JSON.stringify(op.fee);
+                operations.push(opStr);
             } else if (opType == 19) {
                 // asset_publish_feed
                 let publisher;
@@ -2183,19 +2164,18 @@ export default class BitShares extends BlockchainAPI {
                 let settlementPrice = humanReadableFloat(op.feed.settlement_price.base.amount, baseAsset.precision)
                 / humanReadableFloat(op.feed.settlement_price.quote.amount, quoteAsset.precision);
 
-
-                operations.push(
-                    "Publish a price feed for the following asset? \n" +
-                    "publisher: " + publisher ?? '' + "(" + op.publisher + ")\n" +
-                    "asset_id: " + quoteAsset.symbol + "(" + op.asset_id + ")\n" +
-                    "feed: \n" +
-                    "  core_exchange_rate: " + coreExchangeRate + "\n" +
-                    "  settlement_price: " + settlementPrice + "\n" +
-                    "  maintenance_collateral_ratio: " + op.feed.maintenance_collateral_ratio + "\n" +
-                    "  maximum_short_squeeze_ratio: " + op.feed.maximum_short_squeeze_ratio + "\n" +
-                    "extensions: " + op.extensions ? JSON.stringify(op.extensions) : "[]" + "\n" +
-                    "Estimated fee: " + op.fee
-                )
+                
+                let opStr = "Publish a price feed for the following asset? \n";
+                opStr += "publisher: " + publisher ?? '' + "(" + op.publisher + ")\n";
+                opStr += "asset_id: " + quoteAsset.symbol + "(" + op.asset_id + ")\n";
+                opStr += "feed: \n";
+                opStr += "  core_exchange_rate: " + coreExchangeRate + "\n";
+                opStr += "  settlement_price: " + settlementPrice + "\n";
+                opStr += "  maintenance_collateral_ratio: " + op.feed.maintenance_collateral_ratio + "\n";
+                opStr += "  maximum_short_squeeze_ratio: " + op.feed.maximum_short_squeeze_ratio + "\n";
+                opStr += "extensions: " + op.extensions ? JSON.stringify(op.extensions) : "[]";
+                opStr += "Estimated fee: " + JSON.stringify(op.fee);
+                operations.push(opStr);
             } else if (opType == 20) {
                 // witness_create
                 let witnessAccount;
@@ -2204,14 +2184,13 @@ export default class BitShares extends BlockchainAPI {
                 } catch (error) {
                     console.log(error);
                 }
-
-                operations.push(
-                    "Create a witness with the following details? \n" +
-                    "witness_account: " + witnessAccount + "(" + op.witness_account + ")\n" +
-                    "url: " + op.url + "\n" +
-                    "block_signing_key: " + op.block_signing_key + "\n" +
-                    "Estimated fee: " + op.fee
-                )
+                
+                let opStr = "Create a witness with the following details? \n";
+                opStr += "witness_account: " + witnessAccount + "(" + op.witness_account + ")\n";
+                opStr += "url: " + op.url + "\n";
+                opStr += "block_signing_key: " + op.block_signing_key + "\n";
+                opStr += "Estimated fee: " + JSON.stringify(op.fee);
+                operations.push(opStr);
             } else if (opType == 21) {
                 // witness_update
                 let witnessAccount;
@@ -2220,15 +2199,14 @@ export default class BitShares extends BlockchainAPI {
                 } catch (error) {
                     console.log(error);
                 }
-
-                operations.push(
-                    "Update witness details to the following? \n" +
-                    "witness: " + op.witness + "\n" +
-                    "witness_account: " + witnessAccount + "(" + op.witness_account + ")\n" +
-                    "new_url: " + op.new_url + "\n" +
-                    "new_signing_key: " + op.new_signing_key ?? '' + "\n" +
-                    "Estimated fee: " + op.fee
-                )
+                
+                let opStr = "Update witness details to the following? \n";
+                opStr += "witness: " + op.witness + "\n";
+                opStr += "witness_account: " + witnessAccount + "(" + op.witness_account + ")\n";
+                opStr += "new_url: " + op.new_url + "\n";
+                opStr += "new_signing_key: " + op.new_signing_key ?? '' + "\n";
+                opStr += "Estimated fee: " + JSON.stringify(op.fee);
+                operations.push(opStr);
             } else if (opType == 22) {
                 // proposal_create
                 let feePayingAccount;
@@ -2237,15 +2215,14 @@ export default class BitShares extends BlockchainAPI {
                 } catch (error) {
                     console.log(error);
                 }
-
-                operations.push(
-                    "Create the following proposal? \n" +
-                    "expiration_time: " + op.expiration_time + "\n" +
-                    "proposed_ops: " + JSON.stringify(op.proposed_ops) + "\n" +
-                    "review_period_seconds: " + op.review_period_seconds + "\n" +
-                    "fee_paying_account: " + feePayingAccount + "(" + op.fee_paying_account + ")\n" +
-                    "Estimated fee: " + op.fee
-                )
+                
+                let opStr = "Create the following proposal? \n";
+                opStr += "expiration_time: " + op.expiration_time + "\n";
+                opStr += "proposed_ops: " + JSON.stringify(op.proposed_ops) + "\n";
+                opStr += "review_period_seconds: " + op.review_period_seconds + "\n";
+                opStr += "fee_paying_account: " + feePayingAccount + "(" + op.fee_paying_account + ")\n";
+                opStr += "Estimated fee: " + JSON.stringify(op.fee);
+                operations.push(opStr);
             } else if (opType == 23) {
                 // proposal_update
                 let feePayingAccount;
@@ -2254,20 +2231,19 @@ export default class BitShares extends BlockchainAPI {
                 } catch (error) {
                     console.log(error);
                 }
-
-                operations.push(
-                    "Update the following proposal details? \n" +
-                    "proposal: " + op.proposal + "\n" +
-                    "active_approvals_to_add: " + JSON.stringify(op.active_approvals_to_add) + "\n" +
-                    "active_approvals_to_remove: " + JSON.stringify(op.active_approvals_to_remove) + "\n" +
-                    "owner_approvals_to_add: " + JSON.stringify(op.owner_approvals_to_add) + "\n" +
-                    "owner_approvals_to_remove: " + JSON.stringify(op.owner_approvals_to_remove) + "\n" +
-                    "key_approvals_to_add: " + JSON.stringify(op.key_approvals_to_add) + "\n" +
-                    "key_approvals_to_remove: " + JSON.stringify(op.key_approvals_to_remove) + "\n" +
-                    "fee_paying_account: " + feePayingAccount + "(" + op.fee_paying_account + ")\n" +
-                    "extensions: " + op.extensions ? JSON.stringify(op.extensions) : '' + "\n" +
-                    "Estimated fee: " + op.fee
-                )
+                
+                let opStr = "Update the following proposal? \n";
+                opStr += "proposal: " + op.proposal + "\n";
+                opStr += "active_approvals_to_add: " + JSON.stringify(op.active_approvals_to_add) + "\n";
+                opStr += "active_approvals_to_remove: " + JSON.stringify(op.active_approvals_to_remove) + "\n";
+                opStr += "owner_approvals_to_add: " + JSON.stringify(op.owner_approvals_to_add) + "\n";
+                opStr += "owner_approvals_to_remove: " + JSON.stringify(op.owner_approvals_to_remove) + "\n";
+                opStr += "key_approvals_to_add: " + JSON.stringify(op.key_approvals_to_add) + "\n";
+                opStr += "key_approvals_to_remove: " + JSON.stringify(op.key_approvals_to_remove) + "\n";
+                opStr += "fee_paying_account: " + feePayingAccount + "(" + op.fee_paying_account + ")\n";
+                opStr += "extensions: " + JSON.stringify(op.extensions) + "\n";
+                opStr += "Estimated fee: " + JSON.stringify(op.fee);
+                operations.push(opStr);
             } else if (opType == 24) {
                 // proposal_delete
                 let feePayingAccount;
@@ -2276,15 +2252,14 @@ export default class BitShares extends BlockchainAPI {
                 } catch (error) {
                     console.log(error);
                 }
-
-                operations.push(
-                    "Delete the following proposal? \n" +
-                    "using_owner_authority: " + op.using_owner_authority + "\n" +
-                    "proposal: " + op.proposal + "\n" +
-                    "fee_paying_account: " + feePayingAccount + "(" + op.fee_paying_account + ")\n" +
-                    "extensions: " + op.extensions ? JSON.stringify(op.extensions) : '' + "\n" +
-                    "Estimated fee: " + op.fee
-                )
+                
+                let opStr = "Delete the following proposal? \n";
+                opStr += "using_owner_authority: " + op.using_owner_authority + "\n";
+                opStr += "proposal: " + op.proposal + "\n";
+                opStr += "fee_paying_account: " + feePayingAccount + "(" + op.fee_paying_account + ")\n";
+                opStr += "extensions: " + op.extensions ? JSON.stringify(op.extensions) : '' + "\n";
+                opStr += "Estimated fee: " + JSON.stringify(op.fee);
+                operations.push(opStr);
             } else if (opType == 25) {
                 // withdraw_permission_create
                 let to;
@@ -2313,15 +2288,13 @@ export default class BitShares extends BlockchainAPI {
                     console.log("withdraw_permission_create missing field");
                     return;
                 }
-
-                let period = op.withdrawal_period_sec / 60 / 60 / 24;
-                operations.push(
-                    "Direct Debit Authorization\n" +
-                    " Recipient: " + to ?? '' + "(" + op.authorized_account + ")\n" +
-                    " Account to withdraw from: " + from ?? '' + "(" + op.withdraw_from_account + ")\n" +
-                    " Take " + formatAsset(op.withdrawal_limit.amount, asset.symbol, asset.precision) + " every " + period + " days, for " + op.periods_until_expiration + " periods" +
-                    " Starting : " + op.period_start_time // make more human readable?
-                )
+                
+                let opStr = "Direct Debit Authorization\n";
+                opStr += " Recipient: " + to ?? '' + "(" + op.authorized_account + ")\n";
+                opStr += " Account to withdraw from: " + from ?? '' + "(" + op.withdraw_from_account + ")\n";
+                opStr += " Take " + formatAsset(op.withdrawal_limit.amount, asset.symbol, asset.precision) + " every " + period + " days, for " + op.periods_until_expiration + " periods";
+                opStr += " Starting : " + op.period_start_time; // make more human readable?
+                operations.push(opStr);
             } else if (opType == 26) {
                 // withdraw_permission_update
 
@@ -2350,18 +2323,17 @@ export default class BitShares extends BlockchainAPI {
                     console.log("withdraw_permission_update missing field");
                     return;
                 }
-
-                operations.push(
-                    "Update witness permissions to the following? \n" +
-                    "withdraw_from_account: " + withdrawFromAccount ?? '' + "(" + op.withdraw_from_account + ")\n" +
-                    "authorized_account: " + authorizedAccount ?? '' + "(" + op.authorized_account + ")\n" +
-                    "permission_to_update: " + op.permission_to_update + "\n" +
-                    "withdrawal_limit: " + withdrawalLimit ? formatAsset(op.withdrawal_limit.amount, withdrawalLimit.symbol, withdrawalLimit.precision) : op.withdrawal_limit.amount + "(" + op.withdrawal_limit.asset_id + ")\n" +
-                    "withdrawal_period_sec: " + op.withdrawal_period_sec + "\n" +
-                    "period_start_time: " + op.period_start_time + "\n" +
-                    "periods_until_expiration: " + op.periods_until_expiration + "\n" +
-                    "Estimated fee: " + op.fee
-                )
+                
+                let opStr = "Update witness permissions to the following? \n";
+                opStr += "withdraw_from_account: " + withdrawFromAccount ?? '' + "(" + op.withdraw_from_account + ")\n";
+                opStr += "authorized_account: " + authorizedAccount ?? '' + "(" + op.authorized_account + ")\n";
+                opStr += "permission_to_update: " + op.permission_to_update + "\n";
+                opStr += "withdrawal_limit: " + withdrawalLimit ? formatAsset(op.withdrawal_limit.amount, withdrawalLimit.symbol, withdrawalLimit.precision) : op.withdrawal_limit.amount + "(" + op.withdrawal_limit.asset_id + ")\n";
+                opStr += "withdrawal_period_sec: " + op.withdrawal_period_sec + "\n";
+                opStr += "period_start_time: " + op.period_start_time + "\n";
+                opStr += "periods_until_expiration: " + op.periods_until_expiration + "\n";
+                opStr += "Estimated fee: " + JSON.stringify(op.fee);
+                operations.push(opStr);
             } else if (opType == 27) {
                 // withdraw_permission_claim
                 let from;
@@ -2389,16 +2361,15 @@ export default class BitShares extends BlockchainAPI {
                     console.log("withdraw_permission_claim missing field");
                     return;
                 }
-
-                operations.push(
-                    "Claim the following withdrawal permission? \n" +
-                    "withdraw_permission: " + op.withdraw_permission + "\n" +
-                    "withdraw_from_account: " + from + "(" + op.withdraw_from_account + ")\n" +
-                    "withdraw_to_account: " + to + "(" + op.withdraw_to_account + ")\n" +
-                    "amount_to_withdraw: " + withdrawnAsset ? formatAsset(op.amount_to_withdraw.amount, withdrawnAsset.symbol, withdrawnAsset.precision) : op.amount_to_withdraw.amount + "(" + op.amount_to_withdraw.asset_id + ")\n" +
-                    "memo: " + op.memo + "\n" +
-                    "Estimated fee: " + op.fee
-                )
+                
+                let opStr = "Claim the following withdrawal permission? \n";
+                opStr += "withdraw_permission: " + op.withdraw_permission + "\n";
+                opStr += "withdraw_from_account: " + from ?? '' + "(" + op.withdraw_from_account + ")\n";
+                opStr += "withdraw_to_account: " + to ?? '' + "(" + op.withdraw_to_account + ")\n";
+                opStr += "amount_to_withdraw: " + withdrawnAsset ? formatAsset(op.amount_to_withdraw.amount, withdrawnAsset.symbol, withdrawnAsset.precision) : op.amount_to_withdraw.amount + "(" + op.amount_to_withdraw.asset_id + ")\n";
+                opStr += "memo: " + op.memo + "\n";
+                opStr += "Estimated fee: " + JSON.stringify(op.fee);
+                operations.push(opStr);
             } else if (opType == 28) {
                 // withdraw_permission_delete
                 let withdrawFromAccount;
@@ -2414,14 +2385,13 @@ export default class BitShares extends BlockchainAPI {
                 } catch (error) {
                     console.log(error);
                 }
-
-                operations.push(
-                    "Delete the following withdraw permission? \n" +
-                    "withdraw_from_account: " + withdrawFromAccount + "(" + op.withdraw_from_account + ")\n" +
-                    "authorized_account: " + authorizedAccount + "(" + op.authorized_account + ")\n" +
-                    "withdrawal_permission: " + op.withdrawal_permission + "\n" +
-                    "Estimated fee: " + op.fee
-                )
+                
+                let opStr = "Delete the following withdraw permission? \n";
+                opStr += "withdraw_from_account: " + withdrawFromAccount + "(" + op.withdraw_from_account + ")\n";
+                opStr += "authorized_account: " + authorizedAccount + "(" + op.authorized_account + ")\n";
+                opStr += "withdrawal_permission: " + op.withdrawal_permission + "\n";
+                opStr += "Estimated fee: " + JSON.stringify(op.fee);
+                operations.push(opStr);
             } else if (opType == 29) {
                 // committee_member_create
                 let committeeMemberAccount;
@@ -2430,13 +2400,12 @@ export default class BitShares extends BlockchainAPI {
                 } catch (error) {
                     console.log(error);
                 }
-
-                operations.push(
-                    "Create a committee member? \n" +
-                    "committee_member_account: " + committeeMemberAccount + "(" + op.committee_member_account + ")\n" +
-                    "url: " + op.url + "\n" +
-                    "Estimated fee: " + op.fee
-                )
+                
+                let opStr = "Create a committee member? \n";
+                opStr += "committee_member_account: " + committeeMemberAccount + "(" + op.committee_member_account + ")\n";
+                opStr += "url: " + op.url + "\n";
+                opStr += "Estimated fee: " + JSON.stringify(op.fee);
+                operations.push(opStr);
             } else if (opType == 30) {
                 // committee_member_update
                 let committeeMemberAccount;
@@ -2445,50 +2414,48 @@ export default class BitShares extends BlockchainAPI {
                 } catch (error) {
                     console.log(error);
                 }
-
-                operations.push(
-                    "Update the following committee member's details? \n" +
-                    "committee_member: " + op.committee_member + "\n" +
-                    "committee_member_account: " + committeeMemberAccount + "(" + op.committee_member_account + ")\n" +
-                    "new_url: " + op.new_url + "\n" +
-                    "Estimated fee: " + op.fee
-                )
+                
+                let opStr = "Update the following committee member's details? \n";
+                opStr += "committee_member" + op.committee_member + "\n";
+                opStr += "committee_member_account: " + committeeMemberAccount + "(" + op.committee_member_account + ")\n";
+                opStr += "new_url: " + op.new_url + "\n";
+                opStr += "Estimated fee: " + JSON.stringify(op.fee);
+                operations.push(opStr);
             } else if (opType == 31) {
                 // committee_member_update_global_parameters
-                operations.push(
-                    "Approve of following global parameters as a committee? \n" +
-                    "new_parameters: \n" +
-                    "   current_fees" + JSON.stringify(op.new_parameters.current_fees) + "\n" +
-                    "   block_interval: " + op.block_interval + "\n" +
-                    "   maintenance_interval: " + op.maintenance_interval + "\n" +
-                    "   maintenance_skip_slots: " + op.maintenance_skip_slots + "\n" +
-                    "   committee_proposal_review_period: " + op.committee_proposal_review_period + "\n" +
-                    "   maximum_transaction_size: " + op.maximum_transaction_size + "\n" +
-                    "   maximum_block_size: " + op.maximum_block_size + "\n" +
-                    "   maximum_time_until_expiration: " + op.maximum_time_until_expiration + "\n" +
-                    "   maximum_proposal_lifetime: " + op.maximum_proposal_lifetime + "\n" +
-                    "   maximum_asset_whitelist_authorities: " + op.maximum_asset_whitelist_authorities + "\n" +
-                    "   maximum_asset_feed_publishers: " + op.maximum_asset_feed_publishers + "\n" +
-                    "   maximum_witness_count: " + op.maximum_witness_count + "\n" +
-                    "   maximum_committee_count: " + op.maximum_committee_count + "\n" +
-                    "   maximum_authority_membership: " + op.maximum_authority_membership + "\n" +
-                    "   reserve_percent_of_fee: " + op.reserve_percent_of_fee + "\n" +
-                    "   network_percent_of_fee: " + op.network_percent_of_fee + "\n" +
-                    "   lifetime_referrer_percent_of_fee: " + op.lifetime_referrer_percent_of_fee + "\n" +
-                    "   cashback_vesting_period_seconds: " + op.cashback_vesting_period_seconds + "\n" +
-                    "   cashback_vesting_threshold: " + op.cashback_vesting_threshold + "\n" +
-                    "   count_non_member_votes: " + op.count_non_member_votes + "\n" +
-                    "   allow_non_member_whitelists: " + op.allow_non_member_whitelists + "\n" +
-                    "   witness_pay_per_block: " + op.witness_pay_per_block + "\n" +
-                    "   worker_budget_per_day: " + op.worker_budget_per_day + "\n" +
-                    "   max_predicate_opcode: " + op.max_predicate_opcode + "\n" +
-                    "   fee_liquidation_threshold: " + op.fee_liquidation_threshold + "\n" +
-                    "   accounts_per_fee_scale: " + op.accounts_per_fee_scale + "\n" +
-                    "   account_fee_scale_bitshifts: " + op.account_fee_scale_bitshifts + "\n" +
-                    "   max_authority_depth: " + op.max_authority_depth + "\n" +
-                    "   extensions: " + op.extensions ?? "[]" + "\n" +
-                    "Estimated fee: " + op.fee
-                )
+                let opStr = "Approve of following global parameters as a committee? \n";
+                opStr += "new_parameters: \n";
+                opStr += "   current_fees" + JSON.stringify(op.new_parameters.current_fees) + "\n";
+                opStr += "   block_interval: " + op.block_interval + "\n";
+                opStr += "   maintenance_interval: " + op.maintenance_interval + "\n";
+                opStr += "   maintenance_skip_slots: " + op.maintenance_skip_slots + "\n";
+                opStr += "   committee_proposal_review_period: " + op.committee_proposal_review_period + "\n";
+                opStr += "   maximum_transaction_size: " + op.maximum_transaction_size + "\n";
+                opStr += "   maximum_block_size: " + op.maximum_block_size + "\n";
+                opStr += "   maximum_time_until_expiration: " + op.maximum_time_until_expiration + "\n";
+                opStr += "   maximum_proposal_lifetime: " + op.maximum_proposal_lifetime + "\n";
+                opStr += "   maximum_asset_whitelist_authorities: " + op.maximum_asset_whitelist_authorities + "\n";
+                opStr += "   maximum_asset_feed_publishers: " + op.maximum_asset_feed_publishers + "\n";
+                opStr += "   maximum_witness_count: " + op.maximum_witness_count + "\n";
+                opStr += "   maximum_committee_count: " + op.maximum_committee_count + "\n";
+                opStr += "   maximum_authority_membership: " + op.maximum_authority_membership + "\n";
+                opStr += "   reserve_percent_of_fee: " + op.reserve_percent_of_fee + "\n";
+                opStr += "   network_percent_of_fee: " + op.network_percent_of_fee + "\n";
+                opStr += "   lifetime_referrer_percent_of_fee: " + op.lifetime_referrer_percent_of_fee + "\n";
+                opStr += "   cashback_vesting_period_seconds: " + op.cashback_vesting_period_seconds + "\n";
+                opStr += "   cashback_vesting_threshold: " + op.cashback_vesting_threshold + "\n";
+                opStr += "   count_non_member_votes: " + op.count_non_member_votes + "\n";
+                opStr += "   allow_non_member_whitelists: " + op.allow_non_member_whitelists + "\n";
+                opStr += "   witness_pay_per_block: " + op.witness_pay_per_block + "\n";
+                opStr += "   worker_budget_per_day: " + op.worker_budget_per_day + "\n";
+                opStr += "   max_predicate_opcode: " + op.max_predicate_opcode + "\n";
+                opStr += "   fee_liquidation_threshold: " + op.fee_liquidation_threshold + "\n";
+                opStr += "   accounts_per_fee_scale: " + op.accounts_per_fee_scale + "\n";
+                opStr += "   account_fee_scale_bitshifts: " + op.account_fee_scale_bitshifts + "\n";
+                opStr += "   max_authority_depth: " + op.max_authority_depth + "\n";
+                opStr += "Extensions: " + JSON.stringify(op.extensions) + "\n";
+                opStr += "Estimated fee: " + JSON.stringify(op.fee);
+                operations.push(opStr);
             } else if (opType == 32) {
                 // vesting_balance_create
                 let creator;
@@ -2527,17 +2494,16 @@ export default class BitShares extends BlockchainAPI {
                     policyRows = "  start_claim: " + policy[1].start_claim + "\n" +
                                  "  vesting_seconds: " + policy[1].vesting_seconds
                 }
-
-                operations.push(
-                    "Create the following vesting balance? \n" +
-                    "creator: " + creator + "(" + op.creator + ")\n" +
-                    "owner: "  + owner + "(" + op.owner + ")\n" +
-                    "amount: " + formatAsset(op.amount.amount, amount.symbol, amount.precision) + "(" + op.amount.asset_id + ")\n" +
-                    "policy: \n" +
-                    "  type: " + op.policy[0] > 0 ? "" : "" + "\n" +
-                        policyRows +
-                    "Estimated fee: " + op.fee
-                )
+                
+                let opStr = "Create the following vesting balance? \n";
+                opStr += "creator: " + creator + "(" + op.creator + ")\n";
+                opStr += "owner: "  + owner + "(" + op.owner + ")\n";
+                opStr += "amount: " + formatAsset(op.amount.amount, amount.symbol, amount.precision) + "(" + op.amount.asset_id + ")\n";
+                opStr += "policy: \n";
+                opStr += "  type: " + op.policy[0] > 0 ? "" : "" + "\n";
+                opStr += policyRows;
+                opStr += "Estimated fee: " + JSON.stringify(op.fee);
+                operations.push(opStr);
             } else if (opType == 33) {
                 // vesting_balance_withdraw
                 let owner;
@@ -2560,12 +2526,11 @@ export default class BitShares extends BlockchainAPI {
                     console.log("vesting_balance_withdraw: asset is null");
                     return;
                 }
-
-                operations.push(
-                    "Vesting Balance\n" +
-                    " owner: " + owner + "(" + op.owner + ")\n" +
-                    " Claim " + formatAsset(op.amount.amount, asset.symbol, asset.precision) + "(" + op.amount.asset_id + ") from vesting balance " + op.vesting_balance
-                )
+                
+                let opStr = "Vesting Balance\n";
+                opStr += " owner: " + owner + "(" + op.owner + ")\n";
+                opStr += " Claim " + formatAsset(op.amount.amount, asset.symbol, asset.precision) + "(" + op.amount.asset_id + ") from vesting balance " + op.vesting_balance;
+                operations.push(opStr);
             } else if (opType == 34) {
                 // worker_create
                 let owner;
@@ -2575,18 +2540,17 @@ export default class BitShares extends BlockchainAPI {
                   console.log(error);
                   return;
                 }
-
-                operations.push(
-                    "Create the following worker proposal? \n" +
-                    " owner: " + owner + "(" + op.owner + ")\n" +
-                    "work_begin_date: " + op.work_begin_date + "\n" +
-                    "work_end_date: " + op.work_end_date + "\n" +
-                    "daily_pay: " + op.daily_pay + "\n" +
-                    "name: " + op.name + "\n" +
-                    "url: " + op.url + "\n" +
-                    "initializer: " + JSON.stringify(op.initializer) + "\n" +
-                    "Estimated fee: " + op.fee
-                )
+                
+                let opStr = "Create the following worker proposal? \n";
+                opStr += " owner: " + owner + "(" + op.owner + ")\n";
+                opStr += "work_begin_date: " + op.work_begin_date + "\n";
+                opStr += "work_end_date: " + op.work_end_date + "\n";
+                opStr += "daily_pay: " + op.daily_pay + "\n";
+                opStr += "name: " + op.name + "\n";
+                opStr += "url: " + op.url + "\n";
+                opStr += "initializer: " + JSON.stringify(op.initializer) + "\n";
+                opStr += "Estimated fee: " + JSON.stringify(op.fee);
+                operations.push(opStr);
             } else if (opType == 35) {
                 // custom
                 let payer;
@@ -2595,15 +2559,14 @@ export default class BitShares extends BlockchainAPI {
                 } catch (error) {
                   console.log(error);
                 }
-
-                operations.push(
-                    "Custom operation: \n" +
-                    "payer: " + payer ?? '' + "(" + op.payer + ")\n" +
-                    "required_auths: " + op.required_auths + "\n" +
-                    "id: " + op.id + "\n" +
-                    "data: " + op.data + "\n" + // TODO: Convert bytes to safe format?
-                    "Estimated fee: " + op.fee
-                )
+                
+                let opStr = "Custom operation: \n";
+                opStr += "payer: " + payer ?? '' + "(" + op.payer + ")\n";
+                opStr += "required_auths: " + op.required_auths + "\n";
+                opStr += "id: " + op.id + "\n";
+                opStr += "data: " + op.data + "\n"; // TODO: Convert bytes to safe format?
+                opStr += "Estimated fee: " + JSON.stringify(op.fee);
+                operations.push(opStr);
             } else if (opType == 36) {
                 // assert
                 let feePayingAccount;
@@ -2612,15 +2575,14 @@ export default class BitShares extends BlockchainAPI {
                 } catch (error) {
                   console.log(error);
                 }
-
-                operations.push(
-                    "Assert operation: \n" +
-                    "fee_paying_account: " + feePayingAccount + "(" + op.fee_paying_account + ")\n" +
-                    "predicates: " + JSON.stringify(op.predicates) + "\n" +
-                    "required_auths: " + JSON.stringify(op.required_auths) + "\n" +
-                    "extensions: " + op.extensions ? JSON.stringify(op.extensions) : "[]" + "\n" +
-                    "Estimated fee: " + op.fee
-                )
+                
+                let opStr = "Assert operation: \n";
+                opStr += "fee_paying_account: " + feePayingAccount ?? '' + "(" + op.fee_paying_account + ")\n";
+                opStr += "predicates: " + JSON.stringify(op.predicates) + "\n";
+                opStr += "required_auths: " + JSON.stringify(op.required_auths) + "\n";
+                opStr += "extensions: " + op.extensions ? JSON.stringify(op.extensions) : "[]" + "\n";
+                opStr += "Estimated fee: " + JSON.stringify(op.fee);
+                operations.push(opStr);
             } else if (opType == 37) {
                 // balance_claim
                 let depositToAccount;
@@ -2641,15 +2603,14 @@ export default class BitShares extends BlockchainAPI {
                     console.log("balance_claim: claimedAsset is null");
                     return;
                 }
-
-                operations.push(
-                    "Claim the following balance? \n" +
-                    "deposit_to_account: " + depositToAccount + "(" + op.deposit_to_account + ")\n" +
-                    "balance_to_claim: " + op.balance_to_claim + "\n" +
-                    "balance_owner_key: " + op.balance_owner_key + "\n" +
-                    "total_claimed: " + formatAsset(op.amount.amount, claimedAsset.symbol, claimedAsset.precision) + "(" + op.amount.asset_id + ")\n" +
-                    "Estimated fee: " + op.fee
-                )
+                
+                let opStr = "Claim the following balance? \n";
+                opStr += "deposit_to_account: " + depositToAccount + "(" + op.deposit_to_account + ")\n";
+                opStr += "balance_to_claim: " + op.balance_to_claim + "\n";
+                opStr += "balance_owner_key: " + op.balance_owner_key + "\n";
+                opStr += "total_claimed: " + formatAsset(op.amount.amount, claimedAsset.symbol, claimedAsset.precision) + "(" + op.amount.asset_id + ")\n";
+                opStr += "Estimated fee: " + JSON.stringify(op.fee);
+                operations.push(opStr);
             } else if (opType == 38) {
                 // override_transfer
                 let issuer;
@@ -2684,16 +2645,15 @@ export default class BitShares extends BlockchainAPI {
                     console.log("override_transfer: overridenAsset is null");
                     return;
                 }
-
-                operations.push(
-                    "Override the following transfer? \n" +
-                    "issuer: " + issuer + "(" + op.issuer + ")\n" +
-                    "from: " + from + "(" +  op.from + ")\n" +
-                    "to: " + to + "(" +  op.to + ")\n" +
-                    "amount: " + formatAsset(op.amount.amount, overridenAsset.symbol, overridenAsset.precision) + "(" + op.amount.asset_id + ")\n" +
-                    "memo: " + op.memo + "\n" +
-                    "Estimated fee: " + op.fee
-                )
+                
+                let opStr = "Override the following transfer? \n";
+                opStr += "issuer: " + issuer + "(" + op.issuer + ")\n";
+                opStr += "from: " + from + "(" +  op.from + ")\n";
+                opStr += "to: " + to + "(" +  op.to + ")\n";
+                opStr += "amount: " + formatAsset(op.amount.amount, overridenAsset.symbol, overridenAsset.precision) + "(" + op.amount.asset_id + ")\n";
+                opStr += "memo: " + op.memo + "\n";
+                opStr += "Estimated fee: " + JSON.stringify(op.fee);
+                operations.push(opStr);
             } else if (opType == 39) {
                 // transfer_to_blind
                 let from;
@@ -2714,23 +2674,21 @@ export default class BitShares extends BlockchainAPI {
                     console.log("transfer_to_blind: assetToTransfer is null");
                     return;
                 }
-
-                operations.push(
-                    "Transfer the following to blind? \n" +
-                    "amount: " + formatAsset(op.amount.amount, assetToTransfer.symbol, assetToTransfer.precision) + "\n" +
-                    "from: " + from + "(" +  op.from + ")\n" +
-                    "blinding_factor: " + op.blinding_factor + "\n" +
-                    "outputs: " + JSON.stringify(op.outputs) + "\n" +
-                    "Estimated fee: " + op.fee
-                )
+                
+                let opStr = "Transfer the following to blind? \n";
+                opStr += "amount: " + formatAsset(op.amount.amount, assetToTransfer.symbol, assetToTransfer.precision) + "\n";
+                opStr += "from: " + from + "(" +  op.from + ")\n";
+                opStr += "blinding_factor: " + op.blinding_factor + "\n";
+                opStr += "outputs: " + JSON.stringify(op.outputs) + "\n";
+                opStr += "Estimated fee: " + JSON.stringify(op.fee);
+                operations.push(opStr);
             } else if (opType == 40) {
-                // blind_transfer
-                operations.push(
-                    "Approve the following blind transfer? \n" +
-                    "inputs: " + JSON.stringify(op.inputs) + "\n" +
-                    "outputs: " + JSON.stringify(op.outputs) + "\n" +
-                    "Estimated fee: " + op.fee
-                )
+                // blind_transfer         
+                let opStr = "Approve the following blind transfer? \n";
+                opStr += "inputs: " + JSON.stringify(op.inputs) + "\n";
+                opStr += "outputs: " + JSON.stringify(op.outputs) + "\n";
+                opStr += "Estimated fee: " + JSON.stringify(op.fee);
+                operations.push(opStr);
             } else if (opType == 41) {
                 // transfer_from_blind
                 let to;
@@ -2751,15 +2709,14 @@ export default class BitShares extends BlockchainAPI {
                     console.log("transfer_from_blind: assetToTransfer is null");
                     return;
                 }
-
-                operations.push(
-                    "Transfer from blind? \n" +
-                    "amount: " + formatAsset(op.amount.amount, assetToTransfer.symbol, assetToTransfer.precision) + "\n" +
-                    "to: " + to + "(" +  op.to + ")\n" +
-                    "blinding_factor: " + op.blinding_factor + "\n" +
-                    "inputs: " + JSON.stringify(op.inputs) + "\n" +
-                    "Estimated fee: " + op.fee
-                )
+                
+                let opStr = "Transfer from blind? \n";
+                opStr += "amount: " + formatAsset(op.amount.amount, assetToTransfer.symbol, assetToTransfer.precision) + "\n";
+                opStr += "to: " + to + "(" +  op.to + ")\n";
+                opStr += "blinding_factor: " + op.blinding_factor + "\n";
+                opStr += "inputs: " + JSON.stringify(op.inputs) + "\n";
+                opStr += "Estimated fee: " + JSON.stringify(op.fee);
+                operations.push(opStr);
             } else if (opType == 43) {
                 // asset_claim_fees
                 let issuer;
@@ -2780,14 +2737,13 @@ export default class BitShares extends BlockchainAPI {
                     console.log("asset_claim_fees: assetToClaim is null");
                     return;
                 }
-
-                operations.push(
-                    "Withdraw the fees from the following asset? \n" +
-                    "issuer: " + issuer + "(" +  op.issuer + ")\n" +
-                    "amount_to_claim: " + formatAsset(op.amount_to_claim.amount, assetToClaim.symbol, assetToClaim.precision) + "\n" +
-                    "extensions: " + JSON.stringify(op.extensions) + "\n" +
-                    "Estimated fee: " + op.fee
-                )
+                
+                let opStr = "Withdraw the fees from the following asset? \n";
+                opStr += "issuer: " + issuer + "(" +  op.issuer + ")\n";
+                opStr += "amount_to_claim: " + formatAsset(op.amount_to_claim.amount, assetToClaim.symbol, assetToClaim.precision) + "\n";
+                opStr += "extensions: " + JSON.stringify(op.extensions) + "\n";
+                opStr += "Estimated fee: " + JSON.stringify(op.fee);
+                operations.push(opStr);
             } else if (opType == 45) {
                 // bid_collateral
                 let bidder;
@@ -2815,14 +2771,13 @@ export default class BitShares extends BlockchainAPI {
                     console.log("bid_collateral: collateral or debtCovered is null");
                     return;
                 } 
-
-                operations.push(
-                    "Approve the following collateral bid? \n" +
-                    "bidder: " + bidder + "(" +  op.bidder + ")\n" +
-                    "additional_collateral: " + formatAsset(op.additional_collateral.amount, collateral.symbol, collateral.precision) + "\n" +
-                    "debt_covered: " + formatAsset(op.debt_covered.amount, debtCovered.symbol, debtCovered.precision) + "\n" +
-                    "Estimated fee: " + op.fee
-                )
+                
+                let opStr = "Approve the following collateral bid? \n";
+                opStr += "bidder: " + bidder + "(" +  op.bidder + ")\n";
+                opStr += "additional_collateral: " + formatAsset(op.additional_collateral.amount, collateral.symbol, collateral.precision) + "\n";
+                opStr += "debt_covered: " + formatAsset(op.debt_covered.amount, debtCovered.symbol, debtCovered.precision) + "\n";
+                opStr += "Estimated fee: " + JSON.stringify(op.fee);
+                operations.push(opStr);
             } else if (opType == 47) {
                 // asset_claim_pool
                 let issuer;
@@ -2843,14 +2798,13 @@ export default class BitShares extends BlockchainAPI {
                     console.log("asset_claim_pool: relevantAsset is null");
                     return;
                 }
-
-                operations.push(
-                    "Claim assets from pool? \n" +
-                    "issuer: " + issuer + "(" +  op.issuer + ")\n" +
-                    "asset_id: " + op.asset_id + "\n" +
-                    "amount_to_claim: " + formatAsset(op.amount_to_claim.amount, relevantAsset.symbol, relevantAsset.precision) + "\n" +
-                    "Estimated fee: " + op.fee
-                )
+                
+                let opStr = "Claim assets from pool? \n";
+                opStr += "issuer: " + issuer + "(" +  op.issuer + ")\n";
+                opStr += "asset_id: " + op.asset_id + "\n";
+                opStr += "amount_to_claim: " + formatAsset(op.amount_to_claim.amount, relevantAsset.symbol, relevantAsset.precision) + "\n";
+                opStr += "Estimated fee: " + JSON.stringify(op.fee);
+                operations.push(opStr);
             } else if (opType == 48) {
                 // asset_update_issuer
                 let issuer;
@@ -2878,14 +2832,13 @@ export default class BitShares extends BlockchainAPI {
                     console.log("asset_update_issuer: assetToUpdate is null");
                     return;
                 }
-
-                operations.push(
-                    "Update asset issuer? \n" +
-                    "issuer: " + issuer + "(" +  op.issuer + ")\n" +
-                    "asset_to_update: " + assetToUpdate + "(" +  op.asset_to_update + ")\n" +
-                    "new_issuer: " + new_issuer + "(" +  op.new_issuer + ")\n" +
-                    "Estimated fee: " + op.fee
-                )
+                
+                let opStr = "Update asset issuer? \n";
+                opStr += "issuer: " + issuer + "(" +  op.issuer + ")\n";
+                opStr += "asset_to_update: " + assetToUpdate + "(" +  op.asset_to_update + ")\n";
+                opStr += "new_issuer: " + new_issuer + "(" +  op.new_issuer + ")\n";
+                opStr += "Estimated fee: " + JSON.stringify(op.fee);
+                operations.push(opStr);
             } else if (opType == 49) {
                 // htlc_create
                 let from;
@@ -2913,17 +2866,16 @@ export default class BitShares extends BlockchainAPI {
                     console.log("htlc_create: htlcAsset is null");
                     return;
                 }
-
-                operations.push(
-                    "Create the following HTLC operaton? \n" +
-                    "from: " + from + "(" +  op.from + ")\n" +
-                    "to: " + to + "(" +  op.to + ")\n" +
-                    "amount: " + formatAsset(op.amount.amount, htlcAsset.symbol, htlcAsset.precision) + "\n" +
-                    "preimage_hash: " + op.preimage_hash + "\n" +
-                    "preimage_size: " + op.preimage_size + "\n" +
-                    "claim_period_seconds: " + op.claim_period_seconds + "\n" +
-                    "Estimated fee: " + op.fee
-                )
+                
+                let opStr = "Create the following HTLC operaton? \n";
+                opStr += "from: " + from + "(" +  op.from + ")\n";
+                opStr += "to: " + to + "(" +  op.to + ")\n";
+                opStr += "amount: " + formatAsset(op.amount.amount, htlcAsset.symbol, htlcAsset.precision) + "\n";
+                opStr += "preimage_hash: " + op.preimage_hash + "\n";
+                opStr += "preimage_size: " + op.preimage_size + "\n";
+                opStr += "claim_period_seconds: " + op.claim_period_seconds + "\n";
+                opStr += "Estimated fee: " + JSON.stringify(op.fee);
+                operations.push(opStr);
             } else if (opType == 50) {
                 // htlc_redeem
                 let redeemer;
@@ -2932,15 +2884,14 @@ export default class BitShares extends BlockchainAPI {
                 } catch (error) {
                   console.log(error);
                 }
-
-                operations.push(
-                    "Redeem the following HTLC operation? \n" +
-                    "htlc_id: " + op.htlc_id + "\n" +
-                    "redeemer: " + redeemer + "(" +  op.redeemer + ")\n" +
-                    "preimage: " + op.preimage + "\n" +
-                    "extensions: " + op.extensions ? JSON.stringify(op.extensions) : "[]" + "\n" +
-                    "Estimated fee: " + op.fee
-                )
+                
+                let opStr = "Redeem the following HTLC operation? \n";
+                opStr += "htlc_id: " + op.htlc_id + "\n";
+                opStr += "redeemer: " + redeemer + "(" +  op.redeemer + ")\n";
+                opStr += "preimage: " + op.preimage + "\n";
+                opStr += "extensions: " + op.extensions ? JSON.stringify(op.extensions) : "[]" + "\n";
+                opStr += "Estimated fee: " + JSON.stringify(op.fee);
+                operations.push(opStr);
             } else if (opType == 52) {
                 // htlc_extend
                 let update_issuer;
@@ -2949,16 +2900,15 @@ export default class BitShares extends BlockchainAPI {
                 } catch (error) {
                   console.log(error);
                 }
-
-                operations.push(
-                    "Approve the following HTLC extension? \n" +
-                    "htlc_id: " + op.htlc_id + "\n" +
-                    "update_issuer: " + op.update_issuer + "\n" +
-                    "update_issuer: " + update_issuer + "(" +  op.update_issuer + ")\n" +
-                    "seconds_to_add: " + op.seconds_to_add + "\n" +
-                    "extensions: " + op.extensions ? JSON.stringify(op.extensions) : "[]" + "\n" +
-                    "Estimated fee: " + op.fee
-                )
+                
+                let opStr = "Approve the following HTLC extension? \n";
+                opStr += "htlc_id: " + op.htlc_id + "\n";
+                opStr += "update_issuer: " + op.update_issuer + "\n";
+                opStr += "update_issuer: " + update_issuer + "(" +  op.update_issuer + ")\n";
+                opStr += "seconds_to_add: " + op.seconds_to_add + "\n";
+                opStr += "extensions: " + op.extensions ? JSON.stringify(op.extensions) : "[]" + "\n";
+                opStr += "Estimated fee: " + JSON.stringify(op.fee);
+                operations.push(opStr);
             } else if (opType == 54) {
                 // custom_authority_create
                 let account;
@@ -2967,19 +2917,18 @@ export default class BitShares extends BlockchainAPI {
                 } catch (error) {
                   console.log(error);
                 }
-
-                operations.push(
-                    "Create the following custom authority? \n" +
-                    "account: " + account + "(" +  op.account + ")\n" +
-                    "enabled: " + op.enabled + "\n" +
-                    "valid_from: " + op.valid_from + "\n" +
-                    "valid_to: " + op.valid_to + "\n" +
-                    "operation_type: " + op.operation_type + "\n" +
-                    "auth: " + JSON.stringify(op.auth) + "\n" +
-                    "restrictions: " + JSON.stringify(op.restrictions) + "\n" +
-                    "extensions: " + op.extensions ? JSON.stringify(op.extensions) : "[]" + "\n" +
-                    "Estimated fee: " + op.fee
-                )
+                
+                let opStr = "Create the following custom authority? \n";
+                opStr += "account: " + account + "(" +  op.account + ")\n";
+                opStr += "enabled: " + op.enabled + "\n";
+                opStr += "valid_from: " + op.valid_from + "\n";
+                opStr += "valid_to: " + op.valid_to + "\n";
+                opStr += "operation_type: " + op.operation_type + "\n";
+                opStr += "auth: " + JSON.stringify(op.auth) + "\n";
+                opStr += "restrictions: " + JSON.stringify(op.restrictions) + "\n";
+                opStr += "extensions: " + op.extensions ? JSON.stringify(op.extensions) : "[]" + "\n";
+                opStr += "Estimated fee: " + JSON.stringify(op.fee);
+                operations.push(opStr);
             } else if (opType == 55) {
                 // custom_authority_update
                 let account;
@@ -2988,20 +2937,19 @@ export default class BitShares extends BlockchainAPI {
                 } catch (error) {
                   console.log(error);
                 }
-
-                operations.push(
-                    "Update the following custom authority? \n" +
-                    "account: " + account + "(" +  op.account + ")\n" +
-                    "authority_to_update: " + op.authority_to_update + "\n" +
-                    "new_enabled: " + op.new_enabled + "\n" +
-                    "new_valid_from: " + op.new_valid_from + "\n" +
-                    "new_valid_to: " + op.new_valid_to + "\n" +
-                    "new_auth: " + JSON.stringify(op.new_auth) + "\n" +
-                    "restrictions_to_remove: " + JSON.stringify(op.restrictions_to_remove) + "\n" +
-                    "restrictions_to_add: " + JSON.stringify(op.restrictions_to_add) + "\n" +
-                    "extensions: " + op.extensions ? JSON.stringify(op.extensions) : "[]" + "\n" +
-                    "Estimated fee: " + op.fee
-                )
+                
+                let opStr = "Update the following custom authority? \n";
+                opStr += "account: " + account + "(" +  op.account + ")\n";
+                opStr += "authority_to_update: " + op.authority_to_update + "\n";
+                opStr += "new_enabled: " + op.new_enabled + "\n";
+                opStr += "new_valid_from: " + op.new_valid_from + "\n";
+                opStr += "new_valid_to: " + op.new_valid_to + "\n";
+                opStr += "new_auth: " + JSON.stringify(op.new_auth) + "\n";
+                opStr += "restrictions_to_remove: " + JSON.stringify(op.restrictions_to_remove) + "\n";
+                opStr += "restrictions_to_add: " + JSON.stringify(op.restrictions_to_add) + "\n";
+                opStr += "extensions: " + op.extensions ? JSON.stringify(op.extensions) : "[]" + "\n";
+                opStr += "Estimated fee: " + JSON.stringify(op.fee);
+                operations.push(opStr);
             } else if (opType == 56) {
                 // custom_authority_delete
                 let account;
@@ -3010,14 +2958,13 @@ export default class BitShares extends BlockchainAPI {
                 } catch (error) {
                   console.log(error);
                 }
-
-                operations.push(
-                    "Delete the following custom authority? \n" +
-                    "account: " + account + "(" +  op.account + ")\n" +
-                    "authority_to_delete: " + op.authority_to_delete + "\n" +
-                    "extensions: " + op.extensions ? JSON.stringify(op.extensions) : "[]" + "\n" +
-                    "Estimated fee: " + op.fee
-                )
+                
+                let opStr = "Delete the following custom authority? \n";
+                opStr += "account: " + account + "(" +  op.account + ")\n";
+                opStr += "authority_to_delete: " + op.authority_to_delete + "\n";
+                opStr += "extensions: " + op.extensions ? JSON.stringify(op.extensions) : "[]" + "\n";
+                opStr += "Estimated fee: " + JSON.stringify(op.fee);
+                operations.push(opStr);
             } else if (opType == 57) {
                 // ticket_create
                 let account;
@@ -3038,15 +2985,14 @@ export default class BitShares extends BlockchainAPI {
                     console.log("ticket_create: ticketAsset is null");
                     return;
                 }
-
-                operations.push(
-                    "Create the following ticket? \n" +
-                    "account: " + account + "(" +  op.account + ")\n" +
-                    "target_type: " + op.target_type + "\n" +
-                    "amount: " + formatAsset(op.amount.amount, ticketAsset.symbol, ticketAsset.precision) + "\n" +
-                    "extensions: " + op.extensions ? JSON.stringify(op.extensions) : "[]" + "\n" +
-                    "Estimated fee: " + op.fee
-                )
+                
+                let opStr = "Create the following ticket? \n";
+                opStr += "account: " + account + "(" +  op.account + ")\n";
+                opStr += "target_type: " + op.target_type + "\n";
+                opStr += "amount: " + formatAsset(op.amount.amount, ticketAsset.symbol, ticketAsset.precision) + "\n";
+                opStr += "extensions: " + op.extensions ? JSON.stringify(op.extensions) : "[]" + "\n";
+                opStr += "Estimated fee: " + JSON.stringify(op.fee);
+                operations.push(opStr);
             } else if (opType == 58) {
                 // ticket_update
                 let account;
@@ -3067,16 +3013,14 @@ export default class BitShares extends BlockchainAPI {
                     console.log("ticket_update: ticketAsset is null");
                     return;
                 }
-
-                operations.push(
-                    "Update the following ticket? \n" +
-                    "ticket: " + op.ticket + "\n" +
-                    "account: " + account + "(" +  op.account + ")\n" +
-                    "target_type: " + op.target_type + "\n" +
-                    "amount_for_new_target: " + formatAsset(op.amount_for_new_target.amount, ticketAsset.symbol, ticketAsset.precision) + "\n" +
-                    "extensions: " + op.extensions ? JSON.stringify(op.extensions) : "[]" + "\n" +
-                    "Estimated fee: " + op.fee
-                )
+                
+                let opStr = "Update the following ticket? \n";
+                opStr += "ticket: " + op.ticket + "\n";
+                opStr += "account: " + account + "(" +  op.account + ")\n";
+                opStr += "target_type: " + op.target_type + "\n";
+                opStr += "amount_for_new_target: " + formatAsset(op.amount_for_new_target.amount, ticketAsset.symbol, ticketAsset.precision) + "\n";
+                opStr += "extensions: " + op.extensions ? JSON.stringify(op.extensions) : "[]" + "\n";
+                operations.push(opStr);
             } else if (opType == 59) {
                 // liquidity_pool_create
                 let account;
@@ -3111,18 +3055,17 @@ export default class BitShares extends BlockchainAPI {
                     console.log("liquidity_pool_create: assetA, assetB or shareAsset is null");
                     return;
                 }
-
-                operations.push(
-                    "Create a liquidity pool with the following details? \n" +
-                    "account: " + account + "(" +  op.account + ")\n" +
-                    "asset_a: " + assetA.symbol + "(" + op.asset_a + ")\n" +
-                    "asset_b: " + assetB.symbol + "(" + op.asset_b + ")\n" +
-                    "share_asset: " + shareAsset.symbol + "(" + op.share_asset + ")\n" +
-                    "taker_fee_percent: " + op.taker_fee_percent + "\n" +
-                    "withdrawal_fee_percent: " + op.withdrawal_fee_percent + "\n" +
-                    "extensions: " + op.extensions ? JSON.stringify(op.extensions) : "[]" + "\n" +
-                    "Estimated fee: " + op.fee
-                )
+                
+                let opStr = "Create a liquidity pool with the following details? \n";
+                opStr += "account: " + account + "(" +  op.account + ")\n";
+                opStr += "asset_a: " + assetA.symbol + "(" + op.asset_a + ")\n";
+                opStr += "asset_b: " + assetB.symbol + "(" + op.asset_b + ")\n";
+                opStr += "share_asset: " + shareAsset.symbol + "(" + op.share_asset + ")\n";
+                opStr += "taker_fee_percent: " + op.taker_fee_percent + "\n";
+                opStr += "withdrawal_fee_percent: " + op.withdrawal_fee_percent + "\n";
+                opStr += "extensions: " + op.extensions ? JSON.stringify(op.extensions) : "[]" + "\n";
+                opStr += "Estimated fee: " + JSON.stringify(op.fee);
+                operations.push(opStr);
             } else if (opType == 60) {
                 // liquidity_pool_delete
                 let account;
@@ -3131,14 +3074,13 @@ export default class BitShares extends BlockchainAPI {
                 } catch (error) {
                   console.log(error);
                 }
-
-                operations.push(
-                    "Delete the following liquidity pool? \n" +
-                    "account: " + account ?? '' + "(" +  op.account + ")\n" +
-                    "pool: " + op.pool + "\n" +
-                    "extensions: " + op.extensions ? JSON.stringify(op.extensions) : "[]" + "\n" +
-                    "Estimated fee: " + op.fee
-                )
+                
+                let opStr = "Delete the following liquidity pool? \n";
+                opStr += "account: " + account ?? '' + "(" +  op.account + ")\n";
+                opStr += "pool: " + op.pool + "\n";
+                opStr += "extensions: " + op.extensions ? JSON.stringify(op.extensions) : "[]" + "\n";
+                opStr += "Estimated fee: " + JSON.stringify(op.fee);
+                operations.push(opStr);
             } else if (opType == 61) {
                 // liquidity_pool_deposit
                 let account;
@@ -3166,16 +3108,15 @@ export default class BitShares extends BlockchainAPI {
                     console.log("liquidity_pool_deposit: amountA or amountB is null");
                     return;
                 }
-
-                operations.push(
-                    "Deposit into the following liquidity pool? \n" +
-                    "account: " + account ?? '' + "(" +  op.account + ")\n" +
-                    "pool: " + op.pool + "\n" +
-                    "amount_a: " + formatAsset(op.amount_a.amount, amountA.symbol, amountA.precision) + "\n" +
-                    "amount_b: " + formatAsset(op.amount_b.amount, amountB.symbol, amountB.precision) + "\n" +
-                    "extensions: " + op.extensions ? JSON.stringify(op.extensions) : "[]" + "\n" +
-                    "Estimated fee: " + op.fee
-                )
+                
+                let opStr = "Deposit into the following liquidity pool? \n";
+                opStr += "account: " + account ?? '' + "(" +  op.account + ")\n";
+                opStr += "pool: " + op.pool + "\n";
+                opStr += "amount_a: " + formatAsset(op.amount_a.amount, amountA.symbol, amountA.precision) + "\n";
+                opStr += "amount_b: " + formatAsset(op.amount_b.amount, amountB.symbol, amountB.precision) + "\n";
+                opStr += "extensions: " + op.extensions ? JSON.stringify(op.extensions) : "[]" + "\n";
+                opStr += "Estimated fee: " + JSON.stringify(op.fee);
+                operations.push(opStr);
             } else if (opType == 62) {
                 // liquidity_pool_withdraw
                 let account;
@@ -3196,15 +3137,14 @@ export default class BitShares extends BlockchainAPI {
                     console.log("liquidity_pool_withdraw: shareAsset is null");
                     return;
                 }
-
-                operations.push(
-                    "Withdraw from the following liquidity pool? \n" +
-                    "account: " + account ?? '' + "(" +  op.account + ")\n" +
-                    "pool: " + op.pool + "\n" +
-                    "share_amount: " + formatAsset(op.share_amount.amount, shareAsset.symbol, shareAsset.precision) + "\n" +
-                    "extensions: " + op.extensions ? JSON.stringify(op.extensions) : "[]" + "\n" +
-                    "Estimated fee: " + op.fee
-                )
+                
+                let opStr = "Withdraw from the following liquidity pool? \n";
+                opStr += "account: " + account ?? '' + "(" +  op.account + ")\n";
+                opStr += "pool: " + op.pool + "\n";
+                opStr += "share_amount: " + formatAsset(op.share_amount.amount, shareAsset.symbol, shareAsset.precision) + "\n";
+                opStr += "extensions: " + op.extensions ? JSON.stringify(op.extensions) : "[]" + "\n";
+                opStr += "Estimated fee: " + JSON.stringify(op.fee);
+                operations.push(opStr);
             } else if (opType == 63) {
                 // liquidity_pool_exchange
                 let account;
@@ -3232,16 +3172,15 @@ export default class BitShares extends BlockchainAPI {
                     console.log("liquidity_pool_exchange: soldAsset or receivedAsset is null");
                     return;
                 }
-
-                operations.push(
-                    "Approve of the following liquidity pool exchange? \n" +
-                    "account: " + account ?? '' + "(" +  op.account + ")\n" +
-                    "pool: " + op.pool + "\n" +
-                    "amount_to_sell: " + formatAsset(op.amount_to_sell.amount, soldAsset.symbol, soldAsset.precision) + "\n" +
-                    "min_to_receive: " + formatAsset(op.min_to_receive.amount, receivedAsset.symbol, receivedAsset.precision) + "\n" +
-                    "extensions: " + op.extensions ? JSON.stringify(op.extensions) : "[]" + "\n" +
-                    "Estimated fee: " + op.fee
-                )
+                
+                let opStr = "Approve of the following liquidity pool exchange? \n";
+                opStr += "account: " + account ?? '' + "(" +  op.account + ")\n";
+                opStr += "pool: " + op.pool + "\n";
+                opStr += "amount_to_sell: " + formatAsset(op.amount_to_sell.amount, soldAsset.symbol, soldAsset.precision) + "\n";
+                opStr += "min_to_receive: " + formatAsset(op.min_to_receive.amount, receivedAsset.symbol, receivedAsset.precision) + "\n";
+                opStr += "extensions: " + op.extensions ? JSON.stringify(op.extensions) : "[]" + "\n";
+                opStr += "Estimated fee: " + JSON.stringify(op.fee);
+                operations.push(opStr);
             } else if (opType == 64) {
                 // samet_fund_create
                 let ownerAccount;
@@ -3250,16 +3189,15 @@ export default class BitShares extends BlockchainAPI {
                 } catch (error) {
                   console.log(error);
                 }
-
-                operations.push(
-                    "Approve of the following samet fund creation? \n" +
-                    "owner_account: " + ownerAccount ?? '' + "(" +  op.owner_account + ")\n" +
-                    "asset_type: " + op.asset_type + "\n" +
-                    "balance: " + op.balance + "\n" +
-                    "fee_rate: " + op.fee_rate + "\n" +
-                    "extensions: " + op.extensions ? JSON.stringify(op.extensions) : "[]" + "\n" +
-                    "Estimated fee: " + op.fee
-                )
+                
+                let opStr = "Approve of the following samet fund creation? \n";
+                opStr += "owner_account: " + ownerAccount ?? '' + "(" +  op.owner_account + ")\n";
+                opStr += "asset_type: " + op.asset_type + "\n";
+                opStr += "balance: " + op.balance + "\n";
+                opStr += "fee_rate: " + op.fee_rate + "\n";
+                opStr += "extensions: " + op.extensions ? JSON.stringify(op.extensions) : "[]" + "\n";
+                opStr += "Estimated fee: " + JSON.stringify(op.fee);
+                operations.push(opStr);
             } else if (opType == 65) {
                 // samet_fund_delete
                 let ownerAccount;
@@ -3268,14 +3206,13 @@ export default class BitShares extends BlockchainAPI {
                 } catch (error) {
                   console.log(error);
                 }
-
-                operations.push(
-                    "Deleting the following samet fund \n" +
-                    "owner_account: " + ownerAccount ?? '' + "(" +  op.owner_account + ")\n" +
-                    "fund_id: " + op.fund_id + "\n" +
-                    "extensions: " + op.extensions ? JSON.stringify(op.extensions) : "[]" + "\n" +
-                    "Estimated fee: " + op.fee
-                )
+                
+                let opStr = "Deleting the following samet fund \n";
+                opStr += "owner_account: " + ownerAccount ?? '' + "(" +  op.owner_account + ")\n";
+                opStr += "fund_id: " + op.fund_id + "\n";
+                opStr += "extensions: " + op.extensions ? JSON.stringify(op.extensions) : "[]" + "\n";
+                opStr += "Estimated fee: " + JSON.stringify(op.fee);
+                operations.push(opStr);
             } else if (opType == 66) {
                 // samet_fund_update
                 let ownerAccount;
@@ -3293,16 +3230,15 @@ export default class BitShares extends BlockchainAPI {
                       console.log(error);
                     }
                 }
-
-                operations.push(
-                    "Update the following samet fund? \n" +
-                    "owner_account: " + ownerAccount ?? '' + "(" +  op.owner_account + ")\n" +
-                    "fund_id: " + op.fund_id + "\n" +
-                    "delta_amount: " + deltaAmount ? formatAsset(op.delta_amount.amount, deltaAmount.symbol, deltaAmount.precision) : '{}' + "\n" +
-                    "new_fee_rate: " + op.new_fee_rate ?? '' + "\n" +
-                    "extensions: " + op.extensions ? JSON.stringify(op.extensions) : "[]" + "\n" +
-                    "Estimated fee: " + op.fee
-                )
+                
+                let opStr = "Update the following samet fund? \n"
+                opStr += "owner_account: " + ownerAccount ?? '' + "(" +  op.owner_account + ")\n"
+                opStr += "fund_id: " + op.fund_id + "\n"
+                opStr += "delta_amount: " + deltaAmount ? formatAsset(op.delta_amount.amount, deltaAmount.symbol, deltaAmount.precision) : '{}' + "\n"
+                opStr += "new_fee_rate: " + op.new_fee_rate ?? '' + "\n"
+                opStr += "extensions: " + op.extensions ? JSON.stringify(op.extensions) : "[]" + "\n"
+                opStr += "Estimated fee: " + JSON.stringify(op.fee)
+                operations.push(opStr);
             } else if (opType == 67) {
                 // samet_fund_borrow
                 let borrower;
@@ -3323,15 +3259,14 @@ export default class BitShares extends BlockchainAPI {
                     console.log("samet_fund_borrow: borrowAmount is null");
                     return;
                 }
-
-                operations.push(
-                    "Borrow from the folling samet fund? \n" +
-                    "borrower: " + borrower ?? '' + "(" + op.borrower + ")\n" +
-                    "fund_id: " + op.fund_id + "\n" +
-                    "borrow_amount: " + formatAsset(op.borrow_amount.amount, borrowAmount.symbol, borrowAmount.precision) + "\n" +
-                    "extensions: " + op.extensions ? JSON.stringify(op.extensions) : "[]" + "\n" +
-                    "Estimated fee: " + op.fee
-                )
+                
+                let opStr = "Borrow from the following samet fund? \n"
+                opStr += "borrower: " + borrower ?? '' + "(" + op.borrower + ")\n"
+                opStr += "fund_id: " + op.fund_id + "\n"
+                opStr += "borrow_amount: " + formatAsset(op.borrow_amount.amount, borrowAmount.symbol, borrowAmount.precision) + "\n"
+                opStr += "extensions: " + op.extensions ? JSON.stringify(op.extensions) : "[]" + "\n"
+                opStr += "Estimated fee: " + JSON.stringify(op.fee);
+                operations.push(opStr);
             } else if (opType == 68) {
                 // samet_fund_repay
                 let account;
@@ -3359,16 +3294,15 @@ export default class BitShares extends BlockchainAPI {
                     console.log("samet_fund_repay: repayAmount or fundFee is null");
                     return;
                 }
-
-                operations.push(
-                    "Repay the following samet fund? \n" +
-                    "account: " + account + "(" + op.account + ")\n" +
-                    "fund_id: " + op.fund_id + "\n" +
-                    "repay_amount: " + formatAsset(op.repay_amount.amount, repayAmount.symbol, repayAmount.precision) + "\n" +
-                    "fund_fee: " + formatAsset(op.fund_fee.amount, fundFee.symbol, fundFee.precision) + "\n" +
-                    "extensions: " + op.extensions ? JSON.stringify(op.extensions) : "[]" + "\n" +
-                    "Estimated fee: " + op.fee
-                )
+                
+                let opStr = "Repay the following samet fund? \n";
+                opStr += "account: " + account ?? '' + "(" + op.account + ")\n";
+                opStr += "fund_id: " + op.fund_id + "\n";
+                opStr += "repay_amount: " + formatAsset(op.repay_amount.amount, repayAmount.symbol, repayAmount.precision) + "\n";
+                opStr += "fund_fee: " + formatAsset(op.fund_fee.amount, fundFee.symbol, fundFee.precision) + "\n";
+                opStr += "extensions: " + op.extensions ? JSON.stringify(op.extensions) : "[]" + "\n";
+                opStr += "Estimated fee: " + JSON.stringify(op.fee);
+                operations.push(opStr);
             } else if (opType == 69) {
                 // credit_offer_create
                 let ownerAccount;
@@ -3377,22 +3311,21 @@ export default class BitShares extends BlockchainAPI {
                 } catch (error) {
                   console.log(error);
                 }
-
-                operations.push(
-                    "Approve the creation of the following credit offer? \n" +
-                    "owner_account: " + ownerAccount + "(" + op.owner_account + ")\n" +
-                    "asset_type: " + op.asset_type + "\n" +
-                    "balance: " + op.balance + "\n" +
-                    "fee_rate: " + op.fee_rate + "\n" +
-                    "max_duration_seconds: " + op.max_duration_seconds + "\n" +
-                    "min_deal_amount: " + op.min_deal_amount + "\n" +
-                    "enabled: " + op.enabled + "\n" +
-                    "auto_disable_time: " + op.auto_disable_time + "\n" +
-                    "acceptable_collateral: " + JSON.stringify(op.acceptable_collateral) + "\n" +
-                    "acceptable_borrowers: " + JSON.stringify(op.acceptable_borrowers) + "\n" +
-                    "extensions: " + op.extensions ? JSON.stringify(op.extensions) : "[]" + "\n" +
-                    "Estimated fee: " + op.fee
-                )
+                
+                let opStr = "Approve the creation of the following credit offer? \n";
+                opStr += "owner_account: " + ownerAccount + "(" + op.owner_account + ")\n";
+                opStr += "asset_type: " + op.asset_type + "\n";
+                opStr += "balance: " + op.balance + "\n";
+                opStr += "fee_rate: " + op.fee_rate + "\n";
+                opStr += "max_duration_seconds: " + op.max_duration_seconds + "\n";
+                opStr += "min_deal_amount: " + op.min_deal_amount + "\n";
+                opStr += "enabled: " + op.enabled + "\n";
+                opStr += "auto_disable_time: " + op.auto_disable_time + "\n";
+                opStr += "acceptable_collateral: " + JSON.stringify(op.acceptable_collateral) + "\n";
+                opStr += "acceptable_borrowers: " + JSON.stringify(op.acceptable_borrowers) + "\n";
+                opStr += "extensions: " + op.extensions ? JSON.stringify(op.extensions) : "[]" + "\n";
+                opStr += "Estimated fee: " + JSON.stringify(op.fee);
+                operations.push(opStr);
             } else if (opType == 70) {
                 // credit_offer_delete
                 let ownerAccount;
@@ -3401,14 +3334,13 @@ export default class BitShares extends BlockchainAPI {
                 } catch (error) {
                   console.log(error);
                 }
-
-                operations.push(
-                    "Delete the following credit offer? \n" +
-                    "owner_account: " + ownerAccount + "(" + op.owner_account + ")\n" +
-                    "offer_id: " + op.offer_id + "\n" +
-                    "extensions: " + op.extensions ? JSON.stringify(op.extensions) : "[]" + "\n" +
-                    "Estimated fee: " + op.fee
-                )
+                
+                let opStr = "Delete the following credit offer? \n";
+                opStr += "owner_account: " + ownerAccount + "(" + op.owner_account + ")\n";
+                opStr += "offer_id: " + op.offer_id + "\n";
+                opStr += "extensions: " + op.extensions ? JSON.stringify(op.extensions) : "[]" + "\n";
+                opStr += "Estimated fee: " + JSON.stringify(op.fee);
+                operations.push(opStr);
             } else if (opType == 71) {
                 // credit_offer_update
                 let ownerAccount;
@@ -3431,22 +3363,21 @@ export default class BitShares extends BlockchainAPI {
                     console.log("credit_offer_update: deltaAmount is null");
                     return;
                 }
-
-                operations.push(
-                    "Update the following credit offer? \n" +
-                    "owner_account: " + ownerAccount + "(" + op.owner_account + ")\n" +
-                    "offer_id: " + op.offer_id + "\n" +
-                    "delta_amount: " + formatAsset(op.delta_amount.amount, deltaAmount.symbol, deltaAmount.precision) + "\n" +
-                    "fee_rate: " + op.fee_rate + "\n" +
-                    "max_duration_seconds: " + op.max_duration_seconds + "\n" +
-                    "min_deal_amount: " + op.min_deal_amount + "\n" +
-                    "enabled: " + op.enabled + "\n" +
-                    "auto_disable_time: " + op.auto_disable_time + "\n" +
-                    "acceptable_collateral: " + JSON.stringify(op.acceptable_collateral) + "\n" +
-                    "acceptable_borrowers: " + JSON.stringify(op.acceptable_borrowers) + "\n" +
-                    "extensions: " + op.extensions ? JSON.stringify(op.extensions) : "[]" + "\n" +
-                    "Estimated fee: " + op.fee
-                )
+                
+                let opStr = "Update the following credit offer? \n";
+                opStr += "owner_account: " + ownerAccount + "(" + op.owner_account + ")\n";
+                opStr += "offer_id: " + op.offer_id + "\n";
+                opStr += "delta_amount: " + formatAsset(op.delta_amount.amount, deltaAmount.symbol, deltaAmount.precision) + "\n";
+                opStr += "fee_rate: " + op.fee_rate + "\n";
+                opStr += "max_duration_seconds: " + op.max_duration_seconds + "\n";
+                opStr += "min_deal_amount: " + op.min_deal_amount + "\n";
+                opStr += "enabled: " + op.enabled + "\n";
+                opStr += "auto_disable_time: " + op.auto_disable_time + "\n";
+                opStr += "acceptable_collateral: " + JSON.stringify(op.acceptable_collateral) + "\n";
+                opStr += "acceptable_borrowers: " + JSON.stringify(op.acceptable_borrowers) + "\n";
+                opStr += "extensions: " + op.extensions ? JSON.stringify(op.extensions) : "[]" + "\n";
+                opStr += "Estimated fee: " + JSON.stringify(op.fee);
+                operations.push(opStr);
             } else if (opType == 72) {
                 // credit_offer_accept
                 let borrower;
@@ -3474,18 +3405,17 @@ export default class BitShares extends BlockchainAPI {
                     console.log("credit_offer_accept: borrowAmount or collateral is null");
                     return;
                 }
-
-                operations.push(
-                    "Approve of the following credit offer? \n" +
-                    "borrower: " + borrower + "(" + op.borrower + ")\n" +
-                    "offer_id: " + op.offer_id + "\n" +
-                    "borrow_amount: " + formatAsset(op.borrow_amount.amount, borrowAmount.symbol, borrowAmount.precision) + "\n" +
-                    "collateral: " + formatAsset(op.collateral.amount, collateral.symbol, collateral.precision) + "\n" +
-                    "max_fee_rate: " + op.max_fee_rate + "\n" +
-                    "min_duration_seconds: " + op.min_duration_seconds + "\n" +
-                    "extensions: " + op.extensions ? JSON.stringify(op.extensions) : "[]" + "\n" +
-                    "Estimated fee: " + op.fee
-                )
+                
+                let opStr = "Approve of the following credit offer? \n";
+                opStr += "borrower: " + borrower + "(" + op.borrower + ")\n";
+                opStr += "offer_id: " + op.offer_id + "\n";
+                opStr += "borrow_amount: " + formatAsset(op.borrow_amount.amount, borrowAmount.symbol, borrowAmount.precision) + "\n";
+                opStr += "collateral: " + formatAsset(op.collateral.amount, collateral.symbol, collateral.precision) + "\n";
+                opStr += "max_fee_rate: " + op.max_fee_rate + "\n";
+                opStr += "min_duration_seconds: " + op.min_duration_seconds + "\n";
+                opStr += "extensions: " + op.extensions ? JSON.stringify(op.extensions) : "[]" + "\n";
+                opStr += "Estimated fee: " + JSON.stringify(op.fee);
+                operations.push(opStr);
             } else if (opType == 73) {
                 // credit_deal_repay
                 let account;
@@ -3513,16 +3443,15 @@ export default class BitShares extends BlockchainAPI {
                     console.log("credit_deal_repay: repayAmount or creditFee is null");
                     return;
                 }
-
-                operations.push(
-                    "Repay the following credit deal? \n" +
-                    "account: " + account + "(" + op.account + ")\n" +
-                    "deal_id: " + op.deal_id + "\n" +
-                    "repay_amount: " + formatAsset(op.repay_amount.amount, repayAmount.symbol, repayAmount.precision) + "\n" +
-                    "credit_fee: " + formatAsset(op.credit_fee.amount, creditFee.symbol, creditFee.precision) + "\n" +
-                    "extensions: " + op.extensions ? JSON.stringify(op.extensions) : "[]" + "\n" +
-                    "Estimated fee: " + op.fee
-                )
+                
+                let opStr = "Repay the following credit deal? \n";
+                opStr += "account: " + account + "(" + op.account + ")\n";
+                opStr += "deal_id: " + op.deal_id + "\n";
+                opStr += "repay_amount: " + formatAsset(op.repay_amount.amount, repayAmount.symbol, repayAmount.precision) + "\n";
+                opStr += "credit_fee: " + formatAsset(op.credit_fee.amount, creditFee.symbol, creditFee.precision) + "\n";
+                opStr += "extensions: " + op.extensions ? JSON.stringify(op.extensions) : "[]" + "\n";
+                opStr += "Estimated fee: " + JSON.stringify(op.fee);
+                operations.push(opStr);
             }
         }
 
