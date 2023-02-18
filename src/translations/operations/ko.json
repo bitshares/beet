@@ -5,10 +5,10 @@
     "link": {
       "title": "계정 연결 요청",
       "account_select": "계정 선택",
-      "account_missing": "요청한 계정이 이 비트 지갑에 없습니다.",
+      "account_missing": "요청한 계정이 이 지갑에 없습니다.",
       "request": "'{origin}'의 '{appName}' 애플리케이션이 {chain} 계정에 대한 액세스를 요청하고 있습니다.",
       "request_fresh": "응용 프로그램은 아래 목록에 표시된 대로 이전에 이미 {chain} 계정을 연결했습니다.",
-      "request_tooltip": "응용 프로그램은 귀하의 계정 세부 정보(이름 및 ID)와 Beet에 대한 링크를 수신합니다.",
+      "request_tooltip": "애플리케이션은 귀하의 계정 세부 정보(이름 및 ID)를 수신하고 지갑 링크를 설정합니다.",
       "request_cta": "제공할 계정을 선택합니다.",
       "accept_btn": "허용하다",
       "reject_btn": "부인하다",
@@ -23,7 +23,7 @@
     "account_id": {
       "title": "계정 정보 요청",
       "request": "앱: '{origin}'의 '{appName}'이 연결된 ID(계정 ID)에 대한 액세스를 요청하고 있습니다.",
-      "request_tooltip": "기본적으로 Beet은 익명 링크를 제공합니다. ",
+      "request_tooltip": "기본적으로 익명 링크가 제공됩니다. ",
       "accept_btn": "허용하다",
       "reject_btn": "부인하다"
     },
@@ -77,31 +77,31 @@
       "BTS": {
         "getAccount": {
           "method": "getAccount",
-          "tooltip": "Beet에게 블록체인 계정 세부 정보를 요청하십시오."
+          "tooltip": "지갑에 블록체인 계정 세부 정보를 요청합니다."
         },
         "requestSignature": {
           "method": "요청서명",
-          "tooltip": "Beet에게 블록체인 서명 요청"
+          "tooltip": "지갑에 블록체인 서명 요청"
         },
         "injectedCall": {
           "method": "주입된 호출",
-          "tooltip": "비트는 주입된 블록체인 작업을 처리합니다."
+          "tooltip": "주입된 블록체인 작업을 처리하도록 지갑에 요청"
         },
         "voteFor": {
           "method": "투표하다",
-          "tooltip": "사탕무 처리 블록 체인 투표"
+          "tooltip": "블록체인 투표 수행"
         },
         "signMessage": {
           "method": "기호메시지",
-          "tooltip": "사탕무는 메시지에 서명"
+          "tooltip": "블록체인 기반 메시지 서명"
         },
         "signNFT": {
           "method": "서명NFT",
-          "tooltip": "사탕무는 NFT에 서명합니다."
+          "tooltip": "NFT 콘텐츠 서명"
         },
         "verifyMessage": {
           "method": "verifyMessage",
-          "tooltip": "사탕무는 메시지를 확인"
+          "tooltip": "블록체인 기반 서명 메시지 확인"
         },
         "transfer": {
           "method": "옮기다",
@@ -109,7 +109,7 @@
         },
         "limit_order_create": {
           "method": "지정가 주문 생성",
-          "tooltip": "특정 시점까지 지정된 환율로 자산의 양을 매도하겠다는 제안"
+          "tooltip": "특정 시간까지 지정된 환율로 자산의 양을 매도하겠다는 제안"
         },
         "limit_order_cancel": {
           "method": "지정가 주문 취소",
@@ -176,7 +176,7 @@
           "tooltip": "블록체인 운영 제안 업데이트"
         },
         "proposal_delete": {
-          "method": "제안서 삭제",
+          "method": "제안 삭제",
           "tooltip": "블록체인 운영 제안 삭제"
         },
         "withdraw_permission_create": {
@@ -256,16 +256,16 @@
           "tooltip": "자산 발행자를 새 관리자 계정으로 업데이트합니다."
         },
         "htlc_create": {
-          "method": "HTLC 생성",
-          "tooltip": "HTLC 작업 만들기"
+          "method": "해시 시간 잠긴 계약 생성",
+          "tooltip": "Hash Time Locked Contract 작업 생성"
         },
         "htlc_redeem": {
-          "method": "HTLC 교환",
-          "tooltip": "HTLC 작업의 콘텐츠 사용"
+          "method": "해시 시간 잠긴 계약 상환",
+          "tooltip": "Hash Time Locked Contract 작업의 내용을 상환합니다."
         },
         "htlc_extend": {
-          "method": "HTLC 확장",
-          "tooltip": "HTLC 작업 기간 연장"
+          "method": "해시 시간 잠긴 계약 연장",
+          "tooltip": "Hash Time Locked Contract 작업 기간 연장"
         },
         "custom_authority_create": {
           "method": "커스텀 권한 생성",
@@ -325,7 +325,7 @@
         },
         "samt_fund_repay": {
           "method": "SameT 자금 상환",
-          "tooltip": "SameT 펀드로 부채 상환."
+          "tooltip": "SameT 펀드로 부채를 상환하십시오."
         },
         "credit_offer_create": {
           "method": "신용 제공 생성",

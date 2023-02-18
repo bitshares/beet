@@ -5,10 +5,10 @@
     "link": {
       "title": "アカウント リンクのリクエスト",
       "account_select": "アカウント選択",
-      "account_missing": "要求されたアカウントがこの Beet ウォレットにありません。",
+      "account_missing": "要求されたアカウントがこのウォレットにありません。",
       "request": "「{origin}」のアプリケーション「{appName}」が {chain} アカウントへのアクセスをリクエストしています。",
       "request_fresh": "以下のリストでマークされているように、アプリケーションはすでに {chain} アカウントをリンクしています。",
-      "request_tooltip": "アプリケーションは、アカウントの詳細 (名前と ID) と Beet へのリンクを受け取ります。",
+      "request_tooltip": "アプリケーションはアカウントの詳細 (名前と ID) を受け取り、ウォレット リンクを確立します。",
       "request_cta": "提供するアカウントを選択します。",
       "accept_btn": "許可する",
       "reject_btn": "拒否",
@@ -23,7 +23,7 @@
     "account_id": {
       "title": "アカウント詳細リクエスト",
       "request": "アプリ: 「{origin}」の「{appName}」が、リンクされた ID (アカウント ID) へのアクセスを要求しています",
-      "request_tooltip": "デフォルトでは、Beet は匿名リンクを提供します。",
+      "request_tooltip": "デフォルトでは、匿名リンクが提供されます。",
       "accept_btn": "許可する",
       "reject_btn": "拒否"
     },
@@ -77,31 +77,31 @@
       "BTS": {
         "getAccount": {
           "method": "getAccount",
-          "tooltip": "ブロックチェーン アカウントの詳細について Beet に問い合わせる"
+          "tooltip": "ウォレットにブロックチェーン アカウントの詳細を尋ねます"
         },
         "requestSignature": {
           "method": "requestSignature",
-          "tooltip": "Beet にブロックチェーン署名を依頼する"
+          "tooltip": "ウォレットにブロックチェーン署名を要求します"
         },
         "injectedCall": {
           "method": "注入コール",
-          "tooltip": "Beet は注入されたブロックチェーン操作を処理します"
+          "tooltip": "注入されたブロックチェーン操作を処理するようウォレットに要求します"
         },
         "voteFor": {
           "method": "に投票",
-          "tooltip": "Beet がブロックチェーン投票を処理"
+          "tooltip": "ブロックチェーン投票を実行する"
         },
         "signMessage": {
           "method": "サインメッセージ",
-          "tooltip": "ビートはメッセージに署名します"
+          "tooltip": "ブロックチェーン ベースのメッセージに署名する"
         },
         "signNFT": {
           "method": "サインNFT",
-          "tooltip": "ビートは NFT に署名します"
+          "tooltip": "NFTコンテンツに署名する"
         },
         "verifyMessage": {
           "method": "検証メッセージ",
-          "tooltip": "ビートはメッセージを検証します"
+          "tooltip": "ブロックチェーン ベースの署名付きメッセージを検証する"
         },
         "transfer": {
           "method": "移行",
@@ -157,7 +157,7 @@
         },
         "asset_publish_feed": {
           "method": "アセット公開フィード",
-          "tooltip": "ビットアセットの価格フィードを公開する"
+          "tooltip": "ビットアセットの価格フィードを発行する"
         },
         "witness_create": {
           "method": "証人の作成",
@@ -233,7 +233,7 @@
         },
         "blind_transfer": {
           "method": "ブラインド転送",
-          "tooltip": "ブラインド アセットをブラインド方法で転送する"
+          "tooltip": "ブラインド アセットをブラインドで転送する"
         },
         "transfer_from_blind": {
           "method": "ブラインドからの転送",
@@ -256,16 +256,16 @@
           "tooltip": "アセットの発行者を新しい管理者アカウントに更新します。"
         },
         "htlc_create": {
-          "method": "HTLC 作成",
-          "tooltip": "HTLC 操作を作成する"
+          "method": "ハッシュ タイム ロック コントラクトの作成",
+          "tooltip": "ハッシュ タイム ロック コントラクト操作を作成する"
         },
         "htlc_redeem": {
-          "method": "HTLC 引き換え",
-          "tooltip": "HTLC 操作の内容を引き換える"
+          "method": "ハッシュ タイム ロック コントラクトの償還",
+          "tooltip": "Hash Time Locked Contract 操作の内容を引き換える"
         },
         "htlc_extend": {
-          "method": "HTLC 拡張",
-          "tooltip": "HTLC 操作の期間を延長する"
+          "method": "ハッシュ タイム ロック コントラクト エクステンド",
+          "tooltip": "ハッシュ タイム ロック コントラクト操作の期間を延長する"
         },
         "custom_authority_create": {
           "method": "カスタム権限の作成",

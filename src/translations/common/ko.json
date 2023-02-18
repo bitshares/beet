@@ -13,8 +13,8 @@
       "exit": "설정 메뉴 종료"
     },
     "start": {
-      "wallet_name": "비트 지갑 이름",
-      "invalid_password": "유효하지 않은 암호로 Beet 지갑의 잠금을 해제하려고 시도했습니다."
+      "wallet_name": "지갑 이름",
+      "invalid_password": "유효하지 않은 암호로 지갑 잠금 해제를 시도했습니다."
     },
     "apiUtils": {
       "broadcast": "거래가 성공적으로 방송되었습니다.",
@@ -100,11 +100,10 @@
     "actions_approvedOps": "승인된 작업",
     "abSettings": "설정",
     "abLogout": "로그 아웃",
-    "appName": "beet",
     "slogan": "당신의 블록체인 동반자",
-    "welcome": "비트에 오신 것을 환영합니다!",
-    "no_wallet": "사용할 수 있는 비트 지갑이 없습니다.",
-    "start_cta": "새 비트 지갑 만들기",
+    "welcome": "환영!",
+    "no_wallet": "사용할 수 있는 지갑이 없습니다.",
+    "start_cta": "새 지갑 만들기",
     "select_wallet": "지갑 선택:",
     "password_placeholder": "비밀번호",
     "invalid_password": "비밀번호가 맞지 않습니다. ",
@@ -117,8 +116,8 @@
     "step_counter": "단계 {step_no}",
     "friendly_cta": "새 지갑의 친숙한 이름을 설정하십시오.",
     "tooltip_friendly_cta": "이 이름으로 새 암호화된 디지털 지갑이 컴퓨터에 로컬로 저장됩니다. ",
-    "backupfile_cta": "사탕무 지갑 백업을 선택하십시오",
-    "tooltip_backupfile_cta": "해당 지갑을 다시 생성하기 위해 키와 계정 세부 정보가 포함된 이전에 백업된 비트 지갑(.beet 파일)을 선택합니다.",
+    "backupfile_cta": "지갑 백업을 선택하세요",
+    "tooltip_backupfile_cta": "해당 지갑을 다시 생성하기 위해 키와 계정 세부 정보가 포함된 이전에 백업한 지갑(.beet 파일)을 선택합니다.",
     "backuppass_cta": "백업 비밀번호를 입력하세요",
     "tooltip_backuppass_cta": "백업된 지갑의 비밀번호를 입력하세요. ",
     "restore_go_cta": "내 지갑 복원",
@@ -183,7 +182,7 @@
     "settings_lbl": "설정",
     "error_lbl": "오류",
     "node_lbl": "마디:",
-    "link_alert": "앱: '{origin}'의 '{appName}'에서 {chain} 체인에 연결하려고 합니다.",
+    "link_alert": "앱: '{origin}'의 '{appName}'이(가) {chain} 체인에 연결하려고 합니다.",
     "relink_alert": "앱: '{origin}'의 '{appName}'이(가) {chain} 체인에 다시 연결하려고 합니다.",
     "access_alert": "앱: '{origin}'의 '{appName}'이(가) 연결된 계정 {chain}:{account_id}와(과) 상호 작용하려고 합니다.",
     "dapps_lbl": "연결된 dApp",
@@ -195,9 +194,9 @@
     "actions_lbl": "행동",
     "no_dapps_linked": "아직 연결된 dApp이 없습니다.",
     "delete_btn": "제거하다",
-    "backup_lbl": "사탕무 백업",
+    "backup_lbl": "지갑 백업",
     "backup_btn": "백업 다운로드",
-    "backup_txt": "아래의 '백업 다운로드' 버튼을 클릭하여 모든 비트 지갑 키와 함께 암호화된 파일을 저장하세요. ",
+    "backup_txt": "아래의 '백업 다운로드' 버튼을 클릭하여 모든 지갑 키와 함께 암호화된 파일을 저장하세요. ",
     "tooltip_lock": "이 지갑을 잠그거나 로그아웃하고 지갑 선택 화면으로 돌아가려면 클릭하십시오.",
     "tooltip_refresh": "블록체인에 다시 연결하고 계정 잔액을 새로 고칩니다."
   }

@@ -13,8 +13,8 @@
       "exit": "設定メニューを終了"
     },
     "start": {
-      "wallet_name": "ビートウォレット名",
-      "invalid_password": "無効なパスワードで Beet ウォレットのロックを解除しようとしました。"
+      "wallet_name": "ウォレット名",
+      "invalid_password": "無効なパスワードでウォレットのロックを解除しようとしました。"
     },
     "apiUtils": {
       "broadcast": "トランザクションが正常にブロードキャストされました。",
@@ -32,7 +32,7 @@
     "recovery": {
       "decryptError": "アカウント復元エラー！",
       "invalidPassword": "復元されたウォレットのパスワードが無効です",
-      "duplicate": "同じ名前のウォレットがすでに存在するため、ウォレットの復元を中止します"
+      "duplicate": "同じ名前のウォレットが既に存在するため、ウォレットの復元を中止します"
     },
     "raw": {
       "label": "生のディープリンクページ",
@@ -48,7 +48,7 @@
       "default": "不十分な操作",
       "time": "残り時間",
       "exit": "TOTPページを終了",
-      "save": "セーブ",
+      "save": "保存",
       "unsupported": "TOTP はこのチェーンではまだサポートされていません。申し訳ありません。",
       "warning": "上記のコードを誰とも共有しないでください",
       "inProgress": "ディープリンクを処理しています"
@@ -100,11 +100,10 @@
     "actions_approvedOps": "承認された操作",
     "abSettings": "設定",
     "abLogout": "ログアウト",
-    "appName": "beet",
     "slogan": "あなたのブロックチェーンコンパニオン",
-    "welcome": "ビートへようこそ！",
-    "no_wallet": "利用可能な Beet ウォレットはありません。",
-    "start_cta": "新しい Beet ウォレットを作成する",
+    "welcome": "いらっしゃいませ！",
+    "no_wallet": "ウォレットはありません。",
+    "start_cta": "新しいウォレットを作成する",
     "select_wallet": "ウォレットを選択:",
     "password_placeholder": "パスワード",
     "invalid_password": "パスワードが正しくありません。",
@@ -117,8 +116,8 @@
     "step_counter": "ステップ {step_no}",
     "friendly_cta": "新しいウォレットのわかりやすい名前を設定します。",
     "tooltip_friendly_cta": "この名前で、新しい暗号化されたデジタル ウォレットがコンピュータにローカルに保存されます。",
-    "backupfile_cta": "Beetウォレットのバックアップを選択してください",
-    "tooltip_backupfile_cta": "キーとアカウントの詳細を含む、以前にバックアップした Beet ウォレット (.beet ファイル) を選択して、そのウォレットを再作成します。",
+    "backupfile_cta": "ウォレットのバックアップを選択してください",
+    "tooltip_backupfile_cta": "キーとアカウントの詳細を含む、以前にバックアップしたウォレット (.beet ファイル) を選択して、そのウォレットを再作成します。",
     "backuppass_cta": "バックアップパスワードを入力してください",
     "tooltip_backuppass_cta": "バックアップされたウォレットのパスワードを入力します。",
     "restore_go_cta": "ウォレットを復元する",
@@ -146,7 +145,7 @@
     "error_text": "エラーが発生しました。パスワードを確認して、もう一度お試しください。",
     "import_btn": "選択したインポート",
     "back_btn": "戻る",
-    "next2_btn": "再試行",
+    "next2_btn": "再試行する",
     "account": "アカウント：",
     "account_name": "{chain} アカウント名",
     "address_name": "{chain} アドレス",
@@ -194,10 +193,10 @@
     "chain_lbl": "ブロックチェーン",
     "actions_lbl": "アクション",
     "no_dapps_linked": "まだ dApps がリンクされていません。",
-    "delete_btn": "削除する",
-    "backup_lbl": "ビートをバックアップする",
+    "delete_btn": "削除",
+    "backup_lbl": "ウォレットをバックアップする",
     "backup_btn": "バックアップをダウンロード",
-    "backup_txt": "下の [バックアップをダウンロード] ボタンをクリックして、すべての Beet Wallet キーを含む暗号化ファイルを保存します。",
+    "backup_txt": "下の [バックアップをダウンロード] ボタンをクリックして、すべてのウォレット キーを含む暗号化ファイルを保存します。",
     "tooltip_lock": "クリックすると、このウォレットをロック/ログアウトし、ウォレット選択画面に戻ります。",
     "tooltip_refresh": "ブロックチェーンに再接続し、アカウントの残高を更新します"
   }

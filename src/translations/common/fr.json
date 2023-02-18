@@ -13,8 +13,8 @@
       "exit": "Quitter le menu des paramètres"
     },
     "start": {
-      "wallet_name": "Nom du portefeuille de betteraves",
-      "invalid_password": "Une tentative de déverrouillage du portefeuille Beet a été effectuée avec un mot de passe invalide."
+      "wallet_name": "Nom du portefeuille",
+      "invalid_password": "Une tentative de déverrouillage de votre portefeuille a été effectuée avec un mot de passe invalide."
     },
     "apiUtils": {
       "broadcast": "Transaction diffusée avec succès.",
@@ -48,7 +48,7 @@
       "default": "Opérations insuffisantes",
       "time": "Temps restant",
       "exit": "Quitter la page TOTP",
-      "save": "Sauver",
+      "save": "Sauvegarder",
       "unsupported": "TOTP n'est pas encore pris en charge pour cette chaîne, désolé.",
       "warning": "Ne partagez le code ci-dessus avec personne",
       "inProgress": "Un lien profond est en cours de traitement"
@@ -58,7 +58,7 @@
       "main": {
         "title": "Méthodes du scanner QR",
         "scan": "Scannez un code QR",
-        "drag": "Traîne",
+        "drag": "Glisser",
         "upload": "Télécharger une image QR"
       },
       "scan": {
@@ -78,7 +78,7 @@
       "promptFailure": "Quelque chose s'est mal passé avec le QR scanné"
     },
     "actionBar": {
-      "Home": "Domicile",
+      "Home": "Maison",
       "New": "Nouveau",
       "TOTP": "TOTP",
       "RAW": "Lien brut",
@@ -95,16 +95,15 @@
       "language": "Langue",
       "chainOperations": "Opérations en chaîne"
     },
-    "abHome": "Domicile",
+    "abHome": "Maison",
     "abNew": "Nouveau",
     "actions_approvedOps": "Opérations approuvées",
     "abSettings": "Paramètres",
     "abLogout": "Se déconnecter",
-    "appName": "beet",
     "slogan": "Votre compagnon blockchain",
-    "welcome": "Bienvenue chez Betterave !",
-    "no_wallet": "Il n'y a pas de Beet Wallet disponible.",
-    "start_cta": "Créer un nouveau portefeuille de betteraves",
+    "welcome": "Accueillir!",
+    "no_wallet": "Il n'y a pas de portefeuille disponible.",
+    "start_cta": "Créer un nouveau portefeuille",
     "select_wallet": "Sélectionnez Portefeuille :",
     "password_placeholder": "Mot de passe",
     "invalid_password": "Le mot de passe est incorrect. ",
@@ -117,8 +116,8 @@
     "step_counter": "Étape {step_no}",
     "friendly_cta": "Définissez un nom convivial pour votre nouveau portefeuille :",
     "tooltip_friendly_cta": "Sous ce nom, un nouveau portefeuille numérique crypté sera stocké localement sur votre ordinateur. ",
-    "backupfile_cta": "Veuillez sélectionner une sauvegarde de portefeuille Beet",
-    "tooltip_backupfile_cta": "Choisissez un portefeuille Beet précédemment sauvegardé (fichier .beet) contenant vos clés et les détails de votre compte pour recréer ce portefeuille.",
+    "backupfile_cta": "Veuillez sélectionner un portefeuille",
+    "tooltip_backupfile_cta": "Choisissez un portefeuille précédemment sauvegardé (fichier .beet) contenant vos clés et les détails de votre compte pour recréer ce portefeuille.",
     "backuppass_cta": "Entrez votre mot de passe de sauvegarde",
     "tooltip_backuppass_cta": "Saisissez le mot de passe du portefeuille sauvegardé. ",
     "restore_go_cta": "Restaurer mon portefeuille",
@@ -194,10 +193,10 @@
     "chain_lbl": "Chaîne de blocs",
     "actions_lbl": "Action",
     "no_dapps_linked": "Vous n'avez pas encore de dApps liées.",
-    "delete_btn": "Éliminer",
-    "backup_lbl": "Sauvegardez votre betterave",
+    "delete_btn": "Retirer",
+    "backup_lbl": "Sauvegardez votre portefeuille",
     "backup_btn": "Télécharger la sauvegarde",
-    "backup_txt": "Cliquez sur le bouton 'Télécharger la sauvegarde' ci-dessous pour enregistrer un fichier crypté avec toutes vos clés Beet Wallet. ",
+    "backup_txt": "Cliquez sur le bouton \"Télécharger la sauvegarde\" ci-dessous pour enregistrer un fichier crypté avec toutes les clés de votre portefeuille. ",
     "tooltip_lock": "Cliquez pour verrouiller ce portefeuille/déconnexion et revenir à l'écran de sélection du portefeuille.",
     "tooltip_refresh": "Reconnectez-vous à la blockchain et actualisez le solde du compte"
   }

@@ -13,8 +13,8 @@
       "exit": "Välju seadete menüüst"
     },
     "start": {
-      "wallet_name": "Peedi rahakoti nimi",
-      "invalid_password": "Beet rahakotti üritati avada kehtetu parooliga."
+      "wallet_name": "Rahakoti nimi",
+      "invalid_password": "Teie rahakotti üritati avada kehtetu parooliga."
     },
     "apiUtils": {
       "broadcast": "Tehingu edastamine õnnestus.",
@@ -24,7 +24,7 @@
       "vote": "Hääletusviis",
       "signNFT": "NFT allkirja taotlus",
       "signMessage": "Taotlege allkirjastatud sõnumit",
-      "transfer": "Tokenite ülekandmise taotlus",
+      "transfer": "Märgi ülekandmise taotlus",
       "transferComplete": "Tehingu ülekanne edastati edukalt.",
       "msgVerify": "Sõnumi kinnitamine",
       "getAccount": "Rakendus, mis taotleb teavet ühe teie konto kohta."
@@ -100,11 +100,10 @@
     "actions_approvedOps": "Heakskiidetud toimingud",
     "abSettings": "Seaded",
     "abLogout": "Logi välja",
-    "appName": "beet",
     "slogan": "Sinu plokiahela kaaslane",
-    "welcome": "Tere tulemast Peeti!",
-    "no_wallet": "Beet Wallet pole saadaval.",
-    "start_cta": "Looge uus Beet Wallet",
+    "welcome": "Tere tulemast!",
+    "no_wallet": "Rahakott pole saadaval.",
+    "start_cta": "Looge uus rahakott",
     "select_wallet": "Valige Rahakott:",
     "password_placeholder": "Parool",
     "invalid_password": "Parool on vale. ",
@@ -117,8 +116,8 @@
     "step_counter": "Samm {step_no}",
     "friendly_cta": "Määrake oma uuele rahakotile sõbralik nimi:",
     "tooltip_friendly_cta": "Selle nime all salvestatakse teie arvutisse lokaalselt uus krüpteeritud digitaalne rahakott. ",
-    "backupfile_cta": "Valige Beet Walleti varukoopia",
-    "tooltip_backupfile_cta": "Valige rahakoti uuesti loomiseks varem varundatud Beet Wallet (.beet-fail), mis sisaldab teie võtmeid ja konto üksikasju.",
+    "backupfile_cta": "Valige rahakoti varukoopia",
+    "tooltip_backupfile_cta": "Valige rahakoti uuesti loomiseks varem varundatud rahakott (.beet-fail), mis sisaldab teie võtmeid ja konto üksikasju.",
     "backuppass_cta": "Sisestage varuparool",
     "tooltip_backuppass_cta": "Sisestage varundatud rahakoti parool. ",
     "restore_go_cta": "Taasta mu rahakott",
@@ -178,7 +177,7 @@
     "account_details_address_lbl": "Aadress",
     "account_details_id_lbl": "ID",
     "account_details_explorer_lbl": "Explorer",
-    "balances_lbl": "Saldo",
+    "balances_lbl": "Tasakaalud",
     "balances_error": "Viga saldode laadimisel",
     "settings_lbl": "Seaded",
     "error_lbl": "Viga",
@@ -195,9 +194,9 @@
     "actions_lbl": "Tegevus",
     "no_dapps_linked": "Teil pole veel ühtegi dApppi lingitud.",
     "delete_btn": "Eemalda",
-    "backup_lbl": "Varundage oma Beet",
+    "backup_lbl": "Varundage oma rahakott",
     "backup_btn": "Laadige alla Backup",
-    "backup_txt": "Kõigi Beet Walleti võtmetega krüptitud faili salvestamiseks klõpsake alloleval nupul „Laadi varukoopia alla”. ",
-    "tooltip_lock": "Klõpsake selle rahakoti lukustamiseks / väljalogimiseks ja naasmiseks rahakoti valikukuvale.",
+    "backup_txt": "Kõigi rahakotivõtmetega krüptitud faili salvestamiseks klõpsake alloleval nupul „Laadi varukoopia alla”. ",
+    "tooltip_lock": "Klõpsake selle rahakoti lukustamiseks/väljalogimiseks ja naasmiseks rahakoti valikukuvale.",
     "tooltip_refresh": "Ühendage uuesti plokiahelaga ja värskendage konto saldot"
   }

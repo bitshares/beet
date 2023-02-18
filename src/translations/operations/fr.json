@@ -5,10 +5,10 @@
     "link": {
       "title": "Demande d'association de compte",
       "account_select": "Sélection de compte",
-      "account_missing": "Le compte demandé n'est pas présent dans ce portefeuille Beet.",
+      "account_missing": "Le compte demandé n'est pas présent dans ce portefeuille.",
       "request": "L'application '{appName}' de '{origin}' demande l'accès à un compte {chain}.",
       "request_fresh": "L'application a déjà associé un compte {chain} comme indiqué dans la liste ci-dessous.",
-      "request_tooltip": "L'application recevra les détails de votre compte (nom et identifiant) et un lien vers Beet.",
+      "request_tooltip": "L'application recevra les détails de votre compte (nom et identifiant) et établira un lien de portefeuille.",
       "request_cta": "Sélectionnez le compte à fournir.",
       "accept_btn": "Permettre",
       "reject_btn": "Refuser",
@@ -23,7 +23,7 @@
     "account_id": {
       "title": "Demande de détails de compte",
       "request": "Application : '{appName}' de '{origin}' demande l'accès à l'identité liée (ID de compte",
-      "request_tooltip": "Par défaut, Beet fournit un lien anonyme. ",
+      "request_tooltip": "Par défaut, un lien anonyme est fourni. ",
       "accept_btn": "Permettre",
       "reject_btn": "Refuser"
     },
@@ -37,11 +37,11 @@
     "transfer": {
       "title": "Demande de transfert",
       "to": "Destinataire",
-      "amount": "Quantité",
+      "amount": "Montant",
       "memo": "Note",
       "request": "App : '{appName}' de '{origin}' veut initier un transfert depuis { chain } :{ accountName }.",
       "request_cta": "Voulez-vous l'exécuter ?",
-      "accept_btn": "Pancarte",
+      "accept_btn": "Signe",
       "reject_btn": "Ignorer",
       "server_error": "La liste des escrocs connus n'a pas pu être chargée pour vérification, procédez avec prudence.",
       "detected_scammer": "Le destinataire est un escroc connu, conseil d'avorter."
@@ -51,9 +51,9 @@
       "loading": "Chargement des détails de la transaction depuis la blockchain, veuillez patienter.",
       "request": "L'application : '{appName}' de '{origin}' a soumis la transaction suivante pour le compte { chain } :{ accountName }.",
       "request_cta": "Voulez-vous l'exécuter ?",
-      "accept_btn": "Pancarte",
-      "sign_and_broadcast_btn": "Pancarte",
-      "sign_btn": "Pancarte",
+      "accept_btn": "Signe",
+      "sign_and_broadcast_btn": "Signe",
+      "sign_btn": "Signe",
       "reject_btn": "Ignorer"
     },
     "whitelist": {
@@ -77,31 +77,31 @@
       "BTS": {
         "getAccount": {
           "method": "getAccount",
-          "tooltip": "Demandez à Beet les détails du compte blockchain"
+          "tooltip": "Demande à votre portefeuille les détails du compte blockchain"
         },
         "requestSignature": {
           "method": "demandeSignature",
-          "tooltip": "Demandez à Beet des signatures blockchain"
+          "tooltip": "Demande à votre portefeuille des signatures blockchain"
         },
         "injectedCall": {
           "method": "Appel injecté",
-          "tooltip": "Beet gère une opération blockchain injectée"
+          "tooltip": "Demande à votre portefeuille de gérer une opération de blockchain injectée"
         },
         "voteFor": {
           "method": "voter pour",
-          "tooltip": "Vote blockchain géré par la betterave"
+          "tooltip": "Effectuer un vote blockchain"
         },
         "signMessage": {
           "method": "signeMessage",
-          "tooltip": "La betterave signe un message"
+          "tooltip": "Signer un message basé sur la blockchain"
         },
         "signNFT": {
           "method": "signeNFT",
-          "tooltip": "La betterave signe un NFT"
+          "tooltip": "Signer un contenu NFTs"
         },
         "verifyMessage": {
           "method": "vérifierMessage",
-          "tooltip": "Beet vérifie un message"
+          "tooltip": "Vérifier un message signé basé sur la blockchain"
         },
         "transfer": {
           "method": "Transfert",
@@ -256,16 +256,16 @@
           "tooltip": "Mettre à jour l'émetteur d'un actif vers un nouveau compte administrateur."
         },
         "htlc_create": {
-          "method": "Création HTLC",
-          "tooltip": "Créer une opération HTLC"
+          "method": "Création d'un contrat verrouillé dans le temps de hachage",
+          "tooltip": "Créer une opération Hash Time Locked Contract"
         },
         "htlc_redeem": {
-          "method": "HTLC Utiliser",
-          "tooltip": "Utiliser le contenu d'une opération HTLC"
+          "method": "Rachat de contrat verrouillé par temps de hachage",
+          "tooltip": "Utiliser le contenu d'une opération Hash Time Locked Contract"
         },
         "htlc_extend": {
-          "method": "Extension HTLC",
-          "tooltip": "Prolonger la durée d'une opération HTLC"
+          "method": "Hash Time Locked Contract Extend",
+          "tooltip": "Prolonger la durée d'une opération Hash Time Locked Contract"
         },
         "custom_authority_create": {
           "method": "Créer une autorité personnalisée",
@@ -348,7 +348,7 @@
           "tooltip": "Rembourser un contrat de crédit."
         },
         "custom": {
-          "method": "Personnalisé",
+          "method": "Coutume",
           "tooltip": "Fournit un moyen générique d'ajouter des protocoles de niveau supérieur en plus du consensus des témoins"
         },
         "assert": {

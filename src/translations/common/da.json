@@ -13,13 +13,13 @@
       "exit": "Afslut indstillingsmenuen"
     },
     "start": {
-      "wallet_name": "Beet wallet navn",
-      "invalid_password": "Et forsøg på at låse Beet-pungen op med en ugyldig adgangskode."
+      "wallet_name": "Tegnebogsnavn",
+      "invalid_password": "Et forsøg på at låse din tegnebog op med en ugyldig adgangskode."
     },
     "apiUtils": {
       "broadcast": "Transaktionen blev sendt.",
       "sign": "Transaktionen blev underskrevet.",
-      "signAndBroadcast": "Transaktionen blev underskrevet",
+      "signAndBroadcast": "Transaktionen er underskrevet",
       "inject": "Anmodning om at udføre en specifik blockchain-operation",
       "vote": "Stemprompt",
       "signNFT": "Anmodning om en NFT-signatur",
@@ -35,12 +35,12 @@
       "duplicate": "En pung med samme navn findes allerede, hvilket afbryder punggendannelse"
     },
     "raw": {
-      "label": "Rå dybt linkside",
+      "label": "Rå dybt link-side",
       "promptFailure": "Et råt dybt link blev afvist. "
     },
     "totp": {
       "label": "Tidsbaserede engangsadgangskoder",
-      "promptFailure": "Et TOTP-dybt link blev afvist. ",
+      "promptFailure": "Et TOTP-dyblink blev afvist. ",
       "prompt": "Vælg dine nødvendige handlinger nedenfor",
       "chosen": "operationer valgt",
       "request": "Anmod om adgangskode",
@@ -100,11 +100,10 @@
     "actions_approvedOps": "Godkendte operationer",
     "abSettings": "Indstillinger",
     "abLogout": "Log ud",
-    "appName": "beet",
     "slogan": "Din blockchain-ledsager",
-    "welcome": "Velkommen til Beet!",
-    "no_wallet": "Der er ingen Beet Wallet tilgængelig.",
-    "start_cta": "Opret ny Beet Wallet",
+    "welcome": "Velkommen!",
+    "no_wallet": "Der er ingen pung tilgængelig.",
+    "start_cta": "Opret en ny tegnebog",
     "select_wallet": "Vælg tegnebog:",
     "password_placeholder": "Adgangskode",
     "invalid_password": "Adgangskoden er forkert. ",
@@ -117,8 +116,8 @@
     "step_counter": "Trin {step_no}",
     "friendly_cta": "Indstil et venligt navn til din nye tegnebog:",
     "tooltip_friendly_cta": "Under dette navn vil en ny krypteret digital tegnebog blive gemt lokalt på din computer. ",
-    "backupfile_cta": "Vælg venligst en Beet Wallet Backup",
-    "tooltip_backupfile_cta": "Vælg en tidligere sikkerhedskopieret Beet Wallet (.beet-fil), der indeholder dine nøgler og kontooplysninger for at genskabe den tegnebog.",
+    "backupfile_cta": "Vælg venligst en sikkerhedskopi af tegnebogen",
+    "tooltip_backupfile_cta": "Vælg en tidligere sikkerhedskopieret tegnebog (.beet-fil), der indeholder dine nøgler og kontooplysninger, for at genskabe tegnebogen.",
     "backuppass_cta": "Indtast din backup-adgangskode",
     "tooltip_backuppass_cta": "Indtast adgangskoden til den sikkerhedskopierede tegnebog. ",
     "restore_go_cta": "Gendan min pung",
@@ -144,7 +143,7 @@
     "cancel_btn": "Afbestille",
     "next_btn": "Næste",
     "error_text": "Der opstod en fejl, tjek din adgangskode og prøv igen.",
-    "import_btn": "Import valgt",
+    "import_btn": "Importer valgt",
     "back_btn": "Tilbage",
     "next2_btn": "Prøv igen",
     "account": "Konto:",
@@ -171,7 +170,7 @@
     "missing_account_error": "Du skal angive dit {chain}-kontonavn.",
     "invalid_key_error": "Ugyldigt privat nøgleformat.",
     "unverified_account_error": "Kunne ikke bekræfte nøglerne til det angivne kontonavn. ",
-    "confirm_pass_error": "Kodeordene er ikke ens.",
+    "confirm_pass_error": "Adgangskoderne stemmer ikke overens.",
     "account_details_lbl": "konto detaljer",
     "account_details_chaim_lbl": "Blockchain",
     "account_details_name_lbl": "Kontonavn",
@@ -195,9 +194,9 @@
     "actions_lbl": "Handling",
     "no_dapps_linked": "Du har endnu ikke linket nogen dApps.",
     "delete_btn": "Fjerne",
-    "backup_lbl": "Sikkerhedskopier din Beet",
+    "backup_lbl": "Sikkerhedskopier din tegnebog",
     "backup_btn": "Download sikkerhedskopi",
-    "backup_txt": "Klik på knappen 'Download Backup' nedenfor for at gemme en krypteret fil med alle dine Beet Wallet-nøgler. ",
+    "backup_txt": "Klik på knappen 'Download Backup' nedenfor for at gemme en krypteret fil med alle dine tegnebogsnøgler. ",
     "tooltip_lock": "Klik for at låse denne tegnebog/log ud og vende tilbage til skærmen til valg af tegnebog.",
     "tooltip_refresh": "Genopret forbindelse til blockchain og opdater kontosaldoen"
   }

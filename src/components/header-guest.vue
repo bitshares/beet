@@ -26,7 +26,7 @@
                     height="150"
                 >
                 <div class="beet-typo">
-                    beet
+                    Beet
                 </div>
                 <h3 class="h3">
                     {{ t("common.welcome" ) }}

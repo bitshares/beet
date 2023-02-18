@@ -5,12 +5,12 @@
     "link": {
       "title": "Anmodning om kontolink",
       "account_select": "Vælg konto",
-      "account_missing": "Den anmodede konto findes ikke i denne Beet-pung.",
+      "account_missing": "Den anmodede konto findes ikke i denne tegnebog.",
       "request": "Applikationen '{appName}' fra '{origin}' anmoder om adgang til en {chain}-konto.",
       "request_fresh": "Applikationen har allerede knyttet en {chain}-konto før som markeret på listen nedenfor.",
-      "request_tooltip": "Ansøgningen modtager dine kontooplysninger (navn og id) og link til Beet.",
+      "request_tooltip": "Applikationen modtager dine kontooplysninger (navn og id) og etablerer et tegnebogslink.",
       "request_cta": "Vælg den konto, der skal angives.",
-      "accept_btn": "Tillade",
+      "accept_btn": "Give lov til",
       "reject_btn": "Nægte",
       "invalid_operations": "Forkert linkanmodning - ugyldig(e) handling(er)."
     },
@@ -23,15 +23,15 @@
     "account_id": {
       "title": "Anmodning om kontooplysninger",
       "request": "App: '{appName}' fra '{origin}' anmoder om adgang til den linkede identitet (konto-id",
-      "request_tooltip": "Som standard giver Beet et anonymt link. ",
-      "accept_btn": "Tillade",
+      "request_tooltip": "Som standard leveres et anonymt link. ",
+      "accept_btn": "Give lov til",
       "reject_btn": "Nægte"
     },
     "any_account_id": {
       "title": "Anmodning om kontooplysninger",
       "request": "App: '{appName}' fra '{origin}' anmoder om adgang til en konto.",
       "request_cta": "Vælg den konto, der skal angives.",
-      "accept_btn": "Tillade",
+      "accept_btn": "Give lov til",
       "reject_btn": "Nægte"
     },
     "transfer": {
@@ -77,31 +77,31 @@
       "BTS": {
         "getAccount": {
           "method": "få konto",
-          "tooltip": "Spørg Beet om blockchain-kontooplysninger"
+          "tooltip": "Spørger din tegnebog om blockchain-kontooplysninger"
         },
         "requestSignature": {
           "method": "anmodningSignatur",
-          "tooltip": "Spørg Beet om blockchain-signaturer"
+          "tooltip": "Spørger din tegnebog om blockchain-signaturer"
         },
         "injectedCall": {
           "method": "injiceretCall",
-          "tooltip": "Beet håndterer en injiceret blockchain-operation"
+          "tooltip": "Beder din tegnebog om at håndtere en indsprøjtet blockchain-operation"
         },
         "voteFor": {
           "method": "Stem på",
-          "tooltip": "Roebehandlet blockchain-afstemning"
+          "tooltip": "Udfør en blockchain-afstemning"
         },
         "signMessage": {
           "method": "tegnBesked",
-          "tooltip": "Beet underskriver en besked"
+          "tooltip": "Underskriv en blockchain-baseret besked"
         },
         "signNFT": {
           "method": "tegnNFT",
-          "tooltip": "Beet underskriver en NFT"
+          "tooltip": "Underskriv en NFTs indhold"
         },
         "verifyMessage": {
           "method": "verifyMessage",
-          "tooltip": "Beet bekræfter en besked"
+          "tooltip": "Bekræft en blockchain-baseret signeret besked"
         },
         "transfer": {
           "method": "Overførsel",
@@ -256,16 +256,16 @@
           "tooltip": "Opdater udsteder af et aktiv til en ny administratorkonto."
         },
         "htlc_create": {
-          "method": "HTC oprette",
-          "tooltip": "Opret en HTTP-operation"
+          "method": "Hash Time Locked Kontrakt oprettes",
+          "tooltip": "Opret en Hash Time Locked Contract-operation"
         },
         "htlc_redeem": {
-          "method": "HTLC Indløs",
-          "tooltip": "Indløs indholdet af en HTLC-operation"
+          "method": "Hash Time Locked Kontrakt Indløs",
+          "tooltip": "Indløs indholdet af en Hash Time Locked-kontraktoperation"
         },
         "htlc_extend": {
-          "method": "HTC Udvid",
-          "tooltip": "Forlæng varigheden af ​​en HTLC-operation"
+          "method": "Hash Time Locked Kontrakt forlænges",
+          "tooltip": "Forlæng varigheden af ​​en Hash Time Locked Contract-operation"
         },
         "custom_authority_create": {
           "method": "Opret brugerdefineret autoritet",
@@ -328,7 +328,7 @@
           "tooltip": "Indfri gæld til en SameT-fond."
         },
         "credit_offer_create": {
-          "method": "Kredit tilbud oprette",
+          "method": "Kredittilbud opret",
           "tooltip": "Opret et nyt kredittilbud. "
         },
         "credit_offer_delete": {

@@ -42,7 +42,7 @@
                     alt
                 >
                 <h4 class="h4 beet-typo-small">
-                    {{ t('common.appName') }}
+                    Beet
                 </h4>
             </ui-grid-cell>
         </ui-grid>

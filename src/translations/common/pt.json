@@ -13,8 +13,8 @@
       "exit": "Sair do menu de configurações"
     },
     "start": {
-      "wallet_name": "Nome da carteira de beterraba",
-      "invalid_password": "Uma tentativa de desbloquear a carteira Beet foi feita com uma senha inválida."
+      "wallet_name": "Nome da carteira",
+      "invalid_password": "Uma tentativa de desbloquear sua carteira foi feita com uma senha inválida."
     },
     "apiUtils": {
       "broadcast": "Transação transmitida com sucesso.",
@@ -48,7 +48,7 @@
       "default": "Operações insuficientes",
       "time": "Tempo restante",
       "exit": "Sair da página TOTP",
-      "save": "Salve ",
+      "save": "Salvar",
       "unsupported": "TOTP ainda não é suportado por esta cadeia, desculpe.",
       "warning": "Não compartilhe o código acima com ninguém",
       "inProgress": "Um link direto está sendo processado"
@@ -78,7 +78,7 @@
       "promptFailure": "Algo deu errado com o QR digitalizado"
     },
     "actionBar": {
-      "Home": "Casa",
+      "Home": "Lar",
       "New": "Novo",
       "TOTP": "TOTP",
       "RAW": "Link Bruto",
@@ -95,16 +95,15 @@
       "language": "Linguagem",
       "chainOperations": "operações em cadeia"
     },
-    "abHome": "Casa",
+    "abHome": "Lar",
     "abNew": "Novo",
     "actions_approvedOps": "Operações aprovadas",
     "abSettings": "Configurações",
     "abLogout": "Sair",
-    "appName": "beet",
     "slogan": "Seu companheiro de blockchain",
-    "welcome": "Bem vindo a Beterraba!",
-    "no_wallet": "Não há carteira de beterraba disponível.",
-    "start_cta": "Criar nova carteira de beterraba",
+    "welcome": "Bem-vindo!",
+    "no_wallet": "Não há carteira disponível.",
+    "start_cta": "Criar uma nova Carteira",
     "select_wallet": "Selecione Carteira:",
     "password_placeholder": "Senha",
     "invalid_password": "Senha é incorreta. ",
@@ -117,8 +116,8 @@
     "step_counter": "Etapa {step_no}",
     "friendly_cta": "Defina um nome amigável para sua nova carteira:",
     "tooltip_friendly_cta": "Sob este nome, uma nova carteira digital criptografada será armazenada localmente em seu computador. ",
-    "backupfile_cta": "Por favor, selecione um backup da Beet Wallet",
-    "tooltip_backupfile_cta": "Escolha uma Carteira Beet com backup anterior (arquivo .beet) que contenha suas chaves e detalhes da conta para recriar essa carteira.",
+    "backupfile_cta": "Selecione um backup de carteira",
+    "tooltip_backupfile_cta": "Escolha uma carteira com backup anterior (arquivo .beet) que contenha suas chaves e detalhes da conta para recriar essa carteira.",
     "backuppass_cta": "Digite sua senha de backup",
     "tooltip_backuppass_cta": "Digite a senha para a carteira de backup. ",
     "restore_go_cta": "Restaurar minha carteira",
@@ -164,8 +163,8 @@
     "password_cta": "Defina uma senha para esta carteira:",
     "tooltip_password_cta": "Sua carteira será criptografada e só poderá ser desbloqueada com esta senha. ",
     "unlock_with_password_cta": "Desbloqueie sua carteira para adicionar a(s) conta(s):",
-    "confirm_cta": "Confirme a Senha:",
-    "confirm_placeholder": "Confirme a Senha",
+    "confirm_cta": "Confirme sua senha:",
+    "confirm_placeholder": "Confirme sua senha",
     "empty_wallet_error": "Não é possível criar uma carteira sem um nome.",
     "duplicate_wallet_error": "Já existe uma carteira com este nome.",
     "missing_account_error": "Você deve especificar o nome da sua conta {chain}.",
@@ -176,7 +175,7 @@
     "account_details_chaim_lbl": "Blockchain",
     "account_details_name_lbl": "Nome da conta",
     "account_details_address_lbl": "Endereço",
-    "account_details_id_lbl": "EU IRIA",
+    "account_details_id_lbl": "EU IA",
     "account_details_explorer_lbl": "Explorador",
     "balances_lbl": "Saldos",
     "balances_error": "Erro ao carregar saldos",
@@ -194,10 +193,10 @@
     "chain_lbl": "Blockchain",
     "actions_lbl": "Ação",
     "no_dapps_linked": "Você ainda não tem nenhum dApp vinculado.",
-    "delete_btn": "Retirar",
-    "backup_lbl": "Faça backup da sua beterraba",
+    "delete_btn": "Remover",
+    "backup_lbl": "Faça backup da sua carteira",
     "backup_btn": "Baixar backup",
-    "backup_txt": "Clique no botão 'Baixar Backup' abaixo para salvar um arquivo criptografado com todas as suas chaves da Beet Wallet. ",
+    "backup_txt": "Clique no botão 'Baixar backup' abaixo para salvar um arquivo criptografado com todas as chaves da sua carteira. ",
     "tooltip_lock": "Clique para bloquear esta carteira/logout e retornar à tela de seleção de carteira.",
     "tooltip_refresh": "Reconecte-se ao blockchain e atualize o saldo da conta"
   }

@@ -5,10 +5,10 @@
     "link": {
       "title": "Konto linkimise taotlus",
       "account_select": "Konto valimine",
-      "account_missing": "Taotletud kontot selles Beeti rahakotis ei ole.",
+      "account_missing": "Taotletud kontot selles rahakotis ei ole.",
       "request": "Rakendus „{appName}” asukohast „{origin}” taotleb juurdepääsu {chain} kontole.",
       "request_fresh": "Rakendus on juba varem linkinud {chain} konto, nagu on märgitud allolevas loendis.",
-      "request_tooltip": "Rakendus saab teie konto andmed (nimi ja ID) ja lingi Beetiga.",
+      "request_tooltip": "Rakendus saab teie konto andmed (nimi ja ID) ning loob rahakoti lingi.",
       "request_cta": "Valige esitatav konto.",
       "accept_btn": "Lubama",
       "reject_btn": "Keela",
@@ -23,7 +23,7 @@
     "account_id": {
       "title": "Konto üksikasjade taotlus",
       "request": "Rakendus: „{appName}” asukohast „{origin}” taotleb juurdepääsu lingitud identiteedile (konto ID",
-      "request_tooltip": "Vaikimisi pakub Beet anonüümset linki. ",
+      "request_tooltip": "Vaikimisi antakse anonüümne link. ",
       "accept_btn": "Lubama",
       "reject_btn": "Keela"
     },
@@ -77,31 +77,31 @@
       "BTS": {
         "getAccount": {
           "method": "hankige konto",
-          "tooltip": "Küsige Beetilt plokiahela konto üksikasju"
+          "tooltip": "Küsib teie rahakotilt plokiahela konto üksikasju"
         },
         "requestSignature": {
           "method": "taotlusallkiri",
-          "tooltip": "Küsige Beetilt plokiahela allkirju"
+          "tooltip": "Küsib teie rahakotilt plokiahela allkirju"
         },
         "injectedCall": {
           "method": "süstitud Helista",
-          "tooltip": "Peet tegeleb süstitud plokiahela operatsiooniga"
+          "tooltip": "Palub teie rahakotil süstitud plokiahela operatsiooniga hakkama saada"
         },
         "voteFor": {
           "method": "hääletama poolt",
-          "tooltip": "Beet käsitles plokiahela hääletust"
+          "tooltip": "Tehke plokiahela hääletus"
         },
         "signMessage": {
           "method": "märk Sõnum",
-          "tooltip": "Peet kirjutab sõnumile alla"
+          "tooltip": "Allkirjastage plokiahelapõhine sõnum"
         },
         "signNFT": {
           "method": "märkNFT",
-          "tooltip": "Peet allkirjastab NFT"
+          "tooltip": "Allkirjastage NFT-i sisu"
         },
         "verifyMessage": {
           "method": "kinnita sõnum",
-          "tooltip": "Peet kinnitab sõnumi"
+          "tooltip": "Kinnitage plokiahelapõhine allkirjastatud sõnum"
         },
         "transfer": {
           "method": "Ülekanne",
@@ -256,16 +256,16 @@
           "tooltip": "Värskendage vara väljaandja uuele administraatorikontole."
         },
         "htlc_create": {
-          "method": "HTLC loomine",
-          "tooltip": "Looge HTLC-operatsioon"
+          "method": "Räsiajaga lukustatud lepingu loomine",
+          "tooltip": "Looge räsiajaga lukustatud lepingu toiming"
         },
         "htlc_redeem": {
-          "method": "HTLC Lunasta",
-          "tooltip": "Lunastage HTLC-toimingu sisu"
+          "method": "Räsiajaga lukustatud lepingu lunastamine",
+          "tooltip": "Lunastage räsiajaga lukustatud lepingu toimingu sisu"
         },
         "htlc_extend": {
-          "method": "HTLC pikendamine",
-          "tooltip": "Pikendage HTLC toimingu kestust"
+          "method": "Räsiajaga lukustatud lepingu pikendamine",
+          "tooltip": "Pikendage räsiajaga lukustatud lepingu toimingu kestust"
         },
         "custom_authority_create": {
           "method": "Kohandatud volituste loomine",
@@ -328,7 +328,7 @@
           "tooltip": "Makske võlg tagasi SameT fondi."
         },
         "credit_offer_create": {
-          "method": "Loo krediidipakkumine",
+          "method": "Krediidipakkumise loomine",
           "tooltip": "Looge uus krediidipakkumine. "
         },
         "credit_offer_delete": {

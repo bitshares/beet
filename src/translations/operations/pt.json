@@ -5,10 +5,10 @@
     "link": {
       "title": "Solicitação de vinculação de conta",
       "account_select": "Seleção de conta",
-      "account_missing": "A conta solicitada não está presente nesta carteira Beet.",
+      "account_missing": "A conta solicitada não está presente nesta carteira.",
       "request": "O aplicativo '{appName}' de '{origin}' está solicitando acesso a uma conta {chain}.",
       "request_fresh": "O aplicativo já vinculou uma conta {chain} antes, conforme marcado na lista abaixo.",
-      "request_tooltip": "O aplicativo receberá os dados da sua conta (nome e id) e o link para o Beet.",
+      "request_tooltip": "O aplicativo receberá os detalhes da sua conta (nome e id) e estabelecerá um link de carteira.",
       "request_cta": "Selecione a conta para fornecer.",
       "accept_btn": "Permitir",
       "reject_btn": "Negar",
@@ -23,7 +23,7 @@
     "account_id": {
       "title": "Solicitação de detalhes da conta",
       "request": "Aplicativo: '{appName}' de '{origin}' está solicitando acesso à identidade vinculada (ID da conta",
-      "request_tooltip": "Por padrão, o Beet fornece um link anônimo. ",
+      "request_tooltip": "Por padrão, um link anônimo é fornecido. ",
       "accept_btn": "Permitir",
       "reject_btn": "Negar"
     },
@@ -37,11 +37,11 @@
     "transfer": {
       "title": "Solicitação de transferência",
       "to": "Destinatário",
-      "amount": "Montante",
+      "amount": "Quantia",
       "memo": "Memorando",
       "request": "App: '{appName}' de '{origin}' deseja iniciar uma transferência de { chain }:{ accountName }.",
       "request_cta": "Deseja executá-lo?",
-      "accept_btn": "O sinal",
+      "accept_btn": "Sinal",
       "reject_btn": "Ignorar",
       "server_error": "A lista de golpistas conhecidos não pôde ser carregada para verificação, prossiga com cuidado.",
       "detected_scammer": "O destinatário é um golpista conhecido, conselho para abortar."
@@ -51,9 +51,9 @@
       "loading": "Carregando detalhes da transação do blockchain, aguarde.",
       "request": "App: '{appName}' de '{origin}' enviou a seguinte transação para a conta { chain }:{ accountName }.",
       "request_cta": "Deseja executá-lo?",
-      "accept_btn": "O sinal",
-      "sign_and_broadcast_btn": "O sinal",
-      "sign_btn": "O sinal",
+      "accept_btn": "Sinal",
+      "sign_and_broadcast_btn": "Sinal",
+      "sign_btn": "Sinal",
       "reject_btn": "Ignorar"
     },
     "whitelist": {
@@ -77,31 +77,31 @@
       "BTS": {
         "getAccount": {
           "method": "obter conta",
-          "tooltip": "Peça a Beet os detalhes da conta blockchain"
+          "tooltip": "Pede à sua carteira os detalhes da conta blockchain"
         },
         "requestSignature": {
           "method": "solicitaçãoAssinatura",
-          "tooltip": "Peça a Beet assinaturas de blockchain"
+          "tooltip": "Pede à sua carteira assinaturas de blockchain"
         },
         "injectedCall": {
           "method": "Chamada injetada",
-          "tooltip": "Beet lida com uma operação de blockchain injetada"
+          "tooltip": "Pede à sua carteira para lidar com uma operação de blockchain injetada"
         },
         "voteFor": {
           "method": "vote para",
-          "tooltip": "Voto blockchain manipulado com beterraba"
+          "tooltip": "Realize uma votação em blockchain"
         },
         "signMessage": {
           "method": "mensagem de sinal",
-          "tooltip": "Beterraba assina uma mensagem"
+          "tooltip": "Assine uma mensagem baseada em blockchain"
         },
         "signNFT": {
           "method": "assinarNFT",
-          "tooltip": "Beet assina um NFT"
+          "tooltip": "Assinar um conteúdo NFTs"
         },
         "verifyMessage": {
           "method": "mensagem de verificação",
-          "tooltip": "Beterraba verifica uma mensagem"
+          "tooltip": "Verifique uma mensagem assinada baseada em blockchain"
         },
         "transfer": {
           "method": "Transferir",
@@ -256,16 +256,16 @@
           "tooltip": "Atualize o emissor de um ativo para uma nova conta de administrador."
         },
         "htlc_create": {
-          "method": "Criar HTLC",
-          "tooltip": "Criar uma operação HTLC"
+          "method": "Criação de contrato bloqueado por tempo de hash",
+          "tooltip": "Criar uma operação de contrato de bloqueio de tempo de hash"
         },
         "htlc_redeem": {
-          "method": "Resgatar HTLC",
-          "tooltip": "Resgatar o conteúdo de uma operação HTLC"
+          "method": "Resgate de contrato bloqueado por tempo de hash",
+          "tooltip": "Resgatar o conteúdo de uma operação Hash Time Locked Contract"
         },
         "htlc_extend": {
-          "method": "Estender HTLC",
-          "tooltip": "Estender a duração de uma operação HTLC"
+          "method": "Prorrogação de contrato bloqueado por tempo de hash",
+          "tooltip": "Estenda a duração de uma operação de contrato de bloqueio de tempo de hash"
         },
         "custom_authority_create": {
           "method": "Criação de autoridade personalizada",

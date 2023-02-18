@@ -5,10 +5,10 @@
     "link": {
       "title": "Solicitud de vinculación de cuenta",
       "account_select": "selección de cuenta",
-      "account_missing": "La cuenta solicitada no está presente en esta billetera Beet.",
+      "account_missing": "La cuenta solicitada no está presente en esta billetera.",
       "request": "La aplicación '{appName}' de '{origin}' solicita acceso a una cuenta {chain}.",
       "request_fresh": "La aplicación ya ha vinculado una cuenta de {cadena} anteriormente, como se indica en la lista a continuación.",
-      "request_tooltip": "La aplicación recibirá los detalles de su cuenta (nombre e identificación) y un enlace a Beet.",
+      "request_tooltip": "La aplicación recibirá los detalles de su cuenta (nombre e identificación) y establecerá un enlace de billetera.",
       "request_cta": "Seleccione la cuenta para proporcionar.",
       "accept_btn": "Permitir",
       "reject_btn": "Denegar",
@@ -23,7 +23,7 @@
     "account_id": {
       "title": "Solicitud de detalles de la cuenta",
       "request": "Aplicación: '{appName}' de '{origin}' está solicitando acceso a la identidad vinculada (ID de cuenta",
-      "request_tooltip": "Por defecto, Beet proporciona un enlace anónimo. ",
+      "request_tooltip": "De forma predeterminada, se proporciona un enlace anónimo. ",
       "accept_btn": "Permitir",
       "reject_btn": "Denegar"
     },
@@ -41,20 +41,20 @@
       "memo": "Memorándum",
       "request": "Aplicación: '{appName}' from '{origin}' quiere iniciar una transferencia desde { chain }:{ accountName }.",
       "request_cta": "¿Quieres ejecutarlo?",
-      "accept_btn": "Signo",
-      "reject_btn": "Pasar por alto",
+      "accept_btn": "Firmar",
+      "reject_btn": "Ignorar",
       "server_error": "No se pudo cargar la lista de estafadores conocidos para verificar, proceda con precaución.",
       "detected_scammer": "El destinatario es un estafador conocido, consejo para abortar."
     },
     "rawsig": {
-      "title": "Solicitud",
+      "title": "Pedido",
       "loading": "Cargando detalles de la transacción desde blockchain, espere.",
       "request": "Aplicación: '{appName}' de '{origin}' envió la siguiente transacción para la cuenta { cadena }:{ accountName }.",
       "request_cta": "¿Quieres ejecutarlo?",
-      "accept_btn": "Signo",
-      "sign_and_broadcast_btn": "Signo",
-      "sign_btn": "Signo",
-      "reject_btn": "Pasar por alto"
+      "accept_btn": "Firmar",
+      "sign_and_broadcast_btn": "Firmar",
+      "sign_btn": "Firmar",
+      "reject_btn": "Ignorar"
     },
     "whitelist": {
       "prompt": "¿Incluir en la lista blanca las solicitudes subsiguientes de '{método}' de esta aplicación?"
@@ -64,44 +64,44 @@
       "request": "Aplicación: '{appName}' de '{origin}' quiere que vote por la siguiente {entidad} con cuenta { cadena }:{ nombre de cuenta }",
       "request_cta": "",
       "accept_btn": "Aprobar",
-      "reject_btn": "Pasar por alto"
+      "reject_btn": "Ignorar"
     },
     "message": {
       "title": "Solicitud de mensaje de firma",
       "request": "Aplicación: '{appName}' from '{origin}' quiere que firmes el siguiente texto con la cuenta { cadena }:{ accountName }",
       "request_cta": "",
       "accept_btn": "Aprobar",
-      "reject_btn": "Pasar por alto"
+      "reject_btn": "Ignorar"
     },
     "injected": {
       "BTS": {
         "getAccount": {
           "method": "obtenerCuenta",
-          "tooltip": "Pregúntele a Beet por los detalles de la cuenta de blockchain"
+          "tooltip": "Le pide a su billetera los detalles de la cuenta de blockchain"
         },
         "requestSignature": {
           "method": "solicitudFirma",
-          "tooltip": "Pregunte a Beet por firmas de blockchain"
+          "tooltip": "Le pide a su billetera firmas de blockchain"
         },
         "injectedCall": {
           "method": "inyectadoLlamar",
-          "tooltip": "Beet maneja una operación blockchain inyectada"
+          "tooltip": "Le pide a su billetera que maneje una operación de blockchain inyectada"
         },
         "voteFor": {
           "method": "vota por",
-          "tooltip": "Beet manejó el voto de blockchain"
+          "tooltip": "Realizar una votación de blockchain"
         },
         "signMessage": {
           "method": "firmarMensaje",
-          "tooltip": "Beet firma un mensaje"
+          "tooltip": "Firme un mensaje basado en blockchain"
         },
         "signNFT": {
           "method": "firmarNFT",
-          "tooltip": "Beet firma un NFT"
+          "tooltip": "Firmar un contenido de NFT"
         },
         "verifyMessage": {
           "method": "verificarMensaje",
-          "tooltip": "Beet verifica un mensaje"
+          "tooltip": "Verificar un mensaje firmado basado en blockchain"
         },
         "transfer": {
           "method": "Transferir",
@@ -256,16 +256,16 @@
           "tooltip": "Actualice el emisor de un activo a una nueva cuenta de administrador."
         },
         "htlc_create": {
-          "method": "HTLC crear",
-          "tooltip": "Crear una operación HTLC"
+          "method": "Hash Time Locked Contract crear",
+          "tooltip": "Crear una operación de contrato de bloqueo de tiempo hash"
         },
         "htlc_redeem": {
-          "method": "HTLC Canjear",
-          "tooltip": "Canjear el contenido de una operación HTLC"
+          "method": "Hash Time Locked Contract Canjear",
+          "tooltip": "Canjear el contenido de una operación de Hash Time Locked Contract"
         },
         "htlc_extend": {
-          "method": "Extensión de HTLC",
-          "tooltip": "Ampliar la duración de una operación HTLC"
+          "method": "Hash Time Locked Contract Extend",
+          "tooltip": "Ampliar la duración de una operación de contrato bloqueado de tiempo hash"
         },
         "custom_authority_create": {
           "method": "Creación de autoridad personalizada",
@@ -348,7 +348,7 @@
           "tooltip": "Pagar un trato de crédito."
         },
         "custom": {
-          "method": "Disfraz",
+          "method": "Costumbre",
           "tooltip": "Proporciona una forma genérica de agregar protocolos de nivel superior además del consenso de los testigos"
         },
         "assert": {

@@ -5,10 +5,10 @@
     "link": {
       "title": "Richiesta di collegamento all'account",
       "account_select": "Seleziona conto",
-      "account_missing": "Account richiesto non presente in questo portafoglio Beet.",
+      "account_missing": "Account richiesto non presente in questo portafoglio.",
       "request": "L'applicazione '{appName}' da '{origin}' richiede l'accesso a un account {chain}.",
       "request_fresh": "L'applicazione ha già collegato un account {chain} in precedenza, come indicato nell'elenco seguente.",
-      "request_tooltip": "L'applicazione riceverà i dettagli del tuo account (nome e ID) e il collegamento a Beet.",
+      "request_tooltip": "L'applicazione riceverà i dettagli del tuo account (nome e ID) e stabilirà un collegamento al portafoglio.",
       "request_cta": "Seleziona l'account da fornire.",
       "accept_btn": "Permettere",
       "reject_btn": "Negare",
@@ -23,7 +23,7 @@
     "account_id": {
       "title": "Richiesta dettagli account",
       "request": "App: \"{appName}\" da \"{origin}\" richiede l'accesso all'identità collegata (ID account",
-      "request_tooltip": "Per impostazione predefinita, Beet fornisce un collegamento anonimo. ",
+      "request_tooltip": "Per impostazione predefinita viene fornito un collegamento anonimo. ",
       "accept_btn": "Permettere",
       "reject_btn": "Negare"
     },
@@ -68,7 +68,7 @@
     },
     "message": {
       "title": "Firma la richiesta del messaggio",
-      "request": "App: '{appName}' da '{origin}' vuole che tu firmi il seguente testo con l'account { chain }:{ accountName }",
+      "request": "App: '{appName}' da '{origin}' richiede che tu firmi il seguente testo con l'account { chain }:{ accountName }",
       "request_cta": "",
       "accept_btn": "Approvare",
       "reject_btn": "Ignorare"
@@ -77,31 +77,31 @@
       "BTS": {
         "getAccount": {
           "method": "getAccount",
-          "tooltip": "Chiedi a Beet i dettagli dell'account blockchain"
+          "tooltip": "Chiede al tuo portafoglio i dettagli dell'account blockchain"
         },
         "requestSignature": {
           "method": "richiestaFirma",
-          "tooltip": "Chiedi a Beet le firme blockchain"
+          "tooltip": "Chiede al tuo portafoglio le firme blockchain"
         },
         "injectedCall": {
           "method": "iniettatoChiama",
-          "tooltip": "Beet gestisce un'operazione blockchain iniettata"
+          "tooltip": "Chiede al tuo portafoglio di gestire un'operazione blockchain iniettata"
         },
         "voteFor": {
           "method": "voto per",
-          "tooltip": "Beet ha gestito il voto blockchain"
+          "tooltip": "Esegui un voto blockchain"
         },
         "signMessage": {
           "method": "signMessage",
-          "tooltip": "Beet firma un messaggio"
+          "tooltip": "Firma un messaggio basato su blockchain"
         },
         "signNFT": {
           "method": "segnoNFT",
-          "tooltip": "Beet firma un NFT"
+          "tooltip": "Firma un contenuto NFT"
         },
         "verifyMessage": {
           "method": "verificaMessage",
-          "tooltip": "Beet verifica un messaggio"
+          "tooltip": "Verifica un messaggio firmato basato su blockchain"
         },
         "transfer": {
           "method": "Trasferimento",
@@ -176,12 +176,12 @@
           "tooltip": "Aggiorna una proposta di operazione blockchain"
         },
         "proposal_delete": {
-          "method": "Eliminazione della proposta",
+          "method": "Eliminazione proposta",
           "tooltip": "Elimina una proposta di operazione blockchain"
         },
         "withdraw_permission_create": {
           "method": "Ritirare il permesso creare",
-          "tooltip": "Crea un'autorizzazione di prelievo"
+          "tooltip": "Crea un permesso di prelievo"
         },
         "withdraw_permission_update": {
           "method": "Ritirare l'aggiornamento dell'autorizzazione",
@@ -241,7 +241,7 @@
         },
         "asset_claim_fees": {
           "method": "Commissioni per la richiesta di beni",
-          "tooltip": "Richiedi le commissioni da un asset"
+          "tooltip": "Richiedi le commissioni da un bene"
         },
         "bid_collateral": {
           "method": "Offerta collaterale",
@@ -256,16 +256,16 @@
           "tooltip": "Aggiorna l'emittente di una risorsa a un nuovo account amministratore."
         },
         "htlc_create": {
-          "method": "Creazione HTLC",
-          "tooltip": "Creare un'operazione HTLC"
+          "method": "Creazione del contratto bloccato a tempo di hash",
+          "tooltip": "Creare un'operazione di contratto con tempo di hash bloccato"
         },
         "htlc_redeem": {
-          "method": "HTLC Riscatta",
-          "tooltip": "Riscatta il contenuto di un'operazione HTLC"
+          "method": "Riscattare il contratto bloccato a tempo di hash",
+          "tooltip": "Riscatta il contenuto di un'operazione Hash Time Locked Contract"
         },
         "htlc_extend": {
-          "method": "HTLC Estendere",
-          "tooltip": "Estendi la durata di un'operazione HTLC"
+          "method": "Estensione del contratto bloccato a tempo di hash",
+          "tooltip": "Estendere la durata di un'operazione Hash Time Locked Contract"
         },
         "custom_authority_create": {
           "method": "Creazione dell'autorizzazione personalizzata",
@@ -332,7 +332,7 @@
           "tooltip": "Crea una nuova offerta di credito. "
         },
         "credit_offer_delete": {
-          "method": "Cancella offerta di credito",
+          "method": "Eliminare l'offerta di credito",
           "tooltip": "Elimina un'offerta di credito."
         },
         "credit_offer_update": {
