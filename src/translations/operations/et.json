@@ -1,0 +1,380 @@
+{
+    "general": {
+      "content": "Sisu"
+    },
+    "link": {
+      "title": "Konto linkimise taotlus",
+      "account_select": "Konto valimine",
+      "account_missing": "Taotletud kontot selles rahakotis ei ole.",
+      "request": "Rakendus „{appName}” asukohast „{origin}” taotleb juurdepääsu {chain} kontole.",
+      "request_fresh": "Rakendus on juba varem linkinud {chain} konto, nagu on märgitud allolevas loendis.",
+      "request_tooltip": "Rakendus saab teie konto andmed (nimi ja ID) ning loob rahakoti lingi.",
+      "request_cta": "Valige esitatav konto.",
+      "accept_btn": "Lubama",
+      "reject_btn": "Keela",
+      "invalid_operations": "Vigane linkimistaotlus – kehtetu(d) toimingu(d)."
+    },
+    "relink": {
+      "title": "Konto uuesti linkimise taotlus",
+      "error": "Viipa kuvamisel tekkis viga",
+      "request": "Rakendus „{appName}” asukohast „{origin}” taotleb varem lingitud {chain} konto uuesti linkimist: {accountId}. ",
+      "request_tooltip": "Eelmine link rakenduse ja kontoviite vahel lähtestatakse."
+    },
+    "account_id": {
+      "title": "Konto üksikasjade taotlus",
+      "request": "Rakendus: „{appName}” asukohast „{origin}” taotleb juurdepääsu lingitud identiteedile (konto ID",
+      "request_tooltip": "Vaikimisi antakse anonüümne link. ",
+      "accept_btn": "Lubama",
+      "reject_btn": "Keela"
+    },
+    "any_account_id": {
+      "title": "Konto üksikasjade taotlus",
+      "request": "Rakendus: „{appName}” asukohast „{origin}” taotleb juurdepääsu kontole.",
+      "request_cta": "Valige esitatav konto.",
+      "accept_btn": "Lubama",
+      "reject_btn": "Keela"
+    },
+    "transfer": {
+      "title": "Ülekandmise taotlus",
+      "to": "Saaja",
+      "amount": "Summa",
+      "memo": "Memo",
+      "request": "Rakendus: „{appName}” asukohast „{origin}” soovib algatada ülekande ettevõttest { chain }:{ accountName }.",
+      "request_cta": "Kas soovite seda teostada?",
+      "accept_btn": "Sign",
+      "reject_btn": "Ignoreeri",
+      "server_error": "Tuntud petturite loendit ei saanud kontrollimiseks laadida, olge ettevaatlik.",
+      "detected_scammer": "Saajaks on tuntud pettur, soovitan aborti teha."
+    },
+    "rawsig": {
+      "title": "Taotlus",
+      "loading": "Tehingu üksikasjade laadimine plokiahelast, palun oodake.",
+      "request": "Rakendus: „{appName}” asukohast „{origin}” on esitanud konto { kett } jaoks järgmise tehingu:{ accountName }.",
+      "request_cta": "Kas soovite seda teostada?",
+      "accept_btn": "Sign",
+      "sign_and_broadcast_btn": "Sign",
+      "sign_btn": "Sign",
+      "reject_btn": "Ignoreeri"
+    },
+    "whitelist": {
+      "prompt": "Kas lisada selle rakenduse järgmised meetodi {method} taotlused lubatud loendisse?"
+    },
+    "vote": {
+      "title": "Hääletustaotlus",
+      "request": "Rakendus: „{appName}” asukohast „{origin}” soovib, et hääletaksite kontoga { kett } järgmise {entity} poolt:{ accountName }",
+      "request_cta": "",
+      "accept_btn": "Kinnita",
+      "reject_btn": "Ignoreeri"
+    },
+    "message": {
+      "title": "Kirjutage sõnumitaotlus alla",
+      "request": "Rakendus: „{appName}” asukohast „{origin}” soovib, et allkirjastaksite kontoga { kett } järgmise teksti:{ accountName }",
+      "request_cta": "",
+      "accept_btn": "Kinnita",
+      "reject_btn": "Ignoreeri"
+    },
+    "injected": {
+      "BTS": {
+        "getAccount": {
+          "method": "hankige konto",
+          "tooltip": "Küsib teie rahakotilt plokiahela konto üksikasju"
+        },
+        "requestSignature": {
+          "method": "taotlusallkiri",
+          "tooltip": "Küsib teie rahakotilt plokiahela allkirju"
+        },
+        "injectedCall": {
+          "method": "süstitud Helista",
+          "tooltip": "Palub teie rahakotil süstitud plokiahela operatsiooniga hakkama saada"
+        },
+        "voteFor": {
+          "method": "hääletama poolt",
+          "tooltip": "Tehke plokiahela hääletus"
+        },
+        "signMessage": {
+          "method": "märk Sõnum",
+          "tooltip": "Allkirjastage plokiahelapõhine sõnum"
+        },
+        "signNFT": {
+          "method": "märkNFT",
+          "tooltip": "Allkirjastage NFT-i sisu"
+        },
+        "verifyMessage": {
+          "method": "kinnita sõnum",
+          "tooltip": "Kinnitage plokiahelapõhine allkirjastatud sõnum"
+        },
+        "transfer": {
+          "method": "Ülekanne",
+          "tooltip": "Saatke varasid ühelt kontolt teisele"
+        },
+        "limit_order_create": {
+          "method": "Limiittellimuse loomine",
+          "tooltip": "Pakkumine müüa teatud summa vara kindlaksmääratud vahetuskursiga teatud ajaks"
+        },
+        "limit_order_cancel": {
+          "method": "Piiratud tellimuse tühistamine",
+          "tooltip": "Limiittellimuse toimingu tühistamine"
+        },
+        "call_order_update": {
+          "method": "Helistamistellimuse värskendus",
+          "tooltip": "Olemasoleva kõnetellimuse värskendamine"
+        },
+        "account_create": {
+          "method": "Konto loomine",
+          "tooltip": "Uue konto loomine"
+        },
+        "asset_update": {
+          "method": "Vara värskendus",
+          "tooltip": "Värskendage loodud vara seadeid"
+        },
+        "asset_update_bitasset": {
+          "method": "Varavärskenduse bitasset",
+          "tooltip": "Värskendage loodud bitasset seadeid"
+        },
+        "asset_update_feed_producers": {
+          "method": "Varade värskenduste voo tootjad",
+          "tooltip": "Värskendage loodud bitivarade heakskiidetud söödatootjate loendit"
+        },
+        "asset_issue": {
+          "method": "Vara probleem",
+          "tooltip": "Väljasta oma loodud varad üksikisikutele"
+        },
+        "asset_reserve": {
+          "method": "Varade reserv",
+          "tooltip": "Broneerige loodud varad"
+        },
+        "asset_fund_fee_pool": {
+          "method": "Varafondi tasu kogum",
+          "tooltip": "Rahastage loodud vara tasufondi"
+        },
+        "asset_settle": {
+          "method": "Varade arveldamine",
+          "tooltip": "Arveldage oma portfellis vara"
+        },
+        "asset_global_settle": {
+          "method": "Varade ülemaailmne arveldamine",
+          "tooltip": "Arveldage globaalselt üks oma loodud bitivaradest"
+        },
+        "asset_publish_feed": {
+          "method": "Varade avaldamise voog",
+          "tooltip": "Avaldage bitassetti hinnavoog"
+        },
+        "witness_create": {
+          "method": "Tunnistaja loo",
+          "tooltip": "Looge tunnistaja konto"
+        },
+        "witness_update": {
+          "method": "Tunnistaja värskendus",
+          "tooltip": "Värskendage oma tunnistaja kontot"
+        },
+        "proposal_create": {
+          "method": "Ettepanek luua",
+          "tooltip": "Looge plokiahela toimimise ettepanek"
+        },
+        "proposal_update": {
+          "method": "Ettepaneku värskendamine",
+          "tooltip": "Värskendage plokiahela toimimise ettepanekut"
+        },
+        "proposal_delete": {
+          "method": "Ettepanek kustutada",
+          "tooltip": "Kustutage plokiahela toimimise ettepanek"
+        },
+        "withdraw_permission_create": {
+          "method": "Looge loa tühistamine",
+          "tooltip": "Looge tagasivõtmise luba"
+        },
+        "withdraw_permission_update": {
+          "method": "Tühista loa värskendus",
+          "tooltip": "Värskendage tühistamisluba"
+        },
+        "withdraw_permission_claim": {
+          "method": "Võta loanõue tagasi",
+          "tooltip": "Nõue tagasivõtmise loa alusel"
+        },
+        "withdraw_permission_delete": {
+          "method": "Tühista luba kustutada",
+          "tooltip": "Kustutage tühistamisluba"
+        },
+        "committee_member_create": {
+          "method": "Komisjoni liige loob",
+          "tooltip": "Looge komisjoni liikme konto"
+        },
+        "committee_member_update": {
+          "method": "Komisjoni liikmete värskendus",
+          "tooltip": "Värskendage oma komitee liikme konto üksikasju"
+        },
+        "committee_member_update_global_parameters": {
+          "method": "Komisjoni liige värskendab globaalseid parameetreid",
+          "tooltip": "Avaldage oma komitee liikme seisukoht Bitsharesi plokiahela globaalsete parameetrite väärtuste kohta"
+        },
+        "vesting_balance_create": {
+          "method": "Looge üleandmise tasakaal",
+          "tooltip": "Looge omandamise saldo"
+        },
+        "vesting_balance_withdraw": {
+          "method": "Üleandmise saldo tagasivõtmine",
+          "tooltip": "Üleandmisjäägist taganemine"
+        },
+        "worker_create": {
+          "method": "Töötaja loob",
+          "tooltip": "Looge töötaja ettepanek"
+        },
+        "balance_claim": {
+          "method": "Tasakaalunõue",
+          "tooltip": "Nõue saldost"
+        },
+        "override_transfer": {
+          "method": "Ülekande tühistamine",
+          "tooltip": "Edastustoimingu tühistamine"
+        },
+        "transfer_to_blind": {
+          "method": "Pimedaks üleviimine",
+          "tooltip": "Viige varad pimedasse sihtkohta"
+        },
+        "blind_transfer": {
+          "method": "Pime ülekanne",
+          "tooltip": "Pimedate varade pimesi ülekandmine"
+        },
+        "transfer_from_blind": {
+          "method": "Pimedast üleviimine",
+          "tooltip": "Võtke varad pimebilansilt välja"
+        },
+        "asset_claim_fees": {
+          "method": "Varanõude tasud",
+          "tooltip": "Nõuda tasud varalt"
+        },
+        "bid_collateral": {
+          "method": "Pakkumise tagatis",
+          "tooltip": "Tehke pakkumine bitassets tagatistagatisele, kui see on globaalselt arveldatud"
+        },
+        "asset_claim_pool": {
+          "method": "Varade nõuete kogum",
+          "tooltip": "Kandab BTS-i kindlaksmääratud vara tasufondist tagasi emitendi saldole"
+        },
+        "asset_update_issuer": {
+          "method": "Varavärskenduste väljastaja",
+          "tooltip": "Värskendage vara väljaandja uuele administraatorikontole."
+        },
+        "htlc_create": {
+          "method": "Räsiajaga lukustatud lepingu loomine",
+          "tooltip": "Looge räsiajaga lukustatud lepingu toiming"
+        },
+        "htlc_redeem": {
+          "method": "Räsiajaga lukustatud lepingu lunastamine",
+          "tooltip": "Lunastage räsiajaga lukustatud lepingu toimingu sisu"
+        },
+        "htlc_extend": {
+          "method": "Räsiajaga lukustatud lepingu pikendamine",
+          "tooltip": "Pikendage räsiajaga lukustatud lepingu toimingu kestust"
+        },
+        "custom_authority_create": {
+          "method": "Kohandatud volituste loomine",
+          "tooltip": "Looge uus kohandatud asutus."
+        },
+        "custom_authority_update": {
+          "method": "Kohandatud asutuse värskendus",
+          "tooltip": "Värskendage kohandatud asutust."
+        },
+        "custom_authority_delete": {
+          "method": "Kohandatud volituste kustutamine",
+          "tooltip": "Kustutage kohandatud asutus."
+        },
+        "ticket_create": {
+          "method": "Pileti loomine",
+          "tooltip": "Looge uus pilet."
+        },
+        "ticket_update": {
+          "method": "Pileti värskendus",
+          "tooltip": "Värskendage olemasolevat piletit."
+        },
+        "liquidity_pool_create": {
+          "method": "Likviidsusbasseini loomine",
+          "tooltip": "Looge likviidsuskogum"
+        },
+        "liquidity_pool_delete": {
+          "method": "Likviidsusfondi kustutamine",
+          "tooltip": "Kustutage likviidsuskogum"
+        },
+        "liquidity_pool_deposit": {
+          "method": "Likviidsusbasseini hoius",
+          "tooltip": "Deponeerige raha likviidsusfondi"
+        },
+        "liquidity_pool_withdraw": {
+          "method": "Likviidsusfondi väljavõtmine",
+          "tooltip": "Võtke raha välja likviidsuskogumist"
+        },
+        "liquidity_pool_exchange": {
+          "method": "Likviidsusfondi vahetus",
+          "tooltip": "Vahetada likviidsusfondiga."
+        },
+        "samet_fund_create": {
+          "method": "SameT fondi loomine",
+          "tooltip": "Looge uus SameT fond. "
+        },
+        "samet_fund_delete": {
+          "method": "SameT fondi kustutamine",
+          "tooltip": "Kustutage SameT fondi objekt."
+        },
+        "samet_fund_update": {
+          "method": "SameT fondi uuendus",
+          "tooltip": "SameT fondi objekti värskendamine."
+        },
+        "samet_fund_borrow": {
+          "method": "SameT fondi laen",
+          "tooltip": "Laena SameT fondist."
+        },
+        "samt_fund_repay": {
+          "method": "SameT fondi tagasimakse",
+          "tooltip": "Makske võlg tagasi SameT fondi."
+        },
+        "credit_offer_create": {
+          "method": "Krediidipakkumise loomine",
+          "tooltip": "Looge uus krediidipakkumine. "
+        },
+        "credit_offer_delete": {
+          "method": "Krediidipakkumise kustutamine",
+          "tooltip": "Kustutage krediidipakkumine."
+        },
+        "credit_offer_update": {
+          "method": "Krediidipakkumise värskendus",
+          "tooltip": "Uuenda krediidipakkumist"
+        },
+        "credit_offer_accept": {
+          "method": "Krediidipakkumine vastu",
+          "tooltip": "Nõustuge krediidipakkumisega ja looge krediiditehing."
+        },
+        "credit_deal_repay": {
+          "method": "Krediiditehingu tagasimaksmine",
+          "tooltip": "Makske krediiditehing tagasi."
+        },
+        "custom": {
+          "method": "Kohandatud",
+          "tooltip": "Pakub üldist viisi kõrgema taseme protokollide lisamiseks tunnistajate konsensuse peale"
+        },
+        "assert": {
+          "method": "Kinnitage",
+          "tooltip": "Kinnitage, et mõned tingimused on tõesed."
+        },
+        "account_update": {
+          "method": "Konto värskendus",
+          "tooltip": "Seda toimingut kasutatakse olemasoleva konto värskendamiseks. "
+        },
+        "account_whitelist": {
+          "method": "Kontode lubatud loend",
+          "tooltip": "Seda toimingut kasutatakse kontode valgesse ja musta nimekirja lisamiseks, peamiselt lubatud nimekirja kantud varadega tehingute tegemiseks"
+        },
+        "account_upgrade": {
+          "method": "Konto täiendamine",
+          "tooltip": "Seda toimingut kasutatakse konto üleviimiseks liikmeks või selle tellimuse uuendamiseks."
+        },
+        "account_transfer": {
+          "method": "Konto ülekandmine",
+          "tooltip": "Teisaldab konto teisele kontole, kustutades samal ajal valge nimekirja"
+        },
+        "asset_create": {
+          "method": "Vara loomine",
+          "tooltip": "Loob Bitsharesi plokiahelas vara"
+        }
+      }
+    }
+  }

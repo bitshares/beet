@@ -5,10 +5,10 @@
     "link": {
         "title": "Account Link Request",
         "account_select": "Account select",
-        "account_missing": "Requested account not present in this Beet wallet.",
+        "account_missing": "Requested account not present in this wallet.",
         "request": "The application '{appName}' from '{origin}' is requesting access to a {chain} account.",
         "request_fresh": "The application has already linked a {chain} account before as marked in the list below.",
-        "request_tooltip": "The application will receive your account details (name and id) and link to Beet.",
+        "request_tooltip": "The application will receive your account details (name and id) and will establish a wallet link.",
         "request_cta": "Select account to provide.",
         "accept_btn": "Allow",
         "reject_btn": "Deny",
@@ -23,7 +23,7 @@
     "account_id": {
         "title": "Account Details Request",
         "request": "App: '{appName}' from '{origin}' is requesting access to the linked identity (account ID & account name) of account: {chain}: {accountName} ({accountId}).",
-        "request_tooltip": "By default Beet provides an anonymous link. Certain apps/websites require access to your account id/name (e.g. for sign-in purposes). If this is the case, it is safe to 'Allow' here.",
+        "request_tooltip": "By default an anonymous link is provided. Certain apps/websites require access to your account id/name (e.g. for sign-in purposes). If this is the case, it is safe to 'Allow' here.",
         "accept_btn": "Allow",
         "reject_btn": "Deny"
     },
@@ -77,31 +77,31 @@
         "BTS": {
             "getAccount": {
                 "method": "getAccount",
-                "tooltip": "Ask Beet for blockchain account details"
+                "tooltip": "Asks your wallet for blockchain account details"
             },
             "requestSignature": {
                 "method": "requestSignature",
-                "tooltip": "Ask Beet for blockchain signatures"
+                "tooltip": "Asks your wallet for blockchain signatures"
             },
             "injectedCall": {
                 "method": "injectedCall",
-                "tooltip": "Beet handles an injected blockchain operation"
+                "tooltip": "Asks your wallet to handle an injected blockchain operation"
             },
             "voteFor": {
                 "method": "voteFor",
-                "tooltip": "Beet handled blockchain vote"
+                "tooltip": "Perform a blockchain vote"
             },
             "signMessage": {
                 "method": "signMessage",
-                "tooltip": "Beet signs a message"
+                "tooltip": "Sign a blockchain based message"
             },
             "signNFT": {
                 "method": "signNFT",
-                "tooltip": "Beet signs an NFT"
+                "tooltip": "Sign an NFTs contents"
             },
             "verifyMessage": {
                 "method": "verifyMessage",
-                "tooltip": "Beet verifies a message"
+                "tooltip": "Verify a blockchain based signed message"
             },
             "transfer": {
               "method": "Transfer",

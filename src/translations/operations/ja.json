@@ -1,0 +1,380 @@
+{
+    "general": {
+      "content": "コンテンツ"
+    },
+    "link": {
+      "title": "アカウント リンクのリクエスト",
+      "account_select": "アカウント選択",
+      "account_missing": "要求されたアカウントがこのウォレットにありません。",
+      "request": "「{origin}」のアプリケーション「{appName}」が {chain} アカウントへのアクセスをリクエストしています。",
+      "request_fresh": "以下のリストでマークされているように、アプリケーションはすでに {chain} アカウントをリンクしています。",
+      "request_tooltip": "アプリケーションはアカウントの詳細 (名前と ID) を受け取り、ウォレット リンクを確立します。",
+      "request_cta": "提供するアカウントを選択します。",
+      "accept_btn": "許可する",
+      "reject_btn": "拒否",
+      "invalid_operations": "不正なリンク リクエスト - 無効な操作。"
+    },
+    "relink": {
+      "title": "アカウント再リンクのリクエスト",
+      "error": "プロンプト表示エラー",
+      "request": "「{origin}」のアプリケーション「{appName}」が、以前にリンクされた {chain} アカウント {accountId} の再リンクをリクエストしています。",
+      "request_tooltip": "アプリケーションとアカウント参照c の間の以前のリンクはリセットされます。"
+    },
+    "account_id": {
+      "title": "アカウント詳細リクエスト",
+      "request": "アプリ: 「{origin}」の「{appName}」が、リンクされた ID (アカウント ID) へのアクセスを要求しています",
+      "request_tooltip": "デフォルトでは、匿名リンクが提供されます。",
+      "accept_btn": "許可する",
+      "reject_btn": "拒否"
+    },
+    "any_account_id": {
+      "title": "アカウント詳細リクエスト",
+      "request": "アプリ: 「{origin}」の「{appName}」がアカウントへのアクセスをリクエストしています。",
+      "request_cta": "提供するアカウントを選択します。",
+      "accept_btn": "許可する",
+      "reject_btn": "拒否"
+    },
+    "transfer": {
+      "title": "転送依頼",
+      "to": "受信者",
+      "amount": "額",
+      "memo": "メモ",
+      "request": "アプリ: '{origin}' の '{appName}' が { chain }:{ accountName } からの転送を開始しようとしています。",
+      "request_cta": "実行しますか？",
+      "accept_btn": "サイン",
+      "reject_btn": "無視",
+      "server_error": "確認のために既知の詐欺師のリストを読み込めませんでした。注意して進めてください。",
+      "detected_scammer": "受信者は既知の詐欺師です。中止するようアドバイスしてください。"
+    },
+    "rawsig": {
+      "title": "リクエスト",
+      "loading": "ブロックチェーンからトランザクションの詳細を読み込んでいます。お待ちください。",
+      "request": "アプリ: '{origin}' の '{appName}' は、アカウント { chain }:{ accountName } の次のトランザクションを送信しました。",
+      "request_cta": "実行しますか？",
+      "accept_btn": "サイン",
+      "sign_and_broadcast_btn": "サイン",
+      "sign_btn": "サイン",
+      "reject_btn": "無視"
+    },
+    "whitelist": {
+      "prompt": "このアプリからの後続の '{method}' リクエストをホワイトリストに登録しますか?"
+    },
+    "vote": {
+      "title": "投票リクエスト",
+      "request": "アプリ:「{origin}」の「{appName}」は、アカウント {chain}:{accountName} で次の {entity} に投票するよう求めています",
+      "request_cta": "",
+      "accept_btn": "承認",
+      "reject_btn": "無視"
+    },
+    "message": {
+      "title": "サインメッセージリクエスト",
+      "request": "アプリ: '{origin}' の '{appName}' は、次のテキストにアカウント { chain }:{ accountName } で署名するよう求めています",
+      "request_cta": "",
+      "accept_btn": "承認",
+      "reject_btn": "無視"
+    },
+    "injected": {
+      "BTS": {
+        "getAccount": {
+          "method": "getAccount",
+          "tooltip": "ウォレットにブロックチェーン アカウントの詳細を尋ねます"
+        },
+        "requestSignature": {
+          "method": "requestSignature",
+          "tooltip": "ウォレットにブロックチェーン署名を要求します"
+        },
+        "injectedCall": {
+          "method": "注入コール",
+          "tooltip": "注入されたブロックチェーン操作を処理するようウォレットに要求します"
+        },
+        "voteFor": {
+          "method": "に投票",
+          "tooltip": "ブロックチェーン投票を実行する"
+        },
+        "signMessage": {
+          "method": "サインメッセージ",
+          "tooltip": "ブロックチェーン ベースのメッセージに署名する"
+        },
+        "signNFT": {
+          "method": "サインNFT",
+          "tooltip": "NFTコンテンツに署名する"
+        },
+        "verifyMessage": {
+          "method": "検証メッセージ",
+          "tooltip": "ブロックチェーン ベースの署名付きメッセージを検証する"
+        },
+        "transfer": {
+          "method": "移行",
+          "tooltip": "あるアカウントから別のアカウントにアセットを送信する"
+        },
+        "limit_order_create": {
+          "method": "指値注文作成",
+          "tooltip": "一定額の資産を特定の為替レートで特定の時間までに売却するオファー"
+        },
+        "limit_order_cancel": {
+          "method": "指値注文キャンセル",
+          "tooltip": "指値注文のキャンセル"
+        },
+        "call_order_update": {
+          "method": "電話注文の更新",
+          "tooltip": "既存の呼び出し順序の更新"
+        },
+        "account_create": {
+          "method": "アカウントの作成",
+          "tooltip": "新しいアカウントの作成"
+        },
+        "asset_update": {
+          "method": "アセットの更新",
+          "tooltip": "作成したアセット設定を更新する"
+        },
+        "asset_update_bitasset": {
+          "method": "アセット更新ビットアセット",
+          "tooltip": "作成したビットアセットの設定を更新する"
+        },
+        "asset_update_feed_producers": {
+          "method": "アセット更新フィード プロデューサー",
+          "tooltip": "作成された bitasset の承認済みフィード プロデューサーのリストを更新する"
+        },
+        "asset_issue": {
+          "method": "資産の問題",
+          "tooltip": "作成したアセットを個人に発行する"
+        },
+        "asset_reserve": {
+          "method": "資産準備金",
+          "tooltip": "作成したアセットを予約する"
+        },
+        "asset_fund_fee_pool": {
+          "method": "アセットファンド手数料プール",
+          "tooltip": "作成したアセットの手数料プールに資金を提供する"
+        },
+        "asset_settle": {
+          "method": "資産決済",
+          "tooltip": "ポートフォリオで資産を決済する"
+        },
+        "asset_global_settle": {
+          "method": "資産のグローバル決済",
+          "tooltip": "作成したビットアセットの 1 つをグローバルに決済する"
+        },
+        "asset_publish_feed": {
+          "method": "アセット公開フィード",
+          "tooltip": "ビットアセットの価格フィードを発行する"
+        },
+        "witness_create": {
+          "method": "証人の作成",
+          "tooltip": "証人アカウントを作成する"
+        },
+        "witness_update": {
+          "method": "目撃者の更新",
+          "tooltip": "証人アカウントを更新する"
+        },
+        "proposal_create": {
+          "method": "提案作成",
+          "tooltip": "ブロックチェーン運用案の作成"
+        },
+        "proposal_update": {
+          "method": "提案の更新",
+          "tooltip": "ブロックチェーン運用提案を更新する"
+        },
+        "proposal_delete": {
+          "method": "提案の削除",
+          "tooltip": "ブロックチェーン運用提案の削除"
+        },
+        "withdraw_permission_create": {
+          "method": "権限の取り消し作成",
+          "tooltip": "出金許可を作成する"
+        },
+        "withdraw_permission_update": {
+          "method": "許可の更新を取り消す",
+          "tooltip": "出金許可を更新する"
+        },
+        "withdraw_permission_claim": {
+          "method": "許可請求を取り下げる",
+          "tooltip": "撤回許可からの請求"
+        },
+        "withdraw_permission_delete": {
+          "method": "権限の取り消し 削除",
+          "tooltip": "出金許可を削除する"
+        },
+        "committee_member_create": {
+          "method": "委員作成",
+          "tooltip": "委員会メンバーのアカウントを作成する"
+        },
+        "committee_member_update": {
+          "method": "委員更新",
+          "tooltip": "委員会メンバーのアカウントの詳細を更新する"
+        },
+        "committee_member_update_global_parameters": {
+          "method": "委員会メンバーがグローバル パラメータを更新",
+          "tooltip": "Bitshares ブロックチェーンのグローバル パラメータ値に対する委員会メンバーのスタンスを公開する"
+        },
+        "vesting_balance_create": {
+          "method": "権利確定残高の作成",
+          "tooltip": "ベスティングバランスを作成する"
+        },
+        "vesting_balance_withdraw": {
+          "method": "権利確定残高の引き出し",
+          "tooltip": "権利確定残高からの引き出し"
+        },
+        "worker_create": {
+          "method": "ワーカー作成",
+          "tooltip": "作業員の提案を作成する"
+        },
+        "balance_claim": {
+          "method": "残高請求",
+          "tooltip": "残高からの請求"
+        },
+        "override_transfer": {
+          "method": "オーバーライド転送",
+          "tooltip": "転送操作をオーバーライドする"
+        },
+        "transfer_to_blind": {
+          "method": "ブラインドへの転送",
+          "tooltip": "ブラインド宛先へのアセットの転送"
+        },
+        "blind_transfer": {
+          "method": "ブラインド転送",
+          "tooltip": "ブラインド アセットをブラインドで転送する"
+        },
+        "transfer_from_blind": {
+          "method": "ブラインドからの転送",
+          "tooltip": "ブラインド残高から資産を引き出す"
+        },
+        "asset_claim_fees": {
+          "method": "資産請求手数料",
+          "tooltip": "アセットから手数料を請求する"
+        },
+        "bid_collateral": {
+          "method": "入札担保",
+          "tooltip": "グローバルに決済されたときに、bitassets の裏付けとなる担保に入札する"
+        },
+        "asset_claim_pool": {
+          "method": "資産請求プール",
+          "tooltip": "指定した資産の手数料プールから BTS を発行者の残高に戻します"
+        },
+        "asset_update_issuer": {
+          "method": "資産更新発行者",
+          "tooltip": "アセットの発行者を新しい管理者アカウントに更新します。"
+        },
+        "htlc_create": {
+          "method": "ハッシュ タイム ロック コントラクトの作成",
+          "tooltip": "ハッシュ タイム ロック コントラクト操作を作成する"
+        },
+        "htlc_redeem": {
+          "method": "ハッシュ タイム ロック コントラクトの償還",
+          "tooltip": "Hash Time Locked Contract 操作の内容を引き換える"
+        },
+        "htlc_extend": {
+          "method": "ハッシュ タイム ロック コントラクト エクステンド",
+          "tooltip": "ハッシュ タイム ロック コントラクト操作の期間を延長する"
+        },
+        "custom_authority_create": {
+          "method": "カスタム権限の作成",
+          "tooltip": "新しいカスタム権限を作成します。"
+        },
+        "custom_authority_update": {
+          "method": "カスタム権限の更新",
+          "tooltip": "カスタム権限を更新します。"
+        },
+        "custom_authority_delete": {
+          "method": "カスタム権限の削除",
+          "tooltip": "カスタム権限を削除します。"
+        },
+        "ticket_create": {
+          "method": "チケット作成",
+          "tooltip": "新しいチケットを作成します。"
+        },
+        "ticket_update": {
+          "method": "チケットの更新",
+          "tooltip": "既存のチケットを更新します。"
+        },
+        "liquidity_pool_create": {
+          "method": "流動性プールの作成",
+          "tooltip": "流動性プールを作成する"
+        },
+        "liquidity_pool_delete": {
+          "method": "流動性プールの削除",
+          "tooltip": "流動性プールを削除する"
+        },
+        "liquidity_pool_deposit": {
+          "method": "流動性プール預金",
+          "tooltip": "資金を流動性プールに入金する"
+        },
+        "liquidity_pool_withdraw": {
+          "method": "流動性プールの撤回",
+          "tooltip": "流動性プールから資金を引き出す"
+        },
+        "liquidity_pool_exchange": {
+          "method": "流動性プール交換",
+          "tooltip": "流動性プールと交換します。"
+        },
+        "samet_fund_create": {
+          "method": "SameT ファンド作成",
+          "tooltip": "新しい SameT ファンドを作成します。 "
+        },
+        "samet_fund_delete": {
+          "method": "SameT ファンドの削除",
+          "tooltip": "SameT ファンド オブジェクトを削除します。"
+        },
+        "samet_fund_update": {
+          "method": "SameT ファンドの更新",
+          "tooltip": "SameT ファンド オブジェクトを更新します。"
+        },
+        "samet_fund_borrow": {
+          "method": "SameT 資金借入",
+          "tooltip": "SameT ファンドから借ります。"
+        },
+        "samt_fund_repay": {
+          "method": "SameT 資金の返済",
+          "tooltip": "負債を SameT ファンドに返済します。"
+        },
+        "credit_offer_create": {
+          "method": "クレジットオファーの作成",
+          "tooltip": "新しいクレジット オファーを作成します。"
+        },
+        "credit_offer_delete": {
+          "method": "クレジットオファーの削除",
+          "tooltip": "クレジットオファーを削除します。"
+        },
+        "credit_offer_update": {
+          "method": "クレジットオファーの更新",
+          "tooltip": "クレジットオファーを更新する"
+        },
+        "credit_offer_accept": {
+          "method": "クレジットオファーを受け入れる",
+          "tooltip": "信用提案を受け入れ、信用取引を作成します。"
+        },
+        "credit_deal_repay": {
+          "method": "信用取引の返済",
+          "tooltip": "信用取引を返済します。"
+        },
+        "custom": {
+          "method": "カスタム",
+          "tooltip": "証人コンセンサスの上に高レベルのプロトコルを追加する一般的な方法を提供します"
+        },
+        "assert": {
+          "method": "主張する",
+          "tooltip": "いくつかの条件が真であることをアサートします。"
+        },
+        "account_update": {
+          "method": "アカウントの更新",
+          "tooltip": "この操作は、既存のアカウントを更新するために使用されます。"
+        },
+        "account_whitelist": {
+          "method": "アカウントのホワイトリスト",
+          "tooltip": "この操作は、主にホワイトリストに登録された資産での取引のために、アカウントをホワイトリストおよびブラックリストに登録するために使用されます"
+        },
+        "account_upgrade": {
+          "method": "アカウントのアップグレード",
+          "tooltip": "この操作は、アカウントをメンバーにアップグレードするか、サブスクリプションを更新するために使用されます。"
+        },
+        "account_transfer": {
+          "method": "口座振替",
+          "tooltip": "ホワイトリストをクリアしながら、アカウントを別のアカウントに転送します"
+        },
+        "asset_create": {
+          "method": "アセットの作成",
+          "tooltip": "Bitshares ブロックチェーンに資産を作成します"
+        }
+      }
+    }
+  }

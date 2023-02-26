@@ -19,17 +19,12 @@
         }
     });
 
-
     let localesRef = computed(() => {
         return menuLocales;
     });
 
     let location = computed(() => {
         return props.location;
-    });
-
-    let positioning = computed(() => {
-        return props.location === "prompt" ? 'top left' : 'bottom start';
     });
 
     let selected = ref(
@@ -89,8 +84,17 @@
             v-model="open"
             style="border: 1px solid #C7088E;"
             position="BOTTOM_START"
-            :items="localesRef"
             @selected="onSelected"
-        />
+        >
+            <ui-menuitem
+                v-for="locale in selectLocales"
+                :key="locale.value"
+                :value="locale.value"
+            >
+                <ui-menuitem-text>
+                    {{ locale.label }}
+                </ui-menuitem-text>
+            </ui-menuitem>
+        </ui-menu>
     </ui-menu-anchor>
 </template>

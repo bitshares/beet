@@ -1,379 +1,380 @@
 {
     "general": {
-        "content": "Inhalt"
+      "content": "Inhalt"
     },
     "link": {
-         "title": "Anfrage zur Kontoverknüpfung",
-         "account_select": "Konto auswählen",
-         "account_missing": "Das angeforderte Konto ist in dieser Beet-Wallet nicht vorhanden.",
-         "request": "Die Anwendung '{appName}' von '{origin}' fordert Zugriff auf ein {chain}-Konto an.",
-         "request_fresh": "Die Anwendung hat bereits zuvor ein {chain}-Konto verknüpft, wie in der Liste unten markiert.",
-         "request_tooltip": "Die Anwendung erhält Ihre Kontodaten (Name und ID) und einen Link zu Beet.",
-         "request_cta": "Wählen Sie das bereitzustellende Konto aus.",
-         "accept_btn": "Zulassen",
-         "reject_btn": "Verweigern",
-         "invalid_operations": "Falsche Verknüpfungsanforderung - ungültige(r) Vorgang(e)."
+      "title": "Anfrage zur Kontoverknüpfung",
+      "account_select": "Konto auswählen",
+      "account_missing": "Das angeforderte Konto ist in dieser Brieftasche nicht vorhanden.",
+      "request": "Die Anwendung „{appName}“ von „{origin}“ fordert Zugriff auf ein {chain}-Konto an.",
+      "request_fresh": "Die Anwendung hat bereits zuvor ein {chain}-Konto verknüpft, wie in der Liste unten markiert.",
+      "request_tooltip": "Die Anwendung erhält Ihre Kontodaten (Name und ID) und stellt einen Wallet-Link her.",
+      "request_cta": "Wählen Sie das bereitzustellende Konto aus.",
+      "accept_btn": "Erlauben",
+      "reject_btn": "Leugnen",
+      "invalid_operations": "Fehlerhafte Verknüpfungsanforderung - ungültige Operation(en)."
     },
     "relink": {
-         "title": "Anfrage zur Neuverknüpfung des Kontos",
-         "error": "Fehler beim Anzeigen der Eingabeaufforderung",
-         "request": "Die Anwendung '{appName}' von '{origin}' fordert an, das zuvor verknüpfte {chain}-Konto neu zu verknüpfen: {accountId}. Dies liegt normalerweise daran, dass Sie den Cache Ihres Browsers gelöscht haben. In seltenen Fällen ist dies der Fall könnte ein Phishing-Versuch sein, also überprüfen Sie bitte die Website, die Sie besuchen.",
-         "request_tooltip": "Die vorherige Verknüpfung zwischen der Anwendung und der Kontoreferenzc wird zurückgesetzt."
+      "title": "Anfrage zur erneuten Verknüpfung des Kontos",
+      "error": "Fehler beim Anzeigen der Eingabeaufforderung",
+      "request": "Die Anwendung „{appName}“ von „{origin}“ fordert an, das zuvor verknüpfte {chain}-Konto erneut zu verknüpfen: {accountId}. ",
+      "request_tooltip": "Die bisherige Verknüpfung zwischen Antrag und Kontobezugc wird zurückgesetzt."
     },
     "account_id": {
-         "title": "Kontodetails anfordern",
-         "request": "App: '{appName}' von '{origin}' fordert Zugriff auf die verknüpfte Identität (Konto-ID und Kontoname) von Konto an: {chain}: {accountName} ({accountId}).",
-         "request_tooltip": "Standardmäßig stellt Beet einen anonymen Link bereit. Bestimmte Apps/Websites erfordern Zugriff auf Ihre Konto-ID/Ihren Namen (z. B. für Anmeldezwecke). Wenn dies der Fall ist, können Sie hier problemlos 'Erlauben'." ,
-         "accept_btn": "Zulassen",
-         "reject_btn": "Verweigern"
+      "title": "Kontodetails anfordern",
+      "request": "App: „{appName}“ von „{origin}“ fordert Zugriff auf die verknüpfte Identität an (Konto-ID",
+      "request_tooltip": "Standardmäßig wird ein anonymer Link bereitgestellt. ",
+      "accept_btn": "Erlauben",
+      "reject_btn": "Leugnen"
     },
     "any_account_id": {
-         "title": "Kontodetails anfordern",
-         "request": "App: '{appName}' von '{origin}' fordert Zugriff auf ein Konto an.",
-         "request_cta": "Wählen Sie das bereitzustellende Konto aus.",
-         "accept_btn": "Zulassen",
-         "reject_btn": "Verweigern"
+      "title": "Kontodetails anfordern",
+      "request": "App: „{appName}“ von „{origin}“ fordert Zugriff auf ein Konto an.",
+      "request_cta": "Wählen Sie das bereitzustellende Konto aus.",
+      "accept_btn": "Erlauben",
+      "reject_btn": "Leugnen"
     },
     "transfer": {
-         "title": "Übertragungsanfrage",
-         "to": "Empfänger",
-         "amount": "Betrag",
-         "memo": "Memo",
-         "request": "App: '{appName}' von '{origin}' möchte eine Übertragung von {chain}:{accountName} initiieren.",
-         "request_cta": "Möchten Sie es ausführen?",
-         "accept_btn": "Signieren & Senden",
-         "reject_btn": "Ignorieren",
-         "server_error": "Die Liste bekannter Betrüger konnte zur Überprüfung nicht geladen werden, seien Sie vorsichtig.",
-         "detected_scammer": "Der Empfänger ist ein bekannter Betrüger, Abbruchempfehlung."
+      "title": "Transferanforderung",
+      "to": "Empfänger",
+      "amount": "Menge",
+      "memo": "Memo",
+      "request": "App: '{appName}' von '{origin}' möchte eine Übertragung von { chain }:{ accountName } initiieren.",
+      "request_cta": "Willst du es ausführen?",
+      "accept_btn": "Zeichen",
+      "reject_btn": "Ignorieren",
+      "server_error": "Die Liste bekannter Betrüger konnte zur Überprüfung nicht geladen werden, seien Sie vorsichtig.",
+      "detected_scammer": "Der Empfänger ist ein bekannter Betrüger, Abbruchempfehlung."
     },
     "rawsig": {
-         "title": "Anfrage",
-         "loading": "Transaktionsdetails werden aus der Blockchain geladen, bitte warten.",
-         "request": "App: '{appName}' von '{origin}' hat die folgende Transaktion für Konto {chain} übermittelt: {accountName}.",
-         "request_cta": "Möchten Sie es ausführen?",
-         "accept_btn": "Signieren & Senden",
-         "sign_and_broadcast_btn": "Signieren & Broadcasten",
-         "sign_btn": "Unterschreiben",
-         "reject_btn": "Ignorieren"
+      "title": "Anfrage",
+      "loading": "Laden von Transaktionsdetails aus der Blockchain, bitte warten.",
+      "request": "App: '{appName}' von '{origin}' hat die folgende Transaktion für das Konto { chain } übermittelt: { accountName }.",
+      "request_cta": "Willst du es ausführen?",
+      "accept_btn": "Zeichen",
+      "sign_and_broadcast_btn": "Zeichen",
+      "sign_btn": "Zeichen",
+      "reject_btn": "Ignorieren"
     },
     "whitelist": {
-         "prompt": "Weitere '{method}'-Anfragen von dieser App auf Whitelist setzen?"
+      "prompt": "Nachfolgende '{method}'-Anfragen von dieser App auf die weiße Liste setzen?"
     },
     "vote": {
-         "title": "Abstimmungsanfrage",
-         "request": "App: '{appName}' von '{origin}' möchte, dass Sie für die folgende {entity} mit dem Konto { chain } stimmen:{ accountName }",
-         "request_cta": "",
-         "accept_btn": "Genehmigen",
-         "reject_btn": "Ignorieren"
-     },
+      "title": "Abstimmungsanfrage",
+      "request": "App: „{appName}“ von „{origin}“ möchte, dass Sie für das folgende {entity} mit Konto { chain } stimmen: { accountName }",
+      "request_cta": "",
+      "accept_btn": "Genehmigen",
+      "reject_btn": "Ignorieren"
+    },
     "message": {
-         "title": "Anfrage zum Signieren einer Nachricht",
-         "request": "App: '{appName}' von '{origin}' möchte, dass Sie den folgenden Text mit Konto {chain} signieren:{accountName}",
-         "request_cta": "",
-         "accept_btn": "Genehmigen",
-         "reject_btn": "Ignorieren"
-     },
-     "injected": {
-        "BTS": {
-            "getAccount": {
-                "method": "getAccount",
-                "tooltip": "Beet nach Blockchain-Kontodaten fragen"
-            },
-            "requestSignature": {
-                "method": "requestSignature",
-                "tooltip": "Beet nach Blockchain-Signaturen fragen"
-            },
-            "injectedCall": {
-                "method": "injectedCall",
-                "tooltip": "Beet handhabt eine injizierte Blockchain-Operation"
-            },
-            "voteFor": {
-                "method": "voteFor",
-                "tooltip": "Blockchain-Abstimmung mit Rübenhandhabung"
-            },
-            "signMessage": {
-                "method": "signMessage",
-                "tooltip": "Beet signiert eine Nachricht"
-            },
-            "signNFT": {
-                "method": "signNFT",
-                "tooltip": "Beet unterschreibt NFT"
-            },
-            "verifyMessage": {
-                "method": "verifyMessage",
-                "tooltip": "Beet verifiziert eine Nachricht"
-            },
-            "transfer": {
-              "method": "Übertragen",
-              "tooltip": "Assets von einem Konto an ein anderes senden"
-            },
-            "limit_order_create": {
-                "method": "Limit-Order erstellen",
-                "tooltip": "Ein Angebot zum Verkauf einer bestimmten Menge eines Vermögenswerts zu einem bestimmten Wechselkurs zu einem bestimmten Zeitpunkt"
-            },
-            "limit_order_cancel": {
-                "method": "Limit-Order stornieren",
-                "tooltip": "Eine Limit-Order-Operation stornieren"
-            },
-            "call_order_update": {
-                "method": "Aktualisierung der Anrufreihenfolge",
-                "tooltip": "Aktualisieren eines bestehenden Abrufauftrags"
-            },
-            "account_create": {
-                "method": "Konto erstellen",
-                "tooltip": "Neues Konto erstellen"
-            },
-            "asset_update": {
-                "method": "Asset-Update",
-                "tooltip": "Erstellte Asset-Einstellungen aktualisieren"
-            },
-            "asset_update_bitasset": {
-                "method": "Asset-Update-Bitasset",
-                "tooltip": "Erstellte Bitasset-Einstellungen aktualisieren"
-            },
-            "asset_update_feed_producers": {
-                "method": "Erzeuger von Asset-Update-Feeds",
-                "tooltip": "Liste zugelassener Futtermittelhersteller für erstelltes Bitasset aktualisieren"
-            },
-            "asset_issue": {
-                "method": "Vermögensausgabe",
-                "tooltip": "Geben Sie Ihre erstellten Assets an Einzelpersonen aus"
-            },
-            "asset_reserve": {
-                "method": "Vermögensreserve",
-                "tooltip": "Erstellte Assets reservieren"
-            },
-            "asset_fund_fee_pool": {
-                "method": "Gebührenpool des Anlagefonds",
-                "tooltip": "Gebührenpool für Ihr erstelltes Asset finanzieren"
-            },
-            "asset_settle": {
-                "method": "Vermögensausgleich",
-                "tooltip": "Einen Vermögenswert in Ihrem Portfolio abrechnen"
-            },
-            "asset_global_settle": {
-                "method": "Asset global abrechnen",
-                "tooltip": "Eines Ihrer erstellten Bitassets global abrechnen"
-            },
-            "asset_publish_feed": {
-                "method": "Feed zur Veröffentlichung von Assets",
-                "tooltip": "Preis-Feed für ein Bitasset veröffentlichen"
-            },
-            "witness_create": {
-                "method": "Zeugen erstellen",
-                "tooltip": "Zeugenkonto erstellen"
-            },
-            "witness_update": {
-                "method": "Zeugenaktualisierung",
-                "tooltip": "Aktualisieren Sie Ihr Zeugenkonto"
-            },
-            "proposal_create": {
-                "method": "Angebot erstellen",
-                "tooltip": "Erstellen Sie einen Vorschlag für eine Blockchain-Operation"
-            },
-            "proposal_update": {
-                "method": "Angebotsaktualisierung",
-                "tooltip": "Einen Vorschlag für eine Blockchain-Operation aktualisieren"
-            },
-            "proposal_delete": {
-                "method": "Vorschlag löschen",
-                "tooltip": "Vorschlag einer Blockchain-Operation löschen"
-            },
-            "withdraw_permission_create": {
-                "method": "Berechtigungserstellung entziehen",
-                "tooltip": "Entzugserlaubnis erstellen"
-            },
-            "withdraw_permission_update": {
-                "method": "Berechtigungsaktualisierung zurückziehen",
-                "tooltip": "Eine Widerrufserlaubnis aktualisieren"
-            },
-            "withdraw_permission_claim": {
-                "method": "Berechtigungsanspruch zurückziehen",
-                "tooltip": "Eine Widerrufserlaubnis beanspruchen"
-            },
-            "withdraw_permission_delete": {
-                "method": "Berechtigung zum Löschen entziehen",
-                "tooltip": "Entzugserlaubnis löschen"
-            },
-            "committee_member_create": {
-                "method": "Komiteemitglied erstellen",
-                "tooltip": "Konto für Ausschussmitglieder erstellen"
-            },
-            "committee_member_update": {
-                "method": "Update der Ausschussmitglieder",
-                "tooltip": "Aktualisieren Sie die Kontodetails Ihres Komiteemitglieds"
-            },
-            "committee_member_update_global_parameters": {
-                "method": "Komiteemitglied aktualisiert globale Parameter",
-                "tooltip": "Veröffentlichen Sie die Haltung Ihres Komiteemitglieds zu den globalen Parameterwerten der Bitshares-Blockchain"
-            },
-            "vesting_balance_create": {
-                "method": "Freizügigkeitsguthaben erstellen",
-                "tooltip": "Freizügigkeitsguthaben erstellen"
-            },
-            "vesting_balance_withdraw": {
-                "method": "Freizügigkeitsguthaben abheben",
-                "tooltip": "Von einem Unverfallbarkeitsguthaben abheben"
-            },
-            "worker_create": {
-                "method": "Worker erstellen",
-                "tooltip": "Arbeitnehmervorschlag erstellen"
-            },
-            "balance_claim": {
-                "method": "Saldoforderung",
-                "tooltip": "Aus Guthaben beanspruchen"
-            },
-            "override_transfer": {
-                "method": "Übertragung überschreiben",
-                "tooltip": "Übertragungsvorgang überschreiben"
-            },
-            "transfer_to_blind": {
-                "method": "Transfer to blind",
-                "tooltip": "Assets an ein blindes Ziel übertragen"
-            },
-            "blind_transfer": {
-                "method": "Blinde Übertragung",
-                "tooltip": "Blindes Vermögen blind übertragen"
-            },
-            "transfer_from_blind": {
-                "method": "Transfer von blind",
-                "tooltip": "Guthaben von einem Blindguthaben abheben"
-            },
-            "asset_claim_fees": {
-                "method": "Gebühren für Vermögensansprüche",
-                "tooltip": "Gebühren von einem Vermögenswert einfordern"
-            },
-            "bid_collateral": {
-                "method": "Gebotssicherheit",
-                "tooltip": "Gebot auf eine Bitasset-Besicherung bei globaler Abwicklung"
-            },
-            "asset_claim_pool": {
-                "method": "Vermögensanspruch Becken",
-                "tooltip": "Überträgt BTS aus dem Gebührenpool eines bestimmten Vermögenswertes zurück auf das Guthaben des Emittenten"
-            },
-            "asset_update_issuer": {
-              "method": "Herausgeber von Asset-Updates",
-              "tooltip": "Aussteller eines Assets auf ein neues Administratorkonto aktualisieren."
-            },
-            "htlc_create": {
-                "method": "HTLC erstellen",
-                "tooltip": "HTLC-Vorgang erstellen"
-            },
-            "htlc_redeem": {
-                "method": "HTLC einlösen",
-                "tooltip": "Den Inhalt einer HTLC-Operation einlösen"
-            },
-            "htlc_extend": {
-                "method": "HTLC Erweitern",
-                "tooltip": "Dauer einer HTLC-Operation verlängern"
-            },
-            "custom_authority_create": {
-                "method": "Benutzerdefinierte Autorität erstellen",
-                "tooltip": "Neue benutzerdefinierte Autorität erstellen."
-            },
-            "custom_authority_update": {
-                "method": "Aktualisierung der benutzerdefinierten Autorität",
-                "tooltip": "Eine benutzerdefinierte Autorität aktualisieren."
-            },
-            "custom_authority_delete": {
-                "method": "Benutzerdefinierte Autorität löschen",
-                "tooltip": "Eine benutzerdefinierte Autorität löschen."
-            },
-            "ticket_create": {
-                "method": "Ticket erstellen",
-                "tooltip": "Neues Ticket erstellen."
-            },
-            "ticket_update": {
-                "method": "Ticketaktualisierung",
-                "tooltip": "Vorhandenes Ticket aktualisieren."
-            },
-            "liquidity_pool_create": {
-                "method": "Liquiditätspool erstellen",
-                "tooltip": "Liquiditätspool erstellen"
-            },
-            "liquidity_pool_delete": {
-                "method": "Liquiditätspool löschen",
-                "tooltip": "Liquiditätspool löschen"
-            },
-            "liquidity_pool_deposit": {
-                "method": "Liquiditätspool-Einzahlung",
-                "tooltip": "Geld in einen Liquiditätspool einzahlen"
-            },
-            "liquidity_pool_withdraw": {
-                "method": "Abhebung aus dem Liquiditätspool",
-                "tooltip": "Mittel aus einem Liquiditätspool abheben"
-            },
-            "liquidity_pool_exchange": {
-                "method": "Liquiditätspooltausch",
-                "tooltip": "Austausch mit einem Liquiditätspool."
-            },
-            "samet_fund_create": {
-                "method": "SameT-Fonds erstellen",
-                "tooltip": "Erstellen Sie einen neuen SameT-Fonds. Ein SameT-Fonds ist ein Fonds, der von einem Kreditnehmer verwendet werden kann und in derselben Transaktion zurückgezahlt werden muss."
-            },
-            "samet_fund_delete": {
-                "method": "SameT-Fonds löschen",
-                "tooltip": "Löschen Sie ein SameT-Fondsobjekt."
-            },
-            "samet_fund_update": {
-                "method": "SameT-Fondsaktualisierung",
-                "tooltip": "Aktualisiere ein SameT-Fondsobjekt."
-            },
-            "samet_fund_borrow": {
-                "method": "SameT-Fonds ausleihen",
-                "tooltip": "Aus einem SameT-Fonds ausleihen."
-            },
-            "samt_fund_repay": {
-                "method": "SameT-Fondsrückzahlung",
-                "tooltip": "Schulden an einen SameT-Fonds zurückzahlen."
-            },
-            "credit_offer_create": {
-                "method": "Kreditangebot erstellen",
-                "tooltip": "Erstellen Sie ein neues Kreditangebot. Ein Kreditangebot ist ein Guthaben, das von anderen Konten verwendet werden kann, die bestimmte Sicherheiten stellen."
-            },
-            "credit_offer_delete": {
-                "method": "Kreditangebot löschen",
-                "tooltip": "Kreditangebot löschen."
-            },
-            "credit_offer_update": {
-                "method": "Aktualisierung des Kreditangebots",
-                "tooltip": "Kreditangebot aktualisieren"
-            },
-            "credit_offer_accept": {
-                "method": "Kreditangebot annehmen",
-                "tooltip": "Kreditangebot annehmen und Kreditgeschäft erstellen."
-            },
-            "credit_deal_repay": {
-                "method": "Kreditgeschäft zurückzahlen",
-                "tooltip": "Kreditgeschäft zurückzahlen."
-            },
-            "custom": {
-                "method": "Brauch",
-                "tooltip": "Bietet eine generische Möglichkeit, Protokolle auf höherer Ebene zusätzlich zum Zeugenkonsens hinzuzufügen."            },
-            "assert": {
-                "method": "Behaupten",
-                "tooltip": "Bestätigen Sie, dass einige Bedingungen wahr sind."
-            },
-            "account_update": {
-                "method": "Kontoaktualisierung",
-                "tooltip": "Diese Operation wird verwendet, um ein bestehendes Konto zu aktualisieren. Sie kann verwendet werden, um die Autoritäten zu aktualisieren oder die Optionen für das Konto anzupassen."
-            },
-            "account_whitelist": {
-                "method": "Konto-Whitelist",
-                "tooltip": "Dieser Vorgang wird verwendet, um Konten auf die weiße und schwarze Liste zu setzen, hauptsächlich für Transaktionen mit Vermögenswerten auf der weißen Liste."
-            },
-            "account_upgrade": {
-                "method": "Konto-Upgrade",
-                "tooltip": "Dieser Vorgang wird verwendet, um ein Konto zu einem Mitglied hochzustufen oder sein Abonnement zu erneuern."
-            },
-            "account_transfer": {
-                "method": "Kontoübertragung",
-                "tooltip": "Überträgt das Konto auf ein anderes Konto, während die weiße Liste gelöscht wird"
-            },
-            "asset_create": {
-                "method": "Asset erstellen",
-                "tooltip": "Erstellt ein Asset auf der Bitshares-Blockchain"
-            }
+      "title": "Nachrichtenanforderung signieren",
+      "request": "App: „{appName}“ von „{origin}“ möchte, dass Sie den folgenden Text mit dem Konto {chain} signieren:{accountName}",
+      "request_cta": "",
+      "accept_btn": "Genehmigen",
+      "reject_btn": "Ignorieren"
+    },
+    "injected": {
+      "BTS": {
+        "getAccount": {
+          "method": "getAccount",
+          "tooltip": "Fragt Ihre Brieftasche nach Blockchain-Kontodaten"
+        },
+        "requestSignature": {
+          "method": "anfordernSignatur",
+          "tooltip": "Fragt Ihre Brieftasche nach Blockchain-Signaturen"
+        },
+        "injectedCall": {
+          "method": "eingespritztAnruf",
+          "tooltip": "Fordert Ihre Brieftasche auf, eine injizierte Blockchain-Operation zu verarbeiten"
+        },
+        "voteFor": {
+          "method": "StimmeFür",
+          "tooltip": "Führen Sie eine Blockchain-Abstimmung durch"
+        },
+        "signMessage": {
+          "method": "ZeichenNachricht",
+          "tooltip": "Signieren Sie eine Blockchain-basierte Nachricht"
+        },
+        "signNFT": {
+          "method": "signNFT",
+          "tooltip": "Signieren Sie den Inhalt eines NFTs"
+        },
+        "verifyMessage": {
+          "method": "verifizierenNachricht",
+          "tooltip": "Verifizieren Sie eine Blockchain-basierte signierte Nachricht"
+        },
+        "transfer": {
+          "method": "Überweisen",
+          "tooltip": "Senden Sie Vermögenswerte von einem Konto an ein anderes"
+        },
+        "limit_order_create": {
+          "method": "Limitauftrag erstellen",
+          "tooltip": "Ein Angebot, einen bestimmten Betrag eines Vermögenswertes zu einem bestimmten Wechselkurs zu einem bestimmten Zeitpunkt zu verkaufen"
+        },
+        "limit_order_cancel": {
+          "method": "Limit-Order stornieren",
+          "tooltip": "Stornieren einer Limit-Order-Operation"
+        },
+        "call_order_update": {
+          "method": "Aktualisierung der Anrufbestellung",
+          "tooltip": "Aktualisieren eines bestehenden Abrufauftrags"
+        },
+        "account_create": {
+          "method": "Konto erstellen",
+          "tooltip": "Erstellen eines neuen Kontos"
+        },
+        "asset_update": {
+          "method": "Asset-Update",
+          "tooltip": "Aktualisieren Sie die erstellten Asset-Einstellungen"
+        },
+        "asset_update_bitasset": {
+          "method": "Asset-Update-Bitasset",
+          "tooltip": "Aktualisieren Sie die erstellten Bitasset-Einstellungen"
+        },
+        "asset_update_feed_producers": {
+          "method": "Ersteller von Asset-Update-Feeds",
+          "tooltip": "Aktualisieren Sie die Liste der zugelassenen Futtermittelhersteller für das erstellte Bitasset"
+        },
+        "asset_issue": {
+          "method": "Vermögensfrage",
+          "tooltip": "Geben Sie Ihre erstellten Vermögenswerte an Einzelpersonen aus"
+        },
+        "asset_reserve": {
+          "method": "Vermögensreserve",
+          "tooltip": "Reservieren Sie Ihre erstellten Assets"
+        },
+        "asset_fund_fee_pool": {
+          "method": "Gebührenpool für Vermögensfonds",
+          "tooltip": "Finanzieren Sie den Gebührenpool für Ihr erstelltes Vermögen"
+        },
+        "asset_settle": {
+          "method": "Vermögensabrechnung",
+          "tooltip": "Gleichen Sie einen Vermögenswert in Ihrem Portfolio ab"
+        },
+        "asset_global_settle": {
+          "method": "Asset global abrechnen",
+          "tooltip": "Begleichen Sie eines Ihrer erstellten Bitassets global"
+        },
+        "asset_publish_feed": {
+          "method": "Asset-Veröffentlichungs-Feed",
+          "tooltip": "Veröffentlichen Sie einen Preis-Feed für ein Bitasset"
+        },
+        "witness_create": {
+          "method": "Zeuge erstellen",
+          "tooltip": "Erstellen Sie ein Zeugenkonto"
+        },
+        "witness_update": {
+          "method": "Zeugenaktualisierung",
+          "tooltip": "Aktualisieren Sie Ihr Zeugenkonto"
+        },
+        "proposal_create": {
+          "method": "Angebot erstellen",
+          "tooltip": "Erstellen Sie einen Vorschlag für eine Blockchain-Operation"
+        },
+        "proposal_update": {
+          "method": "Angebotsaktualisierung",
+          "tooltip": "Aktualisieren Sie einen Vorschlag für eine Blockchain-Operation"
+        },
+        "proposal_delete": {
+          "method": "Vorschlag löschen",
+          "tooltip": "Löschen Sie einen Vorschlag für eine Blockchain-Operation"
+        },
+        "withdraw_permission_create": {
+          "method": "Erlaubnis erstellen entziehen",
+          "tooltip": "Erstellen Sie eine Widerrufsberechtigung"
+        },
+        "withdraw_permission_update": {
+          "method": "Berechtigungsaktualisierung zurückziehen",
+          "tooltip": "Aktualisieren Sie eine Widerrufsberechtigung"
+        },
+        "withdraw_permission_claim": {
+          "method": "Erlaubnisanspruch zurückziehen",
+          "tooltip": "Anspruch aus einer Widerrufserlaubnis"
+        },
+        "withdraw_permission_delete": {
+          "method": "Erlaubnis löschen entziehen",
+          "tooltip": "Löschen Sie eine Widerrufsberechtigung"
+        },
+        "committee_member_create": {
+          "method": "Ausschussmitglied erstellen",
+          "tooltip": "Erstellen Sie ein Ausschussmitgliedskonto"
+        },
+        "committee_member_update": {
+          "method": "Update der Ausschussmitglieder",
+          "tooltip": "Aktualisieren Sie die Kontodaten Ihres Ausschussmitglieds"
+        },
+        "committee_member_update_global_parameters": {
+          "method": "Komiteemitglied aktualisiert globale Parameter",
+          "tooltip": "Veröffentlichen Sie die Haltung Ihrer Ausschussmitglieder zu den globalen Parameterwerten der Bitshares-Blockchain"
+        },
+        "vesting_balance_create": {
+          "method": "Freizügigkeitsguthaben erstellen",
+          "tooltip": "Erstellen Sie ein Freizügigkeitsguthaben"
+        },
+        "vesting_balance_withdraw": {
+          "method": "Vesting-Guthaben abheben",
+          "tooltip": "Von einem Vesting-Guthaben abheben"
+        },
+        "worker_create": {
+          "method": "Arbeiter erstellen",
+          "tooltip": "Erstellen Sie einen Arbeitnehmervorschlag"
+        },
+        "balance_claim": {
+          "method": "Ausgleichsanspruch",
+          "tooltip": "Forderung aus einem Guthaben"
+        },
+        "override_transfer": {
+          "method": "Übertragung überschreiben",
+          "tooltip": "Überschreiben Sie einen Übertragungsvorgang"
+        },
+        "transfer_to_blind": {
+          "method": "Transfer zu blind",
+          "tooltip": "Übertragen Sie Vermögenswerte an ein blindes Ziel"
+        },
+        "blind_transfer": {
+          "method": "Blindübergabe",
+          "tooltip": "Blindes Vermögen blind übertragen"
+        },
+        "transfer_from_blind": {
+          "method": "Übertragung von blind",
+          "tooltip": "Heben Sie Vermögenswerte von einem Blindguthaben ab"
+        },
+        "asset_claim_fees": {
+          "method": "Gebühren für Vermögensansprüche",
+          "tooltip": "Fordern Sie die Gebühren von einem Vermögenswert an"
+        },
+        "bid_collateral": {
+          "method": "Angebotssicherheiten",
+          "tooltip": "Bieten Sie auf ein BitAssets, das Sicherheiten bei globaler Abwicklung bietet"
+        },
+        "asset_claim_pool": {
+          "method": "Asset-Claim-Pool",
+          "tooltip": "Überträgt BTS aus dem Gebührenpool eines bestimmten Vermögenswertes zurück auf das Guthaben des Emittenten"
+        },
+        "asset_update_issuer": {
+          "method": "Herausgeber von Asset-Updates",
+          "tooltip": "Aktualisieren Sie den Aussteller eines Assets auf ein neues Administratorkonto."
+        },
+        "htlc_create": {
+          "method": "Hash Time Locked Contract erstellen",
+          "tooltip": "Erstellen Sie eine Hash-Time-Locked-Contract-Operation"
+        },
+        "htlc_redeem": {
+          "method": "Hash Time Locked Contract Einlösung",
+          "tooltip": "Lösen Sie den Inhalt einer Hash Time Locked Contract-Operation ein"
+        },
+        "htlc_extend": {
+          "method": "Hash Time Locked Contract Extend",
+          "tooltip": "Verlängern Sie die Dauer einer Hash Time Locked Contract-Operation"
+        },
+        "custom_authority_create": {
+          "method": "Benutzerdefinierte Autorität erstellen",
+          "tooltip": "Erstellen Sie eine neue benutzerdefinierte Autorität."
+        },
+        "custom_authority_update": {
+          "method": "Aktualisierung der benutzerdefinierten Autorität",
+          "tooltip": "Aktualisieren Sie eine benutzerdefinierte Autorität."
+        },
+        "custom_authority_delete": {
+          "method": "Benutzerdefinierte Autorität löschen",
+          "tooltip": "Löschen Sie eine benutzerdefinierte Autorität."
+        },
+        "ticket_create": {
+          "method": "Ticket erstellen",
+          "tooltip": "Erstellen Sie ein neues Ticket."
+        },
+        "ticket_update": {
+          "method": "Ticket-Update",
+          "tooltip": "Aktualisieren Sie ein vorhandenes Ticket."
+        },
+        "liquidity_pool_create": {
+          "method": "Liquiditätspool erstellen",
+          "tooltip": "Erstellen Sie einen Liquiditätspool"
+        },
+        "liquidity_pool_delete": {
+          "method": "Liquiditätspool löschen",
+          "tooltip": "Löschen Sie einen Liquiditätspool"
+        },
+        "liquidity_pool_deposit": {
+          "method": "Liquiditätspool-Einzahlung",
+          "tooltip": "Zahlen Sie Gelder in einen Liquiditätspool ein"
+        },
+        "liquidity_pool_withdraw": {
+          "method": "Liquiditätspool abheben",
+          "tooltip": "Geld aus einem Liquiditätspool abheben"
+        },
+        "liquidity_pool_exchange": {
+          "method": "Austausch von Liquiditätspools",
+          "tooltip": "Austausch mit einem Liquiditätspool."
+        },
+        "samet_fund_create": {
+          "method": "SameT-Fonds erstellen",
+          "tooltip": "Erstellen Sie einen neuen SameT-Fonds. "
+        },
+        "samet_fund_delete": {
+          "method": "SameT-Fonds löschen",
+          "tooltip": "Löschen Sie ein SameT-Fondsobjekt."
+        },
+        "samet_fund_update": {
+          "method": "SameT-Fonds-Update",
+          "tooltip": "Aktualisieren Sie ein SameT-Fondsobjekt."
+        },
+        "samet_fund_borrow": {
+          "method": "SameT-Fonds ausleihen",
+          "tooltip": "Aus einem SameT-Fonds leihen."
+        },
+        "samt_fund_repay": {
+          "method": "SameT-Fondsrückzahlung",
+          "tooltip": "Rückzahlung von Schulden an einen SameT-Fonds."
+        },
+        "credit_offer_create": {
+          "method": "Kreditangebot erstellen",
+          "tooltip": "Erstellen Sie ein neues Kreditangebot. "
+        },
+        "credit_offer_delete": {
+          "method": "Kreditangebot löschen",
+          "tooltip": "Löschen Sie ein Kreditangebot."
+        },
+        "credit_offer_update": {
+          "method": "Kreditangebot aktualisiert",
+          "tooltip": "Aktualisieren Sie ein Kreditangebot"
+        },
+        "credit_offer_accept": {
+          "method": "Kreditangebot annehmen",
+          "tooltip": "Akzeptieren Sie ein Kreditangebot und erstellen Sie einen Kreditvertrag."
+        },
+        "credit_deal_repay": {
+          "method": "Kreditgeschäft zurückzahlen",
+          "tooltip": "Kreditgeschäft zurückzahlen."
+        },
+        "custom": {
+          "method": "Brauch",
+          "tooltip": "Bietet eine generische Möglichkeit, Protokolle auf höherer Ebene zusätzlich zum Zeugenkonsens hinzuzufügen"
+        },
+        "assert": {
+          "method": "Behaupten",
+          "tooltip": "Bestätigen Sie, dass einige Bedingungen wahr sind."
+        },
+        "account_update": {
+          "method": "Kontoaktualisierung",
+          "tooltip": "Dieser Vorgang wird verwendet, um ein vorhandenes Konto zu aktualisieren. "
+        },
+        "account_whitelist": {
+          "method": "Konto-Whitelist",
+          "tooltip": "Dieser Vorgang wird verwendet, um Konten auf die weiße und schwarze Liste zu setzen, hauptsächlich für Transaktionen mit Vermögenswerten auf der weißen Liste"
+        },
+        "account_upgrade": {
+          "method": "Konto-Upgrade",
+          "tooltip": "Dieser Vorgang wird verwendet, um ein Konto auf ein Mitglied hochzustufen oder sein Abonnement zu erneuern."
+        },
+        "account_transfer": {
+          "method": "Kontoübertragung",
+          "tooltip": "Überträgt das Konto auf ein anderes Konto, während die weiße Liste gelöscht wird"
+        },
+        "asset_create": {
+          "method": "Anlage erstellen",
+          "tooltip": "Erstellt ein Asset in der Bitshares-Blockchain"
         }
+      }
     }
-}
+  }

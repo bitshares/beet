@@ -1,0 +1,380 @@
+{
+    "general": {
+      "content": "Indhold"
+    },
+    "link": {
+      "title": "Anmodning om kontolink",
+      "account_select": "Vælg konto",
+      "account_missing": "Den anmodede konto findes ikke i denne tegnebog.",
+      "request": "Applikationen '{appName}' fra '{origin}' anmoder om adgang til en {chain}-konto.",
+      "request_fresh": "Applikationen har allerede knyttet en {chain}-konto før som markeret på listen nedenfor.",
+      "request_tooltip": "Applikationen modtager dine kontooplysninger (navn og id) og etablerer et tegnebogslink.",
+      "request_cta": "Vælg den konto, der skal angives.",
+      "accept_btn": "Give lov til",
+      "reject_btn": "Nægte",
+      "invalid_operations": "Forkert linkanmodning - ugyldig(e) handling(er)."
+    },
+    "relink": {
+      "title": "Anmodning om omkobling af konto",
+      "error": "Fejl under visning af prompt",
+      "request": "Applikationen '{appName}' fra '{origin}' anmoder om at genlinke den tidligere linkede {chain}-konto: {accountId}. ",
+      "request_tooltip": "Det tidligere link mellem applikationen og kontoreferencen vil blive nulstillet."
+    },
+    "account_id": {
+      "title": "Anmodning om kontooplysninger",
+      "request": "App: '{appName}' fra '{origin}' anmoder om adgang til den linkede identitet (konto-id",
+      "request_tooltip": "Som standard leveres et anonymt link. ",
+      "accept_btn": "Give lov til",
+      "reject_btn": "Nægte"
+    },
+    "any_account_id": {
+      "title": "Anmodning om kontooplysninger",
+      "request": "App: '{appName}' fra '{origin}' anmoder om adgang til en konto.",
+      "request_cta": "Vælg den konto, der skal angives.",
+      "accept_btn": "Give lov til",
+      "reject_btn": "Nægte"
+    },
+    "transfer": {
+      "title": "Overførselsanmodning",
+      "to": "Modtager",
+      "amount": "Beløb",
+      "memo": "Memo",
+      "request": "App: '{appName}' fra '{origin}' ønsker at starte en overførsel fra { chain }:{ accountName }.",
+      "request_cta": "Vil du udføre det?",
+      "accept_btn": "Skilt",
+      "reject_btn": "Ignorere",
+      "server_error": "Listen over kendte svindlere kunne ikke indlæses til kontrol, fortsæt med forsigtighed.",
+      "detected_scammer": "Modtageren er en kendt svindler, råd til abort."
+    },
+    "rawsig": {
+      "title": "Anmodning",
+      "loading": "Indlæser transaktionsoplysninger fra blockchain, vent venligst.",
+      "request": "App: '{appName}' fra '{origin}' har indsendt følgende transaktion for kontoen { chain }:{ accountName }.",
+      "request_cta": "Vil du udføre det?",
+      "accept_btn": "Skilt",
+      "sign_and_broadcast_btn": "Skilt",
+      "sign_btn": "Skilt",
+      "reject_btn": "Ignorere"
+    },
+    "whitelist": {
+      "prompt": "Hvidliste efterfølgende \"{method}\"-anmodninger fra denne app?"
+    },
+    "vote": {
+      "title": "Afstemningsanmodning",
+      "request": "App: '{appName}' fra '{origin}' vil have dig til at stemme på følgende {entity} med kontoen { chain }:{ accountName }",
+      "request_cta": "",
+      "accept_btn": "Godkende",
+      "reject_btn": "Ignorere"
+    },
+    "message": {
+      "title": "Underskriv beskedanmodning",
+      "request": "App: '{appName}' fra '{origin}' vil have dig til at underskrive følgende tekst med kontoen { chain }:{ accountName }",
+      "request_cta": "",
+      "accept_btn": "Godkende",
+      "reject_btn": "Ignorere"
+    },
+    "injected": {
+      "BTS": {
+        "getAccount": {
+          "method": "få konto",
+          "tooltip": "Spørger din tegnebog om blockchain-kontooplysninger"
+        },
+        "requestSignature": {
+          "method": "anmodningSignatur",
+          "tooltip": "Spørger din tegnebog om blockchain-signaturer"
+        },
+        "injectedCall": {
+          "method": "injiceretCall",
+          "tooltip": "Beder din tegnebog om at håndtere en indsprøjtet blockchain-operation"
+        },
+        "voteFor": {
+          "method": "Stem på",
+          "tooltip": "Udfør en blockchain-afstemning"
+        },
+        "signMessage": {
+          "method": "tegnBesked",
+          "tooltip": "Underskriv en blockchain-baseret besked"
+        },
+        "signNFT": {
+          "method": "tegnNFT",
+          "tooltip": "Underskriv en NFTs indhold"
+        },
+        "verifyMessage": {
+          "method": "verifyMessage",
+          "tooltip": "Bekræft en blockchain-baseret signeret besked"
+        },
+        "transfer": {
+          "method": "Overførsel",
+          "tooltip": "Send aktiver fra en konto til en anden"
+        },
+        "limit_order_create": {
+          "method": "Opret grænserækkefølge",
+          "tooltip": "Et tilbud om at sælge et beløb af et aktiv til en bestemt valutakurs inden for et bestemt tidspunkt"
+        },
+        "limit_order_cancel": {
+          "method": "Begræns ordre annulleret",
+          "tooltip": "Annullering af en limiteret ordreoperation"
+        },
+        "call_order_update": {
+          "method": "Ring ordreopdatering",
+          "tooltip": "Opdatering af en eksisterende opkaldsordre"
+        },
+        "account_create": {
+          "method": "Konto oprettes",
+          "tooltip": "Oprettelse af en ny konto"
+        },
+        "asset_update": {
+          "method": "Aktivopdatering",
+          "tooltip": "Opdater oprettede aktivindstillinger"
+        },
+        "asset_update_bitasset": {
+          "method": "Asset update bitasset",
+          "tooltip": "Opdater oprettede bitasset-indstillinger"
+        },
+        "asset_update_feed_producers": {
+          "method": "Foderproducenter til opdatering af aktiv",
+          "tooltip": "Opdater listen over godkendte foderproducenter for oprettet bitasset"
+        },
+        "asset_issue": {
+          "method": "Asset problem",
+          "tooltip": "Udsted dine oprettede aktiver til enkeltpersoner"
+        },
+        "asset_reserve": {
+          "method": "Aktivreserve",
+          "tooltip": "Reserver dine oprettede aktiver"
+        },
+        "asset_fund_fee_pool": {
+          "method": "Aktivfondens gebyrpulje",
+          "tooltip": "Finansier gebyrpuljen for dit oprettede aktiv"
+        },
+        "asset_settle": {
+          "method": "Aktivafregning",
+          "tooltip": "Afregn et aktiv i din portefølje"
+        },
+        "asset_global_settle": {
+          "method": "Global afregning af aktiver",
+          "tooltip": "Globalt afregn et af dine oprettede bitassets"
+        },
+        "asset_publish_feed": {
+          "method": "Aktiv publiceringsfeed",
+          "tooltip": "Udgiv et prisfeed for et bitasset"
+        },
+        "witness_create": {
+          "method": "Vidne skabe",
+          "tooltip": "Opret en vidneberetning"
+        },
+        "witness_update": {
+          "method": "Vidneopdatering",
+          "tooltip": "Opdater din vidnekonto"
+        },
+        "proposal_create": {
+          "method": "Forslag oprettes",
+          "tooltip": "Opret et forslag til blockchain-operation"
+        },
+        "proposal_update": {
+          "method": "Opdatering af forslag",
+          "tooltip": "Opdater et forslag til blockchain-operation"
+        },
+        "proposal_delete": {
+          "method": "Forslaget slettes",
+          "tooltip": "Slet et forslag til blockchain-operation"
+        },
+        "withdraw_permission_create": {
+          "method": "Tilbagekald oprettelsestilladelse",
+          "tooltip": "Opret en tilbagetrækningstilladelse"
+        },
+        "withdraw_permission_update": {
+          "method": "Træk tilladelsesopdatering tilbage",
+          "tooltip": "Opdater en tilbagetrækningstilladelse"
+        },
+        "withdraw_permission_claim": {
+          "method": "Træk krav om tilladelse tilbage",
+          "tooltip": "Krav fra en tilbagetrækningstilladelse"
+        },
+        "withdraw_permission_delete": {
+          "method": "Tilbagekald tilladelse sletning",
+          "tooltip": "Slet en tilbagetrækningstilladelse"
+        },
+        "committee_member_create": {
+          "method": "Udvalgsmedlem oprette",
+          "tooltip": "Opret en udvalgsmedlemskonto"
+        },
+        "committee_member_update": {
+          "method": "Opdatering af udvalgsmedlemmer",
+          "tooltip": "Opdater dine udvalgsmedlemskontooplysninger"
+        },
+        "committee_member_update_global_parameters": {
+          "method": "Udvalgsmedlem opdaterer globale parametre",
+          "tooltip": "Offentliggør din komitémedlems holdning til Bitshares blockchain globale parameterværdier"
+        },
+        "vesting_balance_create": {
+          "method": "Vesting balance skabe",
+          "tooltip": "Opret en optjeningsbalance"
+        },
+        "vesting_balance_withdraw": {
+          "method": "Opsigelsessaldo trækkes tilbage",
+          "tooltip": "Træk ud af en optjeningssaldo"
+        },
+        "worker_create": {
+          "method": "Arbejder skabe",
+          "tooltip": "Opret et medarbejderforslag"
+        },
+        "balance_claim": {
+          "method": "Saldokrav",
+          "tooltip": "Krav fra en balance"
+        },
+        "override_transfer": {
+          "method": "Tilsidesæt overførsel",
+          "tooltip": "Tilsidesæt en overførselshandling"
+        },
+        "transfer_to_blind": {
+          "method": "Overfør til blind",
+          "tooltip": "Overfør aktiver til en blind destination"
+        },
+        "blind_transfer": {
+          "method": "Blind overførsel",
+          "tooltip": "Overfør blinde aktiver på en blind måde"
+        },
+        "transfer_from_blind": {
+          "method": "Overførsel fra blind",
+          "tooltip": "Udtag aktiver fra en blind saldo"
+        },
+        "asset_claim_fees": {
+          "method": "Aktivkravsgebyrer",
+          "tooltip": "Gør krav på gebyrerne fra et aktiv"
+        },
+        "bid_collateral": {
+          "method": "Byd sikkerhed",
+          "tooltip": "Byd på en sikkerhedsstillelse for bitassets, når den afvikles globalt"
+        },
+        "asset_claim_pool": {
+          "method": "Aktivkravspulje",
+          "tooltip": "Overfører BTS fra gebyrpuljen for et specificeret aktiv tilbage til udstederens saldo"
+        },
+        "asset_update_issuer": {
+          "method": "Udsteder af aktivopdatering",
+          "tooltip": "Opdater udsteder af et aktiv til en ny administratorkonto."
+        },
+        "htlc_create": {
+          "method": "Hash Time Locked Kontrakt oprettes",
+          "tooltip": "Opret en Hash Time Locked Contract-operation"
+        },
+        "htlc_redeem": {
+          "method": "Hash Time Locked Kontrakt Indløs",
+          "tooltip": "Indløs indholdet af en Hash Time Locked-kontraktoperation"
+        },
+        "htlc_extend": {
+          "method": "Hash Time Locked Kontrakt forlænges",
+          "tooltip": "Forlæng varigheden af ​​en Hash Time Locked Contract-operation"
+        },
+        "custom_authority_create": {
+          "method": "Opret brugerdefineret autoritet",
+          "tooltip": "Opret en ny brugerdefineret myndighed."
+        },
+        "custom_authority_update": {
+          "method": "Opdatering af tilpasset myndighed",
+          "tooltip": "Opdater en tilpasset myndighed."
+        },
+        "custom_authority_delete": {
+          "method": "Brugerdefineret autoritetssletning",
+          "tooltip": "Slet en tilpasset myndighed."
+        },
+        "ticket_create": {
+          "method": "Billet oprettes",
+          "tooltip": "Opret en ny billet."
+        },
+        "ticket_update": {
+          "method": "Billetopdatering",
+          "tooltip": "Opdater en eksisterende billet."
+        },
+        "liquidity_pool_create": {
+          "method": "Opret likviditetspulje",
+          "tooltip": "Opret en likviditetspulje"
+        },
+        "liquidity_pool_delete": {
+          "method": "Sletning af likviditetspulje",
+          "tooltip": "Slet en likviditetspulje"
+        },
+        "liquidity_pool_deposit": {
+          "method": "Likviditetspool depositum",
+          "tooltip": "Indskyder midler i en likviditetspulje"
+        },
+        "liquidity_pool_withdraw": {
+          "method": "Udtræk af likviditetspulje",
+          "tooltip": "Hæve midler fra en likviditetspulje"
+        },
+        "liquidity_pool_exchange": {
+          "method": "Udveksling af likviditetspulje",
+          "tooltip": "Udveksling med en likviditetspulje."
+        },
+        "samet_fund_create": {
+          "method": "SameT fond oprette",
+          "tooltip": "Opret en ny SameT-fond. "
+        },
+        "samet_fund_delete": {
+          "method": "SameT fond sletning",
+          "tooltip": "Slet et SameT-fondsobjekt."
+        },
+        "samet_fund_update": {
+          "method": "SameT-fondsopdatering",
+          "tooltip": "Opdater et SameT-fondsobjekt."
+        },
+        "samet_fund_borrow": {
+          "method": "SameT fund lån",
+          "tooltip": "Lån fra en SameT-fond."
+        },
+        "samt_fund_repay": {
+          "method": "SameT fonds tilbagebetaling",
+          "tooltip": "Indfri gæld til en SameT-fond."
+        },
+        "credit_offer_create": {
+          "method": "Kredittilbud opret",
+          "tooltip": "Opret et nyt kredittilbud. "
+        },
+        "credit_offer_delete": {
+          "method": "Kredittilbud slet",
+          "tooltip": "Slet et kredittilbud."
+        },
+        "credit_offer_update": {
+          "method": "Opdatering af kredittilbud",
+          "tooltip": "Opdater et kredittilbud"
+        },
+        "credit_offer_accept": {
+          "method": "Kredittilbud accepteres",
+          "tooltip": "Accepter et kredittilbud og lav en kreditaftale."
+        },
+        "credit_deal_repay": {
+          "method": "Tilbagebetaling af kreditaftale",
+          "tooltip": "Tilbagebetal en kreditaftale."
+        },
+        "custom": {
+          "method": "Brugerdefinerede",
+          "tooltip": "Giver en generisk måde at tilføje protokoller på højere niveau oven på vidnekonsensus"
+        },
+        "assert": {
+          "method": "Hævde",
+          "tooltip": "Påstå, at nogle forhold er sande."
+        },
+        "account_update": {
+          "method": "Kontoopdatering",
+          "tooltip": "Denne handling bruges til at opdatere en eksisterende konto. "
+        },
+        "account_whitelist": {
+          "method": "Kontohvidliste",
+          "tooltip": "Denne handling bruges til at hvidliste og sortliste konti, primært til at handle i hvidlistede aktiver"
+        },
+        "account_upgrade": {
+          "method": "Kontoopgradering",
+          "tooltip": "Denne handling bruges til at opgradere en konto til et medlem eller forny dets abonnement."
+        },
+        "account_transfer": {
+          "method": "Kontooverførsel",
+          "tooltip": "Overfører kontoen til en anden konto, mens hvidlisten ryddes"
+        },
+        "asset_create": {
+          "method": "Aktiv oprettes",
+          "tooltip": "Opretter et aktiv på Bitshares blockchain"
+        }
+      }
+    }
+  }

@@ -13,8 +13,8 @@
         "exit": "Exit settings menu"
     },
     "start": {
-        "wallet_name": "Beet wallet name",
-        "invalid_password": "An attempt to unlock the Beet wallet was made with an invalid password."
+        "wallet_name": "Wallet name",
+        "invalid_password": "An attempt to unlock your wallet was made with an invalid password."
     },
     "apiUtils": {
         "broadcast": "Transaction successfully broadcast.",
@@ -100,11 +100,10 @@
     "actions_approvedOps": "Approved operations",
     "abSettings": "Settings",
     "abLogout": "Logout",
-    "appName": "beet",
     "slogan": "Your blockchain companion",
-    "welcome": "Welcome to Beet!",
-    "no_wallet": "There is no Beet Wallet available.",
-    "start_cta": "Create new Beet Wallet",
+    "welcome": "Welcome!",
+    "no_wallet": "There is no wallet available.",
+    "start_cta": "Create a new Wallet",
     "select_wallet": "Select Wallet:",
     "password_placeholder": "Password",
     "invalid_password": "Password is incorrect. Please try again.",
@@ -117,10 +116,10 @@
     "step_counter": "Step {step_no}",
     "friendly_cta": "Set a friendly name for your new wallet:",
     "tooltip_friendly_cta": "Under this name a new encrypted digital wallet will be stored locally on your computer. It will contain the private keys of all accounts that you add to it. One wallet can contain multiple blockchains.",
-    "backupfile_cta": "Please select a Beet Wallet Backup",
-    "tooltip_backupfile_cta": "Choose a previously backed up Beet Wallet (.beet file) that contains your keys and account details to recreate that wallet.",
+    "backupfile_cta": "Please select a wallet Backup",
+    "tooltip_backupfile_cta": "Choose a previously backed up wallet (.beet file) that contains your keys and account details to recreate that wallet.",
     "backuppass_cta": "Enter your backup password",
-    "tooltip_backuppass_cta": "Enter the password for the backed up wallet. This will allow Beet to decrypt and restore it. The same password will be used to unlock the wallet from now on.",
+    "tooltip_backuppass_cta": "Enter the password for the backed up wallet. This will enable decryption and restoration of the backup. The same password will be used to unlock the wallet from now on.",
     "restore_go_cta": "Restore my wallet",
     "chain_cta": "Select the blockchain of your account:",
     "bts_importtype_cta": "Please select the way you would like to import this account",
@@ -195,9 +194,9 @@
     "actions_lbl": "Action",
     "no_dapps_linked": "You do not have any dApps linked yet.",
     "delete_btn": "Remove",
-    "backup_lbl": "Backup your Beet",
+    "backup_lbl": "Backup your wallet",
     "backup_btn": "Download Backup",
-    "backup_txt": "Click the 'Download Backup' button below to save an encrypted file with all your Beet Wallet keys. The backup file will be encrypted with your Beet Wallet password and you will need your password to import the backup to a new Beet installation.",
+    "backup_txt": "Click the 'Download Backup' button below to save an encrypted file with all your wallet keys. The backup file will be encrypted with your wallet password and you will need your password to import the backup to a new wallet installation.",
     "tooltip_lock": "Click to lock this wallet / logout and return to the wallet selection screen.",
     "tooltip_refresh": "Reconnect to the blockchain and refresh the account balance"
 }

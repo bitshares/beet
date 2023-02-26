@@ -1,0 +1,380 @@
+{
+    "general": {
+      "content": "Contenuto"
+    },
+    "link": {
+      "title": "Richiesta di collegamento all'account",
+      "account_select": "Seleziona conto",
+      "account_missing": "Account richiesto non presente in questo portafoglio.",
+      "request": "L'applicazione '{appName}' da '{origin}' richiede l'accesso a un account {chain}.",
+      "request_fresh": "L'applicazione ha già collegato un account {chain} in precedenza, come indicato nell'elenco seguente.",
+      "request_tooltip": "L'applicazione riceverà i dettagli del tuo account (nome e ID) e stabilirà un collegamento al portafoglio.",
+      "request_cta": "Seleziona l'account da fornire.",
+      "accept_btn": "Permettere",
+      "reject_btn": "Negare",
+      "invalid_operations": "Richiesta di collegamento errata - operazione/i non valida/e."
+    },
+    "relink": {
+      "title": "Richiesta di ricollegamento dell'account",
+      "error": "Errore durante la visualizzazione del prompt",
+      "request": "L'applicazione '{appName}' da '{origin}' richiede di ricollegare l'account {chain} precedentemente collegato: {accountId}. ",
+      "request_tooltip": "Il collegamento precedente tra l'applicazione e il riferimento dell'account verrà ripristinato."
+    },
+    "account_id": {
+      "title": "Richiesta dettagli account",
+      "request": "App: \"{appName}\" da \"{origin}\" richiede l'accesso all'identità collegata (ID account",
+      "request_tooltip": "Per impostazione predefinita viene fornito un collegamento anonimo. ",
+      "accept_btn": "Permettere",
+      "reject_btn": "Negare"
+    },
+    "any_account_id": {
+      "title": "Richiesta dettagli account",
+      "request": "App: '{appName}' da '{origin}' richiede l'accesso a un account.",
+      "request_cta": "Seleziona l'account da fornire.",
+      "accept_btn": "Permettere",
+      "reject_btn": "Negare"
+    },
+    "transfer": {
+      "title": "Richiesta di trasferimento",
+      "to": "Destinatario",
+      "amount": "Quantità",
+      "memo": "Promemoria",
+      "request": "App: '{appName}' da '{origin}' desidera avviare un trasferimento da { chain }:{ accountName }.",
+      "request_cta": "Vuoi eseguirlo?",
+      "accept_btn": "Cartello",
+      "reject_btn": "Ignorare",
+      "server_error": "Non è stato possibile caricare l'elenco dei truffatori noti per il controllo, procedere con cautela.",
+      "detected_scammer": "Il destinatario è un noto truffatore, consiglio di abortire."
+    },
+    "rawsig": {
+      "title": "Richiesta",
+      "loading": "Caricamento dei dettagli della transazione dalla blockchain, attendere.",
+      "request": "App: '{appName}' da '{origin}' ha inviato la seguente transazione per l'account { chain }:{ accountName }.",
+      "request_cta": "Vuoi eseguirlo?",
+      "accept_btn": "Cartello",
+      "sign_and_broadcast_btn": "Cartello",
+      "sign_btn": "Cartello",
+      "reject_btn": "Ignorare"
+    },
+    "whitelist": {
+      "prompt": "Inserire nella whitelist le successive richieste \"{method}\" da questa app?"
+    },
+    "vote": {
+      "title": "Richiesta di voto",
+      "request": "L'app: '{appName}' di '{origin}' vuole che tu voti per la seguente {entità} con l'account { chain }:{ accountName }",
+      "request_cta": "",
+      "accept_btn": "Approvare",
+      "reject_btn": "Ignorare"
+    },
+    "message": {
+      "title": "Firma la richiesta del messaggio",
+      "request": "App: '{appName}' da '{origin}' richiede che tu firmi il seguente testo con l'account { chain }:{ accountName }",
+      "request_cta": "",
+      "accept_btn": "Approvare",
+      "reject_btn": "Ignorare"
+    },
+    "injected": {
+      "BTS": {
+        "getAccount": {
+          "method": "getAccount",
+          "tooltip": "Chiede al tuo portafoglio i dettagli dell'account blockchain"
+        },
+        "requestSignature": {
+          "method": "richiestaFirma",
+          "tooltip": "Chiede al tuo portafoglio le firme blockchain"
+        },
+        "injectedCall": {
+          "method": "iniettatoChiama",
+          "tooltip": "Chiede al tuo portafoglio di gestire un'operazione blockchain iniettata"
+        },
+        "voteFor": {
+          "method": "voto per",
+          "tooltip": "Esegui un voto blockchain"
+        },
+        "signMessage": {
+          "method": "signMessage",
+          "tooltip": "Firma un messaggio basato su blockchain"
+        },
+        "signNFT": {
+          "method": "segnoNFT",
+          "tooltip": "Firma un contenuto NFT"
+        },
+        "verifyMessage": {
+          "method": "verificaMessage",
+          "tooltip": "Verifica un messaggio firmato basato su blockchain"
+        },
+        "transfer": {
+          "method": "Trasferimento",
+          "tooltip": "Invia risorse da un account a un altro"
+        },
+        "limit_order_create": {
+          "method": "Limitare la creazione dell'ordine",
+          "tooltip": "Un'offerta di vendita di un importo di un bene a un tasso di cambio specificato entro un certo periodo di tempo"
+        },
+        "limit_order_cancel": {
+          "method": "Limitare l'annullamento dell'ordine",
+          "tooltip": "Annullamento di un'operazione di ordine limite"
+        },
+        "call_order_update": {
+          "method": "Aggiornamento dell'ordine di chiamata",
+          "tooltip": "Aggiornamento di un ordine di chiamata esistente"
+        },
+        "account_create": {
+          "method": "Crea account",
+          "tooltip": "Creazione di un nuovo account"
+        },
+        "asset_update": {
+          "method": "Aggiornamento delle risorse",
+          "tooltip": "Aggiorna le impostazioni delle risorse create"
+        },
+        "asset_update_bitasset": {
+          "method": "Bitasset di aggiornamento delle risorse",
+          "tooltip": "Aggiorna le impostazioni del bitasset creato"
+        },
+        "asset_update_feed_producers": {
+          "method": "Produttori di feed di aggiornamento delle risorse",
+          "tooltip": "Aggiorna l'elenco dei produttori di feed approvati per il bitasset creato"
+        },
+        "asset_issue": {
+          "method": "Problema patrimoniale",
+          "tooltip": "Emetti le tue risorse create a privati"
+        },
+        "asset_reserve": {
+          "method": "Riserva patrimoniale",
+          "tooltip": "Prenota le tue risorse create"
+        },
+        "asset_fund_fee_pool": {
+          "method": "Pool di commissioni del fondo patrimoniale",
+          "tooltip": "Finanzia il pool di commissioni per il tuo asset creato"
+        },
+        "asset_settle": {
+          "method": "Sistemazione patrimoniale",
+          "tooltip": "Regola un asset nel tuo portafoglio"
+        },
+        "asset_global_settle": {
+          "method": "Liquidazione globale delle attività",
+          "tooltip": "Liquida globalmente uno dei tuoi bitasset creati"
+        },
+        "asset_publish_feed": {
+          "method": "Feed di pubblicazione delle risorse",
+          "tooltip": "Pubblica un feed prezzo per un bitasset"
+        },
+        "witness_create": {
+          "method": "Testimone crea",
+          "tooltip": "Crea un account testimone"
+        },
+        "witness_update": {
+          "method": "Aggiornamento testimone",
+          "tooltip": "Aggiorna il tuo account testimone"
+        },
+        "proposal_create": {
+          "method": "Creazione proposta",
+          "tooltip": "Crea una proposta di operazione blockchain"
+        },
+        "proposal_update": {
+          "method": "Aggiornamento della proposta",
+          "tooltip": "Aggiorna una proposta di operazione blockchain"
+        },
+        "proposal_delete": {
+          "method": "Eliminazione proposta",
+          "tooltip": "Elimina una proposta di operazione blockchain"
+        },
+        "withdraw_permission_create": {
+          "method": "Ritirare il permesso creare",
+          "tooltip": "Crea un permesso di prelievo"
+        },
+        "withdraw_permission_update": {
+          "method": "Ritirare l'aggiornamento dell'autorizzazione",
+          "tooltip": "Aggiorna un'autorizzazione di prelievo"
+        },
+        "withdraw_permission_claim": {
+          "method": "Ritirare la richiesta di autorizzazione",
+          "tooltip": "Reclamo da un'autorizzazione di ritiro"
+        },
+        "withdraw_permission_delete": {
+          "method": "Ritirare l'autorizzazione eliminare",
+          "tooltip": "Elimina un'autorizzazione di ritiro"
+        },
+        "committee_member_create": {
+          "method": "Crea un membro del comitato",
+          "tooltip": "Crea un account membro del comitato"
+        },
+        "committee_member_update": {
+          "method": "Aggiornamento dei membri del comitato",
+          "tooltip": "Aggiorna i dettagli dell'account del tuo membro del comitato"
+        },
+        "committee_member_update_global_parameters": {
+          "method": "I membri del comitato aggiornano i parametri globali",
+          "tooltip": "Pubblica la posizione del tuo membro del comitato sui valori dei parametri globali della blockchain di Bitshares"
+        },
+        "vesting_balance_create": {
+          "method": "Creazione del saldo di maturazione",
+          "tooltip": "Crea un saldo di maturazione"
+        },
+        "vesting_balance_withdraw": {
+          "method": "Ritiro del saldo di maturazione",
+          "tooltip": "Prelevare da un saldo di maturazione"
+        },
+        "worker_create": {
+          "method": "Il lavoratore crea",
+          "tooltip": "Crea una proposta di lavoro"
+        },
+        "balance_claim": {
+          "method": "Reclamo saldo",
+          "tooltip": "Pretesa da un saldo"
+        },
+        "override_transfer": {
+          "method": "Ignora il trasferimento",
+          "tooltip": "Eseguire l'override di un'operazione di trasferimento"
+        },
+        "transfer_to_blind": {
+          "method": "Trasferimento alla cieca",
+          "tooltip": "Trasferisci le risorse a una destinazione cieca"
+        },
+        "blind_transfer": {
+          "method": "Trasferimento cieco",
+          "tooltip": "Trasferisci beni ciechi in modo cieco"
+        },
+        "transfer_from_blind": {
+          "method": "Trasferimento da cieco",
+          "tooltip": "Prelevare beni da un saldo cieco"
+        },
+        "asset_claim_fees": {
+          "method": "Commissioni per la richiesta di beni",
+          "tooltip": "Richiedi le commissioni da un bene"
+        },
+        "bid_collateral": {
+          "method": "Offerta collaterale",
+          "tooltip": "Fai un'offerta su un bitasset a garanzia della garanzia una volta regolato a livello globale"
+        },
+        "asset_claim_pool": {
+          "method": "pool di rivendicazioni di beni",
+          "tooltip": "Trasferisce i BTS dal pool di commissioni di un asset specificato al saldo dell'emittente"
+        },
+        "asset_update_issuer": {
+          "method": "Emittente dell'aggiornamento delle risorse",
+          "tooltip": "Aggiorna l'emittente di una risorsa a un nuovo account amministratore."
+        },
+        "htlc_create": {
+          "method": "Creazione del contratto bloccato a tempo di hash",
+          "tooltip": "Creare un'operazione di contratto con tempo di hash bloccato"
+        },
+        "htlc_redeem": {
+          "method": "Riscattare il contratto bloccato a tempo di hash",
+          "tooltip": "Riscatta il contenuto di un'operazione Hash Time Locked Contract"
+        },
+        "htlc_extend": {
+          "method": "Estensione del contratto bloccato a tempo di hash",
+          "tooltip": "Estendere la durata di un'operazione Hash Time Locked Contract"
+        },
+        "custom_authority_create": {
+          "method": "Creazione dell'autorizzazione personalizzata",
+          "tooltip": "Crea una nuova autorità personalizzata."
+        },
+        "custom_authority_update": {
+          "method": "Aggiornamento dell'autorità personalizzata",
+          "tooltip": "Aggiorna un'autorità personalizzata."
+        },
+        "custom_authority_delete": {
+          "method": "Eliminazione dell'autorizzazione personalizzata",
+          "tooltip": "Elimina un'autorità personalizzata."
+        },
+        "ticket_create": {
+          "method": "Creazione biglietto",
+          "tooltip": "Crea un nuovo biglietto."
+        },
+        "ticket_update": {
+          "method": "Aggiornamento del biglietto",
+          "tooltip": "Aggiorna un ticket esistente."
+        },
+        "liquidity_pool_create": {
+          "method": "Creazione pool di liquidità",
+          "tooltip": "Creare un pool di liquidità"
+        },
+        "liquidity_pool_delete": {
+          "method": "Cancella pool di liquidità",
+          "tooltip": "Elimina un pool di liquidità"
+        },
+        "liquidity_pool_deposit": {
+          "method": "Deposito pool di liquidità",
+          "tooltip": "Depositare fondi in un pool di liquidità"
+        },
+        "liquidity_pool_withdraw": {
+          "method": "Ritiro pool di liquidità",
+          "tooltip": "Prelevare fondi da un pool di liquidità"
+        },
+        "liquidity_pool_exchange": {
+          "method": "Scambio pool di liquidità",
+          "tooltip": "Scambio con un pool di liquidità."
+        },
+        "samet_fund_create": {
+          "method": "Creazione del fondo SameT",
+          "tooltip": "Crea un nuovo fondo SameT. "
+        },
+        "samet_fund_delete": {
+          "method": "Eliminazione del fondo SameT",
+          "tooltip": "Elimina un oggetto fondo SameT."
+        },
+        "samet_fund_update": {
+          "method": "Aggiornamento del fondo SameT",
+          "tooltip": "Aggiorna un oggetto fondo SameT."
+        },
+        "samet_fund_borrow": {
+          "method": "Prestito del fondo SameT",
+          "tooltip": "Prendere in prestito da un fondo SameT."
+        },
+        "samt_fund_repay": {
+          "method": "Rimborso del fondo SameT",
+          "tooltip": "Rimborsare il debito a un fondo SameT."
+        },
+        "credit_offer_create": {
+          "method": "Creare un'offerta di credito",
+          "tooltip": "Crea una nuova offerta di credito. "
+        },
+        "credit_offer_delete": {
+          "method": "Eliminare l'offerta di credito",
+          "tooltip": "Elimina un'offerta di credito."
+        },
+        "credit_offer_update": {
+          "method": "Aggiornamento dell'offerta di credito",
+          "tooltip": "Aggiorna un'offerta di credito"
+        },
+        "credit_offer_accept": {
+          "method": "Offerta di credito accettata",
+          "tooltip": "Accetta un'offerta di credito e crea un accordo di credito."
+        },
+        "credit_deal_repay": {
+          "method": "Rimborso dell'accordo di credito",
+          "tooltip": "Rimborsare un contratto di credito."
+        },
+        "custom": {
+          "method": "Costume",
+          "tooltip": "Fornisce un modo generico per aggiungere protocolli di livello superiore oltre al consenso dei testimoni"
+        },
+        "assert": {
+          "method": "Affermare",
+          "tooltip": "Asserire che alcune condizioni sono vere."
+        },
+        "account_update": {
+          "method": "Aggiornamento dell'account",
+          "tooltip": "Questa operazione viene utilizzata per aggiornare un account esistente. "
+        },
+        "account_whitelist": {
+          "method": "Lista bianca dell'account",
+          "tooltip": "Questa operazione viene utilizzata per inserire nella whitelist e nella blacklist gli account, principalmente per effettuare transazioni nelle risorse autorizzate"
+        },
+        "account_upgrade": {
+          "method": "Aggiornamento dell'account",
+          "tooltip": "Questa operazione viene utilizzata per aggiornare un account a membro o rinnovarne l'abbonamento."
+        },
+        "account_transfer": {
+          "method": "Trasferimento di conto",
+          "tooltip": "Trasferisce l'account a un altro account cancellando la lista bianca"
+        },
+        "asset_create": {
+          "method": "Creazione risorsa",
+          "tooltip": "Crea un asset sulla blockchain di Bitshares"
+        }
+      }
+    }
+  }

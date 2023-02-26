@@ -1,5 +1,4 @@
 import { createApp } from 'vue';
-import { createI18n } from 'vue-i18n';
 import VueRouter from 'vue-router';
 import mitt from 'mitt';
 
