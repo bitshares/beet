@@ -14,10 +14,29 @@ import Binance from "./Binance";
 */
 
 let bts,bts_test,tusc,steem,wls,eos,tlos,btc,btc_test,bnb,bnb_test;
+let lastChain;
 
 export default function getBlockchainAPI(chain = null, node = null) {
     if (chain == null) {
         chain = store.getters['AccountStore/getChain'];
+    }
+
+    if (!lastChain) {
+        lastChain = chain;
+    } else if (lastChain && lastChain !== chain) {
+        console.log("Switching blockchain!")
+        bts = undefined;
+        bts_test = undefined;
+        tusc = undefined;
+        steem = undefined;
+        wls = undefined;
+        eos = undefined;
+        tlos = undefined;
+        btc = undefined;
+        btc_test = undefined;
+        bnb = undefined;
+        bnb_test = undefined;
+        lastChain = chain;
     }
 
     let config;
