@@ -1,5 +1,7 @@
 <script setup>
     import {ref, inject, computed} from "vue";
+    import { ipcRenderer } from 'electron';
+
     const emitter = inject('emitter');
     import { useI18n } from 'vue-i18n';
     const { t } = useI18n({ useScope: 'global' });
@@ -58,6 +60,7 @@
             account = await blockchain.verifyAccount(accountname.value, authorities);
         } catch (error) {
             console.log(error);
+            ipcRenderer.send("notify", t("common.unverified_account_error"));
             return;
         }
 
