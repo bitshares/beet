@@ -77,10 +77,22 @@
       "promptSuccess": "QRスキャン操作のブロードキャストに成功",
       "promptFailure": "スキャンした QR に問題が発生しました"
     },
+    "local": {
+        "label": "ローカル ファイル操作スキャナー",
+        "upload": "提案された操作の JSON ファイルをアップロードする",
+        "exit": "ローカルファイルページの終了",
+        "failed": "JSONの処理に失敗しました",
+        "back": "戻る",
+        "progress": "ローカルファイルを処理しています",
+        "unsupported": "ローカル ファイルのサポートは、このチェーンではまだサポートされていません。",
+        "promptSuccess": "スキャンされた操作を正常にブロードキャストしました",
+        "promptFailure": "スキャンされたファイルに問題が発生しました"
+      },
     "actionBar": {
       "Home": "家",
       "New": "新しい",
       "TOTP": "TOTP",
+      "Local": "地元",
       "RAW": "生のリンク",
       "QR": "QR",
       "Settings": "設定",

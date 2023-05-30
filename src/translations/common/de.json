@@ -77,10 +77,22 @@
       "promptSuccess": "QR-Scan-Vorgang erfolgreich übertragen",
       "promptFailure": "Etwas ist mit dem gescannten QR schief gelaufen"
     },
+    "local": {
+        "label": "Lokaler Datei-Op-Scanner",
+        "upload": "Laden Sie die JSON-Datei des vorgeschlagenen Vorgangs hoch",
+        "exit": "Lokale Dateiseite verlassen",
+        "failed": "JSON konnte nicht verarbeitet werden",
+        "back": "Zurück",
+        "progress": "Lokale Datei wird verarbeitet",
+        "unsupported": "Die Unterstützung lokaler Dateien wird für diese Kette leider noch nicht unterstützt.",
+        "promptSuccess": "Der gescannte Vorgang wurde erfolgreich übertragen",
+        "promptFailure": "Bei der gescannten Datei ist ein Fehler aufgetreten"
+    },
     "actionBar": {
       "Home": "Heim",
       "New": "Neu",
       "TOTP": "TOTP",
+      "Local": "lokal",
       "RAW": "Rohlink",
       "QR": "QR",
       "Settings": "Einstellungen",

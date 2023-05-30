@@ -77,10 +77,22 @@
       "promptSuccess": "Diffusez avec succès l'opération de numérisation QR",
       "promptFailure": "Quelque chose s'est mal passé avec le QR scanné"
     },
+    "local": {
+        "label": "Analyseur d'opérations de fichiers locaux",
+        "upload": "Charger le fichier JSON de l'opération proposée",
+        "exit": "Quitter la page du fichier local",
+        "failed": "Échec du traitement de JSON",
+        "back": "Dos",
+        "progress": "Traitement du fichier local",
+        "unsupported": "La prise en charge des fichiers locaux n'est pas encore prise en charge pour cette chaîne, désolé.",
+        "promptSuccess": "Diffusion réussie de l'opération numérisée",
+        "promptFailure": "Quelque chose s'est mal passé avec le fichier numérisé"
+      },
     "actionBar": {
       "Home": "Maison",
       "New": "Nouveau",
       "TOTP": "TOTP",
+      "Local": "Local",
       "RAW": "Lien brut",
       "QR": "QR",
       "Settings": "Paramètres",

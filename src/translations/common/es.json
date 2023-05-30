@@ -77,10 +77,22 @@
       "promptSuccess": "Difundir con éxito la operación escaneada QR",
       "promptFailure": "Algo salió mal con el QR escaneado"
     },
+    "local": {
+        "label": "Escáner de operaciones de archivos locales",
+        "upload": "Cargue el archivo JSON de la operación propuesta",
+        "exit": "Salir de la página del archivo local",
+        "failed": "Error al procesar JSON",
+        "back": "Atrás",
+        "progress": "Procesando archivo local",
+        "unsupported": "La compatibilidad con archivos locales aún no es compatible con esta cadena, lo sentimos.",
+        "promptSuccess": "Operación escaneada de transmisión exitosa",
+        "promptFailure": "Algo salió mal con el archivo escaneado"
+      },
     "actionBar": {
       "Home": "Hogar",
       "New": "Nuevo",
       "TOTP": "TOTP",
+      "Local": "Local",
       "RAW": "Enlace sin procesar",
       "QR": "código QR",
       "Settings": "Ajustes",

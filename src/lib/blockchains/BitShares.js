@@ -1178,6 +1178,14 @@ export default class BitShares extends BlockchainAPI {
         return true;
     }
 
+    /**
+     * Bitshares supports local file processing
+     * @returns Boolean
+     */
+    supportsLocal() {
+        return true;
+    }
+
     /*
      * Parse incoming and return a readied transaction builder instance
      * @param {Class||Object} incoming

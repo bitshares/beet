@@ -77,10 +77,22 @@
         "promptSuccess": "Successfully broadcast QR scanned operation",
         "promptFailure": "Something went wrong with the scanned QR"
     },
+    "local": {
+        "label": "Local file op scanner",
+        "upload": "Upload proposed operation JSON file",
+        "exit": "Exit local file page",
+        "failed": "Failed to process JSON",
+        "back": "Back",
+        "progress": "Processing local file",
+        "unsupported": "Local file support isn't supported for this chain yet, sorry.",
+        "promptSuccess": "Successfully broadcast scanned operation",
+        "promptFailure": "Something went wrong with the scanned file"
+    },
     "actionBar": {
         "Home": "Home",
         "New": "New",
         "TOTP": "TOTP",
+        "Local": "Local",
         "RAW": "Raw Link",
         "QR": "QR",
         "Settings": "Settings",

@@ -20,7 +20,10 @@
 </script>
 
 <template>
-    <div class="dapp-list mt-2" style="text-align: center; margin-top: auto; margin-bottom: auto;">
+    <div
+        class="dapp-list mt-2"
+        style="text-align: center; margin-top: auto; margin-bottom: auto;"
+    >
         <p>
             <u>{{ t('common.backup_lbl') }}</u>
         </p>
@@ -42,7 +45,7 @@
                     @click="downloadBackup"
                 >
                     {{ t('common.backup_btn') }}
-                </ui-button><br/>
+                </ui-button><br>
                 <router-link
                     :to="'/dashboard'"
                     style="text-decoration: none;"
@@ -55,7 +58,6 @@
                         Exit settings menu
                     </ui-button>
                 </router-link>
-
             </ui-grid-cell>
             <ui-grid-cell columns="3" />
         </ui-grid>

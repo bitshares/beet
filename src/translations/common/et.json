@@ -77,10 +77,22 @@
       "promptSuccess": "QR-skannitud toimingu edastamine õnnestus",
       "promptFailure": "Midagi läks skannitud QR-ga valesti"
     },
+    "local": {
+        "label": "Kohalik faili op skanner",
+        "upload": "Laadige üles pakutud toimingu JSON-fail",
+        "exit": "Välju kohaliku faili lehelt",
+        "failed": "JSON-i töötlemine ebaõnnestus",
+        "back": "tagasi",
+        "progress": "Kohaliku faili töötlemine",
+        "unsupported": "Vabandust, see kett ei toeta veel kohalikku failituge.",
+        "promptSuccess": "Skaneeritud toimingu edastamine õnnestus",
+        "promptFailure": "Midagi läks skannitud failiga valesti"
+      },
     "actionBar": {
       "Home": "Kodu",
       "New": "Uus",
       "TOTP": "TOTP",
+      "Local": "kohalik",
       "RAW": "Toores link",
       "QR": "QR",
       "Settings": "Seaded",

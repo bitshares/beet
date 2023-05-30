@@ -77,10 +77,22 @@
       "promptSuccess": "Transmitir operação digitalizada de QR com sucesso",
       "promptFailure": "Algo deu errado com o QR digitalizado"
     },
+    "local": {
+        "label": "Scanner operacional de arquivo local",
+        "upload": "Fazer upload do arquivo JSON da operação proposta",
+        "exit": "Sair da página de arquivo local",
+        "failed": "Falha ao processar JSON",
+        "back": "Voltar",
+        "progress": "Processando arquivo local",
+        "unsupported": "O suporte a arquivos locais ainda não é compatível com esta cadeia, desculpe.",
+        "promptSuccess": "Transmitir operação digitalizada com sucesso",
+        "promptFailure": "Algo deu errado com o arquivo digitalizado"
+      },
     "actionBar": {
       "Home": "Lar",
       "New": "Novo",
       "TOTP": "TOTP",
+      "Local": "Local",
       "RAW": "Link Bruto",
       "QR": "QR",
       "Settings": "Configurações",

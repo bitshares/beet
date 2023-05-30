@@ -466,7 +466,7 @@ export default class BlockchainAPI {
      * Placeholder for blockchain TOTP implementation
      * @returns Boolean
      */
-     supportsTOTP() {
+    supportsTOTP() {
         return false;
     }
 
@@ -474,7 +474,15 @@ export default class BlockchainAPI {
      * Placeholder for blockchain QR implementation
      * @returns Boolean
      */
-     supportsQR() {
+    supportsQR() {
+        return false;
+    }
+
+    /**
+     * Placeholder for local file processing
+     * @returns Boolean
+     */
+    supportsLocal() {
         return false;
     }
 

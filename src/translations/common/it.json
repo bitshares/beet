@@ -77,10 +77,22 @@
       "promptSuccess": "Operazione di scansione QR trasmessa correttamente",
       "promptFailure": "Qualcosa è andato storto con il QR scansionato"
     },
+    "local": {
+        "label": "Scanner operativo file locale",
+        "upload": "Carica il file JSON dell'operazione proposta",
+        "exit": "Esci dalla pagina del file locale",
+        "failed": "Impossibile elaborare JSON",
+        "back": "Indietro",
+        "progress": "Elaborazione file locale",
+        "unsupported": "Il supporto dei file locali non è ancora supportato per questa catena, mi dispiace.",
+        "promptSuccess": "Operazione di scansione trasmessa correttamente",
+        "promptFailure": "Qualcosa è andato storto con il file digitalizzato"
+      },
     "actionBar": {
       "Home": "Casa",
       "New": "Nuovo",
       "TOTP": "TOP",
+      "Local": "Locale",
       "RAW": "Collegamento grezzo",
       "QR": "QR",
       "Settings": "Impostazioni",

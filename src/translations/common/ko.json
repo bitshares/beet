@@ -77,10 +77,22 @@
       "promptSuccess": "QR 스캔 작업을 성공적으로 방송했습니다.",
       "promptFailure": "스캔한 QR에 문제가 발생했습니다."
     },
+    "local": {
+        "label": "로컬 파일 작업 스캐너",
+        "upload": "제안된 작업 JSON 파일 업로드",
+        "exit": "로컬 파일 페이지 종료",
+        "failed": "JSON 처리 실패",
+        "back": "뒤쪽에",
+        "progress": "로컬 파일 처리 중",
+        "unsupported": "이 체인에는 아직 로컬 파일 지원이 지원되지 않습니다. 죄송합니다.",
+        "promptSuccess": "스캔한 작업을 성공적으로 브로드캐스트했습니다.",
+        "promptFailure": "스캔한 파일에 문제가 발생했습니다."
+      },
     "actionBar": {
       "Home": "집",
       "New": "새로운",
       "TOTP": "TOTP",
+      "Local": "현지의",
       "RAW": "원시 링크",
       "QR": "QR",
       "Settings": "설정",

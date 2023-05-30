@@ -77,10 +77,22 @@
       "promptSuccess": "Den QR-scannede operation blev udsendt",
       "promptFailure": "Der gik noget galt med den scannede QR"
     },
+    "local": {
+        "label": "Lokal fil op scanner",
+        "upload": "Upload foreslået operation JSON-fil",
+        "exit": "Afslut lokal filside",
+        "failed": "Kunne ikke behandle JSON",
+        "back": "Tilbage",
+        "progress": "Behandler lokal fil",
+        "unsupported": "Lokal filsupport er ikke understøttet for denne kæde endnu, beklager.",
+        "promptSuccess": "Den scannede handling blev udsendt",
+        "promptFailure": "Der gik noget galt med den scannede fil"
+    },
     "actionBar": {
       "Home": "Hjem",
       "New": "Ny",
       "TOTP": "TOTP",
+      "Local": "lokal",
       "RAW": "Rå link",
       "QR": "QR",
       "Settings": "Indstillinger",
