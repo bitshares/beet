@@ -1,8 +1,9 @@
 import BitShares from "./BitShares";
-import {Apis} from "bitsharesjs-ws";
+//import {Apis} from "bitsharesjs-ws";
 
 export default class TUSC extends BitShares {
 
+    /*
     _connect(nodeToConnect = null) {
         return new Promise((resolve, reject) => {
             if (nodeToConnect == null) {
@@ -46,6 +47,7 @@ export default class TUSC extends BitShares {
         }
         return super._needsNewConnection();
     }
+    */
 
     getAsset(assetSymbolOrId) {
         if (assetSymbolOrId == "1.3.0") {

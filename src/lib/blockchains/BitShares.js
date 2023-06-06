@@ -722,7 +722,7 @@ export default class BitShares extends BlockchainAPI {
             console.log('Initial WSS Connection closed')
         ).init_promise
         .then((res) => {
-          console.log("established connection:", res[0].network);
+          console.log({msg: "established connection", res})
           this._connectionEstablished(resolve, nodeToConnect);
         })
         .catch(error => {
