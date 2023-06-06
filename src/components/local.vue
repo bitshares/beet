@@ -96,7 +96,7 @@
             let chain = store.getters['AccountStore/getChain'];
             if (!requestedChain || chain !== requestedChain) {
                 console.log("Incoming uploaded request for wrong chain");
-                ipcRenderer.send("notify", t("common.local.failed"));
+                ipcRenderer.send("notify", t("common.local.promptFailure"));
                 inProgress.value = false;
                 return;
             }
@@ -195,7 +195,7 @@
                 return;
             }
 
-            ipcRenderer.send("notify", t("common.local.prompt_success"));
+            ipcRenderer.send("notify", t("common.local.promptSuccess"));
             inProgress.value = false;
         });
     }
