@@ -9,6 +9,8 @@ import {
     Signature
 } from "bitsharesjs";
 import * as Socket from "simple-websocket";
+import _ from "lodash";
+
 import * as Actions from '../Actions';
 
 import RendererLogger from "../RendererLogger";
@@ -887,6 +889,70 @@ export default class BitShares extends BlockchainAPI {
         });
     }
 
+    /**
+     * Given an array of account IDs, retrieve their account names
+     * @param {Array} accountIDs
+     * @param {Object} 
+     */
+    _getMultipleAcountNames(accountIDs) {
+        return new Promise((resolve, reject) => {
+            this.ensureConnection().then(() => {
+                if (!accountIDs) {
+                    resolve([]);
+                    return;
+                }
+
+                Apis.instance().db_api().exec("get_full_accounts", [accountIDs, false]).then((results) => {
+                    if (results && results.length) {
+                        resolve(results);
+                        return;
+                    }
+                }).catch((error) => {
+                    console.error('Error fetching account details:', error);
+                    reject(error)
+                });
+            }).catch(reject);
+        });
+    }
+
+    /*
+     * Retrieve multiple asset objects from an array of asset IDs
+     * @param {Array} assetIDs
+     * @returns {Object}
+     */
+    _resolveMultipleAssets(assetIDs) {
+        let timeoutPromise = new Promise((resolve) => {
+            setTimeout(() => {
+                console.log('timed out');
+                resolve(null);
+            }, 3000);
+        });
+
+        let timeLimitedPromise = new Promise(async (resolve, reject) => {
+            this.ensureConnection().then(() => {
+                Apis.instance().db_api().exec("lookup_asset_symbols", [assetIDs]).then((asset_objects) => {
+                    if (asset_objects && asset_objects.length) {
+                        resolve(asset_objects);
+                    }
+                }).catch((error) => {
+                    console.log(error);
+                    reject(error)
+                });
+            }).catch((error) => {
+                console.log(error);
+                reject(error)
+            });
+        });
+
+        const fastestPromise = Promise.race([timeLimitedPromise, timeoutPromise]).catch(
+            (error) => {
+                return null;
+            }
+        );
+
+        return fastestPromise;
+    }
+
     /*
      * Retrieve an asset object from a provided asset symbol or ID
      * @param {String} assetSymbolOrId
@@ -1574,10 +1640,139 @@ export default class BitShares extends BlockchainAPI {
         let operations = [];
         let tr;
         try {
-            tr = this._parseTransactionBuilder(thing);
+            tr = await this._parseTransactionBuilder(thing);
         } catch (error) {
             console.log(error);
             return;
+        }
+
+        // iterate over to get the operations
+        // summarize the details we need to query from the blockchain
+        // try to reduce duplicate calls
+        let accountsToFetch = [];
+        let assetsToFetch = [];
+        for (let i = 0; i < tr.operations.length; i++) {
+            let operation = tr.operations[i];
+            const op = operation[1];
+            const idKeys = [
+                "from",
+                "from_account",
+                "to",
+                "witness_account",
+                "fee_paying_account",
+                "funding_account",
+                "seller",
+                "registrar",
+                "referrer",
+                "account",
+                "authorizing_account",
+                "account_to_list",
+                "account_to_upgrade",
+                "account_id",
+                "issuer",
+                "issue_to_account",
+                "payer",
+                "publisher",
+                "fee_paying_account",
+                "authorized_account",
+                "withdraw_from_account",
+                "committee_member_account",
+                "creator",
+                "owner",
+                "owner_account",
+                "new_owner",
+                "deposit_to_account",
+                "bidder",
+                "new_issuer",
+                "redeemer",
+                "update_issuer",
+                "borrower"
+            ];
+
+            const assetKeys = [
+                "amount.asset_id",
+                "min_to_receive.asset_id",
+                "amount_to_sell.asset_id",
+                "delta_collateral.asset_id",
+                "delta_debt.asset_id",
+                "asset_to_update",
+                "new_options.short_backing_asset",
+                "asset_to_issue.asset_id",
+                "asset_to_reserve.asset_id",
+                "asset_id",
+                "asset_to_settle",
+                "settle_price.base.asset_id",
+                "settle_price.quote.asset_id",
+                "withdrawal_limit.asset_id",
+                "asset_to_withdraw.asset_id",
+                "amount_to_claim.asset_id",
+                "additional_collateral.asset_id",
+                "debtCovered.asset_id",
+                "amount_for_new_target.asset_id",
+                "asset_a",
+                "asset_b",
+                "share_asset",
+                "amount_a.asset_id",
+                "amount_b.asset_id",
+                "share_amount.asset_id",
+                "amount_to_sell.asset_id",
+                "min_to_receive.asset_id",
+                "delta_amount.asset_id",
+                "borrow_amount.asset_id",
+                "repay_amount.asset_id",
+                "fund_fee.asset_id",
+                "collateral.asset_id",
+                "credit_fee.asset_id"
+            ]
+
+            for (let k = 0; k < idKeys.length; k++) {
+                const id = _.get(op, idKeys[k]);
+                if (id && !accountsToFetch.includes(id)) {
+                    accountsToFetch.push(id);
+                }
+            }
+
+            for (let z = 0; z < assetKeys.length; z++) {
+                const id = _.get(op, assetKeys[z]);
+                if (id && !assetsToFetch.includes(id)) {
+                    assetsToFetch.push(id);
+                }
+            }
+        }
+
+        
+        let accountResults = [];
+        let accountBatches = _.chunk(accountsToFetch, 49);
+        for (let i = 0; i < accountBatches.length; i++) {
+            let fetchedAccountNames;
+            try {
+                fetchedAccountNames = await this._getMultipleAcountNames(accountBatches[i])
+            } catch (error) {
+                console.log(error)
+            }
+
+            if (fetchedAccountNames && fetchedAccountNames.length) {
+                let finalNames = fetchedAccountNames.map((user) => {
+                    return {id: user[1].account.id, accountName: user[1].account.name}
+                });
+
+                accountResults.push(...finalNames);
+            }
+        }
+
+        let assetResults = [];
+        let assetBatches = _.chunk(assetsToFetch, 49);
+        for (let i = 0; i < assetBatches.length; i++) {
+            let fetchedAssets;
+            try {
+                fetchedAssets = await this._resolveMultipleAssets(assetBatches[i])
+            } catch (error) {
+                console.log(error)
+            }
+
+            if (fetchedAssets && fetchedAssets.length) {
+                assetResults.push(...fetchedAssets)
+            }
         }
 
         //  https://github.com/bitshares/bitsharesjs/blob/master/lib/serializer/src/operations.js#L1551
@@ -1588,39 +1783,15 @@ export default class BitShares extends BlockchainAPI {
 
             if (opType == 0) {
                 // transfer
-                let from;
-                try {
-                  from = await this._getAccountName(op.from);
-                } catch (error) {
-                  console.log(error);
-                  return;
-                }
-
-                let to;
-                try {
-                  to = await this._getAccountName(op.to);
-                } catch (error) {
-                  console.log(error);
-                  return;
-                }
-
-                let asset;
-                try {
-                  asset = await this._resolveAsset(op.amount.asset_id);
-                } catch (error) {
-                  console.log(error);
-                  return;
-                }
-
-                if (!asset) {
-                    console.log('Asset not found');
-                    return;
-                }
+                let from = accountResults.find((resAcc) => resAcc.id === op.from).accountName;
+                let to = accountResults.find((resAcc) => resAcc.id === op.to).accountName;
+                let asset = assetResults.find((assRes) => assRes.id === op.amount.asset_id);
 
                 let opStr = "Transfer request:\n";
                 opStr += " from: " + from + "(" + op.from + ")\n";
                 opStr += " to: " + to + "(" + op.to + ")\n";
-                opStr += " amount: " + formatAsset(op.amount.amount, asset.symbol, asset.precision);
+                opStr += " amount: " + formatAsset(op.amount.amount, asset.symbol, asset.precision) + "\n";
+                opStr += " --- ";
                 operations.push(opStr);
             } else if (opType == 1) {
                 // limit_order_create
@@ -3233,7 +3404,7 @@ export default class BitShares extends BlockchainAPI {
                 let deltaAmount;
                 if (op.delta_amount) {
                     try {
-                      deltaAmount = await this._getAccountName(op.delta_amount.asset_id);
+                      deltaAmount = await this._resolveAsset(op.delta_amount.asset_id);
                     } catch (error) {
                       console.log(error);
                     }
