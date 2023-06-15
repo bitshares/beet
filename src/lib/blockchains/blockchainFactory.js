@@ -4,12 +4,12 @@ import BitShares from "./BitShares"
 import TUSC from "./TUSC"
 import store from "../../store";
 import Bitcoin from "./Bitcoin";
+import EOSmainnet from "./EOSmainnet";
+import TLOS from "./TLOS";
 
 /*
 import Steem from "./Steem"
 import WhaleShares from "./WhaleShares";
-import EOSmainnet from "./EOSmainnet";
-import TLOS from "./TLOS";
 import Binance from "./Binance";
 */
 
@@ -78,7 +78,18 @@ export default function getBlockchainAPI(chain = null, node = null) {
             }
         }
         return btc_test;
-    }/* else if (chain == "STEEM" || chain == "STM") {
+    } else if (chain == "EOS") {
+        if (!eos) {
+            eos = new EOSmainnet(config, node);
+        }
+        return eos;
+    } else if (chain == "TLOS") {
+        if (!tlos) {
+            tlos = new TLOS(config, node);
+        }
+        return tlos;
+    }
+    /* else if (chain == "STEEM" || chain == "STM") {
         if (!steem) {
             try {
               steem = new Steem(config, node);
@@ -98,16 +109,6 @@ export default function getBlockchainAPI(chain = null, node = null) {
             }
         }
         return wls;
-    } else if (chain == "EOS") {
-        if (!apiCache.EOS) {
-            apiCache.EOS = new EOSmainnet(config, node);
-        }
-        return apiCache.EOS;
-    } else if (chain == "TLOS") {
-        if (!apiCache.TLOS) {
-            apiCache.TLOS = new TLOS(config, node);
-        }
-        return apiCache.TLOS;
     } else if (chain == "BNB") {
         if (!apiCache.BNB) {
             apiCache.BNB = new Binance(config, node);

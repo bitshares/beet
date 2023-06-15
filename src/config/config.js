@@ -92,36 +92,6 @@ let _blockchains = {
                 contact: "https://www.blockchain.com"
             }
         ]
-    }
-    /*STEEM: {
-        coreSymbol: 'STM',
-        name: 'Steem',
-        chainId: '0',
-        nodeList: [
-            {
-                url: "https://api.steemit.com/",
-                location: "Unknown",
-                region: "Unknown",
-                country: "Unknown",
-                operator: "Steemit Inc.",
-                contact: "https://steem.com"
-            }
-        ]
-    },
-    WLS: {
-        coreSymbol: 'WLS',
-        name: 'WhaleShares',
-        chainId: '0',
-        nodeList: [
-            {
-                url: "https://wls.kennybll.com/",
-                location: "Unknown",
-                region: "Unknown",
-                country: "Unknown",
-                operator: "Beyond Bitcoin",
-                contact: "Discord Channel"
-            }
-        ]
     },
     EOS: {
         coreSymbol: 'EOS',
@@ -150,6 +120,36 @@ let _blockchains = {
                 country: "Unknown",
                 operator: "Greymass",
                 contact: "Greymass"
+            }
+        ]
+    }
+    /*STEEM: {
+        coreSymbol: 'STM',
+        name: 'Steem',
+        chainId: '0',
+        nodeList: [
+            {
+                url: "https://api.steemit.com/",
+                location: "Unknown",
+                region: "Unknown",
+                country: "Unknown",
+                operator: "Steemit Inc.",
+                contact: "https://steem.com"
+            }
+        ]
+    },
+    WLS: {
+        coreSymbol: 'WLS',
+        name: 'WhaleShares',
+        chainId: '0',
+        nodeList: [
+            {
+                url: "https://wls.kennybll.com/",
+                location: "Unknown",
+                region: "Unknown",
+                country: "Unknown",
+                operator: "Beyond Bitcoin",
+                contact: "Discord Channel"
             }
         ]
     },
