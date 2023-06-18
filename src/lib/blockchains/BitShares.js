@@ -1796,27 +1796,9 @@ export default class BitShares extends BlockchainAPI {
             } else if (opType == 1) {
                 // limit_order_create
                 console.log('limit_order_create 1')
-                let seller;
-                try {
-                  seller = await this._getAccountName(op.seller);
-                } catch (error) {
-                  console.log(error);
-                  return;
-                }
-
-                let buy;
-                try {
-                  buy = await this._resolveAsset(op.min_to_receive.asset_id);
-                } catch (error) {
-                  console.log(error);
-                }
-
-                let sell;
-                try {
-                  sell = await this._resolveAsset(op.amount_to_sell.asset_id);
-                } catch (error) {
-                  console.log(error);
-                }
+                let seller = accountResults.find((resAcc) => resAcc.id === op.seller).accountName;
+                let buy = assetResults.find((assRes) => assRes.id === op.min_to_receive.asset_id);
+                let sell = assetResults.find((assRes) => assRes.id === op.amount_to_sell.asset_id);
 
                 if (!buy || !sell) {
                     console.log('Could not resolve assets in limit_order_create');
@@ -1830,6 +1812,7 @@ export default class BitShares extends BlockchainAPI {
                 
                 let opStr = "Trade request:\n"
                 opStr += "Trade" + (fillOrKill ? "(Fill or Kill)" : "") + "\n"
+                opStr += ` Seller: ${seller} (${op.seller})`
                 opStr += " Sell: " + formatAsset(op.amount_to_sell.amount, sell.symbol, sell.precision) + "\n"
                 opStr += " Buy: " + formatAsset(op.min_to_receive.amount, buy.symbol, buy.precision) + "\n"
                 opStr += " Price: " + price.toPrecision(6) + " " + sell.symbol + "/" +  buy.symbol
@@ -1850,28 +1833,9 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(opStr);
             } else if (opType == 3) {
                 // call_order_update
-                let fundingAccount;
-                try {
-                    fundingAccount = await this._getAccountName(op.funding_account);
-                } catch (error) {
-                    console.log(error);
-                }
-
-                let deltaCollateral;
-                try {
-                    deltaCollateral = await this._resolveAsset(op.delta_collateral.asset_id);
-                } catch (error) {
-                    console.log(error);
-                    return;
-                }
-
-                let deltaDebt;
-                try {
-                    deltaDebt = await this._resolveAsset(op.delta_debt.asset_id);
-                } catch (error) {
-                    console.log(error);
-                    return;
-                }
+                let fundingAccount = accountResults.find((resAcc) => resAcc.id === op.funding_account).accountName;
+                let deltaCollateral = assetResults.find((assRes) => assRes.id === op.delta_collateral.asset_id);
+                let deltaDebt = assetResults.find((assRes) => assRes.id === op.delta_debt.asset_id);
 
                 if (!deltaCollateral || !deltaDebt) {
                     console.log('Could not resolve delta fields');
@@ -1886,20 +1850,8 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(opStr);
             } else if (opType == 5) {
                 // account_create
-
-                let registrar;
-                try {
-                    registrar = await this._getAccountName(op.registrar);
-                } catch (error) {
-                    console.log(error);
-                }
-
-                let referrer;
-                try {
-                    referrer = await this._getAccountName(op.referrer);
-                } catch (error) {
-                    console.log(error);
-                }
+                let registrar = accountResults.find((resAcc) => resAcc.id === op.registrar).accountName;
+                let referrer = accountResults.find((resAcc) => resAcc.id === op.referrer).accountName;
                 
                 let opStr = "Do you want to create the following account? \n";
                 opStr += "registrar: " + registrar ?? '' + "(" + op.registrar + ")\n";
@@ -1927,12 +1879,7 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(opStr);
             } else if (opType == 6) {
                 // account_update
-                let targetAccount;
-                try {
-                    targetAccount = await this._getAccountName(op.account);
-                } catch (error) {
-                    console.log(error);
-                }
+                let targetAccount = accountResults.find((resAcc) => resAcc.id === op.account).accountName;
                 
                 let opStr = "Do you want to update the following account? \n";
                 opStr += "Warning: This action is irreversible! \n";
@@ -1944,21 +1891,10 @@ export default class BitShares extends BlockchainAPI {
                 opStr += "Estimated fee: " + JSON.stringify(op.fee);
                 operations.push(opStr);
             } else if (opType == 7) {
+                // account_whitelist
+                let authorizingAccount = accountResults.find((resAcc) => resAcc.id === op.authorizing_account).accountName;
+                let accountToList = accountResults.find((resAcc) => resAcc.id === op.account_to_list).accountName;
 
-                let authorizingAccount;
-                try {
-                    authorizingAccount = await this._getAccountName(op.authorizing_account);
-                } catch (error) {
-                    console.log(error);
-                }
-
-                let accountToList;
-                try {
-                    accountToList = await this._getAccountName(op.account_to_list);
-                } catch (error) {
-                    console.log(error);
-                }
-                
                 let opStr = "Account whitelist details: \n";
                 opStr += "authorizing_account: " + authorizingAccount + "(" + op.authorizing_account + ")\n";
                 opStr += "account_to_list: " + accountToList + "(" + op.account_to_list + ")\n";
@@ -1968,12 +1904,7 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(opStr);
             } else if (opType == 8) {
                 // account_upgrade
-                let accountToUpgrade;
-                try {
-                    accountToUpgrade = await this._getAccountName(op.account_to_upgrade);
-                } catch (error) {
-                    console.log(error);
-                }
+                let accountToUpgrade = accountResults.find((resAcc) => resAcc.id === op.account_to_upgrade).accountName;
                 
                 let opStr = "Upgrade account to lifetime member? \n";
                 opStr += "account_to_upgrade: " + accountToUpgrade + "(" + op.account_to_upgrade + ")\n";
@@ -1983,19 +1914,8 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(opStr);
             } else if (opType == 9) {
                 // account_transfer
-                let originalOwner;
-                try {
-                    originalOwner = await this._getAccountName(op.account_id);
-                } catch (error) {
-                    console.log(error);
-                }
-
-                let newOwner;
-                try {
-                    newOwner = await this._getAccountName(op.new_owner);
-                } catch (error) {
-                    console.log(error);
-                }
+                let originalOwner = accountResults.find((resAcc) => resAcc.id === op.account_id).accountName;
+                let newOwner = accountResults.find((resAcc) => resAcc.id === op.new_owner).accountName;
                 
                 let opStr = "Transfer account to a new owner? \n";
                 opStr += "Warning: This action is irreversible. \n";
@@ -2005,16 +1925,10 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(opStr);
             } else if (opType == 10 || opType == 11) {
                 // Create or Update an asset
-                let asset;
-                if (opType == 11) {
-                    // fetch asset to update
-                    try {
-                      asset = await this._resolveAsset(op.asset_to_update);
-                    } catch (error) {
-                      console.log(error);
-                      return;
-                    }
-                }
+                let asset = opType === 11
+                    ? assetResults.find((assRes) => assRes.id === op.asset_to_update) // fetch asset to update
+                    : null;
+
                 let symbol = asset ? asset.symbol : op.symbol;
                 let precision = asset ? asset.precision : op.precision;
                 let is_prediction_market = asset ? asset.is_prediction_market : op.is_prediction_market;
@@ -2096,13 +2010,7 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(operationString);
             } else if (opType == 12) {
                 // asset_update_bitasset
-                let shortBackingAsset;
-                try {
-                    shortBackingAsset = await this._resolveAsset(op.new_options.short_backing_asset);
-                } catch (error) {
-                    console.log(error);
-                    return;
-                }
+                let shortBackingAsset = assetResults.find((assRes) => assRes.id === op.new_options.short_backing_asset);
 
                 if (!shortBackingAsset) {
                     console.log("shortBackingAsset issue");
@@ -2125,21 +2033,8 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(opStr);
             } else if (opType == 13) {
                 // asset_update_feed_producers
-
-                let issuer;
-                try {
-                    issuer = await this._getAccountName(op.issuer);
-                } catch (error) {
-                    console.log(error);
-                }
-
-                let assetToUpdate;
-                try {
-                    assetToUpdate = await this._resolveAsset(op.new_options.short_backing_asset);
-                } catch (error) {
-                    console.log(error);
-                    return;
-                }
+                let issuer = accountResults.find((resAcc) => resAcc.id === op.issuer).accountName;
+                let assetToUpdate = assetResults.find((assRes) => assRes.id === op.new_options.short_backing_asset);
 
                 if (!assetToUpdate) {
                     console.log("assetToUpdate issue");
@@ -2154,52 +2049,22 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(opStr);
             } else if (opType == 14) {
                 // asset_issue
-
-                let issuer;
-                try {
-                    issuer = await this._getAccountName(op.issuer);
-                } catch (error) {
-                    console.log(error);
-                }
-
-                let targetAccount;
-                try {
-                    targetAccount = await this._getAccountName(op.issue_to_account);
-                } catch (error) {
-                    console.log(error);
-                }
-
-                let assetToIssue;
-                try {
-                    assetToIssue = await this._resolveAsset(op.asset_to_issue.asset_id);
-                } catch (error) {
-                    console.log(error);
-                    return;
-                }
+                //let issuer = accountResults.find((resAcc) => resAcc.id === op.issuer).accountName;
+                let targetAccount = accountResults.find((resAcc) => resAcc.id === op.issue_to_account).accountName;
+                let assetToIssue = assetResults.find((assRes) => assRes.id === op.asset_to_issue.asset_id);
 
                 if (!assetToIssue) {
                     console.log("No asset to issue found");
                     return;
                 }
-                
+
                 let opStr = `Issue ${op.asset_to_issue.amount} ${assetToIssue.symbol} (${assetToIssue.id}) to ${targetAccount} (${op.issue_to_account})? \n`;
                 opStr += "Estimated fee: " + JSON.stringify(op.fee).amount + " (" + op.fee.asset_id + ")"
                 operations.push(opStr);
             } else if (opType == 15) {
                 // asset_reserve
-                let payer;
-                try {
-                    payer = await this._getAccountName(op.payer);
-                } catch (error) {
-                    console.log(error);
-                }
-
-                let assetToReserve;
-                try {
-                    assetToReserve = await this._resolveAsset(op.amount_to_reserve.asset_id);
-                } catch (error) {
-                    console.log(error);
-                }
+                let payer = accountResults.find((resAcc) => resAcc.id === op.payer).accountName;
+                let assetToReserve = assetResults.find((assRes) => assRes.id === op.amount_to_reserve.asset_id);
 
                 if (!assetToReserve) {
                     console.log("assetToReserve issue");
@@ -2214,19 +2079,8 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(opStr);
             } else if (opType == 16) {
                 // asset_fund_fee_pool
-                let fromAccount;
-                try {
-                    fromAccount = await this._getAccountName(op.from_account);
-                } catch (error) {
-                    console.log(error);
-                }
-
-                let assetToFund;
-                try {
-                    assetToFund = await this._resolveAsset(op.asset_id);
-                } catch (error) {
-                    console.log(error);
-                }
+                let fromAccount = accountResults.find((resAcc) => resAcc.id === op.from_account).accountName;
+                let assetToFund = assetResults.find((assRes) => assRes.id === op.asset_id);
 
                 if (!assetToFund) {
                     console.log("assetToFund issue");
@@ -2241,19 +2095,8 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(opStr);
             } else if (opType == 17) {
                 // asset_settle
-                let account;
-                try {
-                    account = await this._getAccountName(op.account);
-                } catch (error) {
-                    console.log(error);
-                }
-
-                let assetToSettle;
-                try {
-                    assetToSettle = await this._resolveAsset(op.amount.asset_id);
-                } catch (error) {
-                    console.log(error);
-                }
+                let account = accountResults.find((resAcc) => resAcc.id === op.account).accountName;
+                let assetToSettle = assetResults.find((assRes) => assRes.id === op.amount.asset_id);
 
                 if (!assetToSettle) {
                     console.log("assetToSettle issue");
@@ -2267,33 +2110,11 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(opStr);
             } else if (opType == 18) {
                 // asset_global_settle
-                let issuer;
-                try {
-                    issuer = await this._getAccountName(op.account);
-                } catch (error) {
-                    console.log(error);
-                }
+                let issuer = accountResults.find((resAcc) => resAcc.id === op.account).accountName;
 
-                let assetToSettle;
-                try {
-                    assetToSettle = await this._resolveAsset(op.asset_to_settle);
-                } catch (error) {
-                    console.log(error);
-                }
-
-                let baseAsset;
-                try {
-                    baseAsset = await this._resolveAsset(op.settle_price.base.asset_id);
-                } catch (error) {
-                    console.log(error);
-                }
-
-                let quoteAsset;
-                try {
-                    quoteAsset = await this._resolveAsset(op.settle_price.quote.asset_id);
-                } catch (error) {
-                    console.log(error);
-                }
+                let assetToSettle = assetResults.find((assRes) => assRes.id === op.asset_to_settle)
+                let baseAsset = assetResults.find((assRes) => assRes.id === op.settle_price.base.asset_id);
+                let quoteAsset = assetResults.find((assRes) => assRes.id === op.settle_price.quote.asset_id);
 
                 if (!assetToSettle || !baseAsset || !quoteAsset) {
                     console.log("asset_global_settle param issue");
@@ -2311,26 +2132,9 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(opStr);
             } else if (opType == 19) {
                 // asset_publish_feed
-                let publisher;
-                try {
-                    publisher = await this._getAccountName(op.publisher);
-                } catch (error) {
-                    console.log(error);
-                }
-
-                let baseAsset; // backing e.g. BTS
-                try {
-                    baseAsset = await this._resolveAsset(op.settle_price.base.asset_id);
-                } catch (error) {
-                    console.log(error);
-                }
-
-                let quoteAsset; // same as asset_id
-                try {
-                    quoteAsset = await this._resolveAsset(op.settle_price.quote.asset_id);
-                } catch (error) {
-                    console.log(error);
-                }
+                let publisher = accountResults.find((resAcc) => resAcc.id === op.publisher).accountName;
+                let baseAsset = assetResults.find((assRes) => assRes.id === op.settle_price.base.asset_id); // backing e.g. BTS
+                let quoteAsset = assetResults.find((assRes) => assRes.id === op.settle_price.quote.asset_id); // same as asset_id
 
                 if (!baseAsset || !quoteAsset) {
                     console.log("asset_publish_feed param issue");
@@ -2357,12 +2161,7 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(opStr);
             } else if (opType == 20) {
                 // witness_create
-                let witnessAccount;
-                try {
-                    witnessAccount = await this._getAccountName(op.witness_account);
-                } catch (error) {
-                    console.log(error);
-                }
+                let witnessAccount = accountResults.find((resAcc) => resAcc.id === op.witness_account).accountName;
                 
                 let opStr = "Create a witness with the following details? \n";
                 opStr += "witness_account: " + witnessAccount + "(" + op.witness_account + ")\n";
@@ -2372,12 +2171,7 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(opStr);
             } else if (opType == 21) {
                 // witness_update
-                let witnessAccount;
-                try {
-                    witnessAccount = await this._getAccountName(op.witness_account);
-                } catch (error) {
-                    console.log(error);
-                }
+                let witnessAccount = accountResults.find((resAcc) => resAcc.id === op.witness_account).accountName;
                 
                 let opStr = "Update witness details to the following? \n";
                 opStr += "witness: " + op.witness + "\n";
@@ -2388,12 +2182,7 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(opStr);
             } else if (opType == 22) {
                 // proposal_create
-                let feePayingAccount;
-                try {
-                    feePayingAccount = await this._getAccountName(op.fee_paying_account);
-                } catch (error) {
-                    console.log(error);
-                }
+                let feePayingAccount = accountResults.find((resAcc) => resAcc.id === op.fee_paying_account).accountName;
                 
                 let opStr = "Create the following proposal? \n";
                 opStr += "expiration_time: " + op.expiration_time + "\n";
@@ -2404,12 +2193,7 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(opStr);
             } else if (opType == 23) {
                 // proposal_update
-                let feePayingAccount;
-                try {
-                    feePayingAccount = await this._getAccountName(op.fee_paying_account);
-                } catch (error) {
-                    console.log(error);
-                }
+                let feePayingAccount = accountResults.find((resAcc) => resAcc.id === op.fee_paying_account).accountName;
                 
                 let opStr = "Update the following proposal? \n";
                 opStr += "proposal: " + op.proposal + "\n";
@@ -2425,12 +2209,7 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(opStr);
             } else if (opType == 24) {
                 // proposal_delete
-                let feePayingAccount;
-                try {
-                    feePayingAccount = await this._getAccountName(op.fee_paying_account);
-                } catch (error) {
-                    console.log(error);
-                }
+                let feePayingAccount = accountResults.find((resAcc) => resAcc.id === op.fee_paying_account).accountName;
                 
                 let opStr = "Delete the following proposal? \n";
                 opStr += "using_owner_authority: " + op.using_owner_authority + "\n";
@@ -2441,27 +2220,9 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(opStr);
             } else if (opType == 25) {
                 // withdraw_permission_create
-                let to;
-                try {
-                  to = await this._getAccountName(op.authorized_account);
-                } catch (error) {
-                  console.log(error);
-                }
-
-                let from;
-                try {
-                    from = await this._getAccountName(op.withdraw_from_account);
-                } catch (error) {
-                    console.log(error);
-                }
-
-                let asset;
-                try {
-                  asset = await this._resolveAsset(op.withdrawal_limit.asset_id);
-                } catch (error) {
-                  console.log(error);
-                  return;
-                }
+                let to = accountResults.find((resAcc) => resAcc.id === op.authorized_account).accountName;
+                let from = accountResults.find((resAcc) => resAcc.id === op.withdraw_from_account).accountName;
+                let asset = assetResults.find((assRes) => assRes.id === op.withdrawal_limit.asset_id);
 
                 if (!asset) {
                     console.log("withdraw_permission_create missing field");
@@ -2471,32 +2232,14 @@ export default class BitShares extends BlockchainAPI {
                 let opStr = "Direct Debit Authorization\n";
                 opStr += " Recipient: " + to ?? '' + "(" + op.authorized_account + ")\n";
                 opStr += " Account to withdraw from: " + from ?? '' + "(" + op.withdraw_from_account + ")\n";
-                opStr += " Take " + formatAsset(op.withdrawal_limit.amount, asset.symbol, asset.precision) + " every " + period + " days, for " + op.periods_until_expiration + " periods";
+                opStr += " Take " + formatAsset(op.withdrawal_limit.amount, asset.symbol, asset.precision) + " every " + op.withdrawal_period_sec + " seconds, for " + op.periods_until_expiration + " periods";
                 opStr += " Starting : " + op.period_start_time; // make more human readable?
                 operations.push(opStr);
             } else if (opType == 26) {
                 // withdraw_permission_update
-
-                let withdrawFromAccount;
-                try {
-                    withdrawFromAccount = await this._getAccountName(op.withdraw_from_account);
-                } catch (error) {
-                    console.log(error);
-                }
-
-                let authorizedAccount;
-                try {
-                    authorizedAccount = await this._getAccountName(op.authorized_account);
-                } catch (error) {
-                    console.log(error);
-                }
-
-                let withdrawalLimit;
-                try {
-                    withdrawalLimit = await this._resolveAsset(op.withdrawal_limit.asset_id);
-                } catch (error) {
-                  console.log(error);
-                }
+                let withdrawFromAccount = accountResults.find((resAcc) => resAcc.id === op.withdraw_from_account).accountName;
+                let authorizedAccount = accountResults.find((resAcc) => resAcc.id === op.authorized_account).accountName;
+                let withdrawalLimit = assetResults.find((assRes) => assRes.id === op.withdrawal_limit.asset_id);
 
                 if (!withdrawalLimit) {
                     console.log("withdraw_permission_update missing field");
@@ -2515,26 +2258,9 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(opStr);
             } else if (opType == 27) {
                 // withdraw_permission_claim
-                let from;
-                try {
-                    from = await this._getAccountName(op.withdraw_from_account);
-                } catch (error) {
-                    console.log(error);
-                }
-
-                let to;
-                try {
-                  to = await this._getAccountName(op.withdraw_to_account);
-                } catch (error) {
-                  console.log(error);
-                }
-
-                let withdrawnAsset;
-                try {
-                    withdrawnAsset = await this._resolveAsset(op.amount_to_withdraw.asset_id);
-                } catch (error) {
-                  console.log(error);
-                }
+                let from = accountResults.find((resAcc) => resAcc.id === op.withdraw_from_account).accountName;
+                let to = accountResults.find((resAcc) => resAcc.id === op.withdraw_to_account).accountName;
+                let withdrawnAsset = assetResults.find((assRes) => assRes.id === op.amount_to_withdraw.asset_id);
 
                 if (!withdrawnAsset) {
                     console.log("withdraw_permission_claim missing field");
@@ -2551,19 +2277,8 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(opStr);
             } else if (opType == 28) {
                 // withdraw_permission_delete
-                let withdrawFromAccount;
-                try {
-                    withdrawFromAccount = await this._getAccountName(op.withdraw_from_account);
-                } catch (error) {
-                    console.log(error);
-                }
-
-                let authorizedAccount;
-                try {
-                    authorizedAccount = await this._getAccountName(op.withdraw_from_account);
-                } catch (error) {
-                    console.log(error);
-                }
+                let withdrawFromAccount = accountResults.find((resAcc) => resAcc.id === op.withdraw_from_account).accountName;
+                let authorizedAccount = accountResults.find((resAcc) => resAcc.id === op.authorized_account).accountName;
                 
                 let opStr = "Delete the following withdraw permission? \n";
                 opStr += "withdraw_from_account: " + withdrawFromAccount + "(" + op.withdraw_from_account + ")\n";
@@ -2573,12 +2288,7 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(opStr);
             } else if (opType == 29) {
                 // committee_member_create
-                let committeeMemberAccount;
-                try {
-                    committeeMemberAccount = await this._getAccountName(op.committee_member_account);
-                } catch (error) {
-                    console.log(error);
-                }
+                let committeeMemberAccount = accountResults.find((resAcc) => resAcc.id === op.committee_member_account).accountName;
                 
                 let opStr = "Create a committee member? \n";
                 opStr += "committee_member_account: " + committeeMemberAccount + "(" + op.committee_member_account + ")\n";
@@ -2587,12 +2297,7 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(opStr);
             } else if (opType == 30) {
                 // committee_member_update
-                let committeeMemberAccount;
-                try {
-                    committeeMemberAccount = await this._getAccountName(op.committee_member_account);
-                } catch (error) {
-                    console.log(error);
-                }
+                let committeeMemberAccount = accountResults.find((resAcc) => resAcc.id === op.committee_member_account).accountName;
                 
                 let opStr = "Update the following committee member's details? \n";
                 opStr += "committee_member" + op.committee_member + "\n";
@@ -2637,26 +2342,9 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(opStr);
             } else if (opType == 32) {
                 // vesting_balance_create
-                let creator;
-                try {
-                  creator = await this._getAccountName(op.creator);
-                } catch (error) {
-                  console.log(error);
-                }
-
-                let owner;
-                try {
-                  owner = await this._getAccountName(op.owner);
-                } catch (error) {
-                  console.log(error);
-                }
-
-                let amount;
-                try {
-                    amount = await this._resolveAsset(op.amount.asset_id);
-                } catch (error) {
-                  console.log(error);
-                }
+                let creator = accountResults.find((resAcc) => resAcc.id === op.creator).accountName;
+                let owner = accountResults.find((resAcc) => resAcc.id === op.owner).accountName;
+                let amount = assetResults.find((assRes) => assRes.id === op.amount.asset_id);
 
                 if (!amount) {
                     console.log("vesting_balance_create: amount is null");
@@ -2685,21 +2373,8 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(opStr);
             } else if (opType == 33) {
                 // vesting_balance_withdraw
-                let owner;
-                try {
-                  owner = await this._getAccountName(op.owner);
-                } catch (error) {
-                  console.log(error);
-                  return;
-                }
-
-                let asset;
-                try {
-                  asset = await this._resolveAsset(op.amount.asset_id);
-                } catch (error) {
-                  console.log(error);
-                  return;
-                }
+                let owner = accountResults.find((resAcc) => resAcc.id === op.owner).accountName;
+                let asset = assetResults.find((assRes) => assRes.id === op.amount.asset_id);
 
                 if (!asset) {
                     console.log("vesting_balance_withdraw: asset is null");
@@ -2712,13 +2387,7 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(opStr);
             } else if (opType == 34) {
                 // worker_create
-                let owner;
-                try {
-                  owner = await this._getAccountName(op.owner);
-                } catch (error) {
-                  console.log(error);
-                  return;
-                }
+                let owner = accountResults.find((resAcc) => resAcc.id === op.owner).accountName;
                 
                 let opStr = "Create the following worker proposal? \n";
                 opStr += " owner: " + owner + "(" + op.owner + ")\n";
@@ -2732,12 +2401,7 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(opStr);
             } else if (opType == 35) {
                 // custom
-                let payer;
-                try {
-                  payer = await this._getAccountName(op.payer);
-                } catch (error) {
-                  console.log(error);
-                }
+                let payer = accountResults.find((resAcc) => resAcc.id === op.payer).accountName;
                 
                 let opStr = "Custom operation: \n";
                 opStr += "payer: " + payer ?? '' + "(" + op.payer + ")\n";
@@ -2748,12 +2412,7 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(opStr);
             } else if (opType == 36) {
                 // assert
-                let feePayingAccount;
-                try {
-                    feePayingAccount = await this._getAccountName(op.fee_paying_account);
-                } catch (error) {
-                  console.log(error);
-                }
+                let feePayingAccount = accountResults.find((resAcc) => resAcc.id === op.fee_paying_account).accountName;
                 
                 let opStr = "Assert operation: \n";
                 opStr += "fee_paying_account: " + feePayingAccount ?? '' + "(" + op.fee_paying_account + ")\n";
@@ -2764,19 +2423,8 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(opStr);
             } else if (opType == 37) {
                 // balance_claim
-                let depositToAccount;
-                try {
-                    depositToAccount = await this._getAccountName(op.deposit_to_account);
-                } catch (error) {
-                  console.log(error);
-                }
-
-                let claimedAsset;
-                try {
-                    claimedAsset = await this._resolveAsset(op.amount.asset_id);
-                } catch (error) {
-                    console.log(error);
-                }
+                let depositToAccount = accountResults.find((resAcc) => resAcc.id === op.deposit_to_account).accountName;
+                let claimedAsset = assetResults.find((assRes) => assRes.id === op.amount.asset_id);
 
                 if (!claimedAsset) {
                     console.log("balance_claim: claimedAsset is null");
@@ -2792,33 +2440,10 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(opStr);
             } else if (opType == 38) {
                 // override_transfer
-                let issuer;
-                try {
-                  issuer = await this._getAccountName(op.issuer);
-                } catch (error) {
-                  console.log(error);
-                }
-
-                let from;
-                try {
-                    from = await this._getAccountName(op.from);
-                } catch (error) {
-                  console.log(error);
-                }
-
-                let to;
-                try {
-                    to = await this._getAccountName(op.to);
-                } catch (error) {
-                  console.log(error);
-                }
-
-                let overridenAsset;
-                try {
-                    overridenAsset = await this._resolveAsset(op.amount.asset_id);
-                } catch (error) {
-                    console.log(error);
-                }
+                let issuer = accountResults.find((resAcc) => resAcc.id === op.issuer).accountName;
+                let from = accountResults.find((resAcc) => resAcc.id === op.from).accountName;
+                let to = accountResults.find((resAcc) => resAcc.id === op.to).accountName;
+                let overridenAsset = assetResults.find((assRes) => assRes.id === op.amount.asset_id);
 
                 if (!overridenAsset) {
                     console.log("override_transfer: overridenAsset is null");
@@ -2835,19 +2460,8 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(opStr);
             } else if (opType == 39) {
                 // transfer_to_blind
-                let from;
-                try {
-                    from = await this._getAccountName(op.from);
-                } catch (error) {
-                  console.log(error);
-                }
-
-                let assetToTransfer;
-                try {
-                    assetToTransfer = await this._resolveAsset(op.amount.asset_id);
-                } catch (error) {
-                    console.log(error);
-                }
+                let from = accountResults.find((resAcc) => resAcc.id === op.from).accountName;
+                let assetToTransfer = assetResults.find((assRes) => assRes.id === op.amount.asset_id);
 
                 if (!assetToTransfer) {
                     console.log("transfer_to_blind: assetToTransfer is null");
@@ -2870,19 +2484,8 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(opStr);
             } else if (opType == 41) {
                 // transfer_from_blind
-                let to;
-                try {
-                    to = await this._getAccountName(op.to);
-                } catch (error) {
-                  console.log(error);
-                }
-
-                let assetToTransfer;
-                try {
-                    assetToTransfer = await this._resolveAsset(op.amount.asset_id);
-                } catch (error) {
-                    console.log(error);
-                }
+                let to = accountResults.find((resAcc) => resAcc.id === op.to).accountName;
+                let assetToTransfer = assetResults.find((assRes) => assRes.id === op.amount.asset_id);
 
                 if (!assetToTransfer) {
                     console.log("transfer_from_blind: assetToTransfer is null");
@@ -2898,19 +2501,8 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(opStr);
             } else if (opType == 43) {
                 // asset_claim_fees
-                let issuer;
-                try {
-                    issuer = await this._getAccountName(op.issuer);
-                } catch (error) {
-                  console.log(error);
-                }
-
-                let assetToClaim;
-                try {
-                    assetToClaim = await this._resolveAsset(op.amount_to_claim.asset_id);
-                } catch (error) {
-                    console.log(error);
-                }
+                let issuer = accountResults.find((resAcc) => resAcc.id === op.issuer).accountName;
+                let assetToClaim = assetResults.find((assRes) => assRes.id === op.amount_to_claim.asset_id);
 
                 if (!assetToClaim) {
                     console.log("asset_claim_fees: assetToClaim is null");
@@ -2925,26 +2517,9 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(opStr);
             } else if (opType == 45) {
                 // bid_collateral
-                let bidder;
-                try {
-                    bidder = await this._getAccountName(op.bidder);
-                } catch (error) {
-                  console.log(error);
-                }
-
-                let collateral;
-                try {
-                    collateral = await this._resolveAsset(op.additional_collateral.asset_id);
-                } catch (error) {
-                    console.log(error);
-                }
-
-                let debtCovered;
-                try {
-                    debtCovered = await this._resolveAsset(op.debtCovered.asset_id);
-                } catch (error) {
-                    console.log(error);
-                }
+                let bidder = accountResults.find((resAcc) => resAcc.id === op.bidder).accountName;
+                let collateral = assetResults.find((assRes) => assRes.id === op.additional_collateral.asset_id);
+                let debtCovered = assetResults.find((assRes) => assRes.id === op.debtCovered.asset_id);
 
                 if (!collateral || !debtCovered) {
                     console.log("bid_collateral: collateral or debtCovered is null");
@@ -2959,19 +2534,8 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(opStr);
             } else if (opType == 47) {
                 // asset_claim_pool
-                let issuer;
-                try {
-                    issuer = await this._getAccountName(op.issuer);
-                } catch (error) {
-                  console.log(error);
-                }
-
-                let relevantAsset;
-                try {
-                    relevantAsset = await this._resolveAsset(op.asset_id);
-                } catch (error) {
-                    console.log(error);
-                }
+                let issuer = accountResults.find((resAcc) => resAcc.id === op.issuer).accountName;
+                let relevantAsset = assetResults.find((assRes) => assRes.id === op.asset_id);
 
                 if (!relevantAsset) {
                     console.log("asset_claim_pool: relevantAsset is null");
@@ -2986,26 +2550,9 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(opStr);
             } else if (opType == 48) {
                 // asset_update_issuer
-                let issuer;
-                try {
-                    issuer = await this._getAccountName(op.issuer);
-                } catch (error) {
-                  console.log(error);
-                }
-
-                let new_issuer;
-                try {
-                    new_issuer = await this._getAccountName(op.new_issuer);
-                } catch (error) {
-                  console.log(error);
-                }
-
-                let assetToUpdate;
-                try {
-                    assetToUpdate = await this._resolveAsset(op.asset_to_update);
-                } catch (error) {
-                    console.log(error);
-                }
+                let issuer = accountResults.find((resAcc) => resAcc.id === op.issuer).accountName;
+                let new_issuer = accountResults.find((resAcc) => resAcc.id === op.new_issuer).accountName;
+                let assetToUpdate = assetResults.find((assRes) => assRes.id === op.asset_to_update);
 
                 if (!assetToUpdate) {
                     console.log("asset_update_issuer: assetToUpdate is null");
@@ -3020,26 +2567,9 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(opStr);
             } else if (opType == 49) {
                 // htlc_create
-                let from;
-                try {
-                    from = await this._getAccountName(op.from);
-                } catch (error) {
-                  console.log(error);
-                }
-
-                let to;
-                try {
-                    to = await this._getAccountName(op.to);
-                } catch (error) {
-                  console.log(error);
-                }
-
-                let htlcAsset;
-                try {
-                    htlcAsset = await this._resolveAsset(op.amount.asset_id);
-                } catch (error) {
-                    console.log(error);
-                }
+                let from = accountResults.find((resAcc) => resAcc.id === op.from).accountName;
+                let to = accountResults.find((resAcc) => resAcc.id === op.to).accountName;
+                let htlcAsset = assetResults.find((assRes) => assRes.id === op.amount.asset_id);
 
                 if (!htlcAsset) {
                     console.log("htlc_create: htlcAsset is null");
@@ -3057,12 +2587,7 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(opStr);
             } else if (opType == 50) {
                 // htlc_redeem
-                let redeemer;
-                try {
-                    redeemer = await this._getAccountName(op.redeemer);
-                } catch (error) {
-                  console.log(error);
-                }
+                let redeemer = accountResults.find((resAcc) => resAcc.id === op.redeemer).accountName;
                 
                 let opStr = "Redeem the following HTLC operation? \n";
                 opStr += "htlc_id: " + op.htlc_id + "\n";
@@ -3073,12 +2598,7 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(opStr);
             } else if (opType == 52) {
                 // htlc_extend
-                let update_issuer;
-                try {
-                    update_issuer = await this._getAccountName(op.update_issuer);
-                } catch (error) {
-                  console.log(error);
-                }
+                let update_issuer = accountResults.find((resAcc) => resAcc.id === op.update_issuer).accountName;
                 
                 let opStr = "Approve the following HTLC extension? \n";
                 opStr += "htlc_id: " + op.htlc_id + "\n";
@@ -3090,12 +2610,7 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(opStr);
             } else if (opType == 54) {
                 // custom_authority_create
-                let account;
-                try {
-                    account = await this._getAccountName(op.account);
-                } catch (error) {
-                  console.log(error);
-                }
+                let account = accountResults.find((resAcc) => resAcc.id === op.account).accountName;
                 
                 let opStr = "Create the following custom authority? \n";
                 opStr += "account: " + account + "(" +  op.account + ")\n";
@@ -3110,12 +2625,7 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(opStr);
             } else if (opType == 55) {
                 // custom_authority_update
-                let account;
-                try {
-                    account = await this._getAccountName(op.account);
-                } catch (error) {
-                  console.log(error);
-                }
+                let account = accountResults.find((resAcc) => resAcc.id === op.account).accountName;
                 
                 let opStr = "Update the following custom authority? \n";
                 opStr += "account: " + account + "(" +  op.account + ")\n";
@@ -3131,12 +2641,7 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(opStr);
             } else if (opType == 56) {
                 // custom_authority_delete
-                let account;
-                try {
-                    account = await this._getAccountName(op.account);
-                } catch (error) {
-                  console.log(error);
-                }
+                let account = accountResults.find((resAcc) => resAcc.id === op.account).accountName;
                 
                 let opStr = "Delete the following custom authority? \n";
                 opStr += "account: " + account + "(" +  op.account + ")\n";
@@ -3146,19 +2651,8 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(opStr);
             } else if (opType == 57) {
                 // ticket_create
-                let account;
-                try {
-                    account = await this._getAccountName(op.account);
-                } catch (error) {
-                  console.log(error);
-                }
-
-                let ticketAsset;
-                try {
-                    ticketAsset = await this._resolveAsset(op.amount.asset_id);
-                } catch (error) {
-                    console.log(error);
-                }
+                let account = accountResults.find((resAcc) => resAcc.id === op.account).accountName;
+                let ticketAsset = assetResults.find((assRes) => assRes.id === op.amount.asset_id);
 
                 if (!ticketAsset) {
                     console.log("ticket_create: ticketAsset is null");
@@ -3174,19 +2668,8 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(opStr);
             } else if (opType == 58) {
                 // ticket_update
-                let account;
-                try {
-                    account = await this._getAccountName(op.account);
-                } catch (error) {
-                  console.log(error);
-                }
-
-                let ticketAsset;
-                try {
-                    ticketAsset = await this._resolveAsset(op.amount_for_new_target.asset_id);
-                } catch (error) {
-                    console.log(error);
-                }
+                let account = accountResults.find((resAcc) => resAcc.id === op.account).accountName;
+                let ticketAsset = assetResults.find((assRes) => assRes.id === op.amount_for_new_target.asset_id);
 
                 if (!ticketAsset) {
                     console.log("ticket_update: ticketAsset is null");
@@ -3202,33 +2685,10 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(opStr);
             } else if (opType == 59) {
                 // liquidity_pool_create
-                let account;
-                try {
-                    account = await this._getAccountName(op.account);
-                } catch (error) {
-                  console.log(error);
-                }
-
-                let assetA;
-                try {
-                    assetA = await this._resolveAsset(op.asset_a);
-                } catch (error) {
-                    console.log(error);
-                }
-
-                let assetB;
-                try {
-                    assetB = await this._resolveAsset(op.asset_b);
-                } catch (error) {
-                    console.log(error);
-                }
-
-                let shareAsset;
-                try {
-                    shareAsset = await this._resolveAsset(op.share_asset);
-                } catch (error) {
-                    console.log(error);
-                }
+                let account = accountResults.find((resAcc) => resAcc.id === op.account).accountName;
+                let assetA = assetResults.find((assRes) => assRes.id === op.asset_a);
+                let assetB = assetResults.find((assRes) => assRes.id === op.asset_b);
+                let shareAsset = assetResults.find((assRes) => assRes.id === op.share_asset);
 
                 if (!assetA || !assetB || !shareAsset) {
                     console.log("liquidity_pool_create: assetA, assetB or shareAsset is null");
@@ -3247,12 +2707,7 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(opStr);
             } else if (opType == 60) {
                 // liquidity_pool_delete
-                let account;
-                try {
-                    account = await this._getAccountName(op.account);
-                } catch (error) {
-                  console.log(error);
-                }
+                let account = accountResults.find((resAcc) => resAcc.id === op.account).accountName;
                 
                 let opStr = "Delete the following liquidity pool? \n";
                 opStr += "account: " + account ?? '' + "(" +  op.account + ")\n";
@@ -3262,26 +2717,9 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(opStr);
             } else if (opType == 61) {
                 // liquidity_pool_deposit
-                let account;
-                try {
-                    account = await this._getAccountName(op.account);
-                } catch (error) {
-                  console.log(error);
-                }
-
-                let amountA;
-                try {
-                    amountA = await this._resolveAsset(op.amount_a.asset_id);
-                } catch (error) {
-                    console.log(error);
-                }
-
-                let amountB;
-                try {
-                    amountB = await this._resolveAsset(op.amount_b.asset_id);
-                } catch (error) {
-                    console.log(error);
-                }
+                let account = accountResults.find((resAcc) => resAcc.id === op.account).accountName;
+                let amountA = assetResults.find((assRes) => assRes.id === op.amount_a.asset_id);
+                let amountB = assetResults.find((assRes) => assRes.id === op.amount_b.asset_id);
 
                 if (!amountA || !amountB) {
                     console.log("liquidity_pool_deposit: amountA or amountB is null");
@@ -3298,19 +2736,8 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(opStr);
             } else if (opType == 62) {
                 // liquidity_pool_withdraw
-                let account;
-                try {
-                    account = await this._getAccountName(op.account);
-                } catch (error) {
-                  console.log(error);
-                }
-
-                let shareAsset;
-                try {
-                    shareAsset = await this._resolveAsset(op.share_amount.asset_id);
-                } catch (error) {
-                    console.log(error);
-                }
+                let account = accountResults.find((resAcc) => resAcc.id === op.account).accountName;
+                let shareAsset = assetResults.find((assRes) => assRes.id === op.share_amount.asset_id);
 
                 if (!shareAsset) {
                     console.log("liquidity_pool_withdraw: shareAsset is null");
@@ -3326,26 +2753,9 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(opStr);
             } else if (opType == 63) {
                 // liquidity_pool_exchange
-                let account;
-                try {
-                    account = await this._getAccountName(op.account);
-                } catch (error) {
-                  console.log(error);
-                }
-
-                let soldAsset;
-                try {
-                    soldAsset = await this._resolveAsset(op.amount_to_sell.asset_id);
-                } catch (error) {
-                    console.log(error);
-                }
-
-                let receivedAsset;
-                try {
-                    receivedAsset = await this._resolveAsset(op.min_to_receive.asset_id);
-                } catch (error) {
-                    console.log(error);
-                }
+                let account = accountResults.find((resAcc) => resAcc.id === op.account).accountName;
+                let soldAsset = assetResults.find((assRes) => assRes.id === op.amount_to_sell.asset_id);
+                let receivedAsset = assetResults.find((assRes) => assRes.id === op.min_to_receive.asset_id);
 
                 if (!soldAsset || !receivedAsset) {
                     console.log("liquidity_pool_exchange: soldAsset or receivedAsset is null");
@@ -3362,12 +2772,7 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(opStr);
             } else if (opType == 64) {
                 // samet_fund_create
-                let ownerAccount;
-                try {
-                    ownerAccount = await this._getAccountName(op.owner_account);
-                } catch (error) {
-                  console.log(error);
-                }
+                let ownerAccount = accountResults.find((resAcc) => resAcc.id === op.owner_account).accountName;
                 
                 let opStr = "Approve of the following samet fund creation? \n";
                 opStr += "owner_account: " + ownerAccount ?? '' + "(" +  op.owner_account + ")\n";
@@ -3379,12 +2784,7 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(opStr);
             } else if (opType == 65) {
                 // samet_fund_delete
-                let ownerAccount;
-                try {
-                    ownerAccount = await this._getAccountName(op.owner_account);
-                } catch (error) {
-                  console.log(error);
-                }
+                let ownerAccount = accountResults.find((resAcc) => resAcc.id === op.owner_account).accountName;
                 
                 let opStr = "Deleting the following samet fund \n";
                 opStr += "owner_account: " + ownerAccount ?? '' + "(" +  op.owner_account + ")\n";
@@ -3394,21 +2794,11 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(opStr);
             } else if (opType == 66) {
                 // samet_fund_update
-                let ownerAccount;
-                try {
-                    ownerAccount = await this._getAccountName(op.owner_account);
-                } catch (error) {
-                  console.log(error);
-                }
+                let ownerAccount = accountResults.find((resAcc) => resAcc.id === op.owner_account).accountName;
 
-                let deltaAmount;
-                if (op.delta_amount) {
-                    try {
-                      deltaAmount = await this._resolveAsset(op.delta_amount.asset_id);
-                    } catch (error) {
-                      console.log(error);
-                    }
-                }
+                let deltaAmount = op.delta_amount
+                    ? assetResults.find((assRes) => assRes.id === op.delta_amount.asset_id)
+                    : null;
                 
                 let opStr = "Update the following samet fund? \n"
                 opStr += "owner_account: " + ownerAccount ?? '' + "(" +  op.owner_account + ")\n"
@@ -3420,19 +2810,8 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(opStr);
             } else if (opType == 67) {
                 // samet_fund_borrow
-                let borrower;
-                try {
-                  borrower = await this._getAccountName(op.borrower);
-                } catch (error) {
-                  console.log(error);
-                }
-
-                let borrowAmount;
-                try {
-                    borrowAmount = await this._resolveAsset(op.borrow_amount.asset_id);
-                } catch (error) {
-                    console.log(error);
-                }
+                let borrower = accountResults.find((resAcc) => resAcc.id === op.borrower).accountName;
+                let borrowAmount = assetResults.find((assRes) => assRes.id === op.borrow_amount.asset_id);
 
                 if (!borrowAmount) {
                     console.log("samet_fund_borrow: borrowAmount is null");
@@ -3448,26 +2827,9 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(opStr);
             } else if (opType == 68) {
                 // samet_fund_repay
-                let account;
-                try {
-                    account = await this._getAccountName(op.account);
-                } catch (error) {
-                  console.log(error);
-                }
-
-                let repayAmount;
-                try {
-                    repayAmount = await this._resolveAsset(op.repay_amount.asset_id);
-                } catch (error) {
-                    console.log(error);
-                }
-
-                let fundFee;
-                try {
-                    fundFee = await this._resolveAsset(op.fund_fee.asset_id);
-                } catch (error) {
-                    console.log(error);
-                }
+                let account = accountResults.find((resAcc) => resAcc.id === op.account).accountName;
+                let repayAmount = assetResults.find((assRes) => assRes.id === op.repay_amount.asset_id);
+                let fundFee = assetResults.find((assRes) => assRes.id === op.fund_fee.asset_id);
 
                 if (!repayAmount || !fundFee) {
                     console.log("samet_fund_repay: repayAmount or fundFee is null");
@@ -3484,12 +2846,7 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(opStr);
             } else if (opType == 69) {
                 // credit_offer_create
-                let ownerAccount;
-                try {
-                    ownerAccount = await this._getAccountName(op.owner_account);
-                } catch (error) {
-                  console.log(error);
-                }
+                let ownerAccount = accountResults.find((resAcc) => resAcc.id === op.owner_account).accountName;
                 
                 let opStr = "Approve the creation of the following credit offer? \n";
                 opStr += "owner_account: " + ownerAccount + "(" + op.owner_account + ")\n";
@@ -3507,12 +2864,7 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(opStr);
             } else if (opType == 70) {
                 // credit_offer_delete
-                let ownerAccount;
-                try {
-                    ownerAccount = await this._getAccountName(op.owner_account);
-                } catch (error) {
-                  console.log(error);
-                }
+                let ownerAccount = accountResults.find((resAcc) => resAcc.id === op.owner_account).accountName;
                 
                 let opStr = "Delete the following credit offer? \n";
                 opStr += "owner_account: " + ownerAccount + "(" + op.owner_account + ")\n";
@@ -3522,21 +2874,11 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(opStr);
             } else if (opType == 71) {
                 // credit_offer_update
-                let ownerAccount;
-                try {
-                    ownerAccount = await this._getAccountName(op.owner_account);
-                } catch (error) {
-                  console.log(error);
-                }
+                let ownerAccount = accountResults.find((resAcc) => resAcc.id === op.owner_account).accountName;
 
-                let deltaAmount;
-                if (op.delta_amount) {
-                    try {
-                        deltaAmount = await this._resolveAsset(op.delta_amount.asset_id);
-                    } catch (error) {
-                        console.log(error);
-                    }
-                }
+                let deltaAmount = op.delta_amount
+                    ? assetResults.find((assRes) => assRes.id === op.delta_amount.asset_id)
+                    : null;
 
                 if (!deltaAmount) {
                     console.log("credit_offer_update: deltaAmount is null");
@@ -3559,26 +2901,9 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(opStr);
             } else if (opType == 72) {
                 // credit_offer_accept
-                let borrower;
-                try {
-                    borrower = await this._getAccountName(op.borrower);
-                } catch (error) {
-                  console.log(error);
-                }
-
-                let borrowAmount;
-                try {
-                    borrowAmount = await this._resolveAsset(op.borrow_amount.asset_id);
-                } catch (error) {
-                    console.log(error);
-                }
-
-                let collateral;
-                try {
-                    collateral = await this._resolveAsset(op.collateral.asset_id);
-                } catch (error) {
-                    console.log(error);
-                }
+                let borrower = accountResults.find((resAcc) => resAcc.id === op.borrower).accountName;
+                let borrowAmount = assetResults.find((assRes) => assRes.id === op.borrow_amount.asset_id);
+                let collateral = assetResults.find((assRes) => assRes.id === op.collateral.asset_id);
 
                 if (!borrowAmount || !collateral) {
                     console.log("credit_offer_accept: borrowAmount or collateral is null");
@@ -3597,26 +2922,9 @@ export default class BitShares extends BlockchainAPI {
                 operations.push(opStr);
             } else if (opType == 73) {
                 // credit_deal_repay
-                let account;
-                try {
-                    account = await this._getAccountName(op.account);
-                } catch (error) {
-                  console.log(error);
-                }
-
-                let repayAmount;
-                try {
-                    repayAmount = await this._resolveAsset(op.repay_amount.asset_id);
-                } catch (error) {
-                    console.log(error);
-                }
-
-                let creditFee;
-                try {
-                    creditFee = await this._resolveAsset(op.credit_fee.asset_id);
-                } catch (error) {
-                    console.log(error);
-                }
+                let account = accountResults.find((resAcc) => resAcc.id === op.account).accountName;
+                let repayAmount = assetResults.find((assRes) => assRes.id === op.repay_amount.asset_id);
+                let creditFee = assetResults.find((assRes) => assRes.id === op.credit_fee.asset_id);
 
                 if (!repayAmount || !creditFee) {
                     console.log("credit_deal_repay: repayAmount or creditFee is null");
