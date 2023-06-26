@@ -99,12 +99,27 @@
             tableData.value = {
                 data: balances.value.map(balance => {
                     return {
-                        balance: balance.balance,
+                        balance: balance.balance.toLocaleString(
+                            undefined,
+                            { minimumFractionDigits: balance.precision }
+                        ),
+
                         asset_name: balance.asset_name
                     }
                 }),
-                thead: ['Asset name', 'Balance'],
-                tbody: ['asset_name', 'balance']
+                thead: [
+                    {
+                        value: 'Asset name',
+                        sort: 'asc',
+                        columnId: 'asset_name'
+                    },
+                    {
+                        value: 'Balance',
+                        sort: 'none',
+                        columnId: 'balance'
+                    },
+                ],
+                tbody: ['asset_name', 'balance'],
             };
         }
     });
@@ -134,7 +149,7 @@
             :data="tableData.data"
             :thead="tableData.thead"
             :tbody="tableData.tbody"
-            style="height: 150px;"
+            style="height: 180px;"
         />
         <ui-card
             v-if="balances && !balances.length"

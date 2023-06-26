@@ -123,7 +123,7 @@
                         v-if="currentSelection === item.index"
                         selected
                     >
-                        <ui-menuitem-icon>
+                        <ui-menuitem-icon dark>
                             <ui-icon style="color: #707070;">
                                 {{ item.icon }}
                             </ui-icon>
@@ -131,8 +131,11 @@
                         <ui-menuitem-text>{{ item.text }}</ui-menuitem-text>
                     </ui-menuitem>
                     <ui-menuitem v-else>
-                        <ui-menuitem-icon>
-                            <ui-icon style="color: #707070;">
+                        <ui-menuitem-icon dark>
+                            <ui-icon
+                                dark
+                                style="visibility: visible;"
+                            >
                                 {{ item.icon }}
                             </ui-icon>
                         </ui-menuitem-icon>

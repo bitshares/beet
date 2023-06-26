@@ -1070,25 +1070,15 @@ export default class BitShares extends BlockchainAPI {
                 Apis.instance().db_api().exec("get_objects", [neededAssets]).then((assets) => {
                     let balances = [];
                     for (let i = 0; i < account.balances.length; i++) {
-                        if (assets[i].issuer == "1.2.0") {
-                            balances[i] = {
-                                asset_type: account.balances[i].asset_type,
-                                asset_name: assets[i].symbol,
-                                balance: account.balances[i].balance,
-                                owner: assets[i].issuer,
-                                prefix: "BIT"
-                            };
-                        } else {
-                            balances[i] = {
-                                asset_type: account.balances[i].asset_type,
-                                asset_name: assets[i].symbol,
-                                rawbalance: account.balances[i].balance,
-                                balance: account.balances[i].balance /
-                                    Math.pow(10, assets[i].precision),
-                                owner: assets[i].issuer,
-                                prefix: ""
-                            };
-                        }
+                        balances[i] = {
+                            asset_type: account.balances[i].asset_type,
+                            asset_name: assets[i].symbol,
+                            rawbalance: account.balances[i].balance,
+                            balance: humanReadableFloat(account.balances[i].balance, assets[i].precision),
+                            precision: assets[i].precision,
+                            owner: assets[i].issuer,
+                            prefix: assets[i].issuer == "1.2.0" ? "bit" : ""
+                        };
                     }
                     resolve(balances);
                 });
