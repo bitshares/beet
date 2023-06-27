@@ -115,7 +115,6 @@
                     },
                     {
                         value: 'Balance',
-                        sort: 'none',
                         columnId: 'balance'
                     },
                 ],
