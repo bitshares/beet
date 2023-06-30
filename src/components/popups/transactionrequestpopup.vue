@@ -1,6 +1,6 @@
 <script setup>
     import { ipcRenderer } from 'electron';
-    import { computed, onMounted } from "vue";
+    import { computed, onMounted, ref } from "vue";
     import { useI18n } from 'vue-i18n';
     import {formatChain} from "../../lib/formatter";
     import RendererLogger from "../../lib/RendererLogger";
@@ -34,9 +34,9 @@
 
     let visualizedParams = computed(() => {
         if (!props.visualizedParams) {
-            return '';
+            return {};
         }
-        return props.visualizedParams;
+        return JSON.parse(props.visualizedParams);
     });
 
     let tableTooltip = computed(() => {
@@ -91,7 +91,8 @@
         );
     }
 
-
+    let page = ref(1);
+    let total = ref(visualizedParams.value.length);
 </script>
 <template>
     <div style="padding-bottom:5px;">
@@ -101,15 +102,30 @@
         v-if="!!visualizedParams"
         class="text-left custom-content"
     >
-        <ul style="max-height: 150px; overflow: auto;">
-            <li
-                v-for="param in visualizedParams.split(/\r?\n/)"
-                :key="param"
-                style="list-style-type: none"
-            >
-                {{ param }}
-            </li>
-        </ul>
+        <ui-card>
+            <ui-card-content>
+                <ui-card-text>
+                    <div :class="$tt('subtitle1')">
+                        {{ t(visualizedParams[page - 1].title) }}
+                    </div>
+                    <div
+                        v-for="row in visualizedParams[page - 1].rows"
+                        :key="row.key"
+                        :class="$tt('subtitle2')"
+                    >
+                        {{ t(`operations.injected.BTS.${visualizedParams[page - 1].method}.rows.${row.key}`, row.params) }}
+                    </div>
+                </ui-card-text>
+            </ui-card-content>
+        </ui-card>
+        <ui-pagination
+            v-model="page"
+            :total="total"
+            mini
+            show-total
+            :page-size="[1]"
+            position="center"
+        />
     </div>
     <div
         v-else

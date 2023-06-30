@@ -46,8 +46,8 @@ let tray = null;
  * On modal popup this runs to create child browser window
  */
 const createModal = async (arg, modalEvent) => {
-    let modalHeight = 400;
-    let modalWidth = 600;
+    let modalHeight = 600;
+    let modalWidth = 800;
     if (!mainWindow) {
         logger.debug(`No window`);
         throw 'No main window';
@@ -160,7 +160,7 @@ const createModal = async (arg, modalEvent) => {
         minWidth: modalWidth,
         minHeight: modalHeight,
         maxWidth: modalWidth,
-        maximizable: false,
+        maximizable: true,
         maxHeight: modalHeight,
         useContentSize: true,
         webPreferences: {

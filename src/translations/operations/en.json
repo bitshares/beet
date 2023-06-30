@@ -77,303 +77,1076 @@
         "BTS": {
             "getAccount": {
                 "method": "getAccount",
+                "title": "Account Details Request",
                 "tooltip": "Asks your wallet for blockchain account details"
             },
             "requestSignature": {
                 "method": "requestSignature",
+                "title": "Signature Request",
                 "tooltip": "Asks your wallet for blockchain signatures"
             },
             "injectedCall": {
                 "method": "injectedCall",
+                "title": "Injected Call Request",
                 "tooltip": "Asks your wallet to handle an injected blockchain operation"
             },
             "voteFor": {
                 "method": "voteFor",
+                "title": "Vote Request",
                 "tooltip": "Perform a blockchain vote"
             },
             "signMessage": {
                 "method": "signMessage",
+                "title": "Sign Message Request",
                 "tooltip": "Sign a blockchain based message"
             },
             "signNFT": {
                 "method": "signNFT",
+                "title": "Sign NFT Request",
                 "tooltip": "Sign an NFTs contents"
             },
             "verifyMessage": {
                 "method": "verifyMessage",
+                "title": "Verify Message Request",
                 "tooltip": "Verify a blockchain based signed message"
             },
             "transfer": {
               "method": "Transfer",
+              "title": "Transfer Request",
+              "rows": {
+                "from": "From: {from} ({opFrom})",
+                "to": "To: {to} ({opTo})",
+                "amount": "Amount: {amount}"
+              },
               "tooltip": "Send assets from one account to another"
             },
             "limit_order_create": {
               "method": "Limit order create",
+              "title": "Limit order create request",
+              "rows": {
+                "trade": "Trade",
+                "tradeFK": "Trade (Fill or kill)",
+                "seller": "Seller: {seller} ({opSeller})",
+                "selling": "Selling: {amount}",
+                "buying": "Buying: {amount}",
+                "price": "Price: {price} {sellSymbol}/{buySymbol}"
+              },
               "tooltip": "An offer to sell an amount of an asset at a specified exchange rate by a certain time"
             },
             "limit_order_cancel": {
               "method": "Limit order cancel",
+              "title": "Limit order cancel request",
+              "rows": {
+                "header": "Cancel the following limit order?",
+                "id": "Order ID: {id}",
+                "fees": "Estimated fees: {fees}",
+                "account": "Fee paying account: {account}"
+              },
               "tooltip": "Cancelling a limit order operation"
             },
             "call_order_update": {
               "method": "Call order update",
+              "title": "Call order update request",
+              "rows": {
+                "header": "Update your call order to the following?",
+                "funding_account": "Funding account: {funding_account}",
+                "delta_collateral": "Delta collateral: {delta_collateral} ({id})",
+                "delta_debt": "Delta debt: {delta_debt} ({id})",
+                "fees": "Estimated fees: {fees}"
+              },
               "tooltip": "Updating an existing call order"
             },
             "account_create": {
               "method": "Account create",
+              "title": "Account create request",
+              "rows": {
+                "header": "Do you want to create the following account?",
+                    "registrar": "Registrar: {registrar} ({opRegistrar})",
+                    "referrer": "Referrer: {referrer} ({opReferrer})",
+                    "referrer_percent": "Refferrer percent: {referrer_percent}",
+                    "name": "Name: {name}",
+                "ownerHeader": "Owner:",
+                "activeHeader": "Active:",
+                    "weight_threshold": "Weight threshold: {weight_threshold}",
+                    "account_auths": "Account auths: {account_auths}",
+                    "key_auths": "Key auths: {key_auths}",
+                    "address_auths": "Address auths: {address_auths}",
+                "optionsHeader": "Options:",
+                    "memo_key": "Memo key: {memo_key}",
+                    "voting_account": "Voting account: {voting_account} ({opVotingAccount})",
+                    "num_witness": "Number of witnesses: {num_witness}",
+                    "num_committee": "Number of committee members: {num_committee}",
+                    "votes": "Votes: {votes}",
+                    "extensions": "Extensions: {extensions}",
+                "fees": "Estimated fees: {fees}"
+              },
               "tooltip": "Creating a new account"
-            },
-            "asset_update": {
-              "method": "Asset update",
-              "tooltip": "Update created asset settings"
-            },
-            "asset_update_bitasset": {
-              "method": "Asset update bitasset",
-              "tooltip": "Update created bitasset settings"
-            },
-            "asset_update_feed_producers": {
-              "method": "Asset update feed producers",
-              "tooltip": "Update the list of approved feed producers for created bitasset"
-            },
-            "asset_issue": {
-              "method": "Asset issue",
-              "tooltip": "Issue your created assets to individuals"
-            },
-            "asset_reserve": {
-              "method": "Asset reserve",
-              "tooltip": "Reserve your created assets"
-            },
-            "asset_fund_fee_pool": {
-              "method": "Asset fund fee pool",
-              "tooltip": "Fund the fee pool for your created asset"
-            },
-            "asset_settle": {
-              "method": "Asset settle",
-              "tooltip": "Settle an asset in your portfolio"
-            },
-            "asset_global_settle": {
-              "method": "Asset global settle",
-              "tooltip": "Globally settle one of your created bitassets"
-            },
-            "asset_publish_feed": {
-              "method": "Asset publish feed",
-              "tooltip": "Publish a price feed for a bitasset"
-            },
-            "witness_create": {
-              "method": "Witness create",
-              "tooltip": "Create a witness account"
-            },
-            "witness_update": {
-              "method": "Witness update",
-              "tooltip": "Update your witness account"
-            },
-            "proposal_create": {
-              "method": "Proposal create",
-              "tooltip": "Create a blockchain operation proposal"
-            },
-            "proposal_update": {
-              "method": "Proposal update",
-              "tooltip": "Update a blockchain operation proposal"
-            },
-            "proposal_delete": {
-              "method": "Proposal delete",
-              "tooltip": "Delete a blockchain operation proposal"
-            },
-            "withdraw_permission_create": {
-              "method": "Withdraw permission create",
-              "tooltip": "Create a withdraw permission"
-            },
-            "withdraw_permission_update": {
-              "method": "Withdraw permission update",
-              "tooltip": "Update a withdraw permission"
-            },
-            "withdraw_permission_claim": {
-              "method": "Withdraw permission claim",
-              "tooltip": "Claim from a withdraw permission"
-            },
-            "withdraw_permission_delete": {
-              "method": "Withdraw permission delete",
-              "tooltip": "Delete a withdraw permission"
-            },
-            "committee_member_create": {
-              "method": "Committee member create",
-              "tooltip": "Create a committee member account"
-            },
-            "committee_member_update": {
-              "method": "Committee member update",
-              "tooltip": "Update your committee member account details"
-            },
-            "committee_member_update_global_parameters": {
-              "method": "Committee member update global parameters",
-              "tooltip": "Publish your committee member stance on Bitshares blockchain global parameter values"
-            },
-            "vesting_balance_create": {
-              "method": "Vesting balance create",
-              "tooltip": "Create a vesting balance"
-            },
-            "vesting_balance_withdraw": {
-              "method": "Vesting balance withdraw",
-              "tooltip": "Withdraw from a vesting balance"
-            },
-            "worker_create": {
-              "method": "Worker create",
-              "tooltip": "Create a worker proposal"
-            },
-            "balance_claim": {
-              "method": "Balance claim",
-              "tooltip": "Claim from a balance"
-            },
-            "override_transfer": {
-              "method": "Override transfer",
-              "tooltip": "Override a transfer operation"
-            },
-            "transfer_to_blind": {
-              "method": "Transfer to blind",
-              "tooltip": "Transfer assets to a blind destination"
-            },
-            "blind_transfer": {
-              "method": "Blind transfer",
-              "tooltip": "Transfer blind assets in a blind manner"
-            },
-            "transfer_from_blind": {
-              "method": "Transfer from blind",
-              "tooltip": "Withdraw assets from a blind balance"
-            },
-            "asset_claim_fees": {
-              "method": "Asset claim fees",
-              "tooltip": "Claim the fees from an asset"
-            },
-            "bid_collateral": {
-              "method": "Bid collateral",
-              "tooltip": "Bid on a bitassets backing collateral when globally settled"
-            },
-            "asset_claim_pool": {
-              "method": "Asset claim pool",
-              "tooltip": "Transfers BTS from the fee pool of a specified asset back to the issuer's balance"
-            },
-            "asset_update_issuer": {
-              "method": "Asset update issuer",
-              "tooltip": "Update issuer of an asset to a new administrator account."
-            },
-            "htlc_create": {
-              "method": "HTLC create",
-              "tooltip": "Create a HTLC operation"
-            },
-            "htlc_redeem": {
-              "method": "HTLC Redeem",
-              "tooltip": "Redeem the contents of a HTLC operation"
-            },
-            "htlc_extend": {
-              "method": "HTLC Extend",
-              "tooltip": "Extend the duration of an HTLC operation"
-            },
-            "custom_authority_create": {
-              "method": "Custom authority create",
-              "tooltip": "Create a new custom authority."
-            },
-            "custom_authority_update": {
-              "method": "Custom authority update",
-              "tooltip": "Update a custom authority."
-            },
-            "custom_authority_delete": {
-              "method": "Custom authority delete",
-              "tooltip": "Delete a custom authority."
-            },
-            "ticket_create": {
-              "method": "Ticket create",
-              "tooltip": "Create a new ticket."
-            },
-            "ticket_update": {
-              "method": "Ticket update",
-              "tooltip": "Update an existing ticket."
-            },
-            "liquidity_pool_create": {
-              "method": "Liquidity pool create",
-              "tooltip": "Create a liquidity pool"
-            },
-            "liquidity_pool_delete": {
-              "method": "Liquidity pool delete",
-              "tooltip": "Delete a liquidity pool"
-            },
-            "liquidity_pool_deposit": {
-              "method": "Liquidity pool deposit",
-              "tooltip": "Deposit funds into a liquidity pool"
-            },
-            "liquidity_pool_withdraw": {
-              "method": "Liquidity pool withdraw",
-              "tooltip": "Withdraw funds from a liquidity pool"
-            },
-            "liquidity_pool_exchange": {
-              "method": "Liquidity pool exchange",
-              "tooltip": "Exchange with a liquidity pool."
-            },
-            "samet_fund_create": {
-              "method": "SameT fund create",
-              "tooltip": "Create a new SameT Fund. A SameT Fund is a fund which can be used by a borrower and have to be repaid in the same transaction."
-            },
-            "samet_fund_delete": {
-              "method": "SameT fund delete",
-              "tooltip": "Delete a SameT fund object."
-            },
-            "samet_fund_update": {
-              "method": "SameT fund update",
-              "tooltip": "Update a SameT fund object."
-            },
-            "samet_fund_borrow": {
-              "method": "SameT fund borrow",
-              "tooltip": "Borrow from a SameT fund."
-            },
-            "samt_fund_repay": {
-              "method": "SameT fund repay",
-              "tooltip": "Repay debt to a SameT fund."
-            },
-            "credit_offer_create": {
-              "method": "Credit offer create",
-              "tooltip": "Create a new credit offer. A credit offer is a fund that can be used by other accounts who provide certain collateral."
-            },
-            "credit_offer_delete": {
-              "method": "Credit offer delete",
-              "tooltip": "Delete a credit offer."
-            },
-            "credit_offer_update": {
-              "method": "Credit offer update",
-              "tooltip": "Update a credit offer"
-            },
-            "credit_offer_accept": {
-              "method": "Credit offer accept",
-              "tooltip": "Accept a credit offer and create a credit deal."
-            },
-            "credit_deal_repay": {
-              "method": "Credit deal repay",
-              "tooltip": "Repay a credit deal."
-            },
-            "custom": {
-                "method": "Custom",
-                "tooltip": "Provides a generic way to add higher level protocols on top of witness consensus"
-            },
-            "assert": {
-                "method": "Assert",
-                "tooltip": "Assert that some conditions are true."
             },
             "account_update": {
                 "method": "Account update",
+                "title": "Account update request",
+                "rows": {
+                    "header": "Do you want to create the following account?",
+                    "warning": "Warning: This operation is irreversible!",
+                    "account": "Account: {account} ({opAccount})",
+                    "owner": "Owner: {owner}",
+                    "active": "Active: {active}",
+                    "new_options": "New options: {new_options}",
+                    "extensions": "Extensions: {extensions}",
+                    "fees": "Estimated fee: {fees}"
+                },
                 "tooltip": "This operation is used to update an existing account. It can be used to update the authorities, or adjust the options on the account."
             },
             "account_whitelist": {
                 "method": "Account whitelist",
+                "title": "Account whitelist request",
+                "rows": {
+                    "header": "Account whitelist details:",
+                    "authorizing_account": "Authorizing account: {authorizingAccount} (authorizingAccountOP)",
+                    "account_to_list": "Account to list: {accountToList} (accountToListOP)",
+                    "new_listing": "New listing: {newListing}",
+                    "extensions": "Extensions: {extensions}",
+                    "fee": "Fee: {fee}"
+                },
                 "tooltip": "This operation is used to whitelist and blacklist accounts, primarily for transacting in whitelisted assets"
             },
             "account_upgrade": {
                 "method": "Account upgrade",
+                "title": "Account upgrade request",
+                "rows": {
+                    "header": "Upgrade account to lifetime member?",
+                    "account_to_upgrade": "Account to upgrade: {accountToUpgrade} (accountToUpgradeOP)",
+                    "upgrade_to_lifetime_member": "Upgrade to lifetime member: {upgradeToLifetimeMember}",
+                    "extensions": "Extensions: {extensions}",
+                    "fee": "Estimated fee: {fee}"
+                },
                 "tooltip": "This operation is used to upgrade an account to a member, or renew its subscription."
             },
             "account_transfer": {
                 "method": "Account transfer",
+                "title": "Account transfer request",
+                "rows": {
+                    "header": "Transfer account to a new owner?",
+                    "warning": "Warning: This action is irreversible!",
+                    "account_id": "Account ID: {originalOwner} ({account_id})",
+                    "new_owner": "New owner: {newOwner} ({newOwnerOP})",
+                    "fee": "Estimated fee: {fee}"
+                },
                 "tooltip": "Transfers the account to another account while clearing the white list"
             },
             "asset_create": {
                 "method": "Asset create",
+                "title": "Asset create request",
+                "rows": {
+                    "header": "Create the following asset?",
+                        "symbol": "Symbol: {symbol}",
+                        "main": "Main: {main}",
+                        "market": "Market: {market}",
+                        "short_name": "Short name: {short_name}",
+                        "precision": "Precision: {precision}",
+                        "max_supply": "Max supply: {max_supply}",
+                        "market_fee_percent": "Market fee percent: {market_fee_percent}",
+                        "max_market_fee": "Max market fee: {max_market_fee}",
+                    "cer": "Core exchange rates:",
+                        "cer_base_amount": "Base amount: {cer_base_amount}",
+                        "cer_base_id": "Base asset ID: {cer_base_id}",
+                        "cer_quote_amount": "Quote amount: {cer_quote_amount}",
+                        "cer_quote_id": "Quote asset ID: {cer_quote_id}",
+                        "whitelist_authorities": "Whitelist authorities: {whitelist_authorities}",
+                        "blacklist_authorities": "Blacklist authorities: {blacklist_authorities}",
+                        "whitelist_markets": "Whitelist markets: {whitelist_markets}",
+                        "blacklist_markets": "Blacklist markets: {blacklist_markets}",
+                        "is_prediction_market": "Is prediction market: {is_prediction_market}",
+                    "permissions": "Permissions:",
+                        "perm_charge_market_fee": "Charge market fee: {charge_market_fee}",
+                        "perm_white_list": "White list: {white_list}",
+                        "perm_override_authority": "Override authority: {override_authority}",
+                        "perm_transfer_restricted": "Transfer restricted: {transfer_restricted}",
+                        "perm_disable_confidential": "Disable confidential: {disable_confidential}",
+                    "flags": "Flags:",
+                        "flag_charge_market_fee": "Charge market fee: {charge_market_fee}",
+                        "flag_white_list": "White list: {white_list}",
+                        "flag_override_authority": "Override authority: {override_authority}",
+                        "flag_transfer_restricted": "Transfer restricted: {transfer_restricted}",
+                        "flag_disable_confidential": "Disable confidential: {disable_confidential}",
+                    "bitasset": "Bitasset info:",
+                        "feed_lifetime_sec": "Feed lifetime (seconds): {feed_lifetime_sec}",
+                        "force_settlement_delay_sec": "Force settlement delay (seconds): {force_settlement_delay_sec}",
+                        "force_settlement_offset_percent": "Force settlement offset percent: {force_settlement_offset_percent}",
+                        "maximum_force_settlement_volume": "Maximum force settlement volume: {maximum_force_settlement_volume}",
+                        "minimum_feeds": "Minimum feeds: {minimum_feeds}",
+                        "short_backing_asset": "Short backing asset: {short_backing_asset}",
+                    "nft": "NFT Contents:",
+                        "acknowledgements": "Acknowledgements: {acknowledgements}",
+                        "artist": "Artist: {artist}",
+                        "attestation": "Attestation: {attestation}",
+                        "holder_license": "Holder license: {holder_license}",
+                        "license": "License: {license}",
+                        "narrative": "Narrative: {narrative}",
+                        "title": "Title: {title}",
+                        "tags": "Tags: {tags}",
+                        "type": "Type: {type}"
+                },
                 "tooltip": "Creates an asset on the Bitshares blockchain"
+            },
+            "asset_update": {
+                "method": "Asset update",
+                "title": "Asset update request",
+                "rows": {
+                    "header": "Update the following asset?",
+                        "symbol": "Symbol: {symbol}",
+                        "main": "Main: {main}",
+                        "market": "Market: {market}",
+                        "short_name": "Short name: {short_name}",
+                        "precision": "Precision: {precision}",
+                        "max_supply": "Max supply: {max_supply}",
+                        "market_fee_percent": "Market fee percent: {market_fee_percent}",
+                        "max_market_fee": "Max market fee: {max_market_fee}",
+                    "cer": "Core exchange rates:",
+                        "cer_base_amount": "Base amount: {cer_base_amount}",
+                        "cer_base_id": "Base asset ID: {cer_base_id}",
+                        "cer_quote_amount": "Quote amount: {cer_quote_amount}",
+                        "cer_quote_id": "Quote asset ID: {cer_quote_id}",
+                        "whitelist_authorities": "Whitelist authorities: {whitelist_authorities}",
+                        "blacklist_authorities": "Blacklist authorities: {blacklist_authorities}",
+                        "whitelist_markets": "Whitelist markets: {whitelist_markets}",
+                        "blacklist_markets": "Blacklist markets: {blacklist_markets}",
+                        "is_prediction_market": "Is prediction market: {is_prediction_market}",
+                    "permissions": "Permissions:",
+                        "perm_charge_market_fee": "Charge market fee: {charge_market_fee}",
+                        "perm_white_list": "White list: {white_list}",
+                        "perm_override_authority": "Override authority: {override_authority}",
+                        "perm_transfer_restricted": "Transfer restricted: {transfer_restricted}",
+                        "perm_disable_confidential": "Disable confidential: {disable_confidential}",
+                    "flags": "Flags:",
+                        "flag_charge_market_fee": "Charge market fee: {charge_market_fee}",
+                        "flag_white_list": "White list: {white_list}",
+                        "flag_override_authority": "Override authority: {override_authority}",
+                        "flag_transfer_restricted": "Transfer restricted: {transfer_restricted}",
+                        "flag_disable_confidential": "Disable confidential: {disable_confidential}",
+                    "bitasset": "Bitasset info:",
+                        "feed_lifetime_sec": "Feed lifetime (seconds): {feed_lifetime_sec}",
+                        "force_settlement_delay_sec": "Force settlement delay (seconds): {force_settlement_delay_sec}",
+                        "force_settlement_offset_percent": "Force settlement offset percent: {force_settlement_offset_percent}",
+                        "maximum_force_settlement_volume": "Maximum force settlement volume: {maximum_force_settlement_volume}",
+                        "minimum_feeds": "Minimum feeds: {minimum_feeds}",
+                        "short_backing_asset": "Short backing asset: {short_backing_asset}",
+                    "nft": "NFT Contents:",
+                        "acknowledgements": "Acknowledgements: {acknowledgements}",
+                        "artist": "Artist: {artist}",
+                        "attestation": "Attestation: {attestation}",
+                        "holder_license": "Holder license: {holder_license}",
+                        "license": "License: {license}",
+                        "narrative": "Narrative: {narrative}",
+                        "title": "Title: {title}",
+                        "tags": "Tags: {tags}",
+                        "type": "Type: {type}"
+                },
+                "tooltip": "Updates an asset's settings"
+            },
+            "asset_update_bitasset": {
+              "method": "Asset update bitasset",
+              "title": "Asset update bitasset request",
+              "rows": {
+                "header": "Approve bitasset update?",
+                "issuer": "Issuer: {issuer}",
+                "asset_to_update": "Asset to update: {asset_to_update}",
+                "new_options": "New options:",
+                "feed_lifetime_sec": "Feed lifetime (seconds): {feed_lifetime_sec}",
+                "minimum_feeds": "Minimum feeds: {minimum_feeds}",
+                "force_settlement_delay_sec": "Force settlement delay (seconds): {force_settlement_delay_sec}",
+                "force_settlement_offset_percent": "Force settlement offset percent: {force_settlement_offset_percent}",
+                "maximum_force_settlement_volume": "Maximum force settlement volume: {maximum_force_settlement_volume}",
+                "short_backing_asset": "Short backing asset: {symbol} ({short_backing_asset})",
+                "extensions": "Extensions: {extensions}",
+                "noExtensions": "No extensions",
+                "fee": "Estimated fee: {fee} ({id})"
+              },
+              "tooltip": "Update created bitasset settings"
+            },
+            "asset_update_feed_producers": {
+              "method": "Asset update feed producers",
+              "title": "Asset update feed producers request",
+              "rows": {
+                "header": "Approve change to bitasset feed producers?",
+                "issuer": "Issuer: {issuer} ({issuerOP})",
+                "asset_to_update": "Asset to update: {symbol} ({asset_to_update})",
+                "new_feed_producers": "New feed producers: {new_feed_producers}",
+                "fee": "Estimated fee: {fee}"
+              },
+              "tooltip": "Update the list of approved feed producers for created bitasset"
+            },
+            "asset_issue": {
+              "method": "Asset issue",
+              "title": "Asset issue request",
+              "rows": {
+                "header": "Issue {amount} {symbol} ({assetID}) to {to} ({toID})?",
+                "fee": "Estimated fee: {fee} ({id})"
+              },
+              "tooltip": "Issue your created assets to individuals"
+            },
+            "asset_reserve": {
+              "method": "Asset reserve",
+              "title": "Asset reserve request",
+              "rows": {
+                "header": "Approve the following asset reservation?",
+                "payer": "Payer: {payer} ({payerOP})",
+                "amount_to_reserve": "Amount to reserve: {amount_to_reserve} ({amount_to_reserveOP})",
+                "extensions": "Extensions: {extensions}",
+                "fee": "Estimated fee: {fee}"
+              },
+              "tooltip": "Reserve your created assets"
+            },
+            "asset_fund_fee_pool": {
+              "method": "Asset fund fee pool",
+              "title": "Asset fund fee pool request",
+              "rows": {
+                "header": "Fund the following asset's fee pool?",
+                "from_account": "From account: {from_account} ({from_accountOP})",
+                "asset": "Asset: {asset} ({assetOP})",
+                "amount": "Amount: {amount}",
+                "fee": "Estimated fee: {fee}"
+              },
+              "tooltip": "Fund the fee pool for your created asset"
+            },
+            "asset_settle": {
+              "method": "Asset settle",
+              "title": "Asset settle request",
+              "rows": {
+                "header": "Settle the following asset for its backing collateral?",
+                "account": "Account: {account} ({accountOP})",
+                "amount": "Amount: {amount} ({assetID})",
+                "fee": "Estimated fee: {fee}"
+              },
+              "tooltip": "Settle an asset in your portfolio"
+            },
+            "asset_global_settle": {
+              "method": "Asset global settle",
+              "title": "Asset global settle request",
+              "rows": {
+                "header": "Perform global settlement on the following asset?",
+                "issuer": "Issuer: {issuer} ({issuerOP})",
+                "asset_to_settle": "Asset to settle: {asset_to_settle} ({asset_to_settleOP})",
+                "settle_price": "Settle price: {settle_price}",
+                "fee": "Estimated fee: {fee}"
+              },
+              "tooltip": "Globally settle one of your created bitassets"
+            },
+            "asset_publish_feed": {
+              "method": "Asset publish feed",
+              "title": "Asset publish feed request",
+              "rows": {
+                "header": "Publish a price feed for the following asset?",
+                    "publisher": "Publisher: {publisher} ({publisherOP})",
+                    "asset_id": "Asset ID: {symbol} ({asset_idOP})",
+                "feed": "Feed:",
+                    "core_exchange_rate": "Core exchange rate: {core_exchange_rate}",
+                    "settlement_price": "Settlement price: {settlement_price}",
+                    "maintenance_collateral_ratio": "Maintenance collateral ratio: {maintenance_collateral_ratio}",
+                    "maximum_short_squeeze_ratio": "Maximum short squeeze ratio: {maximum_short_squeeze_ratio}",
+                "extensions": "Extensions: {extensions}",
+                "fee": "Estimated fee: {fee}"
+                },
+              "tooltip": "Publish a price feed for a bitasset"
+            },
+            "witness_create": {
+              "method": "Witness create",
+              "title": "Witness create request",
+              "rows": {
+                "header": "Create a witness with the following details?",
+                "witness_account": "Witness account: {witness_account} ({witness_accountOP})",
+                "url": "URL: {url}",
+                "block_signing_key": "Block signing key: {block_signing_key}",
+                "fee": "Estimated fee: {fee}"
+              },
+              "tooltip": "Create a witness account"
+            },
+            "witness_update": {
+              "method": "Witness update",
+              "title": "Witness update request",
+              "rows": {
+                "header": "Update witness details to the following?",
+                "witness": "Witness: {witness}",
+                "witness_account": "Witness account: {witness_account} ({witness_accountOP})",
+                "new_url": "New URL: {new_url}",
+                "new_signing_key": "New signing key: {new_signing_key}",
+                "fee": "Estimated fee: {fee}"
+              },
+              "tooltip": "Update your witness account"
+            },
+            "proposal_create": {
+              "method": "Proposal create",
+              "title": "Proposal create request",
+              "rows": {
+                "header": "Create the following proposal?",
+                    "expiration_time": "Expiration time: {expiration_time}",
+                "proposed_ops": "Proposed operations: {proposed_ops}",
+                "review_period_seconds": "Review period seconds: {review_period_seconds}",
+                "fee_paying_account": "Fee paying account: {fee_paying_account} ({fee_paying_accountOP})",
+                "fee": "Estimated fee: {fee}"
+              },
+              "tooltip": "Create a blockchain operation proposal"
+            },
+            "proposal_update": {
+              "method": "Proposal update",
+              "title": "Proposal update request",
+              "rows": {
+                "header": "Update the following proposal?",
+                    "proposal": "Proposal: {proposal}",
+                    "active_approvals_to_add": "Active approvals to add: {active_approvals_to_add}",
+                    "active_approvals_to_remove": "Active approvals to remove: {active_approvals_to_remove}",
+                    "owner_approvals_to_add": "Owner approvals to add: {owner_approvals_to_add}",
+                    "owner_approvals_to_remove": "Owner approvals to remove: {owner_approvals_to_remove}",
+                    "key_approvals_to_add": "Key approvals to add: {key_approvals_to_add}",
+                    "key_approvals_to_remove": "Key approvals to remove: {key_approvals_to_remove}",
+                    "fee_paying_account": "Fee paying account: {fee_paying_account} ({fee_paying_accountOP})",
+                    "extensions": "Extensions: {extensions}",
+                    "fee": "Estimated fee: {fee}"
+                },
+              "tooltip": "Update a blockchain operation proposal"
+            },
+            "proposal_delete": {
+              "method": "Proposal delete",
+              "title": "Proposal delete request",
+              "rows": {
+                "header": "Delete the following proposal?",
+                "using_owner_authority": "Using owner authority: {using_owner_authority}",
+                "proposal": "Proposal: {proposal}",
+                "fee_paying_account": "Fee paying account: {fee_paying_account} ({fee_paying_accountOP})",
+                "extensions": "Extensions: {extensions}",
+                "fee": "Estimated fee: {fee}"
+              },
+              "tooltip": "Delete a blockchain operation proposal"
+            },
+            "withdraw_permission_create": {
+              "method": "Withdraw permission create",
+              "title": "Withdraw permission create request",
+              "rows": {
+                "header": "Direct Debit Authorization",
+                "recipient": "Recipient: {recipient} ({recipientOP})",
+                "withdraw_from": "Account to withdraw from: {withdraw_from} ({withdraw_fromOP})",
+                "taking": "Take {amount} every {period_sec} seconds, for {period_qty} periods",
+                "start": "Starting: {start}"
+            },
+              "tooltip": "Create a withdraw permission"
+            },
+            "withdraw_permission_update": {
+              "method": "Withdraw permission update",
+              "title": "Withdraw permission update request",
+              "rows": {
+                "header": "Update witness permissions to the following?",
+                "withrdaw_from_account": "Withdraw from account: {withrdaw_from_account} ({withrdaw_from_accountOP})",
+                "authorized_account": "Authorized account: {authorized_account} ({authorized_accountOP})",
+                "permission_to_update": "Permission to update: {permission_to_update}",
+                "withdrawal_limited": "Withdrawal limit: {withdrawal_limit}",
+                "withdrawal_unlimited": "Withdrawal limit: {withdrawal_limit} ({withdrawal_limitOP})",
+                "withdrawal_period_sec": "Withdrawal period (seconds): {withdrawal_period_sec}",
+                "period_start_time": "Period start time: {period_start_time}",
+                "periods_until_expiration": "Periods until expiration: {periods_until_expiration}",
+                "fee":"Estimated fee: {fee}"
+              },
+              "tooltip": "Update a withdraw permission"
+            },
+            "withdraw_permission_claim": {
+              "method": "Withdraw permission claim",
+              "title": "Withdraw permission claim request",
+              "rows": {
+                "header": "Claim the following withdrawal permission",
+                "withdraw_permission": "Withdraw permission: {withdraw_permission}",
+                "withdraw_from_account": "Withdraw from account: {withdraw_from_account} ({withdraw_from_accountOP})",
+                "withdraw_to_account": "Withdraw to account: {withdraw_to_account} ({withdraw_to_accountOP})",
+                "amount_to_withdraw": "Amount to withdraw: {amount_to_withdraw} ({amount_to_withdrawOP})",
+                "memo": "Memo: {memo}",
+                "fee": "Estimated fee: {fee}"
+              },
+              "tooltip": "Claim from a withdraw permission"
+            },
+            "withdraw_permission_delete": {
+              "method": "Withdraw permission delete",
+              "title": "Withdraw permission delete request",
+              "rows": {
+                "header": "Delete the following withdraw permission?",
+                "withdraw_from_account":"Withdraw from account: {withdraw_from_account} ({withdraw_from_accountOP})",
+                "authorized_account": "Authorized account: {authorized_account} ({authorized_accountOP})",
+                "withdrawal_permission": "Withdrawal permission: {withdrawal_permission}",
+                "fee": "Estimated fee: {fee}"
+              },
+              "tooltip": "Delete a withdraw permission"
+            },
+            "committee_member_create": {
+              "method": "Committee member create",
+              "title": "Committee member create request",
+              "rows": {
+                "header": "Create a committee member?",
+                "committee_member_account": "Committee member account: {committee_member_account} ({committee_member_accountOP})",
+                "url": "URL: {url}",
+                "fee": "Estimated fee: {fee}"
+              },
+              "tooltip": "Create a committee member account"
+            },
+            "committee_member_update": {
+              "method": "Committee member update",
+              "title": "Committee member update request",
+              "rows": {
+                "header": "Update the following committee member's details?",
+                "committee_member": "Committee member: {committee_member}",
+                "committee_member_account": "Committee member account: {committee_member_account} ({committee_member_accountOP})",
+                "new_url": "New URL: {new_url}",
+                "fee": "Estimated fee: {fee}"
+              },
+              "tooltip": "Update your committee member account details"
+            },
+            "committee_member_update_global_parameters": {
+              "method": "Committee member update global parameters",
+              "title": "Committee member update global parameters request",
+              "rows": {
+                "header": "Approve of following global parameters as a committee?",
+                "new_parameters": "New parameters:",
+                    "current_fees": "Current fees: {current_fees}",
+                    "block_interval": "Block interval: {block_interval}",
+                    "maintenance_interval": "Maintenance interval: {maintenance_interval}",
+                    "maintenance_skip_slots": "Maintenance skip slots: {maintenance_skip_slots}",
+                    "committee_proposal_review_period": "Committee proposal review period: {committee_proposal_review_period}",
+                    "maximum_transaction_size": "Maximum transaction size: {maximum_transaction_size}",
+                    "maximum_block_size": "Maximum block size: {maximum_block_size}",
+                    "maximum_time_until_expiration": "Maximum time until expiration: {maximum_time_until_expiration}",
+                    "maximum_proposal_lifetime": "Maximum proposal lifetime: {maximum_proposal_lifetime}",
+                    "maximum_asset_whitelist_authorities": "Maximum asset whitelist authorities: {maximum_asset_whitelist_authorities}",
+                    "maximum_asset_feed_publishers": "Maximum asset feed publishers: {maximum_asset_feed_publishers}",
+                    "maximum_witness_count": "Maximum witness count: {maximum_witness_count}",
+                    "maximum_committee_count": "Maximum committee count: {maximum_committee_count}",
+                    "maximum_authority_membership": "Maximum authority membership: {maximum_authority_membership}",
+                    "reserve_percent_of_fee": "Reserve percent of fee: {reserve_percent_of_fee}",
+                    "network_percent_of_fee": "Network percent of fee: {network_percent_of_fee}",
+                    "lifetime_referrer_percent_of_fee": "Lifetime referrer percent of fee: {lifetime_referrer_percent_of_fee}",
+                    "cashback_vesting_period_seconds": "Cashback vesting period seconds: {cashback_vesting_period_seconds}",
+                    "cashback_vesting_threshold": "Cashback vesting threshold: {cashback_vesting_threshold}",
+                    "count_non_member_votes": "Count non member votes: {count_non_member_votes}",
+                    "allow_non_member_whitelists": "Allow non member whitelists: {allow_non_member_whitelists}",
+                    "witness_pay_per_block": "Witness pay per block: {witness_pay_per_block}",
+                    "worker_budget_per_day": "Worker budget per day: {worker_budget_per_day}",
+                    "max_predicate_opcode": "Max predicate opcode: {max_predicate_opcode}",
+                    "fee_liquidation_threshold": "Fee liquidation threshold: {fee_liquidation_threshold}",
+                    "accounts_per_fee_scale": "Accounts per fee scale: {accounts_per_fee_scale}",
+                    "account_fee_scale_bitshifts": "Account fee scale bitshifts: {account_fee_scale_bitshifts}",
+                    "max_authority_depth": "Max authority depth: {max_authority_depth}",
+                "extensions": "Extensions: {extensions}",
+                "fee": "Estimated fee: {fee}"
+              },
+              "tooltip": "Publish your committee member stance on Bitshares blockchain global parameter values"
+            },
+            "vesting_balance_create": {
+              "method": "Vesting balance create",
+              "title": "Vesting balance create request",
+              "rows": {
+                "header": "Create the following vesting balance?",
+                    "creator": "Creator: {creator} ({creatorOP})",
+                    "owner": "Owner: {owner} ({ownerOP})",
+                    "amount": "Amount: {amount} ({asset_id})",
+                "policy": "Policy:",
+                    "begin_timestamp": "Begin timestamp: {begin_timestamp}",
+                    "vesting_cliff_seconds": "Vesting cliff seconds: {vesting_cliff_seconds}",
+                    "vesting_duration_seconds": "Vesting duration seconds: {vesting_duration_seconds}",
+                    "start_claim": "Start claim: {start_claim}",
+                    "vesting_seconds": "Vesting seconds: {vesting_seconds}",
+                "fee": "Estimated fee: {fee}"
+              },
+              "tooltip": "Create a vesting balance"
+            },
+            "vesting_balance_withdraw": {
+              "method": "Vesting balance withdraw",
+              "title": "Vesting balance withdraw request",
+              "rows": {
+                "header": "Vesting Balance",
+                "owner":"Owner: {owner} ({ownerOP})",
+                "claim": "Claim: {claim} ({asset_id})"
+              },
+              "tooltip": "Withdraw from a vesting balance"
+            },
+            "worker_create": {
+              "method": "Worker create",
+              "title": "Worker create request",
+              "rows": {
+                "header": "Create the following worker proposal?",
+                "owner":"Owner: {owner} ({ownerOP})",
+                "work_begin_date": "Work begin date: {work_begin_date}",
+                "work_end_date": "Work end date: {work_end_date}",
+                "daily_pay": "Daily pay: {daily_pay}",
+                "name": "Name: {name}",
+                "url": "URL: {url}",
+                "initializer": "Initializer: {initializer}",
+                "fee": "Estimated fee: {fee}"
+              },
+              "tooltip": "Create a worker proposal"
+            },
+            "custom": {
+                "method": "Custom",
+                "title": "Custom request",
+                "rows": {
+                    "header": "Custom operation:",
+                    "payer": "Payer: {payer} ({payerOP})",
+                    "required_auths": "Required authorities: {required_auths}",
+                    "id": "ID: {id}",
+                    "data": "Data: {data}",
+                    "fee": "Estimated fee: {fee}"
+                },
+                "tooltip": "Provides a generic way to add higher level protocols on top of witness consensus"
+            },
+            "assert": {
+                "method": "Assert",
+                "title": "Assert request",
+                "rows": {
+                    "header": "Assert operation:",
+                    "fee_paying_account": "Fee paying account: {fee_paying_account} ({fee_paying_accountOP})",
+                    "predicates": "Predicates: {predicates}",
+                    "required_auths": "Required authorities: {required_auths}",
+                    "extensions": "Extensions: {extensions}",
+                    "fee": "Estimated fee: {fee}"
+                },
+                "tooltip": "Assert that some conditions are true."
+            },
+            "balance_claim": {
+              "method": "Balance claim",
+              "title": "Balance claim request",
+              "rows": {
+                "header": "Claim the following balance?",
+                "deposit_to_account": "Deposit to account: {deposit_to_account} ({deposit_to_accountOP})",
+                "balance_to_claim": "Balance to claim: {balance_to_claim} ({asset_id})",
+                "balance_owner_key": "Balance owner key: {balance_owner_key}",
+                "total_claimed": "Total claimed: {total_claimed} ({asset_id})",
+                "fee": "Estimated fee: {fee}"
+              },
+              "tooltip": "Claim from a balance"
+            },
+            "override_transfer": {
+              "method": "Override transfer",
+              "title": "Override transfer request",
+              "rows": {
+                "header": "Override the following transfer?",
+                "issuer": "Issuer: {issuer} ({issuerOP})",
+                "from": "From: {from} ({fromOP})",
+                "to": "To: {to} ({toOP})",
+                "amount": "Amount: {amount} ({asset_id})",
+                "memo": "Memo: {memo}",
+                "fee": "Estimated fee: {fee}"
+              },
+              "tooltip": "Override a transfer operation"
+            },
+            "transfer_to_blind": {
+              "method": "Transfer to blind",
+              "title": "Transfer to blind request",
+              "rows": {
+                "header": "Transfer the following to blind?",
+                "amount":"Amount: {amount}",
+                "from": "From: {from} ({fromOP})",
+                "blinding_factor": "Blinding factor: {blinding_factor}",
+                "outputs": "Outputs: {outputs}",
+                "fee": "Estimated fee: {fee}"
+              },
+              "tooltip": "Transfer assets to a blind destination"
+            },
+            "blind_transfer": {
+              "method": "Blind transfer",
+              "title": "Blind transfer request",
+              "rows": {
+                "header": "Approve the following blind transfer?",
+                "inputs": "Inputs: {inputs}",
+                "outputs": "Outputs: {outputs}",
+                "fee": "Estimated fee: {fee}"
+              },
+              "tooltip": "Transfer blind assets in a blind manner"
+            },
+            "transfer_from_blind": {
+              "method": "Transfer from blind",
+              "title": "Transfer from blind request",
+              "rows": {
+                "header": "Transfer the following from blind?",
+                "amount":"Amount: {amount}",
+                "to": "To: {to} ({toOP})",
+                "blinding_factor": "Blinding factor: {blinding_factor}",
+                "inputs": "Inputs: {inputs}",
+                "fee": "Estimated fee: {fee}"
+              },
+              "tooltip": "Withdraw assets from a blind balance"
+            },
+            "asset_claim_fees": {
+              "method": "Asset claim fees",
+              "title": "Asset claim fees request",
+              "rows": {
+                "header": "Withdraw the fees from the following asset?",
+                "issuer": "Issuer: {issuer} ({issuerOP})",
+                "amount_to_claim": "Amount to claim: {amount_to_claim} ({asset_id})",
+                "fee": "Estimated fee: {fee}"
+              },
+              "tooltip": "Claim the fees from an asset"
+            },
+            "bid_collateral": {
+              "method": "Bid collateral",
+              "title": "Bid collateral request",
+              "rows": {
+                "header": "Approve the following collateral bid?",
+                "bidder": "Bidder: {bidder} ({bidderOP})",
+                "additional_collateral": "Additional collateral: {additional_collateral}",
+                "debt_covered": "Debt covered: {debt_covered}",
+                "fee": "Estimated fee: {fee}"
+              },
+              "tooltip": "Bid on a bitassets backing collateral when globally settled"
+            },
+            "asset_claim_pool": {
+              "method": "Asset claim pool",
+              "title": "Asset claim pool request",
+              "rows": {
+                "header": "Claim the following asset pool?",
+                "issuer": "Issuer: {issuer} ({issuerOP})",
+                "asset_id": "Asset: {asset_id}",
+                "amount_to_claim": "Amount to claim: {amount_to_claim}",
+                "fee": "Estimated fee: {fee}"
+              },
+              "tooltip": "Transfers BTS from the fee pool of a specified asset back to the issuer's balance"
+            },
+            "asset_update_issuer": {
+              "method": "Asset update issuer",
+              "title": "Asset update issuer request",
+              "rows": {
+                "header": "Update the issuer of the following asset?",
+                    "issuer": "Issuer: {issuer} ({issuerOP})",
+                    "asset_to_update": "Asset to update: {asset_to_update}",
+                    "new_issuer": "New issuer: {new_issuer} ({new_issuerOP})",
+                    "fee": "Estimated fee: {fee}"
+              },
+              "tooltip": "Update issuer of an asset to a new administrator account."
+            },
+            "htlc_create": {
+              "method": "HTLC create",
+              "title": "HTLC create request",
+              "rows": {
+                "header": "Create the following HTLC operation?",
+                    "from": "From: {from} ({fromOP})",
+                    "to": "To: {to} ({toOP})",
+                    "amount": "Amount: {amount}",
+                    "preimage_hash": "Preimage hash: {preimage_hash}",
+                    "preimage_size": "Preimage size: {preimage_size}",
+                    "claim_period_seconds": "Claim period (seconds): {claim_period_seconds}",
+                    "fee": "Estimated fee: {fee}"
+              },
+              "tooltip": "Create a hash time locked contract (HTLC) operation"
+            },
+            "htlc_redeem": {
+              "method": "HTLC Redeem",
+              "title": "HTLC Redeem request",
+              "rows": {
+                "header": "Redeem the following HTLC operation?",
+                    "htlc_id": "HTLC ID: {htlc_id}",
+                    "redeemer": "Redeemer: {redeemer} ({redeemerOP})",
+                    "preimage": "Preimage: {preimage}",
+                    "extensions": "Extensions: {extensions}",
+                    "fee": "Estimated fee: {fee}"
+              },
+              "tooltip": "Redeem the contents of a HTLC operation"
+            },
+            "htlc_extend": {
+              "method": "HTLC Extend",
+              "title": "HTLC Extend request",
+              "rows": {
+                "header": "Approve the following HTLC extension?",
+                "htlc_id": "HTLC ID: {htlc_id}",
+                "update_issuer": "Update issuer: {update_issuer} ({update_issuerOP})",
+                "seconds_to_add": "Seconds to add: {seconds_to_add}",
+                "extensions": "Extensions: {extensions}",
+                "fee": "Estimated fee: {fee}"
+              },
+              "tooltip": "Extend the duration of an HTLC operation"
+            },
+            "custom_authority_create": {
+              "method": "Custom authority create",
+              "title": "Custom authority create request",
+              "rows": {
+                "header": "Create the following custom authority?",
+                "account": "Account: {account} ({accountOP})",
+                "enabled": "Enabled: {enabled}",
+                "valid_from": "Valid from: {valid_from}",
+                "valid_to": "Valid to: {valid_to}",
+                "operation_type": "Operation type: {operation_type}",
+                "auth": "Authority: {auth}",
+                "restrictions": "Restrictions: {restrictions}",
+                "extensions": "Extensions: {extensions}",
+                "fee": "Estimated fee: {fee}"
+              },
+              "tooltip": "Create a new custom authority."
+            },
+            "custom_authority_update": {
+              "method": "Custom authority update",
+              "title": "Custom authority update request",
+              "rows": {
+                "header": "Update the following custom authority?",
+                "account": "Account: {account} ({accountOP})",
+                "authority_to_update": "Authority to update: {authority_to_update}",
+                "new_enabled": "New enabled: {new_enabled}",
+                "new_valid_from": "New valid from: {new_valid_from}",
+                "new_valid_to": "New valid to: {new_valid_to}",
+                "new_auth": "New authority: {new_auth}",
+                "restrictions_to_remove": "Restrictions to remove: {restrictions_to_remove}",
+                "restrictions_to_add": "Restrictions to add: {restrictions_to_add}",
+                "extensions": "Extensions: {extensions}",
+                "fee": "Estimated fee: {fee}"
+              },
+              "tooltip": "Update a custom authority."
+            },
+            "custom_authority_delete": {
+              "method": "Custom authority delete",
+              "title": "Custom authority delete request",
+              "rows": {
+                "header": "Delete the following custom authority?",
+                "account": "Account: {account} ({accountOP})",
+                "authority_to_delete": "Authority to delete: {authority_to_delete}",
+                "extensions": "Extensions: {extensions}",
+                "fee": "Estimated fee: {fee}"
+              },
+              "tooltip": "Delete a custom authority."
+            },
+            "ticket_create": {
+              "method": "Ticket create",
+              "title": "Ticket create request",
+              "rows": {
+                "header": "Create the following ticket?",
+                "account": "Account: {account} ({accountOP})",
+                "target_type": "Target type: {target_type}",
+                "amount":"Amount: {amount}",
+                "extensions": "Extensions: {extensions}",
+                "fee": "Estimated fee: {fee}"
+              },
+              "tooltip": "Create a new ticket."
+            },
+            "ticket_update": {
+              "method": "Ticket update",
+              "title": "Ticket update request",
+              "rows": {
+                "header": "Update the following ticket?",
+                "ticket": "Ticket: {ticket}",
+                "account": "Account: {account} ({accountOP})",
+                "target_type": "Target type: {target_type}",
+                "amount_for_new_target": "Amount for new target: {amount_for_new_target}",
+                "extensions": "Extensions: {extensions}"
+              },
+              "tooltip": "Update an existing ticket."
+            },
+            "liquidity_pool_create": {
+              "method": "Liquidity pool create",
+              "title": "Liquidity pool create request",
+              "rows": {
+                "header": "Create a liquidity pool with the following details?",
+                "account": "Account: {account} ({accountOP})",
+                "asset_a": "Asset A: {asset_a} ({asset_aOP})",
+                "asset_b": "Asset B: {asset_b} ({asset_bOP})",
+                "share_asset": "Share asset: {share_asset} ({share_assetOP})",
+                "taker_fee_percent": "Taker fee percent: {taker_fee_percent}",
+                "withdrawal_fee_percent": "Withdrawal fee percent: {withdrawal_fee_percent}",
+                "extensions": "Extensions: {extensions}",
+                "fee": "Estimated fee: {fee}"
+              },
+              "tooltip": "Create a liquidity pool"
+            },
+            "liquidity_pool_delete": {
+              "method": "Liquidity pool delete",
+              "title": "Liquidity pool delete request",
+              "rows": {
+                "header": "Delete the following liquidity pool?",
+                "account": "Account: {account} ({accountOP})",
+                "pool_id": "Pool ID: {pool_id}",
+                "extensions": "Extensions: {extensions}",
+                "fee": "Estimated fee: {fee}"
+              },
+              "tooltip": "Delete a liquidity pool"
+            },
+            "liquidity_pool_deposit": {
+              "method": "Liquidity pool deposit",
+              "title": "Liquidity pool deposit request",
+              "rows": {
+                "header": "Deposit the following assets into the liquidity pool?",
+                "account": "Account: {account} ({accountOP})",
+                "pool": "Pool: {pool}",
+                "asset_a": "Asset A: {asset_a} ({asset_aOP})",
+                "asset_b": "Asset B: {asset_b} ({asset_bOP})",
+                "extensions": "Extensions: {extensions}",
+                "fee": "Estimated fee: {fee}"
+              },
+              "tooltip": "Deposit funds into a liquidity pool"
+            },
+            "liquidity_pool_withdraw": {
+              "method": "Liquidity pool withdraw",
+              "title": "Liquidity pool withdraw request",
+              "rows": {
+                "header": "Withdraw the following assets from the liquidity pool?",
+                "account": "Account: {account} ({accountOP})",
+                "pool": "Pool: {pool}",
+                "share_asset": "Share asset: {share_asset} ({share_assetOP})",
+                "extensions": "Extensions: {extensions}",
+                "fee": "Estimated fee: {fee}"
+              },
+              "tooltip": "Withdraw funds from a liquidity pool"
+            },
+            "liquidity_pool_exchange": {
+              "method": "Liquidity pool exchange",
+              "title": "Liquidity pool exchange request",
+              "rows": {
+                "header": "Approve of the following liquidity pool exchange?",
+                "account": "Account: {account} ({accountOP})",
+                "pool": "Pool: {pool}",
+                "amount_to_sell": "Amount to sell: {amount_to_sell}",
+                "min_to_receive": "Min to receive: {min_to_receive}",
+                "extensions": "Extensions: {extensions}",
+                "fee": "Estimated fee: {fee}"
+              },
+              "tooltip": "Exchange with a liquidity pool."
+            },
+            "samet_fund_create": {
+              "method": "SameT fund create",
+              "title": "SameT fund create request",
+              "rows": {
+                "header": "Approve of the following samet fund creation?",
+                "owner_account": "Owner account: {owner_account} ({owner_accountOP})",
+                "asset_type": "Asset type: {asset_type}",
+                "balance": "Balance: {balance}",
+                "fee_rate": "Fee rate: {fee_rate}",
+                "extensions": "Extensions: {extensions}",
+                "fee": "Estimated fee: {fee}"
+              },
+              "tooltip": "Create a new SameT Fund. A SameT Fund is a fund which can be used by a borrower and have to be repaid in the same transaction."
+            },
+            "samet_fund_delete": {
+              "method": "SameT fund delete",
+              "title": "SameT fund delete request",
+              "rows": {
+                "header": "Delete the following samet fund?",
+                "owner_account": "Owner account: {owner_account} ({owner_accountOP})",
+                "fund_id": "Fund ID: {fund_id}",
+                "extensions": "Extensions: {extensions}",
+                "fee": "Estimated fee: {fee}"
+              },
+              "tooltip": "Delete a SameT fund object."
+            },
+            "samet_fund_update": {
+              "method": "SameT fund update",
+              "title": "SameT fund update request",
+              "rows": {
+                "header": "Update the following samet fund?",
+                "owner_account": "Owner account: {owner_account} ({owner_accountOP})",
+                "fund_id": "Fund ID: {fund_id}",
+                "delta_amount": "Delta amount: {delta_amount}",
+                "new_fee_rate": "New fee rate: {new_fee_rate}",
+                "extensions": "Extensions: {extensions}",
+                "fee": "Estimated fee: {fee}"
+              },
+              "tooltip": "Update a SameT fund object."
+            },
+            "samet_fund_borrow": {
+              "method": "SameT fund borrow",
+              "title": "SameT fund borrow request",
+              "rows": {
+                "header": "Borrow from the following samet fund?",
+                "borrower": "Borrower: {borrower} ({borrowerOP})",
+                "fund_id": "Fund ID: {fund_id}",
+                "borrow_amount": "Borrow amount: {borrow_amount}",
+                "extensions": "Extensions: {extensions}",
+                "fee": "Estimated fee: {fee}"
+              },
+              "tooltip": "Borrow from a SameT fund."
+            },
+            "samt_fund_repay": {
+              "method": "SameT fund repay",
+              "title": "SameT fund repay request",
+              "rows": {
+                "header": "Repay the following samet fund",
+                "account":"Account: {account} ({accountOP})",
+                "fund_id": "Fund ID: {fund_id}",
+                "repay_amount": "Repay amount: {repay_amount}",
+                "fund_fee": "Fund fee: {fund_fee}",
+                "extensions": "Extensions: {extensions}",
+                "fee": "Estimated fee: {fee}"
+              },
+              "tooltip": "Repay debt to a SameT fund."
+            },
+            "credit_offer_create": {
+              "method": "Credit offer create",
+              "title": "Credit offer create request",
+              "rows": {
+                "header": "Approve the creation of the following credit offer?",
+                "owner_account":"Owner account: {owner_account} ({owner_accountOP})",
+                "asset_type": "Asset type: {asset_type}",
+                "balance": "Balance: {balance}",
+                "fee_rate": "Fee rate: {fee_rate}",
+                "max_duration_seconds": "Max duration seconds: {max_duration_seconds}",
+                "min_deal_amount": "Min deal amount: {min_deal_amount}",
+                "enabled":"Enabled: {enabled}",
+                "auto_disable_time": "Auto disable time: {auto_disable_time}",
+                "acceptable_collateral": "Acceptable collateral: {acceptable_collateral}",
+                "acceptable_borrowers": "Acceptable borrowers: {acceptable_borrowers}",
+                "extensions": "Extensions: {extensions}",
+                "fee": "Estimated fee: {fee}"
+              },
+              "tooltip": "Create a new credit offer. A credit offer is a fund that can be used by other accounts who provide certain collateral."
+            },
+            "credit_offer_delete": {
+              "method": "Credit offer delete",
+              "title": "Credit offer delete request",
+              "rows": {
+                "header": "Delete the following credit offer?",
+                "owner_account": "Owner account: {owner_account} ({owner_accountOP})",
+                "offer_id": "Offer ID: {offer_id}",
+                "extensions": "Extensions: {extensions}",
+                "fee": "Estimated fee: {fee}"
+              },
+              "tooltip": "Delete a credit offer."
+            },
+            "credit_offer_update": {
+              "method": "Credit offer update",
+              "title": "Credit offer update request",
+              "rows": {
+                "header": "Update the following credit offer?",
+                "owner_account": "Owner account: {owner_account} ({owner_accountOP})",
+                "offer_id": "Offer ID: {offer_id}",
+                "delta_amount": "Delta amount: {delta_amount}",
+                "fee_rate": "Fee rate: {fee_rate}",
+                "max_duration_seconds": "Max duration seconds: {max_duration_seconds}",
+                "min_deal_amount": "Min deal amount: {min_deal_amount}",
+                "enabled":"Enabled: {enabled}",
+                "auto_disable_time": "Auto disable time: {auto_disable_time}",
+                "acceptable_collateral": "Acceptable collateral: {acceptable_collateral}",
+                "acceptable_borrowers": "Acceptable borrowers: {acceptable_borrowers}",
+                "extensions": "Extensions: {extensions}",
+                "fee": "Estimated fee: {fee}"
+              },
+              "tooltip": "Update a credit offer"
+            },
+            "credit_offer_accept": {
+              "method": "Credit offer accept",
+              "title": "Credit offer accept request",
+              "rows": {
+                "header": "Approve of the following credit offer?",
+                "borrower": "Borrower: {borrower} ({borrowerOP})",
+                "offer_id": "Offer ID: {offer_id}",
+                "borrow_amount": "Borrow amount: {borrow_amount}",
+                "collateral": "Collateral: {collateral}",
+                "max_fee_rate": "Max fee rate: {max_fee_rate}",
+                "min_duration_seconds": "Min duration seconds: {min_duration_seconds}",
+                "extensions": "Extensions: {extensions}",
+                "fee": "Estimated fee: {fee}"
+              },
+              "tooltip": "Accept a credit offer and create a credit deal."
+            },
+            "credit_deal_repay": {
+              "method": "Credit deal repay",
+              "title": "Credit deal repay request",
+              "rows": {
+                "header": "Repay the following credit deal?",
+                "account": "Account: {account} ({accountOP})",
+                "deal_id": "Deal ID: {deal_id}",
+                "repay_amount": "Repay amount: {repay_amount}",
+                "credit_fee": "Credit fee: {credit_fee}",
+                "extensions": "Extensions: {extensions}",
+                "fee": "Estimated fee: {fee}"
+              },
+              "tooltip": "Repay a credit deal."
             }
         }
     }

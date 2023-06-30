@@ -18,7 +18,7 @@
       "title": "Solicitud de vinculación de cuenta",
       "error": "Error al mostrar aviso",
       "request": "La aplicación '{appName}' de '{origin}' solicita volver a vincular la cuenta {chain} vinculada anteriormente: {accountId}. ",
-      "request_tooltip": "Se restablecerá el vínculo anterior entre la aplicación y la referencia de la cuenta."
+      "request_tooltip": "Se restablecerá el vínculo anterior entre la aplicación y la referencia de la cuentac."
     },
     "account_id": {
       "title": "Solicitud de detalles de la cuenta",
@@ -77,303 +77,1076 @@
       "BTS": {
         "getAccount": {
           "method": "obtenerCuenta",
+          "title": "Solicitud de detalles de la cuenta",
           "tooltip": "Le pide a su billetera los detalles de la cuenta de blockchain"
         },
         "requestSignature": {
           "method": "solicitudFirma",
+          "title": "Solicitud de firma",
           "tooltip": "Le pide a su billetera firmas de blockchain"
         },
         "injectedCall": {
           "method": "inyectadoLlamar",
+          "title": "Solicitud de llamada inyectada",
           "tooltip": "Le pide a su billetera que maneje una operación de blockchain inyectada"
         },
         "voteFor": {
           "method": "vota por",
+          "title": "Solicitud de voto",
           "tooltip": "Realizar una votación de blockchain"
         },
         "signMessage": {
           "method": "firmarMensaje",
+          "title": "Solicitud de mensaje de firma",
           "tooltip": "Firme un mensaje basado en blockchain"
         },
         "signNFT": {
           "method": "firmarNFT",
+          "title": "Firmar solicitud de NFT",
           "tooltip": "Firmar un contenido de NFT"
         },
         "verifyMessage": {
           "method": "verificarMensaje",
+          "title": "Verificar solicitud de mensaje",
           "tooltip": "Verificar un mensaje firmado basado en blockchain"
         },
         "transfer": {
           "method": "Transferir",
+          "title": "Solicitud de transferencia",
+          "rows": {
+            "from": "De: {desde} ({opFrom})",
+            "to": "A: {a} ({opTo})",
+            "amount": "Cantidad: {cantidad}"
+          },
           "tooltip": "Enviar activos de una cuenta a otra"
         },
         "limit_order_create": {
-          "method": "Limitar orden crear",
+          "method": "Crear orden limitada",
+          "title": "Solicitud de creación de orden limitada",
+          "rows": {
+            "trade": "Comercio",
+            "tradeFK": "Comercio (llenar o matar)",
+            "seller": "Vendedor: {vendedor} ({opSeller})",
+            "selling": "Venta: {cantidad}",
+            "buying": "Comprando: {cantidad}",
+            "price": "Precio: {precio} {símbolo de venta}/{símbolo de compra}"
+          },
           "tooltip": "Una oferta para vender una cantidad de un activo a un tipo de cambio específico en un tiempo determinado"
         },
         "limit_order_cancel": {
           "method": "Cancelación de orden limitada",
+          "title": "Solicitud de cancelación de orden limitada",
+          "rows": {
+            "header": "¿Cancelar la siguiente orden limitada?",
+            "id": "ID de pedido: {id}",
+            "fees": "Tarifas estimadas: {tarifas}",
+            "account": "Cuenta de pago de tarifas: {cuenta}"
+          },
           "tooltip": "Cancelación de una operación de orden limitada"
         },
         "call_order_update": {
           "method": "Actualización de orden de llamada",
+          "title": "Solicitud de actualización de orden de llamada",
+          "rows": {
+            "header": "¿Actualizar su orden de llamada a lo siguiente?",
+            "funding_account": "Cuenta de fondos: {funding_account}",
+            "delta_collateral": "Garantía delta: {delta_collateral} ({id})",
+            "delta_debt": "Deuda delta: {delta_debt} ({id})",
+            "fees": "Tarifas estimadas: {tarifas}"
+          },
           "tooltip": "Actualización de una orden de llamada existente"
         },
         "account_create": {
           "method": "Crear cuenta",
+          "title": "Solicitud de creación de cuenta",
+          "rows": {
+            "header": "¿Quieres crear la siguiente cuenta?",
+            "registrar": "Registrador: {registrador} ({opRegistrar})",
+            "referrer": "Recomendador: {referente} ({opReferrer})",
+            "referrer_percent": "Porcentaje de referencia: {referrer_percent}",
+            "name": "Nombre nombre}",
+            "ownerHeader": "Dueño:",
+            "activeHeader": "Activo:",
+            "weight_threshold": "Umbral de peso: {weight_threshold}",
+            "account_auths": "Autorizaciones de cuenta: {account_auths}",
+            "key_auths": "Autorizaciones clave: {key_auths}",
+            "address_auths": "Autorizaciones de direcciones: {address_auths}",
+            "optionsHeader": "Opciones:",
+            "memo_key": "Clave de memoria: {memo_key}",
+            "voting_account": "Cuenta de votante: {voting_account} ({opVotingAccount})",
+            "num_witness": "Número de testigos: {num_witness}",
+            "num_committee": "Número de miembros del comité: {num_committee}",
+            "votes": "Votos: {votos}",
+            "extensions": "Extensiones: {extensiones}",
+            "fees": "Tarifas estimadas: {tarifas}"
+          },
           "tooltip": "Creando una nueva cuenta"
-        },
-        "asset_update": {
-          "method": "Actualización de activos",
-          "tooltip": "Actualizar la configuración de activos creados"
-        },
-        "asset_update_bitasset": {
-          "method": "bitasset de actualización de activos",
-          "tooltip": "Actualizar la configuración de bitasset creada"
-        },
-        "asset_update_feed_producers": {
-          "method": "Productores de feeds de actualización de recursos",
-          "tooltip": "Actualice la lista de productores de alimentos aprobados para bitasset creado"
-        },
-        "asset_issue": {
-          "method": "Problema de activos",
-          "tooltip": "Emita sus activos creados a individuos"
-        },
-        "asset_reserve": {
-          "method": "reserva de activos",
-          "tooltip": "Reserve sus activos creados"
-        },
-        "asset_fund_fee_pool": {
-          "method": "Grupo de tarifas de fondos de activos",
-          "tooltip": "Financie el grupo de tarifas para su activo creado"
-        },
-        "asset_settle": {
-          "method": "Liquidación de activos",
-          "tooltip": "Liquidar un activo en su cartera"
-        },
-        "asset_global_settle": {
-          "method": "Liquidación global de activos",
-          "tooltip": "Liquide globalmente uno de sus bitassets creados"
-        },
-        "asset_publish_feed": {
-          "method": "Feed de publicación de activos",
-          "tooltip": "Publicar un feed de precios para un bitasset"
-        },
-        "witness_create": {
-          "method": "Testigo crear",
-          "tooltip": "Crear una cuenta de testigo"
-        },
-        "witness_update": {
-          "method": "Actualización de testigos",
-          "tooltip": "Actualice su cuenta de testigo"
-        },
-        "proposal_create": {
-          "method": "Crear propuesta",
-          "tooltip": "Crear una propuesta de operación de blockchain"
-        },
-        "proposal_update": {
-          "method": "Actualización de propuesta",
-          "tooltip": "Actualizar una propuesta de operación de blockchain"
-        },
-        "proposal_delete": {
-          "method": "Eliminar propuesta",
-          "tooltip": "Eliminar una propuesta de operación de blockchain"
-        },
-        "withdraw_permission_create": {
-          "method": "Retirar permiso crear",
-          "tooltip": "Crear un permiso de retiro"
-        },
-        "withdraw_permission_update": {
-          "method": "Retirar la actualización del permiso",
-          "tooltip": "Actualizar un permiso de retiro"
-        },
-        "withdraw_permission_claim": {
-          "method": "Retirar solicitud de permiso",
-          "tooltip": "Reclamación de un permiso de retiro"
-        },
-        "withdraw_permission_delete": {
-          "method": "Retirar permiso borrar",
-          "tooltip": "Eliminar un permiso de retiro"
-        },
-        "committee_member_create": {
-          "method": "miembro del comité crear",
-          "tooltip": "Crear una cuenta de miembro del comité"
-        },
-        "committee_member_update": {
-          "method": "Actualización de los miembros del comité",
-          "tooltip": "Actualice los detalles de su cuenta de miembro del comité"
-        },
-        "committee_member_update_global_parameters": {
-          "method": "Miembros del comité actualizan parámetros globales",
-          "tooltip": "Publique la postura de su miembro del comité sobre los valores de parámetros globales de la cadena de bloques de Bitshares"
-        },
-        "vesting_balance_create": {
-          "method": "Crear saldo de adquisición",
-          "tooltip": "Crear un saldo de adquisición"
-        },
-        "vesting_balance_withdraw": {
-          "method": "Retiro del saldo adquirido",
-          "tooltip": "Retirar de un saldo adquirido"
-        },
-        "worker_create": {
-          "method": "trabajador crear",
-          "tooltip": "Crear una propuesta de trabajador"
-        },
-        "balance_claim": {
-          "method": "Reclamación de saldo",
-          "tooltip": "Reclamación de un saldo"
-        },
-        "override_transfer": {
-          "method": "Anular transferencia",
-          "tooltip": "Anular una operación de transferencia"
-        },
-        "transfer_to_blind": {
-          "method": "Transferencia a ciegas",
-          "tooltip": "Transferir activos a un destino ciego"
-        },
-        "blind_transfer": {
-          "method": "transferencia ciega",
-          "tooltip": "Transferir activos ciegos de manera ciega"
-        },
-        "transfer_from_blind": {
-          "method": "Transferencia de ciego",
-          "tooltip": "Retirar activos de un saldo ciego"
-        },
-        "asset_claim_fees": {
-          "method": "Tarifas de reclamo de activos",
-          "tooltip": "Reclamar las tarifas de un activo"
-        },
-        "bid_collateral": {
-          "method": "Garantía de oferta",
-          "tooltip": "Ofertar en una garantía de respaldo de bitassets cuando se liquida globalmente"
-        },
-        "asset_claim_pool": {
-          "method": "Grupo de reclamaciones de activos",
-          "tooltip": "Transfiere BTS del conjunto de tarifas de un activo específico al saldo del emisor"
-        },
-        "asset_update_issuer": {
-          "method": "Emisor de actualización de activos",
-          "tooltip": "Actualice el emisor de un activo a una nueva cuenta de administrador."
-        },
-        "htlc_create": {
-          "method": "Hash Time Locked Contract crear",
-          "tooltip": "Crear una operación de contrato de bloqueo de tiempo hash"
-        },
-        "htlc_redeem": {
-          "method": "Hash Time Locked Contract Canjear",
-          "tooltip": "Canjear el contenido de una operación de Hash Time Locked Contract"
-        },
-        "htlc_extend": {
-          "method": "Hash Time Locked Contract Extend",
-          "tooltip": "Ampliar la duración de una operación de contrato bloqueado de tiempo hash"
-        },
-        "custom_authority_create": {
-          "method": "Creación de autoridad personalizada",
-          "tooltip": "Cree una nueva autoridad personalizada."
-        },
-        "custom_authority_update": {
-          "method": "Actualización de autoridad personalizada",
-          "tooltip": "Actualizar una autoridad personalizada."
-        },
-        "custom_authority_delete": {
-          "method": "Eliminación de autoridad personalizada",
-          "tooltip": "Eliminar una autoridad personalizada."
-        },
-        "ticket_create": {
-          "method": "Creación de entradas",
-          "tooltip": "Crear un nuevo boleto."
-        },
-        "ticket_update": {
-          "method": "Actualización de entradas",
-          "tooltip": "Actualizar un ticket existente."
-        },
-        "liquidity_pool_create": {
-          "method": "Crear fondo de liquidez",
-          "tooltip": "Crear un grupo de liquidez"
-        },
-        "liquidity_pool_delete": {
-          "method": "Eliminación del grupo de liquidez",
-          "tooltip": "Eliminar un grupo de liquidez"
-        },
-        "liquidity_pool_deposit": {
-          "method": "Depósito del fondo de liquidez",
-          "tooltip": "Depositar fondos en un grupo de liquidez"
-        },
-        "liquidity_pool_withdraw": {
-          "method": "Retiro del fondo de liquidez",
-          "tooltip": "Retirar fondos de un fondo de liquidez"
-        },
-        "liquidity_pool_exchange": {
-          "method": "Intercambio de fondos de liquidez",
-          "tooltip": "Intercambio con un fondo de liquidez."
-        },
-        "samet_fund_create": {
-          "method": "Crear fondo SameT",
-          "tooltip": "Crear un nuevo Fondo SameT. "
-        },
-        "samet_fund_delete": {
-          "method": "Eliminación de fondos de SameT",
-          "tooltip": "Eliminar un objeto de fondo de SameT."
-        },
-        "samet_fund_update": {
-          "method": "Actualización de fondos de SameT",
-          "tooltip": "Actualizar un objeto de fondo de SameT."
-        },
-        "samet_fund_borrow": {
-          "method": "Préstamo de fondos de SameT",
-          "tooltip": "Préstamo de un fondo de SameT."
-        },
-        "samt_fund_repay": {
-          "method": "Reembolso de fondos de SameT",
-          "tooltip": "Pagar deuda a un fondo SameT."
-        },
-        "credit_offer_create": {
-          "method": "Crear oferta de crédito",
-          "tooltip": "Crear una nueva oferta de crédito. "
-        },
-        "credit_offer_delete": {
-          "method": "Eliminar oferta de crédito",
-          "tooltip": "Eliminar una oferta de crédito."
-        },
-        "credit_offer_update": {
-          "method": "Actualización de oferta de crédito",
-          "tooltip": "Actualizar una oferta de crédito"
-        },
-        "credit_offer_accept": {
-          "method": "Oferta de crédito aceptada",
-          "tooltip": "Aceptar una oferta de crédito y crear un acuerdo de crédito."
-        },
-        "credit_deal_repay": {
-          "method": "Reembolso de trato de crédito",
-          "tooltip": "Pagar un trato de crédito."
-        },
-        "custom": {
-          "method": "Costumbre",
-          "tooltip": "Proporciona una forma genérica de agregar protocolos de nivel superior además del consenso de los testigos"
-        },
-        "assert": {
-          "method": "Afirmar",
-          "tooltip": "Afirmar que algunas condiciones son verdaderas."
         },
         "account_update": {
           "method": "Actualización de cuenta",
+          "title": "Solicitud de actualización de cuenta",
+          "rows": {
+            "header": "¿Quieres crear la siguiente cuenta?",
+            "warning": "Advertencia: ¡Esta operación es irreversible!",
+            "account": "Cuenta: {cuenta} ({opAccount})",
+            "owner": "Propietario: {propietario}",
+            "active": "Activo: {activo}",
+            "new_options": "Nuevas opciones: {nuevas_opciones}",
+            "extensions": "Extensiones: {extensiones}",
+            "fees": "Tarifa estimada: {tarifas}"
+          },
           "tooltip": "Esta operación se utiliza para actualizar una cuenta existente. "
         },
         "account_whitelist": {
           "method": "Lista blanca de cuentas",
+          "title": "Solicitud de lista blanca de cuenta",
+          "rows": {
+            "header": "Detalles de la lista blanca de la cuenta:",
+            "authorizing_account": "Autorizando cuenta: {authorizingAccount} (authorizingAccountOP)",
+            "account_to_list": "Cuenta para listar: {accountToList} (accountToListOP)",
+            "new_listing": "Nuevo listado: {nuevo listado}",
+            "extensions": "Extensiones: {extensiones}",
+            "fee": "Tarifa: {tarifa}"
+          },
           "tooltip": "Esta operación se utiliza para incluir cuentas en la lista blanca y en la lista negra, principalmente para realizar transacciones en activos incluidos en la lista blanca."
         },
         "account_upgrade": {
           "method": "Actualización de cuenta",
+          "title": "Solicitud de actualización de cuenta",
+          "rows": {
+            "header": "¿Actualizar cuenta a miembro vitalicio?",
+            "account_to_upgrade": "Cuenta para actualizar: {accountToUpgrade} (accountToUpgradeOP)",
+            "upgrade_to_lifetime_member": "Actualizar a miembro vitalicio: {upgradeToLifetimeMember}",
+            "extensions": "Extensiones: {extensiones}",
+            "fee": "Tarifa estimada: {tarifa}"
+          },
           "tooltip": "Esta operación se utiliza para actualizar una cuenta a un miembro o renovar su suscripción."
         },
         "account_transfer": {
           "method": "Transferencia de cuenta",
-          "tooltip": "Transfiere la cuenta a otra cuenta mientras limpia la lista blanca"
+          "title": "Solicitud de transferencia de cuenta",
+          "rows": {
+            "header": "¿Transferir la cuenta a un nuevo propietario?",
+            "warning": "Advertencia: ¡Esta acción es irreversible!",
+            "account_id": "ID de cuenta: {originalOwner} ({account_id})",
+            "new_owner": "Nuevo propietario: {nuevoOwner} ({newOwnerOP})",
+            "fee": "Tarifa estimada: {tarifa}"
+          },
+          "tooltip": "Transfiere la cuenta a otra cuenta mientras borra la lista blanca"
         },
         "asset_create": {
           "method": "Creación de activos",
-          "tooltip": "Crea un activo en la cadena de bloques Bitshares"
+          "title": "Solicitud de creación de activos",
+          "rows": {
+            "header": "¿Crear el siguiente activo?",
+            "symbol": "Símbolo: {símbolo}",
+            "main": "Principal Principal}",
+            "market": "Mercado: {mercado}",
+            "short_name": "Nombre corto: {nombre_corto}",
+            "precision": "Precisión: {precisión}",
+            "max_supply": "Suministro máximo: {max_supply}",
+            "market_fee_percent": "Porcentaje de tarifa de mercado: {market_fee_percent}",
+            "max_market_fee": "Tarifa máxima de mercado: {max_market_fee}",
+            "cer": "Tipos de cambio básicos:",
+            "cer_base_amount": "Cantidad base: {cer_base_amount}",
+            "cer_base_id": "ID de activo base: {cer_base_id}",
+            "cer_quote_amount": "Cantidad de cotización: {cer_quote_amount}",
+            "cer_quote_id": "Cotizar ID de activo: {cer_quote_id}",
+            "whitelist_authorities": "Autoridades de la lista blanca: {whitelist_authorities}",
+            "blacklist_authorities": "Autoridades de la lista negra: {blacklist_authorities}",
+            "whitelist_markets": "Lista blanca de mercados: {whitelist_markets}",
+            "blacklist_markets": "Mercados de la lista negra: {blacklist_markets}",
+            "is_prediction_market": "Es el mercado de predicción: {is_prediction_market}",
+            "permissions": "Permisos:",
+            "perm_charge_market_fee": "Cobrar tarifa de mercado: {charge_market_fee}",
+            "perm_white_list": "Lista blanca: {lista_blanca}",
+            "perm_override_authority": "Anular autoridad: {override_authority}",
+            "perm_transfer_restricted": "Transferencia restringida: {transfer_restricted}",
+            "perm_disable_confidential": "Deshabilitar confidencial: {disable_confidential}",
+            "flags": "Banderas:",
+            "flag_charge_market_fee": "Cobrar tarifa de mercado: {charge_market_fee}",
+            "flag_white_list": "Lista blanca: {lista_blanca}",
+            "flag_override_authority": "Anular autoridad: {override_authority}",
+            "flag_transfer_restricted": "Transferencia restringida: {transfer_restricted}",
+            "flag_disable_confidential": "Deshabilitar confidencial: {disable_confidential}",
+            "bitasset": "Información del conjunto de bits:",
+            "feed_lifetime_sec": "Vida útil del feed (segundos): {feed_lifetime_sec}",
+            "force_settlement_delay_sec": "Retraso de liquidación forzada (segundos): {force_settlement_delay_sec}",
+            "force_settlement_offset_percent": "Forzar porcentaje de compensación de liquidación: {force_settlement_offset_percent}",
+            "maximum_force_settlement_volume": "Volumen máximo de liquidación de fuerza: {maximum_force_settlement_volume}",
+            "minimum_feeds": "Feeds mínimos: {minimum_feeds}",
+            "short_backing_asset": "Activo de respaldo corto: {short_backing_asset}",
+            "nft": "Contenidos NFT:",
+            "acknowledgements": "Agradecimientos: {agradecimientos}",
+            "artist": "Artista: {artista}",
+            "attestation": "Atestación: {atestación}",
+            "holder_license": "Titular de la licencia: {holder_license}",
+            "license": "Licencia: {licencia}",
+            "narrative": "Narrativa: {narrativa}",
+            "title": "Título: {título}",
+            "tags": "Etiquetas: {etiquetas}",
+            "type": "Tipo: {tipo}"
+          },
+          "tooltip": "Crea un activo en la cadena de bloques de Bitshares"
+        },
+        "asset_update": {
+          "method": "Actualización de activos",
+          "title": "Solicitud de actualización de activos",
+          "rows": {
+            "header": "¿Actualizar el siguiente activo?",
+            "symbol": "Símbolo: {símbolo}",
+            "main": "Principal Principal}",
+            "market": "Mercado: {mercado}",
+            "short_name": "Nombre corto: {nombre_corto}",
+            "precision": "Precisión: {precisión}",
+            "max_supply": "Suministro máximo: {max_supply}",
+            "market_fee_percent": "Porcentaje de tarifa de mercado: {market_fee_percent}",
+            "max_market_fee": "Tarifa máxima de mercado: {max_market_fee}",
+            "cer": "Tipos de cambio básicos:",
+            "cer_base_amount": "Cantidad base: {cer_base_amount}",
+            "cer_base_id": "ID de activo base: {cer_base_id}",
+            "cer_quote_amount": "Cantidad de cotización: {cer_quote_amount}",
+            "cer_quote_id": "Cotizar ID de activo: {cer_quote_id}",
+            "whitelist_authorities": "Autoridades de la lista blanca: {whitelist_authorities}",
+            "blacklist_authorities": "Autoridades de la lista negra: {blacklist_authorities}",
+            "whitelist_markets": "Lista blanca de mercados: {whitelist_markets}",
+            "blacklist_markets": "Mercados de la lista negra: {blacklist_markets}",
+            "is_prediction_market": "Es el mercado de predicción: {is_prediction_market}",
+            "permissions": "Permisos:",
+            "perm_charge_market_fee": "Cobrar tarifa de mercado: {charge_market_fee}",
+            "perm_white_list": "Lista blanca: {lista_blanca}",
+            "perm_override_authority": "Anular autoridad: {override_authority}",
+            "perm_transfer_restricted": "Transferencia restringida: {transfer_restricted}",
+            "perm_disable_confidential": "Deshabilitar confidencial: {disable_confidential}",
+            "flags": "Banderas:",
+            "flag_charge_market_fee": "Cobrar tarifa de mercado: {charge_market_fee}",
+            "flag_white_list": "Lista blanca: {lista_blanca}",
+            "flag_override_authority": "Anular autoridad: {override_authority}",
+            "flag_transfer_restricted": "Transferencia restringida: {transfer_restricted}",
+            "flag_disable_confidential": "Deshabilitar confidencial: {disable_confidential}",
+            "bitasset": "Información del conjunto de bits:",
+            "feed_lifetime_sec": "Vida útil del feed (segundos): {feed_lifetime_sec}",
+            "force_settlement_delay_sec": "Retraso de liquidación forzada (segundos): {force_settlement_delay_sec}",
+            "force_settlement_offset_percent": "Forzar porcentaje de compensación de liquidación: {force_settlement_offset_percent}",
+            "maximum_force_settlement_volume": "Volumen máximo de liquidación de fuerza: {maximum_force_settlement_volume}",
+            "minimum_feeds": "Feeds mínimos: {minimum_feeds}",
+            "short_backing_asset": "Activo de respaldo corto: {short_backing_asset}",
+            "nft": "Contenidos NFT:",
+            "acknowledgements": "Agradecimientos: {agradecimientos}",
+            "artist": "Artista: {artista}",
+            "attestation": "Atestación: {atestación}",
+            "holder_license": "Titular de la licencia: {holder_license}",
+            "license": "Licencia: {licencia}",
+            "narrative": "Narrativa: {narrativa}",
+            "title": "Título: {título}",
+            "tags": "Etiquetas: {etiquetas}",
+            "type": "Tipo: {tipo}"
+          },
+          "tooltip": "Actualiza la configuración de un recurso"
+        },
+        "asset_update_bitasset": {
+          "method": "bitasset de actualización de activos",
+          "title": "Solicitud de bitasset de actualización de activos",
+          "rows": {
+            "header": "¿Aprobar la actualización de bitasset?",
+            "issuer": "Emisor: {emisor}",
+            "asset_to_update": "Activo para actualizar: {asset_to_update}",
+            "new_options": "Nuevas opciones:",
+            "feed_lifetime_sec": "Vida útil del feed (segundos): {feed_lifetime_sec}",
+            "minimum_feeds": "Feeds mínimos: {minimum_feeds}",
+            "force_settlement_delay_sec": "Retraso de liquidación forzada (segundos): {force_settlement_delay_sec}",
+            "force_settlement_offset_percent": "Forzar porcentaje de compensación de liquidación: {force_settlement_offset_percent}",
+            "maximum_force_settlement_volume": "Volumen máximo de liquidación de fuerza: {maximum_force_settlement_volume}",
+            "short_backing_asset": "Activo de respaldo corto: {símbolo} ({short_backing_asset})",
+            "extensions": "Extensiones: {extensiones}",
+            "noExtensions": "Sin extensiones",
+            "fee": "Tarifa estimada: {fee} ({id})"
+          },
+          "tooltip": "Actualizar la configuración de bitasset creada"
+        },
+        "asset_update_feed_producers": {
+          "method": "Productores de feeds de actualización de recursos",
+          "title": "Solicitud de productores de feeds de actualización de recursos",
+          "rows": {
+            "header": "¿Aprobar el cambio a los productores de piensos bitasset?",
+            "issuer": "Emisor: {emisor} ({emisorOP})",
+            "asset_to_update": "Activo para actualizar: {símbolo} ({asset_to_update})",
+            "new_feed_producers": "Nuevos productores de feeds: {new_feed_producers}",
+            "fee": "Tarifa estimada: {tarifa}"
+          },
+          "tooltip": "Actualice la lista de productores de alimentos aprobados para bitasset creado"
+        },
+        "asset_issue": {
+          "method": "Problema de activos",
+          "title": "Solicitud de emisión de activos",
+          "rows": {
+            "header": "¿Emitir {cantidad} {símbolo} ({assetID}) a {to} ({toID})?",
+            "fee": "Tarifa estimada: {fee} ({id})"
+          },
+          "tooltip": "Emita sus activos creados a individuos"
+        },
+        "asset_reserve": {
+          "method": "reserva de activos",
+          "title": "Solicitud de reserva de activos",
+          "rows": {
+            "header": "¿Aprobar la siguiente reserva de activos?",
+            "payer": "Pagador: {pagador} ({pagadorOP})",
+            "amount_to_reserve": "Importe a reservar: {amount_to_reserve} ({amount_to_reserveOP})",
+            "extensions": "Extensiones: {extensiones}",
+            "fee": "Tarifa estimada: {tarifa}"
+          },
+          "tooltip": "Reserve sus activos creados"
+        },
+        "asset_fund_fee_pool": {
+          "method": "Grupo de tarifas de fondos de activos",
+          "title": "Solicitud de grupo de tarifas de fondos de activos",
+          "rows": {
+            "header": "¿Financiar el grupo de comisiones del siguiente activo?",
+            "from_account": "De la cuenta: {from_account} ({from_accountOP})",
+            "asset": "Activo: {activo} ({activoOP})",
+            "amount": "Cantidad: {cantidad}",
+            "fee": "Tarifa estimada: {tarifa}"
+          },
+          "tooltip": "Financie el grupo de tarifas para su activo creado"
+        },
+        "asset_settle": {
+          "method": "Liquidación de activos",
+          "title": "Solicitud de liquidación de activos",
+          "rows": {
+            "header": "Liquidar el siguiente activo por su garantía de respaldo?",
+            "account": "Cuenta: {cuenta} ({cuentaOP})",
+            "amount": "Cantidad: {cantidad} ({ID de activo})",
+            "fee": "Tarifa estimada: {tarifa}"
+          },
+          "tooltip": "Liquidar un activo en su cartera"
+        },
+        "asset_global_settle": {
+          "method": "Liquidación global de activos",
+          "title": "Solicitud de liquidación global de activos",
+          "rows": {
+            "header": "¿Realizar la liquidación global del siguiente activo?",
+            "issuer": "Emisor: {emisor} ({emisorOP})",
+            "asset_to_settle": "Activo a liquidar: {asset_to_settle} ({asset_to_settleOP})",
+            "settle_price": "Precio de liquidación: {precio_de liquidación}",
+            "fee": "Tarifa estimada: {tarifa}"
+          },
+          "tooltip": "Liquide globalmente uno de sus bitassets creados"
+        },
+        "asset_publish_feed": {
+          "method": "Feed de publicación de recursos",
+          "title": "Solicitud de feed de publicación de recursos",
+          "rows": {
+            "header": "¿Publicar un feed de precios para el siguiente activo?",
+            "publisher": "Editor: {editor} ({publisherOP})",
+            "asset_id": "ID de activo: {símbolo} ({asset_idOP})",
+            "feed": "Alimentar:",
+            "core_exchange_rate": "Tipo de cambio básico: {core_exchange_rate}",
+            "settlement_price": "Precio de liquidación: {settlement_price}",
+            "maintenance_collateral_ratio": "Relación de garantía de mantenimiento: {maintenance_collateral_ratio}",
+            "maximum_short_squeeze_ratio": "Relación máxima de compresión corta: {maximum_short_squeeze_ratio}",
+            "extensions": "Extensiones: {extensiones}",
+            "fee": "Tarifa estimada: {tarifa}"
+          },
+          "tooltip": "Publicar un feed de precios para un bitasset"
+        },
+        "witness_create": {
+          "method": "Testigo crear",
+          "title": "Solicitud de creación de testigo",
+          "rows": {
+            "header": "¿Crear un testigo con los siguientes detalles?",
+            "witness_account": "Cuenta de testigo: {witness_account} ({witness_accountOP})",
+            "url": "URL: {url}",
+            "block_signing_key": "Bloquear clave de firma: {block_signing_key}",
+            "fee": "Tarifa estimada: {tarifa}"
+          },
+          "tooltip": "Crear una cuenta de testigo"
+        },
+        "witness_update": {
+          "method": "Actualización de testigos",
+          "title": "Solicitud de actualización de testigo",
+          "rows": {
+            "header": "¿Actualizar los detalles del testigo a lo siguiente?",
+            "witness": "Testigo: {testigo}",
+            "witness_account": "Cuenta de testigo: {witness_account} ({witness_accountOP})",
+            "new_url": "Nueva URL: {nueva_url}",
+            "new_signing_key": "Nueva clave de firma: {new_signing_key}",
+            "fee": "Tarifa estimada: {tarifa}"
+          },
+          "tooltip": "Actualice su cuenta de testigo"
+        },
+        "proposal_create": {
+          "method": "Crear propuesta",
+          "title": "Solicitud de creación de propuesta",
+          "rows": {
+            "header": "¿Crear la siguiente propuesta?",
+            "expiration_time": "Tiempo de vencimiento: {expiration_time}",
+            "proposed_ops": "Operaciones propuestas: {proposed_ops}",
+            "review_period_seconds": "Segundos del período de revisión: {review_period_seconds}",
+            "fee_paying_account": "Cuenta de pago de tarifas: {fee_paying_account} ({fee_paying_accountOP})",
+            "fee": "Tarifa estimada: {tarifa}"
+          },
+          "tooltip": "Crear una propuesta de operación de blockchain"
+        },
+        "proposal_update": {
+          "method": "Actualización de propuesta",
+          "title": "Solicitud de actualización de propuesta",
+          "rows": {
+            "header": "¿Actualizar la siguiente propuesta?",
+            "proposal": "Propuesta: {propuesta}",
+            "active_approvals_to_add": "Aprobaciones activas para agregar: {active_approvals_to_add}",
+            "active_approvals_to_remove": "Aprobaciones activas para eliminar: {active_approvals_to_remove}",
+            "owner_approvals_to_add": "Aprobaciones del propietario para agregar: {owner_approvals_to_add}",
+            "owner_approvals_to_remove": "Aprobaciones del propietario para eliminar: {owner_approvals_to_remove}",
+            "key_approvals_to_add": "Aprobaciones clave para agregar: {key_approvals_to_add}",
+            "key_approvals_to_remove": "Aprobaciones clave para eliminar: {key_approvals_to_remove}",
+            "fee_paying_account": "Cuenta de pago de tarifas: {fee_paying_account} ({fee_paying_accountOP})",
+            "extensions": "Extensiones: {extensiones}",
+            "fee": "Tarifa estimada: {tarifa}"
+          },
+          "tooltip": "Actualizar una propuesta de operación de blockchain"
+        },
+        "proposal_delete": {
+          "method": "Eliminar propuesta",
+          "title": "Solicitud de eliminación de propuesta",
+          "rows": {
+            "header": "¿Eliminar la siguiente propuesta?",
+            "using_owner_authority": "Uso de la autoridad del propietario: {using_owner_authority}",
+            "proposal": "Propuesta: {propuesta}",
+            "fee_paying_account": "Cuenta de pago de tarifas: {fee_paying_account} ({fee_paying_accountOP})",
+            "extensions": "Extensiones: {extensiones}",
+            "fee": "Tarifa estimada: {tarifa}"
+          },
+          "tooltip": "Eliminar una propuesta de operación de blockchain"
+        },
+        "withdraw_permission_create": {
+          "method": "Retirar permiso crear",
+          "title": "Retirar permiso crear solicitud",
+          "rows": {
+            "header": "Autorización de Débito Directo",
+            "recipient": "Destinatario: {destinatario} ({destinatarioOP})",
+            "withdraw_from": "Cuenta para retirar: {withdraw_from} ({withdraw_fromOP})",
+            "taking": "Toma {amount} cada {period_sec} segundos, durante {period_qty} periodos",
+            "start": "Comenzando: {comenzar}"
+          },
+          "tooltip": "Crear un permiso de retiro"
+        },
+        "withdraw_permission_update": {
+          "method": "Retirar la actualización del permiso",
+          "title": "Retirar solicitud de actualización de permiso",
+          "rows": {
+            "header": "¿Actualizar los permisos de testigo a lo siguiente?",
+            "withrdaw_from_account": "Retirar de la cuenta: {withrdaw_from_account} ({withrdaw_from_accountOP})",
+            "authorized_account": "Cuenta autorizada: {authorized_account} ({authorized_accountOP})",
+            "permission_to_update": "Permiso para actualizar: {permission_to_update}",
+            "withdrawal_limited": "Límite de retiro: {withdrawal_limit}",
+            "withdrawal_unlimited": "Límite de retiro: {withdrawal_limit} ({withdrawal_limitOP})",
+            "withdrawal_period_sec": "Período de retiro (segundos): {withdrawal_period_sec}",
+            "period_start_time": "Hora de inicio del período: {period_start_time}",
+            "periods_until_expiration": "Períodos hasta el vencimiento: {periods_until_expiration}",
+            "fee": "Tarifa estimada: {tarifa}"
+          },
+          "tooltip": "Actualizar un permiso de retiro"
+        },
+        "withdraw_permission_claim": {
+          "method": "Retirar solicitud de permiso",
+          "title": "Retirar solicitud de reclamación de permiso",
+          "rows": {
+            "header": "Reclamar el siguiente permiso de retiro",
+            "withdraw_permission": "Retirar permiso: {withdraw_permission}",
+            "withdraw_from_account": "Retirar de la cuenta: {withdraw_from_account} ({withdraw_from_accountOP})",
+            "withdraw_to_account": "Retirar a cuenta: {withdraw_to_account} ({withdraw_to_accountOP})",
+            "amount_to_withdraw": "Monto a retirar: {amount_to_withdraw} ({amount_to_withdrawOP})",
+            "memo": "Nota: {nota}",
+            "fee": "Tarifa estimada: {tarifa}"
+          },
+          "tooltip": "Reclamación de un permiso de retiro"
+        },
+        "withdraw_permission_delete": {
+          "method": "Retirar permiso borrar",
+          "title": "Retirar solicitud de eliminación de permiso",
+          "rows": {
+            "header": "¿Eliminar el siguiente permiso de retiro?",
+            "withdraw_from_account": "Retirar de la cuenta: {withdraw_from_account} ({withdraw_from_accountOP})",
+            "authorized_account": "Cuenta autorizada: {authorized_account} ({authorized_accountOP})",
+            "withdrawal_permission": "Permiso de retiro: {withdrawal_permission}",
+            "fee": "Tarifa estimada: {tarifa}"
+          },
+          "tooltip": "Eliminar un permiso de retiro"
+        },
+        "committee_member_create": {
+          "method": "miembro del comité crear",
+          "title": "Solicitud de creación de miembro del comité",
+          "rows": {
+            "header": "¿Crear un miembro del comité?",
+            "committee_member_account": "Cuenta de miembro del comité: {committee_member_account} ({committee_member_accountOP})",
+            "url": "URL: {url}",
+            "fee": "Tarifa estimada: {tarifa}"
+          },
+          "tooltip": "Crear una cuenta de miembro del comité"
+        },
+        "committee_member_update": {
+          "method": "Actualización de los miembros del comité",
+          "title": "Solicitud de actualización de miembros del comité",
+          "rows": {
+            "header": "¿Actualizar los detalles del siguiente miembro del comité?",
+            "committee_member": "Miembro del comité: {committee_member}",
+            "committee_member_account": "Cuenta de miembro del comité: {committee_member_account} ({committee_member_accountOP})",
+            "new_url": "Nueva URL: {nueva_url}",
+            "fee": "Tarifa estimada: {tarifa}"
+          },
+          "tooltip": "Actualice los detalles de su cuenta de miembro del comité"
+        },
+        "committee_member_update_global_parameters": {
+          "method": "Miembros del comité actualizan parámetros globales",
+          "title": "Solicitud de actualización de parámetros globales de miembro del comité",
+          "rows": {
+            "header": "¿Aprueba seguir los parámetros globales como comité?",
+            "new_parameters": "Nuevos parámetros:",
+            "current_fees": "Tarifas actuales: {current_fees}",
+            "block_interval": "Intervalo de bloque: {block_interval}",
+            "maintenance_interval": "Intervalo de mantenimiento: {maintenance_interval}",
+            "maintenance_skip_slots": "Ranuras de omisión de mantenimiento: {maintenance_skip_slots}",
+            "committee_proposal_review_period": "Período de revisión de la propuesta del comité: {committee_proposal_review_period}",
+            "maximum_transaction_size": "Tamaño máximo de transacción: {maximum_transaction_size}",
+            "maximum_block_size": "Tamaño máximo de bloque: {maximum_block_size}",
+            "maximum_time_until_expiration": "Tiempo máximo hasta el vencimiento: {maximum_time_until_expiration}",
+            "maximum_proposal_lifetime": "Duración máxima de la propuesta: {maximum_proposal_lifetime}",
+            "maximum_asset_whitelist_authorities": "Autoridades máximas de la lista blanca de activos: {maximum_asset_whitelist_authorities}",
+            "maximum_asset_feed_publishers": "Número máximo de editores de feeds de recursos: {maximum_asset_feed_publishers}",
+            "maximum_witness_count": "Recuento máximo de testigos: {maximum_witness_count}",
+            "maximum_committee_count": "Recuento máximo de comités: {maximum_committee_count}",
+            "maximum_authority_membership": "Membresía de máxima autoridad: {maximum_authority_membership}",
+            "reserve_percent_of_fee": "Reservar porcentaje de tarifa: {reserve_percent_of_fee}",
+            "network_percent_of_fee": "Porcentaje de tarifa de la red: {network_percent_of_fee}",
+            "lifetime_referrer_percent_of_fee": "Porcentaje de tarifa del referente de por vida: {lifetime_referrer_percent_of_fee}",
+            "cashback_vesting_period_seconds": "Segundos del período de adquisición de reembolsos: {cashback_vesting_period_seconds}",
+            "cashback_vesting_threshold": "Umbral de concesión de devolución de efectivo: {cashback_vesting_threshold}",
+            "count_non_member_votes": "Contar los votos de los no miembros: {count_non_member_votes}",
+            "allow_non_member_whitelists": "Permitir listas blancas de no miembros: {allow_non_member_whitelists}",
+            "witness_pay_per_block": "Pago de testigos por bloque: {witness_pay_per_block}",
+            "worker_budget_per_day": "Presupuesto de trabajador por día: {worker_budget_per_day}",
+            "max_predicate_opcode": "Código de operación de predicado máximo: {max_predicate_opcode}",
+            "fee_liquidation_threshold": "Umbral de liquidación de tarifas: {fee_liquidation_threshold}",
+            "accounts_per_fee_scale": "Cuentas por escala de tarifas: {accounts_per_fee_scale}",
+            "account_fee_scale_bitshifts": "Bitshifts de escala de tarifas de cuenta: {account_fee_scale_bitshifts}",
+            "max_authority_depth": "Profundidad máxima de autoridad: {max_authority_depth}",
+            "extensions": "Extensiones: {extensiones}",
+            "fee": "Tarifa estimada: {tarifa}"
+          },
+          "tooltip": "Publique la postura de su miembro del comité sobre los valores de parámetros globales de la cadena de bloques de Bitshares"
+        },
+        "vesting_balance_create": {
+          "method": "Crear saldo de adquisición",
+          "title": "Solicitud de creación de saldo de adquisición",
+          "rows": {
+            "header": "¿Crear el siguiente saldo de adquisición?",
+            "creator": "Creador: {creador} ({creatorOP})",
+            "owner": "Propietario: {propietario} ({propietarioOP})",
+            "amount": "Cantidad: {cantidad} ({asset_id})",
+            "policy": "Política:",
+            "begin_timestamp": "Marca de tiempo de inicio: {begin_timestamp}",
+            "vesting_cliff_seconds": "Adjudicación de segundos de acantilado: {vesting_cliff_seconds}",
+            "vesting_duration_seconds": "Segundos de duración de la concesión: {vesting_duration_seconds}",
+            "start_claim": "Iniciar reclamo: {start_claim}",
+            "vesting_seconds": "Segundos de concesión: {vesting_seconds}",
+            "fee": "Tarifa estimada: {tarifa}"
+          },
+          "tooltip": "Crear un saldo de adquisición"
+        },
+        "vesting_balance_withdraw": {
+          "method": "Retiro del saldo adquirido",
+          "title": "Solicitud de retiro de saldo de adquisición",
+          "rows": {
+            "header": "Saldo de adquisición",
+            "owner": "Propietario: {propietario} ({propietarioOP})",
+            "claim": "Reclamo: {reclamo} ({asset_id})"
+          },
+          "tooltip": "Retirar de un saldo adquirido"
+        },
+        "worker_create": {
+          "method": "trabajador crear",
+          "title": "Solicitud de creación de trabajador",
+          "rows": {
+            "header": "¿Crear la siguiente propuesta de trabajador?",
+            "owner": "Propietario: {propietario} ({propietarioOP})",
+            "work_begin_date": "Fecha de inicio del trabajo: {work_begin_date}",
+            "work_end_date": "Fecha de finalización del trabajo: {work_end_date}",
+            "daily_pay": "Pago diario: {daily_pay}",
+            "name": "Nombre nombre}",
+            "url": "URL: {url}",
+            "initializer": "Inicializador: {inicializador}",
+            "fee": "Tarifa estimada: {tarifa}"
+          },
+          "tooltip": "Crear una propuesta de trabajador"
+        },
+        "custom": {
+          "method": "Costumbre",
+          "title": "Solicitud personalizada",
+          "rows": {
+            "header": "Operación personalizada:",
+            "payer": "Pagador: {pagador} ({pagadorOP})",
+            "required_auths": "Autoridades requeridas: {required_auths}",
+            "id": "Hice}",
+            "data": "Datos: {datos}",
+            "fee": "Tarifa estimada: {tarifa}"
+          },
+          "tooltip": "Proporciona una forma genérica de agregar protocolos de nivel superior además del consenso de los testigos"
+        },
+        "assert": {
+          "method": "Afirmar",
+          "title": "Afirmar solicitud",
+          "rows": {
+            "header": "Afirmar operación:",
+            "fee_paying_account": "Cuenta de pago de tarifas: {fee_paying_account} ({fee_paying_accountOP})",
+            "predicates": "Predicados: {predicados}",
+            "required_auths": "Autoridades requeridas: {required_auths}",
+            "extensions": "Extensiones: {extensiones}",
+            "fee": "Tarifa estimada: {tarifa}"
+          },
+          "tooltip": "Afirmar que algunas condiciones son verdaderas."
+        },
+        "balance_claim": {
+          "method": "Reclamación de saldo",
+          "title": "Solicitud de reclamo de saldo",
+          "rows": {
+            "header": "¿Reclamar el siguiente saldo?",
+            "deposit_to_account": "Depósito en cuenta: {deposit_to_account} ({deposit_to_accountOP})",
+            "balance_to_claim": "Saldo a reclamar: {balance_to_claim} ({asset_id})",
+            "balance_owner_key": "Clave del propietario del saldo: {balance_owner_key}",
+            "total_claimed": "Total reclamado: {total_claimed} ({asset_id})",
+            "fee": "Tarifa estimada: {tarifa}"
+          },
+          "tooltip": "Reclamación de un saldo"
+        },
+        "override_transfer": {
+          "method": "Anular transferencia",
+          "title": "Anular solicitud de transferencia",
+          "rows": {
+            "header": "¿Anular la siguiente transferencia?",
+            "issuer": "Emisor: {emisor} ({emisorOP})",
+            "from": "De: {desde} ({desdeOP})",
+            "to": "A: {a} ({toOP})",
+            "amount": "Cantidad: {cantidad} ({asset_id})",
+            "memo": "Nota: {nota}",
+            "fee": "Tarifa estimada: {tarifa}"
+          },
+          "tooltip": "Anular una operación de transferencia"
+        },
+        "transfer_to_blind": {
+          "method": "Transferencia a ciegas",
+          "title": "Solicitud de transferencia a ciegas",
+          "rows": {
+            "header": "¿Transferir lo siguiente a ciegas?",
+            "amount": "Cantidad: {cantidad}",
+            "from": "De: {desde} ({desdeOP})",
+            "blinding_factor": "Factor de cegamiento: {blinding_factor}",
+            "outputs": "Salidas: {salidas}",
+            "fee": "Tarifa estimada: {tarifa}"
+          },
+          "tooltip": "Transferir activos a un destino ciego"
+        },
+        "blind_transfer": {
+          "method": "transferencia ciega",
+          "title": "Solicitud de transferencia ciega",
+          "rows": {
+            "header": "¿Aprobar la siguiente transferencia ciega?",
+            "inputs": "Entradas: {entradas}",
+            "outputs": "Salidas: {salidas}",
+            "fee": "Tarifa estimada: {tarifa}"
+          },
+          "tooltip": "Transferir activos ciegos de manera ciega"
+        },
+        "transfer_from_blind": {
+          "method": "Transferencia de ciego",
+          "title": "Transferencia de solicitud ciega",
+          "rows": {
+            "header": "¿Transferir lo siguiente de ciego?",
+            "amount": "Cantidad: {cantidad}",
+            "to": "A: {a} ({toOP})",
+            "blinding_factor": "Factor de cegamiento: {blinding_factor}",
+            "inputs": "Entradas: {entradas}",
+            "fee": "Tarifa estimada: {tarifa}"
+          },
+          "tooltip": "Retirar activos de un saldo ciego"
+        },
+        "asset_claim_fees": {
+          "method": "Tarifas de reclamo de activos",
+          "title": "Solicitud de tarifas de reclamo de activos",
+          "rows": {
+            "header": "¿Retirar los honorarios del siguiente activo?",
+            "issuer": "Emisor: {emisor} ({emisorOP})",
+            "amount_to_claim": "Monto a reclamar: {amount_to_claim} ({asset_id})",
+            "fee": "Tarifa estimada: {tarifa}"
+          },
+          "tooltip": "Reclamar las tarifas de un activo"
+        },
+        "bid_collateral": {
+          "method": "Garantía de oferta",
+          "title": "Solicitud de garantía de oferta",
+          "rows": {
+            "header": "¿Aprobar la siguiente oferta de garantía?",
+            "bidder": "Postor: {postor} ({bidderOP})",
+            "additional_collateral": "Garantía adicional: {additional_collateral}",
+            "debt_covered": "Deuda cubierta: {debt_covered}",
+            "fee": "Tarifa estimada: {tarifa}"
+          },
+          "tooltip": "Ofertar en una garantía de respaldo de bitassets cuando se liquida globalmente"
+        },
+        "asset_claim_pool": {
+          "method": "Grupo de reclamaciones de activos",
+          "title": "Solicitud de conjunto de reclamaciones de activos",
+          "rows": {
+            "header": "¿Reclamar el siguiente grupo de activos?",
+            "issuer": "Emisor: {emisor} ({emisorOP})",
+            "asset_id": "Activo: {asset_id}",
+            "amount_to_claim": "Monto a reclamar: {amount_to_claim}",
+            "fee": "Tarifa estimada: {tarifa}"
+          },
+          "tooltip": "Transfiere BTS del grupo de tarifas de un activo específico al saldo del emisor"
+        },
+        "asset_update_issuer": {
+          "method": "Emisor de actualización de activos",
+          "title": "Solicitud de emisor de actualización de activos",
+          "rows": {
+            "header": "¿Actualizar el emisor del siguiente activo?",
+            "issuer": "Emisor: {emisor} ({emisorOP})",
+            "asset_to_update": "Activo para actualizar: {asset_to_update}",
+            "new_issuer": "Nuevo emisor: {new_issuer} ({new_issuerOP})",
+            "fee": "Tarifa estimada: {tarifa}"
+          },
+          "tooltip": "Actualice el emisor de un activo a una nueva cuenta de administrador."
+        },
+        "htlc_create": {
+          "method": "HTLC crear",
+          "title": "Solicitud de creación de HTLC",
+          "rows": {
+            "header": "¿Crear la siguiente operación HTLC?",
+            "from": "De: {desde} ({desdeOP})",
+            "to": "A: {a} ({toOP})",
+            "amount": "Cantidad: {cantidad}",
+            "preimage_hash": "Hash de preimagen: {preimage_hash}",
+            "preimage_size": "Tamaño de preimagen: {preimage_size}",
+            "claim_period_seconds": "Período de reclamo (segundos): {claim_period_seconds}",
+            "fee": "Tarifa estimada: {tarifa}"
+          },
+          "tooltip": "Crear una operación de contrato de bloqueo de tiempo hash (HTLC)"
+        },
+        "htlc_redeem": {
+          "method": "HTLC Canjear",
+          "title": "Solicitud de canje de HTLC",
+          "rows": {
+            "header": "¿Canjear la siguiente operación HTLC?",
+            "htlc_id": "ID de HTLC: {htlc_id}",
+            "redeemer": "Redentor: {redentor} ({redeemerOP})",
+            "preimage": "Preimagen: {preimagen}",
+            "extensions": "Extensiones: {extensiones}",
+            "fee": "Tarifa estimada: {tarifa}"
+          },
+          "tooltip": "Canjear el contenido de una operación HTLC"
+        },
+        "htlc_extend": {
+          "method": "Extensión de HTLC",
+          "title": "Solicitud de extensión de HTLC",
+          "rows": {
+            "header": "¿Aprobar la siguiente extensión HTLC?",
+            "htlc_id": "ID de HTLC: {htlc_id}",
+            "update_issuer": "Actualizar emisor: {update_issuer} ({update_issuerOP})",
+            "seconds_to_add": "Segundos para agregar: {seconds_to_add}",
+            "extensions": "Extensiones: {extensiones}",
+            "fee": "Tarifa estimada: {tarifa}"
+          },
+          "tooltip": "Ampliar la duración de una operación HTLC"
+        },
+        "custom_authority_create": {
+          "method": "Creación de autoridad personalizada",
+          "title": "Solicitud de creación de autoridad personalizada",
+          "rows": {
+            "header": "¿Crear la siguiente autoridad personalizada?",
+            "account": "Cuenta: {cuenta} ({cuentaOP})",
+            "enabled": "Habilitado: {habilitado}",
+            "valid_from": "Válido desde: {valid_from}",
+            "valid_to": "Válido para: {valid_to}",
+            "operation_type": "Tipo de operación: {tipo_operación}",
+            "auth": "Autoridad: {autorización}",
+            "restrictions": "Restricciones: {restricciones}",
+            "extensions": "Extensiones: {extensiones}",
+            "fee": "Tarifa estimada: {tarifa}"
+          },
+          "tooltip": "Cree una nueva autoridad personalizada."
+        },
+        "custom_authority_update": {
+          "method": "Actualización de autoridad personalizada",
+          "title": "Solicitud de actualización de autoridad personalizada",
+          "rows": {
+            "header": "¿Actualizar la siguiente autoridad personalizada?",
+            "account": "Cuenta: {cuenta} ({cuentaOP})",
+            "authority_to_update": "Autoridad para actualizar: {authority_to_update}",
+            "new_enabled": "Nuevo habilitado: {new_enabled}",
+            "new_valid_from": "Nuevo válido desde: {new_valid_from}",
+            "new_valid_to": "Nuevo válido para: {new_valid_to}",
+            "new_auth": "Nueva autoridad: {new_auth}",
+            "restrictions_to_remove": "Restricciones para eliminar: {restrictions_to_remove}",
+            "restrictions_to_add": "Restricciones para agregar: {restrictions_to_add}",
+            "extensions": "Extensiones: {extensiones}",
+            "fee": "Tarifa estimada: {tarifa}"
+          },
+          "tooltip": "Actualizar una autoridad personalizada."
+        },
+        "custom_authority_delete": {
+          "method": "Eliminación de autoridad personalizada",
+          "title": "Solicitud de eliminación de autoridad personalizada",
+          "rows": {
+            "header": "¿Eliminar la siguiente autoridad personalizada?",
+            "account": "Cuenta: {cuenta} ({cuentaOP})",
+            "authority_to_delete": "Autoridad para eliminar: {authority_to_delete}",
+            "extensions": "Extensiones: {extensiones}",
+            "fee": "Tarifa estimada: {tarifa}"
+          },
+          "tooltip": "Eliminar una autoridad personalizada."
+        },
+        "ticket_create": {
+          "method": "Creación de entradas",
+          "title": "Solicitud de creación de ticket",
+          "rows": {
+            "header": "¿Crear el siguiente ticket?",
+            "account": "Cuenta: {cuenta} ({cuentaOP})",
+            "target_type": "Tipo de objetivo: {target_type}",
+            "amount": "Cantidad: {cantidad}",
+            "extensions": "Extensiones: {extensiones}",
+            "fee": "Tarifa estimada: {tarifa}"
+          },
+          "tooltip": "Crear un nuevo boleto."
+        },
+        "ticket_update": {
+          "method": "Actualización de entradas",
+          "title": "Solicitud de actualización de boleto",
+          "rows": {
+            "header": "¿Actualizar el siguiente ticket?",
+            "ticket": "Boleto: {boleto}",
+            "account": "Cuenta: {cuenta} ({cuentaOP})",
+            "target_type": "Tipo de objetivo: {target_type}",
+            "amount_for_new_target": "Importe para el nuevo objetivo: {amount_for_new_target}",
+            "extensions": "Extensiones: {extensiones}"
+          },
+          "tooltip": "Actualizar un ticket existente."
+        },
+        "liquidity_pool_create": {
+          "method": "Crear fondo de liquidez",
+          "title": "Solicitud de creación de grupo de liquidez",
+          "rows": {
+            "header": "¿Crear un grupo de liquidez con los siguientes detalles?",
+            "account": "Cuenta: {cuenta} ({cuentaOP})",
+            "asset_a": "Activo A: {activo_a} ({activo_aOP})",
+            "asset_b": "Activo B: {activo_b} ({activo_bOP})",
+            "share_asset": "Compartir activo: {share_asset} ({share_assetOP})",
+            "taker_fee_percent": "Porcentaje de tarifa del tomador: {taker_fee_percent}",
+            "withdrawal_fee_percent": "Porcentaje de tarifa de retiro: {withdrawal_fee_percent}",
+            "extensions": "Extensiones: {extensiones}",
+            "fee": "Tarifa estimada: {tarifa}"
+          },
+          "tooltip": "Crear un grupo de liquidez"
+        },
+        "liquidity_pool_delete": {
+          "method": "Eliminación del grupo de liquidez",
+          "title": "Solicitud de eliminación del grupo de liquidez",
+          "rows": {
+            "header": "¿Eliminar el siguiente grupo de liquidez?",
+            "account": "Cuenta: {cuenta} ({cuentaOP})",
+            "pool_id": "ID del grupo: {pool_id}",
+            "extensions": "Extensiones: {extensiones}",
+            "fee": "Tarifa estimada: {tarifa}"
+          },
+          "tooltip": "Eliminar un grupo de liquidez"
+        },
+        "liquidity_pool_deposit": {
+          "method": "Depósito del fondo de liquidez",
+          "title": "Solicitud de depósito de fondo de liquidez",
+          "rows": {
+            "header": "¿Depositar los siguientes activos en el fondo de liquidez?",
+            "account": "Cuenta: {cuenta} ({cuentaOP})",
+            "pool": "piscina: {piscina}",
+            "asset_a": "Activo A: {activo_a} ({activo_aOP})",
+            "asset_b": "Activo B: {activo_b} ({activo_bOP})",
+            "extensions": "Extensiones: {extensiones}",
+            "fee": "Tarifa estimada: {tarifa}"
+          },
+          "tooltip": "Depositar fondos en un grupo de liquidez"
+        },
+        "liquidity_pool_withdraw": {
+          "method": "Retiro del fondo de liquidez",
+          "title": "Solicitud de retiro del fondo de liquidez",
+          "rows": {
+            "header": "¿Retirar los siguientes activos del fondo de liquidez?",
+            "account": "Cuenta: {cuenta} ({cuentaOP})",
+            "pool": "piscina: {piscina}",
+            "share_asset": "Compartir activo: {share_asset} ({share_assetOP})",
+            "extensions": "Extensiones: {extensiones}",
+            "fee": "Tarifa estimada: {tarifa}"
+          },
+          "tooltip": "Retirar fondos de un fondo de liquidez"
+        },
+        "liquidity_pool_exchange": {
+          "method": "Intercambio de fondos de liquidez",
+          "title": "Solicitud de intercambio de fondo de liquidez",
+          "rows": {
+            "header": "¿Aprueba el siguiente intercambio de fondos de liquidez?",
+            "account": "Cuenta: {cuenta} ({cuentaOP})",
+            "pool": "piscina: {piscina}",
+            "amount_to_sell": "Cantidad a vender: {amount_to_sell}",
+            "min_to_receive": "Min para recibir: {min_to_receive}",
+            "extensions": "Extensiones: {extensiones}",
+            "fee": "Tarifa estimada: {tarifa}"
+          },
+          "tooltip": "Intercambio con un fondo de liquidez."
+        },
+        "samet_fund_create": {
+          "method": "Crear fondo SameT",
+          "title": "Solicitud de creación de fondos de SameT",
+          "rows": {
+            "header": "¿Aprueba la siguiente creación del fondo samet?",
+            "owner_account": "Cuenta de propietario: {owner_account} ({owner_accountOP})",
+            "asset_type": "Tipo de activo: {asset_type}",
+            "balance": "Saldo: {saldo}",
+            "fee_rate": "Tasa de tarifa: {fee_rate}",
+            "extensions": "Extensiones: {extensiones}",
+            "fee": "Tarifa estimada: {tarifa}"
+          },
+          "tooltip": "Crear un nuevo Fondo SameT. "
+        },
+        "samet_fund_delete": {
+          "method": "Eliminación de fondos de SameT",
+          "title": "Solicitud de eliminación de fondos de SameT",
+          "rows": {
+            "header": "¿Eliminar el siguiente fondo de samet?",
+            "owner_account": "Cuenta de propietario: {owner_account} ({owner_accountOP})",
+            "fund_id": "ID del fondo: {fund_id}",
+            "extensions": "Extensiones: {extensiones}",
+            "fee": "Tarifa estimada: {tarifa}"
+          },
+          "tooltip": "Eliminar un objeto de fondo de SameT."
+        },
+        "samet_fund_update": {
+          "method": "Actualización de fondos de SameT",
+          "title": "Solicitud de actualización de fondos de SameT",
+          "rows": {
+            "header": "¿Actualizar el siguiente fondo de samet?",
+            "owner_account": "Cuenta de propietario: {owner_account} ({owner_accountOP})",
+            "fund_id": "ID del fondo: {fund_id}",
+            "delta_amount": "Cantidad delta: {delta_amount}",
+            "new_fee_rate": "Nueva tasa de tarifa: {new_fee_rate}",
+            "extensions": "Extensiones: {extensiones}",
+            "fee": "Tarifa estimada: {tarifa}"
+          },
+          "tooltip": "Actualizar un objeto de fondo de SameT."
+        },
+        "samet_fund_borrow": {
+          "method": "Préstamo de fondos de SameT",
+          "title": "Solicitud de préstamo de fondos de SameT",
+          "rows": {
+            "header": "¿Tomar prestado del siguiente fondo samet?",
+            "borrower": "Prestatario: {prestatario} ({prestatarioOP})",
+            "fund_id": "ID del fondo: {fund_id}",
+            "borrow_amount": "Monto del préstamo: {borrow_amount}",
+            "extensions": "Extensiones: {extensiones}",
+            "fee": "Tarifa estimada: {tarifa}"
+          },
+          "tooltip": "Préstamo de un fondo de SameT."
+        },
+        "samt_fund_repay": {
+          "method": "Reembolso del fondo SameT",
+          "title": "Solicitud de devolución de fondos de SameT",
+          "rows": {
+            "header": "Reembolsar el siguiente fondo mismo",
+            "account": "Cuenta: {cuenta} ({cuentaOP})",
+            "fund_id": "ID del fondo: {fund_id}",
+            "repay_amount": "Monto de reembolso: {repay_amount}",
+            "fund_fee": "Comisión del fondo: {fund_fee}",
+            "extensions": "Extensiones: {extensiones}",
+            "fee": "Tarifa estimada: {tarifa}"
+          },
+          "tooltip": "Pagar deuda a un fondo SameT."
+        },
+        "credit_offer_create": {
+          "method": "Crear oferta de crédito",
+          "title": "solicitud de creación de oferta de crédito",
+          "rows": {
+            "header": "¿Aprueba la creación de la siguiente oferta de crédito?",
+            "owner_account": "Cuenta de propietario: {owner_account} ({owner_accountOP})",
+            "asset_type": "Tipo de activo: {asset_type}",
+            "balance": "Saldo: {saldo}",
+            "fee_rate": "Tasa de tarifa: {fee_rate}",
+            "max_duration_seconds": "Segundos de duración máxima: {max_duration_seconds}",
+            "min_deal_amount": "Importe mínimo de la oferta: {min_deal_amount}",
+            "enabled": "Habilitado: {habilitado}",
+            "auto_disable_time": "Tiempo de desactivación automática: {auto_disable_time}",
+            "acceptable_collateral": "Garantía aceptable: {acceptable_collateral}",
+            "acceptable_borrowers": "Prestatarios aceptables: {acceptable_borrowers}",
+            "extensions": "Extensiones: {extensiones}",
+            "fee": "Tarifa estimada: {tarifa}"
+          },
+          "tooltip": "Crear una nueva oferta de crédito. "
+        },
+        "credit_offer_delete": {
+          "method": "Eliminar oferta de crédito",
+          "title": "Solicitud de eliminación de oferta de crédito",
+          "rows": {
+            "header": "¿Eliminar la siguiente oferta de crédito?",
+            "owner_account": "Cuenta de propietario: {owner_account} ({owner_accountOP})",
+            "offer_id": "ID de la oferta: {offer_id}",
+            "extensions": "Extensiones: {extensiones}",
+            "fee": "Tarifa estimada: {tarifa}"
+          },
+          "tooltip": "Eliminar una oferta de crédito."
+        },
+        "credit_offer_update": {
+          "method": "Actualización de oferta de crédito",
+          "title": "Solicitud de actualización de oferta de crédito",
+          "rows": {
+            "header": "¿Actualizar la siguiente oferta de crédito?",
+            "owner_account": "Cuenta de propietario: {owner_account} ({owner_accountOP})",
+            "offer_id": "ID de la oferta: {offer_id}",
+            "delta_amount": "Cantidad delta: {delta_amount}",
+            "fee_rate": "Tasa de tarifa: {fee_rate}",
+            "max_duration_seconds": "Segundos de duración máxima: {max_duration_seconds}",
+            "min_deal_amount": "Importe mínimo de la oferta: {min_deal_amount}",
+            "enabled": "Habilitado: {habilitado}",
+            "auto_disable_time": "Tiempo de desactivación automática: {auto_disable_time}",
+            "acceptable_collateral": "Garantía aceptable: {acceptable_collateral}",
+            "acceptable_borrowers": "Prestatarios aceptables: {acceptable_borrowers}",
+            "extensions": "Extensiones: {extensiones}",
+            "fee": "Tarifa estimada: {tarifa}"
+          },
+          "tooltip": "Actualizar una oferta de crédito"
+        },
+        "credit_offer_accept": {
+          "method": "Se acepta oferta de credito",
+          "title": "Oferta de crédito aceptar solicitud",
+          "rows": {
+            "header": "¿Aprueba la siguiente oferta de crédito?",
+            "borrower": "Prestatario: {prestatario} ({prestatarioOP})",
+            "offer_id": "ID de la oferta: {offer_id}",
+            "borrow_amount": "Monto del préstamo: {borrow_amount}",
+            "collateral": "Garantía: {garantía}",
+            "max_fee_rate": "Tasa de tarifa máxima: {max_fee_rate}",
+            "min_duration_seconds": "Segundos de duración mínima: {min_duration_seconds}",
+            "extensions": "Extensiones: {extensiones}",
+            "fee": "Tarifa estimada: {tarifa}"
+          },
+          "tooltip": "Aceptar una oferta de crédito y crear un acuerdo de crédito."
+        },
+        "credit_deal_repay": {
+          "method": "Reembolso de trato de crédito",
+          "title": "Solicitud de reembolso de trato de crédito",
+          "rows": {
+            "header": "¿Pagar la siguiente oferta de crédito?",
+            "account": "Cuenta: {cuenta} ({cuentaOP})",
+            "deal_id": "ID de oferta: {deal_id}",
+            "repay_amount": "Monto de reembolso: {repay_amount}",
+            "credit_fee": "Tarifa de crédito: {credit_fee}",
+            "extensions": "Extensiones: {extensiones}",
+            "fee": "Tarifa estimada: {tarifa}"
+          },
+          "tooltip": "Pagar un trato de crédito."
         }
       }
     }

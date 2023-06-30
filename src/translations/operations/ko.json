@@ -77,303 +77,1076 @@
       "BTS": {
         "getAccount": {
           "method": "getAccount",
+          "title": "계정 정보 요청",
           "tooltip": "지갑에 블록체인 계정 세부 정보를 요청합니다."
         },
         "requestSignature": {
           "method": "요청서명",
+          "title": "서명 요청",
           "tooltip": "지갑에 블록체인 서명 요청"
         },
         "injectedCall": {
           "method": "주입된 호출",
+          "title": "주입된 호출 요청",
           "tooltip": "주입된 블록체인 작업을 처리하도록 지갑에 요청"
         },
         "voteFor": {
           "method": "투표하다",
+          "title": "투표 요청",
           "tooltip": "블록체인 투표 수행"
         },
         "signMessage": {
           "method": "기호메시지",
+          "title": "서명 메시지 요청",
           "tooltip": "블록체인 기반 메시지 서명"
         },
         "signNFT": {
           "method": "서명NFT",
+          "title": "NFT 요청 서명",
           "tooltip": "NFT 콘텐츠 서명"
         },
         "verifyMessage": {
           "method": "verifyMessage",
+          "title": "메시지 요청 확인",
           "tooltip": "블록체인 기반 서명 메시지 확인"
         },
         "transfer": {
           "method": "옮기다",
+          "title": "전송 요청",
+          "rows": {
+            "from": "발신자: {from} ({opFrom})",
+            "to": "받는 사람: {to} ({opTo})",
+            "amount": "금액: {금액}"
+          },
           "tooltip": "한 계정에서 다른 계정으로 자산 보내기"
         },
         "limit_order_create": {
           "method": "지정가 주문 생성",
-          "tooltip": "특정 시간까지 지정된 환율로 자산의 양을 매도하겠다는 제안"
+          "title": "지정가 주문 생성 요청",
+          "rows": {
+            "trade": "거래",
+            "tradeFK": "무역 (채우거나 죽이기)",
+            "seller": "판매자: {seller} ({opSeller})",
+            "selling": "매도: {amount}",
+            "buying": "구매: {amount}",
+            "price": "가격: {price} {sellSymbol}/{buySymbol}"
+          },
+          "tooltip": "특정 시점까지 지정된 환율로 자산의 양을 매도하겠다는 제안"
         },
         "limit_order_cancel": {
           "method": "지정가 주문 취소",
+          "title": "지정가 주문 취소 요청",
+          "rows": {
+            "header": "다음 지정가 주문을 취소하시겠습니까?",
+            "id": "주문 ID: {id}",
+            "fees": "예상 수수료: {fees}",
+            "account": "수수료 지불 계정: {account}"
+          },
           "tooltip": "지정가 주문 취소"
         },
         "call_order_update": {
           "method": "전화 주문 업데이트",
+          "title": "전화 주문 업데이트 요청",
+          "rows": {
+            "header": "호출 순서를 다음과 같이 업데이트하시겠습니까?",
+            "funding_account": "펀딩 계정: {funding_account}",
+            "delta_collateral": "델타 담보: {delta_collateral}({id})",
+            "delta_debt": "델타 부채: {delta_debt} ({id})",
+            "fees": "예상 수수료: {fees}"
+          },
           "tooltip": "기존 통화 주문 업데이트"
         },
         "account_create": {
           "method": "계정 생성",
+          "title": "계정 생성 요청",
+          "rows": {
+            "header": "다음 계정을 만드시겠습니까?",
+            "registrar": "레지스트라: {registrar} ({opRegistrar})",
+            "referrer": "리퍼러: {referrer} ({opReferrer})",
+            "referrer_percent": "리퍼러 퍼센트: {referrer_percent}",
+            "name": "이름: {이름}",
+            "ownerHeader": "소유자:",
+            "activeHeader": "활동적인:",
+            "weight_threshold": "가중치 임계값: {weight_threshold}",
+            "account_auths": "계정 인증: {account_auths}",
+            "key_auths": "키 인증: {key_auths}",
+            "address_auths": "주소 인증: {address_auths}",
+            "optionsHeader": "옵션:",
+            "memo_key": "메모 키: {memo_key}",
+            "voting_account": "투표 계정: {voting_account} ({opVotingAccount})",
+            "num_witness": "증인 수: {num_witness}",
+            "num_committee": "위원 수: {num_committee}",
+            "votes": "투표: {votes}",
+            "extensions": "확장 프로그램: {extensions}",
+            "fees": "예상 수수료: {fees}"
+          },
           "tooltip": "새 계정 만들기"
-        },
-        "asset_update": {
-          "method": "자산 업데이트",
-          "tooltip": "생성된 자산 설정 업데이트"
-        },
-        "asset_update_bitasset": {
-          "method": "자산 업데이트 비트자산",
-          "tooltip": "생성된 비트에셋 설정 업데이트"
-        },
-        "asset_update_feed_producers": {
-          "method": "자산 업데이트 피드 제작자",
-          "tooltip": "생성된 비트 자산에 대해 승인된 피드 제작자 목록 업데이트"
-        },
-        "asset_issue": {
-          "method": "자산 발행",
-          "tooltip": "생성한 자산을 개인에게 발행"
-        },
-        "asset_reserve": {
-          "method": "자산 준비금",
-          "tooltip": "생성된 자산 예약"
-        },
-        "asset_fund_fee_pool": {
-          "method": "자산 펀드 수수료 풀",
-          "tooltip": "생성된 자산에 대한 수수료 풀에 자금을 지원합니다."
-        },
-        "asset_settle": {
-          "method": "자산 정산",
-          "tooltip": "포트폴리오의 자산 정산"
-        },
-        "asset_global_settle": {
-          "method": "자산 글로벌 결제",
-          "tooltip": "생성된 비트 자산 중 하나를 전역적으로 정산"
-        },
-        "asset_publish_feed": {
-          "method": "자산 게시 피드",
-          "tooltip": "비트에셋에 대한 가격 피드 게시"
-        },
-        "witness_create": {
-          "method": "목격자 생성",
-          "tooltip": "증인 계정 만들기"
-        },
-        "witness_update": {
-          "method": "증인 업데이트",
-          "tooltip": "증인 계정 업데이트"
-        },
-        "proposal_create": {
-          "method": "제안서 작성",
-          "tooltip": "블록체인 운영 제안서 작성"
-        },
-        "proposal_update": {
-          "method": "제안 업데이트",
-          "tooltip": "블록체인 운영 제안 업데이트"
-        },
-        "proposal_delete": {
-          "method": "제안 삭제",
-          "tooltip": "블록체인 운영 제안 삭제"
-        },
-        "withdraw_permission_create": {
-          "method": "권한 생성 철회",
-          "tooltip": "철회 권한 만들기"
-        },
-        "withdraw_permission_update": {
-          "method": "철회 권한 업데이트",
-          "tooltip": "철회 권한 업데이트"
-        },
-        "withdraw_permission_claim": {
-          "method": "권한 요청 철회",
-          "tooltip": "철회 권한 요청"
-        },
-        "withdraw_permission_delete": {
-          "method": "철회 권한 삭제",
-          "tooltip": "철회 권한 삭제"
-        },
-        "committee_member_create": {
-          "method": "위원 생성",
-          "tooltip": "위원 계정 만들기"
-        },
-        "committee_member_update": {
-          "method": "위원 업데이트",
-          "tooltip": "위원 계정 세부 정보 업데이트"
-        },
-        "committee_member_update_global_parameters": {
-          "method": "위원회 구성원 업데이트 전역 매개변수",
-          "tooltip": "Bitshares 블록체인 전역 매개 변수 값에 대한 위원회 구성원 입장 게시"
-        },
-        "vesting_balance_create": {
-          "method": "베스팅 잔액 생성",
-          "tooltip": "베스팅 잔액 만들기"
-        },
-        "vesting_balance_withdraw": {
-          "method": "베스팅 잔액 인출",
-          "tooltip": "베스팅 잔액에서 인출"
-        },
-        "worker_create": {
-          "method": "작업자 생성",
-          "tooltip": "작업자 제안 만들기"
-        },
-        "balance_claim": {
-          "method": "잔액 청구",
-          "tooltip": "잔액에서 청구"
-        },
-        "override_transfer": {
-          "method": "대체 전송",
-          "tooltip": "전송 작업 재정의"
-        },
-        "transfer_to_blind": {
-          "method": "맹인으로 전환",
-          "tooltip": "블라인드 대상으로 자산 전송"
-        },
-        "blind_transfer": {
-          "method": "블라인드 전송",
-          "tooltip": "블라인드 자산을 블라인드 방식으로 이전"
-        },
-        "transfer_from_blind": {
-          "method": "맹인에서 이동",
-          "tooltip": "블라인드 잔액에서 자산 인출"
-        },
-        "asset_claim_fees": {
-          "method": "자산 청구 수수료",
-          "tooltip": "자산에서 수수료 청구"
-        },
-        "bid_collateral": {
-          "method": "입찰 자료",
-          "tooltip": "전 세계적으로 결제될 때 비트에셋 담보 담보에 입찰"
-        },
-        "asset_claim_pool": {
-          "method": "자산 클레임 풀",
-          "tooltip": "지정된 자산의 수수료 풀에서 BTS를 발행자의 잔액으로 다시 이체합니다."
-        },
-        "asset_update_issuer": {
-          "method": "자산 업데이트 발행자",
-          "tooltip": "자산 발행자를 새 관리자 계정으로 업데이트합니다."
-        },
-        "htlc_create": {
-          "method": "해시 시간 잠긴 계약 생성",
-          "tooltip": "Hash Time Locked Contract 작업 생성"
-        },
-        "htlc_redeem": {
-          "method": "해시 시간 잠긴 계약 상환",
-          "tooltip": "Hash Time Locked Contract 작업의 내용을 상환합니다."
-        },
-        "htlc_extend": {
-          "method": "해시 시간 잠긴 계약 연장",
-          "tooltip": "Hash Time Locked Contract 작업 기간 연장"
-        },
-        "custom_authority_create": {
-          "method": "커스텀 권한 생성",
-          "tooltip": "새 사용자 지정 권한을 만듭니다."
-        },
-        "custom_authority_update": {
-          "method": "사용자 지정 권한 업데이트",
-          "tooltip": "사용자 지정 권한을 업데이트합니다."
-        },
-        "custom_authority_delete": {
-          "method": "맞춤 권한 삭제",
-          "tooltip": "사용자 지정 권한을 삭제합니다."
-        },
-        "ticket_create": {
-          "method": "티켓 생성",
-          "tooltip": "새 티켓을 만듭니다."
-        },
-        "ticket_update": {
-          "method": "티켓 업데이트",
-          "tooltip": "기존 티켓을 업데이트합니다."
-        },
-        "liquidity_pool_create": {
-          "method": "유동성 풀 생성",
-          "tooltip": "유동성 풀 만들기"
-        },
-        "liquidity_pool_delete": {
-          "method": "유동성 풀 삭제",
-          "tooltip": "유동성 풀 삭제"
-        },
-        "liquidity_pool_deposit": {
-          "method": "유동성 풀 예금",
-          "tooltip": "유동성 풀에 자금 입금"
-        },
-        "liquidity_pool_withdraw": {
-          "method": "유동성 풀 철회",
-          "tooltip": "유동성 풀에서 자금 인출"
-        },
-        "liquidity_pool_exchange": {
-          "method": "유동성 풀 교환",
-          "tooltip": "유동성 풀과 교환하십시오."
-        },
-        "samet_fund_create": {
-          "method": "SameT 펀드 생성",
-          "tooltip": "새 SameT 펀드를 만듭니다. "
-        },
-        "samet_fund_delete": {
-          "method": "SameT 펀드 삭제",
-          "tooltip": "SameT 펀드 개체를 삭제합니다."
-        },
-        "samet_fund_update": {
-          "method": "SameT 펀드 업데이트",
-          "tooltip": "SameT 펀드 개체를 업데이트합니다."
-        },
-        "samet_fund_borrow": {
-          "method": "SameT 펀드 차용",
-          "tooltip": "SameT 펀드에서 빌립니다."
-        },
-        "samt_fund_repay": {
-          "method": "SameT 자금 상환",
-          "tooltip": "SameT 펀드로 부채를 상환하십시오."
-        },
-        "credit_offer_create": {
-          "method": "신용 제공 생성",
-          "tooltip": "새 신용 제안을 만듭니다. "
-        },
-        "credit_offer_delete": {
-          "method": "크레딧 제안 삭제",
-          "tooltip": "신용 제안을 삭제합니다."
-        },
-        "credit_offer_update": {
-          "method": "크레딧 제공 업데이트",
-          "tooltip": "신용 제안 업데이트"
-        },
-        "credit_offer_accept": {
-          "method": "신용 제안 수락",
-          "tooltip": "신용 제안을 수락하고 신용 거래를 생성합니다."
-        },
-        "credit_deal_repay": {
-          "method": "신용 거래 상환",
-          "tooltip": "신용 거래를 상환하십시오."
-        },
-        "custom": {
-          "method": "관습",
-          "tooltip": "증인 합의 위에 더 높은 수준의 프로토콜을 추가하는 일반적인 방법을 제공합니다."
-        },
-        "assert": {
-          "method": "주장하다",
-          "tooltip": "일부 조건이 참임을 주장합니다."
         },
         "account_update": {
           "method": "계정 업데이트",
+          "title": "계정 업데이트 요청",
+          "rows": {
+            "header": "다음 계정을 만드시겠습니까?",
+            "warning": "경고: 이 작업은 되돌릴 수 없습니다!",
+            "account": "계정: {account} ({opAccount})",
+            "owner": "소유자: {소유자}",
+            "active": "활성: {활성}",
+            "new_options": "새로운 옵션: {new_options}",
+            "extensions": "확장 프로그램: {extensions}",
+            "fees": "예상 수수료: {fees}"
+          },
           "tooltip": "이 작업은 기존 계정을 업데이트하는 데 사용됩니다. "
         },
         "account_whitelist": {
           "method": "계정 화이트리스트",
+          "title": "계정 화이트리스트 요청",
+          "rows": {
+            "header": "계정 화이트리스트 세부 정보:",
+            "authorizing_account": "인증 계정: {authorizingAccount} (authorizingAccountOP)",
+            "account_to_list": "나열할 계정: {accountToList} (accountToListOP)",
+            "new_listing": "새 목록: {newListing}",
+            "extensions": "확장 프로그램: {extensions}",
+            "fee": "수수료: {수수료}"
+          },
           "tooltip": "이 작업은 주로 화이트리스트 자산 거래를 위해 계정을 화이트리스트 및 블랙리스트에 추가하는 데 사용됩니다."
         },
         "account_upgrade": {
           "method": "계정 업그레이드",
+          "title": "계정 업그레이드 요청",
+          "rows": {
+            "header": "계정을 평생 회원으로 업그레이드하시겠습니까?",
+            "account_to_upgrade": "업그레이드할 계정: {accountToUpgrade} (accountToUpgradeOP)",
+            "upgrade_to_lifetime_member": "평생 회원으로 업그레이드: {upgradeToLifetimeMember}",
+            "extensions": "확장 프로그램: {extensions}",
+            "fee": "예상 수수료: {fee}"
+          },
           "tooltip": "이 작업은 계정을 회원으로 업그레이드하거나 구독을 갱신하는 데 사용됩니다."
         },
         "account_transfer": {
           "method": "계좌이체",
+          "title": "계좌 이체 요청",
+          "rows": {
+            "header": "새 소유자에게 계정을 이전하시겠습니까?",
+            "warning": "경고: 이 작업은 되돌릴 수 없습니다!",
+            "account_id": "계정 ID: {originalOwner}({account_id})",
+            "new_owner": "새 소유자: {newOwner} ({newOwnerOP})",
+            "fee": "예상 수수료: {fee}"
+          },
           "tooltip": "화이트리스트를 지우는 동안 다른 계정으로 계정을 이체합니다."
         },
         "asset_create": {
           "method": "자산 생성",
+          "title": "자산 생성 요청",
+          "rows": {
+            "header": "다음 자산을 만드시겠습니까?",
+            "symbol": "기호: {기호}",
+            "main": "메인: {메인}",
+            "market": "시장: {시장}",
+            "short_name": "짧은 이름: {short_name}",
+            "precision": "정밀도: {정밀도}",
+            "max_supply": "최대 공급: {max_supply}",
+            "market_fee_percent": "시장 수수료 비율: {market_fee_percent}",
+            "max_market_fee": "최대 시장 수수료: {max_market_fee}",
+            "cer": "핵심 환율:",
+            "cer_base_amount": "기본 금액: {cer_base_amount}",
+            "cer_base_id": "기본 자산 ID: {cer_base_id}",
+            "cer_quote_amount": "견적 금액: {cer_quote_amount}",
+            "cer_quote_id": "견적 자산 ID: {cer_quote_id}",
+            "whitelist_authorities": "화이트리스트 권한: {whitelist_authorities}",
+            "blacklist_authorities": "블랙리스트 권한: {blacklist_authorities}",
+            "whitelist_markets": "화이트리스트 시장: {whitelist_markets}",
+            "blacklist_markets": "블랙리스트 시장: {blacklist_markets}",
+            "is_prediction_market": "예측 시장인가: {is_prediction_market}",
+            "permissions": "권한:",
+            "perm_charge_market_fee": "청구 시장 수수료: {charge_market_fee}",
+            "perm_white_list": "화이트리스트: {white_list}",
+            "perm_override_authority": "재정의 권한: {override_authority}",
+            "perm_transfer_restricted": "전송 제한됨: {transfer_restricted}",
+            "perm_disable_confidential": "기밀 비활성화: {disable_confidential}",
+            "flags": "플래그:",
+            "flag_charge_market_fee": "청구 시장 수수료: {charge_market_fee}",
+            "flag_white_list": "화이트리스트: {white_list}",
+            "flag_override_authority": "재정의 권한: {override_authority}",
+            "flag_transfer_restricted": "전송 제한됨: {transfer_restricted}",
+            "flag_disable_confidential": "기밀 비활성화: {disable_confidential}",
+            "bitasset": "비트자산 정보:",
+            "feed_lifetime_sec": "피드 수명(초): {feed_lifetime_sec}",
+            "force_settlement_delay_sec": "강제 정산 지연(초): {force_settlement_delay_sec}",
+            "force_settlement_offset_percent": "강제 정산 오프셋 퍼센트: {force_settlement_offset_percent}",
+            "maximum_force_settlement_volume": "최대 강제 정산량: {maximum_force_settlement_volume}",
+            "minimum_feeds": "최소 피드: {minimum_feeds}",
+            "short_backing_asset": "짧은 백업 자산: {short_backing_asset}",
+            "nft": "NFT 콘텐츠:",
+            "acknowledgements": "감사의 말: {acknowledgements}",
+            "artist": "아티스트: {아티스트}",
+            "attestation": "증명: {증명}",
+            "holder_license": "보유자 라이선스: {holder_license}",
+            "license": "라이센스: {라이센스}",
+            "narrative": "내러티브: {narrative}",
+            "title": "제목: {제목}",
+            "tags": "태그: {태그}",
+            "type": "유형: {유형}"
+          },
           "tooltip": "Bitshares 블록체인에 자산 생성"
+        },
+        "asset_update": {
+          "method": "자산 업데이트",
+          "title": "자산 업데이트 요청",
+          "rows": {
+            "header": "다음 자산을 업데이트하시겠습니까?",
+            "symbol": "기호: {기호}",
+            "main": "메인: {메인}",
+            "market": "시장: {시장}",
+            "short_name": "짧은 이름: {short_name}",
+            "precision": "정밀도: {정밀도}",
+            "max_supply": "최대 공급: {max_supply}",
+            "market_fee_percent": "시장 수수료 비율: {market_fee_percent}",
+            "max_market_fee": "최대 시장 수수료: {max_market_fee}",
+            "cer": "핵심 환율:",
+            "cer_base_amount": "기본 금액: {cer_base_amount}",
+            "cer_base_id": "기본 자산 ID: {cer_base_id}",
+            "cer_quote_amount": "견적 금액: {cer_quote_amount}",
+            "cer_quote_id": "견적 자산 ID: {cer_quote_id}",
+            "whitelist_authorities": "화이트리스트 권한: {whitelist_authorities}",
+            "blacklist_authorities": "블랙리스트 권한: {blacklist_authorities}",
+            "whitelist_markets": "화이트리스트 시장: {whitelist_markets}",
+            "blacklist_markets": "블랙리스트 시장: {blacklist_markets}",
+            "is_prediction_market": "예측 시장인가: {is_prediction_market}",
+            "permissions": "권한:",
+            "perm_charge_market_fee": "청구 시장 수수료: {charge_market_fee}",
+            "perm_white_list": "화이트리스트: {white_list}",
+            "perm_override_authority": "재정의 권한: {override_authority}",
+            "perm_transfer_restricted": "전송 제한됨: {transfer_restricted}",
+            "perm_disable_confidential": "기밀 비활성화: {disable_confidential}",
+            "flags": "플래그:",
+            "flag_charge_market_fee": "청구 시장 수수료: {charge_market_fee}",
+            "flag_white_list": "화이트리스트: {white_list}",
+            "flag_override_authority": "재정의 권한: {override_authority}",
+            "flag_transfer_restricted": "전송 제한됨: {transfer_restricted}",
+            "flag_disable_confidential": "기밀 비활성화: {disable_confidential}",
+            "bitasset": "비트자산 정보:",
+            "feed_lifetime_sec": "피드 수명(초): {feed_lifetime_sec}",
+            "force_settlement_delay_sec": "강제 정산 지연(초): {force_settlement_delay_sec}",
+            "force_settlement_offset_percent": "강제 정산 오프셋 퍼센트: {force_settlement_offset_percent}",
+            "maximum_force_settlement_volume": "최대 강제 정산량: {maximum_force_settlement_volume}",
+            "minimum_feeds": "최소 피드: {minimum_feeds}",
+            "short_backing_asset": "짧은 백업 자산: {short_backing_asset}",
+            "nft": "NFT 콘텐츠:",
+            "acknowledgements": "감사의 말: {acknowledgements}",
+            "artist": "아티스트: {아티스트}",
+            "attestation": "증명: {증명}",
+            "holder_license": "보유자 라이선스: {holder_license}",
+            "license": "라이센스: {라이센스}",
+            "narrative": "내러티브: {narrative}",
+            "title": "제목: {제목}",
+            "tags": "태그: {태그}",
+            "type": "유형: {유형}"
+          },
+          "tooltip": "자산의 설정을 업데이트합니다."
+        },
+        "asset_update_bitasset": {
+          "method": "자산 업데이트 비트자산",
+          "title": "자산 업데이트 비트 자산 요청",
+          "rows": {
+            "header": "비트에셋 업데이트를 승인하시겠습니까?",
+            "issuer": "발급자: {issuer}",
+            "asset_to_update": "업데이트할 자산: {asset_to_update}",
+            "new_options": "새로운 옵션:",
+            "feed_lifetime_sec": "피드 수명(초): {feed_lifetime_sec}",
+            "minimum_feeds": "최소 피드: {minimum_feeds}",
+            "force_settlement_delay_sec": "강제 정산 지연(초): {force_settlement_delay_sec}",
+            "force_settlement_offset_percent": "강제 정산 오프셋 퍼센트: {force_settlement_offset_percent}",
+            "maximum_force_settlement_volume": "최대 강제 정산량: {maximum_force_settlement_volume}",
+            "short_backing_asset": "짧은 백업 자산: {symbol} ({short_backing_asset})",
+            "extensions": "확장 프로그램: {extensions}",
+            "noExtensions": "확장자 없음",
+            "fee": "예상 수수료: {fee} ({id})"
+          },
+          "tooltip": "생성된 비트에셋 설정 업데이트"
+        },
+        "asset_update_feed_producers": {
+          "method": "자산 업데이트 피드 제작자",
+          "title": "저작물 업데이트 피드 제작자 요청",
+          "rows": {
+            "header": "Bitasset 피드 제작자에 대한 변경을 승인하시겠습니까?",
+            "issuer": "발급자: {issuer} ({issuerOP})",
+            "asset_to_update": "업데이트할 자산: {symbol} ({asset_to_update})",
+            "new_feed_producers": "새 피드 제작자: {new_feed_producers}",
+            "fee": "예상 수수료: {fee}"
+          },
+          "tooltip": "생성된 비트 자산에 대해 승인된 피드 제작자 목록 업데이트"
+        },
+        "asset_issue": {
+          "method": "자산 발행",
+          "title": "자산 발행 요청",
+          "rows": {
+            "header": "{amount} {symbol} ({assetID})을(를) {to}({toID})에 발행하시겠습니까?",
+            "fee": "예상 수수료: {fee} ({id})"
+          },
+          "tooltip": "생성한 자산을 개인에게 발행"
+        },
+        "asset_reserve": {
+          "method": "자산 준비금",
+          "title": "자산 준비 요청",
+          "rows": {
+            "header": "다음 자산 예약을 승인하시겠습니까?",
+            "payer": "지불인: {payer} ({payerOP})",
+            "amount_to_reserve": "예비 금액: {amount_to_reserve} ({amount_to_reserveOP})",
+            "extensions": "확장 프로그램: {extensions}",
+            "fee": "예상 수수료: {fee}"
+          },
+          "tooltip": "생성된 자산 예약"
+        },
+        "asset_fund_fee_pool": {
+          "method": "자산 펀드 수수료 풀",
+          "title": "자산 펀드 수수료 풀 요청",
+          "rows": {
+            "header": "다음 자산의 수수료 풀에 자금을 조달하시겠습니까?",
+            "from_account": "발신 계정: {from_account} ({from_accountOP})",
+            "asset": "자산: {자산} ({assetOP})",
+            "amount": "금액: {금액}",
+            "fee": "예상 수수료: {fee}"
+          },
+          "tooltip": "생성된 자산에 대한 수수료 풀에 자금을 지원합니다."
+        },
+        "asset_settle": {
+          "method": "자산 정산",
+          "title": "자산 정산 요청",
+          "rows": {
+            "header": "뒷받침 담보로 다음 자산을 정산하시겠습니까?",
+            "account": "계정: {account} ({accountOP})",
+            "amount": "금액: {amount} ({assetID})",
+            "fee": "예상 수수료: {fee}"
+          },
+          "tooltip": "포트폴리오의 자산 정산"
+        },
+        "asset_global_settle": {
+          "method": "자산 글로벌 결제",
+          "title": "자산 글로벌 정산 요청",
+          "rows": {
+            "header": "다음 자산에 대한 글로벌 결제를 수행하시겠습니까?",
+            "issuer": "발급자: {issuer} ({issuerOP})",
+            "asset_to_settle": "정산할 자산: {asset_to_settle} ({asset_to_settleOP})",
+            "settle_price": "정가: {settle_price}",
+            "fee": "예상 수수료: {fee}"
+          },
+          "tooltip": "생성된 비트 자산 중 하나를 전역적으로 정산"
+        },
+        "asset_publish_feed": {
+          "method": "자산 게시 피드",
+          "title": "자산 게시 피드 요청",
+          "rows": {
+            "header": "다음 자산에 대한 가격 피드를 게시하시겠습니까?",
+            "publisher": "출판사: {publisher} ({publisherOP})",
+            "asset_id": "자산 ID: {symbol} ({asset_idOP})",
+            "feed": "밥을 먹이다:",
+            "core_exchange_rate": "핵심 환율: {core_exchange_rate}",
+            "settlement_price": "결제 가격: {settlement_price}",
+            "maintenance_collateral_ratio": "유지보수 담보 비율: {maintenance_collateral_ratio}",
+            "maximum_short_squeeze_ratio": "최대 숏 스퀴즈 비율: {maximum_short_squeeze_ratio}",
+            "extensions": "확장 프로그램: {extensions}",
+            "fee": "예상 수수료: {fee}"
+          },
+          "tooltip": "비트에셋에 대한 가격 피드 게시"
+        },
+        "witness_create": {
+          "method": "목격자 생성",
+          "title": "증인 만들기 요청",
+          "rows": {
+            "header": "다음 세부 정보로 증인을 만드시겠습니까?",
+            "witness_account": "증인 계정: {witness_account} ({witness_accountOP})",
+            "url": "URL: {URL}",
+            "block_signing_key": "블록 서명 키: {block_signing_key}",
+            "fee": "예상 수수료: {fee}"
+          },
+          "tooltip": "증인 계정 만들기"
+        },
+        "witness_update": {
+          "method": "증인 업데이트",
+          "title": "증인 업데이트 요청",
+          "rows": {
+            "header": "증인 세부 정보를 다음으로 업데이트하시겠습니까?",
+            "witness": "증인: {증인}",
+            "witness_account": "증인 계정: {witness_account} ({witness_accountOP})",
+            "new_url": "새 URL: {new_url}",
+            "new_signing_key": "새 서명 키: {new_signing_key}",
+            "fee": "예상 수수료: {fee}"
+          },
+          "tooltip": "증인 계정 업데이트"
+        },
+        "proposal_create": {
+          "method": "제안서 작성",
+          "title": "제안 생성 요청",
+          "rows": {
+            "header": "다음 제안서를 만드시겠습니까?",
+            "expiration_time": "만료 시간: {expiration_time}",
+            "proposed_ops": "제안된 작업: {proposed_ops}",
+            "review_period_seconds": "검토 기간 초: {review_period_seconds}",
+            "fee_paying_account": "수수료 납부 계좌: {fee_paying_account} ({fee_paying_accountOP})",
+            "fee": "예상 수수료: {fee}"
+          },
+          "tooltip": "블록체인 운영 제안서 작성"
+        },
+        "proposal_update": {
+          "method": "제안 업데이트",
+          "title": "제안 업데이트 요청",
+          "rows": {
+            "header": "다음 제안을 업데이트하시겠습니까?",
+            "proposal": "제안: {제안}",
+            "active_approvals_to_add": "추가할 활성 승인: {active_approvals_to_add}",
+            "active_approvals_to_remove": "제거할 활성 승인: {active_approvals_to_remove}",
+            "owner_approvals_to_add": "추가할 소유자 승인: {owner_approvals_to_add}",
+            "owner_approvals_to_remove": "제거할 소유자 승인: {owner_approvals_to_remove}",
+            "key_approvals_to_add": "추가할 주요 승인: {key_approvals_to_add}",
+            "key_approvals_to_remove": "제거할 주요 승인: {key_approvals_to_remove}",
+            "fee_paying_account": "수수료 납부 계좌: {fee_paying_account} ({fee_paying_accountOP})",
+            "extensions": "확장 프로그램: {extensions}",
+            "fee": "예상 수수료: {fee}"
+          },
+          "tooltip": "블록체인 운영 제안 업데이트"
+        },
+        "proposal_delete": {
+          "method": "제안 삭제",
+          "title": "제안 삭제 요청",
+          "rows": {
+            "header": "다음 제안을 삭제하시겠습니까?",
+            "using_owner_authority": "소유자 권한 사용: {using_owner_authority}",
+            "proposal": "제안: {제안}",
+            "fee_paying_account": "수수료 납부 계좌: {fee_paying_account} ({fee_paying_accountOP})",
+            "extensions": "확장 프로그램: {extensions}",
+            "fee": "예상 수수료: {fee}"
+          },
+          "tooltip": "블록체인 운영 제안 삭제"
+        },
+        "withdraw_permission_create": {
+          "method": "권한 생성 철회",
+          "title": "권한 생성 요청 철회",
+          "rows": {
+            "header": "자동이체 승인",
+            "recipient": "수신자: {recipient} ({recipientOP})",
+            "withdraw_from": "인출할 계정: {withdraw_from} ({withdraw_fromOP})",
+            "taking": "{period_qty} 기간 동안 {period_sec}초마다 {amount}를 가져가세요.",
+            "start": "시작: {start}"
+          },
+          "tooltip": "철회 권한 만들기"
+        },
+        "withdraw_permission_update": {
+          "method": "철회 권한 업데이트",
+          "title": "권한 업데이트 요청 철회",
+          "rows": {
+            "header": "증인 권한을 다음으로 업데이트하시겠습니까?",
+            "withrdaw_from_account": "계정에서 인출: {withrdaw_from_account} ({withrdaw_from_accountOP})",
+            "authorized_account": "승인된 계정: {authorized_account} ({authorized_accountOP})",
+            "permission_to_update": "업데이트 권한: {permission_to_update}",
+            "withdrawal_limited": "인출 한도: {withdrawal_limit}",
+            "withdrawal_unlimited": "출금한도: {withdrawal_limit} ({withdrawal_limitOP})",
+            "withdrawal_period_sec": "철회 기간(초): {withdrawal_period_sec}",
+            "period_start_time": "기간 시작 시간: {period_start_time}",
+            "periods_until_expiration": "만료까지의 기간: {periods_until_expiration}",
+            "fee": "예상 수수료: {fee}"
+          },
+          "tooltip": "철회 권한 업데이트"
+        },
+        "withdraw_permission_claim": {
+          "method": "권한 요청 철회",
+          "title": "권한 주장 요청 철회",
+          "rows": {
+            "header": "다음 철회 권한을 요청하십시오",
+            "withdraw_permission": "권한 철회: {withdraw_permission}",
+            "withdraw_from_account": "계정에서 인출: {withdraw_from_account} ({withdraw_from_accountOP})",
+            "withdraw_to_account": "계좌로 인출: {withdraw_to_account} ({withdraw_to_accountOP})",
+            "amount_to_withdraw": "인출할 금액: {amount_to_withdraw} ({amount_to_withdrawOP})",
+            "memo": "메모: {memo}",
+            "fee": "예상 수수료: {fee}"
+          },
+          "tooltip": "철회 권한 요청"
+        },
+        "withdraw_permission_delete": {
+          "method": "철회 권한 삭제",
+          "title": "권한 삭제 요청 철회",
+          "rows": {
+            "header": "다음 철회 권한을 삭제하시겠습니까?",
+            "withdraw_from_account": "계정에서 인출: {withdraw_from_account} ({withdraw_from_accountOP})",
+            "authorized_account": "승인된 계정: {authorized_account} ({authorized_accountOP})",
+            "withdrawal_permission": "철회 권한: {withdrawal_permission}",
+            "fee": "예상 수수료: {fee}"
+          },
+          "tooltip": "철회 권한 삭제"
+        },
+        "committee_member_create": {
+          "method": "위원 생성",
+          "title": "위원 생성 요청",
+          "rows": {
+            "header": "위원을 만드시겠습니까?",
+            "committee_member_account": "위원회 구성원 계정: {committee_member_account} ({committee_member_accountOP})",
+            "url": "URL: {URL}",
+            "fee": "예상 수수료: {fee}"
+          },
+          "tooltip": "위원 계정 만들기"
+        },
+        "committee_member_update": {
+          "method": "위원 업데이트",
+          "title": "위원 업데이트 요청",
+          "rows": {
+            "header": "다음 위원의 세부 정보를 업데이트하시겠습니까?",
+            "committee_member": "위원: {committee_member}",
+            "committee_member_account": "위원회 구성원 계정: {committee_member_account} ({committee_member_accountOP})",
+            "new_url": "새 URL: {new_url}",
+            "fee": "예상 수수료: {fee}"
+          },
+          "tooltip": "위원 계정 세부 정보 업데이트"
+        },
+        "committee_member_update_global_parameters": {
+          "method": "위원회 구성원 업데이트 전역 매개변수",
+          "title": "위원회 구성원 업데이트 전역 매개변수 요청",
+          "rows": {
+            "header": "다음 글로벌 매개변수를 위원회로 승인하시겠습니까?",
+            "new_parameters": "새 매개변수:",
+            "current_fees": "현재 수수료: {current_fees}",
+            "block_interval": "차단 간격: {block_interval}",
+            "maintenance_interval": "유지보수 간격: {maintenance_interval}",
+            "maintenance_skip_slots": "유지보수 건너뛰기 슬롯: {maintenance_skip_slots}",
+            "committee_proposal_review_period": "위원회 제안 검토 기간: {committee_proposal_review_period}",
+            "maximum_transaction_size": "최대 트랜잭션 크기: {maximum_transaction_size}",
+            "maximum_block_size": "최대 블록 크기: {maximum_block_size}",
+            "maximum_time_until_expiration": "만료까지의 최대 시간: {maximum_time_until_expiration}",
+            "maximum_proposal_lifetime": "최대 제안 기간: {maximum_proposal_lifetime}",
+            "maximum_asset_whitelist_authorities": "최대 자산 화이트리스트 권한: {maximum_asset_whitelist_authorities}",
+            "maximum_asset_feed_publishers": "최대 자산 피드 게시자: {maximum_asset_feed_publishers}",
+            "maximum_witness_count": "최대 목격자 수: {maximum_witness_count}",
+            "maximum_committee_count": "최대 위원회 수: {maximum_committee_count}",
+            "maximum_authority_membership": "최대 권한 구성원: {maximum_authority_membership}",
+            "reserve_percent_of_fee": "예약 수수료 비율: {reserve_percent_of_fee}",
+            "network_percent_of_fee": "수수료의 네트워크 비율: {network_percent_of_fee}",
+            "lifetime_referrer_percent_of_fee": "평생 추천인 수수료 비율: {lifetime_referrer_percent_of_fee}",
+            "cashback_vesting_period_seconds": "캐쉬백 베스팅 기간 초: {cashback_vesting_period_seconds}",
+            "cashback_vesting_threshold": "캐쉬백 베스팅 임계값: {cashback_vesting_threshold}",
+            "count_non_member_votes": "비회원 투표 집계: {count_non_member_votes}",
+            "allow_non_member_whitelists": "비회원 화이트리스트 허용: {allow_non_member_whitelists}",
+            "witness_pay_per_block": "블록당 증인 지불: {witness_pay_per_block}",
+            "worker_budget_per_day": "작업자 일일 예산: {worker_budget_per_day}",
+            "max_predicate_opcode": "최대 술어 opcode: {max_predicate_opcode}",
+            "fee_liquidation_threshold": "수수료 청산 임계값: {fee_liquidation_threshold}",
+            "accounts_per_fee_scale": "수수료 규모당 계정: {accounts_per_fee_scale}",
+            "account_fee_scale_bitshifts": "계정 수수료 규모 비트시프트: {account_fee_scale_bitshifts}",
+            "max_authority_depth": "최대 권한 깊이: {max_authority_depth}",
+            "extensions": "확장 프로그램: {extensions}",
+            "fee": "예상 수수료: {fee}"
+          },
+          "tooltip": "Bitshares 블록체인 전역 매개 변수 값에 대한 위원회 구성원 입장 게시"
+        },
+        "vesting_balance_create": {
+          "method": "베스팅 잔액 생성",
+          "title": "베스팅 잔액 생성 요청",
+          "rows": {
+            "header": "다음 베스팅 잔액을 만드시겠습니까?",
+            "creator": "작성자: {creator} ({creatorOP})",
+            "owner": "소유자: {소유자}({소유자OP})",
+            "amount": "금액: {amount} ({asset_id})",
+            "policy": "정책:",
+            "begin_timestamp": "타임스탬프 시작: {begin_timestamp}",
+            "vesting_cliff_seconds": "베스팅 절벽 초: {vesting_cliff_seconds}",
+            "vesting_duration_seconds": "베스팅 기간 초: {vesting_duration_seconds}",
+            "start_claim": "청구 시작: {start_claim}",
+            "vesting_seconds": "베스팅 초: {vesting_seconds}",
+            "fee": "예상 수수료: {fee}"
+          },
+          "tooltip": "베스팅 잔액 만들기"
+        },
+        "vesting_balance_withdraw": {
+          "method": "베스팅 잔액 인출",
+          "title": "베스팅 잔액 인출 요청",
+          "rows": {
+            "header": "베스팅 잔액",
+            "owner": "소유자: {소유자}({소유자OP})",
+            "claim": "소유권 주장: {claim} ({asset_id})"
+          },
+          "tooltip": "베스팅 잔액에서 인출"
+        },
+        "worker_create": {
+          "method": "작업자 생성",
+          "title": "작업자 생성 요청",
+          "rows": {
+            "header": "다음 작업자 제안을 만드시겠습니까?",
+            "owner": "소유자: {소유자}({소유자OP})",
+            "work_begin_date": "작업 시작 날짜: {work_begin_date}",
+            "work_end_date": "작업 종료 날짜: {work_end_date}",
+            "daily_pay": "일당: {daily_pay}",
+            "name": "이름: {이름}",
+            "url": "URL: {URL}",
+            "initializer": "이니셜라이저: {initializer}",
+            "fee": "예상 수수료: {fee}"
+          },
+          "tooltip": "작업자 제안 만들기"
+        },
+        "custom": {
+          "method": "관습",
+          "title": "맞춤 요청",
+          "rows": {
+            "header": "맞춤 작업:",
+            "payer": "지불인: {payer} ({payerOP})",
+            "required_auths": "필수 권한: {required_auths}",
+            "id": "ID: {ID}",
+            "data": "데이터: {데이터}",
+            "fee": "예상 수수료: {fee}"
+          },
+          "tooltip": "증인 합의 위에 더 높은 수준의 프로토콜을 추가하는 일반적인 방법을 제공합니다."
+        },
+        "assert": {
+          "method": "주장하다",
+          "title": "요청 주장",
+          "rows": {
+            "header": "작업 주장:",
+            "fee_paying_account": "수수료 납부 계좌: {fee_paying_account} ({fee_paying_accountOP})",
+            "predicates": "술어: {술어}",
+            "required_auths": "필수 권한: {required_auths}",
+            "extensions": "확장 프로그램: {extensions}",
+            "fee": "예상 수수료: {fee}"
+          },
+          "tooltip": "일부 조건이 참임을 주장합니다."
+        },
+        "balance_claim": {
+          "method": "잔액 청구",
+          "title": "잔액 청구 요청",
+          "rows": {
+            "header": "다음 잔액을 청구하시겠습니까?",
+            "deposit_to_account": "계좌 입금: {deposit_to_account} ({deposit_to_accountOP})",
+            "balance_to_claim": "청구할 잔액: {balance_to_claim} ({asset_id})",
+            "balance_owner_key": "잔액 소유자 키: {balance_owner_key}",
+            "total_claimed": "청구된 총 금액: {total_claimed} ({asset_id})",
+            "fee": "예상 수수료: {fee}"
+          },
+          "tooltip": "잔액에서 청구"
+        },
+        "override_transfer": {
+          "method": "대체 전송",
+          "title": "이전 요청 재정의",
+          "rows": {
+            "header": "다음 전송을 재정의하시겠습니까?",
+            "issuer": "발급자: {issuer} ({issuerOP})",
+            "from": "발신자: {from} ({fromOP})",
+            "to": "받는 사람: {to} ({toOP})",
+            "amount": "금액: {amount} ({asset_id})",
+            "memo": "메모: {memo}",
+            "fee": "예상 수수료: {fee}"
+          },
+          "tooltip": "전송 작업 재정의"
+        },
+        "transfer_to_blind": {
+          "method": "맹인으로 전환",
+          "title": "블라인드 요청으로 전환",
+          "rows": {
+            "header": "다음을 맹인으로 전환하시겠습니까?",
+            "amount": "금액: {금액}",
+            "from": "발신자: {from} ({fromOP})",
+            "blinding_factor": "블라인드 팩터: {blinding_factor}",
+            "outputs": "출력: {출력}",
+            "fee": "예상 수수료: {fee}"
+          },
+          "tooltip": "블라인드 대상으로 자산 전송"
+        },
+        "blind_transfer": {
+          "method": "블라인드 전송",
+          "title": "블라인드 이전 요청",
+          "rows": {
+            "header": "다음 블라인드 전송을 승인하시겠습니까?",
+            "inputs": "입력: {입력}",
+            "outputs": "출력: {출력}",
+            "fee": "예상 수수료: {fee}"
+          },
+          "tooltip": "블라인드 자산을 블라인드 방식으로 이전"
+        },
+        "transfer_from_blind": {
+          "method": "맹인에서 이동",
+          "title": "블라인드 요청에서 전송",
+          "rows": {
+            "header": "블라인드에서 다음을 전송하시겠습니까?",
+            "amount": "금액: {금액}",
+            "to": "받는 사람: {to} ({toOP})",
+            "blinding_factor": "블라인드 팩터: {blinding_factor}",
+            "inputs": "입력: {입력}",
+            "fee": "예상 수수료: {fee}"
+          },
+          "tooltip": "블라인드 잔액에서 자산 인출"
+        },
+        "asset_claim_fees": {
+          "method": "자산 청구 수수료",
+          "title": "자산 청구 수수료 요청",
+          "rows": {
+            "header": "다음 자산에서 수수료를 인출하시겠습니까?",
+            "issuer": "발급자: {issuer} ({issuerOP})",
+            "amount_to_claim": "청구 금액: {amount_to_claim} ({asset_id})",
+            "fee": "예상 수수료: {fee}"
+          },
+          "tooltip": "자산에서 수수료 청구"
+        },
+        "bid_collateral": {
+          "method": "입찰 자료",
+          "title": "입찰 담보 요청",
+          "rows": {
+            "header": "다음 담보 입찰을 승인하시겠습니까?",
+            "bidder": "입찰자: {bidder} ({bidderOP})",
+            "additional_collateral": "추가 담보: {additional_collateral}",
+            "debt_covered": "갚은 부채: {debt_covered}",
+            "fee": "예상 수수료: {fee}"
+          },
+          "tooltip": "전 세계적으로 결제될 때 비트에셋 담보 담보에 입찰"
+        },
+        "asset_claim_pool": {
+          "method": "자산 클레임 풀",
+          "title": "자산 소유권 풀 요청",
+          "rows": {
+            "header": "다음 자산 풀을 청구하시겠습니까?",
+            "issuer": "발급자: {issuer} ({issuerOP})",
+            "asset_id": "저작물: {asset_id}",
+            "amount_to_claim": "청구 금액: {amount_to_claim}",
+            "fee": "예상 수수료: {fee}"
+          },
+          "tooltip": "지정된 자산의 수수료 풀에서 BTS를 발행자의 잔액으로 다시 이체합니다."
+        },
+        "asset_update_issuer": {
+          "method": "자산 업데이트 발행자",
+          "title": "자산 업데이트 발행자 요청",
+          "rows": {
+            "header": "다음 자산의 발행자를 업데이트하시겠습니까?",
+            "issuer": "발급자: {issuer} ({issuerOP})",
+            "asset_to_update": "업데이트할 자산: {asset_to_update}",
+            "new_issuer": "새 발급자: {new_issuer} ({new_issuerOP})",
+            "fee": "예상 수수료: {fee}"
+          },
+          "tooltip": "자산 발행자를 새 관리자 계정으로 업데이트합니다."
+        },
+        "htlc_create": {
+          "method": "HTLC 생성",
+          "title": "HTLC 생성 요청",
+          "rows": {
+            "header": "다음 HTLC 작업을 만드시겠습니까?",
+            "from": "발신자: {from} ({fromOP})",
+            "to": "받는 사람: {to} ({toOP})",
+            "amount": "금액: {금액}",
+            "preimage_hash": "사전 이미지 해시: {preimage_hash}",
+            "preimage_size": "사전 이미지 크기: {preimage_size}",
+            "claim_period_seconds": "청구 기간(초): {claim_period_seconds}",
+            "fee": "예상 수수료: {fee}"
+          },
+          "tooltip": "HTLC(해시 시간 잠금 계약) 작업 생성"
+        },
+        "htlc_redeem": {
+          "method": "HTLC 교환",
+          "title": "HTLC 교환 요청",
+          "rows": {
+            "header": "다음 HTLC 작업을 사용하시겠습니까?",
+            "htlc_id": "HTLC ID: {htlc_id}",
+            "redeemer": "구속자: {redeemer} ({redeemerOP})",
+            "preimage": "프리이미지: {프리이미지}",
+            "extensions": "확장 프로그램: {extensions}",
+            "fee": "예상 수수료: {fee}"
+          },
+          "tooltip": "HTLC 작업의 콘텐츠 사용"
+        },
+        "htlc_extend": {
+          "method": "HTLC 확장",
+          "title": "HTLC 확장 요청",
+          "rows": {
+            "header": "다음 HTLC 확장 프로그램을 승인하시겠습니까?",
+            "htlc_id": "HTLC ID: {htlc_id}",
+            "update_issuer": "업데이트 발행자: {update_issuer} ({update_issuerOP})",
+            "seconds_to_add": "추가할 시간(초): {seconds_to_add}",
+            "extensions": "확장 프로그램: {extensions}",
+            "fee": "예상 수수료: {fee}"
+          },
+          "tooltip": "HTLC 작업 기간 연장"
+        },
+        "custom_authority_create": {
+          "method": "커스텀 권한 생성",
+          "title": "사용자 지정 권한 생성 요청",
+          "rows": {
+            "header": "다음 사용자 지정 권한을 만드시겠습니까?",
+            "account": "계정: {account} ({accountOP})",
+            "enabled": "활성화: {활성화}",
+            "valid_from": "유효 기간: {valid_from}",
+            "valid_to": "유효 대상: {valid_to}",
+            "operation_type": "작업 유형: {operation_type}",
+            "auth": "권한: {auth}",
+            "restrictions": "제한 사항: {restrictions}",
+            "extensions": "확장 프로그램: {extensions}",
+            "fee": "예상 수수료: {fee}"
+          },
+          "tooltip": "새 사용자 지정 권한을 만듭니다."
+        },
+        "custom_authority_update": {
+          "method": "사용자 지정 권한 업데이트",
+          "title": "사용자 지정 권한 업데이트 요청",
+          "rows": {
+            "header": "다음 사용자 정의 권한을 업데이트하시겠습니까?",
+            "account": "계정: {account} ({accountOP})",
+            "authority_to_update": "업데이트 권한: {authority_to_update}",
+            "new_enabled": "새로 활성화됨: {new_enabled}",
+            "new_valid_from": "새 유효 기간: {new_valid_from}",
+            "new_valid_to": "새 유효 대상: {new_valid_to}",
+            "new_auth": "새 권한: {new_auth}",
+            "restrictions_to_remove": "제거 제한: {restrictions_to_remove}",
+            "restrictions_to_add": "추가할 제한 사항: {restrictions_to_add}",
+            "extensions": "확장 프로그램: {extensions}",
+            "fee": "예상 수수료: {fee}"
+          },
+          "tooltip": "사용자 지정 권한을 업데이트합니다."
+        },
+        "custom_authority_delete": {
+          "method": "맞춤 권한 삭제",
+          "title": "커스텀 권한 삭제 요청",
+          "rows": {
+            "header": "다음 사용자 정의 권한을 삭제하시겠습니까?",
+            "account": "계정: {account} ({accountOP})",
+            "authority_to_delete": "삭제 권한: {authority_to_delete}",
+            "extensions": "확장 프로그램: {extensions}",
+            "fee": "예상 수수료: {fee}"
+          },
+          "tooltip": "사용자 지정 권한을 삭제합니다."
+        },
+        "ticket_create": {
+          "method": "티켓 생성",
+          "title": "티켓 생성 요청",
+          "rows": {
+            "header": "다음 티켓을 만드시겠습니까?",
+            "account": "계정: {account} ({accountOP})",
+            "target_type": "대상 유형: {target_type}",
+            "amount": "금액: {금액}",
+            "extensions": "확장 프로그램: {extensions}",
+            "fee": "예상 수수료: {fee}"
+          },
+          "tooltip": "새 티켓을 만듭니다."
+        },
+        "ticket_update": {
+          "method": "티켓 업데이트",
+          "title": "티켓 업데이트 요청",
+          "rows": {
+            "header": "다음 티켓을 업데이트하시겠습니까?",
+            "ticket": "티켓: {티켓}",
+            "account": "계정: {account} ({accountOP})",
+            "target_type": "대상 유형: {target_type}",
+            "amount_for_new_target": "새 목표 금액: {amount_for_new_target}",
+            "extensions": "확장 프로그램: {extensions}"
+          },
+          "tooltip": "기존 티켓을 업데이트합니다."
+        },
+        "liquidity_pool_create": {
+          "method": "유동성 풀 생성",
+          "title": "유동성 풀 생성 요청",
+          "rows": {
+            "header": "다음 세부 정보로 유동성 풀을 만드시겠습니까?",
+            "account": "계정: {account} ({accountOP})",
+            "asset_a": "자산 A: {asset_a} ({asset_aOP})",
+            "asset_b": "자산 B: {asset_b} ({asset_bOP})",
+            "share_asset": "자산 공유: {share_asset} ({share_assetOP})",
+            "taker_fee_percent": "테이커 수수료 퍼센트: {taker_fee_percent}",
+            "withdrawal_fee_percent": "인출 수수료 비율: {withdrawal_fee_percent}",
+            "extensions": "확장 프로그램: {extensions}",
+            "fee": "예상 수수료: {fee}"
+          },
+          "tooltip": "유동성 풀 만들기"
+        },
+        "liquidity_pool_delete": {
+          "method": "유동성 풀 삭제",
+          "title": "유동성 풀 삭제 요청",
+          "rows": {
+            "header": "다음 유동성 풀을 삭제하시겠습니까?",
+            "account": "계정: {account} ({accountOP})",
+            "pool_id": "풀 ID: {pool_id}",
+            "extensions": "확장 프로그램: {extensions}",
+            "fee": "예상 수수료: {fee}"
+          },
+          "tooltip": "유동성 풀 삭제"
+        },
+        "liquidity_pool_deposit": {
+          "method": "유동성 풀 예금",
+          "title": "유동성 풀 입금 요청",
+          "rows": {
+            "header": "다음 자산을 유동성 풀에 예치하시겠습니까?",
+            "account": "계정: {account} ({accountOP})",
+            "pool": "풀: {풀}",
+            "asset_a": "자산 A: {asset_a} ({asset_aOP})",
+            "asset_b": "자산 B: {asset_b} ({asset_bOP})",
+            "extensions": "확장 프로그램: {extensions}",
+            "fee": "예상 수수료: {fee}"
+          },
+          "tooltip": "유동성 풀에 자금 입금"
+        },
+        "liquidity_pool_withdraw": {
+          "method": "유동성 풀 철회",
+          "title": "유동성 풀 출금 요청",
+          "rows": {
+            "header": "유동성 풀에서 다음 자산을 인출하시겠습니까?",
+            "account": "계정: {account} ({accountOP})",
+            "pool": "풀: {풀}",
+            "share_asset": "자산 공유: {share_asset} ({share_assetOP})",
+            "extensions": "확장 프로그램: {extensions}",
+            "fee": "예상 수수료: {fee}"
+          },
+          "tooltip": "유동성 풀에서 자금 인출"
+        },
+        "liquidity_pool_exchange": {
+          "method": "유동성 풀 교환",
+          "title": "유동성 풀 교환 요청",
+          "rows": {
+            "header": "다음 유동성 풀 교환을 승인합니까?",
+            "account": "계정: {account} ({accountOP})",
+            "pool": "풀: {풀}",
+            "amount_to_sell": "판매 수량: {amount_to_sell}",
+            "min_to_receive": "받을 분: {min_to_receive}",
+            "extensions": "확장 프로그램: {extensions}",
+            "fee": "예상 수수료: {fee}"
+          },
+          "tooltip": "유동성 풀과 교환하십시오."
+        },
+        "samet_fund_create": {
+          "method": "SameT 펀드 생성",
+          "title": "SameT 펀드 생성 요청",
+          "rows": {
+            "header": "다음 사멧 펀드 조성에 찬성하십니까?",
+            "owner_account": "소유자 계정: {owner_account}({owner_accountOP})",
+            "asset_type": "자산 유형: {asset_type}",
+            "balance": "잔액: {balance}",
+            "fee_rate": "수수료율: {fee_rate}",
+            "extensions": "확장 프로그램: {extensions}",
+            "fee": "예상 수수료: {fee}"
+          },
+          "tooltip": "새 SameT 펀드를 만듭니다. "
+        },
+        "samet_fund_delete": {
+          "method": "SameT 펀드 삭제",
+          "title": "SameT 펀드 삭제 요청",
+          "rows": {
+            "header": "다음 사멧 펀드를 삭제하시겠습니까?",
+            "owner_account": "소유자 계정: {owner_account}({owner_accountOP})",
+            "fund_id": "펀드 ID: {fund_id}",
+            "extensions": "확장 프로그램: {extensions}",
+            "fee": "예상 수수료: {fee}"
+          },
+          "tooltip": "SameT 펀드 개체를 삭제합니다."
+        },
+        "samet_fund_update": {
+          "method": "SameT 펀드 업데이트",
+          "title": "SameT 펀드 업데이트 요청",
+          "rows": {
+            "header": "다음 사멧 펀드를 업데이트하시겠습니까?",
+            "owner_account": "소유자 계정: {owner_account}({owner_accountOP})",
+            "fund_id": "펀드 ID: {fund_id}",
+            "delta_amount": "델타 금액: {delta_amount}",
+            "new_fee_rate": "새로운 수수료율: {new_fee_rate}",
+            "extensions": "확장 프로그램: {extensions}",
+            "fee": "예상 수수료: {fee}"
+          },
+          "tooltip": "SameT 펀드 개체를 업데이트합니다."
+        },
+        "samet_fund_borrow": {
+          "method": "SameT 펀드 차용",
+          "title": "SameT 펀드 차용 요청",
+          "rows": {
+            "header": "다음 사멧 펀드에서 빌리시겠습니까?",
+            "borrower": "대출자: {borrower} ({borrowerOP})",
+            "fund_id": "펀드 ID: {fund_id}",
+            "borrow_amount": "대출 금액: {borrow_amount}",
+            "extensions": "확장 프로그램: {extensions}",
+            "fee": "예상 수수료: {fee}"
+          },
+          "tooltip": "SameT 펀드에서 빌립니다."
+        },
+        "samt_fund_repay": {
+          "method": "SameT 자금 상환",
+          "title": "SameT 자금 상환 요청",
+          "rows": {
+            "header": "다음 Samet 기금을 상환하십시오",
+            "account": "계정: {account} ({accountOP})",
+            "fund_id": "펀드 ID: {fund_id}",
+            "repay_amount": "상환 금액: {repay_amount}",
+            "fund_fee": "펀드 수수료: {fund_fee}",
+            "extensions": "확장 프로그램: {extensions}",
+            "fee": "예상 수수료: {fee}"
+          },
+          "tooltip": "SameT 펀드로 부채를 상환하십시오."
+        },
+        "credit_offer_create": {
+          "method": "신용 제공 생성",
+          "title": "신용 제안 생성 요청",
+          "rows": {
+            "header": "다음 신용 제안 생성을 승인하시겠습니까?",
+            "owner_account": "소유자 계정: {owner_account}({owner_accountOP})",
+            "asset_type": "자산 유형: {asset_type}",
+            "balance": "잔액: {balance}",
+            "fee_rate": "수수료율: {fee_rate}",
+            "max_duration_seconds": "최대 기간(초): {max_duration_seconds}",
+            "min_deal_amount": "최소 거래 금액: {min_deal_amount}",
+            "enabled": "활성화: {활성화}",
+            "auto_disable_time": "자동 비활성화 시간: {auto_disable_time}",
+            "acceptable_collateral": "허용 가능한 담보: {acceptable_collateral}",
+            "acceptable_borrowers": "허용되는 대출자: {acceptable_borrowers}",
+            "extensions": "확장 프로그램: {extensions}",
+            "fee": "예상 수수료: {fee}"
+          },
+          "tooltip": "새 신용 제안을 만듭니다. "
+        },
+        "credit_offer_delete": {
+          "method": "크레딧 제안 삭제",
+          "title": "크레딧 제안 삭제 요청",
+          "rows": {
+            "header": "다음 크레딧 제안을 삭제하시겠습니까?",
+            "owner_account": "소유자 계정: {owner_account}({owner_accountOP})",
+            "offer_id": "제안 ID: {offer_id}",
+            "extensions": "확장 프로그램: {extensions}",
+            "fee": "예상 수수료: {fee}"
+          },
+          "tooltip": "신용 제안을 삭제합니다."
+        },
+        "credit_offer_update": {
+          "method": "크레딧 제안 업데이트",
+          "title": "크레딧 제공 업데이트 요청",
+          "rows": {
+            "header": "다음 신용 제안을 업데이트하시겠습니까?",
+            "owner_account": "소유자 계정: {owner_account}({owner_accountOP})",
+            "offer_id": "제안 ID: {offer_id}",
+            "delta_amount": "델타 금액: {delta_amount}",
+            "fee_rate": "수수료율: {fee_rate}",
+            "max_duration_seconds": "최대 기간(초): {max_duration_seconds}",
+            "min_deal_amount": "최소 거래 금액: {min_deal_amount}",
+            "enabled": "활성화: {활성화}",
+            "auto_disable_time": "자동 비활성화 시간: {auto_disable_time}",
+            "acceptable_collateral": "허용 가능한 담보: {acceptable_collateral}",
+            "acceptable_borrowers": "허용되는 대출자: {acceptable_borrowers}",
+            "extensions": "확장 프로그램: {extensions}",
+            "fee": "예상 수수료: {fee}"
+          },
+          "tooltip": "신용 제안 업데이트"
+        },
+        "credit_offer_accept": {
+          "method": "신용 제안 수락",
+          "title": "신용 제안 수락 요청",
+          "rows": {
+            "header": "다음 신용 제안을 승인하시겠습니까?",
+            "borrower": "대출자: {borrower} ({borrowerOP})",
+            "offer_id": "제안 ID: {offer_id}",
+            "borrow_amount": "대출 금액: {borrow_amount}",
+            "collateral": "담보: {담보}",
+            "max_fee_rate": "최대 수수료율: {max_fee_rate}",
+            "min_duration_seconds": "최소 기간 초: {min_duration_seconds}",
+            "extensions": "확장 프로그램: {extensions}",
+            "fee": "예상 수수료: {fee}"
+          },
+          "tooltip": "신용 제안을 수락하고 신용 거래를 생성합니다."
+        },
+        "credit_deal_repay": {
+          "method": "신용 거래 상환",
+          "title": "신용 거래 상환 요청",
+          "rows": {
+            "header": "다음 신용 거래를 상환하시겠습니까?",
+            "account": "계정: {account} ({accountOP})",
+            "deal_id": "거래 ID: {deal_id}",
+            "repay_amount": "상환 금액: {repay_amount}",
+            "credit_fee": "신용 수수료: {credit_fee}",
+            "extensions": "확장 프로그램: {extensions}",
+            "fee": "예상 수수료: {fee}"
+          },
+          "tooltip": "신용 거래를 상환하십시오."
         }
       }
     }

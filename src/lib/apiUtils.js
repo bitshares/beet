@@ -365,7 +365,7 @@ export async function injectedCall(request, blockchain) {
     let popupContents = {
         request: request,
         visualizedAccount: visualizedAccount || account.accountName,
-        visualizedParams: visualizedParams
+        visualizedParams: JSON.stringify(visualizedParams)
     };
 
     if (foundIDs.length) {
