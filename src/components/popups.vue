@@ -151,7 +151,10 @@
 </script>
 
 <template>
-    <div v-if="type && type !== '' && request">
+    <div
+        v-if="type && type !== '' && request"
+        style="overflow-y: auto; width: 750px;"
+    >
         <ui-collapse
             with-icon
             ripple

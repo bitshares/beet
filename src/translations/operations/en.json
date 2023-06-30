@@ -50,6 +50,8 @@
         "title": "Request",
         "loading": "Loading transaction details from blockchain, please wait.",
         "request": "App: '{appName}' from '{origin}' has submitted the following transaction for account { chain }:{ accountName }.",
+        "summary": "This transaction contains {numOps} operations, you can browse through them below.",
+        "summary_single": "This transaction contains a single operation, you can browse through it below.",
         "request_cta": "Do you want to execute it?",
         "accept_btn": "Sign & Broadcast",
         "sign_and_broadcast_btn": "Sign & Broadcast",
