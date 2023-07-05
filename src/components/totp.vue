@@ -187,7 +187,14 @@
             return;
         }
 
-        if (!request) {
+        if (
+            !request
+            || !request.id
+            || !request.payload
+            || !request.payload.chain
+            || !request.payload.method
+            || request.payload.method === Actions.INJECTED_CALL && !request.payload.params
+        ) {
             console.log('invalid request format')
             deepLinkInProgress.value = false;
             return;
