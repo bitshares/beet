@@ -1756,7 +1756,10 @@ export default class BitShares extends BlockchainAPI {
         }
 
         let accountResults = [];
-        let accountBatches = chunk(accountsToFetch, 49);
+        let accountBatches = chunk(
+            accountsToFetch,
+            this._isTestnet() ? 9 : 49
+        );
         for (let i = 0; i < accountBatches.length; i++) {
             let fetchedAccountNames;
             try {
@@ -1775,7 +1778,10 @@ export default class BitShares extends BlockchainAPI {
         }
 
         let assetResults = [];
-        let assetBatches = chunk(assetsToFetch, 49);
+        let assetBatches = chunk(
+            assetsToFetch,
+            this._isTestnet() ? 9 : 49
+        );
         for (let i = 0; i < assetBatches.length; i++) {
             let fetchedAssets;
             try {

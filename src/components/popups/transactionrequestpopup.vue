@@ -160,6 +160,46 @@
             :page-size="[1]"
             position="center"
         />
+        <h4 class="h4 beet-typo-small">
+            {{ t('operations.rawsig.request_cta') }}
+        </h4>
+
+        <ui-button-group
+            v-if="!!visualizedParams"
+            style="padding-bottom: 25px;"
+        >
+            <ui-button
+                raised
+                style="margin-right:5px"
+                @click="_clickedAllow()"
+            >
+                {{ buttonText }}
+            </ui-button>
+            <ui-button
+                raised
+                @click="_clickedDeny()"
+            >
+                {{ t('operations.rawsig.reject_btn') }}
+            </ui-button>
+        </ui-button-group>
+        <ui-button-group
+            v-else
+            style="padding-bottom: 25px;"
+        >
+            <ui-button
+                raised
+                style="margin-right:5px"
+                disabled
+            >
+                {{ buttonText }}
+            </ui-button>
+            <ui-button
+                raised
+                @click="_clickedDeny()"
+            >
+                {{ t('operations.rawsig.reject_btn') }}
+            </ui-button>
+        </ui-button-group>
     </div>
     <div
         v-else
@@ -190,39 +230,4 @@
             />
         </ui-dialog-content>
     </ui-dialog>
-    
-    <h4 class="h4 beet-typo-small">
-        {{ t('operations.rawsig.request_cta') }}
-    </h4>
-
-    <span v-if="!!visualizedParams">
-        <ui-button
-            raised
-            style="margin-right:5px"
-            @click="_clickedAllow()"
-        >
-            {{ buttonText }}
-        </ui-button>
-        <ui-button
-            raised
-            @click="_clickedDeny()"
-        >
-            {{ t('operations.rawsig.reject_btn') }}
-        </ui-button>
-    </span>
-    <span v-else>
-        <ui-button
-            raised
-            style="margin-right:5px"
-            disabled
-        >
-            {{ buttonText }}
-        </ui-button>
-        <ui-button
-            raised
-            @click="_clickedDeny()"
-        >
-            {{ t('operations.rawsig.reject_btn') }}
-        </ui-button>
-    </span>
 </template>
