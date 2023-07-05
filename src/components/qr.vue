@@ -235,14 +235,6 @@
                     <ui-button
                         raised
                         style="margin-bottom: 10px;"
-                        @click="setChoice('Scan')"
-                    >
-                        {{ t('common.qr.main.scan') }}
-                    </ui-button>
-                    <br>
-                    <ui-button
-                        raised
-                        style="margin-bottom: 10px;"
                         @click="setChoice('Drag')"
                     >
                         {{ t('common.qr.main.drag') }}
