@@ -14,7 +14,7 @@
   },
   "start": {
     "wallet_name": "지갑 이름",
-    "invalid_password": "유효하지 않은 암호로 지갑 잠금 해제를 시도했습니다."
+    "invalid_password": "유효하지 않은 비밀번호로 지갑 잠금 해제를 시도했습니다."
   },
   "apiUtils": {
     "broadcast": "거래가 성공적으로 방송되었습니다.",
@@ -52,6 +52,16 @@
     "unsupported": "TOTP는 아직 이 체인에서 지원되지 않습니다. 죄송합니다.",
     "warning": "위의 코드를 누구와도 공유하지 마십시오.",
     "inProgress": "딥링크 처리 중"
+  },
+  "opPermissions": {
+    "title": {
+      "local": "스캔 가능한 JSON 파일의 범위를 구성하시겠습니까?",
+      "qr": "스캔 가능한 QR 코드의 범위를 구성하시겠습니까?",
+      "rawLink": "들어오는 원시 딥링크의 범위를 구성하시겠습니까?",
+      "totp": "들어오는 딥링크의 범위를 구성하시겠습니까?"
+    },
+    "yes": "예 - 범위를 맞춤설정합니다.",
+    "no": "아니요 - 모든 작업을 허용합니다."
   },
   "qr": {
     "label": "QR 코드 스캐너",
@@ -194,7 +204,7 @@
   "settings_lbl": "설정",
   "error_lbl": "오류",
   "node_lbl": "마디:",
-  "link_alert": "앱: '{origin}'의 '{appName}'이(가) {chain} 체인에 연결하려고 합니다.",
+  "link_alert": "앱: '{origin}'의 '{appName}'에서 {chain} 체인에 연결하려고 합니다.",
   "relink_alert": "앱: '{origin}'의 '{appName}'이(가) {chain} 체인에 다시 연결하려고 합니다.",
   "access_alert": "앱: '{origin}'의 '{appName}'이(가) 연결된 계정 {chain}:{account_id}와(과) 상호 작용하려고 합니다.",
   "dapps_lbl": "연결된 dApp",

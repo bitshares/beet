@@ -160,7 +160,7 @@
                 let authorizedUse = false;
                 for (let i = 0; i < tr.operations.length; i++) {
                     let operation = tr.operations[i];
-                    if (settingsRows.value.includes(operation[0])) {
+                    if (settingsRows.value && settingsRows.value.includes(operation[0])) {
                         authorizedUse = true;
                         break;
                     }
@@ -231,21 +231,21 @@
                 >
                     <span v-if="!opPermissions">
                         <p>
-                            Do you wish to configure the scope of scannable JSON files?
+                            {{ t('common.opPermissions.title.local') }}
                         </p>
                         <ui-button
                             raised
                             style="margin-right:5px; margin-bottom: 5px;"
                             @click="setScope('Configure')"
                         >
-                            Yes - customize scope
+                            {{ t('common.opPermissions.yes') }}
                         </ui-button>
                         <ui-button
                             raised
                             style="margin-right:5px; margin-bottom: 5px;"
                             @click="setScope('AllowAll')"
                         >
-                            No - allow all operations
+                            {{ t('common.opPermissions.no') }}
                         </ui-button>
                     </span>
                     <span v-else-if="opPermissions == 'Configure' && !selectedRows">

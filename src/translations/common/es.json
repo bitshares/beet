@@ -53,6 +53,16 @@
     "warning": "No comparta el código anterior con nadie.",
     "inProgress": "Se está procesando un enlace profundo"
   },
+  "opPermissions": {
+    "title": {
+      "local": "¿Desea configurar el alcance de los archivos JSON escaneables?",
+      "qr": "¿Desea configurar el alcance de los códigos QR escaneables?",
+      "rawLink": "¿Desea configurar el alcance de los enlaces profundos sin procesar entrantes?",
+      "totp": "¿Desea configurar el alcance de los enlaces profundos entrantes?"
+    },
+    "yes": "Sí, personalizar el alcance",
+    "no": "No - permitir todas las operaciones"
+  },
   "qr": {
     "label": "Escáner de código QR",
     "main": {
@@ -163,7 +173,7 @@
   "address_name": "{cadena} Dirección",
   "keys_cta": "Introduzca las claves privadas de su cuenta a continuación:",
   "use_only_for_messages_and_proof": "Esta cuenta solo se puede usar para firmar mensajes y probar la propiedad de la cuenta. ",
-  "active_authority": "Autoridad Activa",
+  "active_authority": "Autoridad activa",
   "public_authority": "Autoridad de clave pública",
   "owner_authority": "Autoridad del propietario",
   "memo_authority": "Autoridad de la nota",

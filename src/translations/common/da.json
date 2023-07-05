@@ -18,7 +18,7 @@
   },
   "apiUtils": {
     "broadcast": "Transaktionen blev sendt.",
-    "sign": "Transaktionen blev underskrevet.",
+    "sign": "Transaktionen er underskrevet.",
     "signAndBroadcast": "Transaktionen er underskrevet",
     "inject": "Anmodning om at udføre en specifik blockchain-operation",
     "vote": "Stemprompt",
@@ -35,12 +35,12 @@
     "duplicate": "En pung med samme navn findes allerede, hvilket afbryder punggendannelse"
   },
   "raw": {
-    "label": "Rå dybt link-side",
+    "label": "Rå dybt linkside",
     "promptFailure": "Et råt dybt link blev afvist. "
   },
   "totp": {
     "label": "Tidsbaserede engangsadgangskoder",
-    "promptFailure": "Et TOTP-dyblink blev afvist. ",
+    "promptFailure": "Et TOTP-dybt link blev afvist. ",
     "prompt": "Vælg dine nødvendige handlinger nedenfor",
     "chosen": "operationer valgt",
     "request": "Anmod om adgangskode",
@@ -53,8 +53,18 @@
     "warning": "Del ikke koden ovenfor med nogen",
     "inProgress": "Et dybt link behandles"
   },
+  "opPermissions": {
+    "title": {
+      "local": "Ønsker du at konfigurere omfanget af scanbare JSON-filer?",
+      "qr": "Ønsker du at konfigurere omfanget af scanbare QR-koder?",
+      "rawLink": "Ønsker du at konfigurere omfanget af indgående rå deeplinks?",
+      "totp": "Ønsker du at konfigurere omfanget af indgående dybe links?"
+    },
+    "yes": "Ja - tilpas omfanget",
+    "no": "Nej - tillad alle operationer"
+  },
   "qr": {
-    "label": "QR-kode scanner",
+    "label": "QR kode scanner",
     "main": {
       "title": "QR-scanner metoder",
       "scan": "Scan en QR-kode",
@@ -92,7 +102,7 @@
     "Home": "Hjem",
     "New": "Ny",
     "TOTP": "TOTP",
-    "Local": "lokal",
+    "Local": "Lokal",
     "RAW": "Rå link",
     "QR": "QR",
     "Settings": "Indstillinger",
@@ -170,10 +180,10 @@
   "active_authority_placeholder": "Aktiv privat nøgle",
   "public_authority_placeholder": "Privat nøgle",
   "owner_authority_placeholder": "Ejer privat nøgle",
-  "memo_authority_placeholder": "Notat privat nøgle",
+  "memo_authority_placeholder": "Memo privat nøgle",
   "include_owner_check": "Inkludere ejernøgle?",
   "password_cta": "Indstil en adgangskode til denne tegnebog:",
-  "tooltip_password_cta": "Din tegnebog bliver krypteret og kan kun låses op med denne adgangskode. ",
+  "tooltip_password_cta": "Din tegnebog vil blive krypteret og kan kun låses op med denne adgangskode. ",
   "unlock_with_password_cta": "Lås din tegnebog op for at tilføje konti:",
   "confirm_cta": "Bekræft kodeord:",
   "confirm_placeholder": "Bekræft kodeord",

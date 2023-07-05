@@ -53,6 +53,16 @@
         "warning": "Do not share the code above with anyone",
         "inProgress": "A deeplink is being processed"
     },
+    "opPermissions": {
+        "title": {
+            "local": "Do you wish to configure the scope of scannable JSON files?",
+            "qr": "Do you wish to configure the scope of scannable QR codes?",
+            "rawLink": "Do you wish to configure the scope of incoming raw deeplinks?",
+            "totp": "Do you wish to configure the scope of incoming deeplinks?"
+        },
+        "yes": "Yes - customize scope",
+        "no": "No - allow all operations"
+    },
     "qr": {
         "label": "QR Code scanner",
         "main": {

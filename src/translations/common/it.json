@@ -53,6 +53,16 @@
     "warning": "Non condividere il codice sopra con nessuno",
     "inProgress": "Un collegamento diretto è in fase di elaborazione"
   },
+  "opPermissions": {
+    "title": {
+      "local": "Desideri configurare l'ambito dei file JSON analizzabili?",
+      "qr": "Desideri configurare l'ambito dei codici QR scansionabili?",
+      "rawLink": "Desideri configurare l'ambito dei deeplink non elaborati in entrata?",
+      "totp": "Desideri configurare l'ambito dei deeplink in entrata?"
+    },
+    "yes": "Sì, personalizza l'ambito",
+    "no": "No - consenti tutte le operazioni"
+  },
   "qr": {
     "label": "Scanner di codici QR",
     "main": {

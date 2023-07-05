@@ -21,7 +21,7 @@
     "sign": "Transação assinada com sucesso.",
     "signAndBroadcast": "Transação assinada com sucesso",
     "inject": "Solicitação para executar uma operação de blockchain específica",
-    "vote": "prompt de votação",
+    "vote": "Solicitação de votação",
     "signNFT": "Solicitação de assinatura NFT",
     "signMessage": "Solicitação de mensagem assinada",
     "transfer": "Solicitação de transferência de token",
@@ -52,6 +52,16 @@
     "unsupported": "TOTP ainda não é suportado por esta cadeia, desculpe.",
     "warning": "Não compartilhe o código acima com ninguém",
     "inProgress": "Um link direto está sendo processado"
+  },
+  "opPermissions": {
+    "title": {
+      "local": "Deseja configurar o escopo dos arquivos JSON verificáveis?",
+      "qr": "Deseja configurar o escopo dos códigos QR escaneáveis?",
+      "rawLink": "Deseja configurar o escopo dos deeplinks brutos recebidos?",
+      "totp": "Deseja configurar o escopo dos deeplinks recebidos?"
+    },
+    "yes": "Sim - personalize o escopo",
+    "no": "Não - permitir todas as operações"
   },
   "qr": {
     "label": "Leitor de código QR",
@@ -102,7 +112,7 @@
   },
   "popup": {
     "preview": "Solicitar visualização",
-    "request": "Ver solicitação JSON",
+    "request": "Ver pedido JSON",
     "payload": "Exibir carga útil JSON",
     "language": "Linguagem",
     "chainOperations": "operações em cadeia"
@@ -160,7 +170,7 @@
   "next2_btn": "Tente novamente",
   "account": "Conta:",
   "account_name": "{chain} Nome da conta",
-  "address_name": "{cadeia} Endereço",
+  "address_name": "{cadeia} endereço",
   "keys_cta": "Insira as chaves privadas da sua conta abaixo:",
   "use_only_for_messages_and_proof": "Esta conta só pode ser usada para assinar mensagens e comprovar a titularidade da conta. ",
   "active_authority": "Autoridade ativa",
@@ -171,7 +181,7 @@
   "public_authority_placeholder": "Chave privada",
   "owner_authority_placeholder": "Chave Privada do Proprietário",
   "memo_authority_placeholder": "Chave privada de memorando",
-  "include_owner_check": "Incluir Chave do Proprietário?",
+  "include_owner_check": "Incluir chave do proprietário?",
   "password_cta": "Defina uma senha para esta carteira:",
   "tooltip_password_cta": "Sua carteira será criptografada e só poderá ser desbloqueada com esta senha. ",
   "unlock_with_password_cta": "Desbloqueie sua carteira para adicionar a(s) conta(s):",

@@ -53,6 +53,16 @@
     "warning": "Ne partagez le code ci-dessus avec personne",
     "inProgress": "Un lien profond est en cours de traitement"
   },
+  "opPermissions": {
+    "title": {
+      "local": "Souhaitez-vous configurer la portée des fichiers JSON analysables ?",
+      "qr": "Vous souhaitez paramétrer le périmètre des QR codes scannables ?",
+      "rawLink": "Souhaitez-vous paramétrer la portée des deeplinks bruts entrants ?",
+      "totp": "Souhaitez-vous configurer la portée des liens profonds entrants ?"
+    },
+    "yes": "Oui - personnaliser la portée",
+    "no": "Non - autoriser toutes les opérations"
+  },
   "qr": {
     "label": "Lecteur de codes QR",
     "main": {
