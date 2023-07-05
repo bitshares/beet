@@ -9,13 +9,38 @@ import {
     Signature
 } from "bitsharesjs";
 import * as Socket from "simple-websocket";
-import _ from "lodash";
 
 import * as Actions from '../Actions';
 
 import RendererLogger from "../RendererLogger";
 import {formatAsset, humanReadableFloat} from "../assetUtils";
 const logger = new RendererLogger();
+
+/**
+ * Returns the value of a nested property within an object, given a string path.
+ * @param {Object} obj - The object to search for the property.
+ * @param {string} path - The string path of the property to retrieve.
+ * @param {*} defaultValue - The default value to return if the property is not found.
+ * @returns {*} The value of the property, or the default value if the property is not found.
+ */
+const get = (obj, path, defaultValue = undefined) => {
+    const result = path.split('.').reduce((res, key) => (res !== null && res !== undefined) ? res[key] : res, obj);
+    return result !== undefined && result !== obj ? result : defaultValue;
+};
+
+/**
+ * Splits an array into smaller arrays of a specified size.
+ * @param {Array} input - The array to split.
+ * @param {number} size - The size of each chunk.
+ * @returns {Array} An array of smaller arrays, each of size 'size'.
+ */
+const chunk = (input, size) => {
+    return input.reduce((arr, item, idx) => {
+      return idx % size === 0
+        ? [...arr, [item]]
+        : [...arr.slice(0, -1), [...arr.slice(-1)[0], item]];
+    }, []);
+};
 
 const permission_flags = {
     charge_market_fee: 0x01 /**< an issuer-specified percentage of all market trades in this asset is paid to the issuer */,
@@ -1716,14 +1741,14 @@ export default class BitShares extends BlockchainAPI {
             ]
 
             for (let k = 0; k < idKeys.length; k++) {
-                const id = _.get(op, idKeys[k]);
+                const id = get(op, idKeys[k]);
                 if (id && !accountsToFetch.includes(id)) {
                     accountsToFetch.push(id);
                 }
             }
 
             for (let z = 0; z < assetKeys.length; z++) {
-                const id = _.get(op, assetKeys[z]);
+                const id = get(op, assetKeys[z]);
                 if (id && !assetsToFetch.includes(id)) {
                     assetsToFetch.push(id);
                 }
@@ -1731,7 +1756,7 @@ export default class BitShares extends BlockchainAPI {
         }
 
         let accountResults = [];
-        let accountBatches = _.chunk(accountsToFetch, 49);
+        let accountBatches = chunk(accountsToFetch, 49);
         for (let i = 0; i < accountBatches.length; i++) {
             let fetchedAccountNames;
             try {
@@ -1750,7 +1775,7 @@ export default class BitShares extends BlockchainAPI {
         }
 
         let assetResults = [];
-        let assetBatches = _.chunk(assetsToFetch, 49);
+        let assetBatches = chunk(assetsToFetch, 49);
         for (let i = 0; i < assetBatches.length; i++) {
             let fetchedAssets;
             try {
