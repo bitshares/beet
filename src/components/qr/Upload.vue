@@ -1,7 +1,7 @@
 <script setup>
     import { ref, inject } from 'vue';
     import { useI18n } from 'vue-i18n';
-    import { QrcodeCapture } from 'qrcode-reader-vue3'
+    import { QrcodeCapture } from 'vue-qrcode-reader'
 
     const emitter = inject('emitter');
     const { t } = useI18n({ useScope: 'global' });

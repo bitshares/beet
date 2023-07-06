@@ -213,7 +213,14 @@
 
             
             <span v-if="opPermissions && settingsRows && selectedRows">
-                <span v-if="qrChoice && qrChoice === 'Drag'">
+                <span v-if="qrChoice && qrChoice === 'Scan'">
+                    <QRScan />
+                    <br>
+                    <ui-button @click="undoQRChoice()">
+                        {{ t('common.qr.back') }}
+                    </ui-button>
+                </span>
+                <span v-else-if="qrChoice && qrChoice === 'Drag'">
                     <QRDrag />
                     <br>
                     <ui-button @click="undoQRChoice()">
@@ -238,6 +245,14 @@
                         @click="setChoice('Drag')"
                     >
                         {{ t('common.qr.main.drag') }}
+                    </ui-button>
+                    <br>
+                    <ui-button
+                        raised
+                        style="margin-bottom: 10px;"
+                        @click="setChoice('Scan')"
+                    >
+                        {{ t('common.qr.main.scan') }}
                     </ui-button>
                     <br>
                     <ui-button

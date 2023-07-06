@@ -1,7 +1,7 @@
 <script setup>
     import { ref, inject } from 'vue';
     import { useI18n } from 'vue-i18n';
-    import { QrcodeDropZone } from 'qrcode-reader-vue3'
+    import { QrcodeDropZone } from 'vue-qrcode-reader'
 
     const emitter = inject('emitter');
 
