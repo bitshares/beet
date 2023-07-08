@@ -111,9 +111,16 @@
     "Logout": "Ausloggen"
   },
   "popup": {
+    "keywords": {
+      "request": "Operationsanfrage",
+      "result": "Operationsergebnis"
+    },
     "preview": "Sofortige Vorschau",
-    "request": "Anfrage-JSON anzeigen",
+    "evaluate": "Bewerten Sie das sofortige Ergebnis",
     "payload": "Nutzlast-JSON anzeigen",
+    "request": "Anfrage-JSON anzeigen",
+    "result": "Netzwerkergebnis JSON anzeigen",
+    "details": "Details anzeigen",
     "language": "Sprache",
     "chainOperations": "Kettenoperationen"
   },

@@ -35,7 +35,7 @@
     "duplicate": "En pung med samme navn findes allerede, hvilket afbryder punggendannelse"
   },
   "raw": {
-    "label": "Rå dybt linkside",
+    "label": "Rå dybt link-side",
     "promptFailure": "Et råt dybt link blev afvist. "
   },
   "totp": {
@@ -111,9 +111,16 @@
     "Logout": "Log ud"
   },
   "popup": {
+    "keywords": {
+      "request": "Driftsanmodning",
+      "result": "Driftsresultat"
+    },
     "preview": "Spørg forhåndsvisning",
-    "request": "Se anmodning JSON",
+    "evaluate": "Evaluer det hurtige resultat",
     "payload": "Se nyttelast JSON",
+    "request": "Se anmodning JSON",
+    "result": "Se netværksresultat JSON",
+    "details": "Se detaljer",
     "language": "Sprog",
     "chainOperations": "Kædeoperationer"
   },
@@ -180,10 +187,10 @@
   "active_authority_placeholder": "Aktiv privat nøgle",
   "public_authority_placeholder": "Privat nøgle",
   "owner_authority_placeholder": "Ejer privat nøgle",
-  "memo_authority_placeholder": "Memo privat nøgle",
+  "memo_authority_placeholder": "Notat privat nøgle",
   "include_owner_check": "Inkludere ejernøgle?",
   "password_cta": "Indstil en adgangskode til denne tegnebog:",
-  "tooltip_password_cta": "Din tegnebog vil blive krypteret og kan kun låses op med denne adgangskode. ",
+  "tooltip_password_cta": "Din tegnebog bliver krypteret og kan kun låses op med denne adgangskode. ",
   "unlock_with_password_cta": "Lås din tegnebog op for at tilføje konti:",
   "confirm_cta": "Bekræft kodeord:",
   "confirm_placeholder": "Bekræft kodeord",

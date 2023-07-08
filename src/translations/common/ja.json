@@ -96,7 +96,7 @@
     "progress": "ローカルファイルを処理しています",
     "unsupported": "ローカル ファイルのサポートは、このチェーンではまだサポートされていません。",
     "promptSuccess": "スキャンされた操作を正常にブロードキャストしました",
-    "promptFailure": "スキャンされたファイルに問題が発生しました"
+    "promptFailure": "スキャンしたファイルに問題が発生しました"
   },
   "actionBar": {
     "Home": "家",
@@ -111,9 +111,16 @@
     "Logout": "ログアウト"
   },
   "popup": {
+    "keywords": {
+      "request": "操作リクエスト",
+      "result": "演算結果"
+    },
     "preview": "プロンプトプレビュー",
-    "request": "リクエストの JSON を表示する",
+    "evaluate": "即時の結果を評価する",
     "payload": "ペイロード JSON を表示する",
+    "request": "リクエストの JSON を表示する",
+    "result": "ネットワーク結果の JSON を表示する",
+    "details": "詳細を見る",
     "language": "言語",
     "chainOperations": "チェーンオペレーション"
   },

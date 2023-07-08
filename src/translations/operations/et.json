@@ -2,8 +2,16 @@
     "general": {
       "content": "Sisu"
     },
+    "receipt": {
+      "id": "Tehingu ID: { resultID }",
+      "block": "Blokeerimisnumber: { resultBlockNum }",
+      "trxNum": "Tehingu number: { resultTrxNum }",
+      "expiration": "Aegumine: { resultExpiration }",
+      "signatures": "Allkirjad: { resultSsignatures }"
+    },
     "link": {
       "title": "Konto linkimise taotlus",
+      "result": "Konto linkimise tulemus",
       "account_select": "Konto valimine",
       "account_missing": "Taotletud kontot selles rahakotis ei ole.",
       "request": "Rakendus „{appName}” asukohast „{origin}” taotleb juurdepääsu {chain} kontole.",
@@ -16,12 +24,14 @@
     },
     "relink": {
       "title": "Konto uuesti linkimise taotlus",
+      "result": "Konto uuesti linkimise tulemus",
       "error": "Viipa kuvamisel tekkis viga",
       "request": "Rakendus „{appName}” asukohast „{origin}” taotleb varem lingitud {chain} konto uuesti linkimist: {accountId}. ",
       "request_tooltip": "Eelmine link rakenduse ja kontoviite vahel lähtestatakse."
     },
     "account_id": {
       "title": "Konto üksikasjade taotlus",
+      "result": "Konto üksikasjade tulemus",
       "request": "Rakendus: „{appName}” asukohast „{origin}” taotleb juurdepääsu lingitud identiteedile (konto ID",
       "request_tooltip": "Vaikimisi antakse anonüümne link. ",
       "accept_btn": "Lubama",
@@ -29,6 +39,7 @@
     },
     "any_account_id": {
       "title": "Konto üksikasjade taotlus",
+      "result": "Konto üksikasjade tulemus",
       "request": "Rakendus: „{appName}” asukohast „{origin}” taotleb juurdepääsu kontole.",
       "request_cta": "Valige esitatav konto.",
       "accept_btn": "Lubama",
@@ -36,6 +47,7 @@
     },
     "transfer": {
       "title": "Ülekandmise taotlus",
+      "result": "Ülekande tulemus",
       "to": "Saaja",
       "amount": "Summa",
       "memo": "Memo",
@@ -48,12 +60,24 @@
     },
     "rawsig": {
       "title": "Taotlus",
+      "result": "Taotle tulemust",
+      "headers": {
+        "request": "Kas soovite kinnitada järgmise töötlemata allkirja?",
+        "result": "Kiideti heaks järgmine töötlemata allkiri:"
+      },
       "loading": "Tehingu üksikasjade laadimine plokiahelast, palun oodake.",
       "request": "Rakendus: „{appName}” asukohast „{origin}” on esitanud konto { kett } jaoks järgmise tehingu:{ accountName }.",
+      "summary": "See tehing sisaldab {numOps} toimingut, saate neid allpool sirvida.",
+      "summary_single": "See tehing sisaldab ühte toimingut, saate seda allpool sirvida.",
       "request_cta": "Kas soovite seda teostada?",
       "accept_btn": "Sign",
       "sign_and_broadcast_btn": "Sign",
       "sign_btn": "Sign",
+      "receipt": {
+        "title": "Kas soovite kviitungit?",
+        "yes": "Jah, ma tahan kviitungit.",
+        "no": "Ei, ma ei taha kviitungit."
+      },
       "reject_btn": "Ignoreeri"
     },
     "whitelist": {
@@ -61,6 +85,7 @@
     },
     "vote": {
       "title": "Hääletustaotlus",
+      "result": "Hääletustulemus",
       "request": "Rakendus: „{appName}” asukohast „{origin}” soovib, et hääletaksite kontoga { kett } järgmise {entity} poolt:{ accountName }",
       "request_cta": "",
       "accept_btn": "Kinnita",
@@ -68,6 +93,7 @@
     },
     "message": {
       "title": "Kirjutage sõnumitaotlus alla",
+      "result": "Allkiri Sõnumi tulemus",
       "request": "Rakendus: „{appName}” asukohast „{origin}” soovib, et allkirjastaksite kontoga { kett } järgmise teksti:{ accountName }",
       "request_cta": "",
       "accept_btn": "Kinnita",
@@ -78,41 +104,81 @@
         "getAccount": {
           "method": "hankige konto",
           "title": "Konto üksikasjade taotlus",
+          "result": "Konto üksikasjade tulemus",
+          "headers": {
+            "request": "Kas soovite oma konto andmeid jagada?",
+            "result": "Teie konto üksikasju jagati."
+          },
           "tooltip": "Küsib teie rahakotilt plokiahela konto üksikasju"
         },
         "requestSignature": {
           "method": "taotlusallkiri",
           "title": "Allkirjataotlus",
+          "result": "Allkirja tulemus",
+          "headers": {
+            "request": "Kas soovite oma allkirja jagada?",
+            "result": "Teie allkirja jagati:"
+          },
           "tooltip": "Küsib teie rahakotilt plokiahela allkirju"
         },
         "injectedCall": {
           "method": "süstitud Helista",
           "title": "Süstitud kõne taotlus",
+          "result": "Süstitud kõne tulemus",
+          "headers": {
+            "request": "Kas kinnitada järgmine süstitud kõne?",
+            "result": "Järgmine süstitud kõne kiideti heaks:"
+          },
           "tooltip": "Palub teie rahakotil süstitud plokiahela operatsiooniga hakkama saada"
         },
         "voteFor": {
           "method": "hääletama poolt",
           "title": "Hääletustaotlus",
+          "result": "Hääletustulemus",
+          "headers": {
+            "request": "Kas kinnitada järgmine hääletustaotlus?",
+            "result": "Kiideti heaks järgmine hääletustaotlus"
+          },
           "tooltip": "Tehke plokiahela hääletus"
         },
         "signMessage": {
           "method": "märk Sõnum",
           "title": "Kirjutage sõnumitaotlus alla",
+          "result": "Allkiri Sõnumi tulemus",
+          "headers": {
+            "request": "Kas nõustuda järgmise sõnumi allkirjastamisega?",
+            "result": "Allkirjastati järgmine teade:"
+          },
           "tooltip": "Allkirjastage plokiahelapõhine sõnum"
         },
         "signNFT": {
           "method": "märkNFT",
           "title": "Allkirjastage NFT taotlus",
+          "result": "Allkirjastage NFT tulemus",
+          "headers": {
+            "request": "Kas nõustuda järgmise NFT allkirjastamisega?",
+            "result": "Allkirjastati järgmine NFT:"
+          },
           "tooltip": "Allkirjastage NFT-i sisu"
         },
         "verifyMessage": {
           "method": "kinnita sõnum",
           "title": "Kinnitage sõnumitaotlus",
+          "result": "Kinnitage sõnumi tulemus",
+          "headers": {
+            "request": "Kas soovite kinnitada järgmist sõnumit?",
+            "result": "Järgmine teade kinnitati:"
+          },
           "tooltip": "Kinnitage plokiahelapõhine allkirjastatud sõnum"
         },
         "transfer": {
           "method": "Ülekanne",
           "title": "Ülekandmise taotlus",
+          "result": "Ülekande tulemus",
+          "headers": {
+            "request": "Kas soovite kinnitada järgmise ülekandetaotluse?",
+            "result": "Järgmine ülekandetaotlus kinnitati:"
+          },
           "rows": {
             "from": "Saatja: {from} ({opFrom})",
             "to": "Saaja: {to} ({opTo})",
@@ -123,6 +189,11 @@
         "limit_order_create": {
           "method": "Limiittellimuse loomine",
           "title": "Piiratud tellimuse loomise taotlus",
+          "result": "Limiittellimus loo tulemuse",
+          "headers": {
+            "request": "Kas kinnitada järgmine piirtellimuse loomise taotlus?",
+            "result": "Loodi järgmine limiittellimus:"
+          },
           "rows": {
             "trade": "Kaubandus",
             "tradeFK": "Kaubelda (täitke või tapke)",
@@ -136,8 +207,12 @@
         "limit_order_cancel": {
           "method": "Piiratud tellimuse tühistamine",
           "title": "Piiratud tellimuse tühistamise taotlus",
+          "result": "Piiratud tellimuse tühistamise tulemus",
+          "headers": {
+            "request": "Kas tühistada järgmine limiittellimus?",
+            "result": "Järgmine limiittellimus tühistati:"
+          },
           "rows": {
-            "header": "Kas tühistada järgmine limiittellimus?",
             "id": "Tellimuse ID: {id}",
             "fees": "Hinnangulised tasud: {fees}",
             "account": "Tasu maksmise konto: {account}"
@@ -147,8 +222,12 @@
         "call_order_update": {
           "method": "Helistamistellimuse värskendus",
           "title": "Helista tellimuse värskendamise taotlus",
+          "result": "Helista tellimuse värskendamise tulemus",
+          "headers": {
+            "request": "Kas uuendada oma kõnejärjestust järgmisele?",
+            "result": "Järgmist kõnejärjekorda värskendati:"
+          },
           "rows": {
-            "header": "Kas uuendada oma kõnejärjestust järgmisele?",
             "funding_account": "Rahastamiskonto: {funding_account}",
             "delta_collateral": "Delta tagatis: {delta_collateral} ({id})",
             "delta_debt": "Delta võlg: {delta_debt} ({id})",
@@ -159,8 +238,12 @@
         "account_create": {
           "method": "Konto loomine",
           "title": "Konto loomise taotlus",
+          "result": "Konto loomise tulemus",
+          "headers": {
+            "request": "Kas soovite luua järgmise konto?",
+            "result": "Loodi järgmine konto:"
+          },
           "rows": {
-            "header": "Kas soovite luua järgmise konto?",
             "registrar": "Registripidaja: {registrar} ({opRegistrar})",
             "referrer": "Viitaja: {referrer} ({opReferrer})",
             "referrer_percent": "Viitaja protsent: {referrer_percent}",
@@ -169,7 +252,7 @@
             "activeHeader": "Aktiivne:",
             "weight_threshold": "Kaalulävi: {weight_threshold}",
             "account_auths": "Konto autentimised: {account_auths}",
-            "key_auths": "Võtmete autentimised: {key_auths}",
+            "key_auths": "Võtme autentimised: {key_auths}",
             "address_auths": "Aadresside autentimised: {address_auths}",
             "optionsHeader": "Valikud:",
             "memo_key": "Memovõti: {memo_key}",
@@ -185,8 +268,12 @@
         "account_update": {
           "method": "Konto värskendus",
           "title": "Konto värskendamise taotlus",
+          "result": "Konto värskendamise tulemus",
+          "headers": {
+            "request": "Kas soovite värskendada järgmist kontot?",
+            "result": "Järgmist kontot värskendati:"
+          },
           "rows": {
-            "header": "Kas soovite luua järgmise konto?",
             "warning": "Hoiatus: see toiming on pöördumatu!",
             "account": "Konto: {account} ({opAccount})",
             "owner": "Omanik: {owner}",
@@ -200,8 +287,12 @@
         "account_whitelist": {
           "method": "Kontode lubatud loend",
           "title": "Konto lubatud nimekirja taotlus",
+          "result": "Konto valge nimekirja tulemus",
+          "headers": {
+            "request": "Kas värskendada oma konto lubatud loendit järgmiselt?",
+            "result": "Teie konto lubatud loend värskendati järgmiseks:"
+          },
           "rows": {
-            "header": "Konto lubatud loendi üksikasjad:",
             "authorizing_account": "Konto volitamine: {authorizingAccount} (authorizingAccountOP)",
             "account_to_list": "Loendisse lisatav konto: {accountToList} (accountToListOP)",
             "new_listing": "Uus kirje: {newListing}",
@@ -213,8 +304,12 @@
         "account_upgrade": {
           "method": "Konto täiendamine",
           "title": "Konto täiendamise taotlus",
+          "result": "Konto täiendamise tulemus",
+          "headers": {
+            "request": "Kas uuendada oma konto eluaegseks liikmeks?",
+            "result": "Teie konto täiendati eluaegseks liikmeks!"
+          },
           "rows": {
-            "header": "Kas uuendada konto eluaegseks liikmeks?",
             "account_to_upgrade": "Uuendatav konto: {accountToUpgrade} (accountToUpgradeOP)",
             "upgrade_to_lifetime_member": "Uuenda eluaegseks liikmeks: {upgradeToLifetimeMember}",
             "extensions": "Laiendused: {extensions}",
@@ -225,8 +320,12 @@
         "account_transfer": {
           "method": "Konto ülekandmine",
           "title": "Konto ülekandmise taotlus",
+          "result": "Konto ülekande tulemus",
+          "headers": {
+            "request": "Kas teisaldada konto uuele omanikule?",
+            "result": "Järgmine konto kanti üle uuele omanikule:"
+          },
           "rows": {
-            "header": "Kas teisaldada konto uuele omanikule?",
             "warning": "Hoiatus: see toiming on pöördumatu!",
             "account_id": "Konto ID: {originalOwner} ({account_id})",
             "new_owner": "Uus omanik: {newOwner} ({newOwnerOP})",
@@ -237,8 +336,12 @@
         "asset_create": {
           "method": "Vara loomine",
           "title": "Vara loomise taotlus",
+          "result": "Vara loomise tulemus",
+          "headers": {
+            "request": "Kas luua järgmine vara?",
+            "result": "Loodi järgmine vara:"
+          },
           "rows": {
-            "header": "Kas luua järgmine vara?",
             "symbol": "Sümbol: {symbol}",
             "main": "Peamine: {main}",
             "market": "Turg: {market}",
@@ -292,8 +395,12 @@
         "asset_update": {
           "method": "Vara värskendus",
           "title": "Varade värskendamise taotlus",
+          "result": "Vara värskendamise tulemus",
+          "headers": {
+            "request": "Kas värskendada järgmist vara?",
+            "result": "Vara värskendati järgmiste üksikasjadega:"
+          },
           "rows": {
-            "header": "Kas värskendada järgmist vara?",
             "symbol": "Sümbol: {symbol}",
             "main": "Peamine: {main}",
             "market": "Turg: {market}",
@@ -347,8 +454,12 @@
         "asset_update_bitasset": {
           "method": "Varavärskenduse bitasset",
           "title": "Vara värskenduse bitasset taotlus",
+          "result": "Vara värskenduse bitasset tulemus",
+          "headers": {
+            "request": "Kas kinnitada bitasset värskendus?",
+            "result": "Järgmine bitasset värskendus kiideti heaks:"
+          },
           "rows": {
-            "header": "Kas kinnitada bitasset värskendus?",
             "issuer": "Väljaandja: {issuer}",
             "asset_to_update": "Värskendatav vara: {asset_to_update}",
             "new_options": "Uued valikud:",
@@ -367,20 +478,29 @@
         "asset_update_feed_producers": {
           "method": "Varade värskenduste voo tootjad",
           "title": "Varade värskenduste vootootjate taotlus",
+          "result": "Varavärskenduste vootootjate tulemus",
+          "headers": {
+            "request": "Kas kiita bitasset söödatootjate muudatus heaks?",
+            "result": "Kiideti heaks järgmine bitasset söödatootjate muudatus:"
+          },
           "rows": {
-            "header": "Kas kiita bitasset söödatootjate muudatus heaks?",
             "issuer": "Väljaandja: {issuer} ({issuerOP})",
             "asset_to_update": "Värskendatav vara: {symbol} ({asset_to_update})",
             "new_feed_producers": "Uued vootootjad: {new_feed_producers}",
             "fee": "Hinnanguline tasu: {fee}"
           },
-          "tooltip": "Värskendage loodud bitasset jaoks heakskiidetud söödatootjate loendit"
+          "tooltip": "Värskendage loodud bitivarade heakskiidetud söödatootjate loendit"
         },
         "asset_issue": {
           "method": "Vara probleem",
           "title": "Varade väljastamise taotlus",
+          "result": "Varade väljastamise tulemus",
+          "headers": {
+            "request": "Kas kinnitada järgmine varade emiteerimine?",
+            "result": "Kiideti heaks järgmine varade emiteerimine:"
+          },
           "rows": {
-            "header": "Kas anda välja {amount} {symbol} ({assetID}) kasutajale {to} ({toID})?",
+            "prompt": "Kas anda välja {amount} {symbol} ({assetID}) kasutajale {to} ({toID})?",
             "fee": "Hinnanguline tasu: {fee} ({id})"
           },
           "tooltip": "Väljasta oma loodud varad üksikisikutele"
@@ -388,8 +508,12 @@
         "asset_reserve": {
           "method": "Varade reserv",
           "title": "Varade reservi taotlus",
+          "result": "Varade reservi tulemus",
+          "headers": {
+            "request": "Kas kinnitada järgmine varade broneering?",
+            "result": "Järgmine varareservatsioon kinnitati:"
+          },
           "rows": {
-            "header": "Kas kinnitada järgmine varade broneering?",
             "payer": "Maksja: {payer} ({payerOP})",
             "amount_to_reserve": "Reserveeritav summa: {amount_to_reserve} ({amount_to_reserveOP})",
             "extensions": "Laiendused: {extensions}",
@@ -400,8 +524,12 @@
         "asset_fund_fee_pool": {
           "method": "Varafondi tasu kogum",
           "title": "Varafondi tasu kogumistaotlus",
+          "result": "Varafondi tasu kogumi tulemus",
+          "headers": {
+            "request": "Kas rahastada järgmise vara tasude kogumit?",
+            "result": "Kinnitati järgmise vara tasude kogumi rahastamine:"
+          },
           "rows": {
-            "header": "Kas rahastada järgmise vara tasude kogumit?",
             "from_account": "Kontolt: {from_account} ({from_accountOP})",
             "asset": "Vara: {asset} ({assetOP})",
             "amount": "Summa: {amount}",
@@ -412,8 +540,12 @@
         "asset_settle": {
           "method": "Varade arveldamine",
           "title": "Varade arveldustaotlus",
+          "result": "Varade arvelduse tulemus",
+          "headers": {
+            "request": "Arveldada järgmine vara selle tagatistagatiseks?",
+            "result": "Selle tagava tagatisena arveldati järgmine vara:"
+          },
           "rows": {
-            "header": "Arveldada järgmine vara selle tagatistagatiseks?",
             "account": "Konto: {account} ({accountOP})",
             "amount": "Summa: {amount} ({assetID})",
             "fee": "Hinnanguline tasu: {fee}"
@@ -422,9 +554,13 @@
         },
         "asset_global_settle": {
           "method": "Varade ülemaailmne arveldamine",
-          "title": "Varade globaalne arveldustaotlus",
+          "title": "Vara globaalne arveldustaotlus",
+          "result": "Varade globaalse arvelduse tulemus",
+          "headers": {
+            "request": "Kas teha järgmise vara ülemaailmne arveldus?",
+            "result": "Ülemaailmselt arveldati järgmine vara:"
+          },
           "rows": {
-            "header": "Kas teha järgmise vara ülemaailmne arveldus?",
             "issuer": "Väljaandja: {issuer} ({issuerOP})",
             "asset_to_settle": "Arveldatav vara: {asset_to_settle} ({asset_to_settleOP})",
             "settle_price": "Lepingu hind: {settle_price}",
@@ -435,8 +571,12 @@
         "asset_publish_feed": {
           "method": "Varade avaldamise voog",
           "title": "Vara avaldamise voo taotlus",
+          "result": "Vara avaldamise voo tulemus",
+          "headers": {
+            "request": "Kas avaldada järgmise vara hinnavoog?",
+            "result": "Avaldati järgmine varahinna voo värskendus:"
+          },
           "rows": {
-            "header": "Kas avaldada järgmise vara hinnavoog?",
             "publisher": "Väljaandja: {publisher} ({publisherOP})",
             "asset_id": "Vara ID: {symbol} ({asset_idOP})",
             "feed": "Sööt:",
@@ -452,8 +592,12 @@
         "witness_create": {
           "method": "Tunnistaja loo",
           "title": "Tunnistaja loo taotluse",
+          "result": "Tunnistaja loob tulemuse",
+          "headers": {
+            "request": "Kas luua tunnistaja järgmiste üksikasjadega?",
+            "result": "Loodi järgmine tunnistaja:"
+          },
           "rows": {
-            "header": "Kas luua tunnistaja järgmiste üksikasjadega?",
             "witness_account": "Tunnistaja konto: {witness_account} ({witness_accountOP})",
             "url": "URL: {url}",
             "block_signing_key": "Blokeeri allkirjastamisvõti: {block_signing_key}",
@@ -464,8 +608,12 @@
         "witness_update": {
           "method": "Tunnistaja värskendus",
           "title": "Tunnistaja värskenduse taotlus",
+          "result": "Tunnistaja värskenduse tulemus",
+          "headers": {
+            "request": "Kas uuendada tunnistaja üksikasju järgmistele?",
+            "result": "Järgmisi tunnistajate andmeid värskendati:"
+          },
           "rows": {
-            "header": "Kas uuendada tunnistaja üksikasju järgmistele?",
             "witness": "Tunnistaja: {witness}",
             "witness_account": "Tunnistaja konto: {witness_account} ({witness_accountOP})",
             "new_url": "Uus URL: {new_url}",
@@ -477,8 +625,12 @@
         "proposal_create": {
           "method": "Ettepanek luua",
           "title": "Ettepaneku loomise taotlus",
+          "result": "Ettepanek luua tulemus",
+          "headers": {
+            "request": "Kas luua järgmine ettepanek?",
+            "result": "Koostati järgmine ettepanek:"
+          },
           "rows": {
-            "header": "Kas luua järgmine ettepanek?",
             "expiration_time": "Aegumisaeg: {expiration_time}",
             "proposed_ops": "Kavandatud toimingud: {proposed_ops}",
             "review_period_seconds": "Ülevaatusperioodi sekundid: {review_period_seconds}",
@@ -490,8 +642,12 @@
         "proposal_update": {
           "method": "Ettepaneku värskendamine",
           "title": "Ettepaneku värskendamise taotlus",
+          "result": "Ettepaneku värskendamise tulemus",
+          "headers": {
+            "request": "Kas värskendada järgmist ettepanekut?",
+            "result": "Järgmist ettepanekut ajakohastati:"
+          },
           "rows": {
-            "header": "Kas värskendada järgmist ettepanekut?",
             "proposal": "Ettepanek: {proposal}",
             "active_approvals_to_add": "Lisatavad aktiivsed kinnitused: {active_approvals_to_add}",
             "active_approvals_to_remove": "Aktiivsed eemaldatavad kinnitused: {active_approvals_to_remove}",
@@ -508,8 +664,12 @@
         "proposal_delete": {
           "method": "Ettepanek kustutada",
           "title": "Ettepaneku kustutamise taotlus",
+          "result": "Ettepanek kustutada tulemus",
+          "headers": {
+            "request": "Kas kustutada järgmine ettepanek?",
+            "result": "Järgmine ettepanek jäeti välja:"
+          },
           "rows": {
-            "header": "Kas kustutada järgmine ettepanek?",
             "using_owner_authority": "Omaniku volituse kasutamine: {using_owner_authority}",
             "proposal": "Ettepanek: {proposal}",
             "fee_paying_account": "Tasu maksmise konto: {fee_paying_account} ({fee_paying_accountOP})",
@@ -521,8 +681,12 @@
         "withdraw_permission_create": {
           "method": "Looge loa tühistamine",
           "title": "Tühista loa loomise taotlus",
+          "result": "Tühista luba ja loo tulemus",
+          "headers": {
+            "request": "Otsekorralduse autoriseerimine",
+            "result": "Järgmine otsekorralduse autoriseerimine kiideti heaks:"
+          },
           "rows": {
-            "header": "Otsekorralduse autoriseerimine",
             "recipient": "Saaja: {recipient} ({recipientOP})",
             "withdraw_from": "Konto, millelt raha välja võtta: {withdraw_from} ({withdraw_fromOP})",
             "taking": "Võtke {amount} iga {period_sec} sekundi järel {period_qty} perioodi jooksul",
@@ -533,12 +697,16 @@
         "withdraw_permission_update": {
           "method": "Tühista loa värskendus",
           "title": "Võta loa värskendamise taotlus tagasi",
+          "result": "Tühista loa värskenduse tulemus",
+          "headers": {
+            "request": "Kas värskendada tunnistajate õigusi järgmistele?",
+            "result": "Järgmised tunnistajalubade uuendused kiideti heaks:"
+          },
           "rows": {
-            "header": "Kas värskendada tunnistajate õigusi järgmistele?",
             "withrdaw_from_account": "Eemaldage kontolt: {withrdaw_from_account} ({withrdaw_from_accountOP})",
             "authorized_account": "Volitatud konto: {authorized_account} ({authorized_accountOP})",
             "permission_to_update": "Värskendamise luba: {permission_to_update}",
-            "withdrawal_limited": "Väljamakse limiit: {withdrawal_limit}",
+            "withdrawal_limited": "Väljavõtmise limiit: {withdrawal_limit}",
             "withdrawal_unlimited": "Väljavõtmise limiit: {withdrawal_limit} ({withdrawal_limitOP})",
             "withdrawal_period_sec": "Taganemisperiood (sekundites): {withdrawal_period_sec}",
             "period_start_time": "Perioodi algusaeg: {period_start_time}",
@@ -550,8 +718,12 @@
         "withdraw_permission_claim": {
           "method": "Võta loanõue tagasi",
           "title": "Võta loataotlus tagasi",
+          "result": "Tühista loanõude tulemus",
+          "headers": {
+            "request": "Taotlege järgmist taganemisluba",
+            "result": "Taotleti järgmist taganemisluba:"
+          },
           "rows": {
-            "header": "Taotlege järgmist taganemisluba",
             "withdraw_permission": "Luba tühistamine: {withdraw_permission}",
             "withdraw_from_account": "Eemalda kontolt: {withdraw_from_account} ({withdraw_from_accountOP})",
             "withdraw_to_account": "Kontole väljavõtmine: {withdraw_to_account} ({withdraw_to_accountOP})",
@@ -564,20 +736,28 @@
         "withdraw_permission_delete": {
           "method": "Tühista luba kustutada",
           "title": "Tühista loa kustutamistaotlus",
+          "result": "Tühista loa kustutamise tulemus",
+          "headers": {
+            "request": "Kas kustutada järgmine tagasivõtmise luba?",
+            "result": "Järgmine tagasivõtmise luba kustutati:"
+          },
           "rows": {
-            "header": "Kas kustutada järgmine tagasivõtmise luba?",
             "withdraw_from_account": "Eemalda kontolt: {withdraw_from_account} ({withdraw_from_accountOP})",
             "authorized_account": "Volitatud konto: {authorized_account} ({authorized_accountOP})",
             "withdrawal_permission": "Väljavõtmise luba: {withdrawal_permission}",
             "fee": "Hinnanguline tasu: {fee}"
           },
-          "tooltip": "Kustutage tühistamisluba"
+          "tooltip": "Kustutage tagasivõtmise luba"
         },
         "committee_member_create": {
           "method": "Komisjoni liige loob",
           "title": "Komisjoni liige koostab taotluse",
+          "result": "Komisjoni liige loob tulemuse",
+          "headers": {
+            "request": "Kas luua komisjoni liige?",
+            "result": "Loodi järgmine komisjoni liige:"
+          },
           "rows": {
-            "header": "Kas luua komisjoni liige?",
             "committee_member_account": "Komisjoni liikme konto: {committee_member_account} ({committee_member_accountOP})",
             "url": "URL: {url}",
             "fee": "Hinnanguline tasu: {fee}"
@@ -587,8 +767,12 @@
         "committee_member_update": {
           "method": "Komisjoni liikmete värskendus",
           "title": "Komisjoni liikme värskendustaotlus",
+          "result": "Komisjoni liikme värskenduse tulemus",
+          "headers": {
+            "request": "Kas värskendada järgmisi komisjoniliikme andmeid?",
+            "result": "Kiideti heaks järgmised komisjoni liikmete üksikasjade värskendused:"
+          },
           "rows": {
-            "header": "Kas värskendada järgmisi komisjoniliikme andmeid?",
             "committee_member": "Komisjoni liige: {committee_member}",
             "committee_member_account": "Komisjoni liikme konto: {committee_member_account} ({committee_member_accountOP})",
             "new_url": "Uus URL: {new_url}",
@@ -599,8 +783,12 @@
         "committee_member_update_global_parameters": {
           "method": "Komisjoni liige värskendab globaalseid parameetreid",
           "title": "Komisjoni liikme globaalsete parameetrite värskendamise taotlus",
+          "result": "Komisjoni liige värskendab globaalsete parameetrite tulemust",
+          "headers": {
+            "request": "Kas nõustute komisjonina globaalsete parameetrite järgimisega?",
+            "result": "Järgmised ülemaailmse komitee parameetrid kiideti heaks:"
+          },
           "rows": {
-            "header": "Kas nõustute komisjonina globaalsete parameetrite järgimisega?",
             "new_parameters": "Uued parameetrid:",
             "current_fees": "Praegused tasud: {current_fees}",
             "block_interval": "Blokeerimisintervall: {block_interval}",
@@ -638,8 +826,12 @@
         "vesting_balance_create": {
           "method": "Looge üleandmise tasakaal",
           "title": "Üleandmise saldo loomise taotlus",
+          "result": "Omandi saldo loob tulemuse",
+          "headers": {
+            "request": "Kas luua järgmine üleandmise saldo?",
+            "result": "Loodi järgmine üleandmise saldo:"
+          },
           "rows": {
-            "header": "Kas luua järgmine üleandmise saldo?",
             "creator": "Looja: {creator} ({creatorOP})",
             "owner": "Omanik: {owner} ({ownerOP})",
             "amount": "Summa: {amount} ({asset_id})",
@@ -656,8 +848,12 @@
         "vesting_balance_withdraw": {
           "method": "Üleandmise saldo tagasivõtmine",
           "title": "Üleandmise saldo tagasivõtmise taotlus",
+          "result": "Üleandmise saldo tühistamise tulemus",
+          "headers": {
+            "request": "Kas tühistada järgmine üleandmise saldo?",
+            "result": "Järgmine üleandmise saldo võeti tagasi:"
+          },
           "rows": {
-            "header": "Üleandmise saldo",
             "owner": "Omanik: {owner} ({ownerOP})",
             "claim": "Nõue: {claim} ({asset_id})"
           },
@@ -666,8 +862,12 @@
         "worker_create": {
           "method": "Töötaja loob",
           "title": "Töötaja loo taotlus",
+          "result": "Töötaja loob tulemuse",
+          "headers": {
+            "request": "Kas luua järgmine töötaja ettepanek?",
+            "result": "Loodi järgmine töötaja ettepanek:"
+          },
           "rows": {
-            "header": "Kas luua järgmine töötaja ettepanek?",
             "owner": "Omanik: {owner} ({ownerOP})",
             "work_begin_date": "Töö alguskuupäev: {work_begin_date}",
             "work_end_date": "Töö lõppkuupäev: {work_end_date}",
@@ -682,8 +882,12 @@
         "custom": {
           "method": "Kohandatud",
           "title": "Kohandatud taotlus",
+          "result": "Kohandatud tulemus",
+          "headers": {
+            "request": "Kas luua järgmine kohandatud toiming?",
+            "result": "Loodi järgmine kohandatud toiming:"
+          },
           "rows": {
-            "header": "Kohandatud toiming:",
             "payer": "Maksja: {payer} ({payerOP})",
             "required_auths": "Nõutavad volitused: {required_auths}",
             "id": "Ma tegin}",
@@ -695,8 +899,12 @@
         "assert": {
           "method": "Kinnitage",
           "title": "Nõue kinnitada",
+          "result": "Kinnitage tulemus",
+          "headers": {
+            "request": "Kas kinnitada järgmine kinnitustaotluse toiming?",
+            "result": "Järgmine kinnitustaotluse toiming kinnitati:"
+          },
           "rows": {
-            "header": "Kinnitusoperatsioon:",
             "fee_paying_account": "Tasu maksmise konto: {fee_paying_account} ({fee_paying_accountOP})",
             "predicates": "Predikaadid: {predikaadid}",
             "required_auths": "Nõutavad volitused: {required_auths}",
@@ -708,8 +916,12 @@
         "balance_claim": {
           "method": "Tasakaalunõue",
           "title": "Saldonõude taotlus",
+          "result": "Saldonõude tulemus",
+          "headers": {
+            "request": "Kas taotleda järgmist saldot?",
+            "result": "Nõuti järgmine saldo:"
+          },
           "rows": {
-            "header": "Kas taotleda järgmist saldot?",
             "deposit_to_account": "Deposiit kontole: {deposit_to_account} ({deposit_to_accountOP})",
             "balance_to_claim": "Nõutav saldo: {balance_to_claim} ({asset_id})",
             "balance_owner_key": "Saldo omaniku võti: {saldo_omaniku_võti}",
@@ -721,8 +933,12 @@
         "override_transfer": {
           "method": "Ülekande tühistamine",
           "title": "Alista ülekandetaotlus",
+          "result": "Alista ülekande tulemus",
+          "headers": {
+            "request": "Kas tühistada järgmine ülekanne?",
+            "result": "Järgmine ülekanne tühistati:"
+          },
           "rows": {
-            "header": "Kas tühistada järgmine ülekanne?",
             "issuer": "Väljaandja: {issuer} ({issuerOP})",
             "from": "Saatja: {from} ({fromOP})",
             "to": "Saaja: {to} ({toOP})",
@@ -735,8 +951,12 @@
         "transfer_to_blind": {
           "method": "Pimedaks üleviimine",
           "title": "Üleminek pimedale taotlusele",
+          "result": "Ülekanne pimedale tulemusele",
+          "headers": {
+            "request": "Kas kanda järgmised asjad pimedatele?",
+            "result": "Pimedaks kanti üle järgmine:"
+          },
           "rows": {
-            "header": "Kas kanda järgmised pimedatele?",
             "amount": "Summa: {amount}",
             "from": "Saatja: {from} ({fromOP})",
             "blinding_factor": "Pimestav tegur: {blinding_factor}",
@@ -748,8 +968,12 @@
         "blind_transfer": {
           "method": "Pime ülekanne",
           "title": "Pime üleviimise taotlus",
+          "result": "Pimeülekande tulemus",
+          "headers": {
+            "request": "Kas kinnitada järgmine pimesi ülekanne?",
+            "result": "Järgmine pimesi ülekanne kiideti heaks:"
+          },
           "rows": {
-            "header": "Kas kinnitada järgmine pimesi ülekanne?",
             "inputs": "Sisendid: {inputs}",
             "outputs": "Väljundid: {väljundid}",
             "fee": "Hinnanguline tasu: {fee}"
@@ -759,8 +983,12 @@
         "transfer_from_blind": {
           "method": "Pimedast ülekandmine",
           "title": "Ülekanne pimedast taotlusest",
+          "result": "Ülekanne pimedast tulemusest",
+          "headers": {
+            "request": "Kas kanda pimedatelt järgmised andmed?",
+            "result": "Pimedast kanti üle järgmine:"
+          },
           "rows": {
-            "header": "Kas kanda pimedatelt järgmised andmed?",
             "amount": "Summa: {amount}",
             "to": "Saaja: {to} ({toOP})",
             "blinding_factor": "Pimestav tegur: {blinding_factor}",
@@ -772,8 +1000,12 @@
         "asset_claim_fees": {
           "method": "Varanõude tasud",
           "title": "Varanõude tasude taotlus",
+          "result": "Tulemuseks on varanõude tasud",
+          "headers": {
+            "request": "Kas võtta tasu järgmiselt varalt?",
+            "result": "Nõuti järgmised varatasud:"
+          },
           "rows": {
-            "header": "Kas võtta tasu järgmiselt varalt?",
             "issuer": "Väljaandja: {issuer} ({issuerOP})",
             "amount_to_claim": "Nõude summa: {amount_to_claim} ({asset_id})",
             "fee": "Hinnanguline tasu: {fee}"
@@ -783,8 +1015,12 @@
         "bid_collateral": {
           "method": "Pakkumise tagatis",
           "title": "Pakkumise tagatisnõue",
+          "result": "Pakkumise tagatise tulemus",
+          "headers": {
+            "request": "Kas kinnitada järgmine tagatispakkumine?",
+            "result": "Kinnitati järgmine tagatispakkumine:"
+          },
           "rows": {
-            "header": "Kas kinnitada järgmine tagatispakkumine?",
             "bidder": "Pakkuja: {bidder} ({bidderOP})",
             "additional_collateral": "Lisatagatis: {additional_collateral}",
             "debt_covered": "Võlg kaetud: {debt_covered}",
@@ -795,8 +1031,12 @@
         "asset_claim_pool": {
           "method": "Varade nõuete kogum",
           "title": "Varade nõuete kogumi taotlus",
+          "result": "Varade nõuete kogumi tulemus",
+          "headers": {
+            "request": "Kas taotleda järgmist varade kogumit?",
+            "result": "Taotleti järgmist varade kogumit:"
+          },
           "rows": {
-            "header": "Kas taotleda järgmist varade kogumit?",
             "issuer": "Väljaandja: {issuer} ({issuerOP})",
             "asset_id": "Vara: {asset_id}",
             "amount_to_claim": "Nõude summa: {amount_to_claim}",
@@ -807,8 +1047,12 @@
         "asset_update_issuer": {
           "method": "Varavärskenduste väljastaja",
           "title": "Vara värskenduse väljaandja taotlus",
+          "result": "Vara värskenduse väljaandja tulemus",
+          "headers": {
+            "request": "Kas värskendada järgmise vara väljaandjat?",
+            "result": "Värskendati järgmise vara väljaandjat:"
+          },
           "rows": {
-            "header": "Kas värskendada järgmise vara väljaandjat?",
             "issuer": "Väljaandja: {issuer} ({issuerOP})",
             "asset_to_update": "Värskendatav vara: {asset_to_update}",
             "new_issuer": "Uus väljaandja: {new_issuer} ({new_issuerOP})",
@@ -819,8 +1063,12 @@
         "htlc_create": {
           "method": "HTLC loomine",
           "title": "HTLC loomise taotlus",
+          "result": "HTLC tulemuse loomine",
+          "headers": {
+            "request": "Kas luua järgmine räsistatud ajaluku lepingu toiming?",
+            "result": "Järgmise räsitud ajaluku lepingu toimingu loomine kiideti heaks:"
+          },
           "rows": {
-            "header": "Kas luua järgmine HTLC toiming?",
             "from": "Saatja: {from} ({fromOP})",
             "to": "Saaja: {to} ({toOP})",
             "amount": "Summa: {amount}",
@@ -834,8 +1082,12 @@
         "htlc_redeem": {
           "method": "HTLC Lunasta",
           "title": "HTLC lunastamistaotlus",
+          "result": "HTLC Lunasta tulemus",
+          "headers": {
+            "request": "Kas soovite lunastada järgmise räsiajaga lukustatud lepingutoimingu?",
+            "result": "Järgmise räsiajaga lukustatud lepingutoimingu lunastamine kiideti heaks:"
+          },
           "rows": {
-            "header": "Kas soovite järgmise HTLC-toimingu lunastada?",
             "htlc_id": "HTLC ID: {htlc_id}",
             "redeemer": "Lunastaja: {redeemer} ({redeemerOP})",
             "preimage": "Eelpilt: {preimage}",
@@ -847,8 +1099,12 @@
         "htlc_extend": {
           "method": "HTLC pikendamine",
           "title": "HTLC pikendamistaotlus",
+          "result": "HTLC Laienda tulemust",
+          "headers": {
+            "request": "Kas kinnitada järgmine räsiajalukuga lepingupikendus?",
+            "result": "Järgmise räsi ajalukuga lepingu pikendamine kiideti heaks:"
+          },
           "rows": {
-            "header": "Kas kinnitada järgmine HTLC laiendus?",
             "htlc_id": "HTLC ID: {htlc_id}",
             "update_issuer": "Värskenduse väljaandja: {update_issuer} ({update_issuerOP})",
             "seconds_to_add": "Sekundid lisamiseks: {seconds_to_add}",
@@ -860,8 +1116,12 @@
         "custom_authority_create": {
           "method": "Kohandatud volituste loomine",
           "title": "Kohandatud asutus loob päringu",
+          "result": "Kohandatud asutus loob tulemuse",
+          "headers": {
+            "request": "Kas luua järgmine kohandatud volitus?",
+            "result": "Loodi järgmine kohandatud volitus:"
+          },
           "rows": {
-            "header": "Kas luua järgmine kohandatud volitus?",
             "account": "Konto: {account} ({accountOP})",
             "enabled": "Lubatud: {enabled}",
             "valid_from": "Kehtib alates: {valid_from}",
@@ -877,8 +1137,12 @@
         "custom_authority_update": {
           "method": "Kohandatud asutuse värskendus",
           "title": "Kohandatud asutuse värskendustaotlus",
+          "result": "Kohandatud asutuse värskenduse tulemus",
+          "headers": {
+            "request": "Kas värskendada järgmist kohandatud asutust?",
+            "result": "Järgmist kohandatud asutust värskendati:"
+          },
           "rows": {
-            "header": "Kas värskendada järgmist kohandatud asutust?",
             "account": "Konto: {account} ({accountOP})",
             "authority_to_update": "Värskendamise volitus: {authority_to_update}",
             "new_enabled": "Uus lubatud: {new_enabled}",
@@ -895,8 +1159,12 @@
         "custom_authority_delete": {
           "method": "Kohandatud volituste kustutamine",
           "title": "Kohandatud asutuse kustutamistaotlus",
+          "result": "Kohandatud asutus kustutab tulemuse",
+          "headers": {
+            "request": "Kas kustutada järgmine kohandatud asutus?",
+            "result": "Järgmine kohandatud volitus kustutati:"
+          },
           "rows": {
-            "header": "Kas kustutada järgmine kohandatud asutus?",
             "account": "Konto: {account} ({accountOP})",
             "authority_to_delete": "Kustutamisvolitus: {authority_to_delete}",
             "extensions": "Laiendused: {extensions}",
@@ -907,8 +1175,12 @@
         "ticket_create": {
           "method": "Pileti loomine",
           "title": "Pileti loomise taotlus",
+          "result": "Pilet loo tulemus",
+          "headers": {
+            "request": "Kas luua järgmine pilet?",
+            "result": "Loodi järgmine pilet:"
+          },
           "rows": {
-            "header": "Kas luua järgmine pilet?",
             "account": "Konto: {account} ({accountOP})",
             "target_type": "Sihtmärgi tüüp: {target_type}",
             "amount": "Summa: {amount}",
@@ -920,8 +1192,12 @@
         "ticket_update": {
           "method": "Pileti värskendus",
           "title": "Pileti uuendamise taotlus",
+          "result": "Pileti uuendamise tulemus",
+          "headers": {
+            "request": "Kas värskendada järgmist piletit?",
+            "result": "Järgmist piletit uuendati:"
+          },
           "rows": {
-            "header": "Kas värskendada järgmist piletit?",
             "ticket": "Pilet: {pilet}",
             "account": "Konto: {account} ({accountOP})",
             "target_type": "Sihtmärgi tüüp: {target_type}",
@@ -933,8 +1209,12 @@
         "liquidity_pool_create": {
           "method": "Likviidsusbasseini loomine",
           "title": "Likviidsusbasseini loomise taotlus",
+          "result": "Likviidsusbassein loob tulemuse",
+          "headers": {
+            "request": "Kas luua likviidsuskogum järgmiste üksikasjadega?",
+            "result": "Loodi järgmine likviidsuskogum:"
+          },
           "rows": {
-            "header": "Kas luua likviidsuskogum järgmiste üksikasjadega?",
             "account": "Konto: {account} ({accountOP})",
             "asset_a": "Vara A: {asset_a} ({asset_aOP})",
             "asset_b": "Vara B: {asset_b} ({asset_bOP})",
@@ -949,8 +1229,12 @@
         "liquidity_pool_delete": {
           "method": "Likviidsusfondi kustutamine",
           "title": "Likviidsuskogumi kustutamise taotlus",
+          "result": "Likviidsusfondi kustutamise tulemus",
+          "headers": {
+            "request": "Kas kustutada järgmine likviidsuskogum?",
+            "result": "Järgmine likviidsuskogum kustutati:"
+          },
           "rows": {
-            "header": "Kas kustutada järgmine likviidsuskogum?",
             "account": "Konto: {account} ({accountOP})",
             "pool_id": "Basseini ID: {pool_id}",
             "extensions": "Laiendused: {extensions}",
@@ -961,8 +1245,12 @@
         "liquidity_pool_deposit": {
           "method": "Likviidsusbasseini hoius",
           "title": "Likviidsusbasseini sissemakse taotlus",
+          "result": "Likviidsuskogumi hoiuse tulemus",
+          "headers": {
+            "request": "Deponeerida järgmised varad likviidsusfondi?",
+            "result": "Likviidsuskogumisse deponeeriti järgmised varad:"
+          },
           "rows": {
-            "header": "Deponeerida järgmised varad likviidsusfondi?",
             "account": "Konto: {account} ({accountOP})",
             "pool": "Bassein: {pool}",
             "asset_a": "Vara A: {asset_a} ({asset_aOP})",
@@ -975,8 +1263,12 @@
         "liquidity_pool_withdraw": {
           "method": "Likviidsusfondi väljavõtmine",
           "title": "Likviidsusfondi tagasivõtmise taotlus",
+          "result": "Likviidsusfondi tagasivõtmise tulemus",
+          "headers": {
+            "request": "Kas võtta likviidsuskogumist välja järgmised varad?",
+            "result": "Likviidsuskogumist võeti välja järgmised varad:"
+          },
           "rows": {
-            "header": "Kas võtta likviidsuskogumist välja järgmised varad?",
             "account": "Konto: {account} ({accountOP})",
             "pool": "Bassein: {pool}",
             "share_asset": "Jaga vara: {share_asset} ({share_assetOP})",
@@ -988,8 +1280,12 @@
         "liquidity_pool_exchange": {
           "method": "Likviidsusfondi vahetus",
           "title": "Likviidsusfondi vahetustaotlus",
+          "result": "Likviidsusfondi vahetustulemus",
+          "headers": {
+            "request": "Kas nõustuda järgmise likviidsusfondi vahetusega?",
+            "result": "Kiideti heaks järgmine likviidsuskogumi börs:"
+          },
           "rows": {
-            "header": "Kas nõustuda järgmise likviidsusfondi vahetusega?",
             "account": "Konto: {account} ({accountOP})",
             "pool": "Bassein: {pool}",
             "amount_to_sell": "Müüdav summa: {amount_to_sell}",
@@ -1002,8 +1298,12 @@
         "samet_fund_create": {
           "method": "SameT fondi loomine",
           "title": "SameT fondi loomise taotlus",
+          "result": "SameT fond loob tulemuse",
+          "headers": {
+            "request": "Kas nõustuda järgmise sama fondi loomisega?",
+            "result": "Loodi järgmine samafond:"
+          },
           "rows": {
-            "header": "Kas nõustute järgmise sama fondi loomisega?",
             "owner_account": "Omaniku konto: {owner_account} ({owner_accountOP})",
             "asset_type": "Vara tüüp: {asset_type}",
             "balance": "Saldo: {saldo}",
@@ -1016,8 +1316,12 @@
         "samet_fund_delete": {
           "method": "SameT fondi kustutamine",
           "title": "SameT fondi kustutamise taotlus",
+          "result": "SameT fondi kustutamise tulemus",
+          "headers": {
+            "request": "Kas kustutada järgmine sametifond?",
+            "result": "Järgmine sama fond kustutati:"
+          },
           "rows": {
-            "header": "Kas kustutada järgmine sametifond?",
             "owner_account": "Omaniku konto: {owner_account} ({owner_accountOP})",
             "fund_id": "Fondi ID: {fund_id}",
             "extensions": "Laiendused: {extensions}",
@@ -1028,8 +1332,12 @@
         "samet_fund_update": {
           "method": "SameT fondi uuendus",
           "title": "SameT fondi uuendamise taotlus",
+          "result": "SameT fondi uuenduse tulemus",
+          "headers": {
+            "request": "Kas värskendada järgmist samafondi?",
+            "result": "Järgmist sama fondi uuendati:"
+          },
           "rows": {
-            "header": "Kas värskendada järgmist samafondi?",
             "owner_account": "Omaniku konto: {owner_account} ({owner_accountOP})",
             "fund_id": "Fondi ID: {fund_id}",
             "delta_amount": "Delta summa: {delta_amount}",
@@ -1042,8 +1350,12 @@
         "samet_fund_borrow": {
           "method": "SameT fondi laen",
           "title": "SameT fondi laenutaotlus",
+          "result": "SameT fondi laenutulemus",
+          "headers": {
+            "request": "Kas laenata järgmisest samat fondist?",
+            "result": "Edukalt laenatud järgmisest samafondist:"
+          },
           "rows": {
-            "header": "Kas laenata järgmisest samat fondist?",
             "borrower": "Laenaja: {borrower} ({borrowerOP})",
             "fund_id": "Fondi ID: {fund_id}",
             "borrow_amount": "Laenusumma: {borrow_amount}",
@@ -1055,8 +1367,12 @@
         "samt_fund_repay": {
           "method": "SameT fondi tagasimakse",
           "title": "SameT fondi tagasimaksetaotlus",
+          "result": "SameT fondi tagasimakse tulemus",
+          "headers": {
+            "request": "Makske tagasi järgmine sama fond",
+            "result": "Järgmise sama fondi tagasimaksmine õnnestus"
+          },
           "rows": {
-            "header": "Makske tagasi järgmine sama fond",
             "account": "Konto: {account} ({accountOP})",
             "fund_id": "Fondi ID: {fund_id}",
             "repay_amount": "Tagasimakse summa: {repay_amount}",
@@ -1069,8 +1385,12 @@
         "credit_offer_create": {
           "method": "Loo krediidipakkumine",
           "title": "Krediidipakkumise loomine",
+          "result": "Krediidipakkumine loo tulemuse",
+          "headers": {
+            "request": "Kas kinnitada järgmise krediidipakkumise loomine?",
+            "result": "Loodi järgmine krediidipakkumine:"
+          },
           "rows": {
-            "header": "Kas kinnitada järgmise krediidipakkumise loomine?",
             "owner_account": "Omaniku konto: {owner_account} ({owner_accountOP})",
             "asset_type": "Vara tüüp: {asset_type}",
             "balance": "Saldo: {saldo}",
@@ -1089,8 +1409,12 @@
         "credit_offer_delete": {
           "method": "Krediidipakkumise kustutamine",
           "title": "Krediidipakkumise kustutamise taotlus",
+          "result": "Krediidipakkumise kustutamise tulemus",
+          "headers": {
+            "request": "Kas kustutada järgmine krediidipakkumine?",
+            "result": "Järgmine krediidipakkumine kustutati:"
+          },
           "rows": {
-            "header": "Kas kustutada järgmine krediidipakkumine?",
             "owner_account": "Omaniku konto: {owner_account} ({owner_accountOP})",
             "offer_id": "Pakkumise ID: {offer_id}",
             "extensions": "Laiendused: {extensions}",
@@ -1101,8 +1425,12 @@
         "credit_offer_update": {
           "method": "Krediidipakkumise värskendus",
           "title": "Krediidipakkumise värskendamise taotlus",
+          "result": "Krediidipakkumise värskendamise tulemus",
+          "headers": {
+            "request": "Kas värskendada järgmist krediidipakkumist?",
+            "result": "Järgmist krediidipakkumist värskendati:"
+          },
           "rows": {
-            "header": "Kas värskendada järgmist krediidipakkumist?",
             "owner_account": "Omaniku konto: {owner_account} ({owner_accountOP})",
             "offer_id": "Pakkumise ID: {offer_id}",
             "delta_amount": "Delta summa: {delta_amount}",
@@ -1121,8 +1449,12 @@
         "credit_offer_accept": {
           "method": "Krediidipakkumine vastu",
           "title": "Krediidipakkumine nõustu taotlusega",
+          "result": "Krediidipakkumisega nõustute tulemusega",
+          "headers": {
+            "request": "Kas nõustute järgmise krediidipakkumisega?",
+            "result": "Järgmine krediidipakkumine kiideti heaks:"
+          },
           "rows": {
-            "header": "Kas nõustute järgmise krediidipakkumisega?",
             "borrower": "Laenaja: {borrower} ({borrowerOP})",
             "offer_id": "Pakkumise ID: {offer_id}",
             "borrow_amount": "Laenusumma: {borrow_amount}",
@@ -1137,8 +1469,12 @@
         "credit_deal_repay": {
           "method": "Krediiditehingu tagasimaksmine",
           "title": "Krediiditehingu tagasimakse taotlus",
+          "result": "Krediiditehingu tagasimaksmise tulemus",
+          "headers": {
+            "request": "Kas maksta tagasi järgmine krediiditehing?",
+            "result": "Tasusite järgmise krediiditehingu"
+          },
           "rows": {
-            "header": "Kas maksta tagasi järgmine krediiditehing?",
             "account": "Konto: {account} ({accountOP})",
             "deal_id": "Tehingu ID: {deal_id}",
             "repay_amount": "Tagasimakse summa: {repay_amount}",

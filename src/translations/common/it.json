@@ -24,7 +24,7 @@
     "vote": "Richiesta di voto",
     "signNFT": "Richiesta di una firma NFT",
     "signMessage": "Richiesta di messaggio firmato",
-    "transfer": "Richiesta di trasferimento token",
+    "transfer": "Richiesta di trasferimento di token",
     "transferComplete": "Transazione \"trasferimento\" trasmessa con successo.",
     "msgVerify": "Verifica del messaggio",
     "getAccount": "App che richiede informazioni su uno dei tuoi account."
@@ -111,9 +111,16 @@
     "Logout": "Disconnettersi"
   },
   "popup": {
+    "keywords": {
+      "request": "Richiesta di operazione",
+      "result": "Risultato operazione"
+    },
     "preview": "Anteprima immediata",
-    "request": "Visualizza la richiesta JSON",
+    "evaluate": "Valutare il risultato immediato",
     "payload": "Visualizza il payload JSON",
+    "request": "Visualizza la richiesta JSON",
+    "result": "Visualizza il JSON dei risultati di rete",
+    "details": "Visualizza dettagli",
     "language": "Lingua",
     "chainOperations": "Operazioni a catena"
   },
