@@ -69,7 +69,6 @@
                 <div>{{ t('common.popup.evaluate') }}</div>
             </template>
             <div style="overflow-y: auto; padding-right: 25px;">
-                Testing
                 {{ notifyTXT }}
             </div>
         </ui-collapse>
