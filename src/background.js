@@ -36,6 +36,8 @@ import * as Actions from './lib/Actions';
 let mainWindow;
 let modalWindows = {};
 let modalRequests = {};
+
+let receiptWindows = {};
 var timeout;
 
 var isDevMode = process.execPath.match(/[\\/]electron/);
@@ -198,6 +200,72 @@ const createModal = async (arg, modalEvent) => {
 }
 
 /*
+ * Creating an optional receipt browser window popup
+ */
+const createReceipt = async (arg, modalEvent) => {
+    let modalHeight = 600;
+    let modalWidth = 800;
+    if (!mainWindow) {
+        logger.debug(`No window`);
+        throw 'No main window';
+    }
+
+    let request = arg.request;
+    let id = request.id;
+    let result = arg.result;
+    let receipt = arg.receipt;
+    let notifyTXT = arg.notifyTXT;
+    if (!request || !request.id || !result || !notifyTXT || !receipt) {
+        logger.debug(`No request`);
+        throw 'No request';
+    }
+
+    if (receiptWindows[id]) {
+        throw 'Receipt window exists already!';
+    }
+
+    let targetURL = `file://${__dirname}/receipt.html?`
+                    + `id=${encodeURIComponent(id)}`
+                    + `&request=${encodeURIComponent(JSON.stringify(request))}`
+                    + `&result=${encodeURIComponent(JSON.stringify(result))}`
+                    + `&visualizedAccount=${encodeURIComponent(receipt.visualizedAccount)}`
+                    + `&visualizedParams=${encodeURIComponent(receipt.visualizedParams)}`
+                    + `&notifyTXT=${encodeURIComponent(notifyTXT)}`;
+
+    receiptWindows[id] = new BrowserWindow({
+        parent: mainWindow,
+        title: 'Beet receipt',
+        width: modalWidth,
+        height: modalHeight,
+        minWidth: modalWidth,
+        minHeight: modalHeight,
+        maxWidth: modalWidth,
+        maximizable: true,
+        maxHeight: modalHeight,
+        useContentSize: true,
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false,
+            enableRemoteModule: true
+        },
+        icon: __dirname + '/img/beet-taskbar.png'
+    });
+
+    receiptWindows[id].loadURL(targetURL);
+
+    receiptWindows[id].once('ready-to-show', () => {
+        console.log('ready to show modal')
+        receiptWindows[id].show();
+    })
+
+    receiptWindows[id].on('closed', () => {
+      if (receiptWindows[id]) {
+          delete receiptWindows[id];
+      }
+    });
+}
+
+/*
  * User approved modal contents. Close window, resolve promise, delete references.
  */
 ipcMain.on('clickedAllow', (event, arg) => {
@@ -313,6 +381,17 @@ const createWindow = async () => {
         console.log(error);
       }
   })
+
+    /*
+   * Create receipt popup & wait for user response
+   */
+    ipcMain.on('createReceipt', async (event, arg) => {
+        try {
+          await createReceipt(arg, event);
+        } catch (error) {
+          console.log(error);
+        }
+    })
 
   ipcMain.on('notify', (event, arg) => {
       logger.debug("notify");

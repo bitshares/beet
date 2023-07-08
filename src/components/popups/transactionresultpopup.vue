@@ -16,6 +16,13 @@
                 return {}
             }
         },
+        result: {
+            type: Object,
+            required: true,
+            default() {
+                return {}
+            }
+        },
         visualizedAccount: {
             type: String,
             required: true,
@@ -73,7 +80,7 @@
     })
 
     onMounted(() => {
-        logger.debug("Transaction request popup initialised");
+        logger.debug("Transaction result popup initialised");
     });
 
     function _clickedAllow() {

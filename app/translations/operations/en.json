@@ -44,7 +44,12 @@
         "accept_btn": "Sign & Broadcast",
         "sign_and_broadcast_btn": "Sign & Broadcast",
         "sign_btn": "Sign",
-        "reject_btn": "Ignore"
+        "reject_btn": "Ignore",
+        "receipt": {
+            "title": "Do you want a receipt?",
+            "yes": "Yes, I want a receipt.",
+            "no": "No, I don't want a receipt."
+        }
     },
     "whitelist": {
         "prompt": "Whitelist subsequent '{{method}}' requests from this app?"

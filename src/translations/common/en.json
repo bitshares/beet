@@ -112,8 +112,10 @@
     },
     "popup": {
         "preview": "Prompt preview",
-        "request": "View request JSON",
+        "evaluate": "Evaluate prompt outcome",
         "payload": "View payload JSON",
+        "request": "View request JSON",
+        "result": "View network result JSON",
         "language": "Language",
         "chainOperations": "Chain operations"
     },
