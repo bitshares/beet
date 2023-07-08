@@ -8,6 +8,20 @@
     const { t } = useI18n({ useScope: 'global' });
     const emitter = inject('emitter');
     const logger = new RendererLogger();
+    
+    const localeStrings = {
+        da: 'Dansk',
+        de: 'Deutsch',
+        en: 'English',
+        es: 'Español',
+        et: 'Eesti Keel',
+        fr: 'Français',
+        it: 'Italiano',
+        ja: '日本',
+        ko: '한국어',
+        pt: 'Português',
+        th: 'ไทย',
+    }
 
     const props = defineProps({
         location: {
@@ -20,7 +34,9 @@
     });
 
     let localesRef = computed(() => {
-        return menuLocales;
+        return menuLocales.map((x) => {
+            return localeStrings[x]
+        });
     });
 
     let location = computed(() => {
@@ -42,9 +58,10 @@
     }
 
     function onSelected(locale) {
-        emitter.emit('i18n', locale.value);
-        store.dispatch("SettingsStore/setLocale", {locale: locale.value});
-        selected.value = locale.value;
+        const detectedLocale = Object.keys(localeStrings).find((key) => localeStrings[key] === locale.value);
+        emitter.emit('i18n', detectedLocale);
+        store.dispatch("SettingsStore/setLocale", {locale: detectedLocale});
+        selected.value = detectedLocale;
         open.value = false;
     }
 </script>
@@ -90,11 +107,7 @@
                 v-for="locale in selectLocales"
                 :key="locale.value"
                 :value="locale.value"
-            >
-                <ui-menuitem-text>
-                    {{ locale.label }}
-                </ui-menuitem-text>
-            </ui-menuitem>
+            />
         </ui-menu>
     </ui-menu-anchor>
 </template>
