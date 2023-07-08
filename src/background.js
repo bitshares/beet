@@ -228,7 +228,6 @@ const createReceipt = async (arg, modalEvent) => {
                     + `id=${encodeURIComponent(id)}`
                     + `&request=${encodeURIComponent(JSON.stringify(request))}`
                     + `&result=${encodeURIComponent(JSON.stringify(result))}`
-                    + `&visualizedAccount=${encodeURIComponent(receipt.visualizedAccount)}`
                     + `&visualizedParams=${encodeURIComponent(receipt.visualizedParams)}`
                     + `&notifyTXT=${encodeURIComponent(notifyTXT)}`;
 

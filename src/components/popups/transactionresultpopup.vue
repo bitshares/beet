@@ -102,7 +102,7 @@
     <div
         v-if="!!visualizedParams"
         class="text-left custom-content"
-        style="marginTop: 10px;"
+        style="margin-top: 10px;"
     >
         <ui-card>
             <ui-card-content>
@@ -111,13 +111,16 @@
                         v-if="total > 1"
                         :class="$tt('subtitle1')"
                     >
-                        {{ t(visualizedParams[page - 1].title) }} ({{ page }}/{{ total }})
+                        <b>{{ t(visualizedParams[page - 1].title) }}</b> ({{ page }}/{{ total }})
                     </div>
                     <div
                         v-else
                         :class="$tt('subtitle1')"
                     >
-                        {{ t(visualizedParams[page - 1].title) }}
+                        <b>{{ t(visualizedParams[page - 1].title) }}</b>
+                    </div>
+                    <div>
+                        {{ t(`operations.injected.BTS.${visualizedParams[page - 1].method}.headers.request`) }}
                     </div>
                     <div
                         v-for="row in visualizedParams[page - 1].rows"

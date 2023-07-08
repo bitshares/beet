@@ -2,8 +2,16 @@
   "general": {
     "content": "콘텐츠"
   },
+  "receipt": {
+    "id": "트랜잭션 ID: { resultID }",
+    "block": "블록 번호: { resultBlockNum }",
+    "trxNum": "거래 번호: { resultTrxNum }",
+    "expiration": "만료: { resultExpiration }",
+    "signatures": "서명: { resultSignatures }"
+  },
   "link": {
     "title": "계정 연결 요청",
+    "result": "계정 연결 결과",
     "account_select": "계정 선택",
     "account_missing": "요청한 계정이 이 지갑에 없습니다.",
     "request": "'{origin}'의 '{appName}' 애플리케이션이 {chain} 계정에 대한 액세스를 요청하고 있습니다.",
@@ -16,12 +24,14 @@
   },
   "relink": {
     "title": "계정 재연결 요청",
+    "result": "계정 재연결 결과",
     "error": "프롬프트 표시 오류",
     "request": "'{origin}'의 '{appName}' 애플리케이션이 이전에 연결된 {chain} 계정 {accountId}의 재연결을 요청하고 있습니다. ",
     "request_tooltip": "애플리케이션과 계정 참조c 사이의 이전 링크가 재설정됩니다."
   },
   "account_id": {
     "title": "계정 정보 요청",
+    "result": "계정 세부정보 결과",
     "request": "앱: '{origin}'의 '{appName}'이 연결된 ID(계정 ID)에 대한 액세스를 요청하고 있습니다.",
     "request_tooltip": "기본적으로 익명 링크가 제공됩니다. ",
     "accept_btn": "허용하다",
@@ -29,6 +39,7 @@
   },
   "any_account_id": {
     "title": "계정 정보 요청",
+    "result": "계정 세부정보 결과",
     "request": "앱: '{origin}'의 '{appName}'이(가) 계정에 대한 액세스를 요청하고 있습니다.",
     "request_cta": "제공할 계정을 선택합니다.",
     "accept_btn": "허용하다",
@@ -36,10 +47,11 @@
   },
   "transfer": {
     "title": "전송 요청",
+    "result": "전송 결과",
     "to": "받는 사람",
     "amount": "양",
     "memo": "메모",
-    "request": "앱: '{origin}'의 '{appName}'이(가) { chain }:{ accountName }에서 전송을 시작하려고 합니다.",
+    "request": "앱: '{origin}'의 '{appName}'이(가) { chain }:{ accountName }에서 이체를 시작하려고 합니다.",
     "request_cta": "실행하시겠습니까?",
     "accept_btn": "징후",
     "reject_btn": "무시하다",
@@ -48,12 +60,24 @@
   },
   "rawsig": {
     "title": "요구",
+    "result": "요청 결과",
+    "headers": {
+      "request": "다음 원시 서명을 승인하시겠습니까?",
+      "result": "다음 원시 서명이 승인되었습니다."
+    },
     "loading": "블록체인에서 트랜잭션 세부 정보를 로드 중입니다. 잠시만 기다려 주십시오.",
     "request": "앱: '{origin}'의 '{appName}'이(가) 계정 { chain }:{ accountName }에 대해 다음 트랜잭션을 제출했습니다.",
+    "summary": "이 트랜잭션에는 {numOps}개의 작업이 포함되어 있습니다. 아래에서 찾아볼 수 있습니다.",
+    "summary_single": "이 트랜잭션에는 단일 작업이 포함되어 있으며 아래에서 찾아볼 수 있습니다.",
     "request_cta": "실행하시겠습니까?",
     "accept_btn": "징후",
     "sign_and_broadcast_btn": "징후",
     "sign_btn": "징후",
+    "receipt": {
+      "title": "영수증을 원하십니까?",
+      "yes": "예, 영수증을 원합니다.",
+      "no": "아니요, 영수증을 원하지 않습니다."
+    },
     "reject_btn": "무시하다"
   },
   "whitelist": {
@@ -61,6 +85,7 @@
   },
   "vote": {
     "title": "투표 요청",
+    "result": "투표 결과",
     "request": "앱: '{origin}'의 '{appName}'에서 계정 { accountName }:{ chain }을(를) 사용하여 다음 {entity}에 투표하도록 요청했습니다.",
     "request_cta": "",
     "accept_btn": "승인하다",
@@ -68,6 +93,7 @@
   },
   "message": {
     "title": "서명 메시지 요청",
+    "result": "서명 메시지 결과",
     "request": "앱: '{origin}'의 '{appName}'에서 계정 { chain }:{ accountName }으로 다음 텍스트에 서명하도록 요청했습니다.",
     "request_cta": "",
     "accept_btn": "승인하다",
@@ -78,41 +104,81 @@
       "getAccount": {
         "method": "getAccount",
         "title": "계정 정보 요청",
+        "result": "계정 세부정보 결과",
+        "headers": {
+          "request": "계정 정보를 공유하시겠습니까?",
+          "result": "귀하의 계정 세부 정보가 공유되었습니다."
+        },
         "tooltip": "지갑에 블록체인 계정 세부 정보를 요청합니다."
       },
       "requestSignature": {
         "method": "요청서명",
         "title": "서명 요청",
+        "result": "서명 결과",
+        "headers": {
+          "request": "서명을 공유하시겠습니까?",
+          "result": "귀하의 서명이 공유되었습니다:"
+        },
         "tooltip": "지갑에 블록체인 서명 요청"
       },
       "injectedCall": {
         "method": "주입된 호출",
         "title": "주입된 호출 요청",
+        "result": "주입된 호출 결과",
+        "headers": {
+          "request": "다음 주입된 호출을 승인하시겠습니까?",
+          "result": "다음 주입된 호출이 승인되었습니다."
+        },
         "tooltip": "주입된 블록체인 작업을 처리하도록 지갑에 요청"
       },
       "voteFor": {
         "method": "투표하다",
         "title": "투표 요청",
+        "result": "투표 결과",
+        "headers": {
+          "request": "다음 투표 요청을 승인하시겠습니까?",
+          "result": "다음 투표 요청이 승인되었습니다."
+        },
         "tooltip": "블록체인 투표 수행"
       },
       "signMessage": {
         "method": "기호메시지",
         "title": "서명 메시지 요청",
+        "result": "서명 메시지 결과",
+        "headers": {
+          "request": "다음 메시지 서명을 승인하시겠습니까?",
+          "result": "다음 메시지가 서명되었습니다."
+        },
         "tooltip": "블록체인 기반 메시지 서명"
       },
       "signNFT": {
         "method": "서명NFT",
         "title": "NFT 요청 서명",
+        "result": "NFT 결과 서명",
+        "headers": {
+          "request": "다음 NFT 서명을 승인하시겠습니까?",
+          "result": "다음 NFT가 서명되었습니다."
+        },
         "tooltip": "NFT 콘텐츠 서명"
       },
       "verifyMessage": {
         "method": "verifyMessage",
         "title": "메시지 요청 확인",
+        "result": "메시지 결과 확인",
+        "headers": {
+          "request": "다음 메시지를 확인하시겠습니까?",
+          "result": "다음 메시지가 확인되었습니다."
+        },
         "tooltip": "블록체인 기반 서명 메시지 확인"
       },
       "transfer": {
         "method": "옮기다",
         "title": "전송 요청",
+        "result": "전송 결과",
+        "headers": {
+          "request": "다음 이전 요청을 승인하시겠습니까?",
+          "result": "다음 이전 요청이 승인되었습니다."
+        },
         "rows": {
           "from": "발신자: {from} ({opFrom})",
           "to": "받는 사람: {to} ({opTo})",
@@ -123,6 +189,11 @@
       "limit_order_create": {
         "method": "지정가 주문 생성",
         "title": "지정가 주문 생성 요청",
+        "result": "지정가 주문 생성 결과",
+        "headers": {
+          "request": "다음 지정가 주문 생성 요청을 승인하시겠습니까?",
+          "result": "다음 지정가 주문이 생성되었습니다."
+        },
         "rows": {
           "trade": "거래",
           "tradeFK": "무역 (채우거나 죽이기)",
@@ -136,8 +207,12 @@
       "limit_order_cancel": {
         "method": "지정가 주문 취소",
         "title": "지정가 주문 취소 요청",
+        "result": "지정가 주문 취소 결과",
+        "headers": {
+          "request": "다음 지정가 주문을 취소하시겠습니까?",
+          "result": "다음 지정가 주문이 취소되었습니다."
+        },
         "rows": {
-          "header": "다음 지정가 주문을 취소하시겠습니까?",
           "id": "주문 ID: {id}",
           "fees": "예상 수수료: {fees}",
           "account": "수수료 지불 계정: {account}"
@@ -147,8 +222,12 @@
       "call_order_update": {
         "method": "전화 주문 업데이트",
         "title": "전화 주문 업데이트 요청",
+        "result": "콜 오더 업데이트 결과",
+        "headers": {
+          "request": "호출 순서를 다음과 같이 업데이트하시겠습니까?",
+          "result": "다음 호출 순서가 업데이트되었습니다."
+        },
         "rows": {
-          "header": "호출 순서를 다음과 같이 업데이트하시겠습니까?",
           "funding_account": "펀딩 계정: {funding_account}",
           "delta_collateral": "델타 담보: {delta_collateral}({id})",
           "delta_debt": "델타 부채: {delta_debt} ({id})",
@@ -159,8 +238,12 @@
       "account_create": {
         "method": "계정 생성",
         "title": "계정 생성 요청",
+        "result": "계정 생성 결과",
+        "headers": {
+          "request": "다음 계정을 만드시겠습니까?",
+          "result": "다음 계정이 생성되었습니다."
+        },
         "rows": {
-          "header": "다음 계정을 만드시겠습니까?",
           "registrar": "레지스트라: {registrar} ({opRegistrar})",
           "referrer": "리퍼러: {referrer} ({opReferrer})",
           "referrer_percent": "리퍼러 퍼센트: {referrer_percent}",
@@ -185,8 +268,12 @@
       "account_update": {
         "method": "계정 업데이트",
         "title": "계정 업데이트 요청",
+        "result": "계정 업데이트 결과",
+        "headers": {
+          "request": "다음 계정을 업데이트하시겠습니까?",
+          "result": "다음 계정이 업데이트되었습니다."
+        },
         "rows": {
-          "header": "다음 계정을 만드시겠습니까?",
           "warning": "경고: 이 작업은 되돌릴 수 없습니다!",
           "account": "계정: {account} ({opAccount})",
           "owner": "소유자: {owner}",
@@ -200,8 +287,12 @@
       "account_whitelist": {
         "method": "계정 화이트리스트",
         "title": "계정 화이트리스트 요청",
+        "result": "계정 화이트리스트 결과",
+        "headers": {
+          "request": "계정 허용 목록을 다음으로 업데이트하시겠습니까?",
+          "result": "계정 허용 목록이 다음과 같이 업데이트되었습니다."
+        },
         "rows": {
-          "header": "계정 화이트리스트 세부 정보:",
           "authorizing_account": "인증 계정: {authorizingAccount} (authorizingAccountOP)",
           "account_to_list": "나열할 계정: {accountToList} (accountToListOP)",
           "new_listing": "새 목록: {newListing}",
@@ -213,8 +304,12 @@
       "account_upgrade": {
         "method": "계정 업그레이드",
         "title": "계정 업그레이드 요청",
+        "result": "계정 업그레이드 결과",
+        "headers": {
+          "request": "계정을 평생 회원으로 업그레이드하시겠습니까?",
+          "result": "귀하의 계정이 평생 회원으로 업그레이드되었습니다!"
+        },
         "rows": {
-          "header": "계정을 평생 회원으로 업그레이드하시겠습니까?",
           "account_to_upgrade": "업그레이드할 계정: {accountToUpgrade} (accountToUpgradeOP)",
           "upgrade_to_lifetime_member": "평생 회원으로 업그레이드: {upgradeToLifetimeMember}",
           "extensions": "확장 프로그램: {extensions}",
@@ -225,8 +320,12 @@
       "account_transfer": {
         "method": "계좌이체",
         "title": "계좌 이체 요청",
+        "result": "계좌이체 결과",
+        "headers": {
+          "request": "새 소유자에게 계정을 이전하시겠습니까?",
+          "result": "다음 계정이 새 소유자에게 이전되었습니다."
+        },
         "rows": {
-          "header": "새 소유자에게 계정을 이전하시겠습니까?",
           "warning": "경고: 이 작업은 되돌릴 수 없습니다!",
           "account_id": "계정 ID: {originalOwner}({account_id})",
           "new_owner": "새 소유자: {newOwner} ({newOwnerOP})",
@@ -237,8 +336,12 @@
       "asset_create": {
         "method": "자산 생성",
         "title": "자산 생성 요청",
+        "result": "자산 생성 결과",
+        "headers": {
+          "request": "다음 자산을 만드시겠습니까?",
+          "result": "다음 자산이 생성되었습니다."
+        },
         "rows": {
-          "header": "다음 자산을 만드시겠습니까?",
           "symbol": "기호: {symbol}",
           "main": "메인: {main}",
           "market": "시장: {market}",
@@ -292,8 +395,12 @@
       "asset_update": {
         "method": "자산 업데이트",
         "title": "자산 업데이트 요청",
+        "result": "자산 업데이트 결과",
+        "headers": {
+          "request": "다음 자산을 업데이트하시겠습니까?",
+          "result": "자산이 다음 세부 정보로 업데이트되었습니다."
+        },
         "rows": {
-          "header": "다음 자산을 업데이트하시겠습니까?",
           "symbol": "기호: {symbol}",
           "main": "메인: {main}",
           "market": "시장: {market}",
@@ -347,8 +454,12 @@
       "asset_update_bitasset": {
         "method": "자산 업데이트 비트자산",
         "title": "자산 업데이트 비트 자산 요청",
+        "result": "자산 업데이트 비트자산 결과",
+        "headers": {
+          "request": "비트에셋 업데이트를 승인하시겠습니까?",
+          "result": "다음 bitasset 업데이트가 승인되었습니다."
+        },
         "rows": {
-          "header": "비트에셋 업데이트를 승인하시겠습니까?",
           "issuer": "발급자: {issuer}",
           "asset_to_update": "업데이트할 자산: {asset_to_update}",
           "new_options": "새로운 옵션:",
@@ -367,8 +478,12 @@
       "asset_update_feed_producers": {
         "method": "자산 업데이트 피드 제작자",
         "title": "저작물 업데이트 피드 제작자 요청",
+        "result": "자산 업데이트 피드 제작자 결과",
+        "headers": {
+          "request": "Bitasset 피드 제작자에 대한 변경을 승인하시겠습니까?",
+          "result": "Bitasset 피드 생산자에 대한 다음 변경 사항이 승인되었습니다."
+        },
         "rows": {
-          "header": "Bitasset 피드 제작자에 대한 변경을 승인하시겠습니까?",
           "issuer": "발급자: {issuer} ({issuerOP})",
           "asset_to_update": "업데이트할 자산: {symbol} ({asset_to_update})",
           "new_feed_producers": "새 피드 제작자: {new_feed_producers}",
@@ -379,8 +494,13 @@
       "asset_issue": {
         "method": "자산 발행",
         "title": "자산 발행 요청",
+        "result": "자산 발행 결과",
+        "headers": {
+          "request": "다음 자산 발행을 승인하시겠습니까?",
+          "result": "다음 자산 발행이 승인되었습니다."
+        },
         "rows": {
-          "header": "{amount} {symbol} ({assetID})을(를) {to}({toID})에 발행하시겠습니까?",
+          "prompt": "{amount} {symbol} ({assetID})을(를) {to}({toID})에 발행하시겠습니까?",
           "fee": "예상 수수료: {fee} ({id})"
         },
         "tooltip": "생성한 자산을 개인에게 발행"
@@ -388,8 +508,12 @@
       "asset_reserve": {
         "method": "자산 준비금",
         "title": "자산 준비 요청",
+        "result": "자산 준비금 결과",
+        "headers": {
+          "request": "다음 자산 예약을 승인하시겠습니까?",
+          "result": "다음 자산 예약이 승인되었습니다."
+        },
         "rows": {
-          "header": "다음 자산 예약을 승인하시겠습니까?",
           "payer": "지불인: {payer} ({payerOP})",
           "amount_to_reserve": "예비 금액: {amount_to_reserve} ({amount_to_reserveOP})",
           "extensions": "확장 프로그램: {extensions}",
@@ -400,8 +524,12 @@
       "asset_fund_fee_pool": {
         "method": "자산 펀드 수수료 풀",
         "title": "자산 펀드 수수료 풀 요청",
+        "result": "자산 펀드 수수료 풀 결과",
+        "headers": {
+          "request": "다음 자산의 수수료 풀에 자금을 조달하시겠습니까?",
+          "result": "다음 자산의 수수료 풀 자금이 승인되었습니다."
+        },
         "rows": {
-          "header": "다음 자산의 수수료 풀에 자금을 조달하시겠습니까?",
           "from_account": "발신 계정: {from_account} ({from_accountOP})",
           "asset": "자산: {asset} ({assetOP})",
           "amount": "금액: {amount}",
@@ -412,8 +540,12 @@
       "asset_settle": {
         "method": "자산 정산",
         "title": "자산 정산 요청",
+        "result": "자산 정산 결과",
+        "headers": {
+          "request": "뒷받침 담보로 다음 자산을 정산하시겠습니까?",
+          "result": "다음 자산이 담보로 정산되었습니다."
+        },
         "rows": {
-          "header": "뒷받침 담보로 다음 자산을 정산하시겠습니까?",
           "account": "계정: {account} ({accountOP})",
           "amount": "금액: {amount} ({assetID})",
           "fee": "예상 수수료: {fee}"
@@ -423,8 +555,12 @@
       "asset_global_settle": {
         "method": "자산 글로벌 결제",
         "title": "자산 글로벌 정산 요청",
+        "result": "자산 글로벌 정산 결과",
+        "headers": {
+          "request": "다음 자산에 대한 글로벌 결제를 수행하시겠습니까?",
+          "result": "다음 자산이 전역적으로 정산되었습니다."
+        },
         "rows": {
-          "header": "다음 자산에 대한 글로벌 결제를 수행하시겠습니까?",
           "issuer": "발급자: {issuer} ({issuerOP})",
           "asset_to_settle": "정산할 자산: {asset_to_settle} ({asset_to_settleOP})",
           "settle_price": "정가: {settle_price}",
@@ -435,8 +571,12 @@
       "asset_publish_feed": {
         "method": "자산 게시 피드",
         "title": "자산 게시 피드 요청",
+        "result": "자산 게시 피드 결과",
+        "headers": {
+          "request": "다음 자산에 대한 가격 피드를 게시하시겠습니까?",
+          "result": "다음 자산 가격 피드 업데이트가 게시되었습니다."
+        },
         "rows": {
-          "header": "다음 자산에 대한 가격 피드를 게시하시겠습니까?",
           "publisher": "출판사: {publisher} ({publisherOP})",
           "asset_id": "자산 ID: {symbol} ({asset_idOP})",
           "feed": "밥을 먹이다:",
@@ -452,8 +592,12 @@
       "witness_create": {
         "method": "목격자 생성",
         "title": "증인 만들기 요청",
+        "result": "목격자 생성 결과",
+        "headers": {
+          "request": "다음 세부 정보로 증인을 만드시겠습니까?",
+          "result": "다음 증인이 생성되었습니다."
+        },
         "rows": {
-          "header": "다음 세부 정보로 증인을 만드시겠습니까?",
           "witness_account": "증인 계정: {witness_account} ({witness_accountOP})",
           "url": "URL: {url}",
           "block_signing_key": "블록 서명 키: {block_signing_key}",
@@ -464,8 +608,12 @@
       "witness_update": {
         "method": "증인 업데이트",
         "title": "증인 업데이트 요청",
+        "result": "증인 업데이트 결과",
+        "headers": {
+          "request": "증인 세부 정보를 다음으로 업데이트하시겠습니까?",
+          "result": "다음 증인 세부 정보가 업데이트되었습니다."
+        },
         "rows": {
-          "header": "증인 세부 정보를 다음으로 업데이트하시겠습니까?",
           "witness": "증인: {witness}",
           "witness_account": "증인 계정: {witness_account} ({witness_accountOP})",
           "new_url": "새 URL: {new_url}",
@@ -477,8 +625,12 @@
       "proposal_create": {
         "method": "제안서 작성",
         "title": "제안 생성 요청",
+        "result": "제안 생성 결과",
+        "headers": {
+          "request": "다음 제안서를 만드시겠습니까?",
+          "result": "다음과 같은 제안이 생성되었습니다."
+        },
         "rows": {
-          "header": "다음 제안서를 만드시겠습니까?",
           "expiration_time": "만료 시간: {expiration_time}",
           "proposed_ops": "제안된 작업: {proposed_ops}",
           "review_period_seconds": "검토 기간 초: {review_period_seconds}",
@@ -490,8 +642,12 @@
       "proposal_update": {
         "method": "제안 업데이트",
         "title": "제안 업데이트 요청",
+        "result": "제안 업데이트 결과",
+        "headers": {
+          "request": "다음 제안을 업데이트하시겠습니까?",
+          "result": "다음 제안이 업데이트되었습니다."
+        },
         "rows": {
-          "header": "다음 제안을 업데이트하시겠습니까?",
           "proposal": "제안: {proposal}",
           "active_approvals_to_add": "추가할 활성 승인: {active_approvals_to_add}",
           "active_approvals_to_remove": "제거할 활성 승인: {active_approvals_to_remove}",
@@ -508,8 +664,12 @@
       "proposal_delete": {
         "method": "제안 삭제",
         "title": "제안 삭제 요청",
+        "result": "제안 삭제 결과",
+        "headers": {
+          "request": "다음 제안을 삭제하시겠습니까?",
+          "result": "다음 제안이 삭제되었습니다."
+        },
         "rows": {
-          "header": "다음 제안을 삭제하시겠습니까?",
           "using_owner_authority": "소유자 권한 사용: {using_owner_authority}",
           "proposal": "제안: {proposal}",
           "fee_paying_account": "수수료 납부 계좌: {fee_paying_account} ({fee_paying_accountOP})",
@@ -521,8 +681,12 @@
       "withdraw_permission_create": {
         "method": "권한 생성 철회",
         "title": "권한 생성 요청 철회",
+        "result": "철회 권한 생성 결과",
+        "headers": {
+          "request": "자동이체 승인",
+          "result": "다음 자동이체 승인이 승인되었습니다."
+        },
         "rows": {
-          "header": "자동이체 승인",
           "recipient": "수신자: {recipient} ({recipientOP})",
           "withdraw_from": "인출할 계정: {withdraw_from} ({withdraw_fromOP})",
           "taking": "{period_qty} 기간 동안 {period_sec}초마다 {amount}를 가져가세요.",
@@ -533,8 +697,12 @@
       "withdraw_permission_update": {
         "method": "철회 권한 업데이트",
         "title": "권한 업데이트 요청 철회",
+        "result": "철회 권한 업데이트 결과",
+        "headers": {
+          "request": "증인 권한을 다음으로 업데이트하시겠습니까?",
+          "result": "다음 감시 권한 업데이트가 승인되었습니다."
+        },
         "rows": {
-          "header": "증인 권한을 다음으로 업데이트하시겠습니까?",
           "withrdaw_from_account": "계정에서 인출: {withrdaw_from_account} ({withrdaw_from_accountOP})",
           "authorized_account": "승인된 계정: {authorized_account} ({authorized_accountOP})",
           "permission_to_update": "업데이트 권한: {permission_to_update}",
@@ -550,8 +718,12 @@
       "withdraw_permission_claim": {
         "method": "권한 요청 철회",
         "title": "권한 주장 요청 철회",
+        "result": "철회권 주장 결과",
+        "headers": {
+          "request": "다음 철회 권한을 요청하십시오",
+          "result": "다음과 같은 철회 권한이 요청되었습니다."
+        },
         "rows": {
-          "header": "다음 철회 권한을 요청하십시오",
           "withdraw_permission": "권한 철회: {withdraw_permission}",
           "withdraw_from_account": "계정에서 인출: {withdraw_from_account} ({withdraw_from_accountOP})",
           "withdraw_to_account": "계좌로 인출: {withdraw_to_account} ({withdraw_to_accountOP})",
@@ -564,8 +736,12 @@
       "withdraw_permission_delete": {
         "method": "철회 권한 삭제",
         "title": "권한 삭제 요청 철회",
+        "result": "철회 권한 삭제 결과",
+        "headers": {
+          "request": "다음 철회 권한을 삭제하시겠습니까?",
+          "result": "다음 철회 권한이 삭제되었습니다."
+        },
         "rows": {
-          "header": "다음 철회 권한을 삭제하시겠습니까?",
           "withdraw_from_account": "계정에서 인출: {withdraw_from_account} ({withdraw_from_accountOP})",
           "authorized_account": "승인된 계정: {authorized_account} ({authorized_accountOP})",
           "withdrawal_permission": "철회 권한: {withdrawal_permission}",
@@ -576,8 +752,12 @@
       "committee_member_create": {
         "method": "위원 생성",
         "title": "위원 생성 요청",
+        "result": "위원이 결과를 만든다",
+        "headers": {
+          "request": "위원을 만드시겠습니까?",
+          "result": "다음 위원이 생성되었습니다."
+        },
         "rows": {
-          "header": "위원을 만드시겠습니까?",
           "committee_member_account": "위원회 구성원 계정: {committee_member_account} ({committee_member_accountOP})",
           "url": "URL: {url}",
           "fee": "예상 수수료: {fee}"
@@ -587,8 +767,12 @@
       "committee_member_update": {
         "method": "위원 업데이트",
         "title": "위원 업데이트 요청",
+        "result": "위원 업데이트 결과",
+        "headers": {
+          "request": "다음 위원의 세부 정보를 업데이트하시겠습니까?",
+          "result": "다음 위원의 세부 업데이트가 승인되었습니다."
+        },
         "rows": {
-          "header": "다음 위원의 세부 정보를 업데이트하시겠습니까?",
           "committee_member": "위원: {committee_member}",
           "committee_member_account": "위원회 구성원 계정: {committee_member_account} ({committee_member_accountOP})",
           "new_url": "새 URL: {new_url}",
@@ -599,8 +783,12 @@
       "committee_member_update_global_parameters": {
         "method": "위원회 구성원 업데이트 전역 매개변수",
         "title": "위원회 구성원 업데이트 전역 매개변수 요청",
+        "result": "위원회 구성원 업데이트 전역 매개변수 결과",
+        "headers": {
+          "request": "다음 글로벌 매개변수를 위원회로 승인하시겠습니까?",
+          "result": "다음 글로벌 위원회 매개변수가 승인되었습니다."
+        },
         "rows": {
-          "header": "다음 글로벌 매개변수를 위원회로 승인하시겠습니까?",
           "new_parameters": "새 매개변수:",
           "current_fees": "현재 수수료: {current_fees}",
           "block_interval": "차단 간격: {block_interval}",
@@ -638,8 +826,12 @@
       "vesting_balance_create": {
         "method": "베스팅 잔액 생성",
         "title": "베스팅 잔액 생성 요청",
+        "result": "베스팅 잔액 생성 결과",
+        "headers": {
+          "request": "다음 베스팅 잔액을 만드시겠습니까?",
+          "result": "다음 베스팅 잔액이 생성되었습니다."
+        },
         "rows": {
-          "header": "다음 베스팅 잔액을 만드시겠습니까?",
           "creator": "작성자: {creator} ({creatorOP})",
           "owner": "소유자: {owner}({ownerOP})",
           "amount": "금액: {amount} ({asset_id})",
@@ -656,8 +848,12 @@
       "vesting_balance_withdraw": {
         "method": "베스팅 잔액 인출",
         "title": "베스팅 잔액 인출 요청",
+        "result": "베스팅 잔고 인출 결과",
+        "headers": {
+          "request": "다음 베스팅 잔액을 인출하시겠습니까?",
+          "result": "다음 베스팅 잔액이 인출되었습니다."
+        },
         "rows": {
-          "header": "베스팅 잔액",
           "owner": "소유자: {owner}({ownerOP})",
           "claim": "소유권 주장: {claim} ({asset_id})"
         },
@@ -666,8 +862,12 @@
       "worker_create": {
         "method": "작업자 생성",
         "title": "작업자 생성 요청",
+        "result": "작업자 생성 결과",
+        "headers": {
+          "request": "다음 작업자 제안을 만드시겠습니까?",
+          "result": "다음 작업자 제안이 작성되었습니다."
+        },
         "rows": {
-          "header": "다음 작업자 제안을 만드시겠습니까?",
           "owner": "소유자: {owner}({ownerOP})",
           "work_begin_date": "작업 시작 날짜: {work_begin_date}",
           "work_end_date": "작업 종료 날짜: {work_end_date}",
@@ -682,8 +882,12 @@
       "custom": {
         "method": "관습",
         "title": "맞춤 요청",
+        "result": "맞춤 결과",
+        "headers": {
+          "request": "다음 사용자 지정 작업을 만드시겠습니까?",
+          "result": "다음 사용자 지정 작업이 생성되었습니다."
+        },
         "rows": {
-          "header": "맞춤 작업:",
           "payer": "지불인: {payer} ({payerOP})",
           "required_auths": "필수 권한: {required_auths}",
           "id": "ID: {id}",
@@ -695,8 +899,12 @@
       "assert": {
         "method": "주장하다",
         "title": "요청 주장",
+        "result": "결과 주장",
+        "headers": {
+          "request": "다음 어설션 요청 작업을 승인하시겠습니까?",
+          "result": "다음 어설션 요청 작업이 승인되었습니다."
+        },
         "rows": {
-          "header": "작업 주장:",
           "fee_paying_account": "수수료 납부 계좌: {fee_paying_account} ({fee_paying_accountOP})",
           "predicates": "술어: {predicates}",
           "required_auths": "필수 권한: {required_auths}",
@@ -708,8 +916,12 @@
       "balance_claim": {
         "method": "잔액 청구",
         "title": "잔액 청구 요청",
+        "result": "잔액 청구 결과",
+        "headers": {
+          "request": "다음 잔액을 청구하시겠습니까?",
+          "result": "청구된 잔액은 다음과 같습니다."
+        },
         "rows": {
-          "header": "다음 잔액을 청구하시겠습니까?",
           "deposit_to_account": "계좌 입금: {deposit_to_account} ({deposit_to_accountOP})",
           "balance_to_claim": "청구할 잔액: {balance_to_claim} ({asset_id})",
           "balance_owner_key": "잔액 소유자 키: {balance_owner_key}",
@@ -721,10 +933,14 @@
       "override_transfer": {
         "method": "대체 전송",
         "title": "이전 요청 재정의",
+        "result": "전송 결과 재정의",
+        "headers": {
+          "request": "다음 전송을 재정의하시겠습니까?",
+          "result": "다음 전송이 재정의되었습니다."
+        },
         "rows": {
-          "header": "다음 전송을 재정의하시겠습니까?",
           "issuer": "발급자: {issuer} ({issuerOP})",
-          "from": "발신자: {from} ({fromOP})",
+          "from": "보낸사람: {from} ({fromOP})",
           "to": "받는 사람: {to} ({toOP})",
           "amount": "금액: {amount} ({asset_id})",
           "memo": "메모: {memo}",
@@ -735,10 +951,14 @@
       "transfer_to_blind": {
         "method": "맹인으로 전환",
         "title": "블라인드 요청으로 전환",
+        "result": "블라인드 결과로 전환",
+        "headers": {
+          "request": "다음을 맹인으로 전환하시겠습니까?",
+          "result": "다음은 맹인으로 전환되었습니다."
+        },
         "rows": {
-          "header": "다음을 맹인으로 전환하시겠습니까?",
           "amount": "금액: {amount}",
-          "from": "발신자: {from} ({fromOP})",
+          "from": "보낸사람: {from} ({fromOP})",
           "blinding_factor": "블라인드 팩터: {blinding_factor}",
           "outputs": "출력: {outputs}",
           "fee": "예상 수수료: {fee}"
@@ -748,8 +968,12 @@
       "blind_transfer": {
         "method": "블라인드 전송",
         "title": "블라인드 이전 요청",
+        "result": "블라인드 전송 결과",
+        "headers": {
+          "request": "다음 블라인드 전송을 승인하시겠습니까?",
+          "result": "다음 블라인드 전송이 승인되었습니다."
+        },
         "rows": {
-          "header": "다음 블라인드 전송을 승인하시겠습니까?",
           "inputs": "입력: {inputs}",
           "outputs": "출력: {outputs}",
           "fee": "예상 수수료: {fee}"
@@ -759,8 +983,12 @@
       "transfer_from_blind": {
         "method": "맹인에서 이동",
         "title": "블라인드 요청에서 전송",
+        "result": "블라인드 결과에서 전송",
+        "headers": {
+          "request": "블라인드에서 다음을 전송하시겠습니까?",
+          "result": "다음은 맹인에서 이전되었습니다."
+        },
         "rows": {
-          "header": "블라인드에서 다음을 전송하시겠습니까?",
           "amount": "금액: {amount}",
           "to": "받는 사람: {to} ({toOP})",
           "blinding_factor": "블라인드 팩터: {blinding_factor}",
@@ -772,8 +1000,12 @@
       "asset_claim_fees": {
         "method": "자산 청구 수수료",
         "title": "자산 청구 수수료 요청",
+        "result": "자산 청구 수수료 결과",
+        "headers": {
+          "request": "다음 자산에서 수수료를 인출하시겠습니까?",
+          "result": "다음 자산 수수료가 청구되었습니다."
+        },
         "rows": {
-          "header": "다음 자산에서 수수료를 인출하시겠습니까?",
           "issuer": "발급자: {issuer} ({issuerOP})",
           "amount_to_claim": "청구 금액: {amount_to_claim} ({asset_id})",
           "fee": "예상 수수료: {fee}"
@@ -783,8 +1015,12 @@
       "bid_collateral": {
         "method": "입찰 자료",
         "title": "입찰 담보 요청",
+        "result": "입찰 담보 결과",
+        "headers": {
+          "request": "다음 담보 입찰을 승인하시겠습니까?",
+          "result": "다음 담보 입찰이 승인되었습니다."
+        },
         "rows": {
-          "header": "다음 담보 입찰을 승인하시겠습니까?",
           "bidder": "입찰자: {bidder} ({bidderOP})",
           "additional_collateral": "추가 담보: {additional_collateral}",
           "debt_covered": "갚은 부채: {debt_covered}",
@@ -795,8 +1031,12 @@
       "asset_claim_pool": {
         "method": "자산 클레임 풀",
         "title": "자산 소유권 풀 요청",
+        "result": "자산 소유권 풀 결과",
+        "headers": {
+          "request": "다음 자산 풀을 청구하시겠습니까?",
+          "result": "다음 자산 풀이 청구되었습니다."
+        },
         "rows": {
-          "header": "다음 자산 풀을 청구하시겠습니까?",
           "issuer": "발급자: {issuer} ({issuerOP})",
           "asset_id": "저작물: {asset_id}",
           "amount_to_claim": "청구 금액: {amount_to_claim}",
@@ -807,8 +1047,12 @@
       "asset_update_issuer": {
         "method": "자산 업데이트 발행자",
         "title": "자산 업데이트 발행자 요청",
+        "result": "자산 업데이트 발행자 결과",
+        "headers": {
+          "request": "다음 자산의 발행자를 업데이트하시겠습니까?",
+          "result": "다음 자산 발행자가 업데이트되었습니다."
+        },
         "rows": {
-          "header": "다음 자산의 발행자를 업데이트하시겠습니까?",
           "issuer": "발급자: {issuer} ({issuerOP})",
           "asset_to_update": "업데이트할 자산: {asset_to_update}",
           "new_issuer": "새 발급자: {new_issuer} ({new_issuerOP})",
@@ -819,9 +1063,13 @@
       "htlc_create": {
         "method": "HTLC 생성",
         "title": "HTLC 생성 요청",
+        "result": "HTLC 생성 결과",
+        "headers": {
+          "request": "다음과 같은 해시된 타임록 계약 작업을 생성하시겠습니까?",
+          "result": "다음과 같은 해시된 타임록 계약 작업의 생성이 승인되었습니다."
+        },
         "rows": {
-          "header": "다음 HTLC 작업을 만드시겠습니까?",
-          "from": "발신자: {from} ({fromOP})",
+          "from": "보낸사람: {from} ({fromOP})",
           "to": "받는 사람: {to} ({toOP})",
           "amount": "금액: {amount}",
           "preimage_hash": "사전 이미지 해시: {preimage_hash}",
@@ -834,8 +1082,12 @@
       "htlc_redeem": {
         "method": "HTLC 교환",
         "title": "HTLC 교환 요청",
+        "result": "HTLC 사용 결과",
+        "headers": {
+          "request": "다음 해시 시간 고정 계약 작업을 사용하시겠습니까?",
+          "result": "다음 해시 시간 고정 계약 작업의 상환이 승인되었습니다."
+        },
         "rows": {
-          "header": "다음 HTLC 작업을 사용하시겠습니까?",
           "htlc_id": "HTLC ID: {htlc_id}",
           "redeemer": "구속자: {redeemer} ({redeemerOP})",
           "preimage": "프리이미지: {preimage}",
@@ -847,8 +1099,12 @@
       "htlc_extend": {
         "method": "HTLC 확장",
         "title": "HTLC 확장 요청",
+        "result": "HTLC 확장 결과",
+        "headers": {
+          "request": "다음 해시 타임락 계약 연장을 승인하시겠습니까?",
+          "result": "다음 해시 타임락 계약의 연장이 승인되었습니다."
+        },
         "rows": {
-          "header": "다음 HTLC 확장 프로그램을 승인하시겠습니까?",
           "htlc_id": "HTLC ID: {htlc_id}",
           "update_issuer": "업데이트 발행자: {update_issuer} ({update_issuerOP})",
           "seconds_to_add": "추가할 시간(초): {seconds_to_add}",
@@ -860,8 +1116,12 @@
       "custom_authority_create": {
         "method": "커스텀 권한 생성",
         "title": "사용자 지정 권한 생성 요청",
+        "result": "커스텀 권한 생성 결과",
+        "headers": {
+          "request": "다음 사용자 지정 권한을 만드시겠습니까?",
+          "result": "다음 사용자 지정 권한이 생성되었습니다."
+        },
         "rows": {
-          "header": "다음 사용자 지정 권한을 만드시겠습니까?",
           "account": "계정: {account} ({accountOP})",
           "enabled": "활성화: {enabled}",
           "valid_from": "유효 기간: {valid_from}",
@@ -877,8 +1137,12 @@
       "custom_authority_update": {
         "method": "사용자 지정 권한 업데이트",
         "title": "사용자 지정 권한 업데이트 요청",
+        "result": "사용자 지정 권한 업데이트 결과",
+        "headers": {
+          "request": "다음 사용자 정의 권한을 업데이트하시겠습니까?",
+          "result": "다음 사용자 정의 권한이 업데이트되었습니다."
+        },
         "rows": {
-          "header": "다음 사용자 정의 권한을 업데이트하시겠습니까?",
           "account": "계정: {account} ({accountOP})",
           "authority_to_update": "업데이트 권한: {authority_to_update}",
           "new_enabled": "새로 활성화됨: {new_enabled}",
@@ -895,8 +1159,12 @@
       "custom_authority_delete": {
         "method": "맞춤 권한 삭제",
         "title": "커스텀 권한 삭제 요청",
+        "result": "커스텀 권한 삭제 결과",
+        "headers": {
+          "request": "다음 사용자 정의 권한을 삭제하시겠습니까?",
+          "result": "다음 사용자 지정 권한이 삭제되었습니다."
+        },
         "rows": {
-          "header": "다음 사용자 정의 권한을 삭제하시겠습니까?",
           "account": "계정: {account} ({accountOP})",
           "authority_to_delete": "삭제 권한: {authority_to_delete}",
           "extensions": "확장 프로그램: {extensions}",
@@ -907,8 +1175,12 @@
       "ticket_create": {
         "method": "티켓 생성",
         "title": "티켓 생성 요청",
+        "result": "티켓 생성 결과",
+        "headers": {
+          "request": "다음 티켓을 만드시겠습니까?",
+          "result": "다음 티켓이 생성되었습니다."
+        },
         "rows": {
-          "header": "다음 티켓을 만드시겠습니까?",
           "account": "계정: {account} ({accountOP})",
           "target_type": "대상 유형: {target_type}",
           "amount": "금액: {amount}",
@@ -920,8 +1192,12 @@
       "ticket_update": {
         "method": "티켓 업데이트",
         "title": "티켓 업데이트 요청",
+        "result": "티켓 업데이트 결과",
+        "headers": {
+          "request": "다음 티켓을 업데이트하시겠습니까?",
+          "result": "다음 티켓이 업데이트되었습니다."
+        },
         "rows": {
-          "header": "다음 티켓을 업데이트하시겠습니까?",
           "ticket": "티켓: {ticket}",
           "account": "계정: {account} ({accountOP})",
           "target_type": "대상 유형: {target_type}",
@@ -933,8 +1209,12 @@
       "liquidity_pool_create": {
         "method": "유동성 풀 생성",
         "title": "유동성 풀 생성 요청",
+        "result": "유동성 풀 생성 결과",
+        "headers": {
+          "request": "다음 세부 정보로 유동성 풀을 만드시겠습니까?",
+          "result": "다음 유동성 풀이 생성되었습니다."
+        },
         "rows": {
-          "header": "다음 세부 정보로 유동성 풀을 만드시겠습니까?",
           "account": "계정: {account} ({accountOP})",
           "asset_a": "자산 A: {asset_a} ({asset_aOP})",
           "asset_b": "자산 B: {asset_b} ({asset_bOP})",
@@ -949,8 +1229,12 @@
       "liquidity_pool_delete": {
         "method": "유동성 풀 삭제",
         "title": "유동성 풀 삭제 요청",
+        "result": "유동성 풀 삭제 결과",
+        "headers": {
+          "request": "다음 유동성 풀을 삭제하시겠습니까?",
+          "result": "다음 유동성 풀이 삭제되었습니다."
+        },
         "rows": {
-          "header": "다음 유동성 풀을 삭제하시겠습니까?",
           "account": "계정: {account} ({accountOP})",
           "pool_id": "풀 ID: {pool_id}",
           "extensions": "확장 프로그램: {extensions}",
@@ -961,8 +1245,12 @@
       "liquidity_pool_deposit": {
         "method": "유동성 풀 예금",
         "title": "유동성 풀 입금 요청",
+        "result": "유동성 풀 입금 결과",
+        "headers": {
+          "request": "다음 자산을 유동성 풀에 입금하시겠습니까?",
+          "result": "유동성 풀에 예치된 자산은 다음과 같습니다."
+        },
         "rows": {
-          "header": "다음 자산을 유동성 풀에 예치하시겠습니까?",
           "account": "계정: {account} ({accountOP})",
           "pool": "풀: {pool}",
           "asset_a": "자산 A: {asset_a} ({asset_aOP})",
@@ -974,9 +1262,13 @@
       },
       "liquidity_pool_withdraw": {
         "method": "유동성 풀 철회",
-        "title": "유동성 풀 출금 요청",
+        "title": "유동성 풀 철회 요청",
+        "result": "유동성 풀 출금 결과",
+        "headers": {
+          "request": "유동성 풀에서 다음 자산을 인출하시겠습니까?",
+          "result": "유동성 풀에서 다음 자산이 인출되었습니다."
+        },
         "rows": {
-          "header": "유동성 풀에서 다음 자산을 인출하시겠습니까?",
           "account": "계정: {account} ({accountOP})",
           "pool": "풀: {pool}",
           "share_asset": "자산 공유: {share_asset} ({share_assetOP})",
@@ -988,8 +1280,12 @@
       "liquidity_pool_exchange": {
         "method": "유동성 풀 교환",
         "title": "유동성 풀 교환 요청",
+        "result": "유동성 풀 교환 결과",
+        "headers": {
+          "request": "다음 유동성 풀 교환을 승인합니까?",
+          "result": "다음 유동성 풀 교환이 승인되었습니다."
+        },
         "rows": {
-          "header": "다음 유동성 풀 교환을 승인합니까?",
           "account": "계정: {account} ({accountOP})",
           "pool": "풀: {pool}",
           "amount_to_sell": "판매 수량: {amount_to_sell}",
@@ -1002,8 +1298,12 @@
       "samet_fund_create": {
         "method": "SameT 펀드 생성",
         "title": "SameT 펀드 생성 요청",
+        "result": "SameT 펀드 생성 결과",
+        "headers": {
+          "request": "다음 사멧 펀드 조성에 찬성하십니까?",
+          "result": "다음과 같은 사멧 펀드가 생성되었습니다."
+        },
         "rows": {
-          "header": "다음 사멧 펀드 조성에 찬성하십니까?",
           "owner_account": "소유자 계정: {owner_account}({owner_accountOP})",
           "asset_type": "자산 유형: {asset_type}",
           "balance": "잔액: {balance}",
@@ -1016,8 +1316,12 @@
       "samet_fund_delete": {
         "method": "SameT 펀드 삭제",
         "title": "SameT 펀드 삭제 요청",
+        "result": "SameT 펀드 삭제 결과",
+        "headers": {
+          "request": "다음 사멧 펀드를 삭제하시겠습니까?",
+          "result": "다음 사멧 펀드가 삭제되었습니다."
+        },
         "rows": {
-          "header": "다음 사멧 펀드를 삭제하시겠습니까?",
           "owner_account": "소유자 계정: {owner_account}({owner_accountOP})",
           "fund_id": "펀드 ID: {fund_id}",
           "extensions": "확장 프로그램: {extensions}",
@@ -1028,8 +1332,12 @@
       "samet_fund_update": {
         "method": "SameT 펀드 업데이트",
         "title": "SameT 펀드 업데이트 요청",
+        "result": "SameT 펀드 업데이트 결과",
+        "headers": {
+          "request": "다음 사멧 펀드를 업데이트하시겠습니까?",
+          "result": "다음 사멧 펀드가 업데이트되었습니다."
+        },
         "rows": {
-          "header": "다음 사멧 펀드를 업데이트하시겠습니까?",
           "owner_account": "소유자 계정: {owner_account}({owner_accountOP})",
           "fund_id": "펀드 ID: {fund_id}",
           "delta_amount": "델타 금액: {delta_amount}",
@@ -1042,8 +1350,12 @@
       "samet_fund_borrow": {
         "method": "SameT 펀드 차용",
         "title": "SameT 펀드 차용 요청",
+        "result": "SameT 펀드 차용 결과",
+        "headers": {
+          "request": "다음 사멧 펀드에서 빌리시겠습니까?",
+          "result": "다음 samet 펀드에서 성공적으로 빌렸습니다."
+        },
         "rows": {
-          "header": "다음 사멧 펀드에서 빌리시겠습니까?",
           "borrower": "대출자: {borrower} ({borrowerOP})",
           "fund_id": "펀드 ID: {fund_id}",
           "borrow_amount": "대출 금액: {borrow_amount}",
@@ -1055,8 +1367,12 @@
       "samt_fund_repay": {
         "method": "SameT 자금 상환",
         "title": "SameT 자금 상환 요청",
+        "result": "SameT 펀드 상환 결과",
+        "headers": {
+          "request": "다음 Samet 기금을 상환하십시오",
+          "result": "다음 Samet 기금을 성공적으로 상환했습니다."
+        },
         "rows": {
-          "header": "다음 Samet 기금을 상환하십시오",
           "account": "계정: {account} ({accountOP})",
           "fund_id": "펀드 ID: {fund_id}",
           "repay_amount": "상환 금액: {repay_amount}",
@@ -1064,13 +1380,17 @@
           "extensions": "확장 프로그램: {extensions}",
           "fee": "예상 수수료: {fee}"
         },
-        "tooltip": "SameT 펀드로 부채를 상환하십시오."
+        "tooltip": "SameT 펀드로 부채 상환."
       },
       "credit_offer_create": {
         "method": "신용 제공 생성",
-        "title": "신용 제안 생성 요청",
+        "title": "신용 제공 생성 요청",
+        "result": "신용 제안 생성 결과",
+        "headers": {
+          "request": "다음 신용 제안 생성을 승인하시겠습니까?",
+          "result": "다음 신용 제안이 생성되었습니다."
+        },
         "rows": {
-          "header": "다음 신용 제안 생성을 승인하시겠습니까?",
           "owner_account": "소유자 계정: {owner_account}({owner_accountOP})",
           "asset_type": "자산 유형: {asset_type}",
           "balance": "잔액: {balance}",
@@ -1089,8 +1409,12 @@
       "credit_offer_delete": {
         "method": "크레딧 제안 삭제",
         "title": "크레딧 제안 삭제 요청",
+        "result": "신용 제안 삭제 결과",
+        "headers": {
+          "request": "다음 신용 제안을 삭제하시겠습니까?",
+          "result": "다음 신용 제안이 삭제되었습니다."
+        },
         "rows": {
-          "header": "다음 크레딧 제안을 삭제하시겠습니까?",
           "owner_account": "소유자 계정: {owner_account}({owner_accountOP})",
           "offer_id": "제안 ID: {offer_id}",
           "extensions": "확장 프로그램: {extensions}",
@@ -1099,10 +1423,14 @@
         "tooltip": "신용 제안을 삭제합니다."
       },
       "credit_offer_update": {
-        "method": "크레딧 제안 업데이트",
+        "method": "크레딧 제공 업데이트",
         "title": "크레딧 제공 업데이트 요청",
+        "result": "신용 제공 업데이트 결과",
+        "headers": {
+          "request": "다음 신용 제안을 업데이트하시겠습니까?",
+          "result": "다음 신용 제안이 업데이트되었습니다."
+        },
         "rows": {
-          "header": "다음 신용 제안을 업데이트하시겠습니까?",
           "owner_account": "소유자 계정: {owner_account}({owner_accountOP})",
           "offer_id": "제안 ID: {offer_id}",
           "delta_amount": "델타 금액: {delta_amount}",
@@ -1121,8 +1449,12 @@
       "credit_offer_accept": {
         "method": "신용 제안 수락",
         "title": "신용 제안 수락 요청",
+        "result": "신용 제안 수락 결과",
+        "headers": {
+          "request": "다음 신용 제안을 승인하시겠습니까?",
+          "result": "다음 신용 제안이 승인되었습니다."
+        },
         "rows": {
-          "header": "다음 신용 제안을 승인하시겠습니까?",
           "borrower": "대출자: {borrower} ({borrowerOP})",
           "offer_id": "제안 ID: {offer_id}",
           "borrow_amount": "대출 금액: {borrow_amount}",
@@ -1137,8 +1469,12 @@
       "credit_deal_repay": {
         "method": "신용 거래 상환",
         "title": "신용 거래 상환 요청",
+        "result": "신용 거래 상환 결과",
+        "headers": {
+          "request": "다음 신용 거래를 상환하시겠습니까?",
+          "result": "다음 크레딧 거래를 상환했습니다."
+        },
         "rows": {
-          "header": "다음 신용 거래를 상환하시겠습니까?",
           "account": "계정: {account} ({accountOP})",
           "deal_id": "거래 ID: {deal_id}",
           "repay_amount": "상환 금액: {repay_amount}",

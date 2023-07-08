@@ -21,7 +21,7 @@
     "sign": "Transação assinada com sucesso.",
     "signAndBroadcast": "Transação assinada com sucesso",
     "inject": "Solicitação para executar uma operação de blockchain específica",
-    "vote": "Solicitação de votação",
+    "vote": "prompt de votação",
     "signNFT": "Solicitação de assinatura NFT",
     "signMessage": "Solicitação de mensagem assinada",
     "transfer": "Solicitação de transferência de token",
@@ -111,9 +111,16 @@
     "Logout": "Sair"
   },
   "popup": {
+    "keywords": {
+      "request": "Pedido de operação",
+      "result": "resultado da operação"
+    },
     "preview": "Solicitar visualização",
-    "request": "Ver pedido JSON",
+    "evaluate": "Avalie o resultado imediato",
     "payload": "Exibir carga útil JSON",
+    "request": "Ver solicitação JSON",
+    "result": "Exibir JSON do resultado da rede",
+    "details": "Ver detalhes",
     "language": "Linguagem",
     "chainOperations": "operações em cadeia"
   },
@@ -181,7 +188,7 @@
   "public_authority_placeholder": "Chave privada",
   "owner_authority_placeholder": "Chave Privada do Proprietário",
   "memo_authority_placeholder": "Chave privada de memorando",
-  "include_owner_check": "Incluir chave do proprietário?",
+  "include_owner_check": "Incluir Chave do Proprietário?",
   "password_cta": "Defina uma senha para esta carteira:",
   "tooltip_password_cta": "Sua carteira será criptografada e só poderá ser desbloqueada com esta senha. ",
   "unlock_with_password_cta": "Desbloqueie sua carteira para adicionar a(s) conta(s):",

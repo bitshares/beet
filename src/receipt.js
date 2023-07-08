@@ -51,7 +51,7 @@ app.use(BalmUI, {
     }
 });
 app.use(BalmUIPlus);
-app.mount('#modal');
+app.mount('#receipt');
 
 emitter.on('i18n', (data) => {
     i18n.global.locale.value = data

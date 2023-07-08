@@ -1857,7 +1857,6 @@ export default class BitShares extends BlockchainAPI {
                 }
                 
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                     {key: "id", params: {id: op.order}},
                     {key: "fees", params: {fee: JSON.stringify(op.fee)}},
                     {key: "account", params: {account: feePayingAccount ?? '' + " (" + op.fee_paying_account + ")"}}
@@ -1874,7 +1873,6 @@ export default class BitShares extends BlockchainAPI {
                 }
                 
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                     {key: "funding_account", params: {funding_account: fundingAccount ?? '' + " (" + op.funding_account + ")"}},
                     {
                         key: "delta_collateral",
@@ -1898,7 +1896,6 @@ export default class BitShares extends BlockchainAPI {
                 let referrer = accountResults.find((resAcc) => resAcc.id === op.referrer).accountName;
                 
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                         {key: "registrar", params: {registrar: registrar ?? '', opRegistrar: op.registrar}},
                         {key: "referrer", params: {referrer: referrer ?? '', opReferrer: op.referrer}},
                         {key: "referrer_percent", params: {referrer_percent: op.referrer_percent}},
@@ -1927,7 +1924,6 @@ export default class BitShares extends BlockchainAPI {
                 let targetAccount = accountResults.find((resAcc) => resAcc.id === op.account).accountName;
                 
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                     {key: "warning", params: {}},
                     {key: "account", params: {account: targetAccount ?? '', opAccount: op.account}},
                     {key: "owner", params: {owner: JSON.stringify(op.owner)}},
@@ -1942,7 +1938,6 @@ export default class BitShares extends BlockchainAPI {
                 let accountToList = accountResults.find((resAcc) => resAcc.id === op.account_to_list).accountName;
                 
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                     {
                         key: "authorizing_account",
                         params: {
@@ -1971,7 +1966,6 @@ export default class BitShares extends BlockchainAPI {
                 let accountToUpgrade = accountResults.find((resAcc) => resAcc.id === op.account_to_upgrade).accountName;
                 
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                     {
                         key: "account_to_upgrade",
                         params: {
@@ -1989,7 +1983,6 @@ export default class BitShares extends BlockchainAPI {
                 let newOwner = accountResults.find((resAcc) => resAcc.id === op.new_owner).accountName;
                 
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                     {key: "warning", params: {}},
                     {
                         key: "account_id",
@@ -2035,7 +2028,6 @@ export default class BitShares extends BlockchainAPI {
                 let nft_object = description ? description.nft_object : null;
                 
                 let tempRows = [
-                    {key: "header", params: {}},
                         {key: "symbol", params: {symbol: symbol}},
                         {key: "main", params: {main: description.main}},
                         {key: "market", params: {market: description.market}},
@@ -2152,7 +2144,6 @@ export default class BitShares extends BlockchainAPI {
                 }
 
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                         {key: "issuer", params: {issuer: op.issuer}},
                         {key: "asset_to_update", params: {asset_to_update: op.asset_to_update}},
                     {key: "new_options", params: {}},
@@ -2178,7 +2169,6 @@ export default class BitShares extends BlockchainAPI {
                 }
                 
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                         {key: "issuer", params: {issuer: issuer, issuerOP: op.issuer}},
                         {key: "asset_to_update", params: {symbol: assetToUpdate.symbol, asset_to_update: op.asset_to_update}},
                     {key: "new_feed_producers", params: {new_feed_producers: JSON.stringify(op.new_feed_producers)}},
@@ -2197,7 +2187,7 @@ export default class BitShares extends BlockchainAPI {
                 
                 currentOperation['rows'] = [
                     {
-                        key: "header",
+                        key: "prompt",
                         params: {
                             amount: op.asset_to_issue.amount,
                             symbol: assetToIssue.symbol,
@@ -2219,7 +2209,6 @@ export default class BitShares extends BlockchainAPI {
                 }
                 
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                         {key: "payer", params: {payer: payer, payerOP: op.payer}},
                         {
                             key: "amount_to_reserve",
@@ -2249,7 +2238,6 @@ export default class BitShares extends BlockchainAPI {
                 }
                 
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                         {key: "from_account", params: {from_account: fromAccount, from_accountOP: op.from_account}},
                         {
                             key: "asset",
@@ -2269,7 +2257,6 @@ export default class BitShares extends BlockchainAPI {
                 }
                 
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                         {key: "account", params: {account: account, accountOP: op.account}},
                         {
                             key: "amount",
@@ -2301,7 +2288,6 @@ export default class BitShares extends BlockchainAPI {
                     / humanReadableFloat(op.settle_price.quote.amount, quoteAsset.precision);
                       
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                         {key: "issuer", params: {issuer: issuer, issuerOP: op.account}},
                         {
                             key: "asset_to_settle",
@@ -2331,7 +2317,6 @@ export default class BitShares extends BlockchainAPI {
                 / humanReadableFloat(op.feed.settlement_price.quote.amount, quoteAsset.precision);
 
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                         {key: "publisher", params: {publisher: publisher, publisherOP: op.publisher}},
                         {
                             key: "asset_id",
@@ -2353,7 +2338,6 @@ export default class BitShares extends BlockchainAPI {
                 let witnessAccount = accountResults.find((resAcc) => resAcc.id === op.witness_account).accountName;
                 
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                         {
                             key: "witness_account",
                             params: {
@@ -2370,7 +2354,6 @@ export default class BitShares extends BlockchainAPI {
                 let witnessAccount = accountResults.find((resAcc) => resAcc.id === op.witness_account).accountName;
                 
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                         {
                             key: "witness",
                             params: {
@@ -2393,7 +2376,6 @@ export default class BitShares extends BlockchainAPI {
                 let feePayingAccount = accountResults.find((resAcc) => resAcc.id === op.fee_paying_account).accountName;
                 
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                         {key: "expiration_time", params: {expiration_time: op.expiration_time}},
                         {key: "proposed_ops", params: {proposed_ops: JSON.stringify(op.proposed_ops)}},
                         {key: "review_period_seconds", params: {review_period_seconds: op.review_period_seconds}},
@@ -2411,7 +2393,6 @@ export default class BitShares extends BlockchainAPI {
                 let feePayingAccount = accountResults.find((resAcc) => resAcc.id === op.fee_paying_account).accountName;
                 
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                         {key: "proposal", params: {proposal: op.proposal}},
                         {
                             key: "active_approvals_to_add", params: {active_approvals_to_add: JSON.stringify(op.active_approvals_to_add)}
@@ -2442,7 +2423,6 @@ export default class BitShares extends BlockchainAPI {
                 let feePayingAccount = accountResults.find((resAcc) => resAcc.id === op.fee_paying_account).accountName;
                 
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                         {key: "using_owner_authority", params: {using_owner_authority: op.using_owner_authority}},
                         {key: "proposal", params: {proposal: op.proposal}},
                         {
@@ -2463,7 +2443,6 @@ export default class BitShares extends BlockchainAPI {
                 }
 
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                         {key: "recipient", params: {recipient: to, recipientOP: op.authorized_account}},
                         {key: "withdraw_from", params: {withdraw_from: from, withdraw_fromOP: op.withdraw_from_account}},
                         {
@@ -2487,7 +2466,6 @@ export default class BitShares extends BlockchainAPI {
                 }
 
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                         {
                             key: "withdraw_from_account",
                             params: {
@@ -2534,7 +2512,6 @@ export default class BitShares extends BlockchainAPI {
                 }
 
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                         {key: "withdraw_permission", params: {withdraw_permission: op.withdraw_permission}},
                         {
                             key: "withdraw_from_account",
@@ -2568,7 +2545,6 @@ export default class BitShares extends BlockchainAPI {
                 let authorizedAccount = accountResults.find((resAcc) => resAcc.id === op.authorized_account).accountName;
                 
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                         {
                             key: "withdraw_from_account",
                             params: {
@@ -2591,7 +2567,6 @@ export default class BitShares extends BlockchainAPI {
                 let committeeMemberAccount = accountResults.find((resAcc) => resAcc.id === op.committee_member_account).accountName;
                 
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                     {
                         key: "committee_member_account",
                         params: {
@@ -2607,7 +2582,6 @@ export default class BitShares extends BlockchainAPI {
                 let committeeMemberAccount = accountResults.find((resAcc) => resAcc.id === op.committee_member_account).accountName;
                 
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                     {key: "committee_member", params: {committee_member: op.committee_member}},
                     {
                         key: "committee_member_account",
@@ -2622,7 +2596,6 @@ export default class BitShares extends BlockchainAPI {
             } else if (opType == 31) {
                 // committee_member_update_global_parameters
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                     {key: "new_parameters", params: {}},
                         {
                             key: "current_fees",
@@ -2676,7 +2649,6 @@ export default class BitShares extends BlockchainAPI {
                 }
                 
                 let tempRows = [
-                    {key: "header", params: {}},
                     {key: "creator", params: {creator: creator, creatorOP: op.creator}},
                     {key: "owner", params: {owner: owner, ownerOP: op.owner}},
                     {
@@ -2712,7 +2684,6 @@ export default class BitShares extends BlockchainAPI {
                 }
                 
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                     {key: "owner", params: {owner: owner, ownerOP: op.owner}},
                     {
                         key: "claim",
@@ -2727,7 +2698,6 @@ export default class BitShares extends BlockchainAPI {
                 let owner = accountResults.find((resAcc) => resAcc.id === op.owner).accountName;
                 
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                     {key: "owner", params: {owner: owner, ownerOP: op.owner}},
                     {key: "work_begin_date", params: {work_begin_date: op.work_begin_date}},
                     {key: "work_end_date", params: {work_end_date: op.work_end_date}},
@@ -2742,7 +2712,6 @@ export default class BitShares extends BlockchainAPI {
                 let payer = accountResults.find((resAcc) => resAcc.id === op.payer).accountName;
                 
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                     {key: "payer", params: {payer: payer, payerOP: op.payer}},
                     {key: "required_auths", params: {required_auths: JSON.stringify(op.required_auths)}},
                     {key: "id", params: {id: op.id}},
@@ -2754,7 +2723,6 @@ export default class BitShares extends BlockchainAPI {
                 let feePayingAccount = accountResults.find((resAcc) => resAcc.id === op.fee_paying_account).accountName;
                 
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                     {
                         key: "fee_paying_account",
                         params: {
@@ -2778,7 +2746,6 @@ export default class BitShares extends BlockchainAPI {
                 }
                 
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                     {
                         key: "deposit_to_account",
                         params: {
@@ -2810,7 +2777,6 @@ export default class BitShares extends BlockchainAPI {
                 }
                 
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                     {key: "issuer", params: {issuer: issuer, issuerOP: op.issuer}},
                     {key: "from", params: {from: from, fromOP: op.from}},
                     {key: "to", params: {to: to, toOP: op.to}},
@@ -2835,7 +2801,6 @@ export default class BitShares extends BlockchainAPI {
                 }
                 
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                     {
                         key: "amount",
                         params: {
@@ -2850,7 +2815,6 @@ export default class BitShares extends BlockchainAPI {
             } else if (opType == 40) {
                 // blind_transfer
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                     {key: "inputs", params: {inputs: JSON.stringify(op.inputs)}},
                     {key: "outputs", params: {outputs: JSON.stringify(op.outputs)}},
                     {key: "fee", params: {fee: JSON.stringify(op.fee) }}
@@ -2866,7 +2830,6 @@ export default class BitShares extends BlockchainAPI {
                 }
                 
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                     {
                         key: "amount",
                         params: {
@@ -2889,7 +2852,6 @@ export default class BitShares extends BlockchainAPI {
                 }
                 
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                     {key: "issuer", params: {issuer: issuer, issuerOP: op.issuer}},
                     {
                         key: "amount_to_claim",
@@ -2913,7 +2875,6 @@ export default class BitShares extends BlockchainAPI {
                 }
 
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                     {key: "bidder", params: {bidder: bidder, bidderOP: op.bidder}},
                     {
                         key: "additional_collateral",
@@ -2940,7 +2901,6 @@ export default class BitShares extends BlockchainAPI {
                 }
 
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                     {key: "issuer", params: {issuer: issuer, issuerOP: op.issuer}},
                     {key: "asset_id", params: {asset_id: op.asset_id}},
                     {
@@ -2963,7 +2923,6 @@ export default class BitShares extends BlockchainAPI {
                 }
 
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                     {key: "issuer", params: {issuer: issuer, issuerOP: op.issuer}},
                     {key: "asset_to_update", params: {asset_to_update: assetToUpdate.symbol}},
                     {key: "new_issuer", params: {new_issuer: new_issuer, new_issuerOP: op.new_issuer}},
@@ -2981,7 +2940,6 @@ export default class BitShares extends BlockchainAPI {
                 }
 
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                     {key: "from", params: {from: from, fromOP: op.from}},
                     {key: "to", params: {to: to, toOP: op.to}},
                     {
@@ -3000,7 +2958,6 @@ export default class BitShares extends BlockchainAPI {
                 let redeemer = accountResults.find((resAcc) => resAcc.id === op.redeemer).accountName;
                 
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                     {key: "htlc_id", params: {htlc_id: op.htlc_id}},
                     {key: "redeemer", params: {redeemer: redeemer, redeemerOP: op.redeemer}},
                     {key: "preimage", params: {preimage: op.preimage}},
@@ -3012,7 +2969,6 @@ export default class BitShares extends BlockchainAPI {
                 let update_issuer = accountResults.find((resAcc) => resAcc.id === op.update_issuer).accountName;
                 
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                     {key: "htlc_id", params: {htlc_id: op.htlc_id}},
                     {key: "update_issuer", params: {update_issuer: update_issuer, update_issuerOP: op.update_issuer}},
                     {key: "seconds_to_add", params: {seconds_to_add: op.seconds_to_add}},
@@ -3024,7 +2980,6 @@ export default class BitShares extends BlockchainAPI {
                 let account = accountResults.find((resAcc) => resAcc.id === op.account).accountName;
                 
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                     {key: "account", params: {account: account, accountOP: op.account}},
                     {key: "enabled", params: {enabled: op.enabled}},
                     {key: "valid_from", params: {valid_from: op.valid_from}},
@@ -3040,7 +2995,6 @@ export default class BitShares extends BlockchainAPI {
                 let account = accountResults.find((resAcc) => resAcc.id === op.account).accountName;
 
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                     {key: "account", params: {account: account, accountOP: op.account}},
                     {key: "authority_to_update", params: {authority_to_update: op.authority_to_update}},
                     {key: "new_enabled", params: {new_enabled: op.new_enabled}},
@@ -3057,7 +3011,6 @@ export default class BitShares extends BlockchainAPI {
                 let account = accountResults.find((resAcc) => resAcc.id === op.account).accountName;
                 
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                     {key: "account", params: {account: account, accountOP: op.account}},
                     {key: "authority_to_delete", params: {authority_to_delete: op.authority_to_delete}},
                     {key: "extensions", params: {extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"}},
@@ -3074,7 +3027,6 @@ export default class BitShares extends BlockchainAPI {
                 }
 
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                     {key: "account", params: {account: account, accountOP: op.account}},
                     {key: "target_type", params: {target_type: op.target_type}},
                     {key: "amount", params: {amount: formatAsset(op.amount.amount, ticketAsset.symbol, ticketAsset.precision)}},
@@ -3092,7 +3044,6 @@ export default class BitShares extends BlockchainAPI {
                 }
                 
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                     {key: "ticket", params: {ticket: op.ticket}},
                     {key: "account", params: {account: account, accountOP: op.account}},
                     {key: "target_type", params: {target_type: op.target_type}},
@@ -3112,7 +3063,6 @@ export default class BitShares extends BlockchainAPI {
                 }
                 
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                     {key: "account", params: {account: account, accountOP: op.account}},
                     {key: "asset_a", params: {asset_a: assetA.symbol, asset_aOP: op.asset_a}},
                     {key: "asset_b", params: {asset_b: assetB.symbol, asset_bOP: op.asset_b}},
@@ -3126,7 +3076,6 @@ export default class BitShares extends BlockchainAPI {
                 // liquidity_pool_delete
                 let account = accountResults.find((resAcc) => resAcc.id === op.account).accountName;
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                     {key: "account", params: {account: account, accountOP: op.account}},
                     {key: "pool_id", params: {pool_id: op.pool}},
                     {key: "extensions", params: {extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"}},
@@ -3144,7 +3093,6 @@ export default class BitShares extends BlockchainAPI {
                 }
 
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                     {key: "account", params: {account: account, accountOP: op.account}},
                     {key: "pool", params: {pool: op.pool}},
                     {
@@ -3175,7 +3123,6 @@ export default class BitShares extends BlockchainAPI {
                 }
 
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                     {key: "account", params: {account: account, accountOP: op.account}},
                     {key: "pool", params: {pool: op.pool}},
                     {
@@ -3200,7 +3147,6 @@ export default class BitShares extends BlockchainAPI {
                 }
 
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                     {key: "account", params: {account: account, accountOP: op.account}},
                     {key: "pool", params: {pool: op.pool}},
                     {
@@ -3223,7 +3169,6 @@ export default class BitShares extends BlockchainAPI {
                 let ownerAccount = accountResults.find((resAcc) => resAcc.id === op.owner_account).accountName;
                 
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                     {key: "owner_account", params: {owner_account: ownerAccount, owner_accountOP: op.owner_account}},
                     {key: "asset_type", params: {asset_type: op.asset_type}},
                     {key: "balance", params: {balance: op.balance}},
@@ -3236,7 +3181,6 @@ export default class BitShares extends BlockchainAPI {
                 let ownerAccount = accountResults.find((resAcc) => resAcc.id === op.owner_account).accountName;
                 
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                     {key: "owner_account", params: {owner_account: ownerAccount, owner_accountOP: op.owner_account}},
                     {key: "fund_id", params: {fund_id: op.fund_id}},
                     {key: "extensions", params: {extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"}},
@@ -3251,7 +3195,6 @@ export default class BitShares extends BlockchainAPI {
                     : null;
                 
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                     {key: "owner_account", params: {owner_account: ownerAccount, owner_accountOP: op.owner_account}},
                     {key: "fund_id", params: {fund_id: op.fund_id}},
                     {
@@ -3275,7 +3218,6 @@ export default class BitShares extends BlockchainAPI {
                 }
                 
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                     {key: "borrower", params: {borrower: borrower, borrowerOP: op.borrower}},
                     {key: "fund_id", params: {fund_id: op.fund_id}},
                     {
@@ -3299,7 +3241,6 @@ export default class BitShares extends BlockchainAPI {
                 }
                 
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                     {key: "account", params: {account: account, accountOP: op.account}},
                     {key: "fund_id", params: {fund_id: op.fund_id}},
                     {
@@ -3322,7 +3263,6 @@ export default class BitShares extends BlockchainAPI {
                 let ownerAccount = accountResults.find((resAcc) => resAcc.id === op.owner_account).accountName;
                 
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                     {key: "owner_account", params: {owner_account: ownerAccount, owner_accountOP: op.owner_account}},
                     {key: "asset_type", params: {asset_type: op.asset_type}},
                     {key: "balance", params: {balance: op.balance}},
@@ -3341,7 +3281,6 @@ export default class BitShares extends BlockchainAPI {
                 let ownerAccount = accountResults.find((resAcc) => resAcc.id === op.owner_account).accountName;
                 
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                     {key: "owner_account", params: {owner_account: ownerAccount, owner_accountOP: op.owner_account}},
                     {key: "offer_id", params: {offer_id: op.offer_id}},
                     {key: "extensions", params: {extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"}},
@@ -3361,7 +3300,6 @@ export default class BitShares extends BlockchainAPI {
                 }
                 
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                     {key: "owner_account", params: {owner_account: ownerAccount, owner_accountOP: op.owner_account}},
                     {key: "offer_id", params: {offer_id: op.offer_id}},
                     {
@@ -3392,7 +3330,6 @@ export default class BitShares extends BlockchainAPI {
                 }
                 
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                     {key: "borrower", params: {borrower: borrower, borrowerOP: op.borrower}},
                     {key: "offer_id", params: {offer_id: op.offer_id}},
                     {
@@ -3424,7 +3361,6 @@ export default class BitShares extends BlockchainAPI {
                 }
                 
                 currentOperation['rows'] = [
-                    {key: "header", params: {}},
                     {key: "account", params: {account: account, accountOP: op.account}},
                     {key: "deal_id", params: {deal_id: op.deal_id}},
                     {

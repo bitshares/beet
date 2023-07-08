@@ -2,8 +2,16 @@
   "general": {
     "content": "เนื้อหา"
   },
+  "receipt": {
+    "id": "รหัสธุรกรรม: { resultID }",
+    "block": "หมายเลขบล็อก: { resultBlockNum }",
+    "trxNum": "หมายเลขธุรกรรม: { resultTrxNum }",
+    "expiration": "วันหมดอายุ: { resultExpiration }",
+    "signatures": "ลายเซ็น: { resultSignatures }"
+  },
   "link": {
     "title": "คำขอเชื่อมโยงบัญชี",
+    "result": "ผลการเชื่อมโยงบัญชี",
     "account_select": "เลือกบัญชี",
     "account_missing": "บัญชีที่ร้องขอไม่มีอยู่ในกระเป๋าเงินนี้",
     "request": "แอปพลิเคชัน '{appName}' จาก '{origin}' กำลังร้องขอการเข้าถึงบัญชี {chain}",
@@ -16,19 +24,22 @@
   },
   "relink": {
     "title": "คำขอเชื่อมโยงบัญชีใหม่",
+    "result": "ผลการเชื่อมโยงบัญชีใหม่",
     "error": "เกิดข้อผิดพลาดในการแสดงข้อความแจ้ง",
     "request": "แอปพลิเคชัน '{appName}' จาก '{origin}' กำลังขอเชื่อมโยงบัญชี {chain} ที่เชื่อมโยงก่อนหน้านี้อีกครั้ง: {accountId} ",
     "request_tooltip": "ลิงก์ก่อนหน้าระหว่างแอปพลิเคชันและการอ้างอิงบัญชีc จะถูกรีเซ็ต"
   },
   "account_id": {
     "title": "คำขอรายละเอียดบัญชี",
+    "result": "ผลรายละเอียดบัญชี",
     "request": "แอป: '{appName}' จาก '{origin}' กำลังร้องขอการเข้าถึงข้อมูลประจำตัวที่เชื่อมโยง (รหัสบัญชี",
-    "request_tooltip": "โดยค่าเริ่มต้นจะมีการระบุลิงก์ที่ไม่ระบุตัวตน ",
+    "request_tooltip": "ตามค่าเริ่มต้นจะมีการจัดเตรียมลิงค์ที่ไม่ระบุตัวตน ",
     "accept_btn": "อนุญาต",
     "reject_btn": "ปฏิเสธ"
   },
   "any_account_id": {
     "title": "คำขอรายละเอียดบัญชี",
+    "result": "ผลรายละเอียดบัญชี",
     "request": "แอป: '{appName}' จาก '{origin}' กำลังขอสิทธิ์เข้าถึงบัญชี",
     "request_cta": "เลือกบัญชีที่จะให้",
     "accept_btn": "อนุญาต",
@@ -36,6 +47,7 @@
   },
   "transfer": {
     "title": "คำขอโอน",
+    "result": "ผลการโอน",
     "to": "ผู้รับ",
     "amount": "จำนวน",
     "memo": "บันทึก",
@@ -48,12 +60,24 @@
   },
   "rawsig": {
     "title": "ขอ",
-    "loading": "กำลังโหลดรายละเอียดการทำธุรกรรมจาก blockchain โปรดรอสักครู่",
+    "result": "ขอทราบผล",
+    "headers": {
+      "request": "คุณต้องการอนุมัติลายเซ็นดิบต่อไปนี้หรือไม่",
+      "result": "ลายเซ็นดิบต่อไปนี้ได้รับการอนุมัติ:"
+    },
+    "loading": "กำลังโหลดรายละเอียดธุรกรรมจากบล็อกเชน โปรดรอสักครู่",
     "request": "แอป: '{appName}' จาก '{origin}' ได้ส่งธุรกรรมต่อไปนี้สำหรับบัญชี { chain }:{ accountName }",
+    "summary": "ธุรกรรมนี้มีการดำเนินการ {numOps} รายการ คุณสามารถเรียกดูได้ด้านล่าง",
+    "summary_single": "ธุรกรรมนี้มีการดำเนินการเดียว คุณสามารถเรียกดูผ่านด้านล่าง",
     "request_cta": "คุณต้องการดำเนินการหรือไม่",
     "accept_btn": "เข้าสู่ระบบ",
     "sign_and_broadcast_btn": "เข้าสู่ระบบ",
     "sign_btn": "เข้าสู่ระบบ",
+    "receipt": {
+      "title": "คุณต้องการใบเสร็จรับเงินหรือไม่?",
+      "yes": "ใช่ ฉันต้องการใบเสร็จรับเงิน",
+      "no": "ไม่ ฉันไม่ต้องการใบเสร็จรับเงิน"
+    },
     "reject_btn": "ไม่สนใจ"
   },
   "whitelist": {
@@ -61,6 +85,7 @@
   },
   "vote": {
     "title": "ขอโหวต",
+    "result": "ผลโหวต",
     "request": "แอป: '{appName}' จาก '{origin}' ต้องการให้คุณโหวต {entity} ต่อไปนี้ด้วยบัญชี { chain }:{ accountName }",
     "request_cta": "",
     "accept_btn": "อนุมัติ",
@@ -68,6 +93,7 @@
   },
   "message": {
     "title": "ลงชื่อขอข้อความ",
+    "result": "ลงชื่อ ผลการส่งข้อความ",
     "request": "แอป: '{appName}' จาก '{origin}' ต้องการให้คุณเซ็นข้อความต่อไปนี้ด้วยบัญชี { chain }:{ accountName }",
     "request_cta": "",
     "accept_btn": "อนุมัติ",
@@ -78,51 +104,96 @@
       "getAccount": {
         "method": "รับบัญชี",
         "title": "คำขอรายละเอียดบัญชี",
+        "result": "ผลรายละเอียดบัญชี",
+        "headers": {
+          "request": "คุณต้องการแบ่งปันรายละเอียดบัญชีของคุณหรือไม่?",
+          "result": "มีการแชร์รายละเอียดบัญชีของคุณ"
+        },
         "tooltip": "ขอรายละเอียดบัญชี blockchain กระเป๋าเงินของคุณ"
       },
       "requestSignature": {
         "method": "ขอลายเซ็น",
         "title": "ขอลายเซ็น",
+        "result": "ผลลายเซ็น",
+        "headers": {
+          "request": "คุณต้องการแบ่งปันลายเซ็นของคุณหรือไม่?",
+          "result": "มีการแชร์ลายเซ็นของคุณ:"
+        },
         "tooltip": "ถามกระเป๋าเงินของคุณสำหรับลายเซ็น blockchain"
       },
       "injectedCall": {
         "method": "ฉีดโทร",
         "title": "คำขอโทรเข้า",
+        "result": "ผลการโทรเข้า",
+        "headers": {
+          "request": "อนุมัติการโทรที่แทรกต่อไปนี้หรือไม่",
+          "result": "การโทรที่ฉีดต่อไปนี้ได้รับการอนุมัติ:"
+        },
         "tooltip": "ขอให้กระเป๋าเงินของคุณจัดการการดำเนินการบล็อกเชนแบบฉีด"
       },
       "voteFor": {
         "method": "โหวตให้",
         "title": "ขอโหวต",
+        "result": "ผลโหวต",
+        "headers": {
+          "request": "อนุมัติคำขอลงคะแนนต่อไปนี้?",
+          "result": "คำขอลงคะแนนต่อไปนี้ได้รับการอนุมัติ"
+        },
         "tooltip": "ดำเนินการลงคะแนน blockchain"
       },
       "signMessage": {
         "method": "เซ็นข้อความ",
         "title": "ลงชื่อขอข้อความ",
+        "result": "ลงชื่อ ผลการส่งข้อความ",
+        "headers": {
+          "request": "อนุมัติการเซ็นข้อความต่อไปนี้?",
+          "result": "ข้อความต่อไปนี้ได้รับการลงนาม:"
+        },
         "tooltip": "ลงนามในข้อความตาม blockchain"
       },
       "signNFT": {
         "method": "เซ็นNFT",
         "title": "ลงชื่อคำขอ NFT",
+        "result": "ลงชื่อผลลัพธ์ NFT",
+        "headers": {
+          "request": "อนุมัติการลงนาม NFT ต่อไปนี้หรือไม่",
+          "result": "มีการลงนาม NFT ต่อไปนี้:"
+        },
         "tooltip": "ลงนามในเนื้อหา NFTs"
       },
       "verifyMessage": {
         "method": "ตรวจสอบข้อความ",
         "title": "ตรวจสอบคำขอข้อความ",
+        "result": "ตรวจสอบผลข้อความ",
+        "headers": {
+          "request": "คุณต้องการตรวจสอบข้อความต่อไปนี้หรือไม่",
+          "result": "ข้อความต่อไปนี้ได้รับการยืนยันแล้ว:"
+        },
         "tooltip": "ตรวจสอบข้อความที่เซ็นชื่อบนบล็อกเชน"
       },
       "transfer": {
         "method": "โอนย้าย",
         "title": "คำขอโอน",
+        "result": "ผลการโอน",
+        "headers": {
+          "request": "คุณต้องการอนุมัติคำขอโอนต่อไปนี้หรือไม่",
+          "result": "คำขอโอนต่อไปนี้ได้รับการอนุมัติ:"
+        },
         "rows": {
           "from": "จาก: {from} ({opFrom})",
           "to": "ถึง: {to} ({opTo})",
           "amount": "จำนวนเงิน: {amount}"
         },
-        "tooltip": "ส่งทรัพย์สินจากบัญชีหนึ่งไปยังอีกบัญชีหนึ่ง"
+        "tooltip": "ส่งสินทรัพย์จากบัญชีหนึ่งไปยังอีกบัญชีหนึ่ง"
       },
       "limit_order_create": {
         "method": "สร้างคำสั่งจำกัด",
         "title": "จำกัด คำสั่งสร้างคำขอ",
+        "result": "จำกัด คำสั่งสร้างผลลัพธ์",
+        "headers": {
+          "request": "อนุมัติคำขอสร้างคำสั่งจำกัดต่อไปนี้หรือไม่",
+          "result": "สร้างคำสั่งจำกัดต่อไปนี้:"
+        },
         "rows": {
           "trade": "ซื้อขาย",
           "tradeFK": "การค้า (เติมหรือฆ่า)",
@@ -136,8 +207,12 @@
       "limit_order_cancel": {
         "method": "จำกัด คำสั่งยกเลิก",
         "title": "จำกัด คำสั่งยกเลิกคำขอ",
+        "result": "จำกัด คำสั่งยกเลิกผลลัพธ์",
+        "headers": {
+          "request": "ยกเลิกคำสั่งจำกัดต่อไปนี้หรือไม่",
+          "result": "คำสั่งจำกัดต่อไปนี้ถูกยกเลิก:"
+        },
         "rows": {
-          "header": "ยกเลิกคำสั่งจำกัดต่อไปนี้หรือไม่",
           "id": "รหัสคำสั่งซื้อ: {id}",
           "fees": "ค่าธรรมเนียมโดยประมาณ: {fees}",
           "account": "บัญชีชำระค่าธรรมเนียม: {account}"
@@ -147,8 +222,12 @@
       "call_order_update": {
         "method": "โทรสั่งอัพเดท",
         "title": "โทรขอปรับปรุงคำสั่ง",
+        "result": "โทรสั่งอัพเดทผล",
+        "headers": {
+          "request": "อัปเดตลำดับการโทรของคุณเป็นดังต่อไปนี้หรือไม่",
+          "result": "คำสั่งการโทรต่อไปนี้ได้รับการอัพเดต:"
+        },
         "rows": {
-          "header": "อัปเดตลำดับการโทรของคุณเป็นดังต่อไปนี้หรือไม่",
           "funding_account": "บัญชีเงินทุน: {funding_account}",
           "delta_collateral": "หลักประกันเดลต้า: {delta_collateral} ({id})",
           "delta_debt": "หนี้เดลต้า: {delta_debt} ({id})",
@@ -159,8 +238,12 @@
       "account_create": {
         "method": "สร้างบัญชี",
         "title": "คำขอสร้างบัญชี",
+        "result": "ผลการสร้างบัญชี",
+        "headers": {
+          "request": "คุณต้องการสร้างบัญชีต่อไปนี้หรือไม่?",
+          "result": "บัญชีต่อไปนี้ถูกสร้างขึ้น:"
+        },
         "rows": {
-          "header": "คุณต้องการสร้างบัญชีต่อไปนี้หรือไม่?",
           "registrar": "นายทะเบียน: {registrar} ({opRegistrar})",
           "referrer": "ผู้อ้างอิง: {referrer} ({opReferrer})",
           "referrer_percent": "เปอร์เซ็นต์ผู้อ้างอิง: {referrer_percent}",
@@ -185,8 +268,12 @@
       "account_update": {
         "method": "การปรับปรุงบัญชี",
         "title": "คำขอปรับปรุงบัญชี",
+        "result": "ผลการปรับปรุงบัญชี",
+        "headers": {
+          "request": "คุณต้องการอัปเดตบัญชีต่อไปนี้หรือไม่",
+          "result": "บัญชีต่อไปนี้ได้รับการปรับปรุง:"
+        },
         "rows": {
-          "header": "คุณต้องการสร้างบัญชีต่อไปนี้หรือไม่?",
           "warning": "คำเตือน: การดำเนินการนี้จะย้อนกลับไม่ได้!",
           "account": "บัญชี: {account} ({opAccount})",
           "owner": "เจ้าของ: {owner}",
@@ -200,8 +287,12 @@
       "account_whitelist": {
         "method": "รายการบัญชีที่อนุญาต",
         "title": "คำขอบัญชีขาว",
+        "result": "ผลลัพธ์บัญชีที่อนุญาตพิเศษ",
+        "headers": {
+          "request": "อัปเดตบัญชีที่อนุญาตพิเศษของคุณเป็นรายการต่อไปนี้หรือไม่",
+          "result": "รายการที่อนุญาตพิเศษของบัญชีของคุณได้รับการอัปเดตเป็นดังต่อไปนี้:"
+        },
         "rows": {
-          "header": "รายละเอียดบัญชีที่อนุญาตพิเศษ:",
           "authorizing_account": "บัญชีผู้ให้สิทธิ์: {authorizingAccount} (authorizingAccountOP)",
           "account_to_list": "บัญชีรายชื่อ: {accountToList} (accountToListOP)",
           "new_listing": "รายชื่อใหม่: {newListing}",
@@ -213,8 +304,12 @@
       "account_upgrade": {
         "method": "อัปเกรดบัญชี",
         "title": "คำขออัปเกรดบัญชี",
+        "result": "ผลการอัปเกรดบัญชี",
+        "headers": {
+          "request": "อัพเกรดบัญชีของคุณเป็นสมาชิกตลอดชีพ?",
+          "result": "บัญชีของคุณได้รับการอัปเกรดเป็นสมาชิกตลอดชีพ!"
+        },
         "rows": {
-          "header": "อัพเกรดบัญชีเป็นสมาชิกตลอดชีพ?",
           "account_to_upgrade": "บัญชีที่จะอัปเกรด: {accountToUpgrade} (accountToUpgradeOP)",
           "upgrade_to_lifetime_member": "อัปเกรดเป็นสมาชิกตลอดชีพ: {upgradeToLifetimeMember}",
           "extensions": "ส่วนขยาย: {extensions}",
@@ -225,8 +320,12 @@
       "account_transfer": {
         "method": "โอนเข้าบัญชี",
         "title": "คำขอโอนบัญชี",
+        "result": "ผลการโอนบัญชี",
+        "headers": {
+          "request": "โอนบัญชีไปยังเจ้าของใหม่หรือไม่",
+          "result": "บัญชีต่อไปนี้ถูกโอนไปยังเจ้าของใหม่:"
+        },
         "rows": {
-          "header": "โอนบัญชีไปยังเจ้าของใหม่หรือไม่",
           "warning": "คำเตือน: การกระทำนี้จะย้อนกลับไม่ได้!",
           "account_id": "รหัสบัญชี: {originalOwner} ({account_id})",
           "new_owner": "เจ้าของใหม่: {newOwner} ({newOwnerOP})",
@@ -237,8 +336,12 @@
       "asset_create": {
         "method": "สร้างเนื้อหา",
         "title": "คำขอสร้างเนื้อหา",
+        "result": "ผลลัพธ์การสร้างเนื้อหา",
+        "headers": {
+          "request": "สร้างเนื้อหาต่อไปนี้ไหม",
+          "result": "สร้างเนื้อหาต่อไปนี้แล้ว:"
+        },
         "rows": {
-          "header": "สร้างเนื้อหาต่อไปนี้ไหม",
           "symbol": "สัญลักษณ์: {symbol}",
           "main": "หลัก: {main}",
           "market": "ตลาด: {market}",
@@ -292,8 +395,12 @@
       "asset_update": {
         "method": "การอัปเดตเนื้อหา",
         "title": "คำขออัปเดตเนื้อหา",
+        "result": "ผลการอัปเดตเนื้อหา",
+        "headers": {
+          "request": "อัปเดตเนื้อหาต่อไปนี้ไหม",
+          "result": "เนื้อหาได้รับการปรับปรุงโดยมีรายละเอียดต่อไปนี้:"
+        },
         "rows": {
-          "header": "อัปเดตเนื้อหาต่อไปนี้ไหม",
           "symbol": "สัญลักษณ์: {symbol}",
           "main": "หลัก: {main}",
           "market": "ตลาด: {market}",
@@ -347,8 +454,12 @@
       "asset_update_bitasset": {
         "method": "บิตแอสเซทอัปเดตเนื้อหา",
         "title": "คำขออัปเดตเนื้อหาบิตแอสเซท",
+        "result": "ผลลัพธ์ bitasset ของการอัปเดตเนื้อหา",
+        "headers": {
+          "request": "อนุมัติการอัปเดต bitasset ไหม",
+          "result": "การอัปเดต bitasset ต่อไปนี้ได้รับการอนุมัติ:"
+        },
         "rows": {
-          "header": "อนุมัติการอัปเดต bitasset ไหม",
           "issuer": "ผู้ออก: {issuer}",
           "asset_to_update": "เนื้อหาที่จะอัปเดต: {asset_to_update}",
           "new_options": "ตัวเลือกใหม่:",
@@ -367,8 +478,12 @@
       "asset_update_feed_producers": {
         "method": "ผู้ผลิตฟีดการอัปเดตเนื้อหา",
         "title": "คำขอผู้ผลิตฟีดการอัปเดตเนื้อหา",
+        "result": "ผลลัพธ์ของผู้ผลิตฟีดการอัปเดตเนื้อหา",
+        "headers": {
+          "request": "อนุมัติการเปลี่ยนแปลงผู้ผลิตฟีด bitasset หรือไม่",
+          "result": "การเปลี่ยนแปลงต่อไปนี้สำหรับตัวสร้างฟีด bitasset ได้รับการอนุมัติ:"
+        },
         "rows": {
-          "header": "อนุมัติการเปลี่ยนแปลงผู้ผลิตฟีด bitasset หรือไม่",
           "issuer": "ผู้ออก: {issuer} ({issuerOP})",
           "asset_to_update": "เนื้อหาที่จะอัปเดต: {symbol} ({asset_to_update})",
           "new_feed_producers": "ผู้ผลิตฟีดใหม่: {new_feed_producers}",
@@ -379,17 +494,26 @@
       "asset_issue": {
         "method": "ปัญหาเกี่ยวกับสินทรัพย์",
         "title": "คำขอออกสินทรัพย์",
+        "result": "ผลการออกสินทรัพย์",
+        "headers": {
+          "request": "อนุมัติการออกสินทรัพย์ดังต่อไปนี้?",
+          "result": "อนุมัติการออกสินทรัพย์ต่อไปนี้:"
+        },
         "rows": {
-          "header": "ออก {amount} {symbol} ({assetID}) ถึง {to} ({toID}) ไหม",
+          "prompt": "ออก {amount} {symbol} ({assetID}) ถึง {to} ({toID}) ไหม",
           "fee": "ค่าธรรมเนียมโดยประมาณ: {fee} ({id})"
         },
-        "tooltip": "ออกสินทรัพย์ที่คุณสร้างให้กับบุคคล"
+        "tooltip": "ออกสินทรัพย์ที่คุณสร้างขึ้นให้กับบุคคล"
       },
       "asset_reserve": {
         "method": "สำรองสินทรัพย์",
         "title": "คำขอสำรองทรัพย์สิน",
+        "result": "ผลการสำรองสินทรัพย์",
+        "headers": {
+          "request": "อนุมัติการจองสินทรัพย์ต่อไปนี้หรือไม่",
+          "result": "การจองสินทรัพย์ต่อไปนี้ได้รับการอนุมัติ:"
+        },
         "rows": {
-          "header": "อนุมัติการจองสินทรัพย์ต่อไปนี้หรือไม่",
           "payer": "ผู้ชำระเงิน: {payer} ({payerOP})",
           "amount_to_reserve": "จำนวนสำรอง: {amount_to_reserve} ({amount_to_reserveOP})",
           "extensions": "ส่วนขยาย: {extensions}",
@@ -400,8 +524,12 @@
       "asset_fund_fee_pool": {
         "method": "รวมค่าธรรมเนียมกองทุนสินทรัพย์",
         "title": "คำขอรวมค่าธรรมเนียมกองทุนสินทรัพย์",
+        "result": "ผลรวมค่าธรรมเนียมกองทุนสินทรัพย์",
+        "headers": {
+          "request": "กองทุนรวมค่าธรรมเนียมของเนื้อหาต่อไปนี้หรือไม่",
+          "result": "เงินทุนรวมค่าธรรมเนียมของสินทรัพย์ต่อไปนี้ได้รับการอนุมัติ:"
+        },
         "rows": {
-          "header": "กองทุนรวมค่าธรรมเนียมของเนื้อหาต่อไปนี้หรือไม่",
           "from_account": "จากบัญชี: {from_account} ({from_accountOP})",
           "asset": "สินทรัพย์: {asset} ({assetOP})",
           "amount": "จำนวนเงิน: {amount}",
@@ -412,8 +540,12 @@
       "asset_settle": {
         "method": "การชำระสินทรัพย์",
         "title": "คำขอชำระสินทรัพย์",
+        "result": "ผลการชำระสินทรัพย์",
+        "headers": {
+          "request": "ชำระสินทรัพย์ต่อไปนี้เพื่อเป็นหลักประกันสำรองหรือไม่",
+          "result": "สินทรัพย์ต่อไปนี้ได้รับการชำระเพื่อเป็นหลักประกันสำรอง:"
+        },
         "rows": {
-          "header": "ชำระสินทรัพย์ต่อไปนี้เพื่อเป็นหลักประกันสำรองหรือไม่",
           "account": "บัญชี: {account} ({accountOP})",
           "amount": "จำนวนเงิน: {amount} ({assetID})",
           "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
@@ -423,8 +555,12 @@
       "asset_global_settle": {
         "method": "การชำระสินทรัพย์ทั่วโลก",
         "title": "คำขอชำระสินทรัพย์ทั่วโลก",
+        "result": "ผลการชำระสินทรัพย์ทั่วโลก",
+        "headers": {
+          "request": "ทำการชำระเงินทั่วโลกสำหรับสินทรัพย์ต่อไปนี้หรือไม่",
+          "result": "สินทรัพย์ต่อไปนี้ได้รับการชำระทั่วโลก:"
+        },
         "rows": {
-          "header": "ทำการชำระเงินทั่วโลกสำหรับสินทรัพย์ต่อไปนี้หรือไม่",
           "issuer": "ผู้ออก: {issuer} ({issuerOP})",
           "asset_to_settle": "สินทรัพย์ที่จะชำระ: {asset_to_settle} ({asset_to_settleOP})",
           "settle_price": "ราคาที่ชำระ: {settle_price}",
@@ -435,8 +571,12 @@
       "asset_publish_feed": {
         "method": "ฟีดการเผยแพร่เนื้อหา",
         "title": "คำขอฟีดการเผยแพร่เนื้อหา",
+        "result": "ผลลัพธ์ฟีดการเผยแพร่เนื้อหา",
+        "headers": {
+          "request": "เผยแพร่ฟีดราคาสำหรับเนื้อหาต่อไปนี้ไหม",
+          "result": "มีการเผยแพร่การอัปเดตฟีดราคาสินทรัพย์ต่อไปนี้:"
+        },
         "rows": {
-          "header": "เผยแพร่ฟีดราคาสำหรับเนื้อหาต่อไปนี้ไหม",
           "publisher": "ผู้เผยแพร่: {publisher} ({publisherOP})",
           "asset_id": "รหัสสินทรัพย์: {symbol} ({asset_idOP})",
           "feed": "ให้อาหาร:",
@@ -452,11 +592,15 @@
       "witness_create": {
         "method": "พยานสร้าง",
         "title": "สร้างคำขอเป็นพยาน",
+        "result": "พยานสร้างผลงาน",
+        "headers": {
+          "request": "สร้างพยานโดยมีรายละเอียดดังนี้ ?",
+          "result": "พยานต่อไปนี้ถูกสร้างขึ้น:"
+        },
         "rows": {
-          "header": "สร้างพยานโดยมีรายละเอียดดังนี้ ?",
           "witness_account": "บัญชีพยาน: {witness_account} ({witness_accountOP})",
           "url": "URL: {url}",
-          "block_signing_key": "คีย์การลงนามแบบบล็อก: {block_signing_key}",
+          "block_signing_key": "คีย์การเซ็นชื่อแบบบล็อก: {block_signing_key}",
           "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
         },
         "tooltip": "สร้างบัญชีพยาน"
@@ -464,8 +608,12 @@
       "witness_update": {
         "method": "พยานปรับปรุง",
         "title": "คำขออัปเดตพยาน",
+        "result": "ผลการปรับปรุงพยาน",
+        "headers": {
+          "request": "อัพเดทรายละเอียดพยานเป็นดังนี้?",
+          "result": "รายละเอียดพยานต่อไปนี้ได้รับการปรับปรุง:"
+        },
         "rows": {
-          "header": "อัพเดทรายละเอียดพยานเป็นดังนี้?",
           "witness": "พยาน: {witness}",
           "witness_account": "บัญชีพยาน: {witness_account} ({witness_accountOP})",
           "new_url": "URL ใหม่: {new_url}",
@@ -477,8 +625,12 @@
       "proposal_create": {
         "method": "สร้างข้อเสนอ",
         "title": "ข้อเสนอสร้างคำขอ",
+        "result": "ข้อเสนอสร้างผลลัพธ์",
+        "headers": {
+          "request": "สร้างข้อเสนอต่อไปนี้หรือไม่",
+          "result": "ข้อเสนอต่อไปนี้ถูกสร้างขึ้น:"
+        },
         "rows": {
-          "header": "สร้างข้อเสนอต่อไปนี้หรือไม่",
           "expiration_time": "เวลาหมดอายุ: {expiration_time}",
           "proposed_ops": "การดำเนินการที่เสนอ: {proposed_ops}",
           "review_period_seconds": "ช่วงเวลาตรวจสอบ วินาที: {review_period_seconds}",
@@ -490,12 +642,16 @@
       "proposal_update": {
         "method": "การปรับปรุงข้อเสนอ",
         "title": "คำขออัปเดตข้อเสนอ",
+        "result": "ผลการปรับปรุงข้อเสนอ",
+        "headers": {
+          "request": "อัปเดตข้อเสนอต่อไปนี้ไหม",
+          "result": "ข้อเสนอต่อไปนี้ได้รับการปรับปรุง:"
+        },
         "rows": {
-          "header": "อัปเดตข้อเสนอต่อไปนี้ไหม",
           "proposal": "ข้อเสนอ: {proposal}",
           "active_approvals_to_add": "การอนุมัติที่ดำเนินการเพื่อเพิ่ม: {active_approvals_to_add}",
           "active_approvals_to_remove": "การอนุมัติที่ดำเนินการเพื่อลบ: {active_approvals_to_remove}",
-          "owner_approvals_to_add": "การอนุมัติจากเจ้าของเพื่อเพิ่ม: {owner_approvals_to_add}",
+          "owner_approvals_to_add": "การอนุมัติให้เจ้าของเพิ่ม: {owner_approvals_to_add}",
           "owner_approvals_to_remove": "การอนุมัติให้เจ้าของนำออก: {owner_approvals_to_remove}",
           "key_approvals_to_add": "การอนุมัติคีย์ที่จะเพิ่ม: {key_approvals_to_add}",
           "key_approvals_to_remove": "การอนุมัติคีย์ที่จะลบ: {key_approvals_to_remove}",
@@ -508,8 +664,12 @@
       "proposal_delete": {
         "method": "ลบข้อเสนอ",
         "title": "คำขอลบข้อเสนอ",
+        "result": "ผลการลบข้อเสนอ",
+        "headers": {
+          "request": "ลบข้อเสนอต่อไปนี้ไหม",
+          "result": "ข้อเสนอต่อไปนี้ถูกลบ:"
+        },
         "rows": {
-          "header": "ลบข้อเสนอต่อไปนี้ไหม",
           "using_owner_authority": "การใช้สิทธิ์ของเจ้าของ: {using_owner_authority}",
           "proposal": "ข้อเสนอ: {proposal}",
           "fee_paying_account": "บัญชีที่ชำระค่าธรรมเนียม: {fee_paying_account} ({fee_paying_accountOP})",
@@ -521,8 +681,12 @@
       "withdraw_permission_create": {
         "method": "ถอนสิทธิ์การสร้าง",
         "title": "ถอนสิทธิ์สร้างคำขอ",
+        "result": "ถอนสิทธิ์สร้างผลลัพธ์",
+        "headers": {
+          "request": "การอนุมัติการตัดบัญชีโดยตรง",
+          "result": "อนุมัติการหักบัญชีเงินฝากต่อไปนี้:"
+        },
         "rows": {
-          "header": "การอนุมัติการตัดบัญชีโดยตรง",
           "recipient": "ผู้รับ: {recipient} ({recipientOP})",
           "withdraw_from": "บัญชีที่จะถอนจาก: {withdraw_from} ({withdraw_fromOP})",
           "taking": "ใช้เวลา {amount} ทุก {period_sec} วินาที เป็นระยะเวลา {period_qty}",
@@ -533,8 +697,12 @@
       "withdraw_permission_update": {
         "method": "ถอนการปรับปรุงการอนุญาต",
         "title": "ถอนคำขออัปเดตการอนุญาต",
+        "result": "เพิกถอนสิทธิ์การอัปเดตผล",
+        "headers": {
+          "request": "อัปเดตสิทธิ์ของพยานต่อไปนี้หรือไม่",
+          "result": "การอัปเดตการอนุญาตพยานต่อไปนี้ได้รับการอนุมัติ:"
+        },
         "rows": {
-          "header": "อัปเดตสิทธิ์ของพยานต่อไปนี้หรือไม่",
           "withrdaw_from_account": "ถอนออกจากบัญชี: {withrdaw_from_account} ({withrdaw_from_accountOP})",
           "authorized_account": "บัญชีที่ได้รับอนุญาต: {authorized_account} ({authorized_accountOP})",
           "permission_to_update": "สิทธิ์ในการอัปเดต: {permission_to_update}",
@@ -550,8 +718,12 @@
       "withdraw_permission_claim": {
         "method": "ถอนการอ้างสิทธิ์",
         "title": "ถอนคำขอรับสิทธิ์",
+        "result": "เพิกถอนสิทธิ์การอ้างสิทธิ์",
+        "headers": {
+          "request": "อ้างสิทธิ์การถอนต่อไปนี้",
+          "result": "มีการอ้างสิทธิ์การถอนต่อไปนี้:"
+        },
         "rows": {
-          "header": "อ้างสิทธิ์การถอนต่อไปนี้",
           "withdraw_permission": "ถอนสิทธิ์: {withdraw_permission}",
           "withdraw_from_account": "ถอนออกจากบัญชี: {withdraw_from_account} ({withdraw_from_accountOP})",
           "withdraw_to_account": "ถอนเข้าบัญชี: {withdraw_to_account} ({withdraw_to_accountOP})",
@@ -564,8 +736,12 @@
       "withdraw_permission_delete": {
         "method": "ถอนสิทธิ์การลบ",
         "title": "ถอนคำขอลบสิทธิ์",
+        "result": "ยกเลิกการอนุญาตผลการลบ",
+        "headers": {
+          "request": "ลบสิทธิ์การถอนต่อไปนี้หรือไม่",
+          "result": "สิทธิ์การถอนต่อไปนี้ถูกลบ:"
+        },
         "rows": {
-          "header": "ลบสิทธิ์การถอนต่อไปนี้หรือไม่",
           "withdraw_from_account": "ถอนออกจากบัญชี: {withdraw_from_account} ({withdraw_from_accountOP})",
           "authorized_account": "บัญชีที่ได้รับอนุญาต: {authorized_account} ({authorized_accountOP})",
           "withdrawal_permission": "สิทธิ์การถอน: {withdrawal_permission}",
@@ -576,8 +752,12 @@
       "committee_member_create": {
         "method": "กรรมการจัดสร้าง",
         "title": "กรรมการสร้างคำขอ",
+        "result": "กรรมการสร้างผลงาน",
+        "headers": {
+          "request": "สร้างกรรมการ?",
+          "result": "มีการสร้างกรรมการดังต่อไปนี้:"
+        },
         "rows": {
-          "header": "สร้างกรรมการ?",
           "committee_member_account": "บัญชีสมาชิกคณะกรรมการ: {committee_member_account} ({committee_member_accountOP})",
           "url": "URL: {url}",
           "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
@@ -587,8 +767,12 @@
       "committee_member_update": {
         "method": "อัพเดทสมาชิกคณะกรรมการ",
         "title": "คำขอปรับปรุงสมาชิกคณะกรรมการ",
+        "result": "ผลการอัพเดทของคณะกรรมการ",
+        "headers": {
+          "request": "ปรับปรุงรายละเอียดของคณะกรรมการดังต่อไปนี้?",
+          "result": "การอัปเดตรายละเอียดของสมาชิกคณะกรรมการต่อไปนี้ได้รับการอนุมัติ:"
+        },
         "rows": {
-          "header": "ปรับปรุงรายละเอียดของคณะกรรมการดังต่อไปนี้?",
           "committee_member": "สมาชิกคณะกรรมการ: {committee_member}",
           "committee_member_account": "บัญชีสมาชิกคณะกรรมการ: {committee_member_account} ({committee_member_accountOP})",
           "new_url": "URL ใหม่: {new_url}",
@@ -599,8 +783,12 @@
       "committee_member_update_global_parameters": {
         "method": "สมาชิกคณะกรรมการปรับปรุงพารามิเตอร์ส่วนกลาง",
         "title": "สมาชิกคณะกรรมการปรับปรุงคำขอพารามิเตอร์ส่วนกลาง",
+        "result": "สมาชิกคณะกรรมการปรับปรุงผลลัพธ์ของพารามิเตอร์ส่วนกลาง",
+        "headers": {
+          "request": "อนุมัติตามพารามิเตอร์สากลในฐานะคณะกรรมการ?",
+          "result": "พารามิเตอร์ของคณะกรรมการระดับโลกต่อไปนี้ได้รับการอนุมัติ:"
+        },
         "rows": {
-          "header": "อนุมัติตามพารามิเตอร์สากลในฐานะคณะกรรมการ?",
           "new_parameters": "พารามิเตอร์ใหม่:",
           "current_fees": "ค่าธรรมเนียมปัจจุบัน: {current_fees}",
           "block_interval": "ช่วงเวลาบล็อก: {block_interval}",
@@ -638,8 +826,12 @@
       "vesting_balance_create": {
         "method": "การสร้างยอดเงินคงเหลือ",
         "title": "ยอดเงินคงเหลือสร้างคำขอ",
+        "result": "ยอดเงินคงเหลือสร้างผลลัพธ์",
+        "headers": {
+          "request": "สร้างยอดดุลการได้รับสิทธิ์ต่อไปนี้หรือไม่",
+          "result": "ยอดดุลการให้สิทธิต่อไปนี้ถูกสร้างขึ้น:"
+        },
         "rows": {
-          "header": "สร้างยอดดุลการได้รับสิทธิ์ต่อไปนี้หรือไม่",
           "creator": "ผู้สร้าง: {creator} ({creatorOP})",
           "owner": "เจ้าของ: {owner} ({ownerOP})",
           "amount": "จำนวนเงิน: {amount} ({asset_id})",
@@ -656,8 +848,12 @@
       "vesting_balance_withdraw": {
         "method": "ถอนเงินคงเหลือ",
         "title": "คำขอถอนเงินคงเหลือ",
+        "result": "ผลการถอนยอดคงเหลือ",
+        "headers": {
+          "request": "ถอนยอดคงเหลือต่อไปนี้?",
+          "result": "ยอดคงเหลือที่ได้รับสิทธิต่อไปนี้ถูกถอนออก:"
+        },
         "rows": {
-          "header": "ยอดเงินคงเหลือ",
           "owner": "เจ้าของ: {owner} ({ownerOP})",
           "claim": "อ้างสิทธิ์: {claim} ({asset_id})"
         },
@@ -666,8 +862,12 @@
       "worker_create": {
         "method": "คนงานสร้าง",
         "title": "ผู้ปฏิบัติงานสร้างคำขอ",
+        "result": "ผู้ปฏิบัติงานสร้างผลลัพธ์",
+        "headers": {
+          "request": "สร้างข้อเสนอของผู้ปฏิบัติงานต่อไปนี้หรือไม่",
+          "result": "มีการสร้างข้อเสนอของผู้ปฏิบัติงานต่อไปนี้:"
+        },
         "rows": {
-          "header": "สร้างข้อเสนอของผู้ปฏิบัติงานต่อไปนี้หรือไม่",
           "owner": "เจ้าของ: {owner} ({ownerOP})",
           "work_begin_date": "วันที่เริ่มงาน: {work_begin_date}",
           "work_end_date": "วันที่สิ้นสุดการทำงาน: {work_end_date}",
@@ -682,8 +882,12 @@
       "custom": {
         "method": "กำหนดเอง",
         "title": "คำขอที่กำหนดเอง",
+        "result": "ผลลัพธ์ที่กำหนดเอง",
+        "headers": {
+          "request": "สร้างการดำเนินการแบบกำหนดเองต่อไปนี้หรือไม่",
+          "result": "การดำเนินการแบบกำหนดเองต่อไปนี้ถูกสร้างขึ้น:"
+        },
         "rows": {
-          "header": "การดำเนินการที่กำหนดเอง:",
           "payer": "ผู้ชำระเงิน: {payer} ({payerOP})",
           "required_auths": "หน่วยงานที่จำเป็น: {required_auths}",
           "id": "{id}",
@@ -695,8 +899,12 @@
       "assert": {
         "method": "ยืนยัน",
         "title": "ยืนยันคำขอ",
+        "result": "ยืนยันผล",
+        "headers": {
+          "request": "อนุมัติการดำเนินการขอยืนยันต่อไปนี้หรือไม่",
+          "result": "การดำเนินการขอยืนยันต่อไปนี้ได้รับการอนุมัติ:"
+        },
         "rows": {
-          "header": "การดำเนินการยืนยัน:",
           "fee_paying_account": "บัญชีที่ชำระค่าธรรมเนียม: {fee_paying_account} ({fee_paying_accountOP})",
           "predicates": "เพรดิเคต: {predicates}",
           "required_auths": "หน่วยงานที่จำเป็น: {required_auths}",
@@ -708,8 +916,12 @@
       "balance_claim": {
         "method": "การเรียกร้องยอดคงเหลือ",
         "title": "คำขอเรียกร้องยอดคงเหลือ",
+        "result": "ผลการเรียกร้องยอดคงเหลือ",
+        "headers": {
+          "request": "เรียกร้องยอดต่อไปนี้?",
+          "result": "มีการอ้างสิทธิ์ยอดคงเหลือต่อไปนี้:"
+        },
         "rows": {
-          "header": "เรียกร้องยอดต่อไปนี้?",
           "deposit_to_account": "ฝากเข้าบัญชี: {deposit_to_account} ({deposit_to_accountOP})",
           "balance_to_claim": "ยอดคงเหลือที่จะอ้างสิทธิ์: {balance_to_claim} ({asset_id})",
           "balance_owner_key": "รหัสเจ้าของยอดคงเหลือ: {balance_owner_key}",
@@ -721,8 +933,12 @@
       "override_transfer": {
         "method": "แทนที่การถ่ายโอน",
         "title": "ลบล้างคำขอโอน",
+        "result": "ลบล้างผลการโอน",
+        "headers": {
+          "request": "ลบล้างการโอนต่อไปนี้หรือไม่",
+          "result": "การถ่ายโอนต่อไปนี้ถูกแทนที่:"
+        },
         "rows": {
-          "header": "ลบล้างการโอนต่อไปนี้หรือไม่",
           "issuer": "ผู้ออก: {issuer} ({issuerOP})",
           "from": "จาก: {from} ({fromOP})",
           "to": "ถึง: {to} ({toOP})",
@@ -735,8 +951,12 @@
       "transfer_to_blind": {
         "method": "ถ่ายโอนไปยังคนตาบอด",
         "title": "โอนไปยังคำขอตาบอด",
+        "result": "ถ่ายโอนไปยังผลลัพธ์ที่ตาบอด",
+        "headers": {
+          "request": "โอนสิ่งต่อไปนี้ให้กับคนตาบอดหรือไม่",
+          "result": "ต่อไปนี้ถูกโอนไปยังคนตาบอด:"
+        },
         "rows": {
-          "header": "โอนสิ่งต่อไปนี้ให้กับคนตาบอดหรือไม่",
           "amount": "จำนวนเงิน: {amount}",
           "from": "จาก: {from} ({fromOP})",
           "blinding_factor": "ปัจจัยที่ทำให้ไม่เห็น: {blinding_factor}",
@@ -748,8 +968,12 @@
       "blind_transfer": {
         "method": "การโอนคนตาบอด",
         "title": "คำขอโอนตาบอด",
+        "result": "ผลการโอนคนตาบอด",
+        "headers": {
+          "request": "อนุมัติการโอนคนตาบอดต่อไปนี้หรือไม่",
+          "result": "การโอนคนตาบอดต่อไปนี้ได้รับการอนุมัติ:"
+        },
         "rows": {
-          "header": "อนุมัติการโอนคนตาบอดต่อไปนี้หรือไม่",
           "inputs": "อินพุต: {inputs}",
           "outputs": "เอาต์พุต: {outputs}",
           "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
@@ -759,8 +983,12 @@
       "transfer_from_blind": {
         "method": "ถ่ายโอนจากคนตาบอด",
         "title": "โอนจากคำขอตาบอด",
+        "result": "โอนจากผลการตาบอด",
+        "headers": {
+          "request": "ถ่ายโอนสิ่งต่อไปนี้จากคนตาบอดหรือไม่",
+          "result": "ต่อไปนี้ถูกถ่ายโอนจากคนตาบอด:"
+        },
         "rows": {
-          "header": "ถ่ายโอนสิ่งต่อไปนี้จากคนตาบอดหรือไม่",
           "amount": "จำนวนเงิน: {amount}",
           "to": "ถึง: {to} ({toOP})",
           "blinding_factor": "ปัจจัยที่ทำให้ไม่เห็น: {blinding_factor}",
@@ -772,8 +1000,12 @@
       "asset_claim_fees": {
         "method": "ค่าธรรมเนียมการเรียกร้องทรัพย์สิน",
         "title": "คำขอค่าธรรมเนียมการเรียกร้องสินทรัพย์",
+        "result": "ผลค่าธรรมเนียมการเรียกร้องสินทรัพย์",
+        "headers": {
+          "request": "ถอนค่าธรรมเนียมจากสินทรัพย์ต่อไปนี้หรือไม่",
+          "result": "มีการอ้างสิทธิ์ค่าธรรมเนียมของสินทรัพย์ต่อไปนี้:"
+        },
         "rows": {
-          "header": "ถอนค่าธรรมเนียมจากสินทรัพย์ต่อไปนี้หรือไม่",
           "issuer": "ผู้ออก: {issuer} ({issuerOP})",
           "amount_to_claim": "จำนวนที่จะอ้างสิทธิ์: {amount_to_claim} ({asset_id})",
           "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
@@ -783,8 +1015,12 @@
       "bid_collateral": {
         "method": "หลักประกันการเสนอราคา",
         "title": "คำขอหลักประกันการเสนอราคา",
+        "result": "ผลหลักประกันการเสนอราคา",
+        "headers": {
+          "request": "อนุมัติการเสนอราคาหลักประกันดังต่อไปนี้?",
+          "result": "การเสนอราคาหลักประกันต่อไปนี้ได้รับการอนุมัติ:"
+        },
         "rows": {
-          "header": "อนุมัติการเสนอราคาหลักประกันดังต่อไปนี้?",
           "bidder": "ผู้เสนอราคา: {bidder} ({bidderOP})",
           "additional_collateral": "หลักประกันเพิ่มเติม: {additional_collateral}",
           "debt_covered": "หนี้ที่ครอบคลุม: {debt_covered}",
@@ -795,8 +1031,12 @@
       "asset_claim_pool": {
         "method": "กลุ่มการอ้างสิทธิ์ในสินทรัพย์",
         "title": "คำขอกลุ่มการอ้างสิทธิ์สินทรัพย์",
+        "result": "ผลลัพธ์ของพูลการอ้างสิทธิ์เนื้อหา",
+        "headers": {
+          "request": "อ้างสิทธิ์กลุ่มเนื้อหาต่อไปนี้หรือไม่",
+          "result": "มีการอ้างสิทธิ์กลุ่มเนื้อหาต่อไปนี้:"
+        },
         "rows": {
-          "header": "อ้างสิทธิ์กลุ่มเนื้อหาต่อไปนี้หรือไม่",
           "issuer": "ผู้ออก: {issuer} ({issuerOP})",
           "asset_id": "เนื้อหา: {asset_id}",
           "amount_to_claim": "จำนวนเงินที่จะเรียกร้อง: {amount_to_claim}",
@@ -807,8 +1047,12 @@
       "asset_update_issuer": {
         "method": "ผู้ออกการอัปเดตเนื้อหา",
         "title": "คำขอของผู้ออกการอัปเดตสินทรัพย์",
+        "result": "ผลลัพธ์ของผู้ออกการอัปเดตสินทรัพย์",
+        "headers": {
+          "request": "อัปเดตผู้ออกสินทรัพย์ต่อไปนี้ไหม",
+          "result": "ผู้ออกสินทรัพย์ต่อไปนี้ได้รับการอัปเดต:"
+        },
         "rows": {
-          "header": "อัปเดตผู้ออกสินทรัพย์ต่อไปนี้ไหม",
           "issuer": "ผู้ออก: {issuer} ({issuerOP})",
           "asset_to_update": "เนื้อหาที่จะอัปเดต: {asset_to_update}",
           "new_issuer": "ผู้ออกใหม่: {new_issuer} ({new_issuerOP})",
@@ -819,8 +1063,12 @@
       "htlc_create": {
         "method": "สร้าง HTML",
         "title": "คำขอสร้าง HTML",
+        "result": "HTML สร้างผลลัพธ์",
+        "headers": {
+          "request": "สร้างการดำเนินการตามสัญญาล็อกเวลาที่แฮชต่อไปนี้หรือไม่",
+          "result": "การสร้างการดำเนินการตามสัญญาล็อกเวลาแบบแฮชต่อไปนี้ได้รับการอนุมัติแล้ว:"
+        },
         "rows": {
-          "header": "สร้างการดำเนินการ HTML ต่อไปนี้หรือไม่",
           "from": "จาก: {from} ({fromOP})",
           "to": "ถึง: {to} ({toOP})",
           "amount": "จำนวนเงิน: {amount}",
@@ -834,8 +1082,12 @@
       "htlc_redeem": {
         "method": "แลก HTML",
         "title": "คำขอแลก HTML",
+        "result": "ผลการแลก HTML",
+        "headers": {
+          "request": "แลกการดำเนินการตามสัญญาที่ล็อคเวลาแฮชต่อไปนี้หรือไม่",
+          "result": "การไถ่ถอนการดำเนินการตามสัญญาที่ถูกล็อคเวลาแฮชต่อไปนี้ได้รับการอนุมัติ:"
+        },
         "rows": {
-          "header": "แลกการดำเนินการ HTLC ต่อไปนี้หรือไม่",
           "htlc_id": "รหัส HTML: {htlc_id}",
           "redeemer": "ผู้ไถ่: {redeemer} ({redeemerOP})",
           "preimage": "พรีอิมเมจ: {preimage}",
@@ -847,8 +1099,12 @@
       "htlc_extend": {
         "method": "HTML ขยาย",
         "title": "คำขอขยาย HTML",
+        "result": "HTML ขยายผลลัพธ์",
+        "headers": {
+          "request": "อนุมัติการขยายสัญญาแฮชไทม์ล็อกต่อไปนี้หรือไม่",
+          "result": "การขยายเวลาของสัญญาล็อกเวลาแฮชต่อไปนี้ได้รับการอนุมัติ:"
+        },
         "rows": {
-          "header": "อนุมัติส่วนขยาย HTML ต่อไปนี้หรือไม่",
           "htlc_id": "รหัส HTML: {htlc_id}",
           "update_issuer": "ผู้ออกการอัปเดต: {update_issuer} ({update_issuerOP})",
           "seconds_to_add": "วินาทีที่จะเพิ่ม: {seconds_to_add}",
@@ -860,8 +1116,12 @@
       "custom_authority_create": {
         "method": "สร้างสิทธิ์ที่กำหนดเอง",
         "title": "คำขอสร้างสิทธิ์ที่กำหนดเอง",
+        "result": "สิทธิ์ที่กำหนดเองสร้างผลลัพธ์",
+        "headers": {
+          "request": "สร้างสิทธิ์ที่กำหนดเองต่อไปนี้หรือไม่",
+          "result": "สร้างสิทธิ์ที่กำหนดเองต่อไปนี้:"
+        },
         "rows": {
-          "header": "สร้างสิทธิ์ที่กำหนดเองต่อไปนี้หรือไม่",
           "account": "บัญชี: {account} ({accountOP})",
           "enabled": "เปิดใช้งาน: {enabled}",
           "valid_from": "ใช้ได้จาก: {valid_from}",
@@ -877,8 +1137,12 @@
       "custom_authority_update": {
         "method": "อัปเดตสิทธิ์ที่กำหนดเอง",
         "title": "คำขออัปเดตสิทธิ์ที่กำหนดเอง",
+        "result": "ผลการอัปเดตสิทธิ์ที่กำหนดเอง",
+        "headers": {
+          "request": "อัปเดตสิทธิ์ที่กำหนดเองต่อไปนี้ไหม",
+          "result": "สิทธิ์ที่กำหนดเองต่อไปนี้ได้รับการอัปเดต:"
+        },
         "rows": {
-          "header": "อัปเดตสิทธิ์ที่กำหนดเองต่อไปนี้ไหม",
           "account": "บัญชี: {account} ({accountOP})",
           "authority_to_update": "สิทธิ์ในการอัปเดต: {authority_to_update}",
           "new_enabled": "เปิดใช้งานใหม่: {new_enabled}",
@@ -895,8 +1159,12 @@
       "custom_authority_delete": {
         "method": "ลบสิทธิ์ที่กำหนดเอง",
         "title": "คำขอลบสิทธิ์ที่กำหนดเอง",
+        "result": "ผลการลบสิทธิ์ที่กำหนดเอง",
+        "headers": {
+          "request": "ลบสิทธิ์ที่กำหนดเองต่อไปนี้ไหม",
+          "result": "ลบสิทธิ์ที่กำหนดเองต่อไปนี้แล้ว:"
+        },
         "rows": {
-          "header": "ลบสิทธิ์ที่กำหนดเองต่อไปนี้ไหม",
           "account": "บัญชี: {account} ({accountOP})",
           "authority_to_delete": "สิทธิ์ในการลบ: {authority_to_delete}",
           "extensions": "ส่วนขยาย: {extensions}",
@@ -907,8 +1175,12 @@
       "ticket_create": {
         "method": "สร้างตั๋ว",
         "title": "คำขอสร้างตั๋ว",
+        "result": "ผลการสร้างตั๋ว",
+        "headers": {
+          "request": "สร้างตั๋วต่อไปนี้หรือไม่",
+          "result": "ตั๋วต่อไปนี้ถูกสร้างขึ้น:"
+        },
         "rows": {
-          "header": "สร้างตั๋วต่อไปนี้หรือไม่",
           "account": "บัญชี: {account} ({accountOP})",
           "target_type": "ประเภทเป้าหมาย: {target_type}",
           "amount": "จำนวนเงิน: {amount}",
@@ -920,8 +1192,12 @@
       "ticket_update": {
         "method": "การปรับปรุงตั๋ว",
         "title": "คำขออัปเดตตั๋ว",
+        "result": "ผลการปรับปรุงตั๋ว",
+        "headers": {
+          "request": "อัปเดตตั๋วต่อไปนี้หรือไม่",
+          "result": "ตั๋วต่อไปนี้ได้รับการปรับปรุง:"
+        },
         "rows": {
-          "header": "อัปเดตตั๋วต่อไปนี้หรือไม่",
           "ticket": "ตั๋ว: {ticket}",
           "account": "บัญชี: {account} ({accountOP})",
           "target_type": "ประเภทเป้าหมาย: {target_type}",
@@ -933,8 +1209,12 @@
       "liquidity_pool_create": {
         "method": "สร้างพูลสภาพคล่อง",
         "title": "คำขอสร้างกลุ่มสภาพคล่อง",
+        "result": "กลุ่มสภาพคล่องสร้างผลลัพธ์",
+        "headers": {
+          "request": "สร้าง Liquidity Pool โดยมีรายละเอียดดังนี้?",
+          "result": "พูลสภาพคล่องต่อไปนี้ถูกสร้างขึ้น:"
+        },
         "rows": {
-          "header": "สร้าง Liquidity Pool โดยมีรายละเอียดดังนี้?",
           "account": "บัญชี: {account} ({accountOP})",
           "asset_a": "เนื้อหา A: {asset_a} ({asset_aOP})",
           "asset_b": "สินทรัพย์ B: {asset_b} ({asset_bOP})",
@@ -949,8 +1229,12 @@
       "liquidity_pool_delete": {
         "method": "ลบพูลสภาพคล่อง",
         "title": "คำขอลบกลุ่มสภาพคล่อง",
+        "result": "ผลการลบกลุ่มสภาพคล่อง",
+        "headers": {
+          "request": "ลบ Liquidity Pool ต่อไปนี้ไหม",
+          "result": "พูลสภาพคล่องต่อไปนี้ถูกลบ:"
+        },
         "rows": {
-          "header": "ลบ Liquidity Pool ต่อไปนี้ไหม",
           "account": "บัญชี: {account} ({accountOP})",
           "pool_id": "รหัสพูล: {pool_id}",
           "extensions": "ส่วนขยาย: {extensions}",
@@ -961,8 +1245,12 @@
       "liquidity_pool_deposit": {
         "method": "เงินฝากรวมสภาพคล่อง",
         "title": "คำขอเงินฝากรวมสภาพคล่อง",
+        "result": "ผลเงินฝากรวมสภาพคล่อง",
+        "headers": {
+          "request": "ฝากทรัพย์สินต่อไปนี้เข้ากองทุนสภาพคล่อง?",
+          "result": "สินทรัพย์ต่อไปนี้ถูกฝากเข้าในแหล่งสภาพคล่อง:"
+        },
         "rows": {
-          "header": "ฝากทรัพย์สินต่อไปนี้เข้ากองทุนสภาพคล่อง?",
           "account": "บัญชี: {account} ({accountOP})",
           "pool": "พูล: {pool}",
           "asset_a": "เนื้อหา A: {asset_a} ({asset_aOP})",
@@ -975,8 +1263,12 @@
       "liquidity_pool_withdraw": {
         "method": "ถอนกลุ่มสภาพคล่อง",
         "title": "คำขอถอนกลุ่มสภาพคล่อง",
+        "result": "ผลการถอนกลุ่มสภาพคล่อง",
+        "headers": {
+          "request": "ถอนสินทรัพย์ต่อไปนี้ออกจากกลุ่มสภาพคล่องหรือไม่",
+          "result": "สินทรัพย์ต่อไปนี้ถูกถอนออกจากกลุ่มสภาพคล่อง:"
+        },
         "rows": {
-          "header": "ถอนสินทรัพย์ต่อไปนี้ออกจากกลุ่มสภาพคล่องหรือไม่",
           "account": "บัญชี: {account} ({accountOP})",
           "pool": "พูล: {pool}",
           "share_asset": "แชร์เนื้อหา: {share_asset} ({share_assetOP})",
@@ -988,8 +1280,12 @@
       "liquidity_pool_exchange": {
         "method": "การแลกเปลี่ยนสภาพคล่อง",
         "title": "คำขอแลกเปลี่ยน Liquidity Pool",
+        "result": "ผลการแลกเปลี่ยน Liquidity Pool",
+        "headers": {
+          "request": "อนุมัติการแลกเปลี่ยน Liquidity Pool ต่อไปนี้หรือไม่",
+          "result": "การแลกเปลี่ยน Liquidity Pool ต่อไปนี้ได้รับการอนุมัติ:"
+        },
         "rows": {
-          "header": "อนุมัติการแลกเปลี่ยน Liquidity Pool ต่อไปนี้หรือไม่",
           "account": "บัญชี: {account} ({accountOP})",
           "pool": "พูล: {pool}",
           "amount_to_sell": "จำนวนที่จะขาย: {amount_to_sell}",
@@ -1002,8 +1298,12 @@
       "samet_fund_create": {
         "method": "กองทุน SameT สร้าง",
         "title": "คำขอสร้างกองทุน SameT",
+        "result": "กองทุน SameT สร้างผลลัพธ์",
+        "headers": {
+          "request": "อนุมัติการจัดตั้งกองทุนเสม็ดดังต่อไปนี้?",
+          "result": "มีการสร้างกองทุนเสม็ดดังต่อไปนี้:"
+        },
         "rows": {
-          "header": "อนุมัติการจัดตั้งกองทุนเสม็ดดังต่อไปนี้?",
           "owner_account": "บัญชีเจ้าของ: {owner_account} ({owner_accountOP})",
           "asset_type": "ประเภทสินทรัพย์: {asset_type}",
           "balance": "ยอดคงเหลือ: {balance}",
@@ -1016,8 +1316,12 @@
       "samet_fund_delete": {
         "method": "ลบกองทุน SameT",
         "title": "คำขอลบกองทุน SameT",
+        "result": "ผลการลบกองทุน SameT",
+        "headers": {
+          "request": "ลบกองทุนเสม็ดต่อไปนี้หรือไม่",
+          "result": "กองทุนเสม็ดต่อไปนี้ถูกลบ:"
+        },
         "rows": {
-          "header": "ลบกองทุนเสม็ดต่อไปนี้หรือไม่",
           "owner_account": "บัญชีเจ้าของ: {owner_account} ({owner_accountOP})",
           "fund_id": "รหัสกองทุน: {fund_id}",
           "extensions": "ส่วนขยาย: {extensions}",
@@ -1028,8 +1332,12 @@
       "samet_fund_update": {
         "method": "อัพเดทกองทุน SameT",
         "title": "คำขออัปเดตกองทุน SameT",
+        "result": "ผลการอัปเดตกองทุน SameT",
+        "headers": {
+          "request": "อัพเดทกองทุนเสม็ดดังต่อไปนี้?",
+          "result": "กองทุนเสม็ดต่อไปนี้ได้รับการปรับปรุง:"
+        },
         "rows": {
-          "header": "อัพเดทกองทุนเสม็ดดังต่อไปนี้?",
           "owner_account": "บัญชีเจ้าของ: {owner_account} ({owner_accountOP})",
           "fund_id": "รหัสกองทุน: {fund_id}",
           "delta_amount": "จำนวนเดลต้า: {delta_amount}",
@@ -1042,8 +1350,12 @@
       "samet_fund_borrow": {
         "method": "ยืมกองทุน SameT",
         "title": "คำขอยืมกองทุน SameT",
+        "result": "ผลการยืมกองทุน SameT",
+        "headers": {
+          "request": "กู้ยืมจากกองทุนเสม็ดดังต่อไปนี้?",
+          "result": "กู้สำเร็จจากกองทุนเสม็ด ดังนี้"
+        },
         "rows": {
-          "header": "กู้ยืมจากกองทุนเสม็ดดังต่อไปนี้?",
           "borrower": "ผู้ยืม: {borrower} ({borrowerOP})",
           "fund_id": "รหัสกองทุน: {fund_id}",
           "borrow_amount": "จำนวนการยืม: {borrow_amount}",
@@ -1055,11 +1367,15 @@
       "samt_fund_repay": {
         "method": "ชำระคืนกองทุน SameT",
         "title": "คำขอชำระคืนกองทุน SameT",
+        "result": "ผลการชำระคืนกองทุน SameT",
+        "headers": {
+          "request": "ชำระคืนกองทุนเสม็ดดังต่อไปนี้",
+          "result": "ชำระคืนกองทุนเสม็ดต่อไปนี้เรียบร้อยแล้ว"
+        },
         "rows": {
-          "header": "ชำระคืนกองทุนเสม็ดดังต่อไปนี้",
           "account": "บัญชี: {account} ({accountOP})",
           "fund_id": "รหัสกองทุน: {fund_id}",
-          "repay_amount": "จำนวนชำระคืน: {repay_amount}",
+          "repay_amount": "จำนวนเงินที่ชำระคืน: {repay_amount}",
           "fund_fee": "ค่าธรรมเนียมกองทุน: {fund_fee}",
           "extensions": "ส่วนขยาย: {extensions}",
           "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
@@ -1069,8 +1385,12 @@
       "credit_offer_create": {
         "method": "สร้างข้อเสนอสินเชื่อ",
         "title": "ข้อเสนอสินเชื่อสร้างคำขอ",
+        "result": "ข้อเสนอสินเชื่อสร้างผลลัพธ์",
+        "headers": {
+          "request": "อนุมัติการสร้างข้อเสนอสินเชื่อต่อไปนี้หรือไม่",
+          "result": "มีการสร้างข้อเสนอสินเชื่อต่อไปนี้:"
+        },
         "rows": {
-          "header": "อนุมัติการสร้างข้อเสนอสินเชื่อต่อไปนี้หรือไม่",
           "owner_account": "บัญชีเจ้าของ: {owner_account} ({owner_accountOP})",
           "asset_type": "ประเภทสินทรัพย์: {asset_type}",
           "balance": "ยอดคงเหลือ: {balance}",
@@ -1089,8 +1409,12 @@
       "credit_offer_delete": {
         "method": "ลบข้อเสนอเครดิต",
         "title": "คำขอลบข้อเสนอสินเชื่อ",
+        "result": "ผลการลบข้อเสนอสินเชื่อ",
+        "headers": {
+          "request": "ลบข้อเสนอเครดิตต่อไปนี้ไหม",
+          "result": "ข้อเสนอเครดิตต่อไปนี้ถูกลบแล้ว:"
+        },
         "rows": {
-          "header": "ลบข้อเสนอเครดิตต่อไปนี้ไหม",
           "owner_account": "บัญชีเจ้าของ: {owner_account} ({owner_accountOP})",
           "offer_id": "รหัสข้อเสนอ: {offer_id}",
           "extensions": "ส่วนขยาย: {extensions}",
@@ -1101,8 +1425,12 @@
       "credit_offer_update": {
         "method": "อัปเดตข้อเสนอสินเชื่อ",
         "title": "คำขออัปเดตข้อเสนอสินเชื่อ",
+        "result": "ผลการอัปเดตข้อเสนอสินเชื่อ",
+        "headers": {
+          "request": "อัปเดตข้อเสนอสินเชื่อต่อไปนี้ไหม",
+          "result": "ข้อเสนอเครดิตต่อไปนี้ได้รับการอัปเดต:"
+        },
         "rows": {
-          "header": "อัปเดตข้อเสนอสินเชื่อต่อไปนี้ไหม",
           "owner_account": "บัญชีเจ้าของ: {owner_account} ({owner_accountOP})",
           "offer_id": "รหัสข้อเสนอ: {offer_id}",
           "delta_amount": "จำนวนเดลต้า: {delta_amount}",
@@ -1121,8 +1449,12 @@
       "credit_offer_accept": {
         "method": "ข้อเสนอสินเชื่อยอมรับ",
         "title": "ข้อเสนอสินเชื่อยอมรับคำขอ",
+        "result": "ข้อเสนอสินเชื่อยอมรับผล",
+        "headers": {
+          "request": "อนุมัติข้อเสนอสินเชื่อต่อไปนี้?",
+          "result": "ข้อเสนอสินเชื่อต่อไปนี้ได้รับการอนุมัติ:"
+        },
         "rows": {
-          "header": "อนุมัติข้อเสนอสินเชื่อต่อไปนี้?",
           "borrower": "ผู้ยืม: {borrower} ({borrowerOP})",
           "offer_id": "รหัสข้อเสนอ: {offer_id}",
           "borrow_amount": "จำนวนการยืม: {borrow_amount}",
@@ -1137,11 +1469,15 @@
       "credit_deal_repay": {
         "method": "ชำระคืนข้อตกลงเครดิต",
         "title": "คำขอชำระคืนข้อตกลงเครดิต",
+        "result": "ผลการชำระคืนข้อตกลงเครดิต",
+        "headers": {
+          "request": "ชำระคืนข้อตกลงเครดิตต่อไปนี้หรือไม่",
+          "result": "คุณได้ชำระคืนข้อตกลงเครดิตต่อไปนี้"
+        },
         "rows": {
-          "header": "ชำระคืนข้อตกลงเครดิตต่อไปนี้หรือไม่",
           "account": "บัญชี: {account} ({accountOP})",
           "deal_id": "รหัสดีล: {deal_id}",
-          "repay_amount": "จำนวนชำระคืน: {repay_amount}",
+          "repay_amount": "จำนวนเงินที่ชำระคืน: {repay_amount}",
           "credit_fee": "ค่าธรรมเนียมเครดิต: {credit_fee}",
           "extensions": "ส่วนขยาย: {extensions}",
           "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
