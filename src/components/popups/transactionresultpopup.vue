@@ -120,7 +120,7 @@
                         <b>{{ t(visualizedParams[page - 1].title) }}</b>
                     </div>
                     <div>
-                        {{ t(`operations.injected.BTS.${visualizedParams[page - 1].method}.headers.request`) }}
+                        {{ t(`operations.injected.BTS.${visualizedParams[page - 1].method}.headers.result`) }}
                     </div>
                     <div
                         v-for="row in visualizedParams[page - 1].rows"

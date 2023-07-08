@@ -132,6 +132,9 @@
                     >
                         {{ t(visualizedParams[page - 1].title) }}
                     </div>
+                    <div>
+                        {{ t(`operations.injected.BTS.${visualizedParams[page - 1].method}.headers.request`) }}
+                    </div>
                     <div
                         v-for="row in visualizedParams[page - 1].rows"
                         :key="row.key"
