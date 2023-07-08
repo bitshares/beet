@@ -83,26 +83,6 @@
         logger.debug("Transaction result popup initialised");
     });
 
-    function _clickedAllow() {
-        ipcRenderer.send(
-            "clickedAllow",
-            {
-                result: {success: true, receipt: receipt.value},
-                request: {id: props.request.id}
-            }
-        );
-    }
-
-    function _clickedDeny() {
-        ipcRenderer.send(
-            "clickedDeny",
-            {
-                result: {canceled: true},
-                request: {id: props.request.id}
-            }
-        );
-    }
-
     let jsonData = ref("");
     watchEffect(() => {
         jsonData.value = JSON.stringify(visualizedParams.value[page.value - 1].op, undefined, 4)
