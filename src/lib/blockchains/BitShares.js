@@ -919,7 +919,7 @@ export default class BitShares extends BlockchainAPI {
      * @param {Array} accountIDs
      * @param {Object} 
      */
-    _getMultipleAcountNames(accountIDs) {
+    _getMultipleAccountNames(accountIDs) {
         return new Promise((resolve, reject) => {
             this.ensureConnection().then(() => {
                 if (!accountIDs) {
@@ -927,12 +927,14 @@ export default class BitShares extends BlockchainAPI {
                     return;
                 }
 
-                Apis.instance().db_api().exec("get_full_accounts", [accountIDs, false]).then((results) => {
+                Apis.instance().db_api().exec("get_objects", [accountIDs, false]).then((results) => {
                     if (results && results.length) {
-                        resolve(results);
+                        const filteredResults = results.filter(result => result !== null);
+                        resolve(filteredResults);
                         return;
                     }
                 }).catch((error) => {
+
                     console.error('Error fetching account details:', error);
                     reject(error)
                 });
@@ -1756,21 +1758,18 @@ export default class BitShares extends BlockchainAPI {
         }
 
         let accountResults = [];
-        let accountBatches = chunk(
-            accountsToFetch,
-            this._isTestnet() ? 9 : 49
-        );
+        let accountBatches = chunk(accountsToFetch, 100);
         for (let i = 0; i < accountBatches.length; i++) {
             let fetchedAccountNames;
             try {
-                fetchedAccountNames = await this._getMultipleAcountNames(accountBatches[i])
+                fetchedAccountNames = await this._getMultipleAccountNames(accountBatches[i])
             } catch (error) {
                 console.log(error)
             }
 
             if (fetchedAccountNames && fetchedAccountNames.length) {
                 let finalNames = fetchedAccountNames.map((user) => {
-                    return {id: user[1].account.id, accountName: user[1].account.name}
+                    return {id: user.id, accountName: user.name}
                 });
 
                 accountResults.push(...finalNames);
@@ -1814,39 +1813,37 @@ export default class BitShares extends BlockchainAPI {
             
             if (opType == 0) {
                 // transfer
-                let from = accountResults.find((resAcc) => resAcc.id === op.from).accountName;
-                let to = accountResults.find((resAcc) => resAcc.id === op.to).accountName;
+                let from = accountResults.find((resAcc) => resAcc.id === op.from);
+                let to = accountResults.find((resAcc) => resAcc.id === op.to);
                 let asset = assetResults.find((assRes) => assRes.id === op.amount.asset_id);
 
-                currentOperation['rows'] = [
-                    {key: 'from', params: {from: from, opFrom: op.from}},
-                    {key: 'to', params: {to: to, opTo: op.to}},
-                    {key: 'amount', params: {amount: formatAsset(op.amount.amount, asset.symbol, asset.precision)}}
-                ];
+                if (from && to && asset) {
+                    currentOperation['rows'] = [
+                        {key: 'from', params: {from: from.accountName, opFrom: op.from}},
+                        {key: 'to', params: {to: to.accountName, opTo: op.to}},
+                        {key: 'amount', params: {amount: formatAsset(op.amount.amount, asset.symbol, asset.precision)}}
+                    ];
+                }
             } else if (opType == 1) {
                 // limit_order_create
-                console.log('limit_order_create 1')
                 let seller = accountResults.find((resAcc) => resAcc.id === op.seller).accountName;
                 let buy = assetResults.find((assRes) => assRes.id === op.min_to_receive.asset_id);
                 let sell = assetResults.find((assRes) => assRes.id === op.amount_to_sell.asset_id);
 
-                if (!buy || !sell) {
-                    console.log('Could not resolve assets in limit_order_create');
-                    return;
+                if (seller && buy && sell) {
+                    let fillOrKill = op.amount_to_sell.fill_or_kill;
+
+                    let price = humanReadableFloat(op.amount_to_sell.amount, sell.precision)
+                        / humanReadableFloat(op.min_to_receive.amount, buy.precision);
+                    
+                    currentOperation['rows'] = [
+                        {key: fillOrKill ? 'tradeFK' : 'trade'},
+                        {key: 'seller', params: {seller: seller, opSeller: op.seller}},
+                        {key: 'sell', params: {amount: formatAsset(op.amount_to_sell.amount, sell.symbol, sell.precision)}},
+                        {key: 'buying', params: {amount: formatAsset(op.min_to_receive.amount, buy.symbol, buy.precision)}},
+                        {key: 'price', params: {price: price.toPrecision(sell.precision), sellSymbol: sell.symbol, buySymbol: buy.symbol}}
+                    ];
                 }
-
-                let fillOrKill = op.amount_to_sell.fill_or_kill;
-
-                let price = humanReadableFloat(op.amount_to_sell.amount, sell.precision)
-                    / humanReadableFloat(op.min_to_receive.amount, buy.precision);
-                
-                currentOperation['rows'] = [
-                    {key: fillOrKill ? 'tradeFK' : 'trade'},
-                    {key: 'seller', params: {seller: seller, opSeller: op.seller}},
-                    {key: 'sell', params: {amount: formatAsset(op.amount_to_sell.amount, sell.symbol, sell.precision)}},
-                    {key: 'buying', params: {amount: formatAsset(op.min_to_receive.amount, buy.symbol, buy.precision)}},
-                    {key: 'price', params: {price: price.toPrecision(sell.precision), sellSymbol: sell.symbol, buySymbol: buy.symbol}}
-                ];
             } else if (opType == 2) {
                 // limit_order_cancel
                 let feePayingAccount;
@@ -1856,150 +1853,157 @@ export default class BitShares extends BlockchainAPI {
                     console.log(error);
                 }
                 
-                currentOperation['rows'] = [
-                    {key: "id", params: {id: op.order}},
-                    {key: "fees", params: {fee: JSON.stringify(op.fee)}},
-                    {key: "account", params: {account: feePayingAccount ?? '' + " (" + op.fee_paying_account + ")"}}
-                ];
+                if (feePayingAccount) {
+                    currentOperation['rows'] = [
+                        {key: "id", params: {id: op.order}},
+                        {key: "fees", params: {fee: JSON.stringify(op.fee)}},
+                        {key: "account", params: {account: feePayingAccount ?? '' + " (" + op.fee_paying_account + ")"}}
+                    ];
+                }
             } else if (opType == 3) {
                 // call_order_update
                 let fundingAccount = accountResults.find((resAcc) => resAcc.id === op.funding_account).accountName;
                 let deltaCollateral = assetResults.find((assRes) => assRes.id === op.delta_collateral.asset_id);
                 let deltaDebt = assetResults.find((assRes) => assRes.id === op.delta_debt.asset_id);
 
-                if (!deltaCollateral || !deltaDebt) {
-                    console.log('Could not resolve delta fields');
-                    return;
+                if (fundingAccount && deltaCollateral && deltaDebt) {
+                    currentOperation['rows'] = [
+                        {key: "funding_account", params: {funding_account: fundingAccount ?? '' + " (" + op.funding_account + ")"}},
+                        {
+                            key: "delta_collateral",
+                            params: {
+                                delta_collateral: formatAsset(op.delta_collateral.amount, deltaCollateral.symbol, deltaCollateral.precision),
+                                id: op.delta_collateral.asset_id
+                            }
+                        },
+                        {
+                            key: "delta_debt",
+                            params: {
+                                delta_debt: formatAsset(op.delta_debt.amount, deltaDebt.symbol, deltaDebt.precision),
+                                id: op.delta_debt.asset_id
+                            }
+                        },
+                        {key: "fees", params: {fee: JSON.stringify(op.fee)}}
+                    ];
                 }
-                
-                currentOperation['rows'] = [
-                    {key: "funding_account", params: {funding_account: fundingAccount ?? '' + " (" + op.funding_account + ")"}},
-                    {
-                        key: "delta_collateral",
-                        params: {
-                            delta_collateral: formatAsset(op.delta_collateral.amount, deltaCollateral.symbol, deltaCollateral.precision),
-                            id: op.delta_collateral.asset_id
-                        }
-                    },
-                    {
-                        key: "delta_debt",
-                        params: {
-                            delta_debt: formatAsset(op.delta_debt.amount, deltaDebt.symbol, deltaDebt.precision),
-                            id: op.delta_debt.asset_id
-                        }
-                    },
-                    {key: "fees", params: {fee: JSON.stringify(op.fee)}}
-                ];
             } else if (opType == 5) {
                 // account_create
                 let registrar = accountResults.find((resAcc) => resAcc.id === op.registrar).accountName;
                 let referrer = accountResults.find((resAcc) => resAcc.id === op.referrer).accountName;
                 
-                currentOperation['rows'] = [
-                        {key: "registrar", params: {registrar: registrar ?? '', opRegistrar: op.registrar}},
-                        {key: "referrer", params: {referrer: referrer ?? '', opReferrer: op.referrer}},
-                        {key: "referrer_percent", params: {referrer_percent: op.referrer_percent}},
-                        {key: "name", params: {name: op.name}},
-                    {key: "ownerHeader", params: {}},
-                        {key: "weight_threshold", params: {weight_threshold: op.owner.weight_threshold}},
-                        {key: "account_auths", params: {account_auths: JSON.stringify(op.owner.account_auths)}},
-                        {key: "key_auths", params: {key_auths: JSON.stringify(op.owner.key_auths)}},
-                        {key: "address_auths", params: {address_auths: JSON.stringify(op.owner.address_auths)}},
-                    {key: "activeHeader", params: {}},
-                        {key: "weight_threshold", params: {weight_threshold: op.active.weight_threshold}},
-                        {key: "account_auths", params: {account_auths: JSON.stringify(op.active.account_auths)}},
-                        {key: "key_auths", params: {key_auths: JSON.stringify(op.active.key_auths)}},
-                        {key: "address_auths", params: {address_auths: JSON.stringify(op.active.address_auths)}},
-                    {key: "optionsHeader", params: {}},
-                        {key: "memo_key", params: {memo_key: op.options.memo_key}},
-                        {key: "voting_account", params: {voting_account: op.options.voting_account}},
-                        {key: "num_witness", params: {num_witness: op.options.num_witness}},
-                        {key: "num_committee", params: {num_committee: op.options.num_committee}},
-                        {key: "votes", params: {votes: JSON.stringify(op.options.votes)}},
-                        {key: "extensions", params: {extensions: JSON.stringify(op.options.extensions)}},
-                    {key: "fees", params: {fee: JSON.stringify(op.fee)}}
-                ];
+                if (registrar && referrer) {
+                    currentOperation['rows'] = [
+                            {key: "registrar", params: {registrar: registrar ?? '', opRegistrar: op.registrar}},
+                            {key: "referrer", params: {referrer: referrer ?? '', opReferrer: op.referrer}},
+                            {key: "referrer_percent", params: {referrer_percent: op.referrer_percent}},
+                            {key: "name", params: {name: op.name}},
+                        {key: "ownerHeader", params: {}},
+                            {key: "weight_threshold", params: {weight_threshold: op.owner.weight_threshold}},
+                            {key: "account_auths", params: {account_auths: JSON.stringify(op.owner.account_auths)}},
+                            {key: "key_auths", params: {key_auths: JSON.stringify(op.owner.key_auths)}},
+                            {key: "address_auths", params: {address_auths: JSON.stringify(op.owner.address_auths)}},
+                        {key: "activeHeader", params: {}},
+                            {key: "weight_threshold", params: {weight_threshold: op.active.weight_threshold}},
+                            {key: "account_auths", params: {account_auths: JSON.stringify(op.active.account_auths)}},
+                            {key: "key_auths", params: {key_auths: JSON.stringify(op.active.key_auths)}},
+                            {key: "address_auths", params: {address_auths: JSON.stringify(op.active.address_auths)}},
+                        {key: "optionsHeader", params: {}},
+                            {key: "memo_key", params: {memo_key: op.options.memo_key}},
+                            {key: "voting_account", params: {voting_account: op.options.voting_account}},
+                            {key: "num_witness", params: {num_witness: op.options.num_witness}},
+                            {key: "num_committee", params: {num_committee: op.options.num_committee}},
+                            {key: "votes", params: {votes: JSON.stringify(op.options.votes)}},
+                            {key: "extensions", params: {extensions: JSON.stringify(op.options.extensions)}},
+                        {key: "fees", params: {fee: JSON.stringify(op.fee)}}
+                    ];
+                }
             } else if (opType == 6) {
                 // account_update
                 let targetAccount = accountResults.find((resAcc) => resAcc.id === op.account).accountName;
-                
-                currentOperation['rows'] = [
-                    {key: "warning", params: {}},
-                    {key: "account", params: {account: targetAccount ?? '', opAccount: op.account}},
-                    {key: "owner", params: {owner: JSON.stringify(op.owner)}},
-                    {key: "active", params: {active: JSON.stringify(op.active)}},
-                    {key: "new_options", params: {new_options: JSON.stringify(op.new_options)}},
-                    {key: "extensions", params: {extensions: JSON.stringify(op.extensions)}},
-                    {key: "fees", params: {fee: JSON.stringify(op.fee)}}
-                ];
+                if (targetAccount) {
+                    currentOperation['rows'] = [
+                        {key: "warning", params: {}},
+                        {key: "account", params: {account: targetAccount ?? '', opAccount: op.account}},
+                        {key: "owner", params: {owner: JSON.stringify(op.owner)}},
+                        {key: "active", params: {active: JSON.stringify(op.active)}},
+                        {key: "new_options", params: {new_options: JSON.stringify(op.new_options)}},
+                        {key: "extensions", params: {extensions: JSON.stringify(op.extensions)}},
+                        {key: "fees", params: {fee: JSON.stringify(op.fee)}}
+                    ];
+                }
             } else if (opType == 7) {
                 // account_whitelist
                 let authorizingAccount = accountResults.find((resAcc) => resAcc.id === op.authorizing_account).accountName;
                 let accountToList = accountResults.find((resAcc) => resAcc.id === op.account_to_list).accountName;
                 
-                currentOperation['rows'] = [
-                    {
-                        key: "authorizing_account",
-                        params: {
-                            authorizingAccount: authorizingAccount ?? '',
-                            authorizingAccountOP: op.authorizing_account
-                        }
-                    },
-                    {
-                        key: "account_to_list",
-                        params: {
-                            accountToList: accountToList ?? '',
-                            accountToListOP: op.account_to_list
-                        }
-                    },
-                    {key: "new_listing", params: {new_listing: op.new_listing}},
-                    {
-                        key: "extensions",
-                        params: {
-                            extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"
-                        }
-                    },
-                    {key: "fee", params: {fee: JSON.stringify(op.fee)}}
-                ];
+                if (authorizingAccount && accountToList) {
+                    currentOperation['rows'] = [
+                        {
+                            key: "authorizing_account",
+                            params: {
+                                authorizingAccount: authorizingAccount ?? '',
+                                authorizingAccountOP: op.authorizing_account
+                            }
+                        },
+                        {
+                            key: "account_to_list",
+                            params: {
+                                accountToList: accountToList ?? '',
+                                accountToListOP: op.account_to_list
+                            }
+                        },
+                        {key: "new_listing", params: {new_listing: op.new_listing}},
+                        {
+                            key: "extensions",
+                            params: {
+                                extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"
+                            }
+                        },
+                        {key: "fee", params: {fee: JSON.stringify(op.fee)}}
+                    ];
+                }
             } else if (opType == 8) {
                 // account_upgrade
                 let accountToUpgrade = accountResults.find((resAcc) => resAcc.id === op.account_to_upgrade).accountName;
-                
-                currentOperation['rows'] = [
-                    {
-                        key: "account_to_upgrade",
-                        params: {
-                            accountToUpgrade: accountToUpgrade ?? '',
-                            accountToUpgradeOP: op.account_to_upgrade
-                        }
-                    },
-                    {key: "upgrade_to_lifetime_member", params: {upgradeToLifetimeMember: op.upgrade_to_lifetime_member}},
-                    {key: "extensions", params: {extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"}},
-                    {key: "fee", params: {fee: JSON.stringify(op.fee)}}
-                ];
+                if (accountToUpgrade) {
+                    currentOperation['rows'] = [
+                        {
+                            key: "account_to_upgrade",
+                            params: {
+                                accountToUpgrade: accountToUpgrade ?? '',
+                                accountToUpgradeOP: op.account_to_upgrade
+                            }
+                        },
+                        {key: "upgrade_to_lifetime_member", params: {upgradeToLifetimeMember: op.upgrade_to_lifetime_member}},
+                        {key: "extensions", params: {extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"}},
+                        {key: "fee", params: {fee: JSON.stringify(op.fee)}}
+                    ];
+                }
             } else if (opType == 9) {
                 // account_transfer
                 let originalOwner = accountResults.find((resAcc) => resAcc.id === op.account_id).accountName;
                 let newOwner = accountResults.find((resAcc) => resAcc.id === op.new_owner).accountName;
                 
-                currentOperation['rows'] = [
-                    {key: "warning", params: {}},
-                    {
-                        key: "account_id",
-                        params: {
-                            originalOwner: originalOwner ?? '',
-                            account_id: op.account_id
-                        }
-                    },
-                    {
-                        key: "new_owner",
-                        params: {
-                            newOwner: newOwner ?? '',
-                            newOwnerOP: op.new_owner
-                        }
-                    },
-                    {key: "fee", params: {fee: JSON.stringify(op.fee)}}
-                ];
+                if (originalOwner && newOwner) {
+                    currentOperation['rows'] = [
+                        {key: "warning", params: {}},
+                        {
+                            key: "account_id",
+                            params: {
+                                originalOwner: originalOwner ?? '',
+                                account_id: op.account_id
+                            }
+                        },
+                        {
+                            key: "new_owner",
+                            params: {
+                                newOwner: newOwner ?? '',
+                                newOwnerOP: op.new_owner
+                            }
+                        },
+                        {key: "fee", params: {fee: JSON.stringify(op.fee)}}
+                    ];
+                }
             } else if (opType == 10 || opType == 11) {
                 // Create or Update an asset
                 let asset = opType === 11
@@ -2138,77 +2142,64 @@ export default class BitShares extends BlockchainAPI {
                 // asset_update_bitasset
                 let shortBackingAsset = assetResults.find((assRes) => assRes.id === op.new_options.short_backing_asset);
 
-                if (!shortBackingAsset) {
-                    console.log("shortBackingAsset issue");
-                    return;
+                if (shortBackingAsset) {
+                    currentOperation['rows'] = [
+                            {key: "issuer", params: {issuer: op.issuer}},
+                            {key: "asset_to_update", params: {asset_to_update: op.asset_to_update}},
+                        {key: "new_options", params: {}},
+                            {key: "feed_lifetime_sec", params: {feed_lifetime_sec: op.new_options.feed_lifetime_sec}},
+                            {key: "minimum_feeds", params: {minimum_feeds: op.new_options.minimum_feeds}},
+                            {key: "force_settlement_delay_sec", params: {force_settlement_delay_sec: op.new_options.force_settlement_delay_sec}},
+                            {key: "force_settlement_offset_percent", params: {force_settlement_offset_percent: op.new_options.force_settlement_offset_percent}},
+                            {key: "maximum_force_settlement_volume", params: {maximum_force_settlement_volume: op.new_options.maximum_force_settlement_volume}},
+                            {key: "short_backing_asset", params: {short_backing_asset: shortBackingAsset.symbol}},
+                            op.new_options.extensions
+                                ? {key: "extensions", params: {extensions: op.new_options.extensions}}
+                                : {key: "noExtensions", params: {}},
+                            {key: "fee", params: {fee: formatAsset(op.fee.amount, "BTS", 5), id: op.fee.asset_id }}
+                    ];
                 }
-
-                currentOperation['rows'] = [
-                        {key: "issuer", params: {issuer: op.issuer}},
-                        {key: "asset_to_update", params: {asset_to_update: op.asset_to_update}},
-                    {key: "new_options", params: {}},
-                        {key: "feed_lifetime_sec", params: {feed_lifetime_sec: op.new_options.feed_lifetime_sec}},
-                        {key: "minimum_feeds", params: {minimum_feeds: op.new_options.minimum_feeds}},
-                        {key: "force_settlement_delay_sec", params: {force_settlement_delay_sec: op.new_options.force_settlement_delay_sec}},
-                        {key: "force_settlement_offset_percent", params: {force_settlement_offset_percent: op.new_options.force_settlement_offset_percent}},
-                        {key: "maximum_force_settlement_volume", params: {maximum_force_settlement_volume: op.new_options.maximum_force_settlement_volume}},
-                        {key: "short_backing_asset", params: {short_backing_asset: shortBackingAsset.symbol}},
-                        op.new_options.extensions
-                            ? {key: "extensions", params: {extensions: op.new_options.extensions}}
-                            : {key: "noExtensions", params: {}},
-                        {key: "fee", params: {fee: formatAsset(op.fee.amount, "BTS", 5), id: op.fee.asset_id }}
-                ];
             } else if (opType == 13) {
                 // asset_update_feed_producers
                 let issuer = accountResults.find((resAcc) => resAcc.id === op.issuer).accountName;
                 let assetToUpdate = assetResults.find((assRes) => assRes.id === op.new_options.short_backing_asset);
 
-                if (!assetToUpdate) {
-                    console.log("assetToUpdate issue");
-                    return;
+                if (issuer && assetToUpdate) {                
+                    currentOperation['rows'] = [
+                            {key: "issuer", params: {issuer: issuer, issuerOP: op.issuer}},
+                            {key: "asset_to_update", params: {symbol: assetToUpdate.symbol, asset_to_update: op.asset_to_update}},
+                        {key: "new_feed_producers", params: {new_feed_producers: JSON.stringify(op.new_feed_producers)}},
+                        {key: "fee", params: {fee: JSON.stringify(op.fee) }}
+                    ];
                 }
-                
-                currentOperation['rows'] = [
-                        {key: "issuer", params: {issuer: issuer, issuerOP: op.issuer}},
-                        {key: "asset_to_update", params: {symbol: assetToUpdate.symbol, asset_to_update: op.asset_to_update}},
-                    {key: "new_feed_producers", params: {new_feed_producers: JSON.stringify(op.new_feed_producers)}},
-                    {key: "fee", params: {fee: JSON.stringify(op.fee) }}
-                ];
             } else if (opType == 14) {
                 // asset_issue
                 //let issuer = accountResults.find((resAcc) => resAcc.id === op.issuer).accountName;
                 let targetAccount = accountResults.find((resAcc) => resAcc.id === op.issue_to_account).accountName;
                 let assetToIssue = assetResults.find((assRes) => assRes.id === op.asset_to_issue.asset_id);
 
-                if (!assetToIssue) {
-                    console.log("No asset to issue found");
-                    return;
+                if (targetAccount && assetToIssue) {                
+                    currentOperation['rows'] = [
+                        {
+                            key: "prompt",
+                            params: {
+                                amount: op.asset_to_issue.amount,
+                                symbol: assetToIssue.symbol,
+                                asset_id: op.asset_to_issue.asset_id,
+                                to: targetAccount,
+                                toID: op.issue_to_account
+                            }
+                        },
+                        {key: "fee", params: {fee: JSON.stringify(op.fee).amount, id: op.fee.asset_id }}
+                    ];
                 }
-                
-                currentOperation['rows'] = [
-                    {
-                        key: "prompt",
-                        params: {
-                            amount: op.asset_to_issue.amount,
-                            symbol: assetToIssue.symbol,
-                            asset_id: op.asset_to_issue.asset_id,
-                            to: targetAccount,
-                            toID: op.issue_to_account
-                        }
-                    },
-                    {key: "fee", params: {fee: JSON.stringify(op.fee).amount, id: op.fee.asset_id }}
-                ];
             } else if (opType == 15) {
                 // asset_reserve
                 let payer = accountResults.find((resAcc) => resAcc.id === op.payer).accountName;
                 let assetToReserve = assetResults.find((assRes) => assRes.id === op.amount_to_reserve.asset_id);
 
-                if (!assetToReserve) {
-                    console.log("assetToReserve issue");
-                    return;
-                }
-                
-                currentOperation['rows'] = [
+                if (payer && assetToReserve) {                
+                    currentOperation['rows'] = [
                         {key: "payer", params: {payer: payer, payerOP: op.payer}},
                         {
                             key: "amount_to_reserve",
@@ -2225,38 +2216,32 @@ export default class BitShares extends BlockchainAPI {
                             key: "extensions",
                             params: {extensions: op.extensions ? JSON.stringify(op.extensions) : "[]" }
                         },
-                    {key: "fee", params: {fee: JSON.stringify(op.fee) }}
-                ];
+                        {key: "fee", params: {fee: JSON.stringify(op.fee) }}
+                    ];
+                }
             } else if (opType == 16) {
                 // asset_fund_fee_pool
                 let fromAccount = accountResults.find((resAcc) => resAcc.id === op.from_account).accountName;
                 let assetToFund = assetResults.find((assRes) => assRes.id === op.asset_id);
 
-                if (!assetToFund) {
-                    console.log("assetToFund issue");
-                    return;
-                }
-                
-                currentOperation['rows'] = [
+                if (fromAccount && assetToFund) {                
+                    currentOperation['rows'] = [
                         {key: "from_account", params: {from_account: fromAccount, from_accountOP: op.from_account}},
                         {
                             key: "asset",
                             params: {from_account: assetToFund.symbol, from_accountOP: op.asset_id}
                         },
                         { key: "amount", params: {amount: formatAsset(op.amount, assetToFund.symbol, assetToFund.precision)}},
-                    {key: "fee", params: {fee: JSON.stringify(op.fee) }}
-                ];
+                        {key: "fee", params: {fee: JSON.stringify(op.fee) }}
+                    ];
+                }
             } else if (opType == 17) {
                 // asset_settle
                 let account = accountResults.find((resAcc) => resAcc.id === op.account).accountName;
                 let assetToSettle = assetResults.find((assRes) => assRes.id === op.amount.asset_id);
 
-                if (!assetToSettle) {
-                    console.log("assetToSettle issue");
-                    return;
-                }
-                
-                currentOperation['rows'] = [
+                if (account && assetToSettle) {                
+                    currentOperation['rows'] = [
                         {key: "account", params: {account: account, accountOP: op.account}},
                         {
                             key: "amount",
@@ -2269,25 +2254,21 @@ export default class BitShares extends BlockchainAPI {
                                 assetID: op.amount.asset_id
                             }
                         },
-                    {key: "fee", params: {fee: JSON.stringify(op.fee) }}
-                ];
+                        {key: "fee", params: {fee: JSON.stringify(op.fee) }}
+                    ];
+                }
             } else if (opType == 18) {
                 // asset_global_settle
                 let issuer = accountResults.find((resAcc) => resAcc.id === op.account).accountName;
-
                 let assetToSettle = assetResults.find((assRes) => assRes.id === op.asset_to_settle)
                 let baseAsset = assetResults.find((assRes) => assRes.id === op.settle_price.base.asset_id);
                 let quoteAsset = assetResults.find((assRes) => assRes.id === op.settle_price.quote.asset_id);
 
-                if (!assetToSettle || !baseAsset || !quoteAsset) {
-                    console.log("asset_global_settle param issue");
-                    return;
-                }
-
-                let price = humanReadableFloat(op.settle_price.base.amount, baseAsset.precision)
-                    / humanReadableFloat(op.settle_price.quote.amount, quoteAsset.precision);
-                      
-                currentOperation['rows'] = [
+                if (issuer && assetToSettle && baseAsset && quoteAsset) {
+                    let price = humanReadableFloat(op.settle_price.base.amount, baseAsset.precision)
+                        / humanReadableFloat(op.settle_price.quote.amount, quoteAsset.precision);
+                          
+                    currentOperation['rows'] = [
                         {key: "issuer", params: {issuer: issuer, issuerOP: op.account}},
                         {
                             key: "asset_to_settle",
@@ -2297,26 +2278,23 @@ export default class BitShares extends BlockchainAPI {
                             }
                         },
                         {key: "settle_price", params: {settle_price: price}},
-                    {key: "fee", params: {fee: JSON.stringify(op.fee) }}
-                ];
+                        {key: "fee", params: {fee: JSON.stringify(op.fee) }}
+                    ];
+                }
             } else if (opType == 19) {
                 // asset_publish_feed
                 let publisher = accountResults.find((resAcc) => resAcc.id === op.publisher).accountName;
                 let baseAsset = assetResults.find((assRes) => assRes.id === op.settle_price.base.asset_id); // backing e.g. BTS
                 let quoteAsset = assetResults.find((assRes) => assRes.id === op.settle_price.quote.asset_id); // same as asset_id
 
-                if (!baseAsset || !quoteAsset) {
-                    console.log("asset_publish_feed param issue");
-                    return;
-                }
-
-                let coreExchangeRate = humanReadableFloat(op.feed.core_exchange_rate.base.amount, baseAsset.precision)
-                / humanReadableFloat(op.feed.core_exchange_rate.quote.amount, quoteAsset.precision);
-
-                let settlementPrice = humanReadableFloat(op.feed.settlement_price.base.amount, baseAsset.precision)
-                / humanReadableFloat(op.feed.settlement_price.quote.amount, quoteAsset.precision);
-
-                currentOperation['rows'] = [
+                if (publisher && baseAsset && quoteAsset) {
+                    let coreExchangeRate = humanReadableFloat(op.feed.core_exchange_rate.base.amount, baseAsset.precision)
+                    / humanReadableFloat(op.feed.core_exchange_rate.quote.amount, quoteAsset.precision);
+    
+                    let settlementPrice = humanReadableFloat(op.feed.settlement_price.base.amount, baseAsset.precision)
+                    / humanReadableFloat(op.feed.settlement_price.quote.amount, quoteAsset.precision);
+    
+                    currentOperation['rows'] = [
                         {key: "publisher", params: {publisher: publisher, publisherOP: op.publisher}},
                         {
                             key: "asset_id",
@@ -2331,13 +2309,14 @@ export default class BitShares extends BlockchainAPI {
                             {key: "maintenance_collateral_ratio", params: {maintenance_collateral_ratio: op.feed.maintenance_collateral_ratio}},
                             {key: "maximum_short_squeeze_ratio", params: {maximum_short_squeeze_ratio: op.feed.maximum_short_squeeze_ratio}},
                         {key: "extensions", params: {extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"}},
-                    {key: "fee", params: {fee: JSON.stringify(op.fee) }}
-                ];
+                        {key: "fee", params: {fee: JSON.stringify(op.fee) }}
+                    ];
+                }
             } else if (opType == 20) {
                 // witness_create
                 let witnessAccount = accountResults.find((resAcc) => resAcc.id === op.witness_account).accountName;
-                
-                currentOperation['rows'] = [
+                if (witnessAccount) {
+                    currentOperation['rows'] = [
                         {
                             key: "witness_account",
                             params: {
@@ -2347,13 +2326,14 @@ export default class BitShares extends BlockchainAPI {
                         },
                         {key: "url", params: {url: op.url}},
                         {key: "block_signing_key", params: {block_signing_key: op.block_signing_key}},
-                    {key: "fee", params: {fee: JSON.stringify(op.fee) }}
-                ];
+                        {key: "fee", params: {fee: JSON.stringify(op.fee) }}
+                    ];
+                }
             } else if (opType == 21) {
                 // witness_update
                 let witnessAccount = accountResults.find((resAcc) => resAcc.id === op.witness_account).accountName;
-                
-                currentOperation['rows'] = [
+                if (witnessAccount) {
+                    currentOperation['rows'] = [
                         {
                             key: "witness",
                             params: {
@@ -2369,13 +2349,14 @@ export default class BitShares extends BlockchainAPI {
                         },
                         {key: "new_url", params: {new_url: op.new_url}},
                         {key: "new_signing_key", params: {new_signing_key: op.new_signing_key}},
-                    {key: "fee", params: {fee: JSON.stringify(op.fee) }}
-                ];
+                        {key: "fee", params: {fee: JSON.stringify(op.fee) }}
+                    ];
+                }
             } else if (opType == 22) {
                 // proposal_create
                 let feePayingAccount = accountResults.find((resAcc) => resAcc.id === op.fee_paying_account).accountName;
-                
-                currentOperation['rows'] = [
+                if (feePayingAccount) {
+                    currentOperation['rows'] = [
                         {key: "expiration_time", params: {expiration_time: op.expiration_time}},
                         {key: "proposed_ops", params: {proposed_ops: JSON.stringify(op.proposed_ops)}},
                         {key: "review_period_seconds", params: {review_period_seconds: op.review_period_seconds}},
@@ -2386,13 +2367,14 @@ export default class BitShares extends BlockchainAPI {
                                 fee_paying_accountOP: op.fee_paying_account
                             }
                         },
-                    {key: "fee", params: {fee: JSON.stringify(op.fee) }}
-                ];
+                        {key: "fee", params: {fee: JSON.stringify(op.fee) }}
+                    ];
+                }
             } else if (opType == 23) {
                 // proposal_update
                 let feePayingAccount = accountResults.find((resAcc) => resAcc.id === op.fee_paying_account).accountName;
-                
-                currentOperation['rows'] = [
+                if (feePayingAccount) {
+                    currentOperation['rows'] = [
                         {key: "proposal", params: {proposal: op.proposal}},
                         {
                             key: "active_approvals_to_add", params: {active_approvals_to_add: JSON.stringify(op.active_approvals_to_add)}
@@ -2415,34 +2397,32 @@ export default class BitShares extends BlockchainAPI {
                         {
                             key: "fee_paying_account", params: {fee_paying_account: feePayingAccount, fee_paying_accountOP: op.fee_paying_account}
                         },
-                    {key: "extensions", params: {extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"}},
-                    {key: "fee", params: {fee: JSON.stringify(op.fee) }}
-                ];
+                        {key: "extensions", params: {extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"}},
+                        {key: "fee", params: {fee: JSON.stringify(op.fee) }}
+                    ];
+                }
             } else if (opType == 24) {
                 // proposal_delete
                 let feePayingAccount = accountResults.find((resAcc) => resAcc.id === op.fee_paying_account).accountName;
-                
-                currentOperation['rows'] = [
+                if (feePayingAccount) {
+                    currentOperation['rows'] = [
                         {key: "using_owner_authority", params: {using_owner_authority: op.using_owner_authority}},
                         {key: "proposal", params: {proposal: op.proposal}},
                         {
                             key: "fee_paying_account", params: {fee_paying_account: feePayingAccount, fee_paying_accountOP: op.fee_paying_account}
                         },
-                    {key: "extensions", params: {extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"}},
-                    {key: "fee", params: {fee: JSON.stringify(op.fee) }}
-                ];
+                        {key: "extensions", params: {extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"}},
+                        {key: "fee", params: {fee: JSON.stringify(op.fee) }}
+                    ];
+                }
             } else if (opType == 25) {
                 // withdraw_permission_create
                 let to = accountResults.find((resAcc) => resAcc.id === op.authorized_account).accountName;
                 let from = accountResults.find((resAcc) => resAcc.id === op.withdraw_from_account).accountName;
                 let asset = assetResults.find((assRes) => assRes.id === op.withdrawal_limit.asset_id);
 
-                if (!asset) {
-                    console.log("withdraw_permission_create missing field");
-                    return;
-                }
-
-                currentOperation['rows'] = [
+                if (to && from && asset) {
+                    currentOperation['rows'] = [
                         {key: "recipient", params: {recipient: to, recipientOP: op.authorized_account}},
                         {key: "withdraw_from", params: {withdraw_from: from, withdraw_fromOP: op.withdraw_from_account}},
                         {
@@ -2453,19 +2433,16 @@ export default class BitShares extends BlockchainAPI {
                                 period_qty: op.periods_until_expiration
                             }
                         },
-                ];
+                    ];
+                }
             } else if (opType == 26) {
                 // withdraw_permission_update
                 let withdrawFromAccount = accountResults.find((resAcc) => resAcc.id === op.withdraw_from_account).accountName;
                 let authorizedAccount = accountResults.find((resAcc) => resAcc.id === op.authorized_account).accountName;
                 let withdrawalLimit = assetResults.find((assRes) => assRes.id === op.withdrawal_limit.asset_id);
 
-                if (!withdrawalLimit) {
-                    console.log("withdraw_permission_update missing field");
-                    return;
-                }
-
-                currentOperation['rows'] = [
+                if (withdrawFromAccount && authorizedAccount && withdrawalLimit) {
+                    currentOperation['rows'] = [
                         {
                             key: "withdraw_from_account",
                             params: {
@@ -2499,19 +2476,16 @@ export default class BitShares extends BlockchainAPI {
                         {key: "period_start_time", params: {period_start_time: op.period_start_time}},
                         {key: "periods_until_expiration", params: {periods_until_expiration: op.periods_until_expiration}},
                         {key: "fee", params: {fee: JSON.stringify(op.fee) }}
-                ];
+                    ];
+                }
             } else if (opType == 27) {
                 // withdraw_permission_claim
                 let from = accountResults.find((resAcc) => resAcc.id === op.withdraw_from_account).accountName;
                 let to = accountResults.find((resAcc) => resAcc.id === op.withdraw_to_account).accountName;
                 let withdrawnAsset = assetResults.find((assRes) => assRes.id === op.amount_to_withdraw.asset_id);
 
-                if (!withdrawnAsset) {
-                    console.log("withdraw_permission_claim missing field");
-                    return;
-                }
-
-                currentOperation['rows'] = [
+                if (from && to && withdrawnAsset) {
+                    currentOperation['rows'] = [
                         {key: "withdraw_permission", params: {withdraw_permission: op.withdraw_permission}},
                         {
                             key: "withdraw_from_account",
@@ -2538,13 +2512,15 @@ export default class BitShares extends BlockchainAPI {
                         },
                         {key: "memo", params: {memo: op.memo}},
                         {key: "fee", params: {fee: JSON.stringify(op.fee) }}
-                ];
+                    ];
+                }
             } else if (opType == 28) {
                 // withdraw_permission_delete
                 let withdrawFromAccount = accountResults.find((resAcc) => resAcc.id === op.withdraw_from_account).accountName;
                 let authorizedAccount = accountResults.find((resAcc) => resAcc.id === op.authorized_account).accountName;
                 
-                currentOperation['rows'] = [
+                if (withdrawFromAccount && authorizedAccount) {
+                    currentOperation['rows'] = [
                         {
                             key: "withdraw_from_account",
                             params: {
@@ -2561,38 +2537,41 @@ export default class BitShares extends BlockchainAPI {
                         },
                         {key: "withdrawal_permission", params: {withdrawal_permission: op.withdrawal_permission}},
                         {key: "fee", params: {fee: JSON.stringify(op.fee) }}
-                ];
+                    ];
+                }
             } else if (opType == 29) {
                 // committee_member_create
                 let committeeMemberAccount = accountResults.find((resAcc) => resAcc.id === op.committee_member_account).accountName;
-                
-                currentOperation['rows'] = [
-                    {
-                        key: "committee_member_account",
-                        params: {
-                            committee_member_account: committeeMemberAccount,
-                            committee_member_accountOP: op.committee_member_account
-                        }
-                    },
-                    {key: "url", params: {url: op.url}},
-                    {key: "fee", params: {fee: JSON.stringify(op.fee) }}
-                ];
+                if (committeeMemberAccount) {
+                    currentOperation['rows'] = [
+                        {
+                            key: "committee_member_account",
+                            params: {
+                                committee_member_account: committeeMemberAccount,
+                                committee_member_accountOP: op.committee_member_account
+                            }
+                        },
+                        {key: "url", params: {url: op.url}},
+                        {key: "fee", params: {fee: JSON.stringify(op.fee) }}
+                    ];
+                }
             } else if (opType == 30) {
                 // committee_member_update
                 let committeeMemberAccount = accountResults.find((resAcc) => resAcc.id === op.committee_member_account).accountName;
-                
-                currentOperation['rows'] = [
-                    {key: "committee_member", params: {committee_member: op.committee_member}},
-                    {
-                        key: "committee_member_account",
-                        params: {
-                            committee_member_account: committeeMemberAccount,
-                            committee_member_accountOP: op.committee_member_account
-                        }
-                    },
-                    {key: "new_url", params: {new_url: op.new_url}},
-                    {key: "fee", params: {fee: JSON.stringify(op.fee) }}
-                ];
+                if (committeeMemberAccount) {
+                    currentOperation['rows'] = [
+                        {key: "committee_member", params: {committee_member: op.committee_member}},
+                        {
+                            key: "committee_member_account",
+                            params: {
+                                committee_member_account: committeeMemberAccount,
+                                committee_member_accountOP: op.committee_member_account
+                            }
+                        },
+                        {key: "new_url", params: {new_url: op.new_url}},
+                        {key: "fee", params: {fee: JSON.stringify(op.fee) }}
+                    ];
+                }
             } else if (opType == 31) {
                 // committee_member_update_global_parameters
                 currentOperation['rows'] = [
@@ -2643,127 +2622,121 @@ export default class BitShares extends BlockchainAPI {
                 let owner = accountResults.find((resAcc) => resAcc.id === op.owner).accountName;
                 let amount = assetResults.find((assRes) => assRes.id === op.amount.asset_id);
 
-                if (!amount) {
-                    console.log("vesting_balance_create: amount is null");
-                    return;
+                if (creator && owner && amount) {
+                    let tempRows = [
+                        {key: "creator", params: {creator: creator, creatorOP: op.creator}},
+                        {key: "owner", params: {owner: owner, ownerOP: op.owner}},
+                        {
+                            key: "amount",
+                            params: {
+                                amount: formatAsset(op.amount.amount, amount.symbol, amount.precision),
+                                amount_id: op.amount.asset_id
+                            }
+                        },
+                        {key: "policy", params: {}}
+                    ];
+    
+                    let policy = op.policy;
+                    if (policy[0] == 0) {
+                        tempRows.push({key: "begin_timestamp", params: {begin_timestamp: policy[1].begin_timestamp}})
+                        tempRows.push({key: "vesting_cliff_seconds", params: {vesting_cliff_seconds: policy[1].vesting_cliff_seconds}})
+                        tempRows.push({key: "vesting_duration_seconds", params: {vesting_duration_seconds: policy[1].vesting_duration_seconds}})
+                    } else {
+                        tempRows.push({key: "start_claim", params: {start_claim: policy[1].start_claim}})
+                        tempRows.push({key: "vesting_seconds", params: {vesting_seconds: policy[1].vesting_seconds}})
+                    }
+    
+                    tempRows.push({key: "fee", params: {fee: JSON.stringify(op.fee) }})
+                    currentOperation['rows'] = tempRows;
                 }
-                
-                let tempRows = [
-                    {key: "creator", params: {creator: creator, creatorOP: op.creator}},
-                    {key: "owner", params: {owner: owner, ownerOP: op.owner}},
-                    {
-                        key: "amount",
-                        params: {
-                            amount: formatAsset(op.amount.amount, amount.symbol, amount.precision),
-                            amount_id: op.amount.asset_id
-                        }
-                    },
-                    {key: "policy", params: {}}
-                ];
-
-                let policy = op.policy;
-                if (policy[0] == 0) {
-                    tempRows.push({key: "begin_timestamp", params: {begin_timestamp: policy[1].begin_timestamp}})
-                    tempRows.push({key: "vesting_cliff_seconds", params: {vesting_cliff_seconds: policy[1].vesting_cliff_seconds}})
-                    tempRows.push({key: "vesting_duration_seconds", params: {vesting_duration_seconds: policy[1].vesting_duration_seconds}})
-                } else {
-                    tempRows.push({key: "start_claim", params: {start_claim: policy[1].start_claim}})
-                    tempRows.push({key: "vesting_seconds", params: {vesting_seconds: policy[1].vesting_seconds}})
-                }
-
-                tempRows.push({key: "fee", params: {fee: JSON.stringify(op.fee) }})
-                currentOperation['rows'] = tempRows;
             } else if (opType == 33) {
                 // vesting_balance_withdraw
                 let owner = accountResults.find((resAcc) => resAcc.id === op.owner).accountName;
                 let asset = assetResults.find((assRes) => assRes.id === op.amount.asset_id);
 
-                if (!asset) {
-                    console.log("vesting_balance_withdraw: asset is null");
-                    return;
+                if (owner && asset) {
+                    currentOperation['rows'] = [
+                        {key: "owner", params: {owner: owner, ownerOP: op.owner}},
+                        {
+                            key: "claim",
+                            params: {
+                                claim: formatAsset(op.amount.amount, asset.symbol, asset.precision),
+                                asset_id: op.amount.asset_id
+                            }
+                        },
+                    ];
                 }
-                
-                currentOperation['rows'] = [
-                    {key: "owner", params: {owner: owner, ownerOP: op.owner}},
-                    {
-                        key: "claim",
-                        params: {
-                            claim: formatAsset(op.amount.amount, asset.symbol, asset.precision),
-                            asset_id: op.amount.asset_id
-                        }
-                    },
-                ];
             } else if (opType == 34) {
                 // worker_create
                 let owner = accountResults.find((resAcc) => resAcc.id === op.owner).accountName;
-                
-                currentOperation['rows'] = [
-                    {key: "owner", params: {owner: owner, ownerOP: op.owner}},
-                    {key: "work_begin_date", params: {work_begin_date: op.work_begin_date}},
-                    {key: "work_end_date", params: {work_end_date: op.work_end_date}},
-                    {key: "daily_pay", params: {daily_pay: op.daily_pay}},
-                    {key: "name", params: {name: op.name}},
-                    {key: "url", params: {url: op.url}},
-                    {key: "initializer", params: {initializer: JSON.stringify(op.initializer)}},
-                    {key: "fee", params: {fee: JSON.stringify(op.fee) }}
-                ];
+                if (owner) {
+                    currentOperation['rows'] = [
+                        {key: "owner", params: {owner: owner, ownerOP: op.owner}},
+                        {key: "work_begin_date", params: {work_begin_date: op.work_begin_date}},
+                        {key: "work_end_date", params: {work_end_date: op.work_end_date}},
+                        {key: "daily_pay", params: {daily_pay: op.daily_pay}},
+                        {key: "name", params: {name: op.name}},
+                        {key: "url", params: {url: op.url}},
+                        {key: "initializer", params: {initializer: JSON.stringify(op.initializer)}},
+                        {key: "fee", params: {fee: JSON.stringify(op.fee) }}
+                    ];
+                }
             } else if (opType == 35) {
                 // custom
                 let payer = accountResults.find((resAcc) => resAcc.id === op.payer).accountName;
-                
-                currentOperation['rows'] = [
-                    {key: "payer", params: {payer: payer, payerOP: op.payer}},
-                    {key: "required_auths", params: {required_auths: JSON.stringify(op.required_auths)}},
-                    {key: "id", params: {id: op.id}},
-                    {key: "data", params: {data: JSON.stringify(op.data)}},
-                    {key: "fee", params: {fee: JSON.stringify(op.fee) }}
-                ];
+                if (payer) {
+                    currentOperation['rows'] = [
+                        {key: "payer", params: {payer: payer, payerOP: op.payer}},
+                        {key: "required_auths", params: {required_auths: JSON.stringify(op.required_auths)}},
+                        {key: "id", params: {id: op.id}},
+                        {key: "data", params: {data: JSON.stringify(op.data)}},
+                        {key: "fee", params: {fee: JSON.stringify(op.fee) }}
+                    ];
+                }
             } else if (opType == 36) {
                 // assert
                 let feePayingAccount = accountResults.find((resAcc) => resAcc.id === op.fee_paying_account).accountName;
-                
-                currentOperation['rows'] = [
-                    {
-                        key: "fee_paying_account",
-                        params: {
-                            fee_paying_account: feePayingAccount,
-                            fee_paying_accountOP: op.fee_paying_account
-                        }
-                    },
-                    {key: "predicates", params: {predicates: JSON.stringify(op.predicates)}},
-                    {key: "required_auths", params: {required_auths: JSON.stringify(op.required_auths)}},
-                    {key: "extensions", params: {extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"}},
-                    {key: "fee", params: {fee: JSON.stringify(op.fee) }}
-                ];
+                if (feePayingAccount) {
+                    currentOperation['rows'] = [
+                        {
+                            key: "fee_paying_account",
+                            params: {
+                                fee_paying_account: feePayingAccount,
+                                fee_paying_accountOP: op.fee_paying_account
+                            }
+                        },
+                        {key: "predicates", params: {predicates: JSON.stringify(op.predicates)}},
+                        {key: "required_auths", params: {required_auths: JSON.stringify(op.required_auths)}},
+                        {key: "extensions", params: {extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"}},
+                        {key: "fee", params: {fee: JSON.stringify(op.fee) }}
+                    ];
+                }
             } else if (opType == 37) {
                 // balance_claim
                 let depositToAccount = accountResults.find((resAcc) => resAcc.id === op.deposit_to_account).accountName;
                 let claimedAsset = assetResults.find((assRes) => assRes.id === op.amount.asset_id);
 
-                if (!claimedAsset) {
-                    console.log("balance_claim: claimedAsset is null");
-                    return;
+                if (depositToAccount && claimedAsset) {
+                    currentOperation['rows'] = [
+                        {
+                            key: "deposit_to_account",
+                            params: {
+                                deposit_to_account: depositToAccount,
+                                deposit_to_accountOP: op.deposit_to_account
+                            }
+                        },
+                        {key: "balance_to_claim", params: {balance_to_claim: op.balance_to_claim}},
+                        {key: "balance_owner_key", params: {balance_owner_key: op.balance_owner_key}},
+                        {
+                            key: "total_claimed",
+                            params: {
+                                total_claimed: formatAsset(op.amount.amount, claimedAsset.symbol, claimedAsset.precision),
+                                asset_id: op.amount.asset_id
+                            }
+                        },
+                        {key: "fee", params: {fee: JSON.stringify(op.fee) }}
+                    ];
                 }
-                
-                currentOperation['rows'] = [
-                    {
-                        key: "deposit_to_account",
-                        params: {
-                            deposit_to_account: depositToAccount,
-                            deposit_to_accountOP: op.deposit_to_account
-                        }
-                    },
-                    {key: "balance_to_claim", params: {balance_to_claim: op.balance_to_claim}},
-                    {key: "balance_owner_key", params: {balance_owner_key: op.balance_owner_key}},
-                    {
-                        key: "total_claimed",
-                        params: {
-                            total_claimed: formatAsset(op.amount.amount, claimedAsset.symbol, claimedAsset.precision),
-                            asset_id: op.amount.asset_id
-                        }
-                    },
-                    {key: "fee", params: {fee: JSON.stringify(op.fee) }}
-                ];
             } else if (opType == 38) {
                 // override_transfer
                 let issuer = accountResults.find((resAcc) => resAcc.id === op.issuer).accountName;
@@ -2771,47 +2744,41 @@ export default class BitShares extends BlockchainAPI {
                 let to = accountResults.find((resAcc) => resAcc.id === op.to).accountName;
                 let overridenAsset = assetResults.find((assRes) => assRes.id === op.amount.asset_id);
 
-                if (!overridenAsset) {
-                    console.log("override_transfer: overridenAsset is null");
-                    return;
+                if (issuer && from && to && overridenAsset) {
+                    currentOperation['rows'] = [
+                        {key: "issuer", params: {issuer: issuer, issuerOP: op.issuer}},
+                        {key: "from", params: {from: from, fromOP: op.from}},
+                        {key: "to", params: {to: to, toOP: op.to}},
+                        {
+                            key: "amount",
+                            params: {
+                                amount: formatAsset(op.amount.amount, overridenAsset.symbol, overridenAsset.precision),
+                                asset_id: op.amount.asset_id
+                            }
+                        },
+                        {key: "memo", params: {memo: op.memo}},
+                        {key: "fee", params: {fee: JSON.stringify(op.fee) }}
+                    ];
                 }
-                
-                currentOperation['rows'] = [
-                    {key: "issuer", params: {issuer: issuer, issuerOP: op.issuer}},
-                    {key: "from", params: {from: from, fromOP: op.from}},
-                    {key: "to", params: {to: to, toOP: op.to}},
-                    {
-                        key: "amount",
-                        params: {
-                            amount: formatAsset(op.amount.amount, overridenAsset.symbol, overridenAsset.precision),
-                            asset_id: op.amount.asset_id
-                        }
-                    },
-                    {key: "memo", params: {memo: op.memo}},
-                    {key: "fee", params: {fee: JSON.stringify(op.fee) }}
-                ];
             } else if (opType == 39) {
                 // transfer_to_blind
                 let from = accountResults.find((resAcc) => resAcc.id === op.from).accountName;
                 let assetToTransfer = assetResults.find((assRes) => assRes.id === op.amount.asset_id);
 
-                if (!assetToTransfer) {
-                    console.log("transfer_to_blind: assetToTransfer is null");
-                    return;
+                if (from && assetToTransfer) {
+                    currentOperation['rows'] = [
+                        {
+                            key: "amount",
+                            params: {
+                                amount: formatAsset(op.amount.amount, assetToTransfer.symbol, assetToTransfer.precision),
+                            }
+                        },
+                        {key: "from", params: {from: from, fromOP: op.from}},
+                        {key: "blinding_factor", params: {blinding_factor: op.blinding_factor}},
+                        {key: "outputs", params: {outputs: JSON.stringify(op.outputs)}},
+                        {key: "fee", params: {fee: JSON.stringify(op.fee) }}
+                    ];
                 }
-                
-                currentOperation['rows'] = [
-                    {
-                        key: "amount",
-                        params: {
-                            amount: formatAsset(op.amount.amount, assetToTransfer.symbol, assetToTransfer.precision),
-                        }
-                    },
-                    {key: "from", params: {from: from, fromOP: op.from}},
-                    {key: "blinding_factor", params: {blinding_factor: op.blinding_factor}},
-                    {key: "outputs", params: {outputs: JSON.stringify(op.outputs)}},
-                    {key: "fee", params: {fee: JSON.stringify(op.fee) }}
-                ];
             } else if (opType == 40) {
                 // blind_transfer
                 currentOperation['rows'] = [
@@ -2824,232 +2791,214 @@ export default class BitShares extends BlockchainAPI {
                 let to = accountResults.find((resAcc) => resAcc.id === op.to).accountName;
                 let assetToTransfer = assetResults.find((assRes) => assRes.id === op.amount.asset_id);
 
-                if (!assetToTransfer) {
-                    console.log("transfer_from_blind: assetToTransfer is null");
-                    return;
+                if (to && assetToTransfer) {
+                    currentOperation['rows'] = [
+                        {
+                            key: "amount",
+                            params: {
+                                amount: formatAsset(op.amount.amount, assetToTransfer.symbol, assetToTransfer.precision),
+                            }
+                        },
+                        {key: "to", params: {to: to, toOP: op.to}},
+                        {key: "blinding_factor", params: {blinding_factor: op.blinding_factor}},
+                        {key: "inputs", params: {inputs: JSON.stringify(op.inputs)}},
+                        {key: "fee", params: {fee: JSON.stringify(op.fee) }}
+                    ];
                 }
-                
-                currentOperation['rows'] = [
-                    {
-                        key: "amount",
-                        params: {
-                            amount: formatAsset(op.amount.amount, assetToTransfer.symbol, assetToTransfer.precision),
-                        }
-                    },
-                    {key: "to", params: {to: to, toOP: op.to}},
-                    {key: "blinding_factor", params: {blinding_factor: op.blinding_factor}},
-                    {key: "inputs", params: {inputs: JSON.stringify(op.inputs)}},
-                    {key: "fee", params: {fee: JSON.stringify(op.fee) }}
-                ];
             } else if (opType == 43) {
                 // asset_claim_fees
                 let issuer = accountResults.find((resAcc) => resAcc.id === op.issuer).accountName;
                 let assetToClaim = assetResults.find((assRes) => assRes.id === op.amount_to_claim.asset_id);
 
-                if (!assetToClaim) {
-                    console.log("asset_claim_fees: assetToClaim is null");
-                    return;
+                if (issuer && assetToClaim) {
+                    currentOperation['rows'] = [
+                        {key: "issuer", params: {issuer: issuer, issuerOP: op.issuer}},
+                        {
+                            key: "amount_to_claim",
+                            params: {
+                                amount_to_claim: formatAsset(op.amount_to_claim.amount, assetToClaim.symbol, assetToClaim.precision),
+                                asset_id: op.amount_to_claim.asset_id
+                            }
+                        },
+                        {key: "extensions", params: {extensions: JSON.stringify(op.extensions)}},
+                        {key: "fee", params: {fee: JSON.stringify(op.fee) }}
+                    ];
                 }
-                
-                currentOperation['rows'] = [
-                    {key: "issuer", params: {issuer: issuer, issuerOP: op.issuer}},
-                    {
-                        key: "amount_to_claim",
-                        params: {
-                            amount_to_claim: formatAsset(op.amount_to_claim.amount, assetToClaim.symbol, assetToClaim.precision),
-                            asset_id: op.amount_to_claim.asset_id
-                        }
-                    },
-                    {key: "extensions", params: {extensions: JSON.stringify(op.extensions)}},
-                    {key: "fee", params: {fee: JSON.stringify(op.fee) }}
-                ];
             } else if (opType == 45) {
                 // bid_collateral
                 let bidder = accountResults.find((resAcc) => resAcc.id === op.bidder).accountName;
                 let collateral = assetResults.find((assRes) => assRes.id === op.additional_collateral.asset_id);
                 let debtCovered = assetResults.find((assRes) => assRes.id === op.debtCovered.asset_id);
 
-                if (!collateral || !debtCovered) {
-                    console.log("bid_collateral: collateral or debtCovered is null");
-                    return;
+                if (bidder && collateral && debtCovered) {
+                    currentOperation['rows'] = [
+                        {key: "bidder", params: {bidder: bidder, bidderOP: op.bidder}},
+                        {
+                            key: "additional_collateral",
+                            params: {
+                                additional_collateral: formatAsset(op.additional_collateral.amount, collateral.symbol, collateral.precision),
+                            }
+                        },
+                        {
+                            key: "debt_covered",
+                            params: {
+                                debt_covered: formatAsset(op.debt_covered.amount, debtCovered.symbol, debtCovered.precision),
+                            }
+                        },
+                        {key: "fee", params: {fee: JSON.stringify(op.fee) }}
+                    ];
                 }
-
-                currentOperation['rows'] = [
-                    {key: "bidder", params: {bidder: bidder, bidderOP: op.bidder}},
-                    {
-                        key: "additional_collateral",
-                        params: {
-                            additional_collateral: formatAsset(op.additional_collateral.amount, collateral.symbol, collateral.precision),
-                        }
-                    },
-                    {
-                        key: "debt_covered",
-                        params: {
-                            debt_covered: formatAsset(op.debt_covered.amount, debtCovered.symbol, debtCovered.precision),
-                        }
-                    },
-                    {key: "fee", params: {fee: JSON.stringify(op.fee) }}
-                ];
             } else if (opType == 47) {
                 // asset_claim_pool
                 let issuer = accountResults.find((resAcc) => resAcc.id === op.issuer).accountName;
                 let relevantAsset = assetResults.find((assRes) => assRes.id === op.asset_id);
 
-                if (!relevantAsset) {
-                    console.log("asset_claim_pool: relevantAsset is null");
-                    return;
+                if (issuer && relevantAsset) {
+                    currentOperation['rows'] = [
+                        {key: "issuer", params: {issuer: issuer, issuerOP: op.issuer}},
+                        {key: "asset_id", params: {asset_id: op.asset_id}},
+                        {
+                            key: "amount_to_claim",
+                            params: {
+                                amount_to_claim: formatAsset(op.amount_to_claim.amount, relevantAsset.symbol, relevantAsset.precision),
+                            }
+                        },
+                        {key: "fee", params: {fee: JSON.stringify(op.fee) }}
+                    ];
                 }
-
-                currentOperation['rows'] = [
-                    {key: "issuer", params: {issuer: issuer, issuerOP: op.issuer}},
-                    {key: "asset_id", params: {asset_id: op.asset_id}},
-                    {
-                        key: "amount_to_claim",
-                        params: {
-                            amount_to_claim: formatAsset(op.amount_to_claim.amount, relevantAsset.symbol, relevantAsset.precision),
-                        }
-                    },
-                    {key: "fee", params: {fee: JSON.stringify(op.fee) }}
-                ];
             } else if (opType == 48) {
                 // asset_update_issuer
                 let issuer = accountResults.find((resAcc) => resAcc.id === op.issuer).accountName;
                 let new_issuer = accountResults.find((resAcc) => resAcc.id === op.new_issuer).accountName;
                 let assetToUpdate = assetResults.find((assRes) => assRes.id === op.asset_to_update);
 
-                if (!assetToUpdate) {
-                    console.log("asset_update_issuer: assetToUpdate is null");
-                    return;
+                if (issuer && new_issuer && assetToUpdate) {
+                    currentOperation['rows'] = [
+                        {key: "issuer", params: {issuer: issuer, issuerOP: op.issuer}},
+                        {key: "asset_to_update", params: {asset_to_update: assetToUpdate.symbol}},
+                        {key: "new_issuer", params: {new_issuer: new_issuer, new_issuerOP: op.new_issuer}},
+                        {key: "fee", params: {fee: JSON.stringify(op.fee) }}
+                    ];
                 }
-
-                currentOperation['rows'] = [
-                    {key: "issuer", params: {issuer: issuer, issuerOP: op.issuer}},
-                    {key: "asset_to_update", params: {asset_to_update: assetToUpdate.symbol}},
-                    {key: "new_issuer", params: {new_issuer: new_issuer, new_issuerOP: op.new_issuer}},
-                    {key: "fee", params: {fee: JSON.stringify(op.fee) }}
-                ];
             } else if (opType == 49) {
                 // htlc_create
                 let from = accountResults.find((resAcc) => resAcc.id === op.from).accountName;
                 let to = accountResults.find((resAcc) => resAcc.id === op.to).accountName;
                 let htlcAsset = assetResults.find((assRes) => assRes.id === op.amount.asset_id);
 
-                if (!htlcAsset) {
-                    console.log("htlc_create: htlcAsset is null");
-                    return;
+                if (from && to && htlcAsset) {
+                    currentOperation['rows'] = [
+                        {key: "from", params: {from: from, fromOP: op.from}},
+                        {key: "to", params: {to: to, toOP: op.to}},
+                        {
+                            key: "amount",
+                            params: {
+                                amount: formatAsset(op.amount.amount, htlcAsset.symbol, htlcAsset.precision),
+                            }
+                        },
+                        {key: "preimage_hash", params: {preimage_hash: op.preimage_hash}},
+                        {key: "preimage_size", params: {preimage_size: op.preimage_size}},
+                        {key: "claim_period_seconds", params: {claim_period_seconds: op.claim_period_seconds}},
+                        {key: "fee", params: {fee: JSON.stringify(op.fee) }}
+                    ];
                 }
-
-                currentOperation['rows'] = [
-                    {key: "from", params: {from: from, fromOP: op.from}},
-                    {key: "to", params: {to: to, toOP: op.to}},
-                    {
-                        key: "amount",
-                        params: {
-                            amount: formatAsset(op.amount.amount, htlcAsset.symbol, htlcAsset.precision),
-                        }
-                    },
-                    {key: "preimage_hash", params: {preimage_hash: op.preimage_hash}},
-                    {key: "preimage_size", params: {preimage_size: op.preimage_size}},
-                    {key: "claim_period_seconds", params: {claim_period_seconds: op.claim_period_seconds}},
-                    {key: "fee", params: {fee: JSON.stringify(op.fee) }}
-                ];
             } else if (opType == 50) {
                 // htlc_redeem
                 let redeemer = accountResults.find((resAcc) => resAcc.id === op.redeemer).accountName;
-                
-                currentOperation['rows'] = [
-                    {key: "htlc_id", params: {htlc_id: op.htlc_id}},
-                    {key: "redeemer", params: {redeemer: redeemer, redeemerOP: op.redeemer}},
-                    {key: "preimage", params: {preimage: op.preimage}},
-                    {key: "extensions", params: {extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"}},
-                    {key: "fee", params: {fee: JSON.stringify(op.fee) }}
-                ];
+                if (redeemer) {
+                    currentOperation['rows'] = [
+                        {key: "htlc_id", params: {htlc_id: op.htlc_id}},
+                        {key: "redeemer", params: {redeemer: redeemer, redeemerOP: op.redeemer}},
+                        {key: "preimage", params: {preimage: op.preimage}},
+                        {key: "extensions", params: {extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"}},
+                        {key: "fee", params: {fee: JSON.stringify(op.fee) }}
+                    ];
+                }
             } else if (opType == 52) {
                 // htlc_extend
                 let update_issuer = accountResults.find((resAcc) => resAcc.id === op.update_issuer).accountName;
-                
-                currentOperation['rows'] = [
-                    {key: "htlc_id", params: {htlc_id: op.htlc_id}},
-                    {key: "update_issuer", params: {update_issuer: update_issuer, update_issuerOP: op.update_issuer}},
-                    {key: "seconds_to_add", params: {seconds_to_add: op.seconds_to_add}},
-                    {key: "extensions", params: {extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"}},
-                    {key: "fee", params: {fee: JSON.stringify(op.fee) }}
-                ];
+                if (update_issuer) {
+                    currentOperation['rows'] = [
+                        {key: "htlc_id", params: {htlc_id: op.htlc_id}},
+                        {key: "update_issuer", params: {update_issuer: update_issuer, update_issuerOP: op.update_issuer}},
+                        {key: "seconds_to_add", params: {seconds_to_add: op.seconds_to_add}},
+                        {key: "extensions", params: {extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"}},
+                        {key: "fee", params: {fee: JSON.stringify(op.fee) }}
+                    ];
+                }
             } else if (opType == 54) {
                 // custom_authority_create
                 let account = accountResults.find((resAcc) => resAcc.id === op.account).accountName;
-                
-                currentOperation['rows'] = [
-                    {key: "account", params: {account: account, accountOP: op.account}},
-                    {key: "enabled", params: {enabled: op.enabled}},
-                    {key: "valid_from", params: {valid_from: op.valid_from}},
-                    {key: "valid_to", params: {valid_to: op.valid_to}},
-                    {key: "operation_type", params: {operation_type: op.operation_type}},
-                    {key: "auth", params: {auth: JSON.stringify(op.auth)}},
-                    {key: "restrictions", params: {restrictions: JSON.stringify(op.restrictions)}},
-                    {key: "extensions", params: {extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"}},
-                    {key: "fee", params: {fee: JSON.stringify(op.fee) }}
-                ];
+                if (account) {
+                    currentOperation['rows'] = [
+                        {key: "account", params: {account: account, accountOP: op.account}},
+                        {key: "enabled", params: {enabled: op.enabled}},
+                        {key: "valid_from", params: {valid_from: op.valid_from}},
+                        {key: "valid_to", params: {valid_to: op.valid_to}},
+                        {key: "operation_type", params: {operation_type: op.operation_type}},
+                        {key: "auth", params: {auth: JSON.stringify(op.auth)}},
+                        {key: "restrictions", params: {restrictions: JSON.stringify(op.restrictions)}},
+                        {key: "extensions", params: {extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"}},
+                        {key: "fee", params: {fee: JSON.stringify(op.fee) }}
+                    ];
+                }
             } else if (opType == 55) {
                 // custom_authority_update
                 let account = accountResults.find((resAcc) => resAcc.id === op.account).accountName;
 
-                currentOperation['rows'] = [
-                    {key: "account", params: {account: account, accountOP: op.account}},
-                    {key: "authority_to_update", params: {authority_to_update: op.authority_to_update}},
-                    {key: "new_enabled", params: {new_enabled: op.new_enabled}},
-                    {key: "new_valid_from", params: {new_valid_from: op.new_valid_from}},
-                    {key: "new_valid_to", params: {new_valid_to: op.new_valid_to}},
-                    {key: "new_auth", params: {new_auth: JSON.stringify(op.new_auth)}},
-                    {key: "restrictions_to_remove", params: {restrictions_to_remove: JSON.stringify(op.restrictions_to_remove)}},
-                    {key: "restrictions_to_add", params: {restrictions_to_add: JSON.stringify(op.restrictions_to_add)}},
-                    {key: "extensions", params: {extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"}},
-                    {key: "fee", params: {fee: JSON.stringify(op.fee) }}
-                ];
+                if (account) {
+                    currentOperation['rows'] = [
+                        {key: "account", params: {account: account, accountOP: op.account}},
+                        {key: "authority_to_update", params: {authority_to_update: op.authority_to_update}},
+                        {key: "new_enabled", params: {new_enabled: op.new_enabled}},
+                        {key: "new_valid_from", params: {new_valid_from: op.new_valid_from}},
+                        {key: "new_valid_to", params: {new_valid_to: op.new_valid_to}},
+                        {key: "new_auth", params: {new_auth: JSON.stringify(op.new_auth)}},
+                        {key: "restrictions_to_remove", params: {restrictions_to_remove: JSON.stringify(op.restrictions_to_remove)}},
+                        {key: "restrictions_to_add", params: {restrictions_to_add: JSON.stringify(op.restrictions_to_add)}},
+                        {key: "extensions", params: {extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"}},
+                        {key: "fee", params: {fee: JSON.stringify(op.fee) }}
+                    ];
+                }
             } else if (opType == 56) {
                 // custom_authority_delete
                 let account = accountResults.find((resAcc) => resAcc.id === op.account).accountName;
-                
-                currentOperation['rows'] = [
-                    {key: "account", params: {account: account, accountOP: op.account}},
-                    {key: "authority_to_delete", params: {authority_to_delete: op.authority_to_delete}},
-                    {key: "extensions", params: {extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"}},
-                    {key: "fee", params: {fee: JSON.stringify(op.fee) }}
-                ];
+                if (account) {
+                    currentOperation['rows'] = [
+                        {key: "account", params: {account: account, accountOP: op.account}},
+                        {key: "authority_to_delete", params: {authority_to_delete: op.authority_to_delete}},
+                        {key: "extensions", params: {extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"}},
+                        {key: "fee", params: {fee: JSON.stringify(op.fee) }}
+                    ];
+                }
             } else if (opType == 57) {
                 // ticket_create
                 let account = accountResults.find((resAcc) => resAcc.id === op.account).accountName;
                 let ticketAsset = assetResults.find((assRes) => assRes.id === op.amount.asset_id);
 
-                if (!ticketAsset) {
-                    console.log("ticket_create: ticketAsset is null");
-                    return;
+                if (account && ticketAsset) {
+                    currentOperation['rows'] = [
+                        {key: "account", params: {account: account, accountOP: op.account}},
+                        {key: "target_type", params: {target_type: op.target_type}},
+                        {key: "amount", params: {amount: formatAsset(op.amount.amount, ticketAsset.symbol, ticketAsset.precision)}},
+                        {key: "extensions", params: {extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"}},
+                        {key: "fee", params: {fee: JSON.stringify(op.fee) }}
+                    ];
                 }
-
-                currentOperation['rows'] = [
-                    {key: "account", params: {account: account, accountOP: op.account}},
-                    {key: "target_type", params: {target_type: op.target_type}},
-                    {key: "amount", params: {amount: formatAsset(op.amount.amount, ticketAsset.symbol, ticketAsset.precision)}},
-                    {key: "extensions", params: {extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"}},
-                    {key: "fee", params: {fee: JSON.stringify(op.fee) }}
-                ];
             } else if (opType == 58) {
                 // ticket_update
                 let account = accountResults.find((resAcc) => resAcc.id === op.account).accountName;
                 let ticketAsset = assetResults.find((assRes) => assRes.id === op.amount_for_new_target.asset_id);
 
-                if (!ticketAsset) {
-                    console.log("ticket_update: ticketAsset is null");
-                    return;
+                if (account && ticketAsset) {
+                    currentOperation['rows'] = [
+                        {key: "ticket", params: {ticket: op.ticket}},
+                        {key: "account", params: {account: account, accountOP: op.account}},
+                        {key: "target_type", params: {target_type: op.target_type}},
+                        {key: "amount_for_new_target", params: {amount_for_new_target: formatAsset(op.amount_for_new_target.amount, ticketAsset.symbol, ticketAsset.precision)}},
+                        {key: "extensions", params: {extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"}},
+                    ];
                 }
-                
-                currentOperation['rows'] = [
-                    {key: "ticket", params: {ticket: op.ticket}},
-                    {key: "account", params: {account: account, accountOP: op.account}},
-                    {key: "target_type", params: {target_type: op.target_type}},
-                    {key: "amount_for_new_target", params: {amount_for_new_target: formatAsset(op.amount_for_new_target.amount, ticketAsset.symbol, ticketAsset.precision)}},
-                    {key: "extensions", params: {extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"}},
-                ];
             } else if (opType == 59) {
                 // liquidity_pool_create
                 let account = accountResults.find((resAcc) => resAcc.id === op.account).accountName;
@@ -3057,135 +3006,127 @@ export default class BitShares extends BlockchainAPI {
                 let assetB = assetResults.find((assRes) => assRes.id === op.asset_b);
                 let shareAsset = assetResults.find((assRes) => assRes.id === op.share_asset);
 
-                if (!assetA || !assetB || !shareAsset) {
-                    console.log("liquidity_pool_create: assetA, assetB or shareAsset is null");
-                    return;
+                if (account && assetA && assetB && shareAsset) {
+                    currentOperation['rows'] = [
+                        {key: "account", params: {account: account, accountOP: op.account}},
+                        {key: "asset_a", params: {asset_a: assetA.symbol, asset_aOP: op.asset_a}},
+                        {key: "asset_b", params: {asset_b: assetB.symbol, asset_bOP: op.asset_b}},
+                        {key: "share_asset", params: {share_asset: shareAsset.symbol, share_assetOP: op.share_asset}},
+                        {key: "taker_fee_percent", params: {taker_fee_percent: op.taker_fee_percent}},
+                        {key: "withdrawal_fee_percent", params: {withdrawal_fee_percent: op.withdrawal_fee_percent}},
+                        {key: "extensions", params: {extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"}},
+                        {key: "fee", params: {fee: JSON.stringify(op.fee) }}
+                    ];
                 }
-                
-                currentOperation['rows'] = [
-                    {key: "account", params: {account: account, accountOP: op.account}},
-                    {key: "asset_a", params: {asset_a: assetA.symbol, asset_aOP: op.asset_a}},
-                    {key: "asset_b", params: {asset_b: assetB.symbol, asset_bOP: op.asset_b}},
-                    {key: "share_asset", params: {share_asset: shareAsset.symbol, share_assetOP: op.share_asset}},
-                    {key: "taker_fee_percent", params: {taker_fee_percent: op.taker_fee_percent}},
-                    {key: "withdrawal_fee_percent", params: {withdrawal_fee_percent: op.withdrawal_fee_percent}},
-                    {key: "extensions", params: {extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"}},
-                    {key: "fee", params: {fee: JSON.stringify(op.fee) }}
-                ];
             } else if (opType == 60) {
                 // liquidity_pool_delete
                 let account = accountResults.find((resAcc) => resAcc.id === op.account).accountName;
-                currentOperation['rows'] = [
-                    {key: "account", params: {account: account, accountOP: op.account}},
-                    {key: "pool_id", params: {pool_id: op.pool}},
-                    {key: "extensions", params: {extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"}},
-                    {key: "fee", params: {fee: JSON.stringify(op.fee) }}
-                ];
+                if (account) {
+                    currentOperation['rows'] = [
+                        {key: "account", params: {account: account, accountOP: op.account}},
+                        {key: "pool_id", params: {pool_id: op.pool}},
+                        {key: "extensions", params: {extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"}},
+                        {key: "fee", params: {fee: JSON.stringify(op.fee) }}
+                    ];
+                }
             } else if (opType == 61) {
                 // liquidity_pool_deposit
                 let account = accountResults.find((resAcc) => resAcc.id === op.account).accountName;
                 let amountA = assetResults.find((assRes) => assRes.id === op.amount_a.asset_id);
                 let amountB = assetResults.find((assRes) => assRes.id === op.amount_b.asset_id);
 
-                if (!amountA || !amountB) {
-                    console.log("liquidity_pool_deposit: amountA or amountB is null");
-                    return;
+                if (account && amountA && amountB) {
+                    currentOperation['rows'] = [
+                        {key: "account", params: {account: account, accountOP: op.account}},
+                        {key: "pool", params: {pool: op.pool}},
+                        {
+                            key: "amount_a",
+                            params: {
+                                amount_a: formatAsset(op.amount_a.amount, amountA.symbol, amountA.precision),
+                                amount_aOP: op.amount_a.asset_id                            
+                            }
+                        },
+                        {
+                            key: "amount_b",
+                            params: {
+                                amount_b: formatAsset(op.amount_b.amount, amountB.symbol, amountB.precision),
+                                amount_bOP: op.amount_b.asset_id
+                            }
+                        },
+                        {key: "extensions", params: {extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"}},
+                        {key: "fee", params: {fee: JSON.stringify(op.fee) }}
+                    ];
                 }
-
-                currentOperation['rows'] = [
-                    {key: "account", params: {account: account, accountOP: op.account}},
-                    {key: "pool", params: {pool: op.pool}},
-                    {
-                        key: "amount_a",
-                        params: {
-                            amount_a: formatAsset(op.amount_a.amount, amountA.symbol, amountA.precision),
-                            amount_aOP: op.amount_a.asset_id                            
-                        }
-                    },
-                    {
-                        key: "amount_b",
-                        params: {
-                            amount_b: formatAsset(op.amount_b.amount, amountB.symbol, amountB.precision),
-                            amount_bOP: op.amount_b.asset_id
-                        }
-                    },
-                    {key: "extensions", params: {extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"}},
-                    {key: "fee", params: {fee: JSON.stringify(op.fee) }}
-                ];
             } else if (opType == 62) {
                 // liquidity_pool_withdraw
                 let account = accountResults.find((resAcc) => resAcc.id === op.account).accountName;
                 let shareAsset = assetResults.find((assRes) => assRes.id === op.share_amount.asset_id);
 
-                if (!shareAsset) {
-                    console.log("liquidity_pool_withdraw: shareAsset is null");
-                    return;
+                if (account && shareAsset) {
+                    currentOperation['rows'] = [
+                        {key: "account", params: {account: account, accountOP: op.account}},
+                        {key: "pool", params: {pool: op.pool}},
+                        {
+                            key: "share_amount",
+                            params: {
+                                share_amount: formatAsset(op.share_amount.amount, shareAsset.symbol, shareAsset.precision),
+                                share_amountOP: op.share_amount.asset_id
+                            }
+                        },
+                        {key: "extensions", params: {extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"}},
+                        {key: "fee", params: {fee: JSON.stringify(op.fee) }}
+                    ];
                 }
-
-                currentOperation['rows'] = [
-                    {key: "account", params: {account: account, accountOP: op.account}},
-                    {key: "pool", params: {pool: op.pool}},
-                    {
-                        key: "share_amount",
-                        params: {
-                            share_amount: formatAsset(op.share_amount.amount, shareAsset.symbol, shareAsset.precision),
-                            share_amountOP: op.share_amount.asset_id
-                        }
-                    },
-                    {key: "extensions", params: {extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"}},
-                    {key: "fee", params: {fee: JSON.stringify(op.fee) }}
-                ];
             } else if (opType == 63) {
                 // liquidity_pool_exchange
                 let account = accountResults.find((resAcc) => resAcc.id === op.account).accountName;
                 let soldAsset = assetResults.find((assRes) => assRes.id === op.amount_to_sell.asset_id);
                 let receivedAsset = assetResults.find((assRes) => assRes.id === op.min_to_receive.asset_id);
 
-                if (!soldAsset || !receivedAsset) {
-                    console.log("liquidity_pool_exchange: soldAsset or receivedAsset is null");
-                    return;
+                if (account && soldAsset && receivedAsset) {
+                    currentOperation['rows'] = [
+                        {key: "account", params: {account: account, accountOP: op.account}},
+                        {key: "pool", params: {pool: op.pool}},
+                        {
+                            key: "amount_to_sell",
+                            params: {
+                                amount_to_sell: formatAsset(op.amount_to_sell.amount, soldAsset.symbol, soldAsset.precision),
+                            }
+                        },
+                        {
+                            key: "min_to_receive",
+                            params: {
+                                min_to_receive: formatAsset(op.min_to_receive.amount, receivedAsset.symbol, receivedAsset.precision),
+                            }
+                        },
+                        {key: "extensions", params: {extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"}},
+                        {key: "fee", params: {fee: JSON.stringify(op.fee)}}
+                    ];
                 }
-
-                currentOperation['rows'] = [
-                    {key: "account", params: {account: account, accountOP: op.account}},
-                    {key: "pool", params: {pool: op.pool}},
-                    {
-                        key: "amount_to_sell",
-                        params: {
-                            amount_to_sell: formatAsset(op.amount_to_sell.amount, soldAsset.symbol, soldAsset.precision),
-                        }
-                    },
-                    {
-                        key: "min_to_receive",
-                        params: {
-                            min_to_receive: formatAsset(op.min_to_receive.amount, receivedAsset.symbol, receivedAsset.precision),
-                        }
-                    },
-                    {key: "extensions", params: {extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"}},
-                    {key: "fee", params: {fee: JSON.stringify(op.fee)}}
-                ];
             } else if (opType == 64) {
                 // samet_fund_create
                 let ownerAccount = accountResults.find((resAcc) => resAcc.id === op.owner_account).accountName;
-                
-                currentOperation['rows'] = [
-                    {key: "owner_account", params: {owner_account: ownerAccount, owner_accountOP: op.owner_account}},
-                    {key: "asset_type", params: {asset_type: op.asset_type}},
-                    {key: "balance", params: {balance: op.balance}},
-                    {key: "fee_rate", params: {fee_rate: op.fee_rate}},
-                    {key: "extensions", params: {extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"}},
-                    {key: "fee", params: {fee: JSON.stringify(op.fee) }}
-                ];
+                if (ownerAccount) {
+                    currentOperation['rows'] = [
+                        {key: "owner_account", params: {owner_account: ownerAccount, owner_accountOP: op.owner_account}},
+                        {key: "asset_type", params: {asset_type: op.asset_type}},
+                        {key: "balance", params: {balance: op.balance}},
+                        {key: "fee_rate", params: {fee_rate: op.fee_rate}},
+                        {key: "extensions", params: {extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"}},
+                        {key: "fee", params: {fee: JSON.stringify(op.fee) }}
+                    ];
+                }
             } else if (opType == 65) {
                 // samet_fund_delete
                 let ownerAccount = accountResults.find((resAcc) => resAcc.id === op.owner_account).accountName;
-                
-                currentOperation['rows'] = [
-                    {key: "owner_account", params: {owner_account: ownerAccount, owner_accountOP: op.owner_account}},
-                    {key: "fund_id", params: {fund_id: op.fund_id}},
-                    {key: "extensions", params: {extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"}},
-                    {key: "fee", params: {fee: JSON.stringify(op.fee) }}
-                ];
+                if (ownerAccount) {
+                    currentOperation['rows'] = [
+                        {key: "owner_account", params: {owner_account: ownerAccount, owner_accountOP: op.owner_account}},
+                        {key: "fund_id", params: {fund_id: op.fund_id}},
+                        {key: "extensions", params: {extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"}},
+                        {key: "fee", params: {fee: JSON.stringify(op.fee) }}
+                    ];
+                }
             } else if (opType == 66) {
                 // samet_fund_update
                 let ownerAccount = accountResults.find((resAcc) => resAcc.id === op.owner_account).accountName;
@@ -3193,99 +3134,97 @@ export default class BitShares extends BlockchainAPI {
                 let deltaAmount = op.delta_amount
                     ? assetResults.find((assRes) => assRes.id === op.delta_amount.asset_id)
                     : null;
-                
-                currentOperation['rows'] = [
-                    {key: "owner_account", params: {owner_account: ownerAccount, owner_accountOP: op.owner_account}},
-                    {key: "fund_id", params: {fund_id: op.fund_id}},
-                    {
-                        key: "delta_amount",
-                        params: {
-                            delta_amount: deltaAmount ? formatAsset(op.delta_amount.amount, deltaAmount.symbol, deltaAmount.precision) : '{}',
-                        }
-                    },
-                    {key: "new_fee_rate", params: {new_fee_rate: op.new_fee_rate}},
-                    {key: "extensions", params: {extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"}},
-                    {key: "fee", params: {fee: JSON.stringify(op.fee) }}
-                ];
+                if (ownerAccount) {
+                    currentOperation['rows'] = [
+                        {key: "owner_account", params: {owner_account: ownerAccount, owner_accountOP: op.owner_account}},
+                        {key: "fund_id", params: {fund_id: op.fund_id}},
+                        {
+                            key: "delta_amount",
+                            params: {
+                                delta_amount: deltaAmount ? formatAsset(op.delta_amount.amount, deltaAmount.symbol, deltaAmount.precision) : '{}',
+                            }
+                        },
+                        {key: "new_fee_rate", params: {new_fee_rate: op.new_fee_rate}},
+                        {key: "extensions", params: {extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"}},
+                        {key: "fee", params: {fee: JSON.stringify(op.fee) }}
+                    ];
+                }
             } else if (opType == 67) {
                 // samet_fund_borrow
                 let borrower = accountResults.find((resAcc) => resAcc.id === op.borrower).accountName;
                 let borrowAmount = assetResults.find((assRes) => assRes.id === op.borrow_amount.asset_id);
 
-                if (!borrowAmount) {
-                    console.log("samet_fund_borrow: borrowAmount is null");
-                    return;
+                if (borrower && borrowAmount) {
+                    currentOperation['rows'] = [
+                        {key: "borrower", params: {borrower: borrower, borrowerOP: op.borrower}},
+                        {key: "fund_id", params: {fund_id: op.fund_id}},
+                        {
+                            key: "borrow_amount",
+                            params: {
+                                borrow_amount: formatAsset(op.borrow_amount.amount, borrowAmount.symbol, borrowAmount.precision),
+                            }
+                        },
+                        {key: "extensions", params: {extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"}},
+                        {key: "fee", params: {fee: JSON.stringify(op.fee) }}
+                    ];
                 }
-                
-                currentOperation['rows'] = [
-                    {key: "borrower", params: {borrower: borrower, borrowerOP: op.borrower}},
-                    {key: "fund_id", params: {fund_id: op.fund_id}},
-                    {
-                        key: "borrow_amount",
-                        params: {
-                            borrow_amount: formatAsset(op.borrow_amount.amount, borrowAmount.symbol, borrowAmount.precision),
-                        }
-                    },
-                    {key: "extensions", params: {extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"}},
-                    {key: "fee", params: {fee: JSON.stringify(op.fee) }}
-                ];
             } else if (opType == 68) {
                 // samet_fund_repay
                 let account = accountResults.find((resAcc) => resAcc.id === op.account).accountName;
                 let repayAmount = assetResults.find((assRes) => assRes.id === op.repay_amount.asset_id);
                 let fundFee = assetResults.find((assRes) => assRes.id === op.fund_fee.asset_id);
 
-                if (!repayAmount || !fundFee) {
-                    console.log("samet_fund_repay: repayAmount or fundFee is null");
-                    return;
+                if (account && repayAmount && fundFee) {
+                    currentOperation['rows'] = [
+                        {key: "account", params: {account: account, accountOP: op.account}},
+                        {key: "fund_id", params: {fund_id: op.fund_id}},
+                        {
+                            key: "repay_amount",
+                            params: {
+                                repay_amount: formatAsset(op.repay_amount.amount, repayAmount.symbol, repayAmount.precision),
+                            }
+                        },
+                        {
+                            key: "fund_fee",
+                            params: {
+                                fund_fee: formatAsset(op.fund_fee.amount, fundFee.symbol, fundFee.precision),
+                            }
+                        },
+                        {key: "extensions", params: {extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"}},
+                        {key: "fee", params: {fee: JSON.stringify(op.fee) }}
+                    ];
                 }
                 
-                currentOperation['rows'] = [
-                    {key: "account", params: {account: account, accountOP: op.account}},
-                    {key: "fund_id", params: {fund_id: op.fund_id}},
-                    {
-                        key: "repay_amount",
-                        params: {
-                            repay_amount: formatAsset(op.repay_amount.amount, repayAmount.symbol, repayAmount.precision),
-                        }
-                    },
-                    {
-                        key: "fund_fee",
-                        params: {
-                            fund_fee: formatAsset(op.fund_fee.amount, fundFee.symbol, fundFee.precision),
-                        }
-                    },
-                    {key: "extensions", params: {extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"}},
-                    {key: "fee", params: {fee: JSON.stringify(op.fee) }}
-                ];
             } else if (opType == 69) {
                 // credit_offer_create
                 let ownerAccount = accountResults.find((resAcc) => resAcc.id === op.owner_account).accountName;
-                
-                currentOperation['rows'] = [
-                    {key: "owner_account", params: {owner_account: ownerAccount, owner_accountOP: op.owner_account}},
-                    {key: "asset_type", params: {asset_type: op.asset_type}},
-                    {key: "balance", params: {balance: op.balance}},
-                    {key: "fee_rate", params: {fee_rate: op.fee_rate}},
-                    {key: "max_duration_seconds", params: {max_duration_seconds: op.max_duration_seconds}},
-                    {key: "min_deal_amount", params: {min_deal_amount: op.min_deal_amount}},
-                    {key: "enabled", params: {enabled: op.enabled}},
-                    {key: "auto_disable_time", params: {auto_disable_time: op.auto_disable_time}},
-                    {key: "acceptable_collateral", params: {acceptable_collateral: JSON.stringify(op.acceptable_collateral)}},
-                    {key: "acceptable_borrowers", params: {acceptable_borrowers: JSON.stringify(op.acceptable_borrowers)}},
-                    {key: "extensions", params: {extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"}},
-                    {key: "fee", params: {fee: JSON.stringify(op.fee) }}
-                ];
+                if (ownerAccount) {
+                    currentOperation['rows'] = [
+                        {key: "owner_account", params: {owner_account: ownerAccount, owner_accountOP: op.owner_account}},
+                        {key: "asset_type", params: {asset_type: op.asset_type}},
+                        {key: "balance", params: {balance: op.balance}},
+                        {key: "fee_rate", params: {fee_rate: op.fee_rate}},
+                        {key: "max_duration_seconds", params: {max_duration_seconds: op.max_duration_seconds}},
+                        {key: "min_deal_amount", params: {min_deal_amount: op.min_deal_amount}},
+                        {key: "enabled", params: {enabled: op.enabled}},
+                        {key: "auto_disable_time", params: {auto_disable_time: op.auto_disable_time}},
+                        {key: "acceptable_collateral", params: {acceptable_collateral: JSON.stringify(op.acceptable_collateral)}},
+                        {key: "acceptable_borrowers", params: {acceptable_borrowers: JSON.stringify(op.acceptable_borrowers)}},
+                        {key: "extensions", params: {extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"}},
+                        {key: "fee", params: {fee: JSON.stringify(op.fee) }}
+                    ];
+                }
             } else if (opType == 70) {
                 // credit_offer_delete
                 let ownerAccount = accountResults.find((resAcc) => resAcc.id === op.owner_account).accountName;
-                
-                currentOperation['rows'] = [
-                    {key: "owner_account", params: {owner_account: ownerAccount, owner_accountOP: op.owner_account}},
-                    {key: "offer_id", params: {offer_id: op.offer_id}},
-                    {key: "extensions", params: {extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"}},
-                    {key: "fee", params: {fee: JSON.stringify(op.fee) }}
-                ];
+                if (ownerAccount) {
+                    currentOperation['rows'] = [
+                        {key: "owner_account", params: {owner_account: ownerAccount, owner_accountOP: op.owner_account}},
+                        {key: "offer_id", params: {offer_id: op.offer_id}},
+                        {key: "extensions", params: {extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"}},
+                        {key: "fee", params: {fee: JSON.stringify(op.fee) }}
+                    ];
+                }
             } else if (opType == 71) {
                 // credit_offer_update
                 let ownerAccount = accountResults.find((resAcc) => resAcc.id === op.owner_account).accountName;
@@ -3294,95 +3233,93 @@ export default class BitShares extends BlockchainAPI {
                     ? assetResults.find((assRes) => assRes.id === op.delta_amount.asset_id)
                     : null;
 
-                if (!deltaAmount) {
-                    console.log("credit_offer_update: deltaAmount is null");
-                    return;
+                if (ownerAccount && deltaAmount) {
+                    currentOperation['rows'] = [
+                        {key: "owner_account", params: {owner_account: ownerAccount, owner_accountOP: op.owner_account}},
+                        {key: "offer_id", params: {offer_id: op.offer_id}},
+                        {
+                            key: "delta_amount",
+                            params: {
+                                delta_amount: formatAsset(op.delta_amount.amount, deltaAmount.symbol, deltaAmount.precision),
+                            }
+                        },
+                        {key: "fee_rate", params: {fee_rate: op.fee_rate}},
+                        {key: "max_duration_seconds", params: {max_duration_seconds: op.max_duration_seconds}},
+                        {key: "min_deal_amount", params: {min_deal_amount: op.min_deal_amount}},
+                        {key: "enabled", params: {enabled: op.enabled}},
+                        {key: "auto_disable_time", params: {auto_disable_time: op.auto_disable_time}},
+                        {key: "acceptable_collateral", params: {acceptable_collateral: JSON.stringify(op.acceptable_collateral)}},
+                        {key: "acceptable_borrowers", params: {acceptable_borrowers: JSON.stringify(op.acceptable_borrowers)}},
+                        {key: "extensions", params: {extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"}},
+                        {key: "fee", params: {fee: JSON.stringify(op.fee) }}
+                    ];
                 }
-                
-                currentOperation['rows'] = [
-                    {key: "owner_account", params: {owner_account: ownerAccount, owner_accountOP: op.owner_account}},
-                    {key: "offer_id", params: {offer_id: op.offer_id}},
-                    {
-                        key: "delta_amount",
-                        params: {
-                            delta_amount: formatAsset(op.delta_amount.amount, deltaAmount.symbol, deltaAmount.precision),
-                        }
-                    },
-                    {key: "fee_rate", params: {fee_rate: op.fee_rate}},
-                    {key: "max_duration_seconds", params: {max_duration_seconds: op.max_duration_seconds}},
-                    {key: "min_deal_amount", params: {min_deal_amount: op.min_deal_amount}},
-                    {key: "enabled", params: {enabled: op.enabled}},
-                    {key: "auto_disable_time", params: {auto_disable_time: op.auto_disable_time}},
-                    {key: "acceptable_collateral", params: {acceptable_collateral: JSON.stringify(op.acceptable_collateral)}},
-                    {key: "acceptable_borrowers", params: {acceptable_borrowers: JSON.stringify(op.acceptable_borrowers)}},
-                    {key: "extensions", params: {extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"}},
-                    {key: "fee", params: {fee: JSON.stringify(op.fee) }}
-                ];
             } else if (opType == 72) {
                 // credit_offer_accept
                 let borrower = accountResults.find((resAcc) => resAcc.id === op.borrower).accountName;
                 let borrowAmount = assetResults.find((assRes) => assRes.id === op.borrow_amount.asset_id);
                 let collateral = assetResults.find((assRes) => assRes.id === op.collateral.asset_id);
 
-                if (!borrowAmount || !collateral) {
-                    console.log("credit_offer_accept: borrowAmount or collateral is null");
-                    return;
+                if (borrower && borrowAmount && collateral) {
+                    currentOperation['rows'] = [
+                        {key: "borrower", params: {borrower: borrower, borrowerOP: op.borrower}},
+                        {key: "offer_id", params: {offer_id: op.offer_id}},
+                        {
+                            key: "borrow_amount",
+                            params: {
+                                borrow_amount: formatAsset(op.borrow_amount.amount, borrowAmount.symbol, borrowAmount.precision),
+                            }
+                        },
+                        {
+                            key: "collateral",
+                            params: {
+                                collateral: formatAsset(op.collateral.amount, collateral.symbol, collateral.precision),
+                            }
+                        },
+                        {key: "max_fee_rate", params: {max_fee_rate: op.max_fee_rate}},
+                        {key: "min_duration_seconds", params: {min_duration_seconds: op.min_duration_seconds}},
+                        {key: "extensions", params: {extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"}},
+                        {key: "fee", params: {fee: JSON.stringify(op.fee) }}
+                    ];
                 }
-                
-                currentOperation['rows'] = [
-                    {key: "borrower", params: {borrower: borrower, borrowerOP: op.borrower}},
-                    {key: "offer_id", params: {offer_id: op.offer_id}},
-                    {
-                        key: "borrow_amount",
-                        params: {
-                            borrow_amount: formatAsset(op.borrow_amount.amount, borrowAmount.symbol, borrowAmount.precision),
-                        }
-                    },
-                    {
-                        key: "collateral",
-                        params: {
-                            collateral: formatAsset(op.collateral.amount, collateral.symbol, collateral.precision),
-                        }
-                    },
-                    {key: "max_fee_rate", params: {max_fee_rate: op.max_fee_rate}},
-                    {key: "min_duration_seconds", params: {min_duration_seconds: op.min_duration_seconds}},
-                    {key: "extensions", params: {extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"}},
-                    {key: "fee", params: {fee: JSON.stringify(op.fee) }}
-                ];
             } else if (opType == 73) {
                 // credit_deal_repay
                 let account = accountResults.find((resAcc) => resAcc.id === op.account).accountName;
                 let repayAmount = assetResults.find((assRes) => assRes.id === op.repay_amount.asset_id);
                 let creditFee = assetResults.find((assRes) => assRes.id === op.credit_fee.asset_id);
 
-                if (!repayAmount || !creditFee) {
-                    console.log("credit_deal_repay: repayAmount or creditFee is null");
-                    return;
+                if (account && repayAmount && creditFee) {
+                    currentOperation['rows'] = [
+                        {key: "account", params: {account: account, accountOP: op.account}},
+                        {key: "deal_id", params: {deal_id: op.deal_id}},
+                        {
+                            key: "repay_amount",
+                            params: {
+                                repay_amount: formatAsset(op.repay_amount.amount, repayAmount.symbol, repayAmount.precision),
+                            }
+                        },
+                        {
+                            key: "credit_fee",
+                            params: {
+                                credit_fee: formatAsset(op.credit_fee.amount, creditFee.symbol, creditFee.precision),
+                            }
+                        },
+                        {key: "extensions", params: {extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"}},
+                        {key: "fee", params: {fee: JSON.stringify(op.fee) }}
+                    ];
                 }
-                
-                currentOperation['rows'] = [
-                    {key: "account", params: {account: account, accountOP: op.account}},
-                    {key: "deal_id", params: {deal_id: op.deal_id}},
-                    {
-                        key: "repay_amount",
-                        params: {
-                            repay_amount: formatAsset(op.repay_amount.amount, repayAmount.symbol, repayAmount.precision),
-                        }
-                    },
-                    {
-                        key: "credit_fee",
-                        params: {
-                            credit_fee: formatAsset(op.credit_fee.amount, creditFee.symbol, creditFee.precision),
-                        }
-                    },
-                    {key: "extensions", params: {extensions: op.extensions ? JSON.stringify(op.extensions) : "[]"}},
-                    {key: "fee", params: {fee: JSON.stringify(op.fee) }}
-                ];
             }
 
             operations.push(currentOperation);
         }
 
+        if (operations.some(op => !Object.prototype.hasOwnProperty.call(op, 'rows'))) {
+            console.log({
+                invalid: operations.filter(op => !Object.prototype.hasOwnProperty.call(op, 'rows')),
+                valid: operations.filter(op => Object.prototype.hasOwnProperty.call(op, 'rows'))
+            });
+            throw new Error("There's an issue with the format of an operation!")
+        }
         return operations;
     }
 
