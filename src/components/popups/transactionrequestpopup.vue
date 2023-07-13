@@ -39,7 +39,6 @@
         return JSON.parse(props.visualizedParams);
     });
 
-    let total = ref(visualizedParams.value.length);
     let open = ref(false);
     let page = ref(1);
     let receipt = ref(false);
@@ -121,10 +120,10 @@
             <ui-card-content>
                 <ui-card-text>
                     <div
-                        v-if="total > 1"
+                        v-if="visualizedParams.length > 1"
                         :class="$tt('subtitle1')"
                     >
-                        {{ t(visualizedParams[page - 1].title) }} ({{ page }}/{{ total }})
+                        {{ t(visualizedParams[page - 1].title) }} ({{ page }}/{{ visualizedParams.length }})
                     </div>
                     <div
                         v-else
@@ -158,7 +157,7 @@
         </ui-card>
         <ui-pagination
             v-model="page"
-            :total="total"
+            :total="visualizedParams.length"
             mini
             show-total
             :page-size="[1]"
@@ -233,8 +232,8 @@
         v-model="open"
         fullscreen
     >
-        <ui-dialog-title v-if="total > 1">
-            {{ t(visualizedParams[page - 1].title) }} ({{ page }}/{{ total }})
+        <ui-dialog-title v-if="visualizedParams.length > 1">
+            {{ t(visualizedParams[page - 1].title) }} ({{ page }}/{{ visualizedParams.length }})
         </ui-dialog-title>
         <ui-dialog-title v-else>
             {{ t(visualizedParams[page - 1].title) }}

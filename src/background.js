@@ -72,17 +72,14 @@ const createModal = async (arg, modalEvent) => {
     }
 
     modalRequests[id] = {request: request, event: modalEvent};
-
-    let targetURL = `file://${__dirname}/modal.html?`
-                    + `id=${encodeURIComponent(id)}`
-                    + `&type=${encodeURIComponent(type)}`
-                    + `&request=${encodeURIComponent(JSON.stringify(request))}`;
+    let targetURL = `file://${__dirname}/modal.html?id=${encodeURIComponent(id)}`;
+    let modalData = { id, type, request };
 
     if (type === Actions.REQUEST_LINK) {
         let existingLinks = arg.existingLinks;
         if (existingLinks) {
             modalRequests[id]['existingLinks'] = existingLinks;
-            targetURL += `&existingLinks=${encodeURIComponent(JSON.stringify(existingLinks))}`;
+            modalData['existingLinks'] = existingLinks;
         }
     }
 
@@ -94,8 +91,8 @@ const createModal = async (arg, modalEvent) => {
       }
       modalRequests[id]['visualizedAccount'] = visualizedAccount;
       modalRequests[id]['visualizedParams'] = visualizedParams;
-      targetURL += `&visualizedAccount=${encodeURIComponent(visualizedAccount)}`;
-      targetURL += `&visualizedParams=${encodeURIComponent(visualizedParams)}`;
+      modalData['visualizedAccount'] = visualizedAccount;
+      modalData['visualizedParams'] = visualizedParams;
     }
 
     if ([Actions.VOTE_FOR].includes(type)) {
@@ -104,7 +101,7 @@ const createModal = async (arg, modalEvent) => {
         throw 'Missing required payload field'
       }
       modalRequests[id]['payload'] = payload;
-      targetURL += `&payload=${encodeURIComponent(JSON.stringify(payload))}`;
+      modalData['payload'] = payload;
     }
 
     if ([
@@ -119,7 +116,7 @@ const createModal = async (arg, modalEvent) => {
         throw 'Missing required accounts field'
       }
       modalRequests[id]['accounts'] = accounts;
-      targetURL += `&accounts=${encodeURIComponent(JSON.stringify(accounts))}`;
+      modalData['accounts'] = accounts;
     }
 
     if ([Actions.TRANSFER].includes(type)) {
@@ -138,21 +135,26 @@ const createModal = async (arg, modalEvent) => {
       let target = arg.target;
       modalRequests[id]['target'] = target;
 
-      targetURL += `&chain=${encodeURIComponent(chain)}`;
-      targetURL += `&accountName=${encodeURIComponent(accountName)}`;
-      targetURL += `&target=${encodeURIComponent(target)}`;
-      targetURL += `&toSend=${encodeURIComponent(toSend)}`;
+      modalData['chain'] = chain;
+      modalData['accountName'] = accountName;
+      modalData['target'] = target;
+      modalData['toSend'] = toSend;
     }
 
     if ([Actions.INJECTED_CALL, Actions.TRANSFER].includes(type)) {
         if (arg.isBlockedAccount) {
             modalRequests[id]['warning'] = true;
-            targetURL += `&warning=blockedAccount`;
+            modalData['warning'] = "blockedAccount";
         } else if (arg.serverError) {
             modalRequests[id]['warning'] = true;
-            targetURL += `&warning=serverError`;
+            modalData['warning'] = "serverError";
         }
     }
+
+    ipcMain.on(`get:prompt:${id}`, (event) => {
+        // The modal window is ready to receive data
+        event.reply(`respond:prompt:${id}`, modalData);
+    });
 
     modalWindows[id] = new BrowserWindow({
         parent: mainWindow,
@@ -195,6 +197,7 @@ const createModal = async (arg, modalEvent) => {
               }
           });
           delete modalRequests[id];
+          modalData = {};
       }
     });
 }
@@ -224,12 +227,15 @@ const createReceipt = async (arg, modalEvent) => {
         throw 'Receipt window exists already!';
     }
 
-    let targetURL = `file://${__dirname}/receipt.html?`
-                    + `id=${encodeURIComponent(id)}`
-                    + `&request=${encodeURIComponent(JSON.stringify(request))}`
-                    + `&result=${encodeURIComponent(JSON.stringify(result))}`
-                    + `&visualizedParams=${encodeURIComponent(receipt.visualizedParams)}`
-                    + `&notifyTXT=${encodeURIComponent(notifyTXT)}`;
+    let targetURL = `file://${__dirname}/receipt.html?id=${encodeURIComponent(id)}`;
+   
+    ipcMain.on(`get:receipt:${id}`, (event) => {
+        // The modal window is ready to receive data
+        event.reply(
+            `respond:receipt:${id}`,
+            { id, request, result, receipt, notifyTXT }
+        );
+    });
 
     receiptWindows[id] = new BrowserWindow({
         parent: mainWindow,
