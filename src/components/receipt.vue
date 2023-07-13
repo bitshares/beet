@@ -1,11 +1,8 @@
 <script setup>
-    import { computed, onMounted, ref, watchEffect } from "vue";
-
+    import { computed, ref, watchEffect } from "vue";
     import queryString from "query-string";
     import { useI18n } from 'vue-i18n';
-    import getBlockchainAPI from "../lib/blockchains/blockchainFactory";
-
-    import * as Actions from '../lib/Actions';
+    import { ipcRenderer } from 'electron';
 
     import langSelect from "./lang-select.vue";
 
@@ -33,37 +30,78 @@
         return decoded;
     }
 
-    let request = computed(() => {
-        let req = handleProp('request');
-        return req ? JSON.parse(req) : null;
-    });
+    const type = ref();
+    const toSend = ref();
+    const chain = ref();
+    const accountName = ref();
+    const target = ref();
+    const warning = ref();
+    const visualizedParams = ref();
+    const request = ref();
+    const moreRequest = ref();
+    const result = ref();
+    const moreResult = ref();
+    const notifyTXT = ref();
 
-    let moreRequest = computed(() => {
-        let req = handleProp('request');
-        return req ? JSON.stringify(JSON.parse(req), undefined, 4) : null;
-    });
+    const payload = ref();
+    const accounts = ref();
+    const existingLinks = ref();
 
-    let result = computed(() => {
-        let res = handleProp('result');
-        return res ? JSON.parse(res) : null;
-    });
+    watchEffect(() => {
+        const id = handleProp('id');
 
-    let moreResult = computed(() => {
-        let res = handleProp('result');
-        return res ? JSON.stringify(JSON.parse(res), undefined, 4) : null;
-    });
+        ipcRenderer.send(`get:receipt:${id}`);
 
-    let notifyTXT = computed(() => {
-        let res = handleProp('notifyTXT');
-        return res ?? null;
-    });
+        ipcRenderer.on(`respond:receipt:${id}`, (event, data) => {
+            console.log({data})
+            //console.log({data});
+            if (data.type) {
+                type.value = data.type;
+            }
+            if (data.toSend) {
+                toSend.value = data.toSend;
+            }
+            if (data.chain) {
+                chain.value = data.chain;
+            }
+            if (data.accountName) {
+                accountName.value = data.accountName;
+            }
+            if (data.target) {
+                target.value = data.target;
+            }
+            if (data.warning) {
+                warning.value = data.warning;
+            }
+            if (data.receipt) {
+                visualizedParams.value = JSON.parse(data.receipt.visualizedParams);
+            }
+            if (data.request) {
+                request.value = data.request;
+                moreRequest.value = JSON.stringify(data.request, undefined, 4);
+            }
+            if (data.result) {
+                result.value = data.result;
+                moreResult.value = JSON.stringify(data.result, undefined, 4);
+            }
+            if (data.payload) {
+                payload.value = JSON.parse(data.payload);
+            }
+            if (data.accounts && data.request) {
+                const parsedAccounts = JSON.parse(data.accounts);
+                const parsedRequest = JSON.parse(data.request);
+                const filteredAccounts = parsedAccounts.filter(account => parsedRequest.payload.chain === account.chain);
+                accounts.value = filteredAccounts;
+            }
+            if (data.existingLinks) {
+                existingLinks.value = JSON.parse(data.existingLinks);
+            }
+            if (data.notifyTXT) {
+                notifyTXT.value = data.notifyTXT;
+            }
+        });
+    })
 
-    let visualizedParams = computed(() => {
-        let params = handleProp('visualizedParams');
-        return params ? JSON.parse(params) : {};
-    });
-
-    let total = ref(visualizedParams.value.length);
     let openOPReq = ref(false);
     let openOPRes = ref(false);
     let openOpDetails = ref(false);
@@ -118,10 +156,10 @@
                         <ui-card-content>
                             <ui-card-text>
                                 <div
-                                    v-if="total > 1"
+                                    v-if="visualizedParams.length > 1"
                                     :class="$tt('subtitle1')"
                                 >
-                                    <b>{{ t(visualizedParams[page - 1].title) }}</b> ({{ page }}/{{ total }})
+                                    <b>{{ t(visualizedParams[page - 1].title) }}</b> ({{ page }}/{{ visualizedParams.length }})
                                 </div>
                                 <div
                                     v-else
@@ -168,9 +206,9 @@
                         </ui-card-actions>
                     </ui-card>
                     <ui-pagination
-                        v-if="total > 1"
+                        v-if="visualizedParams.length > 1"
                         v-model="page"
-                        :total="total"
+                        :total="visualizedParams.length"
                         mini
                         show-total
                         :page-size="[1]"
@@ -228,8 +266,8 @@
         v-model="openOPReq"
         fullscreen
     >
-        <ui-dialog-title v-if="total > 1">
-            {{ t("common.popup.keywords.request") }} ({{ page }}/{{ total }})
+        <ui-dialog-title v-if="visualizedParams.length > 1">
+            {{ t("common.popup.keywords.request") }} ({{ page }}/{{ visualizedParams.length }})
         </ui-dialog-title>
         <ui-dialog-title v-else>
             {{ t("common.popup.keywords.request") }}
@@ -249,8 +287,8 @@
         v-model="openOPRes"
         fullscreen
     >
-        <ui-dialog-title v-if="total > 1">
-            {{ t("common.popup.keywords.result") }} ({{ page }}/{{ total }})
+        <ui-dialog-title v-if="visualizedParams.length > 1">
+            {{ t("common.popup.keywords.result") }} ({{ page }}/{{ visualizedParams.length }})
         </ui-dialog-title>
         <ui-dialog-title v-else>
             {{ t("common.popup.keywords.result") }}
