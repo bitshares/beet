@@ -1,3 +1,8 @@
+/*
+    This script is used to detect and fix any variables which have been broken during translations.
+    It uses the english locale files as the truthful references, and scans deeply nested keys for variables to fix.
+*/
+
 const fs = require('fs');
 
 // 

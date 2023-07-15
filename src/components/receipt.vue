@@ -53,8 +53,6 @@
         ipcRenderer.send(`get:receipt:${id}`);
 
         ipcRenderer.on(`respond:receipt:${id}`, (event, data) => {
-            console.log({data})
-            //console.log({data});
             if (data.type) {
                 type.value = data.type;
             }
@@ -115,17 +113,24 @@
     let resultExpiration = ref("");
     let resultSignatures = ref("");
     watchEffect(() => {
-        jsonData.value = JSON.stringify(
-            visualizedParams.value[page.value - 1].op, undefined, 4
-        );
-        resultData.value = JSON.stringify(
-            result.value[0].trx.operation_results[page.value - 1], undefined, 4
-        );
-        resultID.value = result.value[page.value - 1].id;
-        resultBlockNum.value = result.value[page.value - 1].block_num;
-        resultTrxNum.value = result.value[page.value - 1].trx_num;
-        resultExpiration.value = result.value[page.value - 1].trx.expiration;
-        resultSignatures.value = result.value[page.value - 1].trx.signatures;
+        const currentPageValue = page.value > 0 ? page.value - 1 : 0;
+
+        if (visualizedParams.value && visualizedParams.value.length) {
+            jsonData.value = JSON.stringify(
+                visualizedParams.value[currentPageValue].op, undefined, 4
+            );
+        }
+
+        if (result.value && result.value.length) {
+            resultData.value = JSON.stringify(
+                result.value[0].trx.operation_results[currentPageValue], undefined, 4
+            );
+            resultID.value = result.value[currentPageValue].id;
+            resultBlockNum.value = result.value[currentPageValue].block_num;
+            resultTrxNum.value = result.value[currentPageValue].trx_num;
+            resultExpiration.value = result.value[currentPageValue].trx.expiration;
+            resultSignatures.value = result.value[currentPageValue].trx.signatures;
+        }
     });
 
     let openMoreRequest = ref(false);
@@ -159,23 +164,23 @@
                                     v-if="visualizedParams.length > 1"
                                     :class="$tt('subtitle1')"
                                 >
-                                    <b>{{ t(visualizedParams[page - 1].title) }}</b> ({{ page }}/{{ visualizedParams.length }})
+                                    <b>{{ t(visualizedParams[page > 0 ? page - 1 : 0].title) }}</b> ({{ page }}/{{ visualizedParams.length }})
                                 </div>
                                 <div
                                     v-else
                                     :class="$tt('subtitle1')"
                                 >
-                                    <b>{{ t(visualizedParams[page - 1].title) }}</b>
+                                    <b>{{ t(visualizedParams[page > 0 ? page - 1 : 0].title) }}</b>
                                 </div>
                                 <div style="margin-bottom: 5px;">
-                                    {{ t(`operations.injected.BTS.${visualizedParams[page - 1].method}.headers.result`) }}
+                                    {{ t(`operations.injected.BTS.${visualizedParams[page > 0 ? page - 1 : 0].method}.headers.result`) }}
                                 </div>
                                 <div
-                                    v-for="row in visualizedParams[page - 1].rows"
+                                    v-for="row in visualizedParams[page > 0 ? page - 1 : 0].rows"
                                     :key="row.key"
                                     :class="$tt('subtitle2')"
                                 >
-                                    {{ t(`operations.injected.BTS.${visualizedParams[page - 1].method}.rows.${row.key}`, row.params) }}
+                                    {{ t(`operations.injected.BTS.${visualizedParams[page > 0 ? page - 1 : 0].method}.rows.${row.key}`, row.params) }}
                                 </div>
                             </ui-card-text>
                         </ui-card-content>
@@ -266,7 +271,7 @@
         v-model="openOPReq"
         fullscreen
     >
-        <ui-dialog-title v-if="visualizedParams.length > 1">
+        <ui-dialog-title v-if="visualizedParams && visualizedParams.length > 1">
             {{ t("common.popup.keywords.request") }} ({{ page }}/{{ visualizedParams.length }})
         </ui-dialog-title>
         <ui-dialog-title v-else>
@@ -287,7 +292,7 @@
         v-model="openOPRes"
         fullscreen
     >
-        <ui-dialog-title v-if="visualizedParams.length > 1">
+        <ui-dialog-title v-if="visualizedParams && visualizedParams.length > 1">
             {{ t("common.popup.keywords.result") }} ({{ page }}/{{ visualizedParams.length }})
         </ui-dialog-title>
         <ui-dialog-title v-else>

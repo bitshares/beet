@@ -60,7 +60,6 @@
         ipcRenderer.send(`get:prompt:${id}`);
 
         ipcRenderer.on(`respond:prompt:${id}`, (event, data) => {
-            //console.log({data});
             if (data.type) {
                 type.value = data.type;
             }
@@ -87,18 +86,14 @@
             }
             if (data.request) {
                 request.value = data.request;
-                console.log({
-                    request: data.request,
-                    moreRequest: JSON.stringify(data.request, undefined, 4)
-                })
                 moreRequest.value = JSON.stringify(data.request, undefined, 4);
             }
             if (data.payload) {
                 payload.value = JSON.parse(data.payload);
             }
             if (data.accounts && data.request) {
-                const parsedAccounts = JSON.parse(data.accounts);
-                const parsedRequest = JSON.parse(data.request);
+                const parsedAccounts = data.accounts;
+                const parsedRequest = data.request;
                 const filteredAccounts = parsedAccounts.filter(account => parsedRequest.payload.chain === account.chain);
                 accounts.value = filteredAccounts;
             }
