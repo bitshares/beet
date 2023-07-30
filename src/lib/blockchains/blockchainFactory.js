@@ -13,11 +13,20 @@ import TLOS from "./TLOS";
 import Binance from "./Binance";
 */
 
-let bts,bts_test,tusc,steem,wls,eos,tlos,btc,btc_test,bnb,bnb_test;
+let storedChain;
+let lastChain;
 
 export default function getBlockchainAPI(chain = null, node = null) {
     if (chain == null) {
         chain = store.getters['AccountStore/getChain'];
+    }
+
+    if (!lastChain) {
+        lastChain = chain;
+    } else if (lastChain && lastChain !== chain) {
+        console.log("Switching blockchain!")
+        storedChain = undefined;
+        lastChain = chain;
     }
 
     let config;
@@ -28,96 +37,33 @@ export default function getBlockchainAPI(chain = null, node = null) {
       return;
     }
 
-    if (chain == "BTS") {
-        if (!bts) {
-            try {
-              bts = new BitShares(config, node);
-            } catch (error) {
-              console.log(error);
-              return;
+    if (!storedChain) {
+        try {
+            if (chain == "BTS" || chain == "BTS_TEST") {
+                storedChain = new BitShares(config, node);
+            } else if (chain == "TUSC") {
+                storedChain = new TUSC(config, node);
+            } else if (chain == "BTC" || chain == "BTC_TEST") {
+                storedChain = new Bitcoin(config, node);
             }
+            /*
+                else if (chain == "STEEM" || chain == "STM") {
+                   storedChain = new Steem(config, node);
+                } else if (chain == "WLS") {
+                   storedChain = new WhaleShares(config, node);
+                } else if (chain == "EOS") {
+                   storedChain = new EOSmainnet(config, node);
+                } else if (chain == "TLOS") {
+                   storedChain = new TLOS(config, node);
+                } else if (chain == "BNB" || chain == "BNB_TEST") {
+                   storedChain = new Binance(config, node);
+                }
+            */
+        } catch (error) {
+            console.log(error);
+            return;
         }
-        return bts;
-    } else if (chain == "BTS_TEST") {
-        if (!bts_test) {
-            try {
-              bts_test = new BitShares(config, node);
-            } catch (error) {
-              console.log(error);
-              return;
-            }
-        }
-        return bts_test;
-    } else if (chain == "TUSC") {
-        if (!tusc) {
-            try {
-              tusc = new TUSC(config, node);
-            } catch (error) {
-              console.log(error);
-              return;
-            }
-        }
-        return tusc;
-    } else if (chain == "BTC") {
-        if (!btc) {
-            try {
-              btc = new Bitcoin(config, node);
-            } catch (error) {
-              console.log(error);
-              return;
-            }
-        }
-        return btc;
-    } else if (chain == "BTC_TEST") {
-        if (!btc_test) {
-            try {
-              btc_test = new Bitcoin(config, node);
-            } catch (error) {
-              console.log(error);
-              return;
-            }
-        }
-        return btc_test;
-    }/* else if (chain == "STEEM" || chain == "STM") {
-        if (!steem) {
-            try {
-              steem = new Steem(config, node);
-            } catch (error) {
-              console.log(error);
-              return;
-            }
-        }
-        return steem;
-    } else if (chain == "WLS") {
-        if (!wls) {
-            try {
-              wls = new WhaleShares(config, node);
-            } catch (error) {
-              console.log(error);
-              return;
-            }
-        }
-        return wls;
-    } else if (chain == "EOS") {
-        if (!apiCache.EOS) {
-            apiCache.EOS = new EOSmainnet(config, node);
-        }
-        return apiCache.EOS;
-    } else if (chain == "TLOS") {
-        if (!apiCache.TLOS) {
-            apiCache.TLOS = new TLOS(config, node);
-        }
-        return apiCache.TLOS;
-    } else if (chain == "BNB") {
-        if (!apiCache.BNB) {
-            apiCache.BNB = new Binance(config, node);
-        }
-        return apiCache.BNB;
-    } else if (chain == "BNB_TEST") {
-        if (!apiCache.BNB_TEST) {
-            apiCache.BNB_TEST = new Binance(config, node);
-        }
-        return apiCache.BNB_TEST;
-    }*/
+    }
 
+    return storedChain;
 }
