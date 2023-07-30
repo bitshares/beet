@@ -5,6 +5,7 @@ import TUSC from "./TUSC"
 import store from "../../store";
 import Bitcoin from "./Bitcoin";
 import EOSmainnet from "./EOSmainnet";
+import BEOS from "./BEOS";
 import TLOS from "./TLOS";
 
 /*
@@ -47,11 +48,10 @@ export default function getBlockchainAPI(chain = null, node = null) {
                 storedChain = new Bitcoin(config, node);
             } else if (chain == "EOS") {
                 storedChain = new EOSmainnet(config, node);
+             } else if (chain == "BEOS") {
+                storedChain = new BEOS(config, node);
              } else if (chain == "TLOS") {
                 storedChain = new TLOS(config, node);
-             } else if (chain == "BEOS") {
-                // EXPERIMENTAL
-                storedChain = new EOSmainnet(config, node);
              }
             /*
                 else if (chain == "STEEM" || chain == "STM") {
