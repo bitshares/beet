@@ -108,6 +108,21 @@ let _blockchains = {
             }
         ]
     },
+    BEOS: {
+        coreSymbol: 'BEOS',
+        name: 'BEOSmainnet',
+        chainId: 'cbef47b0b26d2b8407ec6a6f91284100ec32d288a39d4b4bbd49655f7c484112',
+        nodeList: [
+            {
+                url: "https://api.beos.world",
+                location: "Unknown",
+                region: "Unknown",
+                country: "Unknown",
+                operator: "BEOS",
+                contact: "BEOS"
+            }
+        ]
+    },
     TLOS: {
         coreSymbol: 'TLOS',
         name: 'Telos',
