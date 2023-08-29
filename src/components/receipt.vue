@@ -125,11 +125,12 @@
             resultData.value = JSON.stringify(
                 result.value[0].trx.operation_results[currentPageValue], undefined, 4
             );
-            resultID.value = result.value[currentPageValue].id;
-            resultBlockNum.value = result.value[currentPageValue].block_num;
-            resultTrxNum.value = result.value[currentPageValue].trx_num;
-            resultExpiration.value = result.value[currentPageValue].trx.expiration;
-            resultSignatures.value = result.value[currentPageValue].trx.signatures;
+
+            resultID.value = result.value[0].id;
+            resultBlockNum.value = result.value[0].block_num;
+            resultTrxNum.value = result.value[0].trx_num;
+            resultExpiration.value = result.value[0].trx.expiration;
+            resultSignatures.value = result.value[0].trx.signatures;
         }
     });
 
