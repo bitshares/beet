@@ -77,303 +77,1076 @@
       "BTS": {
         "getAccount": {
           "method": "hankige konto",
+          "title": "Konto üksikasjade taotlus",
           "tooltip": "Küsib teie rahakotilt plokiahela konto üksikasju"
         },
         "requestSignature": {
           "method": "taotlusallkiri",
+          "title": "Allkirjataotlus",
           "tooltip": "Küsib teie rahakotilt plokiahela allkirju"
         },
         "injectedCall": {
           "method": "süstitud Helista",
+          "title": "Süstitud kõne taotlus",
           "tooltip": "Palub teie rahakotil süstitud plokiahela operatsiooniga hakkama saada"
         },
         "voteFor": {
           "method": "hääletama poolt",
+          "title": "Hääletustaotlus",
           "tooltip": "Tehke plokiahela hääletus"
         },
         "signMessage": {
           "method": "märk Sõnum",
+          "title": "Kirjutage sõnumitaotlus alla",
           "tooltip": "Allkirjastage plokiahelapõhine sõnum"
         },
         "signNFT": {
           "method": "märkNFT",
+          "title": "Allkirjastage NFT taotlus",
           "tooltip": "Allkirjastage NFT-i sisu"
         },
         "verifyMessage": {
           "method": "kinnita sõnum",
+          "title": "Kinnitage sõnumitaotlus",
           "tooltip": "Kinnitage plokiahelapõhine allkirjastatud sõnum"
         },
         "transfer": {
           "method": "Ülekanne",
+          "title": "Ülekandmise taotlus",
+          "rows": {
+            "from": "Saatja: {from} ({opFrom})",
+            "to": "Saaja: {to} ({opTo})",
+            "amount": "Summa: {amount}"
+          },
           "tooltip": "Saatke varasid ühelt kontolt teisele"
         },
         "limit_order_create": {
           "method": "Limiittellimuse loomine",
+          "title": "Piiratud tellimuse loomise taotlus",
+          "rows": {
+            "trade": "Kaubandus",
+            "tradeFK": "Kaubelda (täitke või tapke)",
+            "seller": "Müüja: {seller} ({opSeller})",
+            "selling": "Müük: {amount}",
+            "buying": "Ostmine: {amount}",
+            "price": "Hind: {price} {sellSymbol}/{buySymbol}"
+          },
           "tooltip": "Pakkumine müüa teatud summa vara kindlaksmääratud vahetuskursiga teatud ajaks"
         },
         "limit_order_cancel": {
           "method": "Piiratud tellimuse tühistamine",
+          "title": "Piiratud tellimuse tühistamise taotlus",
+          "rows": {
+            "header": "Kas tühistada järgmine limiittellimus?",
+            "id": "Tellimuse ID: {id}",
+            "fees": "Hinnangulised tasud: {fees}",
+            "account": "Tasu maksmise konto: {account}"
+          },
           "tooltip": "Limiittellimuse toimingu tühistamine"
         },
         "call_order_update": {
           "method": "Helistamistellimuse värskendus",
+          "title": "Helista tellimuse värskendamise taotlus",
+          "rows": {
+            "header": "Kas uuendada oma kõnejärjestust järgmisele?",
+            "funding_account": "Rahastamiskonto: {funding_account}",
+            "delta_collateral": "Delta tagatis: {delta_collateral} ({id})",
+            "delta_debt": "Delta võlg: {delta_debt} ({id})",
+            "fees": "Hinnangulised tasud: {fees}"
+          },
           "tooltip": "Olemasoleva kõnetellimuse värskendamine"
         },
         "account_create": {
           "method": "Konto loomine",
+          "title": "Konto loomise taotlus",
+          "rows": {
+            "header": "Kas soovite luua järgmise konto?",
+            "registrar": "Registripidaja: {registrar} ({opRegistrar})",
+            "referrer": "Viitaja: {referrer} ({opReferrer})",
+            "referrer_percent": "Viitaja protsent: {referrer_percent}",
+            "name": "Nimi: {name}",
+            "ownerHeader": "Omanik:",
+            "activeHeader": "Aktiivne:",
+            "weight_threshold": "Kaalulävi: {weight_threshold}",
+            "account_auths": "Konto autentimised: {account_auths}",
+            "key_auths": "Võtmete autentimised: {key_auths}",
+            "address_auths": "Aadresside autentimised: {address_auths}",
+            "optionsHeader": "Valikud:",
+            "memo_key": "Memovõti: {memo_key}",
+            "voting_account": "Hääletuskonto: {voting_account} ({opVotingAccount})",
+            "num_witness": "Tunnistajate arv: {num_witness}",
+            "num_committee": "Komisjoni liikmete arv: {num_committee}",
+            "votes": "Hääled: {hääli}",
+            "extensions": "Laiendused: {extensions}",
+            "fees": "Hinnangulised tasud: {fees}"
+          },
           "tooltip": "Uue konto loomine"
-        },
-        "asset_update": {
-          "method": "Vara värskendus",
-          "tooltip": "Värskendage loodud vara seadeid"
-        },
-        "asset_update_bitasset": {
-          "method": "Varavärskenduse bitasset",
-          "tooltip": "Värskendage loodud bitasset seadeid"
-        },
-        "asset_update_feed_producers": {
-          "method": "Varade värskenduste voo tootjad",
-          "tooltip": "Värskendage loodud bitivarade heakskiidetud söödatootjate loendit"
-        },
-        "asset_issue": {
-          "method": "Vara probleem",
-          "tooltip": "Väljasta oma loodud varad üksikisikutele"
-        },
-        "asset_reserve": {
-          "method": "Varade reserv",
-          "tooltip": "Broneerige loodud varad"
-        },
-        "asset_fund_fee_pool": {
-          "method": "Varafondi tasu kogum",
-          "tooltip": "Rahastage loodud vara tasufondi"
-        },
-        "asset_settle": {
-          "method": "Varade arveldamine",
-          "tooltip": "Arveldage oma portfellis vara"
-        },
-        "asset_global_settle": {
-          "method": "Varade ülemaailmne arveldamine",
-          "tooltip": "Arveldage globaalselt üks oma loodud bitivaradest"
-        },
-        "asset_publish_feed": {
-          "method": "Varade avaldamise voog",
-          "tooltip": "Avaldage bitassetti hinnavoog"
-        },
-        "witness_create": {
-          "method": "Tunnistaja loo",
-          "tooltip": "Looge tunnistaja konto"
-        },
-        "witness_update": {
-          "method": "Tunnistaja värskendus",
-          "tooltip": "Värskendage oma tunnistaja kontot"
-        },
-        "proposal_create": {
-          "method": "Ettepanek luua",
-          "tooltip": "Looge plokiahela toimimise ettepanek"
-        },
-        "proposal_update": {
-          "method": "Ettepaneku värskendamine",
-          "tooltip": "Värskendage plokiahela toimimise ettepanekut"
-        },
-        "proposal_delete": {
-          "method": "Ettepanek kustutada",
-          "tooltip": "Kustutage plokiahela toimimise ettepanek"
-        },
-        "withdraw_permission_create": {
-          "method": "Looge loa tühistamine",
-          "tooltip": "Looge tagasivõtmise luba"
-        },
-        "withdraw_permission_update": {
-          "method": "Tühista loa värskendus",
-          "tooltip": "Värskendage tühistamisluba"
-        },
-        "withdraw_permission_claim": {
-          "method": "Võta loanõue tagasi",
-          "tooltip": "Nõue tagasivõtmise loa alusel"
-        },
-        "withdraw_permission_delete": {
-          "method": "Tühista luba kustutada",
-          "tooltip": "Kustutage tühistamisluba"
-        },
-        "committee_member_create": {
-          "method": "Komisjoni liige loob",
-          "tooltip": "Looge komisjoni liikme konto"
-        },
-        "committee_member_update": {
-          "method": "Komisjoni liikmete värskendus",
-          "tooltip": "Värskendage oma komitee liikme konto üksikasju"
-        },
-        "committee_member_update_global_parameters": {
-          "method": "Komisjoni liige värskendab globaalseid parameetreid",
-          "tooltip": "Avaldage oma komitee liikme seisukoht Bitsharesi plokiahela globaalsete parameetrite väärtuste kohta"
-        },
-        "vesting_balance_create": {
-          "method": "Looge üleandmise tasakaal",
-          "tooltip": "Looge omandamise saldo"
-        },
-        "vesting_balance_withdraw": {
-          "method": "Üleandmise saldo tagasivõtmine",
-          "tooltip": "Üleandmisjäägist taganemine"
-        },
-        "worker_create": {
-          "method": "Töötaja loob",
-          "tooltip": "Looge töötaja ettepanek"
-        },
-        "balance_claim": {
-          "method": "Tasakaalunõue",
-          "tooltip": "Nõue saldost"
-        },
-        "override_transfer": {
-          "method": "Ülekande tühistamine",
-          "tooltip": "Edastustoimingu tühistamine"
-        },
-        "transfer_to_blind": {
-          "method": "Pimedaks üleviimine",
-          "tooltip": "Viige varad pimedasse sihtkohta"
-        },
-        "blind_transfer": {
-          "method": "Pime ülekanne",
-          "tooltip": "Pimedate varade pimesi ülekandmine"
-        },
-        "transfer_from_blind": {
-          "method": "Pimedast üleviimine",
-          "tooltip": "Võtke varad pimebilansilt välja"
-        },
-        "asset_claim_fees": {
-          "method": "Varanõude tasud",
-          "tooltip": "Nõuda tasud varalt"
-        },
-        "bid_collateral": {
-          "method": "Pakkumise tagatis",
-          "tooltip": "Tehke pakkumine bitassets tagatistagatisele, kui see on globaalselt arveldatud"
-        },
-        "asset_claim_pool": {
-          "method": "Varade nõuete kogum",
-          "tooltip": "Kandab BTS-i kindlaksmääratud vara tasufondist tagasi emitendi saldole"
-        },
-        "asset_update_issuer": {
-          "method": "Varavärskenduste väljastaja",
-          "tooltip": "Värskendage vara väljaandja uuele administraatorikontole."
-        },
-        "htlc_create": {
-          "method": "Räsiajaga lukustatud lepingu loomine",
-          "tooltip": "Looge räsiajaga lukustatud lepingu toiming"
-        },
-        "htlc_redeem": {
-          "method": "Räsiajaga lukustatud lepingu lunastamine",
-          "tooltip": "Lunastage räsiajaga lukustatud lepingu toimingu sisu"
-        },
-        "htlc_extend": {
-          "method": "Räsiajaga lukustatud lepingu pikendamine",
-          "tooltip": "Pikendage räsiajaga lukustatud lepingu toimingu kestust"
-        },
-        "custom_authority_create": {
-          "method": "Kohandatud volituste loomine",
-          "tooltip": "Looge uus kohandatud asutus."
-        },
-        "custom_authority_update": {
-          "method": "Kohandatud asutuse värskendus",
-          "tooltip": "Värskendage kohandatud asutust."
-        },
-        "custom_authority_delete": {
-          "method": "Kohandatud volituste kustutamine",
-          "tooltip": "Kustutage kohandatud asutus."
-        },
-        "ticket_create": {
-          "method": "Pileti loomine",
-          "tooltip": "Looge uus pilet."
-        },
-        "ticket_update": {
-          "method": "Pileti värskendus",
-          "tooltip": "Värskendage olemasolevat piletit."
-        },
-        "liquidity_pool_create": {
-          "method": "Likviidsusbasseini loomine",
-          "tooltip": "Looge likviidsuskogum"
-        },
-        "liquidity_pool_delete": {
-          "method": "Likviidsusfondi kustutamine",
-          "tooltip": "Kustutage likviidsuskogum"
-        },
-        "liquidity_pool_deposit": {
-          "method": "Likviidsusbasseini hoius",
-          "tooltip": "Deponeerige raha likviidsusfondi"
-        },
-        "liquidity_pool_withdraw": {
-          "method": "Likviidsusfondi väljavõtmine",
-          "tooltip": "Võtke raha välja likviidsuskogumist"
-        },
-        "liquidity_pool_exchange": {
-          "method": "Likviidsusfondi vahetus",
-          "tooltip": "Vahetada likviidsusfondiga."
-        },
-        "samet_fund_create": {
-          "method": "SameT fondi loomine",
-          "tooltip": "Looge uus SameT fond. "
-        },
-        "samet_fund_delete": {
-          "method": "SameT fondi kustutamine",
-          "tooltip": "Kustutage SameT fondi objekt."
-        },
-        "samet_fund_update": {
-          "method": "SameT fondi uuendus",
-          "tooltip": "SameT fondi objekti värskendamine."
-        },
-        "samet_fund_borrow": {
-          "method": "SameT fondi laen",
-          "tooltip": "Laena SameT fondist."
-        },
-        "samt_fund_repay": {
-          "method": "SameT fondi tagasimakse",
-          "tooltip": "Makske võlg tagasi SameT fondi."
-        },
-        "credit_offer_create": {
-          "method": "Krediidipakkumise loomine",
-          "tooltip": "Looge uus krediidipakkumine. "
-        },
-        "credit_offer_delete": {
-          "method": "Krediidipakkumise kustutamine",
-          "tooltip": "Kustutage krediidipakkumine."
-        },
-        "credit_offer_update": {
-          "method": "Krediidipakkumise värskendus",
-          "tooltip": "Uuenda krediidipakkumist"
-        },
-        "credit_offer_accept": {
-          "method": "Krediidipakkumine vastu",
-          "tooltip": "Nõustuge krediidipakkumisega ja looge krediiditehing."
-        },
-        "credit_deal_repay": {
-          "method": "Krediiditehingu tagasimaksmine",
-          "tooltip": "Makske krediiditehing tagasi."
-        },
-        "custom": {
-          "method": "Kohandatud",
-          "tooltip": "Pakub üldist viisi kõrgema taseme protokollide lisamiseks tunnistajate konsensuse peale"
-        },
-        "assert": {
-          "method": "Kinnitage",
-          "tooltip": "Kinnitage, et mõned tingimused on tõesed."
         },
         "account_update": {
           "method": "Konto värskendus",
+          "title": "Konto värskendamise taotlus",
+          "rows": {
+            "header": "Kas soovite luua järgmise konto?",
+            "warning": "Hoiatus: see toiming on pöördumatu!",
+            "account": "Konto: {account} ({opAccount})",
+            "owner": "Omanik: {owner}",
+            "active": "Aktiivne: {active}",
+            "new_options": "Uued valikud: {new_options}",
+            "extensions": "Laiendused: {extensions}",
+            "fees": "Hinnanguline tasu: {fees}"
+          },
           "tooltip": "Seda toimingut kasutatakse olemasoleva konto värskendamiseks. "
         },
         "account_whitelist": {
           "method": "Kontode lubatud loend",
+          "title": "Konto lubatud nimekirja taotlus",
+          "rows": {
+            "header": "Konto lubatud loendi üksikasjad:",
+            "authorizing_account": "Konto volitamine: {authorizingAccount} (authorizingAccountOP)",
+            "account_to_list": "Loendisse lisatav konto: {accountToList} (accountToListOP)",
+            "new_listing": "Uus kirje: {newListing}",
+            "extensions": "Laiendused: {extensions}",
+            "fee": "Tasu: {fee}"
+          },
           "tooltip": "Seda toimingut kasutatakse kontode valgesse ja musta nimekirja lisamiseks, peamiselt lubatud nimekirja kantud varadega tehingute tegemiseks"
         },
         "account_upgrade": {
           "method": "Konto täiendamine",
+          "title": "Konto täiendamise taotlus",
+          "rows": {
+            "header": "Kas uuendada konto eluaegseks liikmeks?",
+            "account_to_upgrade": "Uuendatav konto: {accountToUpgrade} (accountToUpgradeOP)",
+            "upgrade_to_lifetime_member": "Uuenda eluaegseks liikmeks: {upgradeToLifetimeMember}",
+            "extensions": "Laiendused: {extensions}",
+            "fee": "Hinnanguline tasu: {fee}"
+          },
           "tooltip": "Seda toimingut kasutatakse konto üleviimiseks liikmeks või selle tellimuse uuendamiseks."
         },
         "account_transfer": {
           "method": "Konto ülekandmine",
+          "title": "Konto ülekandmise taotlus",
+          "rows": {
+            "header": "Kas teisaldada konto uuele omanikule?",
+            "warning": "Hoiatus: see toiming on pöördumatu!",
+            "account_id": "Konto ID: {originalOwner} ({account_id})",
+            "new_owner": "Uus omanik: {newOwner} ({newOwnerOP})",
+            "fee": "Hinnanguline tasu: {fee}"
+          },
           "tooltip": "Teisaldab konto teisele kontole, kustutades samal ajal valge nimekirja"
         },
         "asset_create": {
           "method": "Vara loomine",
+          "title": "Vara loomise taotlus",
+          "rows": {
+            "header": "Kas luua järgmine vara?",
+            "symbol": "Sümbol: {symbol}",
+            "main": "Peamine: {main}",
+            "market": "Turg: {market}",
+            "short_name": "Lühike nimi: {short_name}",
+            "precision": "Täpsus: {täpsus}",
+            "max_supply": "Maksimaalne tarne: {max_supply}",
+            "market_fee_percent": "Turutasu protsent: {market_fee_percent}",
+            "max_market_fee": "Maksimaalne turutasu: {max_market_fee}",
+            "cer": "Põhilised vahetuskursid:",
+            "cer_base_amount": "Baassumma: {cer_base_amount}",
+            "cer_base_id": "Põhivara ID: {cer_base_id}",
+            "cer_quote_amount": "Pakkumise summa: {cer_quote_amount}",
+            "cer_quote_id": "Pakkumise vara ID: {cer_quote_id}",
+            "whitelist_authorities": "Lubatud nimekirja asutused: {whitelist_authorities}",
+            "blacklist_authorities": "Musta nimekirja asutused: {blacklist_authorities}",
+            "whitelist_markets": "Lubatud turud: {whitelist_markets}",
+            "blacklist_markets": "Musta nimekirja turud: {blacklist_markets}",
+            "is_prediction_market": "Kas ennustuste turg: {is_prediction_market}",
+            "permissions": "Load:",
+            "perm_charge_market_fee": "Võtke turutasu: {charge_market_fee}",
+            "perm_white_list": "Valge nimekiri: {white_list}",
+            "perm_override_authority": "Autoriteedi alistamine: {override_authority}",
+            "perm_transfer_restricted": "Ülekandmine on piiratud: {transfer_restricted}",
+            "perm_disable_confidential": "Keela konfidentsiaalne: {disable_confidential}",
+            "flags": "Lipud:",
+            "flag_charge_market_fee": "Võtke turutasu: {charge_market_fee}",
+            "flag_white_list": "Valge nimekiri: {white_list}",
+            "flag_override_authority": "Autoriteedi alistamine: {override_authority}",
+            "flag_transfer_restricted": "Ülekandmine on piiratud: {transfer_restricted}",
+            "flag_disable_confidential": "Keela konfidentsiaalne: {disable_confidential}",
+            "bitasset": "Bitasset teave:",
+            "feed_lifetime_sec": "Voo eluiga (sekundites): {feed_lifetime_sec}",
+            "force_settlement_delay_sec": "Sundlahenduse viivitus (sekundites): {force_settlement_delay_sec}",
+            "force_settlement_offset_percent": "Sundlahenduse nihke protsent: {force_settlement_offset_percent}",
+            "maximum_force_settlement_volume": "Maksimaalne jõuga kokkuleppe maht: {maximum_force_settlement_volume}",
+            "minimum_feeds": "Miinimumvood: {minimum_feeds}",
+            "short_backing_asset": "Lühike tagavara: {short_backing_asset}",
+            "nft": "NFT sisu:",
+            "acknowledgements": "Tänuavaldused: {acnowledgements}",
+            "artist": "Kunstnik: {artist}",
+            "attestation": "Tõend: {attestation}",
+            "holder_license": "Omaniku litsents: {holder_license}",
+            "license": "Litsents: {license}",
+            "narrative": "Narratiiv: {narrative}",
+            "title": "Pealkiri: {title}",
+            "tags": "Sildid: {tags}",
+            "type": "Tüüp: {type}"
+          },
           "tooltip": "Loob Bitsharesi plokiahelas vara"
+        },
+        "asset_update": {
+          "method": "Vara värskendus",
+          "title": "Varade värskendamise taotlus",
+          "rows": {
+            "header": "Kas värskendada järgmist vara?",
+            "symbol": "Sümbol: {symbol}",
+            "main": "Peamine: {main}",
+            "market": "Turg: {market}",
+            "short_name": "Lühike nimi: {short_name}",
+            "precision": "Täpsus: {täpsus}",
+            "max_supply": "Maksimaalne tarne: {max_supply}",
+            "market_fee_percent": "Turutasu protsent: {market_fee_percent}",
+            "max_market_fee": "Maksimaalne turutasu: {max_market_fee}",
+            "cer": "Põhilised vahetuskursid:",
+            "cer_base_amount": "Baassumma: {cer_base_amount}",
+            "cer_base_id": "Põhivara ID: {cer_base_id}",
+            "cer_quote_amount": "Pakkumise summa: {cer_quote_amount}",
+            "cer_quote_id": "Pakkumise vara ID: {cer_quote_id}",
+            "whitelist_authorities": "Lubatud nimekirja asutused: {whitelist_authorities}",
+            "blacklist_authorities": "Musta nimekirja asutused: {blacklist_authorities}",
+            "whitelist_markets": "Lubatud turud: {whitelist_markets}",
+            "blacklist_markets": "Musta nimekirja turud: {blacklist_markets}",
+            "is_prediction_market": "Kas ennustuste turg: {is_prediction_market}",
+            "permissions": "Load:",
+            "perm_charge_market_fee": "Võtke turutasu: {charge_market_fee}",
+            "perm_white_list": "Valge nimekiri: {white_list}",
+            "perm_override_authority": "Autoriteedi alistamine: {override_authority}",
+            "perm_transfer_restricted": "Ülekandmine on piiratud: {transfer_restricted}",
+            "perm_disable_confidential": "Keela konfidentsiaalne: {disable_confidential}",
+            "flags": "Lipud:",
+            "flag_charge_market_fee": "Võtke turutasu: {charge_market_fee}",
+            "flag_white_list": "Valge nimekiri: {white_list}",
+            "flag_override_authority": "Autoriteedi alistamine: {override_authority}",
+            "flag_transfer_restricted": "Ülekandmine on piiratud: {transfer_restricted}",
+            "flag_disable_confidential": "Keela konfidentsiaalne: {disable_confidential}",
+            "bitasset": "Bitasset teave:",
+            "feed_lifetime_sec": "Voo eluiga (sekundites): {feed_lifetime_sec}",
+            "force_settlement_delay_sec": "Sundlahenduse viivitus (sekundites): {force_settlement_delay_sec}",
+            "force_settlement_offset_percent": "Sundlahenduse nihke protsent: {force_settlement_offset_percent}",
+            "maximum_force_settlement_volume": "Maksimaalne jõuga kokkuleppe maht: {maximum_force_settlement_volume}",
+            "minimum_feeds": "Miinimumvood: {minimum_feeds}",
+            "short_backing_asset": "Lühike tagavara: {short_backing_asset}",
+            "nft": "NFT sisu:",
+            "acknowledgements": "Tänuavaldused: {acnowledgements}",
+            "artist": "Kunstnik: {artist}",
+            "attestation": "Tõend: {attestation}",
+            "holder_license": "Omaniku litsents: {holder_license}",
+            "license": "Litsents: {license}",
+            "narrative": "Narratiiv: {narrative}",
+            "title": "Pealkiri: {title}",
+            "tags": "Sildid: {tags}",
+            "type": "Tüüp: {type}"
+          },
+          "tooltip": "Värskendab vara seadeid"
+        },
+        "asset_update_bitasset": {
+          "method": "Varavärskenduse bitasset",
+          "title": "Vara värskenduse bitasset taotlus",
+          "rows": {
+            "header": "Kas kinnitada bitasset värskendus?",
+            "issuer": "Väljaandja: {issuer}",
+            "asset_to_update": "Värskendatav vara: {asset_to_update}",
+            "new_options": "Uued valikud:",
+            "feed_lifetime_sec": "Voo eluiga (sekundites): {feed_lifetime_sec}",
+            "minimum_feeds": "Miinimumvood: {minimum_feeds}",
+            "force_settlement_delay_sec": "Sundlahenduse viivitus (sekundites): {force_settlement_delay_sec}",
+            "force_settlement_offset_percent": "Sundlahenduse nihke protsent: {force_settlement_offset_percent}",
+            "maximum_force_settlement_volume": "Maksimaalne jõuga kokkuleppe maht: {maximum_force_settlement_volume}",
+            "short_backing_asset": "Lühike tagavara: {symbol} ({short_backing_asset})",
+            "extensions": "Laiendused: {extensions}",
+            "noExtensions": "Laiendusi pole",
+            "fee": "Hinnanguline tasu: {fee} ({id})"
+          },
+          "tooltip": "Värskendage loodud bitasset seadeid"
+        },
+        "asset_update_feed_producers": {
+          "method": "Varade värskenduste voo tootjad",
+          "title": "Varade värskenduste vootootjate taotlus",
+          "rows": {
+            "header": "Kas kiita bitasset söödatootjate muudatus heaks?",
+            "issuer": "Väljaandja: {issuer} ({issuerOP})",
+            "asset_to_update": "Värskendatav vara: {symbol} ({asset_to_update})",
+            "new_feed_producers": "Uued vootootjad: {new_feed_producers}",
+            "fee": "Hinnanguline tasu: {fee}"
+          },
+          "tooltip": "Värskendage loodud bitasset jaoks heakskiidetud söödatootjate loendit"
+        },
+        "asset_issue": {
+          "method": "Vara probleem",
+          "title": "Varade väljastamise taotlus",
+          "rows": {
+            "header": "Kas anda välja {amount} {symbol} ({assetID}) kasutajale {to} ({toID})?",
+            "fee": "Hinnanguline tasu: {fee} ({id})"
+          },
+          "tooltip": "Väljasta oma loodud varad üksikisikutele"
+        },
+        "asset_reserve": {
+          "method": "Varade reserv",
+          "title": "Varade reservi taotlus",
+          "rows": {
+            "header": "Kas kinnitada järgmine varade broneering?",
+            "payer": "Maksja: {payer} ({payerOP})",
+            "amount_to_reserve": "Reserveeritav summa: {amount_to_reserve} ({amount_to_reserveOP})",
+            "extensions": "Laiendused: {extensions}",
+            "fee": "Hinnanguline tasu: {fee}"
+          },
+          "tooltip": "Broneerige loodud varad"
+        },
+        "asset_fund_fee_pool": {
+          "method": "Varafondi tasu kogum",
+          "title": "Varafondi tasu kogumistaotlus",
+          "rows": {
+            "header": "Kas rahastada järgmise vara tasude kogumit?",
+            "from_account": "Kontolt: {from_account} ({from_accountOP})",
+            "asset": "Vara: {asset} ({assetOP})",
+            "amount": "Summa: {amount}",
+            "fee": "Hinnanguline tasu: {fee}"
+          },
+          "tooltip": "Rahastage loodud vara tasufondi"
+        },
+        "asset_settle": {
+          "method": "Varade arveldamine",
+          "title": "Varade arveldustaotlus",
+          "rows": {
+            "header": "Arveldada järgmine vara selle tagatistagatiseks?",
+            "account": "Konto: {account} ({accountOP})",
+            "amount": "Summa: {amount} ({assetID})",
+            "fee": "Hinnanguline tasu: {fee}"
+          },
+          "tooltip": "Arveldage oma portfellis vara"
+        },
+        "asset_global_settle": {
+          "method": "Varade ülemaailmne arveldamine",
+          "title": "Varade globaalne arveldustaotlus",
+          "rows": {
+            "header": "Kas teha järgmise vara ülemaailmne arveldus?",
+            "issuer": "Väljaandja: {issuer} ({issuerOP})",
+            "asset_to_settle": "Arveldatav vara: {asset_to_settle} ({asset_to_settleOP})",
+            "settle_price": "Lepingu hind: {settle_price}",
+            "fee": "Hinnanguline tasu: {fee}"
+          },
+          "tooltip": "Arveldage globaalselt üks oma loodud bitivaradest"
+        },
+        "asset_publish_feed": {
+          "method": "Varade avaldamise voog",
+          "title": "Vara avaldamise voo taotlus",
+          "rows": {
+            "header": "Kas avaldada järgmise vara hinnavoog?",
+            "publisher": "Väljaandja: {publisher} ({publisherOP})",
+            "asset_id": "Vara ID: {symbol} ({asset_idOP})",
+            "feed": "Sööt:",
+            "core_exchange_rate": "Põhivahetuskurss: {core_exchange_rate}",
+            "settlement_price": "Lõpphind: {settlement_price}",
+            "maintenance_collateral_ratio": "Hooldustagatise suhe: {maintenance_collateral_ratio}",
+            "maximum_short_squeeze_ratio": "Maksimaalne lühike pigistussuhe: {maximum_short_squeeze_ratio}",
+            "extensions": "Laiendused: {extensions}",
+            "fee": "Hinnanguline tasu: {fee}"
+          },
+          "tooltip": "Avaldage bitassetti hinnavoog"
+        },
+        "witness_create": {
+          "method": "Tunnistaja loo",
+          "title": "Tunnistaja loo taotluse",
+          "rows": {
+            "header": "Kas luua tunnistaja järgmiste üksikasjadega?",
+            "witness_account": "Tunnistaja konto: {witness_account} ({witness_accountOP})",
+            "url": "URL: {url}",
+            "block_signing_key": "Blokeeri allkirjastamisvõti: {block_signing_key}",
+            "fee": "Hinnanguline tasu: {fee}"
+          },
+          "tooltip": "Looge tunnistaja konto"
+        },
+        "witness_update": {
+          "method": "Tunnistaja värskendus",
+          "title": "Tunnistaja värskenduse taotlus",
+          "rows": {
+            "header": "Kas uuendada tunnistaja üksikasju järgmistele?",
+            "witness": "Tunnistaja: {witness}",
+            "witness_account": "Tunnistaja konto: {witness_account} ({witness_accountOP})",
+            "new_url": "Uus URL: {new_url}",
+            "new_signing_key": "Uus allkirjastamisvõti: {new_signing_key}",
+            "fee": "Hinnanguline tasu: {fee}"
+          },
+          "tooltip": "Värskendage oma tunnistaja kontot"
+        },
+        "proposal_create": {
+          "method": "Ettepanek luua",
+          "title": "Ettepaneku loomise taotlus",
+          "rows": {
+            "header": "Kas luua järgmine ettepanek?",
+            "expiration_time": "Aegumisaeg: {expiration_time}",
+            "proposed_ops": "Kavandatud toimingud: {proposed_ops}",
+            "review_period_seconds": "Ülevaatusperioodi sekundid: {review_period_seconds}",
+            "fee_paying_account": "Tasu maksmise konto: {fee_paying_account} ({fee_paying_accountOP})",
+            "fee": "Hinnanguline tasu: {fee}"
+          },
+          "tooltip": "Looge plokiahela toimimise ettepanek"
+        },
+        "proposal_update": {
+          "method": "Ettepaneku värskendamine",
+          "title": "Ettepaneku värskendamise taotlus",
+          "rows": {
+            "header": "Kas värskendada järgmist ettepanekut?",
+            "proposal": "Ettepanek: {proposal}",
+            "active_approvals_to_add": "Lisatavad aktiivsed kinnitused: {active_approvals_to_add}",
+            "active_approvals_to_remove": "Aktiivsed eemaldatavad kinnitused: {active_approvals_to_remove}",
+            "owner_approvals_to_add": "Omaniku kinnitused lisamiseks: {owner_approvals_to_add}",
+            "owner_approvals_to_remove": "Omaniku kinnitused eemaldamiseks: {owner_approvals_to_remove}",
+            "key_approvals_to_add": "Lisatavad võtmekinnitused: {key_approvals_to_add}",
+            "key_approvals_to_remove": "Eemaldatavad võtmekinnitused: {key_approvals_to_remove}",
+            "fee_paying_account": "Tasu maksmise konto: {fee_paying_account} ({fee_paying_accountOP})",
+            "extensions": "Laiendused: {extensions}",
+            "fee": "Hinnanguline tasu: {fee}"
+          },
+          "tooltip": "Värskendage plokiahela toimimise ettepanekut"
+        },
+        "proposal_delete": {
+          "method": "Ettepanek kustutada",
+          "title": "Ettepaneku kustutamise taotlus",
+          "rows": {
+            "header": "Kas kustutada järgmine ettepanek?",
+            "using_owner_authority": "Omaniku volituse kasutamine: {using_owner_authority}",
+            "proposal": "Ettepanek: {proposal}",
+            "fee_paying_account": "Tasu maksmise konto: {fee_paying_account} ({fee_paying_accountOP})",
+            "extensions": "Laiendused: {extensions}",
+            "fee": "Hinnanguline tasu: {fee}"
+          },
+          "tooltip": "Kustutage plokiahela toimimise ettepanek"
+        },
+        "withdraw_permission_create": {
+          "method": "Looge loa tühistamine",
+          "title": "Tühista loa loomise taotlus",
+          "rows": {
+            "header": "Otsekorralduse autoriseerimine",
+            "recipient": "Saaja: {recipient} ({recipientOP})",
+            "withdraw_from": "Konto, millelt raha välja võtta: {withdraw_from} ({withdraw_fromOP})",
+            "taking": "Võtke {amount} iga {period_sec} sekundi järel {period_qty} perioodi jooksul",
+            "start": "Algus: {start}"
+          },
+          "tooltip": "Looge tagasivõtmise luba"
+        },
+        "withdraw_permission_update": {
+          "method": "Tühista loa värskendus",
+          "title": "Võta loa värskendamise taotlus tagasi",
+          "rows": {
+            "header": "Kas värskendada tunnistajate õigusi järgmistele?",
+            "withrdaw_from_account": "Eemaldage kontolt: {withrdaw_from_account} ({withrdaw_from_accountOP})",
+            "authorized_account": "Volitatud konto: {authorized_account} ({authorized_accountOP})",
+            "permission_to_update": "Värskendamise luba: {permission_to_update}",
+            "withdrawal_limited": "Väljamakse limiit: {withdrawal_limit}",
+            "withdrawal_unlimited": "Väljavõtmise limiit: {withdrawal_limit} ({withdrawal_limitOP})",
+            "withdrawal_period_sec": "Taganemisperiood (sekundites): {withdrawal_period_sec}",
+            "period_start_time": "Perioodi algusaeg: {period_start_time}",
+            "periods_until_expiration": "Period kuni aegumiseni: {periods_until_expiration}",
+            "fee": "Hinnanguline tasu: {fee}"
+          },
+          "tooltip": "Värskendage tühistamisluba"
+        },
+        "withdraw_permission_claim": {
+          "method": "Võta loanõue tagasi",
+          "title": "Võta loataotlus tagasi",
+          "rows": {
+            "header": "Taotlege järgmist taganemisluba",
+            "withdraw_permission": "Luba tühistamine: {withdraw_permission}",
+            "withdraw_from_account": "Eemalda kontolt: {withdraw_from_account} ({withdraw_from_accountOP})",
+            "withdraw_to_account": "Kontole väljavõtmine: {withdraw_to_account} ({withdraw_to_accountOP})",
+            "amount_to_withdraw": "Väljamakstav summa: {amount_to_withdraw} ({amount_to_withdrawOP})",
+            "memo": "Memo: {memo}",
+            "fee": "Hinnanguline tasu: {fee}"
+          },
+          "tooltip": "Nõue tagasivõtmise loa alusel"
+        },
+        "withdraw_permission_delete": {
+          "method": "Tühista luba kustutada",
+          "title": "Tühista loa kustutamistaotlus",
+          "rows": {
+            "header": "Kas kustutada järgmine tagasivõtmise luba?",
+            "withdraw_from_account": "Eemalda kontolt: {withdraw_from_account} ({withdraw_from_accountOP})",
+            "authorized_account": "Volitatud konto: {authorized_account} ({authorized_accountOP})",
+            "withdrawal_permission": "Väljavõtmise luba: {withdrawal_permission}",
+            "fee": "Hinnanguline tasu: {fee}"
+          },
+          "tooltip": "Kustutage tühistamisluba"
+        },
+        "committee_member_create": {
+          "method": "Komisjoni liige loob",
+          "title": "Komisjoni liige koostab taotluse",
+          "rows": {
+            "header": "Kas luua komisjoni liige?",
+            "committee_member_account": "Komisjoni liikme konto: {committee_member_account} ({committee_member_accountOP})",
+            "url": "URL: {url}",
+            "fee": "Hinnanguline tasu: {fee}"
+          },
+          "tooltip": "Looge komisjoni liikme konto"
+        },
+        "committee_member_update": {
+          "method": "Komisjoni liikmete värskendus",
+          "title": "Komisjoni liikme värskendustaotlus",
+          "rows": {
+            "header": "Kas värskendada järgmisi komisjoniliikme andmeid?",
+            "committee_member": "Komisjoni liige: {committee_member}",
+            "committee_member_account": "Komisjoni liikme konto: {committee_member_account} ({committee_member_accountOP})",
+            "new_url": "Uus URL: {new_url}",
+            "fee": "Hinnanguline tasu: {fee}"
+          },
+          "tooltip": "Värskendage oma komitee liikme konto üksikasju"
+        },
+        "committee_member_update_global_parameters": {
+          "method": "Komisjoni liige värskendab globaalseid parameetreid",
+          "title": "Komisjoni liikme globaalsete parameetrite värskendamise taotlus",
+          "rows": {
+            "header": "Kas nõustute komisjonina globaalsete parameetrite järgimisega?",
+            "new_parameters": "Uued parameetrid:",
+            "current_fees": "Praegused tasud: {current_fees}",
+            "block_interval": "Blokeerimisintervall: {block_interval}",
+            "maintenance_interval": "Hooldusintervall: {maintenance_interval}",
+            "maintenance_skip_slots": "Hoolduse vahelejätmise pesad: {maintenance_skip_slots}",
+            "committee_proposal_review_period": "Komisjoni ettepanekute läbivaatamise periood: {committee_proposal_review_period}",
+            "maximum_transaction_size": "Tehingu maksimaalne suurus: {maximum_transaction_size}",
+            "maximum_block_size": "Maksimaalne ploki suurus: {maximum_block_size}",
+            "maximum_time_until_expiration": "Maksimaalne aeg aegumiseni: {maximum_time_until_expiration}",
+            "maximum_proposal_lifetime": "Ettepaneku maksimaalne eluiga: {maximum_proposal_lifetime}",
+            "maximum_asset_whitelist_authorities": "Maksimaalne varade lubatud nimekirja volitused: {maximum_asset_whitelist_authorities}",
+            "maximum_asset_feed_publishers": "Maksimaalne varavoo avaldajate arv: {maximum_asset_feed_publishers}",
+            "maximum_witness_count": "Maksimaalne tunnistajate arv: {maximum_witness_count}",
+            "maximum_committee_count": "Maksimaalne komisjonide arv: {maximum_committee_count}",
+            "maximum_authority_membership": "Maksimaalne volituste liikmelisus: {maximum_authority_membership}",
+            "reserve_percent_of_fee": "Tasu reservprotsent: {reserve_percent_of_fee}",
+            "network_percent_of_fee": "Võrgutasu protsent: {network_percent_of_fee}",
+            "lifetime_referrer_percent_of_fee": "Eluaegne viiteprotsent tasust: {lifetime_referrer_percent_of_fee}",
+            "cashback_vesting_period_seconds": "Raha tagasi saamise perioodi sekundid: {cashback_vesting_period_seconds}",
+            "cashback_vesting_threshold": "Raha tagasi saamise künnis: {cashback_vesting_threshold}",
+            "count_non_member_votes": "Mitteliikmete häälte loendus: {count_non_member_votes}",
+            "allow_non_member_whitelists": "Luba mitteliikmete valged nimekirjad: {allow_non_member_whitelists}",
+            "witness_pay_per_block": "Tunnistaja tasu ploki kohta: {witness_pay_per_block}",
+            "worker_budget_per_day": "Töötaja päevaeelarve: {worker_budget_per_day}",
+            "max_predicate_opcode": "Maksimaalne predikaadi opkood: {max_predicate_opcode}",
+            "fee_liquidation_threshold": "Tasu likvideerimislävi: {fee_liquidation_threshold}",
+            "accounts_per_fee_scale": "Kontod tasu skaala kohta: {accounts_per_fee_scale}",
+            "account_fee_scale_bitshifts": "Kontotasude skaala bitinihked: {account_fee_scale_bitshifts}",
+            "max_authority_depth": "Maksimaalne volituse sügavus: {max_authority_depth}",
+            "extensions": "Laiendused: {extensions}",
+            "fee": "Hinnanguline tasu: {fee}"
+          },
+          "tooltip": "Avaldage oma komitee liikme seisukoht Bitsharesi plokiahela globaalsete parameetrite väärtuste kohta"
+        },
+        "vesting_balance_create": {
+          "method": "Looge üleandmise tasakaal",
+          "title": "Üleandmise saldo loomise taotlus",
+          "rows": {
+            "header": "Kas luua järgmine üleandmise saldo?",
+            "creator": "Looja: {creator} ({creatorOP})",
+            "owner": "Omanik: {owner} ({ownerOP})",
+            "amount": "Summa: {amount} ({asset_id})",
+            "policy": "Eeskirjad:",
+            "begin_timestamp": "Alguse ajatempel: {begin_timestamp}",
+            "vesting_cliff_seconds": "Kalju sekundite omandamine: {vesting_cliff_seconds}",
+            "vesting_duration_seconds": "Üleandmise kestus sekundites: {vesting_duration_seconds}",
+            "start_claim": "Alusta nõuet: {start_claim}",
+            "vesting_seconds": "Üleandmise sekundid: {vesting_seconds}",
+            "fee": "Hinnanguline tasu: {fee}"
+          },
+          "tooltip": "Looge omandamise saldo"
+        },
+        "vesting_balance_withdraw": {
+          "method": "Üleandmise saldo tagasivõtmine",
+          "title": "Üleandmise saldo tagasivõtmise taotlus",
+          "rows": {
+            "header": "Üleandmise saldo",
+            "owner": "Omanik: {owner} ({ownerOP})",
+            "claim": "Nõue: {claim} ({asset_id})"
+          },
+          "tooltip": "Üleandmisjäägist taganemine"
+        },
+        "worker_create": {
+          "method": "Töötaja loob",
+          "title": "Töötaja loo taotlus",
+          "rows": {
+            "header": "Kas luua järgmine töötaja ettepanek?",
+            "owner": "Omanik: {owner} ({ownerOP})",
+            "work_begin_date": "Töö alguskuupäev: {work_begin_date}",
+            "work_end_date": "Töö lõppkuupäev: {work_end_date}",
+            "daily_pay": "Päevatasu: {daily_pay}",
+            "name": "Nimi: {name}",
+            "url": "URL: {url}",
+            "initializer": "Initsialiseerija: {initializer}",
+            "fee": "Hinnanguline tasu: {fee}"
+          },
+          "tooltip": "Looge töötaja ettepanek"
+        },
+        "custom": {
+          "method": "Kohandatud",
+          "title": "Kohandatud taotlus",
+          "rows": {
+            "header": "Kohandatud toiming:",
+            "payer": "Maksja: {payer} ({payerOP})",
+            "required_auths": "Nõutavad volitused: {required_auths}",
+            "id": "Ma tegin}",
+            "data": "Andmed: {data}",
+            "fee": "Hinnanguline tasu: {fee}"
+          },
+          "tooltip": "Pakub üldist viisi kõrgema taseme protokollide lisamiseks tunnistajate konsensuse peale"
+        },
+        "assert": {
+          "method": "Kinnitage",
+          "title": "Nõue kinnitada",
+          "rows": {
+            "header": "Kinnitusoperatsioon:",
+            "fee_paying_account": "Tasu maksmise konto: {fee_paying_account} ({fee_paying_accountOP})",
+            "predicates": "Predikaadid: {predikaadid}",
+            "required_auths": "Nõutavad volitused: {required_auths}",
+            "extensions": "Laiendused: {extensions}",
+            "fee": "Hinnanguline tasu: {fee}"
+          },
+          "tooltip": "Kinnitage, et mõned tingimused on tõesed."
+        },
+        "balance_claim": {
+          "method": "Tasakaalunõue",
+          "title": "Saldonõude taotlus",
+          "rows": {
+            "header": "Kas taotleda järgmist saldot?",
+            "deposit_to_account": "Deposiit kontole: {deposit_to_account} ({deposit_to_accountOP})",
+            "balance_to_claim": "Nõutav saldo: {balance_to_claim} ({asset_id})",
+            "balance_owner_key": "Saldo omaniku võti: {saldo_omaniku_võti}",
+            "total_claimed": "Nõude kogusumma: {total_claimed} ({asset_id})",
+            "fee": "Hinnanguline tasu: {fee}"
+          },
+          "tooltip": "Nõue saldost"
+        },
+        "override_transfer": {
+          "method": "Ülekande tühistamine",
+          "title": "Alista ülekandetaotlus",
+          "rows": {
+            "header": "Kas tühistada järgmine ülekanne?",
+            "issuer": "Väljaandja: {issuer} ({issuerOP})",
+            "from": "Saatja: {from} ({fromOP})",
+            "to": "Saaja: {to} ({toOP})",
+            "amount": "Summa: {amount} ({asset_id})",
+            "memo": "Memo: {memo}",
+            "fee": "Hinnanguline tasu: {fee}"
+          },
+          "tooltip": "Edastustoimingu tühistamine"
+        },
+        "transfer_to_blind": {
+          "method": "Pimedaks üleviimine",
+          "title": "Üleminek pimedale taotlusele",
+          "rows": {
+            "header": "Kas kanda järgmised pimedatele?",
+            "amount": "Summa: {amount}",
+            "from": "Saatja: {from} ({fromOP})",
+            "blinding_factor": "Pimestav tegur: {blinding_factor}",
+            "outputs": "Väljundid: {väljundid}",
+            "fee": "Hinnanguline tasu: {fee}"
+          },
+          "tooltip": "Viige varad pimedasse sihtkohta"
+        },
+        "blind_transfer": {
+          "method": "Pime ülekanne",
+          "title": "Pime üleviimise taotlus",
+          "rows": {
+            "header": "Kas kinnitada järgmine pimesi ülekanne?",
+            "inputs": "Sisendid: {inputs}",
+            "outputs": "Väljundid: {väljundid}",
+            "fee": "Hinnanguline tasu: {fee}"
+          },
+          "tooltip": "Pimedate varade pimesi ülekandmine"
+        },
+        "transfer_from_blind": {
+          "method": "Pimedast ülekandmine",
+          "title": "Ülekanne pimedast taotlusest",
+          "rows": {
+            "header": "Kas kanda pimedatelt järgmised andmed?",
+            "amount": "Summa: {amount}",
+            "to": "Saaja: {to} ({toOP})",
+            "blinding_factor": "Pimestav tegur: {blinding_factor}",
+            "inputs": "Sisendid: {inputs}",
+            "fee": "Hinnanguline tasu: {fee}"
+          },
+          "tooltip": "Võtke varad pimebilansilt välja"
+        },
+        "asset_claim_fees": {
+          "method": "Varanõude tasud",
+          "title": "Varanõude tasude taotlus",
+          "rows": {
+            "header": "Kas võtta tasu järgmiselt varalt?",
+            "issuer": "Väljaandja: {issuer} ({issuerOP})",
+            "amount_to_claim": "Nõude summa: {amount_to_claim} ({asset_id})",
+            "fee": "Hinnanguline tasu: {fee}"
+          },
+          "tooltip": "Nõuda tasud varalt"
+        },
+        "bid_collateral": {
+          "method": "Pakkumise tagatis",
+          "title": "Pakkumise tagatisnõue",
+          "rows": {
+            "header": "Kas kinnitada järgmine tagatispakkumine?",
+            "bidder": "Pakkuja: {bidder} ({bidderOP})",
+            "additional_collateral": "Lisatagatis: {additional_collateral}",
+            "debt_covered": "Võlg kaetud: {debt_covered}",
+            "fee": "Hinnanguline tasu: {fee}"
+          },
+          "tooltip": "Tehke pakkumine bitassets tagatistagatisele, kui see on globaalselt arveldatud"
+        },
+        "asset_claim_pool": {
+          "method": "Varade nõuete kogum",
+          "title": "Varade nõuete kogumi taotlus",
+          "rows": {
+            "header": "Kas taotleda järgmist varade kogumit?",
+            "issuer": "Väljaandja: {issuer} ({issuerOP})",
+            "asset_id": "Vara: {asset_id}",
+            "amount_to_claim": "Nõude summa: {amount_to_claim}",
+            "fee": "Hinnanguline tasu: {fee}"
+          },
+          "tooltip": "Kandab BTS-i kindlaksmääratud vara tasufondist tagasi emitendi saldole"
+        },
+        "asset_update_issuer": {
+          "method": "Varavärskenduste väljastaja",
+          "title": "Vara värskenduse väljaandja taotlus",
+          "rows": {
+            "header": "Kas värskendada järgmise vara väljaandjat?",
+            "issuer": "Väljaandja: {issuer} ({issuerOP})",
+            "asset_to_update": "Värskendatav vara: {asset_to_update}",
+            "new_issuer": "Uus väljaandja: {new_issuer} ({new_issuerOP})",
+            "fee": "Hinnanguline tasu: {fee}"
+          },
+          "tooltip": "Värskendage vara väljaandja uuele administraatorikontole."
+        },
+        "htlc_create": {
+          "method": "HTLC loomine",
+          "title": "HTLC loomise taotlus",
+          "rows": {
+            "header": "Kas luua järgmine HTLC toiming?",
+            "from": "Saatja: {from} ({fromOP})",
+            "to": "Saaja: {to} ({toOP})",
+            "amount": "Summa: {amount}",
+            "preimage_hash": "Eelpildi räsi: {preimage_hash}",
+            "preimage_size": "Eelpildi suurus: {preimage_size}",
+            "claim_period_seconds": "Nõude esitamise periood (sekundites): {claim_period_seconds}",
+            "fee": "Hinnanguline tasu: {fee}"
+          },
+          "tooltip": "Looge räsiajaga lukustatud lepingu (HTLC) toiming"
+        },
+        "htlc_redeem": {
+          "method": "HTLC Lunasta",
+          "title": "HTLC lunastamistaotlus",
+          "rows": {
+            "header": "Kas soovite järgmise HTLC-toimingu lunastada?",
+            "htlc_id": "HTLC ID: {htlc_id}",
+            "redeemer": "Lunastaja: {redeemer} ({redeemerOP})",
+            "preimage": "Eelpilt: {preimage}",
+            "extensions": "Laiendused: {extensions}",
+            "fee": "Hinnanguline tasu: {fee}"
+          },
+          "tooltip": "Lunastage HTLC-toimingu sisu"
+        },
+        "htlc_extend": {
+          "method": "HTLC pikendamine",
+          "title": "HTLC pikendamistaotlus",
+          "rows": {
+            "header": "Kas kinnitada järgmine HTLC laiendus?",
+            "htlc_id": "HTLC ID: {htlc_id}",
+            "update_issuer": "Värskenduse väljaandja: {update_issuer} ({update_issuerOP})",
+            "seconds_to_add": "Sekundid lisamiseks: {seconds_to_add}",
+            "extensions": "Laiendused: {extensions}",
+            "fee": "Hinnanguline tasu: {fee}"
+          },
+          "tooltip": "Pikendage HTLC toimingu kestust"
+        },
+        "custom_authority_create": {
+          "method": "Kohandatud volituste loomine",
+          "title": "Kohandatud asutus loob päringu",
+          "rows": {
+            "header": "Kas luua järgmine kohandatud volitus?",
+            "account": "Konto: {account} ({accountOP})",
+            "enabled": "Lubatud: {enabled}",
+            "valid_from": "Kehtib alates: {valid_from}",
+            "valid_to": "Kehtib kuni: {valid_to}",
+            "operation_type": "Toimingu tüüp: {operation_type}",
+            "auth": "Volitus: {auth}",
+            "restrictions": "Piirangud: {restrictions}",
+            "extensions": "Laiendused: {extensions}",
+            "fee": "Hinnanguline tasu: {fee}"
+          },
+          "tooltip": "Looge uus kohandatud asutus."
+        },
+        "custom_authority_update": {
+          "method": "Kohandatud asutuse värskendus",
+          "title": "Kohandatud asutuse värskendustaotlus",
+          "rows": {
+            "header": "Kas värskendada järgmist kohandatud asutust?",
+            "account": "Konto: {account} ({accountOP})",
+            "authority_to_update": "Värskendamise volitus: {authority_to_update}",
+            "new_enabled": "Uus lubatud: {new_enabled}",
+            "new_valid_from": "Uus kehtiv alates: {new_valid_from}",
+            "new_valid_to": "Uus kehtivusaeg: {new_valid_to}",
+            "new_auth": "Uus volitus: {new_auth}",
+            "restrictions_to_remove": "Eemaldamise piirangud: {restrictions_to_remove}",
+            "restrictions_to_add": "Lisamise piirangud: {restrictions_to_add}",
+            "extensions": "Laiendused: {extensions}",
+            "fee": "Hinnanguline tasu: {fee}"
+          },
+          "tooltip": "Värskendage kohandatud asutust."
+        },
+        "custom_authority_delete": {
+          "method": "Kohandatud volituste kustutamine",
+          "title": "Kohandatud asutuse kustutamistaotlus",
+          "rows": {
+            "header": "Kas kustutada järgmine kohandatud asutus?",
+            "account": "Konto: {account} ({accountOP})",
+            "authority_to_delete": "Kustutamisvolitus: {authority_to_delete}",
+            "extensions": "Laiendused: {extensions}",
+            "fee": "Hinnanguline tasu: {fee}"
+          },
+          "tooltip": "Kustutage kohandatud asutus."
+        },
+        "ticket_create": {
+          "method": "Pileti loomine",
+          "title": "Pileti loomise taotlus",
+          "rows": {
+            "header": "Kas luua järgmine pilet?",
+            "account": "Konto: {account} ({accountOP})",
+            "target_type": "Sihtmärgi tüüp: {target_type}",
+            "amount": "Summa: {amount}",
+            "extensions": "Laiendused: {extensions}",
+            "fee": "Hinnanguline tasu: {fee}"
+          },
+          "tooltip": "Looge uus pilet."
+        },
+        "ticket_update": {
+          "method": "Pileti värskendus",
+          "title": "Pileti uuendamise taotlus",
+          "rows": {
+            "header": "Kas värskendada järgmist piletit?",
+            "ticket": "Pilet: {pilet}",
+            "account": "Konto: {account} ({accountOP})",
+            "target_type": "Sihtmärgi tüüp: {target_type}",
+            "amount_for_new_target": "Uue sihtmärgi summa: {amount_for_new_target}",
+            "extensions": "Laiendused: {extensions}"
+          },
+          "tooltip": "Värskendage olemasolevat piletit."
+        },
+        "liquidity_pool_create": {
+          "method": "Likviidsusbasseini loomine",
+          "title": "Likviidsusbasseini loomise taotlus",
+          "rows": {
+            "header": "Kas luua likviidsuskogum järgmiste üksikasjadega?",
+            "account": "Konto: {account} ({accountOP})",
+            "asset_a": "Vara A: {asset_a} ({asset_aOP})",
+            "asset_b": "Vara B: {asset_b} ({asset_bOP})",
+            "share_asset": "Jaga vara: {share_asset} ({share_assetOP})",
+            "taker_fee_percent": "Tasu protsent: {taker_fee_percent}",
+            "withdrawal_fee_percent": "Väljamaksetasu protsent: {withdrawal_fee_percent}",
+            "extensions": "Laiendused: {extensions}",
+            "fee": "Hinnanguline tasu: {fee}"
+          },
+          "tooltip": "Looge likviidsuskogum"
+        },
+        "liquidity_pool_delete": {
+          "method": "Likviidsusfondi kustutamine",
+          "title": "Likviidsuskogumi kustutamise taotlus",
+          "rows": {
+            "header": "Kas kustutada järgmine likviidsuskogum?",
+            "account": "Konto: {account} ({accountOP})",
+            "pool_id": "Basseini ID: {pool_id}",
+            "extensions": "Laiendused: {extensions}",
+            "fee": "Hinnanguline tasu: {fee}"
+          },
+          "tooltip": "Kustutage likviidsuskogum"
+        },
+        "liquidity_pool_deposit": {
+          "method": "Likviidsusbasseini hoius",
+          "title": "Likviidsusbasseini sissemakse taotlus",
+          "rows": {
+            "header": "Deponeerida järgmised varad likviidsusfondi?",
+            "account": "Konto: {account} ({accountOP})",
+            "pool": "Bassein: {pool}",
+            "asset_a": "Vara A: {asset_a} ({asset_aOP})",
+            "asset_b": "Vara B: {asset_b} ({asset_bOP})",
+            "extensions": "Laiendused: {extensions}",
+            "fee": "Hinnanguline tasu: {fee}"
+          },
+          "tooltip": "Deponeerige raha likviidsusfondi"
+        },
+        "liquidity_pool_withdraw": {
+          "method": "Likviidsusfondi väljavõtmine",
+          "title": "Likviidsusfondi tagasivõtmise taotlus",
+          "rows": {
+            "header": "Kas võtta likviidsuskogumist välja järgmised varad?",
+            "account": "Konto: {account} ({accountOP})",
+            "pool": "Bassein: {pool}",
+            "share_asset": "Jaga vara: {share_asset} ({share_assetOP})",
+            "extensions": "Laiendused: {extensions}",
+            "fee": "Hinnanguline tasu: {fee}"
+          },
+          "tooltip": "Võtke raha välja likviidsuskogumist"
+        },
+        "liquidity_pool_exchange": {
+          "method": "Likviidsusfondi vahetus",
+          "title": "Likviidsusfondi vahetustaotlus",
+          "rows": {
+            "header": "Kas nõustuda järgmise likviidsusfondi vahetusega?",
+            "account": "Konto: {account} ({accountOP})",
+            "pool": "Bassein: {pool}",
+            "amount_to_sell": "Müüdav summa: {amount_to_sell}",
+            "min_to_receive": "Minimaalne vastuvõtt: {min_to_receive}",
+            "extensions": "Laiendused: {extensions}",
+            "fee": "Hinnanguline tasu: {fee}"
+          },
+          "tooltip": "Vahetada likviidsusfondiga."
+        },
+        "samet_fund_create": {
+          "method": "SameT fondi loomine",
+          "title": "SameT fondi loomise taotlus",
+          "rows": {
+            "header": "Kas nõustute järgmise sama fondi loomisega?",
+            "owner_account": "Omaniku konto: {owner_account} ({owner_accountOP})",
+            "asset_type": "Vara tüüp: {asset_type}",
+            "balance": "Saldo: {saldo}",
+            "fee_rate": "Tasu määr: {fee_rate}",
+            "extensions": "Laiendused: {extensions}",
+            "fee": "Hinnanguline tasu: {fee}"
+          },
+          "tooltip": "Looge uus SameT fond. "
+        },
+        "samet_fund_delete": {
+          "method": "SameT fondi kustutamine",
+          "title": "SameT fondi kustutamise taotlus",
+          "rows": {
+            "header": "Kas kustutada järgmine sametifond?",
+            "owner_account": "Omaniku konto: {owner_account} ({owner_accountOP})",
+            "fund_id": "Fondi ID: {fund_id}",
+            "extensions": "Laiendused: {extensions}",
+            "fee": "Hinnanguline tasu: {fee}"
+          },
+          "tooltip": "Kustutage SameT fondi objekt."
+        },
+        "samet_fund_update": {
+          "method": "SameT fondi uuendus",
+          "title": "SameT fondi uuendamise taotlus",
+          "rows": {
+            "header": "Kas värskendada järgmist samafondi?",
+            "owner_account": "Omaniku konto: {owner_account} ({owner_accountOP})",
+            "fund_id": "Fondi ID: {fund_id}",
+            "delta_amount": "Delta summa: {delta_amount}",
+            "new_fee_rate": "Uus tasumäär: {new_fee_rate}",
+            "extensions": "Laiendused: {extensions}",
+            "fee": "Hinnanguline tasu: {fee}"
+          },
+          "tooltip": "SameT fondi objekti värskendamine."
+        },
+        "samet_fund_borrow": {
+          "method": "SameT fondi laen",
+          "title": "SameT fondi laenutaotlus",
+          "rows": {
+            "header": "Kas laenata järgmisest samat fondist?",
+            "borrower": "Laenaja: {borrower} ({borrowerOP})",
+            "fund_id": "Fondi ID: {fund_id}",
+            "borrow_amount": "Laenusumma: {borrow_amount}",
+            "extensions": "Laiendused: {extensions}",
+            "fee": "Hinnanguline tasu: {fee}"
+          },
+          "tooltip": "Laena SameT fondist."
+        },
+        "samt_fund_repay": {
+          "method": "SameT fondi tagasimakse",
+          "title": "SameT fondi tagasimaksetaotlus",
+          "rows": {
+            "header": "Makske tagasi järgmine sama fond",
+            "account": "Konto: {account} ({accountOP})",
+            "fund_id": "Fondi ID: {fund_id}",
+            "repay_amount": "Tagasimakse summa: {repay_amount}",
+            "fund_fee": "Fonditasu: {fund_fee}",
+            "extensions": "Laiendused: {extensions}",
+            "fee": "Hinnanguline tasu: {fee}"
+          },
+          "tooltip": "Makske võlg tagasi SameT fondi."
+        },
+        "credit_offer_create": {
+          "method": "Loo krediidipakkumine",
+          "title": "Krediidipakkumise loomine",
+          "rows": {
+            "header": "Kas kinnitada järgmise krediidipakkumise loomine?",
+            "owner_account": "Omaniku konto: {owner_account} ({owner_accountOP})",
+            "asset_type": "Vara tüüp: {asset_type}",
+            "balance": "Saldo: {saldo}",
+            "fee_rate": "Tasu määr: {fee_rate}",
+            "max_duration_seconds": "Maksimaalne kestus sekundid: {max_duration_seconds}",
+            "min_deal_amount": "Minimaalne tehingusumma: {min_deal_amount}",
+            "enabled": "Lubatud: {enabled}",
+            "auto_disable_time": "Automaatse keelamise aeg: {auto_disable_time}",
+            "acceptable_collateral": "Aktsepteeritav tagatis: {acceptable_collateral}",
+            "acceptable_borrowers": "Aktsepteeritavad laenuvõtjad: {acceptable_borrowers}",
+            "extensions": "Laiendused: {extensions}",
+            "fee": "Hinnanguline tasu: {fee}"
+          },
+          "tooltip": "Looge uus krediidipakkumine. "
+        },
+        "credit_offer_delete": {
+          "method": "Krediidipakkumise kustutamine",
+          "title": "Krediidipakkumise kustutamise taotlus",
+          "rows": {
+            "header": "Kas kustutada järgmine krediidipakkumine?",
+            "owner_account": "Omaniku konto: {owner_account} ({owner_accountOP})",
+            "offer_id": "Pakkumise ID: {offer_id}",
+            "extensions": "Laiendused: {extensions}",
+            "fee": "Hinnanguline tasu: {fee}"
+          },
+          "tooltip": "Kustutage krediidipakkumine."
+        },
+        "credit_offer_update": {
+          "method": "Krediidipakkumise värskendus",
+          "title": "Krediidipakkumise värskendamise taotlus",
+          "rows": {
+            "header": "Kas värskendada järgmist krediidipakkumist?",
+            "owner_account": "Omaniku konto: {owner_account} ({owner_accountOP})",
+            "offer_id": "Pakkumise ID: {offer_id}",
+            "delta_amount": "Delta summa: {delta_amount}",
+            "fee_rate": "Tasu määr: {fee_rate}",
+            "max_duration_seconds": "Maksimaalne kestus sekundid: {max_duration_seconds}",
+            "min_deal_amount": "Minimaalne tehingusumma: {min_deal_amount}",
+            "enabled": "Lubatud: {enabled}",
+            "auto_disable_time": "Automaatse keelamise aeg: {auto_disable_time}",
+            "acceptable_collateral": "Aktsepteeritav tagatis: {acceptable_collateral}",
+            "acceptable_borrowers": "Aktsepteeritavad laenuvõtjad: {acceptable_borrowers}",
+            "extensions": "Laiendused: {extensions}",
+            "fee": "Hinnanguline tasu: {fee}"
+          },
+          "tooltip": "Uuenda krediidipakkumist"
+        },
+        "credit_offer_accept": {
+          "method": "Krediidipakkumine vastu",
+          "title": "Krediidipakkumine nõustu taotlusega",
+          "rows": {
+            "header": "Kas nõustute järgmise krediidipakkumisega?",
+            "borrower": "Laenaja: {borrower} ({borrowerOP})",
+            "offer_id": "Pakkumise ID: {offer_id}",
+            "borrow_amount": "Laenusumma: {borrow_amount}",
+            "collateral": "Tagatis: {tagatis}",
+            "max_fee_rate": "Maksimaalne tasumäär: {max_fee_rate}",
+            "min_duration_seconds": "Minimaalne kestus sekundites: {min_duration_seconds}",
+            "extensions": "Laiendused: {extensions}",
+            "fee": "Hinnanguline tasu: {fee}"
+          },
+          "tooltip": "Nõustuge krediidipakkumisega ja looge krediiditehing."
+        },
+        "credit_deal_repay": {
+          "method": "Krediiditehingu tagasimaksmine",
+          "title": "Krediiditehingu tagasimakse taotlus",
+          "rows": {
+            "header": "Kas maksta tagasi järgmine krediiditehing?",
+            "account": "Konto: {account} ({accountOP})",
+            "deal_id": "Tehingu ID: {deal_id}",
+            "repay_amount": "Tagasimakse summa: {repay_amount}",
+            "credit_fee": "Krediiditasu: {credit_fee}",
+            "extensions": "Laiendused: {extensions}",
+            "fee": "Hinnanguline tasu: {fee}"
+          },
+          "tooltip": "Makske krediiditehing tagasi."
         }
       }
     }

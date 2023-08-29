@@ -1,380 +1,1153 @@
 {
-    "general": {
-      "content": "เนื้อหา"
-    },
-    "link": {
-      "title": "คำขอเชื่อมโยงบัญชี",
-      "account_select": "เลือกบัญชี",
-      "account_missing": "บัญชีที่ร้องขอไม่มีอยู่ในกระเป๋าเงินนี้",
-      "request": "แอปพลิเคชัน '{appName}' จาก '{origin}' กำลังร้องขอการเข้าถึงบัญชี {chain}",
-      "request_fresh": "แอปพลิเคชันได้เชื่อมโยงบัญชี {chain} ก่อนหน้านี้ตามที่ระบุไว้ในรายการด้านล่าง",
-      "request_tooltip": "แอปพลิเคชันจะได้รับรายละเอียดบัญชีของคุณ (ชื่อและรหัส) และจะสร้างลิงก์กระเป๋าเงิน",
-      "request_cta": "เลือกบัญชีที่จะให้",
-      "accept_btn": "อนุญาต",
-      "reject_btn": "ปฏิเสธ",
-      "invalid_operations": "คำขอลิงก์มีรูปแบบไม่ถูกต้อง - การดำเนินการไม่ถูกต้อง"
-    },
-    "relink": {
-      "title": "คำขอเชื่อมโยงบัญชีใหม่",
-      "error": "เกิดข้อผิดพลาดในการแสดงข้อความแจ้ง",
-      "request": "แอปพลิเคชัน '{appName}' จาก '{origin}' กำลังขอเชื่อมโยงบัญชี {chain} ที่เชื่อมโยงก่อนหน้านี้อีกครั้ง: {accountId} ",
-      "request_tooltip": "ลิงก์ก่อนหน้าระหว่างแอปพลิเคชันและการอ้างอิงบัญชีc จะถูกรีเซ็ต"
-    },
-    "account_id": {
-      "title": "คำขอรายละเอียดบัญชี",
-      "request": "แอป: '{appName}' จาก '{origin}' กำลังร้องขอการเข้าถึงข้อมูลประจำตัวที่เชื่อมโยง (รหัสบัญชี",
-      "request_tooltip": "ตามค่าเริ่มต้นจะมีการจัดเตรียมลิงค์ที่ไม่ระบุตัวตน ",
-      "accept_btn": "อนุญาต",
-      "reject_btn": "ปฏิเสธ"
-    },
-    "any_account_id": {
-      "title": "คำขอรายละเอียดบัญชี",
-      "request": "แอป: '{appName}' จาก '{origin}' กำลังขอสิทธิ์เข้าถึงบัญชี",
-      "request_cta": "เลือกบัญชีที่จะให้",
-      "accept_btn": "อนุญาต",
-      "reject_btn": "ปฏิเสธ"
-    },
-    "transfer": {
-      "title": "คำขอโอน",
-      "to": "ผู้รับ",
-      "amount": "จำนวน",
-      "memo": "บันทึก",
-      "request": "แอป: '{appName}' จาก '{origin}' ต้องการเริ่มต้นการถ่ายโอนจาก { chain }:{ accountName }",
-      "request_cta": "คุณต้องการดำเนินการหรือไม่",
-      "accept_btn": "เข้าสู่ระบบ",
-      "reject_btn": "ไม่สนใจ",
-      "server_error": "ไม่สามารถโหลดรายชื่อสแกมเมอร์ที่รู้จักเพื่อตรวจสอบ โปรดดำเนินการด้วยความระมัดระวัง",
-      "detected_scammer": "ผู้รับเป็นสแกมเมอร์ที่รู้จักกันดี แนะนำให้ยกเลิก"
-    },
-    "rawsig": {
-      "title": "ขอ",
-      "loading": "กำลังโหลดรายละเอียดการทำธุรกรรมจาก blockchain โปรดรอสักครู่",
-      "request": "แอป: '{appName}' จาก '{origin}' ได้ส่งธุรกรรมต่อไปนี้สำหรับบัญชี { chain }:{ accountName }",
-      "request_cta": "คุณต้องการดำเนินการหรือไม่",
-      "accept_btn": "เข้าสู่ระบบ",
-      "sign_and_broadcast_btn": "เข้าสู่ระบบ",
-      "sign_btn": "เข้าสู่ระบบ",
-      "reject_btn": "ไม่สนใจ"
-    },
-    "whitelist": {
-      "prompt": "อนุญาตคำขอ '{method}' ที่ตามมาจากแอปนี้หรือไม่"
-    },
-    "vote": {
-      "title": "ขอโหวต",
-      "request": "แอป: '{appName}' จาก '{origin}' ต้องการให้คุณโหวต {entity} ต่อไปนี้ด้วยบัญชี { chain }:{ accountName }",
-      "request_cta": "",
-      "accept_btn": "อนุมัติ",
-      "reject_btn": "ไม่สนใจ"
-    },
-    "message": {
-      "title": "ลงชื่อขอข้อความ",
-      "request": "แอป: '{appName}' จาก '{origin}' ต้องการให้คุณเซ็นข้อความต่อไปนี้ด้วยบัญชี { chain }:{ accountName }",
-      "request_cta": "",
-      "accept_btn": "อนุมัติ",
-      "reject_btn": "ไม่สนใจ"
-    },
-    "injected": {
-      "BTS": {
-        "getAccount": {
-          "method": "รับบัญชี",
-          "tooltip": "ขอรายละเอียดบัญชี blockchain กระเป๋าเงินของคุณ"
-        },
-        "requestSignature": {
-          "method": "ขอลายเซ็น",
-          "tooltip": "ถามกระเป๋าเงินของคุณสำหรับลายเซ็น blockchain"
-        },
-        "injectedCall": {
-          "method": "ฉีดโทร",
-          "tooltip": "ขอให้กระเป๋าเงินของคุณจัดการการดำเนินการบล็อกเชนแบบฉีด"
-        },
-        "voteFor": {
-          "method": "โหวตให้",
-          "tooltip": "ดำเนินการลงคะแนน blockchain"
-        },
-        "signMessage": {
-          "method": "เซ็นข้อความ",
-          "tooltip": "ลงนามในข้อความตาม blockchain"
-        },
-        "signNFT": {
-          "method": "เซ็นNFT",
-          "tooltip": "ลงนามในเนื้อหา NFTs"
-        },
-        "verifyMessage": {
-          "method": "ตรวจสอบข้อความ",
-          "tooltip": "ตรวจสอบข้อความที่เซ็นชื่อบนบล็อกเชน"
-        },
-        "transfer": {
-          "method": "โอนย้าย",
-          "tooltip": "ส่งสินทรัพย์จากบัญชีหนึ่งไปยังอีกบัญชีหนึ่ง"
-        },
-        "limit_order_create": {
-          "method": "สร้างคำสั่งจำกัด",
-          "tooltip": "การเสนอขายสินทรัพย์จำนวนหนึ่งในอัตราแลกเปลี่ยนที่กำหนดภายในระยะเวลาหนึ่ง"
-        },
-        "limit_order_cancel": {
-          "method": "จำกัด คำสั่งยกเลิก",
-          "tooltip": "การยกเลิกการดำเนินการคำสั่งจำกัด"
-        },
-        "call_order_update": {
-          "method": "โทรสั่งอัพเดท",
-          "tooltip": "การอัปเดตคำสั่งการโทรที่มีอยู่"
-        },
-        "account_create": {
-          "method": "สร้างบัญชี",
-          "tooltip": "การสร้างบัญชีใหม่"
-        },
-        "asset_update": {
-          "method": "การอัปเดตเนื้อหา",
-          "tooltip": "อัปเดตการตั้งค่าเนื้อหาที่สร้างขึ้น"
-        },
-        "asset_update_bitasset": {
-          "method": "บิตแอสเซทอัปเดตเนื้อหา",
-          "tooltip": "อัปเดตการตั้งค่า bitasset ที่สร้างขึ้น"
-        },
-        "asset_update_feed_producers": {
-          "method": "ผู้ผลิตฟีดการอัปเดตเนื้อหา",
-          "tooltip": "อัปเดตรายชื่อผู้ผลิตฟีดที่ได้รับอนุมัติสำหรับบิตเซ็ตที่สร้างขึ้น"
-        },
-        "asset_issue": {
-          "method": "ปัญหาเกี่ยวกับสินทรัพย์",
-          "tooltip": "ออกสินทรัพย์ที่คุณสร้างขึ้นให้กับบุคคล"
-        },
-        "asset_reserve": {
-          "method": "สำรองสินทรัพย์",
-          "tooltip": "จองสินทรัพย์ที่คุณสร้างขึ้น"
-        },
-        "asset_fund_fee_pool": {
-          "method": "รวมค่าธรรมเนียมกองทุนสินทรัพย์",
-          "tooltip": "เติมเงินรวมค่าธรรมเนียมสำหรับทรัพย์สินที่คุณสร้างขึ้น"
-        },
-        "asset_settle": {
-          "method": "การชำระสินทรัพย์",
-          "tooltip": "ชำระสินทรัพย์ในผลงานของคุณ"
-        },
-        "asset_global_settle": {
-          "method": "การชำระสินทรัพย์ทั่วโลก",
-          "tooltip": "ชำระหนึ่งในบิตแอสเซทที่คุณสร้างขึ้นทั่วโลก"
-        },
-        "asset_publish_feed": {
-          "method": "ฟีดการเผยแพร่เนื้อหา",
-          "tooltip": "เผยแพร่ฟีดราคาสำหรับบิตเซ็ต"
-        },
-        "witness_create": {
-          "method": "พยานสร้าง",
-          "tooltip": "สร้างบัญชีพยาน"
-        },
-        "witness_update": {
-          "method": "พยานปรับปรุง",
-          "tooltip": "อัปเดตบัญชีพยานของคุณ"
-        },
-        "proposal_create": {
-          "method": "สร้างข้อเสนอ",
-          "tooltip": "สร้างข้อเสนอการดำเนินการ blockchain"
-        },
-        "proposal_update": {
-          "method": "การปรับปรุงข้อเสนอ",
-          "tooltip": "อัปเดตข้อเสนอการดำเนินการ blockchain"
-        },
-        "proposal_delete": {
-          "method": "ลบข้อเสนอ",
-          "tooltip": "ลบข้อเสนอการดำเนินการ blockchain"
-        },
-        "withdraw_permission_create": {
-          "method": "ถอนสิทธิ์การสร้าง",
-          "tooltip": "สร้างสิทธิ์การถอน"
-        },
-        "withdraw_permission_update": {
-          "method": "ถอนการปรับปรุงการอนุญาต",
-          "tooltip": "อัปเดตสิทธิ์การถอน"
-        },
-        "withdraw_permission_claim": {
-          "method": "ถอนการอ้างสิทธิ์",
-          "tooltip": "เรียกร้องจากการอนุญาตถอน"
-        },
-        "withdraw_permission_delete": {
-          "method": "ถอนสิทธิ์การลบ",
-          "tooltip": "ลบสิทธิ์การถอน"
-        },
-        "committee_member_create": {
-          "method": "กรรมการจัดสร้าง",
-          "tooltip": "จัดทำบัญชีสมาชิกคณะกรรมการ"
-        },
-        "committee_member_update": {
-          "method": "อัพเดทสมาชิกคณะกรรมการ",
-          "tooltip": "อัปเดตรายละเอียดบัญชีสมาชิกคณะกรรมการของคุณ"
-        },
-        "committee_member_update_global_parameters": {
-          "method": "สมาชิกคณะกรรมการปรับปรุงพารามิเตอร์ส่วนกลาง",
-          "tooltip": "เผยแพร่จุดยืนของสมาชิกคณะกรรมการของคุณเกี่ยวกับค่าพารามิเตอร์ทั่วโลกของ Bitshares blockchain"
-        },
-        "vesting_balance_create": {
-          "method": "การสร้างยอดเงินคงเหลือ",
-          "tooltip": "สร้างความสมดุลของการได้รับสิทธิ"
-        },
-        "vesting_balance_withdraw": {
-          "method": "ถอนเงินคงเหลือ",
-          "tooltip": "ถอนออกจากยอดคงเหลือ"
-        },
-        "worker_create": {
-          "method": "คนงานสร้าง",
-          "tooltip": "สร้างข้อเสนอของผู้ปฏิบัติงาน"
-        },
-        "balance_claim": {
-          "method": "การเรียกร้องยอดคงเหลือ",
-          "tooltip": "เรียกร้องจากยอดคงเหลือ"
-        },
-        "override_transfer": {
-          "method": "แทนที่การถ่ายโอน",
-          "tooltip": "แทนที่การดำเนินการถ่ายโอน"
-        },
-        "transfer_to_blind": {
-          "method": "ถ่ายโอนไปยังคนตาบอด",
-          "tooltip": "โอนทรัพย์สินไปยังปลายทางที่ตาบอด"
-        },
-        "blind_transfer": {
-          "method": "การโอนคนตาบอด",
-          "tooltip": "โอนสินทรัพย์ที่ตาบอดในลักษณะที่ตาบอด"
-        },
-        "transfer_from_blind": {
-          "method": "ถ่ายโอนจากคนตาบอด",
-          "tooltip": "ถอนสินทรัพย์ออกจากยอดคงเหลือ"
-        },
-        "asset_claim_fees": {
-          "method": "ค่าธรรมเนียมการเรียกร้องทรัพย์สิน",
-          "tooltip": "เรียกร้องค่าธรรมเนียมจากสินทรัพย์"
-        },
-        "bid_collateral": {
-          "method": "หลักประกันการเสนอราคา",
-          "tooltip": "เสนอราคาในหลักประกันบิตแอสเซทที่สนับสนุนเมื่อมีการตัดสินทั่วโลก"
-        },
-        "asset_claim_pool": {
-          "method": "กลุ่มการอ้างสิทธิ์ในสินทรัพย์",
-          "tooltip": "โอน BTS จากกลุ่มค่าธรรมเนียมของสินทรัพย์ที่ระบุกลับไปยังยอดคงเหลือของผู้ออก"
-        },
-        "asset_update_issuer": {
-          "method": "ผู้ออกการอัปเดตเนื้อหา",
-          "tooltip": "อัปเดตผู้ออกสินทรัพย์เป็นบัญชีผู้ดูแลระบบใหม่"
-        },
-        "htlc_create": {
-          "method": "สร้างสัญญาแฮชไทม์ล็อค",
-          "tooltip": "สร้างการดำเนินการตามสัญญาที่ล็อกเวลาแฮช"
-        },
-        "htlc_redeem": {
-          "method": "ไถ่ถอนสัญญาแฮชไทม์ล็อค",
-          "tooltip": "แลกรับเนื้อหาของการดำเนินการตามสัญญาที่ล็อกเวลาแฮช"
-        },
-        "htlc_extend": {
-          "method": "การขยายสัญญาที่ถูกล็อคเวลาแฮช",
-          "tooltip": "ขยายระยะเวลาของการดำเนินการตามสัญญาที่ล็อกเวลาแฮช"
-        },
-        "custom_authority_create": {
-          "method": "สร้างสิทธิ์ที่กำหนดเอง",
-          "tooltip": "สร้างสิทธิ์ที่กำหนดเองใหม่"
-        },
-        "custom_authority_update": {
-          "method": "อัปเดตสิทธิ์ที่กำหนดเอง",
-          "tooltip": "อัปเดตสิทธิ์ที่กำหนดเอง"
-        },
-        "custom_authority_delete": {
-          "method": "ลบสิทธิ์ที่กำหนดเอง",
-          "tooltip": "ลบสิทธิ์ที่กำหนดเอง"
-        },
-        "ticket_create": {
-          "method": "สร้างตั๋ว",
-          "tooltip": "สร้างตั๋วใหม่"
-        },
-        "ticket_update": {
-          "method": "การปรับปรุงตั๋ว",
-          "tooltip": "อัปเดตตั๋วที่มีอยู่"
-        },
-        "liquidity_pool_create": {
-          "method": "สร้างพูลสภาพคล่อง",
-          "tooltip": "สร้างสภาพคล่อง"
-        },
-        "liquidity_pool_delete": {
-          "method": "ลบพูลสภาพคล่อง",
-          "tooltip": "ลบพูลสภาพคล่อง"
-        },
-        "liquidity_pool_deposit": {
-          "method": "เงินฝากรวมสภาพคล่อง",
-          "tooltip": "ฝากเงินเข้ากลุ่มสภาพคล่อง"
-        },
-        "liquidity_pool_withdraw": {
-          "method": "ถอนกลุ่มสภาพคล่อง",
-          "tooltip": "ถอนเงินออกจากกลุ่มสภาพคล่อง"
-        },
-        "liquidity_pool_exchange": {
-          "method": "การแลกเปลี่ยนสภาพคล่อง",
-          "tooltip": "แลกเปลี่ยนกับกลุ่มสภาพคล่อง"
-        },
-        "samet_fund_create": {
-          "method": "กองทุน SameT สร้าง",
-          "tooltip": "สร้างกองทุน SameT ใหม่ "
-        },
-        "samet_fund_delete": {
-          "method": "ลบกองทุน SameT",
-          "tooltip": "ลบวัตถุกองทุน SameT"
-        },
-        "samet_fund_update": {
-          "method": "อัพเดทกองทุน SameT",
-          "tooltip": "อัพเดตวัตถุกองทุน SameT"
-        },
-        "samet_fund_borrow": {
-          "method": "ยืมกองทุน SameT",
-          "tooltip": "ยืมจากกองทุน SameT"
-        },
-        "samt_fund_repay": {
-          "method": "ชำระคืนกองทุน SameT",
-          "tooltip": "ชำระหนี้ให้กับกองทุน SameT"
-        },
-        "credit_offer_create": {
-          "method": "สร้างข้อเสนอสินเชื่อ",
-          "tooltip": "สร้างข้อเสนอสินเชื่อใหม่ "
-        },
-        "credit_offer_delete": {
-          "method": "ลบข้อเสนอเครดิต",
-          "tooltip": "ลบข้อเสนอสินเชื่อ"
-        },
-        "credit_offer_update": {
-          "method": "อัปเดตข้อเสนอสินเชื่อ",
-          "tooltip": "อัปเดตข้อเสนอสินเชื่อ"
-        },
-        "credit_offer_accept": {
-          "method": "ข้อเสนอสินเชื่อยอมรับ",
-          "tooltip": "ยอมรับข้อเสนอสินเชื่อและสร้างข้อตกลงสินเชื่อ"
-        },
-        "credit_deal_repay": {
-          "method": "ชำระคืนข้อตกลงเครดิต",
-          "tooltip": "ชำระคืนข้อตกลงเครดิต"
-        },
-        "custom": {
-          "method": "กำหนดเอง",
-          "tooltip": "ให้วิธีทั่วไปในการเพิ่มโปรโตคอลระดับที่สูงขึ้นนอกเหนือจากฉันทามติของพยาน"
-        },
-        "assert": {
-          "method": "ยืนยัน",
-          "tooltip": "ยืนยันว่าเงื่อนไขบางอย่างเป็นจริง"
-        },
-        "account_update": {
-          "method": "การปรับปรุงบัญชี",
-          "tooltip": "การดำเนินการนี้ใช้เพื่ออัปเดตบัญชีที่มีอยู่ "
-        },
-        "account_whitelist": {
-          "method": "รายการบัญชีที่อนุญาต",
-          "tooltip": "การดำเนินการนี้ใช้สำหรับบัญชีที่อนุญาตพิเศษและบัญชีที่ไม่อนุญาต โดยหลักแล้วจะทำธุรกรรมในสินทรัพย์ที่อนุญาตพิเศษ"
-        },
-        "account_upgrade": {
-          "method": "อัปเกรดบัญชี",
-          "tooltip": "การดำเนินการนี้ใช้เพื่ออัปเกรดบัญชีเป็นสมาชิก หรือต่ออายุการสมัคร"
-        },
-        "account_transfer": {
-          "method": "โอนเข้าบัญชี",
-          "tooltip": "โอนบัญชีไปยังบัญชีอื่นในขณะที่ล้างรายการสีขาว"
-        },
-        "asset_create": {
-          "method": "สร้างเนื้อหา",
-          "tooltip": "สร้างสินทรัพย์บน Bitshares blockchain"
-        }
+  "general": {
+    "content": "เนื้อหา"
+  },
+  "link": {
+    "title": "คำขอเชื่อมโยงบัญชี",
+    "account_select": "เลือกบัญชี",
+    "account_missing": "บัญชีที่ร้องขอไม่มีอยู่ในกระเป๋าเงินนี้",
+    "request": "แอปพลิเคชัน '{appName}' จาก '{origin}' กำลังร้องขอการเข้าถึงบัญชี {chain}",
+    "request_fresh": "แอปพลิเคชันได้เชื่อมโยงบัญชี {chain} ก่อนหน้านี้ตามที่ระบุไว้ในรายการด้านล่าง",
+    "request_tooltip": "แอปพลิเคชันจะได้รับรายละเอียดบัญชีของคุณ (ชื่อและรหัส) และจะสร้างลิงก์กระเป๋าเงิน",
+    "request_cta": "เลือกบัญชีที่จะให้",
+    "accept_btn": "อนุญาต",
+    "reject_btn": "ปฏิเสธ",
+    "invalid_operations": "คำขอลิงก์มีรูปแบบไม่ถูกต้อง - การดำเนินการไม่ถูกต้อง"
+  },
+  "relink": {
+    "title": "คำขอเชื่อมโยงบัญชีใหม่",
+    "error": "เกิดข้อผิดพลาดในการแสดงข้อความแจ้ง",
+    "request": "แอปพลิเคชัน '{appName}' จาก '{origin}' กำลังขอเชื่อมโยงบัญชี {chain} ที่เชื่อมโยงก่อนหน้านี้อีกครั้ง: {accountId} ",
+    "request_tooltip": "ลิงก์ก่อนหน้าระหว่างแอปพลิเคชันและการอ้างอิงบัญชีc จะถูกรีเซ็ต"
+  },
+  "account_id": {
+    "title": "คำขอรายละเอียดบัญชี",
+    "request": "แอป: '{appName}' จาก '{origin}' กำลังร้องขอการเข้าถึงข้อมูลประจำตัวที่เชื่อมโยง (รหัสบัญชี",
+    "request_tooltip": "โดยค่าเริ่มต้นจะมีการระบุลิงก์ที่ไม่ระบุตัวตน ",
+    "accept_btn": "อนุญาต",
+    "reject_btn": "ปฏิเสธ"
+  },
+  "any_account_id": {
+    "title": "คำขอรายละเอียดบัญชี",
+    "request": "แอป: '{appName}' จาก '{origin}' กำลังขอสิทธิ์เข้าถึงบัญชี",
+    "request_cta": "เลือกบัญชีที่จะให้",
+    "accept_btn": "อนุญาต",
+    "reject_btn": "ปฏิเสธ"
+  },
+  "transfer": {
+    "title": "คำขอโอน",
+    "to": "ผู้รับ",
+    "amount": "จำนวน",
+    "memo": "บันทึก",
+    "request": "แอป: '{appName}' จาก '{origin}' ต้องการเริ่มต้นการถ่ายโอนจาก { chain }:{ accountName }",
+    "request_cta": "คุณต้องการดำเนินการหรือไม่",
+    "accept_btn": "เข้าสู่ระบบ",
+    "reject_btn": "ไม่สนใจ",
+    "server_error": "ไม่สามารถโหลดรายชื่อสแกมเมอร์ที่รู้จักเพื่อตรวจสอบ โปรดดำเนินการด้วยความระมัดระวัง",
+    "detected_scammer": "ผู้รับเป็นสแกมเมอร์ที่รู้จักกันดี แนะนำให้ยกเลิก"
+  },
+  "rawsig": {
+    "title": "ขอ",
+    "loading": "กำลังโหลดรายละเอียดการทำธุรกรรมจาก blockchain โปรดรอสักครู่",
+    "request": "แอป: '{appName}' จาก '{origin}' ได้ส่งธุรกรรมต่อไปนี้สำหรับบัญชี { chain }:{ accountName }",
+    "request_cta": "คุณต้องการดำเนินการหรือไม่",
+    "accept_btn": "เข้าสู่ระบบ",
+    "sign_and_broadcast_btn": "เข้าสู่ระบบ",
+    "sign_btn": "เข้าสู่ระบบ",
+    "reject_btn": "ไม่สนใจ"
+  },
+  "whitelist": {
+    "prompt": "อนุญาตคำขอ '{method}' ที่ตามมาจากแอปนี้หรือไม่"
+  },
+  "vote": {
+    "title": "ขอโหวต",
+    "request": "แอป: '{appName}' จาก '{origin}' ต้องการให้คุณโหวต {entity} ต่อไปนี้ด้วยบัญชี { chain }:{ accountName }",
+    "request_cta": "",
+    "accept_btn": "อนุมัติ",
+    "reject_btn": "ไม่สนใจ"
+  },
+  "message": {
+    "title": "ลงชื่อขอข้อความ",
+    "request": "แอป: '{appName}' จาก '{origin}' ต้องการให้คุณเซ็นข้อความต่อไปนี้ด้วยบัญชี { chain }:{ accountName }",
+    "request_cta": "",
+    "accept_btn": "อนุมัติ",
+    "reject_btn": "ไม่สนใจ"
+  },
+  "injected": {
+    "BTS": {
+      "getAccount": {
+        "method": "รับบัญชี",
+        "title": "คำขอรายละเอียดบัญชี",
+        "tooltip": "ขอรายละเอียดบัญชี blockchain กระเป๋าเงินของคุณ"
+      },
+      "requestSignature": {
+        "method": "ขอลายเซ็น",
+        "title": "ขอลายเซ็น",
+        "tooltip": "ถามกระเป๋าเงินของคุณสำหรับลายเซ็น blockchain"
+      },
+      "injectedCall": {
+        "method": "ฉีดโทร",
+        "title": "คำขอโทรเข้า",
+        "tooltip": "ขอให้กระเป๋าเงินของคุณจัดการการดำเนินการบล็อกเชนแบบฉีด"
+      },
+      "voteFor": {
+        "method": "โหวตให้",
+        "title": "ขอโหวต",
+        "tooltip": "ดำเนินการลงคะแนน blockchain"
+      },
+      "signMessage": {
+        "method": "เซ็นข้อความ",
+        "title": "ลงชื่อขอข้อความ",
+        "tooltip": "ลงนามในข้อความตาม blockchain"
+      },
+      "signNFT": {
+        "method": "เซ็นNFT",
+        "title": "ลงชื่อคำขอ NFT",
+        "tooltip": "ลงนามในเนื้อหา NFTs"
+      },
+      "verifyMessage": {
+        "method": "ตรวจสอบข้อความ",
+        "title": "ตรวจสอบคำขอข้อความ",
+        "tooltip": "ตรวจสอบข้อความที่เซ็นชื่อบนบล็อกเชน"
+      },
+      "transfer": {
+        "method": "โอนย้าย",
+        "title": "คำขอโอน",
+        "rows": {
+          "from": "จาก: {from} ({opFrom})",
+          "to": "ถึง: {to} ({opTo})",
+          "amount": "จำนวนเงิน: {amount}"
+        },
+        "tooltip": "ส่งทรัพย์สินจากบัญชีหนึ่งไปยังอีกบัญชีหนึ่ง"
+      },
+      "limit_order_create": {
+        "method": "สร้างคำสั่งจำกัด",
+        "title": "จำกัด คำสั่งสร้างคำขอ",
+        "rows": {
+          "trade": "ซื้อขาย",
+          "tradeFK": "การค้า (เติมหรือฆ่า)",
+          "seller": "ผู้ขาย: {seller} ({opSeller})",
+          "selling": "ขาย: {amount}",
+          "buying": "ซื้อ: {amount}",
+          "price": "ราคา: {price} {sellSymbol}/{buySymbol}"
+        },
+        "tooltip": "การเสนอขายสินทรัพย์จำนวนหนึ่งในอัตราแลกเปลี่ยนที่กำหนดภายในระยะเวลาหนึ่ง"
+      },
+      "limit_order_cancel": {
+        "method": "จำกัด คำสั่งยกเลิก",
+        "title": "จำกัด คำสั่งยกเลิกคำขอ",
+        "rows": {
+          "header": "ยกเลิกคำสั่งจำกัดต่อไปนี้หรือไม่",
+          "id": "รหัสคำสั่งซื้อ: {id}",
+          "fees": "ค่าธรรมเนียมโดยประมาณ: {fees}",
+          "account": "บัญชีชำระค่าธรรมเนียม: {account}"
+        },
+        "tooltip": "การยกเลิกการดำเนินการคำสั่งจำกัด"
+      },
+      "call_order_update": {
+        "method": "โทรสั่งอัพเดท",
+        "title": "โทรขอปรับปรุงคำสั่ง",
+        "rows": {
+          "header": "อัปเดตลำดับการโทรของคุณเป็นดังต่อไปนี้หรือไม่",
+          "funding_account": "บัญชีเงินทุน: {funding_account}",
+          "delta_collateral": "หลักประกันเดลต้า: {delta_collateral} ({id})",
+          "delta_debt": "หนี้เดลต้า: {delta_debt} ({id})",
+          "fees": "ค่าธรรมเนียมโดยประมาณ: {fees}"
+        },
+        "tooltip": "การอัปเดตคำสั่งการโทรที่มีอยู่"
+      },
+      "account_create": {
+        "method": "สร้างบัญชี",
+        "title": "คำขอสร้างบัญชี",
+        "rows": {
+          "header": "คุณต้องการสร้างบัญชีต่อไปนี้หรือไม่?",
+          "registrar": "นายทะเบียน: {registrar} ({opRegistrar})",
+          "referrer": "ผู้อ้างอิง: {referrer} ({opReferrer})",
+          "referrer_percent": "เปอร์เซ็นต์ผู้อ้างอิง: {referrer_percent}",
+          "name": "ชื่อ: {name}",
+          "ownerHeader": "เจ้าของ:",
+          "activeHeader": "คล่องแคล่ว:",
+          "weight_threshold": "เกณฑ์น้ำหนัก: {weight_threshold}",
+          "account_auths": "การตรวจสอบบัญชี: {account_auths}",
+          "key_auths": "การตรวจสอบคีย์: {key_auths}",
+          "address_auths": "การตรวจสอบที่อยู่: {address_auths}",
+          "optionsHeader": "ตัวเลือก:",
+          "memo_key": "ปุ่มบันทึก: {memo_key}",
+          "voting_account": "บัญชีลงคะแนน: {voting_account} ({opVotingAccount})",
+          "num_witness": "จำนวนพยาน: {num_witness}",
+          "num_committee": "จำนวนคณะกรรมการ: {num_committee}",
+          "votes": "โหวต: {votes}",
+          "extensions": "ส่วนขยาย: {extensions}",
+          "fees": "ค่าธรรมเนียมโดยประมาณ: {fees}"
+        },
+        "tooltip": "การสร้างบัญชีใหม่"
+      },
+      "account_update": {
+        "method": "การปรับปรุงบัญชี",
+        "title": "คำขอปรับปรุงบัญชี",
+        "rows": {
+          "header": "คุณต้องการสร้างบัญชีต่อไปนี้หรือไม่?",
+          "warning": "คำเตือน: การดำเนินการนี้จะย้อนกลับไม่ได้!",
+          "account": "บัญชี: {account} ({opAccount})",
+          "owner": "เจ้าของ: {owner}",
+          "active": "ใช้งานอยู่: {active}",
+          "new_options": "ตัวเลือกใหม่: {new_options}",
+          "extensions": "ส่วนขยาย: {extensions}",
+          "fees": "ค่าธรรมเนียมโดยประมาณ: {fees}"
+        },
+        "tooltip": "การดำเนินการนี้ใช้เพื่ออัปเดตบัญชีที่มีอยู่ "
+      },
+      "account_whitelist": {
+        "method": "รายการบัญชีที่อนุญาต",
+        "title": "คำขอบัญชีขาว",
+        "rows": {
+          "header": "รายละเอียดบัญชีที่อนุญาตพิเศษ:",
+          "authorizing_account": "บัญชีผู้ให้สิทธิ์: {authorizingAccount} (authorizingAccountOP)",
+          "account_to_list": "บัญชีรายชื่อ: {accountToList} (accountToListOP)",
+          "new_listing": "รายชื่อใหม่: {newListing}",
+          "extensions": "ส่วนขยาย: {extensions}",
+          "fee": "ค่าธรรมเนียม: {fee}"
+        },
+        "tooltip": "การดำเนินการนี้ใช้สำหรับบัญชีที่อนุญาตพิเศษและบัญชีที่ไม่อนุญาต โดยหลักแล้วจะทำธุรกรรมในสินทรัพย์ที่อนุญาตพิเศษ"
+      },
+      "account_upgrade": {
+        "method": "อัปเกรดบัญชี",
+        "title": "คำขออัปเกรดบัญชี",
+        "rows": {
+          "header": "อัพเกรดบัญชีเป็นสมาชิกตลอดชีพ?",
+          "account_to_upgrade": "บัญชีที่จะอัปเกรด: {accountToUpgrade} (accountToUpgradeOP)",
+          "upgrade_to_lifetime_member": "อัปเกรดเป็นสมาชิกตลอดชีพ: {upgradeToLifetimeMember}",
+          "extensions": "ส่วนขยาย: {extensions}",
+          "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
+        },
+        "tooltip": "การดำเนินการนี้ใช้เพื่ออัปเกรดบัญชีเป็นสมาชิก หรือต่ออายุการสมัคร"
+      },
+      "account_transfer": {
+        "method": "โอนเข้าบัญชี",
+        "title": "คำขอโอนบัญชี",
+        "rows": {
+          "header": "โอนบัญชีไปยังเจ้าของใหม่หรือไม่",
+          "warning": "คำเตือน: การกระทำนี้จะย้อนกลับไม่ได้!",
+          "account_id": "รหัสบัญชี: {originalOwner} ({account_id})",
+          "new_owner": "เจ้าของใหม่: {newOwner} ({newOwnerOP})",
+          "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
+        },
+        "tooltip": "โอนบัญชีไปยังบัญชีอื่นในขณะที่ล้างรายการสีขาว"
+      },
+      "asset_create": {
+        "method": "สร้างเนื้อหา",
+        "title": "คำขอสร้างเนื้อหา",
+        "rows": {
+          "header": "สร้างเนื้อหาต่อไปนี้ไหม",
+          "symbol": "สัญลักษณ์: {symbol}",
+          "main": "หลัก: {main}",
+          "market": "ตลาด: {market}",
+          "short_name": "ชื่อสั้น: {short_name}",
+          "precision": "ความแม่นยำ: {precision}",
+          "max_supply": "อุปทานสูงสุด: {max_supply}",
+          "market_fee_percent": "เปอร์เซ็นต์ค่าธรรมเนียมการตลาด: {market_fee_percent}",
+          "max_market_fee": "ค่าธรรมเนียมการตลาดสูงสุด: {max_market_fee}",
+          "cer": "อัตราแลกเปลี่ยนหลัก:",
+          "cer_base_amount": "จำนวนฐาน: {cer_base_amount}",
+          "cer_base_id": "รหัสเนื้อหาฐาน: {cer_base_id}",
+          "cer_quote_amount": "จำนวนใบเสนอราคา: {cer_quote_amount}",
+          "cer_quote_id": "รหัสเนื้อหาใบเสนอราคา: {cer_quote_id}",
+          "whitelist_authorities": "หน่วยงานที่อนุญาตพิเศษ: {whitelist_authorities}",
+          "blacklist_authorities": "หน่วยงานบัญชีดำ: {blacklist_authorities}",
+          "whitelist_markets": "ตลาดที่อนุญาตพิเศษ: {whitelist_markets}",
+          "blacklist_markets": "ตลาดบัญชีดำ: {blacklist_markets}",
+          "is_prediction_market": "เป็นตลาดการคาดการณ์: {is_prediction_market}",
+          "permissions": "สิทธิ์:",
+          "perm_charge_market_fee": "คิดค่าธรรมเนียมตลาด: {charge_market_fee}",
+          "perm_white_list": "ไวท์ลิสต์: {white_list}",
+          "perm_override_authority": "แทนที่อำนาจ: {override_authority}",
+          "perm_transfer_restricted": "จำกัดการโอน: {transfer_restricted}",
+          "perm_disable_confidential": "ปิดใช้งานข้อมูลลับ: {disable_confidential}",
+          "flags": "ธง:",
+          "flag_charge_market_fee": "คิดค่าธรรมเนียมตลาด: {charge_market_fee}",
+          "flag_white_list": "ไวท์ลิสต์: {white_list}",
+          "flag_override_authority": "แทนที่อำนาจ: {override_authority}",
+          "flag_transfer_restricted": "จำกัดการโอน: {transfer_restricted}",
+          "flag_disable_confidential": "ปิดใช้งานข้อมูลลับ: {disable_confidential}",
+          "bitasset": "ข้อมูล Bitasset:",
+          "feed_lifetime_sec": "อายุการใช้งานฟีด (วินาที): {feed_lifetime_sec}",
+          "force_settlement_delay_sec": "ความล่าช้าในการบังคับชำระหนี้ (วินาที): {force_settlement_delay_sec}",
+          "force_settlement_offset_percent": "เปอร์เซ็นต์การชดเชยการบังคับชำระหนี้: {force_settlement_offset_percent}",
+          "maximum_force_settlement_volume": "ปริมาณการบังคับชำระหนี้สูงสุด: {maximum_force_settlement_volume}",
+          "minimum_feeds": "ฟีดขั้นต่ำ: {minimum_feeds}",
+          "short_backing_asset": "เนื้อหาสำรองแบบสั้น: {short_backing_asset}",
+          "nft": "เนื้อหาของ NFT:",
+          "acknowledgements": "กิตติกรรมประกาศ: {acknowledgements}",
+          "artist": "ศิลปิน: {artist}",
+          "attestation": "การรับรอง: {attestation}",
+          "holder_license": "ใบอนุญาตผู้ถือ: {holder_license}",
+          "license": "ใบอนุญาต: {license}",
+          "narrative": "บรรยาย: {narrative}",
+          "title": "ชื่อเรื่อง: {title}",
+          "tags": "แท็ก: {tags}",
+          "type": "ประเภท: {type}"
+        },
+        "tooltip": "สร้างสินทรัพย์บน Bitshares blockchain"
+      },
+      "asset_update": {
+        "method": "การอัปเดตเนื้อหา",
+        "title": "คำขออัปเดตเนื้อหา",
+        "rows": {
+          "header": "อัปเดตเนื้อหาต่อไปนี้ไหม",
+          "symbol": "สัญลักษณ์: {symbol}",
+          "main": "หลัก: {main}",
+          "market": "ตลาด: {market}",
+          "short_name": "ชื่อสั้น: {short_name}",
+          "precision": "ความแม่นยำ: {precision}",
+          "max_supply": "อุปทานสูงสุด: {max_supply}",
+          "market_fee_percent": "เปอร์เซ็นต์ค่าธรรมเนียมการตลาด: {market_fee_percent}",
+          "max_market_fee": "ค่าธรรมเนียมการตลาดสูงสุด: {max_market_fee}",
+          "cer": "อัตราแลกเปลี่ยนหลัก:",
+          "cer_base_amount": "จำนวนฐาน: {cer_base_amount}",
+          "cer_base_id": "รหัสเนื้อหาฐาน: {cer_base_id}",
+          "cer_quote_amount": "จำนวนใบเสนอราคา: {cer_quote_amount}",
+          "cer_quote_id": "รหัสเนื้อหาใบเสนอราคา: {cer_quote_id}",
+          "whitelist_authorities": "หน่วยงานที่อนุญาตพิเศษ: {whitelist_authorities}",
+          "blacklist_authorities": "หน่วยงานบัญชีดำ: {blacklist_authorities}",
+          "whitelist_markets": "ตลาดที่อนุญาตพิเศษ: {whitelist_markets}",
+          "blacklist_markets": "ตลาดบัญชีดำ: {blacklist_markets}",
+          "is_prediction_market": "เป็นตลาดการคาดการณ์: {is_prediction_market}",
+          "permissions": "สิทธิ์:",
+          "perm_charge_market_fee": "คิดค่าธรรมเนียมตลาด: {charge_market_fee}",
+          "perm_white_list": "ไวท์ลิสต์: {white_list}",
+          "perm_override_authority": "แทนที่อำนาจ: {override_authority}",
+          "perm_transfer_restricted": "จำกัดการโอน: {transfer_restricted}",
+          "perm_disable_confidential": "ปิดใช้งานข้อมูลลับ: {disable_confidential}",
+          "flags": "ธง:",
+          "flag_charge_market_fee": "คิดค่าธรรมเนียมตลาด: {charge_market_fee}",
+          "flag_white_list": "ไวท์ลิสต์: {white_list}",
+          "flag_override_authority": "แทนที่อำนาจ: {override_authority}",
+          "flag_transfer_restricted": "จำกัดการโอน: {transfer_restricted}",
+          "flag_disable_confidential": "ปิดใช้งานข้อมูลลับ: {disable_confidential}",
+          "bitasset": "ข้อมูล Bitasset:",
+          "feed_lifetime_sec": "อายุการใช้งานฟีด (วินาที): {feed_lifetime_sec}",
+          "force_settlement_delay_sec": "ความล่าช้าในการบังคับชำระหนี้ (วินาที): {force_settlement_delay_sec}",
+          "force_settlement_offset_percent": "เปอร์เซ็นต์การชดเชยการบังคับชำระหนี้: {force_settlement_offset_percent}",
+          "maximum_force_settlement_volume": "ปริมาณการบังคับชำระหนี้สูงสุด: {maximum_force_settlement_volume}",
+          "minimum_feeds": "ฟีดขั้นต่ำ: {minimum_feeds}",
+          "short_backing_asset": "เนื้อหาสำรองแบบสั้น: {short_backing_asset}",
+          "nft": "เนื้อหาของ NFT:",
+          "acknowledgements": "กิตติกรรมประกาศ: {acknowledgements}",
+          "artist": "ศิลปิน: {artist}",
+          "attestation": "การรับรอง: {attestation}",
+          "holder_license": "ใบอนุญาตผู้ถือ: {holder_license}",
+          "license": "ใบอนุญาต: {license}",
+          "narrative": "บรรยาย: {narrative}",
+          "title": "ชื่อเรื่อง: {title}",
+          "tags": "แท็ก: {tags}",
+          "type": "ประเภท: {type}"
+        },
+        "tooltip": "อัปเดตการตั้งค่าของเนื้อหา"
+      },
+      "asset_update_bitasset": {
+        "method": "บิตแอสเซทอัปเดตเนื้อหา",
+        "title": "คำขออัปเดตเนื้อหาบิตแอสเซท",
+        "rows": {
+          "header": "อนุมัติการอัปเดต bitasset ไหม",
+          "issuer": "ผู้ออก: {issuer}",
+          "asset_to_update": "เนื้อหาที่จะอัปเดต: {asset_to_update}",
+          "new_options": "ตัวเลือกใหม่:",
+          "feed_lifetime_sec": "อายุการใช้งานฟีด (วินาที): {feed_lifetime_sec}",
+          "minimum_feeds": "ฟีดขั้นต่ำ: {minimum_feeds}",
+          "force_settlement_delay_sec": "ความล่าช้าในการบังคับชำระหนี้ (วินาที): {force_settlement_delay_sec}",
+          "force_settlement_offset_percent": "เปอร์เซ็นต์การชดเชยการบังคับชำระหนี้: {force_settlement_offset_percent}",
+          "maximum_force_settlement_volume": "ปริมาณการบังคับชำระหนี้สูงสุด: {maximum_force_settlement_volume}",
+          "short_backing_asset": "เนื้อหาสำรองแบบสั้น: {symbol} ({short_backing_asset})",
+          "extensions": "ส่วนขยาย: {extensions}",
+          "noExtensions": "ไม่มีส่วนขยาย",
+          "fee": "ค่าธรรมเนียมโดยประมาณ: {fee} ({id})"
+        },
+        "tooltip": "อัปเดตการตั้งค่า bitasset ที่สร้างขึ้น"
+      },
+      "asset_update_feed_producers": {
+        "method": "ผู้ผลิตฟีดการอัปเดตเนื้อหา",
+        "title": "คำขอผู้ผลิตฟีดการอัปเดตเนื้อหา",
+        "rows": {
+          "header": "อนุมัติการเปลี่ยนแปลงผู้ผลิตฟีด bitasset หรือไม่",
+          "issuer": "ผู้ออก: {issuer} ({issuerOP})",
+          "asset_to_update": "เนื้อหาที่จะอัปเดต: {symbol} ({asset_to_update})",
+          "new_feed_producers": "ผู้ผลิตฟีดใหม่: {new_feed_producers}",
+          "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
+        },
+        "tooltip": "อัปเดตรายชื่อผู้ผลิตฟีดที่ได้รับอนุมัติสำหรับบิตเซ็ตที่สร้างขึ้น"
+      },
+      "asset_issue": {
+        "method": "ปัญหาเกี่ยวกับสินทรัพย์",
+        "title": "คำขอออกสินทรัพย์",
+        "rows": {
+          "header": "ออก {amount} {symbol} ({assetID}) ถึง {to} ({toID}) ไหม",
+          "fee": "ค่าธรรมเนียมโดยประมาณ: {fee} ({id})"
+        },
+        "tooltip": "ออกสินทรัพย์ที่คุณสร้างให้กับบุคคล"
+      },
+      "asset_reserve": {
+        "method": "สำรองสินทรัพย์",
+        "title": "คำขอสำรองทรัพย์สิน",
+        "rows": {
+          "header": "อนุมัติการจองสินทรัพย์ต่อไปนี้หรือไม่",
+          "payer": "ผู้ชำระเงิน: {payer} ({payerOP})",
+          "amount_to_reserve": "จำนวนสำรอง: {amount_to_reserve} ({amount_to_reserveOP})",
+          "extensions": "ส่วนขยาย: {extensions}",
+          "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
+        },
+        "tooltip": "จองสินทรัพย์ที่คุณสร้างขึ้น"
+      },
+      "asset_fund_fee_pool": {
+        "method": "รวมค่าธรรมเนียมกองทุนสินทรัพย์",
+        "title": "คำขอรวมค่าธรรมเนียมกองทุนสินทรัพย์",
+        "rows": {
+          "header": "กองทุนรวมค่าธรรมเนียมของเนื้อหาต่อไปนี้หรือไม่",
+          "from_account": "จากบัญชี: {from_account} ({from_accountOP})",
+          "asset": "สินทรัพย์: {asset} ({assetOP})",
+          "amount": "จำนวนเงิน: {amount}",
+          "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
+        },
+        "tooltip": "เติมเงินรวมค่าธรรมเนียมสำหรับทรัพย์สินที่คุณสร้างขึ้น"
+      },
+      "asset_settle": {
+        "method": "การชำระสินทรัพย์",
+        "title": "คำขอชำระสินทรัพย์",
+        "rows": {
+          "header": "ชำระสินทรัพย์ต่อไปนี้เพื่อเป็นหลักประกันสำรองหรือไม่",
+          "account": "บัญชี: {account} ({accountOP})",
+          "amount": "จำนวนเงิน: {amount} ({assetID})",
+          "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
+        },
+        "tooltip": "ชำระสินทรัพย์ในผลงานของคุณ"
+      },
+      "asset_global_settle": {
+        "method": "การชำระสินทรัพย์ทั่วโลก",
+        "title": "คำขอชำระสินทรัพย์ทั่วโลก",
+        "rows": {
+          "header": "ทำการชำระเงินทั่วโลกสำหรับสินทรัพย์ต่อไปนี้หรือไม่",
+          "issuer": "ผู้ออก: {issuer} ({issuerOP})",
+          "asset_to_settle": "สินทรัพย์ที่จะชำระ: {asset_to_settle} ({asset_to_settleOP})",
+          "settle_price": "ราคาที่ชำระ: {settle_price}",
+          "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
+        },
+        "tooltip": "ชำระหนึ่งในบิตแอสเซทที่คุณสร้างขึ้นทั่วโลก"
+      },
+      "asset_publish_feed": {
+        "method": "ฟีดการเผยแพร่เนื้อหา",
+        "title": "คำขอฟีดการเผยแพร่เนื้อหา",
+        "rows": {
+          "header": "เผยแพร่ฟีดราคาสำหรับเนื้อหาต่อไปนี้ไหม",
+          "publisher": "ผู้เผยแพร่: {publisher} ({publisherOP})",
+          "asset_id": "รหัสสินทรัพย์: {symbol} ({asset_idOP})",
+          "feed": "ให้อาหาร:",
+          "core_exchange_rate": "อัตราแลกเปลี่ยนหลัก: {core_exchange_rate}",
+          "settlement_price": "ราคาที่ชำระ: {settlement_price}",
+          "maintenance_collateral_ratio": "อัตราส่วนหลักประกันการบำรุงรักษา: {maintenance_collateral_ratio}",
+          "maximum_short_squeeze_ratio": "อัตราส่วนการบีบสั้นสูงสุด: {maximum_short_squeeze_ratio}",
+          "extensions": "ส่วนขยาย: {extensions}",
+          "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
+        },
+        "tooltip": "เผยแพร่ฟีดราคาสำหรับบิตเซ็ต"
+      },
+      "witness_create": {
+        "method": "พยานสร้าง",
+        "title": "สร้างคำขอเป็นพยาน",
+        "rows": {
+          "header": "สร้างพยานโดยมีรายละเอียดดังนี้ ?",
+          "witness_account": "บัญชีพยาน: {witness_account} ({witness_accountOP})",
+          "url": "URL: {url}",
+          "block_signing_key": "คีย์การลงนามแบบบล็อก: {block_signing_key}",
+          "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
+        },
+        "tooltip": "สร้างบัญชีพยาน"
+      },
+      "witness_update": {
+        "method": "พยานปรับปรุง",
+        "title": "คำขออัปเดตพยาน",
+        "rows": {
+          "header": "อัพเดทรายละเอียดพยานเป็นดังนี้?",
+          "witness": "พยาน: {witness}",
+          "witness_account": "บัญชีพยาน: {witness_account} ({witness_accountOP})",
+          "new_url": "URL ใหม่: {new_url}",
+          "new_signing_key": "คีย์การลงนามใหม่: {new_signing_key}",
+          "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
+        },
+        "tooltip": "อัปเดตบัญชีพยานของคุณ"
+      },
+      "proposal_create": {
+        "method": "สร้างข้อเสนอ",
+        "title": "ข้อเสนอสร้างคำขอ",
+        "rows": {
+          "header": "สร้างข้อเสนอต่อไปนี้หรือไม่",
+          "expiration_time": "เวลาหมดอายุ: {expiration_time}",
+          "proposed_ops": "การดำเนินการที่เสนอ: {proposed_ops}",
+          "review_period_seconds": "ช่วงเวลาตรวจสอบ วินาที: {review_period_seconds}",
+          "fee_paying_account": "บัญชีที่ชำระค่าธรรมเนียม: {fee_paying_account} ({fee_paying_accountOP})",
+          "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
+        },
+        "tooltip": "สร้างข้อเสนอการดำเนินการ blockchain"
+      },
+      "proposal_update": {
+        "method": "การปรับปรุงข้อเสนอ",
+        "title": "คำขออัปเดตข้อเสนอ",
+        "rows": {
+          "header": "อัปเดตข้อเสนอต่อไปนี้ไหม",
+          "proposal": "ข้อเสนอ: {proposal}",
+          "active_approvals_to_add": "การอนุมัติที่ดำเนินการเพื่อเพิ่ม: {active_approvals_to_add}",
+          "active_approvals_to_remove": "การอนุมัติที่ดำเนินการเพื่อลบ: {active_approvals_to_remove}",
+          "owner_approvals_to_add": "การอนุมัติจากเจ้าของเพื่อเพิ่ม: {owner_approvals_to_add}",
+          "owner_approvals_to_remove": "การอนุมัติให้เจ้าของนำออก: {owner_approvals_to_remove}",
+          "key_approvals_to_add": "การอนุมัติคีย์ที่จะเพิ่ม: {key_approvals_to_add}",
+          "key_approvals_to_remove": "การอนุมัติคีย์ที่จะลบ: {key_approvals_to_remove}",
+          "fee_paying_account": "บัญชีที่ชำระค่าธรรมเนียม: {fee_paying_account} ({fee_paying_accountOP})",
+          "extensions": "ส่วนขยาย: {extensions}",
+          "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
+        },
+        "tooltip": "อัปเดตข้อเสนอการดำเนินการ blockchain"
+      },
+      "proposal_delete": {
+        "method": "ลบข้อเสนอ",
+        "title": "คำขอลบข้อเสนอ",
+        "rows": {
+          "header": "ลบข้อเสนอต่อไปนี้ไหม",
+          "using_owner_authority": "การใช้สิทธิ์ของเจ้าของ: {using_owner_authority}",
+          "proposal": "ข้อเสนอ: {proposal}",
+          "fee_paying_account": "บัญชีที่ชำระค่าธรรมเนียม: {fee_paying_account} ({fee_paying_accountOP})",
+          "extensions": "ส่วนขยาย: {extensions}",
+          "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
+        },
+        "tooltip": "ลบข้อเสนอการดำเนินการ blockchain"
+      },
+      "withdraw_permission_create": {
+        "method": "ถอนสิทธิ์การสร้าง",
+        "title": "ถอนสิทธิ์สร้างคำขอ",
+        "rows": {
+          "header": "การอนุมัติการตัดบัญชีโดยตรง",
+          "recipient": "ผู้รับ: {recipient} ({recipientOP})",
+          "withdraw_from": "บัญชีที่จะถอนจาก: {withdraw_from} ({withdraw_fromOP})",
+          "taking": "ใช้เวลา {amount} ทุก {period_sec} วินาที เป็นระยะเวลา {period_qty}",
+          "start": "เริ่มต้น: {start}"
+        },
+        "tooltip": "สร้างสิทธิ์การถอน"
+      },
+      "withdraw_permission_update": {
+        "method": "ถอนการปรับปรุงการอนุญาต",
+        "title": "ถอนคำขออัปเดตการอนุญาต",
+        "rows": {
+          "header": "อัปเดตสิทธิ์ของพยานต่อไปนี้หรือไม่",
+          "withrdaw_from_account": "ถอนออกจากบัญชี: {withrdaw_from_account} ({withrdaw_from_accountOP})",
+          "authorized_account": "บัญชีที่ได้รับอนุญาต: {authorized_account} ({authorized_accountOP})",
+          "permission_to_update": "สิทธิ์ในการอัปเดต: {permission_to_update}",
+          "withdrawal_limited": "ขีดจำกัดการถอน: {withdrawal_limit}",
+          "withdrawal_unlimited": "ขีดจำกัดการถอน: {withdrawal_limit} ({withdrawal_limitOP})",
+          "withdrawal_period_sec": "ระยะเวลาการถอน (วินาที): {withdrawal_period_sec}",
+          "period_start_time": "เวลาเริ่มต้นของงวด: {period_start_time}",
+          "periods_until_expiration": "ระยะเวลาจนกว่าจะหมดอายุ: {periods_until_expiration}",
+          "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
+        },
+        "tooltip": "อัปเดตสิทธิ์การถอน"
+      },
+      "withdraw_permission_claim": {
+        "method": "ถอนการอ้างสิทธิ์",
+        "title": "ถอนคำขอรับสิทธิ์",
+        "rows": {
+          "header": "อ้างสิทธิ์การถอนต่อไปนี้",
+          "withdraw_permission": "ถอนสิทธิ์: {withdraw_permission}",
+          "withdraw_from_account": "ถอนออกจากบัญชี: {withdraw_from_account} ({withdraw_from_accountOP})",
+          "withdraw_to_account": "ถอนเข้าบัญชี: {withdraw_to_account} ({withdraw_to_accountOP})",
+          "amount_to_withdraw": "จำนวนเงินที่จะถอน: {amount_to_withdraw} ({amount_to_withdrawOP})",
+          "memo": "ข้อควรจำ: {memo}",
+          "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
+        },
+        "tooltip": "เรียกร้องจากการอนุญาตถอน"
+      },
+      "withdraw_permission_delete": {
+        "method": "ถอนสิทธิ์การลบ",
+        "title": "ถอนคำขอลบสิทธิ์",
+        "rows": {
+          "header": "ลบสิทธิ์การถอนต่อไปนี้หรือไม่",
+          "withdraw_from_account": "ถอนออกจากบัญชี: {withdraw_from_account} ({withdraw_from_accountOP})",
+          "authorized_account": "บัญชีที่ได้รับอนุญาต: {authorized_account} ({authorized_accountOP})",
+          "withdrawal_permission": "สิทธิ์การถอน: {withdrawal_permission}",
+          "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
+        },
+        "tooltip": "ลบสิทธิ์การถอน"
+      },
+      "committee_member_create": {
+        "method": "กรรมการจัดสร้าง",
+        "title": "กรรมการสร้างคำขอ",
+        "rows": {
+          "header": "สร้างกรรมการ?",
+          "committee_member_account": "บัญชีสมาชิกคณะกรรมการ: {committee_member_account} ({committee_member_accountOP})",
+          "url": "URL: {url}",
+          "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
+        },
+        "tooltip": "จัดทำบัญชีสมาชิกคณะกรรมการ"
+      },
+      "committee_member_update": {
+        "method": "อัพเดทสมาชิกคณะกรรมการ",
+        "title": "คำขอปรับปรุงสมาชิกคณะกรรมการ",
+        "rows": {
+          "header": "ปรับปรุงรายละเอียดของคณะกรรมการดังต่อไปนี้?",
+          "committee_member": "สมาชิกคณะกรรมการ: {committee_member}",
+          "committee_member_account": "บัญชีสมาชิกคณะกรรมการ: {committee_member_account} ({committee_member_accountOP})",
+          "new_url": "URL ใหม่: {new_url}",
+          "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
+        },
+        "tooltip": "อัปเดตรายละเอียดบัญชีสมาชิกคณะกรรมการของคุณ"
+      },
+      "committee_member_update_global_parameters": {
+        "method": "สมาชิกคณะกรรมการปรับปรุงพารามิเตอร์ส่วนกลาง",
+        "title": "สมาชิกคณะกรรมการปรับปรุงคำขอพารามิเตอร์ส่วนกลาง",
+        "rows": {
+          "header": "อนุมัติตามพารามิเตอร์สากลในฐานะคณะกรรมการ?",
+          "new_parameters": "พารามิเตอร์ใหม่:",
+          "current_fees": "ค่าธรรมเนียมปัจจุบัน: {current_fees}",
+          "block_interval": "ช่วงเวลาบล็อก: {block_interval}",
+          "maintenance_interval": "ช่วงเวลาบำรุงรักษา: {maintenance_interval}",
+          "maintenance_skip_slots": "ช่องข้ามการบำรุงรักษา: {maintenance_skip_slots}",
+          "committee_proposal_review_period": "ระยะเวลาการพิจารณาข้อเสนอของคณะกรรมการ: {committee_proposal_review_period}",
+          "maximum_transaction_size": "ขนาดธุรกรรมสูงสุด: {maximum_transaction_size}",
+          "maximum_block_size": "ขนาดบล็อกสูงสุด: {maximum_block_size}",
+          "maximum_time_until_expiration": "เวลาสูงสุดจนกว่าจะหมดอายุ: {maximum_time_until_expiration}",
+          "maximum_proposal_lifetime": "อายุการใช้งานสูงสุดของข้อเสนอ: {maximum_proposal_lifetime}",
+          "maximum_asset_whitelist_authorities": "หน่วยงานอนุญาตรายการสินทรัพย์สูงสุด: {maximum_asset_whitelist_authorities}",
+          "maximum_asset_feed_publishers": "ผู้เผยแพร่ฟีดเนื้อหาสูงสุด: {maximum_asset_feed_publishers}",
+          "maximum_witness_count": "จำนวนพยานสูงสุด: {maximum_witness_count}",
+          "maximum_committee_count": "จำนวนคณะกรรมการสูงสุด: {maximum_committee_count}",
+          "maximum_authority_membership": "การเป็นสมาชิกผู้มีอำนาจสูงสุด: {maximum_authority_membership}",
+          "reserve_percent_of_fee": "เปอร์เซ็นต์ค่าธรรมเนียมการจอง: {reserve_percent_of_fee}",
+          "network_percent_of_fee": "เปอร์เซ็นต์ของค่าธรรมเนียมเครือข่าย: {network_percent_of_fee}",
+          "lifetime_referrer_percent_of_fee": "เปอร์เซ็นต์ค่าธรรมเนียมผู้อ้างอิงตลอดอายุการใช้งาน: {lifetime_referrer_percent_of_fee}",
+          "cashback_vesting_period_seconds": "ระยะเวลาการได้รับเงินคืนเป็นวินาที: {cashback_vesting_period_seconds}",
+          "cashback_vesting_threshold": "เกณฑ์การได้รับเงินคืน: {cashback_vesting_threshold}",
+          "count_non_member_votes": "นับคะแนนที่ไม่ใช่สมาชิก: {count_non_member_votes}",
+          "allow_non_member_whitelists": "อนุญาตรายการที่อนุญาตพิเศษที่ไม่ใช่สมาชิก: {allow_non_member_whitelists}",
+          "witness_pay_per_block": "พยานจ่ายต่อบล็อก: {witness_pay_per_block}",
+          "worker_budget_per_day": "งบประมาณคนงานต่อวัน: {worker_budget_per_day}",
+          "max_predicate_opcode": "opcode เพรดิเคตสูงสุด: {max_predicate_opcode}",
+          "fee_liquidation_threshold": "เกณฑ์การชำระค่าธรรมเนียม: {fee_liquidation_threshold}",
+          "accounts_per_fee_scale": "บัญชีต่อระดับค่าธรรมเนียม: {accounts_per_fee_scale}",
+          "account_fee_scale_bitshifts": "บิตชิฟต์ค่าธรรมเนียมบัญชี: {account_fee_scale_bitshifts}",
+          "max_authority_depth": "ความลึกของสิทธิ์สูงสุด: {max_authority_depth}",
+          "extensions": "ส่วนขยาย: {extensions}",
+          "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
+        },
+        "tooltip": "เผยแพร่จุดยืนของสมาชิกคณะกรรมการของคุณเกี่ยวกับค่าพารามิเตอร์ทั่วโลกของ Bitshares blockchain"
+      },
+      "vesting_balance_create": {
+        "method": "การสร้างยอดเงินคงเหลือ",
+        "title": "ยอดเงินคงเหลือสร้างคำขอ",
+        "rows": {
+          "header": "สร้างยอดดุลการได้รับสิทธิ์ต่อไปนี้หรือไม่",
+          "creator": "ผู้สร้าง: {creator} ({creatorOP})",
+          "owner": "เจ้าของ: {owner} ({ownerOP})",
+          "amount": "จำนวนเงิน: {amount} ({asset_id})",
+          "policy": "นโยบาย:",
+          "begin_timestamp": "การประทับเวลาเริ่มต้น: {begin_timestamp}",
+          "vesting_cliff_seconds": "วินาทีที่ผาหมดสิทธิ์: {vesting_cliff_seconds}",
+          "vesting_duration_seconds": "วินาทีระยะเวลาการให้สิทธิ์: {vesting_duration_seconds}",
+          "start_claim": "เริ่มการอ้างสิทธิ์: {start_claim}",
+          "vesting_seconds": "วินาทีในการให้สิทธิ์: {vesting_seconds}",
+          "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
+        },
+        "tooltip": "สร้างความสมดุลของการได้รับสิทธิ"
+      },
+      "vesting_balance_withdraw": {
+        "method": "ถอนเงินคงเหลือ",
+        "title": "คำขอถอนเงินคงเหลือ",
+        "rows": {
+          "header": "ยอดเงินคงเหลือ",
+          "owner": "เจ้าของ: {owner} ({ownerOP})",
+          "claim": "อ้างสิทธิ์: {claim} ({asset_id})"
+        },
+        "tooltip": "ถอนออกจากยอดคงเหลือ"
+      },
+      "worker_create": {
+        "method": "คนงานสร้าง",
+        "title": "ผู้ปฏิบัติงานสร้างคำขอ",
+        "rows": {
+          "header": "สร้างข้อเสนอของผู้ปฏิบัติงานต่อไปนี้หรือไม่",
+          "owner": "เจ้าของ: {owner} ({ownerOP})",
+          "work_begin_date": "วันที่เริ่มงาน: {work_begin_date}",
+          "work_end_date": "วันที่สิ้นสุดการทำงาน: {work_end_date}",
+          "daily_pay": "จ่ายรายวัน: {daily_pay}",
+          "name": "ชื่อ: {name}",
+          "url": "URL: {url}",
+          "initializer": "ตัวเริ่มต้น: {initializer}",
+          "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
+        },
+        "tooltip": "สร้างข้อเสนอของผู้ปฏิบัติงาน"
+      },
+      "custom": {
+        "method": "กำหนดเอง",
+        "title": "คำขอที่กำหนดเอง",
+        "rows": {
+          "header": "การดำเนินการที่กำหนดเอง:",
+          "payer": "ผู้ชำระเงิน: {payer} ({payerOP})",
+          "required_auths": "หน่วยงานที่จำเป็น: {required_auths}",
+          "id": "{id}",
+          "data": "ข้อมูล: {data}",
+          "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
+        },
+        "tooltip": "ให้วิธีทั่วไปในการเพิ่มโปรโตคอลระดับที่สูงขึ้นนอกเหนือจากฉันทามติของพยาน"
+      },
+      "assert": {
+        "method": "ยืนยัน",
+        "title": "ยืนยันคำขอ",
+        "rows": {
+          "header": "การดำเนินการยืนยัน:",
+          "fee_paying_account": "บัญชีที่ชำระค่าธรรมเนียม: {fee_paying_account} ({fee_paying_accountOP})",
+          "predicates": "เพรดิเคต: {predicates}",
+          "required_auths": "หน่วยงานที่จำเป็น: {required_auths}",
+          "extensions": "ส่วนขยาย: {extensions}",
+          "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
+        },
+        "tooltip": "ยืนยันว่าเงื่อนไขบางอย่างเป็นจริง"
+      },
+      "balance_claim": {
+        "method": "การเรียกร้องยอดคงเหลือ",
+        "title": "คำขอเรียกร้องยอดคงเหลือ",
+        "rows": {
+          "header": "เรียกร้องยอดต่อไปนี้?",
+          "deposit_to_account": "ฝากเข้าบัญชี: {deposit_to_account} ({deposit_to_accountOP})",
+          "balance_to_claim": "ยอดคงเหลือที่จะอ้างสิทธิ์: {balance_to_claim} ({asset_id})",
+          "balance_owner_key": "รหัสเจ้าของยอดคงเหลือ: {balance_owner_key}",
+          "total_claimed": "การอ้างสิทธิ์ทั้งหมด: {total_claimed} ({asset_id})",
+          "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
+        },
+        "tooltip": "เรียกร้องจากยอดคงเหลือ"
+      },
+      "override_transfer": {
+        "method": "แทนที่การถ่ายโอน",
+        "title": "ลบล้างคำขอโอน",
+        "rows": {
+          "header": "ลบล้างการโอนต่อไปนี้หรือไม่",
+          "issuer": "ผู้ออก: {issuer} ({issuerOP})",
+          "from": "จาก: {from} ({fromOP})",
+          "to": "ถึง: {to} ({toOP})",
+          "amount": "จำนวนเงิน: {amount} ({asset_id})",
+          "memo": "ข้อควรจำ: {memo}",
+          "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
+        },
+        "tooltip": "แทนที่การดำเนินการถ่ายโอน"
+      },
+      "transfer_to_blind": {
+        "method": "ถ่ายโอนไปยังคนตาบอด",
+        "title": "โอนไปยังคำขอตาบอด",
+        "rows": {
+          "header": "โอนสิ่งต่อไปนี้ให้กับคนตาบอดหรือไม่",
+          "amount": "จำนวนเงิน: {amount}",
+          "from": "จาก: {from} ({fromOP})",
+          "blinding_factor": "ปัจจัยที่ทำให้ไม่เห็น: {blinding_factor}",
+          "outputs": "เอาต์พุต: {outputs}",
+          "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
+        },
+        "tooltip": "โอนทรัพย์สินไปยังปลายทางที่ตาบอด"
+      },
+      "blind_transfer": {
+        "method": "การโอนคนตาบอด",
+        "title": "คำขอโอนตาบอด",
+        "rows": {
+          "header": "อนุมัติการโอนคนตาบอดต่อไปนี้หรือไม่",
+          "inputs": "อินพุต: {inputs}",
+          "outputs": "เอาต์พุต: {outputs}",
+          "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
+        },
+        "tooltip": "โอนสินทรัพย์ที่ตาบอดในลักษณะที่ตาบอด"
+      },
+      "transfer_from_blind": {
+        "method": "ถ่ายโอนจากคนตาบอด",
+        "title": "โอนจากคำขอตาบอด",
+        "rows": {
+          "header": "ถ่ายโอนสิ่งต่อไปนี้จากคนตาบอดหรือไม่",
+          "amount": "จำนวนเงิน: {amount}",
+          "to": "ถึง: {to} ({toOP})",
+          "blinding_factor": "ปัจจัยที่ทำให้ไม่เห็น: {blinding_factor}",
+          "inputs": "อินพุต: {inputs}",
+          "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
+        },
+        "tooltip": "ถอนสินทรัพย์ออกจากยอดคงเหลือ"
+      },
+      "asset_claim_fees": {
+        "method": "ค่าธรรมเนียมการเรียกร้องทรัพย์สิน",
+        "title": "คำขอค่าธรรมเนียมการเรียกร้องสินทรัพย์",
+        "rows": {
+          "header": "ถอนค่าธรรมเนียมจากสินทรัพย์ต่อไปนี้หรือไม่",
+          "issuer": "ผู้ออก: {issuer} ({issuerOP})",
+          "amount_to_claim": "จำนวนที่จะอ้างสิทธิ์: {amount_to_claim} ({asset_id})",
+          "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
+        },
+        "tooltip": "เรียกร้องค่าธรรมเนียมจากสินทรัพย์"
+      },
+      "bid_collateral": {
+        "method": "หลักประกันการเสนอราคา",
+        "title": "คำขอหลักประกันการเสนอราคา",
+        "rows": {
+          "header": "อนุมัติการเสนอราคาหลักประกันดังต่อไปนี้?",
+          "bidder": "ผู้เสนอราคา: {bidder} ({bidderOP})",
+          "additional_collateral": "หลักประกันเพิ่มเติม: {additional_collateral}",
+          "debt_covered": "หนี้ที่ครอบคลุม: {debt_covered}",
+          "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
+        },
+        "tooltip": "เสนอราคาในหลักประกันบิตแอสเซทที่สนับสนุนเมื่อมีการตัดสินทั่วโลก"
+      },
+      "asset_claim_pool": {
+        "method": "กลุ่มการอ้างสิทธิ์ในสินทรัพย์",
+        "title": "คำขอกลุ่มการอ้างสิทธิ์สินทรัพย์",
+        "rows": {
+          "header": "อ้างสิทธิ์กลุ่มเนื้อหาต่อไปนี้หรือไม่",
+          "issuer": "ผู้ออก: {issuer} ({issuerOP})",
+          "asset_id": "เนื้อหา: {asset_id}",
+          "amount_to_claim": "จำนวนเงินที่จะเรียกร้อง: {amount_to_claim}",
+          "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
+        },
+        "tooltip": "โอน BTS จากกลุ่มค่าธรรมเนียมของสินทรัพย์ที่ระบุกลับไปยังยอดคงเหลือของผู้ออก"
+      },
+      "asset_update_issuer": {
+        "method": "ผู้ออกการอัปเดตเนื้อหา",
+        "title": "คำขอของผู้ออกการอัปเดตสินทรัพย์",
+        "rows": {
+          "header": "อัปเดตผู้ออกสินทรัพย์ต่อไปนี้ไหม",
+          "issuer": "ผู้ออก: {issuer} ({issuerOP})",
+          "asset_to_update": "เนื้อหาที่จะอัปเดต: {asset_to_update}",
+          "new_issuer": "ผู้ออกใหม่: {new_issuer} ({new_issuerOP})",
+          "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
+        },
+        "tooltip": "อัปเดตผู้ออกสินทรัพย์เป็นบัญชีผู้ดูแลระบบใหม่"
+      },
+      "htlc_create": {
+        "method": "สร้าง HTML",
+        "title": "คำขอสร้าง HTML",
+        "rows": {
+          "header": "สร้างการดำเนินการ HTML ต่อไปนี้หรือไม่",
+          "from": "จาก: {from} ({fromOP})",
+          "to": "ถึง: {to} ({toOP})",
+          "amount": "จำนวนเงิน: {amount}",
+          "preimage_hash": "แฮชภาพล่วงหน้า: {preimage_hash}",
+          "preimage_size": "ขนาดพรีอิมเมจ: {preimage_size}",
+          "claim_period_seconds": "ระยะเวลาการอ้างสิทธิ์ (วินาที): {claim_period_seconds}",
+          "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
+        },
+        "tooltip": "สร้างการดำเนินการสัญญาล็อกเวลาแฮช (HTLC)"
+      },
+      "htlc_redeem": {
+        "method": "แลก HTML",
+        "title": "คำขอแลก HTML",
+        "rows": {
+          "header": "แลกการดำเนินการ HTLC ต่อไปนี้หรือไม่",
+          "htlc_id": "รหัส HTML: {htlc_id}",
+          "redeemer": "ผู้ไถ่: {redeemer} ({redeemerOP})",
+          "preimage": "พรีอิมเมจ: {preimage}",
+          "extensions": "ส่วนขยาย: {extensions}",
+          "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
+        },
+        "tooltip": "แลกรับเนื้อหาของการดำเนินการ HTLC"
+      },
+      "htlc_extend": {
+        "method": "HTML ขยาย",
+        "title": "คำขอขยาย HTML",
+        "rows": {
+          "header": "อนุมัติส่วนขยาย HTML ต่อไปนี้หรือไม่",
+          "htlc_id": "รหัส HTML: {htlc_id}",
+          "update_issuer": "ผู้ออกการอัปเดต: {update_issuer} ({update_issuerOP})",
+          "seconds_to_add": "วินาทีที่จะเพิ่ม: {seconds_to_add}",
+          "extensions": "ส่วนขยาย: {extensions}",
+          "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
+        },
+        "tooltip": "ขยายระยะเวลาของการดำเนินการ HTLC"
+      },
+      "custom_authority_create": {
+        "method": "สร้างสิทธิ์ที่กำหนดเอง",
+        "title": "คำขอสร้างสิทธิ์ที่กำหนดเอง",
+        "rows": {
+          "header": "สร้างสิทธิ์ที่กำหนดเองต่อไปนี้หรือไม่",
+          "account": "บัญชี: {account} ({accountOP})",
+          "enabled": "เปิดใช้งาน: {enabled}",
+          "valid_from": "ใช้ได้จาก: {valid_from}",
+          "valid_to": "ใช้ได้กับ: {valid_to}",
+          "operation_type": "ประเภทการทำงาน: {operation_type}",
+          "auth": "ผู้มีอำนาจ: {auth}",
+          "restrictions": "ข้อจำกัด: {restrictions}",
+          "extensions": "ส่วนขยาย: {extensions}",
+          "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
+        },
+        "tooltip": "สร้างสิทธิ์ที่กำหนดเองใหม่"
+      },
+      "custom_authority_update": {
+        "method": "อัปเดตสิทธิ์ที่กำหนดเอง",
+        "title": "คำขออัปเดตสิทธิ์ที่กำหนดเอง",
+        "rows": {
+          "header": "อัปเดตสิทธิ์ที่กำหนดเองต่อไปนี้ไหม",
+          "account": "บัญชี: {account} ({accountOP})",
+          "authority_to_update": "สิทธิ์ในการอัปเดต: {authority_to_update}",
+          "new_enabled": "เปิดใช้งานใหม่: {new_enabled}",
+          "new_valid_from": "ใหม่ใช้ได้จาก: {new_valid_from}",
+          "new_valid_to": "ใหม่ใช้ได้กับ: {new_valid_to}",
+          "new_auth": "หน่วยงานใหม่: {new_auth}",
+          "restrictions_to_remove": "ข้อจำกัดในการลบ: {restrictions_to_remove}",
+          "restrictions_to_add": "ข้อจำกัดในการเพิ่ม: {restrictions_to_add}",
+          "extensions": "ส่วนขยาย: {extensions}",
+          "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
+        },
+        "tooltip": "อัปเดตสิทธิ์ที่กำหนดเอง"
+      },
+      "custom_authority_delete": {
+        "method": "ลบสิทธิ์ที่กำหนดเอง",
+        "title": "คำขอลบสิทธิ์ที่กำหนดเอง",
+        "rows": {
+          "header": "ลบสิทธิ์ที่กำหนดเองต่อไปนี้ไหม",
+          "account": "บัญชี: {account} ({accountOP})",
+          "authority_to_delete": "สิทธิ์ในการลบ: {authority_to_delete}",
+          "extensions": "ส่วนขยาย: {extensions}",
+          "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
+        },
+        "tooltip": "ลบสิทธิ์ที่กำหนดเอง"
+      },
+      "ticket_create": {
+        "method": "สร้างตั๋ว",
+        "title": "คำขอสร้างตั๋ว",
+        "rows": {
+          "header": "สร้างตั๋วต่อไปนี้หรือไม่",
+          "account": "บัญชี: {account} ({accountOP})",
+          "target_type": "ประเภทเป้าหมาย: {target_type}",
+          "amount": "จำนวนเงิน: {amount}",
+          "extensions": "ส่วนขยาย: {extensions}",
+          "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
+        },
+        "tooltip": "สร้างตั๋วใหม่"
+      },
+      "ticket_update": {
+        "method": "การปรับปรุงตั๋ว",
+        "title": "คำขออัปเดตตั๋ว",
+        "rows": {
+          "header": "อัปเดตตั๋วต่อไปนี้หรือไม่",
+          "ticket": "ตั๋ว: {ticket}",
+          "account": "บัญชี: {account} ({accountOP})",
+          "target_type": "ประเภทเป้าหมาย: {target_type}",
+          "amount_for_new_target": "จำนวนเงินสำหรับเป้าหมายใหม่: {amount_for_new_target}",
+          "extensions": "ส่วนขยาย: {extensions}"
+        },
+        "tooltip": "อัปเดตตั๋วที่มีอยู่"
+      },
+      "liquidity_pool_create": {
+        "method": "สร้างพูลสภาพคล่อง",
+        "title": "คำขอสร้างกลุ่มสภาพคล่อง",
+        "rows": {
+          "header": "สร้าง Liquidity Pool โดยมีรายละเอียดดังนี้?",
+          "account": "บัญชี: {account} ({accountOP})",
+          "asset_a": "เนื้อหา A: {asset_a} ({asset_aOP})",
+          "asset_b": "สินทรัพย์ B: {asset_b} ({asset_bOP})",
+          "share_asset": "แชร์เนื้อหา: {share_asset} ({share_assetOP})",
+          "taker_fee_percent": "เปอร์เซ็นต์ค่าธรรมเนียมผู้รับ: {taker_fee_percent}",
+          "withdrawal_fee_percent": "เปอร์เซ็นต์ค่าธรรมเนียมการถอน: {withdrawal_fee_percent}",
+          "extensions": "ส่วนขยาย: {extensions}",
+          "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
+        },
+        "tooltip": "สร้างสภาพคล่อง"
+      },
+      "liquidity_pool_delete": {
+        "method": "ลบพูลสภาพคล่อง",
+        "title": "คำขอลบกลุ่มสภาพคล่อง",
+        "rows": {
+          "header": "ลบ Liquidity Pool ต่อไปนี้ไหม",
+          "account": "บัญชี: {account} ({accountOP})",
+          "pool_id": "รหัสพูล: {pool_id}",
+          "extensions": "ส่วนขยาย: {extensions}",
+          "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
+        },
+        "tooltip": "ลบพูลสภาพคล่อง"
+      },
+      "liquidity_pool_deposit": {
+        "method": "เงินฝากรวมสภาพคล่อง",
+        "title": "คำขอเงินฝากรวมสภาพคล่อง",
+        "rows": {
+          "header": "ฝากทรัพย์สินต่อไปนี้เข้ากองทุนสภาพคล่อง?",
+          "account": "บัญชี: {account} ({accountOP})",
+          "pool": "พูล: {pool}",
+          "asset_a": "เนื้อหา A: {asset_a} ({asset_aOP})",
+          "asset_b": "สินทรัพย์ B: {asset_b} ({asset_bOP})",
+          "extensions": "ส่วนขยาย: {extensions}",
+          "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
+        },
+        "tooltip": "ฝากเงินเข้ากลุ่มสภาพคล่อง"
+      },
+      "liquidity_pool_withdraw": {
+        "method": "ถอนกลุ่มสภาพคล่อง",
+        "title": "คำขอถอนกลุ่มสภาพคล่อง",
+        "rows": {
+          "header": "ถอนสินทรัพย์ต่อไปนี้ออกจากกลุ่มสภาพคล่องหรือไม่",
+          "account": "บัญชี: {account} ({accountOP})",
+          "pool": "พูล: {pool}",
+          "share_asset": "แชร์เนื้อหา: {share_asset} ({share_assetOP})",
+          "extensions": "ส่วนขยาย: {extensions}",
+          "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
+        },
+        "tooltip": "ถอนเงินออกจากกลุ่มสภาพคล่อง"
+      },
+      "liquidity_pool_exchange": {
+        "method": "การแลกเปลี่ยนสภาพคล่อง",
+        "title": "คำขอแลกเปลี่ยน Liquidity Pool",
+        "rows": {
+          "header": "อนุมัติการแลกเปลี่ยน Liquidity Pool ต่อไปนี้หรือไม่",
+          "account": "บัญชี: {account} ({accountOP})",
+          "pool": "พูล: {pool}",
+          "amount_to_sell": "จำนวนที่จะขาย: {amount_to_sell}",
+          "min_to_receive": "ขั้นต่ำในการรับ: {min_to_receive}",
+          "extensions": "ส่วนขยาย: {extensions}",
+          "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
+        },
+        "tooltip": "แลกเปลี่ยนกับกลุ่มสภาพคล่อง"
+      },
+      "samet_fund_create": {
+        "method": "กองทุน SameT สร้าง",
+        "title": "คำขอสร้างกองทุน SameT",
+        "rows": {
+          "header": "อนุมัติการจัดตั้งกองทุนเสม็ดดังต่อไปนี้?",
+          "owner_account": "บัญชีเจ้าของ: {owner_account} ({owner_accountOP})",
+          "asset_type": "ประเภทสินทรัพย์: {asset_type}",
+          "balance": "ยอดคงเหลือ: {balance}",
+          "fee_rate": "อัตราค่าธรรมเนียม: {fee_rate}",
+          "extensions": "ส่วนขยาย: {extensions}",
+          "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
+        },
+        "tooltip": "สร้างกองทุน SameT ใหม่ "
+      },
+      "samet_fund_delete": {
+        "method": "ลบกองทุน SameT",
+        "title": "คำขอลบกองทุน SameT",
+        "rows": {
+          "header": "ลบกองทุนเสม็ดต่อไปนี้หรือไม่",
+          "owner_account": "บัญชีเจ้าของ: {owner_account} ({owner_accountOP})",
+          "fund_id": "รหัสกองทุน: {fund_id}",
+          "extensions": "ส่วนขยาย: {extensions}",
+          "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
+        },
+        "tooltip": "ลบวัตถุกองทุน SameT"
+      },
+      "samet_fund_update": {
+        "method": "อัพเดทกองทุน SameT",
+        "title": "คำขออัปเดตกองทุน SameT",
+        "rows": {
+          "header": "อัพเดทกองทุนเสม็ดดังต่อไปนี้?",
+          "owner_account": "บัญชีเจ้าของ: {owner_account} ({owner_accountOP})",
+          "fund_id": "รหัสกองทุน: {fund_id}",
+          "delta_amount": "จำนวนเดลต้า: {delta_amount}",
+          "new_fee_rate": "อัตราค่าธรรมเนียมใหม่: {new_fee_rate}",
+          "extensions": "ส่วนขยาย: {extensions}",
+          "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
+        },
+        "tooltip": "อัพเดตวัตถุกองทุน SameT"
+      },
+      "samet_fund_borrow": {
+        "method": "ยืมกองทุน SameT",
+        "title": "คำขอยืมกองทุน SameT",
+        "rows": {
+          "header": "กู้ยืมจากกองทุนเสม็ดดังต่อไปนี้?",
+          "borrower": "ผู้ยืม: {borrower} ({borrowerOP})",
+          "fund_id": "รหัสกองทุน: {fund_id}",
+          "borrow_amount": "จำนวนการยืม: {borrow_amount}",
+          "extensions": "ส่วนขยาย: {extensions}",
+          "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
+        },
+        "tooltip": "ยืมจากกองทุน SameT"
+      },
+      "samt_fund_repay": {
+        "method": "ชำระคืนกองทุน SameT",
+        "title": "คำขอชำระคืนกองทุน SameT",
+        "rows": {
+          "header": "ชำระคืนกองทุนเสม็ดดังต่อไปนี้",
+          "account": "บัญชี: {account} ({accountOP})",
+          "fund_id": "รหัสกองทุน: {fund_id}",
+          "repay_amount": "จำนวนชำระคืน: {repay_amount}",
+          "fund_fee": "ค่าธรรมเนียมกองทุน: {fund_fee}",
+          "extensions": "ส่วนขยาย: {extensions}",
+          "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
+        },
+        "tooltip": "ชำระหนี้ให้กับกองทุน SameT"
+      },
+      "credit_offer_create": {
+        "method": "สร้างข้อเสนอสินเชื่อ",
+        "title": "ข้อเสนอสินเชื่อสร้างคำขอ",
+        "rows": {
+          "header": "อนุมัติการสร้างข้อเสนอสินเชื่อต่อไปนี้หรือไม่",
+          "owner_account": "บัญชีเจ้าของ: {owner_account} ({owner_accountOP})",
+          "asset_type": "ประเภทสินทรัพย์: {asset_type}",
+          "balance": "ยอดคงเหลือ: {balance}",
+          "fee_rate": "อัตราค่าธรรมเนียม: {fee_rate}",
+          "max_duration_seconds": "ระยะเวลาสูงสุด วินาที: {max_duration_seconds}",
+          "min_deal_amount": "จำนวนข้อตกลงขั้นต่ำ: {min_deal_amount}",
+          "enabled": "เปิดใช้งาน: {enabled}",
+          "auto_disable_time": "เวลาปิดอัตโนมัติ: {auto_disable_time}",
+          "acceptable_collateral": "หลักประกันที่ยอมรับได้: {acceptable_collateral}",
+          "acceptable_borrowers": "ผู้กู้ที่ยอมรับได้: {acceptable_borrowers}",
+          "extensions": "ส่วนขยาย: {extensions}",
+          "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
+        },
+        "tooltip": "สร้างข้อเสนอสินเชื่อใหม่ "
+      },
+      "credit_offer_delete": {
+        "method": "ลบข้อเสนอเครดิต",
+        "title": "คำขอลบข้อเสนอสินเชื่อ",
+        "rows": {
+          "header": "ลบข้อเสนอเครดิตต่อไปนี้ไหม",
+          "owner_account": "บัญชีเจ้าของ: {owner_account} ({owner_accountOP})",
+          "offer_id": "รหัสข้อเสนอ: {offer_id}",
+          "extensions": "ส่วนขยาย: {extensions}",
+          "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
+        },
+        "tooltip": "ลบข้อเสนอสินเชื่อ"
+      },
+      "credit_offer_update": {
+        "method": "อัปเดตข้อเสนอสินเชื่อ",
+        "title": "คำขออัปเดตข้อเสนอสินเชื่อ",
+        "rows": {
+          "header": "อัปเดตข้อเสนอสินเชื่อต่อไปนี้ไหม",
+          "owner_account": "บัญชีเจ้าของ: {owner_account} ({owner_accountOP})",
+          "offer_id": "รหัสข้อเสนอ: {offer_id}",
+          "delta_amount": "จำนวนเดลต้า: {delta_amount}",
+          "fee_rate": "อัตราค่าธรรมเนียม: {fee_rate}",
+          "max_duration_seconds": "ระยะเวลาสูงสุด วินาที: {max_duration_seconds}",
+          "min_deal_amount": "จำนวนข้อตกลงขั้นต่ำ: {min_deal_amount}",
+          "enabled": "เปิดใช้งาน: {enabled}",
+          "auto_disable_time": "เวลาปิดอัตโนมัติ: {auto_disable_time}",
+          "acceptable_collateral": "หลักประกันที่ยอมรับได้: {acceptable_collateral}",
+          "acceptable_borrowers": "ผู้กู้ที่ยอมรับได้: {acceptable_borrowers}",
+          "extensions": "ส่วนขยาย: {extensions}",
+          "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
+        },
+        "tooltip": "อัปเดตข้อเสนอสินเชื่อ"
+      },
+      "credit_offer_accept": {
+        "method": "ข้อเสนอสินเชื่อยอมรับ",
+        "title": "ข้อเสนอสินเชื่อยอมรับคำขอ",
+        "rows": {
+          "header": "อนุมัติข้อเสนอสินเชื่อต่อไปนี้?",
+          "borrower": "ผู้ยืม: {borrower} ({borrowerOP})",
+          "offer_id": "รหัสข้อเสนอ: {offer_id}",
+          "borrow_amount": "จำนวนการยืม: {borrow_amount}",
+          "collateral": "หลักประกัน: {collateral}",
+          "max_fee_rate": "อัตราค่าธรรมเนียมสูงสุด: {max_fee_rate}",
+          "min_duration_seconds": "ระยะเวลาขั้นต่ำ วินาที: {min_duration_seconds}",
+          "extensions": "ส่วนขยาย: {extensions}",
+          "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
+        },
+        "tooltip": "ยอมรับข้อเสนอสินเชื่อและสร้างข้อตกลงสินเชื่อ"
+      },
+      "credit_deal_repay": {
+        "method": "ชำระคืนข้อตกลงเครดิต",
+        "title": "คำขอชำระคืนข้อตกลงเครดิต",
+        "rows": {
+          "header": "ชำระคืนข้อตกลงเครดิตต่อไปนี้หรือไม่",
+          "account": "บัญชี: {account} ({accountOP})",
+          "deal_id": "รหัสดีล: {deal_id}",
+          "repay_amount": "จำนวนชำระคืน: {repay_amount}",
+          "credit_fee": "ค่าธรรมเนียมเครดิต: {credit_fee}",
+          "extensions": "ส่วนขยาย: {extensions}",
+          "fee": "ค่าธรรมเนียมโดยประมาณ: {fee}"
+        },
+        "tooltip": "ชำระคืนข้อตกลงเครดิต"
       }
     }
   }
+}

@@ -362,10 +362,10 @@ export async function injectedCall(request, blockchain) {
         return _promptFail("injectedCall", request.id, request, reject);
     }
 
-    let popupContents = {
+    const popupContents = {
         request: request,
         visualizedAccount: visualizedAccount || account.accountName,
-        visualizedParams: visualizedParams
+        visualizedParams: JSON.stringify(visualizedParams)
     };
 
     if (foundIDs.length) {
@@ -379,9 +379,13 @@ export async function injectedCall(request, blockchain) {
         popupContents['serverError'] = true;
     }
 
-    store.dispatch("WalletStore/notifyUser", {notify: "request", message: window.t('common.apiUtils.inject')});
+    try {
+        ipcRenderer.send('createPopup', popupContents);
+    } catch (error) {
+        return _promptFail("injectedCall", request.id, request, reject);
+    }
 
-    ipcRenderer.send('createPopup', popupContents);
+    store.dispatch("WalletStore/notifyUser", {notify: "request", message: window.t('common.apiUtils.inject')});
 
     ipcRenderer.once(`popupApproved_${request.id}`, async (event, result) => {
         let memoObject;

@@ -56,7 +56,16 @@ let _blockchains = {
         chainId: 'eb938e2a955e39e335120d0a99f3b9f8c04a9ed5690275ea5037d6bbadfc6cf3',
         nodeList: [
             {
+                url: "wss://api.tusc.network/wallet"
+            },
+            {
                 url: "wss://api.cryptotusc.com"
+            },
+            {
+                url: "wss://tuscapi.gambitweb.com"
+            },
+            {
+                url: "wss://api.readyrhino.one"
             }
         ]
     },

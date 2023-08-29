@@ -151,7 +151,10 @@
 </script>
 
 <template>
-    <div v-if="type && type !== '' && request">
+    <div
+        v-if="type && type !== '' && request"
+        style="overflow-y: auto; width: 750px;"
+    >
         <ui-collapse
             with-icon
             ripple
@@ -195,12 +198,16 @@
                 :warning="warning"
                 :to-send="toSend"
             />
-            <TransactionRequestPopup
+            <div
                 v-else-if="type === Actions.REQUEST_SIGNATURE || type === Actions.INJECTED_CALL"
-                :request="request"
-                :visualized-params="visualizedParams"
-                :visualized-account="visualizedAccount"
-            />
+                style="overflow-y: auto; padding-right: 25px;"
+            >
+                <TransactionRequestPopup
+                    :request="request"
+                    :visualized-params="visualizedParams"
+                    :visualized-account="visualizedAccount"
+                />
+            </div>
         </ui-collapse>
         <ui-collapse
             v-if="type === Actions.REQUEST_LINK && chainOperations"

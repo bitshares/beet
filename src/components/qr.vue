@@ -48,7 +48,7 @@
         let authorizedUse = false;
         for (let i = 0; i < qrTX.operations.length; i++) {
             let operation = qrTX.operations[i];
-            if (settingsRows.value.includes(operation[0])) {
+            if (settingsRows.value && settingsRows.value.includes(operation[0])) {
                 authorizedUse = true;
                 break;
             }
@@ -71,7 +71,7 @@
                 origin: 'localhost',
                 appName: 'qr',
                 browser: qrChoice.value,
-                params: qrTX,
+                params: qrTX.toObject(),
                 chain: refChain
             }
         }
@@ -142,10 +142,6 @@
         return getBlockchainAPI(chain).supportsQR();
     });
 
-    let currentChain = computed(() => {
-        return store.getters['AccountStore/getChain'];
-    });
-
     function setScope(newValue) {
         opPermissions.value = newValue;
         if (newValue === 'AllowAll') {
@@ -192,21 +188,21 @@
                 >
                     <span v-if="!opPermissions">
                         <p>
-                            Do you wish to configure the scope of scannable QR codes?
+                            {{ t('common.opPermissions.title.qr') }}
                         </p>
                         <ui-button
                             raised
                             style="margin-right:5px; margin-bottom: 5px;"
                             @click="setScope('Configure')"
                         >
-                            Yes - customize scope
+                            {{ t('common.opPermissions.yes') }}
                         </ui-button>
                         <ui-button
                             raised
                             style="margin-right:5px; margin-bottom: 5px;"
                             @click="setScope('AllowAll')"
                         >
-                            No - allow all operations
+                            {{ t('common.opPermissions.no') }}
                         </ui-button>
                     </span>
                     <span v-else-if="opPermissions == 'Configure' && !selectedRows">
@@ -246,17 +242,17 @@
                     <ui-button
                         raised
                         style="margin-bottom: 10px;"
-                        @click="setChoice('Scan')"
+                        @click="setChoice('Drag')"
                     >
-                        {{ t('common.qr.main.scan') }}
+                        {{ t('common.qr.main.drag') }}
                     </ui-button>
                     <br>
                     <ui-button
                         raised
                         style="margin-bottom: 10px;"
-                        @click="setChoice('Drag')"
+                        @click="setChoice('Scan')"
                     >
-                        {{ t('common.qr.main.drag') }}
+                        {{ t('common.qr.main.scan') }}
                     </ui-button>
                     <br>
                     <ui-button
