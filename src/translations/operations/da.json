@@ -2,8 +2,16 @@
   "general": {
     "content": "Indhold"
   },
+  "receipt": {
+    "id": "Transaktions-id: { resultID }",
+    "block": "Bloknummer: { resultBlockNum }",
+    "trxNum": "Transaktionsnummer: { resultTrxNum }",
+    "expiration": "Udløb: { resultExpiration }",
+    "signatures": "Signaturer: { resultSignatures }"
+  },
   "link": {
     "title": "Anmodning om kontolink",
+    "result": "Resultat af kontolink",
     "account_select": "Vælg konto",
     "account_missing": "Den anmodede konto findes ikke i denne tegnebog.",
     "request": "Applikationen '{appName}' fra '{origin}' anmoder om adgang til en {chain}-konto.",
@@ -16,12 +24,14 @@
   },
   "relink": {
     "title": "Anmodning om omkobling af konto",
+    "result": "Resultat af kontogentilknytning",
     "error": "Fejl under visning af prompt",
     "request": "Applikationen '{appName}' fra '{origin}' anmoder om at genlinke den tidligere linkede {chain}-konto: {accountId}. ",
     "request_tooltip": "Det tidligere link mellem applikationen og kontoreferencen vil blive nulstillet."
   },
   "account_id": {
     "title": "Anmodning om kontooplysninger",
+    "result": "Resultatet af kontooplysninger",
     "request": "App: '{appName}' fra '{origin}' anmoder om adgang til den linkede identitet (konto-id",
     "request_tooltip": "Som standard leveres et anonymt link. ",
     "accept_btn": "Give lov til",
@@ -29,6 +39,7 @@
   },
   "any_account_id": {
     "title": "Anmodning om kontooplysninger",
+    "result": "Resultatet af kontooplysninger",
     "request": "App: '{appName}' fra '{origin}' anmoder om adgang til en konto.",
     "request_cta": "Vælg den konto, der skal angives.",
     "accept_btn": "Give lov til",
@@ -36,6 +47,7 @@
   },
   "transfer": {
     "title": "Overførselsanmodning",
+    "result": "Overførselsresultat",
     "to": "Modtager",
     "amount": "Beløb",
     "memo": "Memo",
@@ -48,12 +60,24 @@
   },
   "rawsig": {
     "title": "Anmodning",
+    "result": "Anmod om resultat",
+    "headers": {
+      "request": "Vil du godkende følgende rå signatur?",
+      "result": "Følgende rå signatur blev godkendt:"
+    },
     "loading": "Indlæser transaktionsoplysninger fra blockchain, vent venligst.",
     "request": "App: '{appName}' fra '{origin}' har indsendt følgende transaktion for kontoen { chain }:{ accountName }.",
+    "summary": "Denne transaktion indeholder {numOps} operationer, du kan gennemse dem nedenfor.",
+    "summary_single": "Denne transaktion indeholder en enkelt handling, du kan gennemse den nedenfor.",
     "request_cta": "Vil du udføre det?",
     "accept_btn": "Skilt",
     "sign_and_broadcast_btn": "Skilt",
     "sign_btn": "Skilt",
+    "receipt": {
+      "title": "Vil du have en kvittering?",
+      "yes": "Ja, jeg vil have en kvittering.",
+      "no": "Nej, jeg vil ikke have en kvittering."
+    },
     "reject_btn": "Ignorere"
   },
   "whitelist": {
@@ -61,6 +85,7 @@
   },
   "vote": {
     "title": "Afstemningsanmodning",
+    "result": "Afstemningsresultat",
     "request": "App: '{appName}' fra '{origin}' vil have dig til at stemme på følgende {entity} med kontoen { chain }:{ accountName }",
     "request_cta": "",
     "accept_btn": "Godkende",
@@ -68,6 +93,7 @@
   },
   "message": {
     "title": "Underskriv beskedanmodning",
+    "result": "Signer Besked resultat",
     "request": "App: '{appName}' fra '{origin}' vil have dig til at underskrive følgende tekst med kontoen { chain }:{ accountName }",
     "request_cta": "",
     "accept_btn": "Godkende",
@@ -78,41 +104,81 @@
       "getAccount": {
         "method": "få konto",
         "title": "Anmodning om kontooplysninger",
+        "result": "Resultatet af kontooplysninger",
+        "headers": {
+          "request": "Vil du dele dine kontooplysninger?",
+          "result": "Dine kontooplysninger blev delt."
+        },
         "tooltip": "Spørger din tegnebog om blockchain-kontooplysninger"
       },
       "requestSignature": {
         "method": "anmodningSignatur",
-        "title": "Underskriftsanmodning",
+        "title": "Signaturanmodning",
+        "result": "Signatur resultat",
+        "headers": {
+          "request": "Vil du dele din signatur?",
+          "result": "Din signatur blev delt:"
+        },
         "tooltip": "Spørger din tegnebog om blockchain-signaturer"
       },
       "injectedCall": {
         "method": "injiceretCall",
         "title": "Injiceret opkaldsanmodning",
+        "result": "Injiceret opkaldsresultat",
+        "headers": {
+          "request": "Godkende følgende indsprøjtede opkald?",
+          "result": "Følgende indsprøjtede opkald blev godkendt:"
+        },
         "tooltip": "Beder din tegnebog om at håndtere en indsprøjtet blockchain-operation"
       },
       "voteFor": {
         "method": "Stem på",
         "title": "Afstemningsanmodning",
+        "result": "Afstemningsresultat",
+        "headers": {
+          "request": "Godkende følgende stemmeanmodning?",
+          "result": "Nedenstående stemmeanmodning blev godkendt"
+        },
         "tooltip": "Udfør en blockchain-afstemning"
       },
       "signMessage": {
         "method": "tegnBesked",
         "title": "Underskriv beskedanmodning",
+        "result": "Signer Besked resultat",
+        "headers": {
+          "request": "Vil du godkende at underskrive følgende meddelelse?",
+          "result": "Følgende besked blev underskrevet:"
+        },
         "tooltip": "Underskriv en blockchain-baseret besked"
       },
       "signNFT": {
         "method": "tegnNFT",
         "title": "Underskriv NFT-anmodning",
+        "result": "Underskriv NFT-resultat",
+        "headers": {
+          "request": "Vil du godkende at underskrive følgende NFT?",
+          "result": "Følgende NFT blev underskrevet:"
+        },
         "tooltip": "Underskriv en NFTs indhold"
       },
       "verifyMessage": {
         "method": "verifyMessage",
         "title": "Bekræft meddelelsesanmodning",
+        "result": "Bekræft beskedresultat",
+        "headers": {
+          "request": "Vil du bekræfte følgende meddelelse?",
+          "result": "Følgende besked blev bekræftet:"
+        },
         "tooltip": "Bekræft en blockchain-baseret signeret besked"
       },
       "transfer": {
         "method": "Overførsel",
         "title": "Overførselsanmodning",
+        "result": "Overførselsresultat",
+        "headers": {
+          "request": "Vil du godkende følgende overførselsanmodning?",
+          "result": "Følgende anmodning om overførsel blev godkendt:"
+        },
         "rows": {
           "from": "Fra: {from} ({opFrom})",
           "to": "Til: {to} ({opTo})",
@@ -123,12 +189,17 @@
       "limit_order_create": {
         "method": "Opret grænserækkefølge",
         "title": "Begræns ordre oprette anmodning",
+        "result": "Begræns rækkefølge skabe resultat",
+        "headers": {
+          "request": "Vil du godkende følgende anmodning om oprettelse af grænseordre?",
+          "result": "Følgende grænseordre blev oprettet:"
+        },
         "rows": {
           "trade": "Handle",
           "tradeFK": "Handel (fyld eller dræb)",
           "seller": "Sælger: {seller} ({opSeller})",
           "selling": "Sælger: {amount}",
-          "buying": "Køb: {amount}",
+          "buying": "Køber: {amount}",
           "price": "Pris: {price} {sellSymbol}/{buySymbol}"
         },
         "tooltip": "Et tilbud om at sælge et beløb af et aktiv til en bestemt valutakurs inden for et bestemt tidspunkt"
@@ -136,8 +207,12 @@
       "limit_order_cancel": {
         "method": "Begræns ordre annulleret",
         "title": "Begræns ordre annullering anmodning",
+        "result": "Begræns ordreannulleringsresultat",
+        "headers": {
+          "request": "Vil du annullere følgende grænseordre?",
+          "result": "Følgende limiterede ordre blev annulleret:"
+        },
         "rows": {
-          "header": "Vil du annullere følgende grænseordre?",
           "id": "Ordre-id: {id}",
           "fees": "Anslåede gebyrer: {fees}",
           "account": "Gebyrbetalingskonto: {account}"
@@ -147,8 +222,12 @@
       "call_order_update": {
         "method": "Ring ordreopdatering",
         "title": "Anmodning om opdatering af opkaldsordre",
+        "result": "Opkaldsordreopdateringsresultat",
+        "headers": {
+          "request": "Vil du opdatere din opkaldsordre til følgende?",
+          "result": "Følgende opkaldsordre blev opdateret:"
+        },
         "rows": {
-          "header": "Vil du opdatere din opkaldsordre til følgende?",
           "funding_account": "Finansieringskonto: {funding_account}",
           "delta_collateral": "Deltasikkerhed: {delta_collateral} ({id})",
           "delta_debt": "Deltagæld: {delta_debt} ({id})",
@@ -159,8 +238,12 @@
       "account_create": {
         "method": "Konto oprettes",
         "title": "Anmodning om oprettelse af konto",
+        "result": "Resultat af oprettelse af konto",
+        "headers": {
+          "request": "Vil du oprette følgende konto?",
+          "result": "Følgende konto blev oprettet:"
+        },
         "rows": {
-          "header": "Vil du oprette følgende konto?",
           "registrar": "Registrator: {registrar} ({opRegistrar})",
           "referrer": "Henviser: {referrer} ({opReferrer})",
           "referrer_percent": "Referrer procent: {referrer_percent}",
@@ -185,8 +268,12 @@
       "account_update": {
         "method": "Kontoopdatering",
         "title": "Anmodning om kontoopdatering",
+        "result": "Resultat af kontoopdatering",
+        "headers": {
+          "request": "Vil du opdatere følgende konto?",
+          "result": "Følgende konto blev opdateret:"
+        },
         "rows": {
-          "header": "Vil du oprette følgende konto?",
           "warning": "Advarsel: Denne operation er irreversibel!",
           "account": "Konto: {account} ({opAccount})",
           "owner": "Ejer: {owner}",
@@ -200,8 +287,12 @@
       "account_whitelist": {
         "method": "Kontohvidliste",
         "title": "Anmodning om kontohvidliste",
+        "result": "Resultat af kontohvidliste",
+        "headers": {
+          "request": "Vil du opdatere din kontohvidliste til følgende?",
+          "result": "Din kontohvidliste blev opdateret til følgende:"
+        },
         "rows": {
-          "header": "Kontohvidlisteoplysninger:",
           "authorizing_account": "Godkender konto: {authorizingAccount} (authorizingAccountOP)",
           "account_to_list": "Konto til liste: {accountToList} (accountToListOP)",
           "new_listing": "Ny fortegnelse: {newListing}",
@@ -213,8 +304,12 @@
       "account_upgrade": {
         "method": "Kontoopgradering",
         "title": "Anmodning om kontoopgradering",
+        "result": "Resultat af kontoopgradering",
+        "headers": {
+          "request": "Opgradere din konto til livstidsmedlem?",
+          "result": "Din konto blev opgraderet til livstidsmedlem!"
+        },
         "rows": {
-          "header": "Opgradere konto til livstidsmedlem?",
           "account_to_upgrade": "Konto, der skal opgraderes: {accountToUpgrade} (accountToUpgradeOP)",
           "upgrade_to_lifetime_member": "Opgrader til livstidsmedlem: {upgradeToLifetimeMember}",
           "extensions": "Udvidelser: {extensions}",
@@ -225,8 +320,12 @@
       "account_transfer": {
         "method": "Kontooverførsel",
         "title": "Anmodning om kontooverførsel",
+        "result": "Resultat af kontooverførsel",
+        "headers": {
+          "request": "Vil du overføre konto til en ny ejer?",
+          "result": "Følgende konto blev overført til en ny ejer:"
+        },
         "rows": {
-          "header": "Vil du overføre konto til en ny ejer?",
           "warning": "Advarsel: Denne handling er irreversibel!",
           "account_id": "Konto-id: {originalOwner} ({account_id})",
           "new_owner": "Ny ejer: {newOwner} ({newOwnerOP})",
@@ -237,8 +336,12 @@
       "asset_create": {
         "method": "Aktiv oprettes",
         "title": "Anmodning om oprettelse af aktiv",
+        "result": "Asset skabe resultat",
+        "headers": {
+          "request": "Vil du oprette følgende aktiv?",
+          "result": "Følgende aktiv blev oprettet:"
+        },
         "rows": {
-          "header": "Vil du oprette følgende aktiv?",
           "symbol": "Symbol: {symbol}",
           "main": "Hoved: {main}",
           "market": "Marked: {market}",
@@ -272,7 +375,7 @@
           "bitasset": "Bitasset info:",
           "feed_lifetime_sec": "Feeds levetid (sekunder): {feed_lifetime_sec}",
           "force_settlement_delay_sec": "Tving afviklingsforsinkelse (sekunder): {force_settlement_delay_sec}",
-          "force_settlement_offset_percent": "Gennemtving forlig-offset procent: {force_settlement_offset_percent}",
+          "force_settlement_offset_percent": "Gennemtvings udligningsforskydning i procent: {force_settlement_offset_percent}",
           "maximum_force_settlement_volume": "Maksimal kraftafregningsvolumen: {maximum_force_settlement_volume}",
           "minimum_feeds": "Minimum feeds: {minimum_feeds}",
           "short_backing_asset": "Kort støtteaktiv: {short_backing_asset}",
@@ -292,8 +395,12 @@
       "asset_update": {
         "method": "Aktivopdatering",
         "title": "Anmodning om aktivopdatering",
+        "result": "Resultat af aktivopdatering",
+        "headers": {
+          "request": "Vil du opdatere følgende aktiv?",
+          "result": "Aktivet blev opdateret med følgende detaljer:"
+        },
         "rows": {
-          "header": "Vil du opdatere følgende aktiv?",
           "symbol": "Symbol: {symbol}",
           "main": "Hoved: {main}",
           "market": "Marked: {market}",
@@ -327,7 +434,7 @@
           "bitasset": "Bitasset info:",
           "feed_lifetime_sec": "Feeds levetid (sekunder): {feed_lifetime_sec}",
           "force_settlement_delay_sec": "Tving afviklingsforsinkelse (sekunder): {force_settlement_delay_sec}",
-          "force_settlement_offset_percent": "Gennemtving forlig-offset procent: {force_settlement_offset_percent}",
+          "force_settlement_offset_percent": "Gennemtvings udligningsforskydning i procent: {force_settlement_offset_percent}",
           "maximum_force_settlement_volume": "Maksimal kraftafregningsvolumen: {maximum_force_settlement_volume}",
           "minimum_feeds": "Minimum feeds: {minimum_feeds}",
           "short_backing_asset": "Kort støtteaktiv: {short_backing_asset}",
@@ -347,15 +454,19 @@
       "asset_update_bitasset": {
         "method": "Asset update bitasset",
         "title": "Bitasset-anmodning om opdatering af aktiv",
+        "result": "Asset update bitasset resultat",
+        "headers": {
+          "request": "Vil du godkende bitasset-opdatering?",
+          "result": "Følgende bitasset-opdatering blev godkendt:"
+        },
         "rows": {
-          "header": "Vil du godkende bitasset-opdatering?",
           "issuer": "Udsteder: {issuer}",
           "asset_to_update": "Aktiv, der skal opdateres: {asset_to_update}",
           "new_options": "Nye muligheder:",
           "feed_lifetime_sec": "Feeds levetid (sekunder): {feed_lifetime_sec}",
           "minimum_feeds": "Minimum feeds: {minimum_feeds}",
           "force_settlement_delay_sec": "Tving afviklingsforsinkelse (sekunder): {force_settlement_delay_sec}",
-          "force_settlement_offset_percent": "Gennemtving forlig-offset procent: {force_settlement_offset_percent}",
+          "force_settlement_offset_percent": "Gennemtvings udligningsforskydning i procent: {force_settlement_offset_percent}",
           "maximum_force_settlement_volume": "Maksimal kraftafregningsvolumen: {maximum_force_settlement_volume}",
           "short_backing_asset": "Kort støtteaktiv: {symbol} ({short_backing_asset})",
           "extensions": "Udvidelser: {extensions}",
@@ -366,9 +477,13 @@
       },
       "asset_update_feed_producers": {
         "method": "Foderproducenter til opdatering af aktiv",
-        "title": "Fedeproducenter anmoder om aktivopdatering",
+        "title": "Anmodning fra feedproducenter om aktivopdatering",
+        "result": "Resultat af feedproducenter til opdatering af aktiv",
+        "headers": {
+          "request": "Godkende ændring til producenter af bitasset-foder?",
+          "result": "Følgende ændring af bitasset-foderproducenter blev godkendt:"
+        },
         "rows": {
-          "header": "Godkende ændring til producenter af bitasset-foder?",
           "issuer": "Udsteder: {issuer} ({issuerOP})",
           "asset_to_update": "Aktiv, der skal opdateres: {symbol} ({asset_to_update})",
           "new_feed_producers": "Nye feedproducenter: {new_feed_producers}",
@@ -379,8 +494,13 @@
       "asset_issue": {
         "method": "Asset problem",
         "title": "Anmodning om aktivudstedelse",
+        "result": "Resultat af aktivudstedelse",
+        "headers": {
+          "request": "Godkende følgende aktivudstedelse?",
+          "result": "Følgende aktivudstedelse blev godkendt:"
+        },
         "rows": {
-          "header": "Udsted {amount} {symbol} ({assetID}) til {to} ({toID})?",
+          "prompt": "Udsted {amount} {symbol} ({assetID}) til {to} ({toID})?",
           "fee": "Estimeret gebyr: {fee} ({id})"
         },
         "tooltip": "Udsted dine oprettede aktiver til enkeltpersoner"
@@ -388,8 +508,12 @@
       "asset_reserve": {
         "method": "Aktivreserve",
         "title": "Anmodning om aktivreserve",
+        "result": "Resultat af aktivreserve",
+        "headers": {
+          "request": "Godkende følgende aktivreservation?",
+          "result": "Følgende aktivreservation blev godkendt:"
+        },
         "rows": {
-          "header": "Godkende følgende aktivreservation?",
           "payer": "Betaler: {payer} ({payerOP})",
           "amount_to_reserve": "Beløb at reservere: {amount_to_reserve} ({amount_to_reserveOP})",
           "extensions": "Udvidelser: {extensions}",
@@ -400,8 +524,12 @@
       "asset_fund_fee_pool": {
         "method": "Aktivfondens gebyrpulje",
         "title": "Anmodning om pool for aktivfonde",
+        "result": "Resultat af aktivfondens gebyrpulje",
+        "headers": {
+          "request": "Finansiere følgende aktivs gebyrpulje?",
+          "result": "Følgende aktivs gebyrpuljefinansiering blev godkendt:"
+        },
         "rows": {
-          "header": "Finansiere følgende aktivs gebyrpulje?",
           "from_account": "Fra konto: {from_account} ({from_accountOP})",
           "asset": "Aktiv: {asset} ({assetOP})",
           "amount": "Beløb: {amount}",
@@ -412,8 +540,12 @@
       "asset_settle": {
         "method": "Aktivafregning",
         "title": "Anmodning om afregning af aktiver",
+        "result": "Resultat af afregning af aktiver",
+        "headers": {
+          "request": "Afregne følgende aktiv for dets sikkerhedsstillelse?",
+          "result": "Følgende aktiv blev afregnet for dets sikkerhedsstillelse:"
+        },
         "rows": {
-          "header": "Afregne følgende aktiv for dets sikkerhedsstillelse?",
           "account": "Konto: {account} ({accountOP})",
           "amount": "Beløb: {amount} ({assetID})",
           "fee": "Estimeret gebyr: {fee}"
@@ -423,8 +555,12 @@
       "asset_global_settle": {
         "method": "Global afregning af aktiver",
         "title": "Anmodning om global afregning af aktiv",
+        "result": "Aktiv globalt afregningsresultat",
+        "headers": {
+          "request": "Udføre global afregning på følgende aktiv?",
+          "result": "Følgende aktiv blev afviklet globalt:"
+        },
         "rows": {
-          "header": "Udføre global afregning på følgende aktiv?",
           "issuer": "Udsteder: {issuer} ({issuerOP})",
           "asset_to_settle": "Aktiv, der skal afregnes: {asset_to_settle} ({asset_to_settleOP})",
           "settle_price": "Afregn pris: {settle_price}",
@@ -435,8 +571,12 @@
       "asset_publish_feed": {
         "method": "Aktiv publiceringsfeed",
         "title": "Anmodning om feedudgivelse af aktiv",
+        "result": "Resultat af feed for aktiv publicering",
+        "headers": {
+          "request": "Vil du offentliggøre et prisfeed for følgende aktiv?",
+          "result": "Følgende feed-opdatering for aktivpriser blev offentliggjort:"
+        },
         "rows": {
-          "header": "Vil du offentliggøre et prisfeed for følgende aktiv?",
           "publisher": "Udgiver: {publisher} ({publisherOP})",
           "asset_id": "Aktiv-id: {symbol} ({asset_idOP})",
           "feed": "Foder:",
@@ -452,8 +592,12 @@
       "witness_create": {
         "method": "Vidne skabe",
         "title": "Vidne oprette anmodning",
+        "result": "Vidne skaber resultat",
+        "headers": {
+          "request": "Vil du oprette et vidne med følgende detaljer?",
+          "result": "Følgende vidne blev oprettet:"
+        },
         "rows": {
-          "header": "Vil du oprette et vidne med følgende detaljer?",
           "witness_account": "Vidnekonto: {witness_account} ({witness_accountOP})",
           "url": "URL: {url}",
           "block_signing_key": "Bloker signaturnøgle: {block_signing_key}",
@@ -464,8 +608,12 @@
       "witness_update": {
         "method": "Vidneopdatering",
         "title": "Anmodning om opdatering af vidne",
+        "result": "Vidneopdateringsresultat",
+        "headers": {
+          "request": "Opdatere vidneoplysninger til følgende?",
+          "result": "Følgende vidneoplysninger blev opdateret:"
+        },
         "rows": {
-          "header": "Opdatere vidneoplysninger til følgende?",
           "witness": "Vidne: {witness}",
           "witness_account": "Vidnekonto: {witness_account} ({witness_accountOP})",
           "new_url": "Ny webadresse: {new_url}",
@@ -477,8 +625,12 @@
       "proposal_create": {
         "method": "Forslag oprettes",
         "title": "Forslag oprette anmodning",
+        "result": "Forslag skaber resultat",
+        "headers": {
+          "request": "Opret følgende forslag?",
+          "result": "Følgende forslag blev lavet:"
+        },
         "rows": {
-          "header": "Opret følgende forslag?",
           "expiration_time": "Udløbstid: {expiration_time}",
           "proposed_ops": "Foreslåede operationer: {proposed_ops}",
           "review_period_seconds": "Sekunder for gennemgangsperiode: {review_period_seconds}",
@@ -490,14 +642,18 @@
       "proposal_update": {
         "method": "Opdatering af forslag",
         "title": "Anmodning om opdatering af forslag",
+        "result": "Resultat af opdatering af forslag",
+        "headers": {
+          "request": "Vil du opdatere følgende forslag?",
+          "result": "Følgende forslag blev opdateret:"
+        },
         "rows": {
-          "header": "Vil du opdatere følgende forslag?",
           "proposal": "Forslag: {proposal}",
           "active_approvals_to_add": "Aktive godkendelser at tilføje: {active_approvals_to_add}",
           "active_approvals_to_remove": "Aktive godkendelser, der skal fjernes: {active_approvals_to_remove}",
           "owner_approvals_to_add": "Ejergodkendelser, der skal tilføjes: {owner_approvals_to_add}",
           "owner_approvals_to_remove": "Ejergodkendelser, der skal fjernes: {owner_approvals_to_remove}",
-          "key_approvals_to_add": "Nøglegodkendelser at tilføje: {key_approvals_to_add}",
+          "key_approvals_to_add": "Nøglegodkendelser, der skal tilføjes: {key_approvals_to_add}",
           "key_approvals_to_remove": "Nøglegodkendelser, der skal fjernes: {key_approvals_to_remove}",
           "fee_paying_account": "Gebyrbetalingskonto: {fee_paying_account} ({fee_paying_accountOP})",
           "extensions": "Udvidelser: {extensions}",
@@ -508,8 +664,12 @@
       "proposal_delete": {
         "method": "Forslaget slettes",
         "title": "Anmodning om sletning af forslag",
+        "result": "Resultat af forslag til sletning",
+        "headers": {
+          "request": "Vil du slette følgende forslag?",
+          "result": "Følgende forslag blev slettet:"
+        },
         "rows": {
-          "header": "Vil du slette følgende forslag?",
           "using_owner_authority": "Brug af ejerautoritet: {using_owner_authority}",
           "proposal": "Forslag: {proposal}",
           "fee_paying_account": "Gebyrbetalingskonto: {fee_paying_account} ({fee_paying_accountOP})",
@@ -521,8 +681,12 @@
       "withdraw_permission_create": {
         "method": "Tilbagekald oprettelsestilladelse",
         "title": "Tilbagekald tilladelse oprettelsesanmodning",
+        "result": "Tilbagekald tilladelse oprette resultat",
+        "headers": {
+          "request": "Autorisation af direkte debitering",
+          "result": "Følgende autorisation til direkte debitering blev godkendt:"
+        },
         "rows": {
-          "header": "Autorisation af direkte debitering",
           "recipient": "Modtager: {recipient} ({recipientOP})",
           "withdraw_from": "Konto at trække fra: {withdraw_from} ({withdraw_fromOP})",
           "taking": "Tag {amount} hvert {period_sec} sekund i {period_qty} perioder",
@@ -533,8 +697,12 @@
       "withdraw_permission_update": {
         "method": "Træk tilladelsesopdatering tilbage",
         "title": "Tilbagekald anmodning om opdatering af tilladelse",
+        "result": "Træk tilladelsesopdateringsresultatet tilbage",
+        "headers": {
+          "request": "Vil du opdatere vidnetilladelser til følgende?",
+          "result": "Følgende opdateringer af vidnetilladelser blev godkendt:"
+        },
         "rows": {
-          "header": "Vil du opdatere vidnetilladelser til følgende?",
           "withrdaw_from_account": "Hæv fra konto: {withrdaw_from_account} ({withrdaw_from_accountOP})",
           "authorized_account": "Autoriseret konto: {authorized_account} ({authorized_accountOP})",
           "permission_to_update": "Tilladelse til at opdatere: {permission_to_update}",
@@ -550,8 +718,12 @@
       "withdraw_permission_claim": {
         "method": "Træk krav om tilladelse tilbage",
         "title": "Træk anmodning om tilladelse tilbage",
+        "result": "Tilbagekald tilladelseskrav resultatet",
+        "headers": {
+          "request": "Gør krav på følgende tilbagetrækningstilladelse",
+          "result": "Der blev anmodet om følgende tilbagetrækningstilladelse:"
+        },
         "rows": {
-          "header": "Gør krav på følgende tilbagetrækningstilladelse",
           "withdraw_permission": "Tilbagekald tilladelse: {withdraw_permission}",
           "withdraw_from_account": "Hæv fra konto: {withdraw_from_account} ({withdraw_from_accountOP})",
           "withdraw_to_account": "Hæv til konto: {withdraw_to_account} ({withdraw_to_accountOP})",
@@ -564,8 +736,12 @@
       "withdraw_permission_delete": {
         "method": "Tilbagekald tilladelse sletning",
         "title": "Træk anmodning om tilladelse til at slette",
+        "result": "Træk tilladelse til at slette resultat",
+        "headers": {
+          "request": "Vil du slette følgende tilbagetrækningstilladelse?",
+          "result": "Følgende tilbagetrækningstilladelse blev slettet:"
+        },
         "rows": {
-          "header": "Vil du slette følgende tilbagetrækningstilladelse?",
           "withdraw_from_account": "Hæv fra konto: {withdraw_from_account} ({withdraw_from_accountOP})",
           "authorized_account": "Autoriseret konto: {authorized_account} ({authorized_accountOP})",
           "withdrawal_permission": "Tilbagetrækningstilladelse: {withdrawal_permission}",
@@ -576,8 +752,12 @@
       "committee_member_create": {
         "method": "Udvalgsmedlem oprette",
         "title": "Udvalgsmedlem oprette anmodning",
+        "result": "Udvalgsmedlem skabe resultat",
+        "headers": {
+          "request": "Oprette et udvalgsmedlem?",
+          "result": "Følgende udvalgsmedlem blev oprettet:"
+        },
         "rows": {
-          "header": "Oprette et udvalgsmedlem?",
           "committee_member_account": "Udvalgsmedlemskonto: {committee_member_account} ({committee_member_accountOP})",
           "url": "URL: {url}",
           "fee": "Estimeret gebyr: {fee}"
@@ -587,8 +767,12 @@
       "committee_member_update": {
         "method": "Opdatering af udvalgsmedlemmer",
         "title": "Anmodning om opdatering af udvalgsmedlem",
+        "result": "Udvalgsmedlem opdateret resultat",
+        "headers": {
+          "request": "Opdater følgende udvalgsmedlems oplysninger?",
+          "result": "Følgende udvalgsmedlems detaljerede opdateringer blev godkendt:"
+        },
         "rows": {
-          "header": "Opdater følgende udvalgsmedlems oplysninger?",
           "committee_member": "Udvalgsmedlem: {committee_member}",
           "committee_member_account": "Udvalgsmedlemskonto: {committee_member_account} ({committee_member_accountOP})",
           "new_url": "Ny webadresse: {new_url}",
@@ -599,8 +783,12 @@
       "committee_member_update_global_parameters": {
         "method": "Udvalgsmedlem opdaterer globale parametre",
         "title": "Udvalgsmedlem opdatering af globale parametre anmodning",
+        "result": "Udvalgsmedlem opdatere globale parametre resultat",
+        "headers": {
+          "request": "Godkende at følge globale parametre som et udvalg?",
+          "result": "Følgende globale komitéparametre blev godkendt:"
+        },
         "rows": {
-          "header": "Godkende at følge globale parametre som et udvalg?",
           "new_parameters": "Nye parametre:",
           "current_fees": "Nuværende gebyrer: {current_fees}",
           "block_interval": "Blokeringsinterval: {block_interval}",
@@ -613,7 +801,7 @@
           "maximum_proposal_lifetime": "Maksimal levetid for forslag: {maximum_proposal_lifetime}",
           "maximum_asset_whitelist_authorities": "Autoriteter for maksimal hvidliste af aktiver: {maximum_asset_whitelist_authorities}",
           "maximum_asset_feed_publishers": "Maksimalt antal aktivfeedudgivere: {maximum_asset_feed_publishers}",
-          "maximum_witness_count": "Maksimalt vidneantal: {maximum_witness_count}",
+          "maximum_witness_count": "Maksimalt antal vidner: {maximum_witness_count}",
           "maximum_committee_count": "Maksimalt antal udvalg: {maximum_committee_count}",
           "maximum_authority_membership": "Maksimalt autoritetsmedlemskab: {maximum_authority_membership}",
           "reserve_percent_of_fee": "Reserveprocent af gebyr: {reserve_percent_of_fee}",
@@ -638,8 +826,12 @@
       "vesting_balance_create": {
         "method": "Vesting balance skabe",
         "title": "Vesting balance oprette anmodning",
+        "result": "Vesting balance skaber resultat",
+        "headers": {
+          "request": "Oprette følgende optjeningssaldo?",
+          "result": "Følgende optjeningsbalance blev oprettet:"
+        },
         "rows": {
-          "header": "Oprette følgende optjeningssaldo?",
           "creator": "Skaber: {creator} ({creatorOP})",
           "owner": "Ejer: {owner} ({ownerOP})",
           "amount": "Beløb: {amount} ({asset_id})",
@@ -656,8 +848,12 @@
       "vesting_balance_withdraw": {
         "method": "Opsigelsessaldo trækkes tilbage",
         "title": "Anmodning om tilbagetrækning af optjeningssaldo",
+        "result": "Optjening balance tilbagetrækning resultat",
+        "headers": {
+          "request": "Tilbagekalde følgende optjeningssaldo?",
+          "result": "Følgende optjeningssaldo blev trukket tilbage:"
+        },
         "rows": {
-          "header": "Optjening Balance",
           "owner": "Ejer: {owner} ({ownerOP})",
           "claim": "Krav: {claim} ({asset_id})"
         },
@@ -666,8 +862,12 @@
       "worker_create": {
         "method": "Arbejder skabe",
         "title": "Arbejder oprette anmodning",
+        "result": "Arbejder skaber resultat",
+        "headers": {
+          "request": "Opret følgende arbejderforslag?",
+          "result": "Følgende arbejderforslag blev oprettet:"
+        },
         "rows": {
-          "header": "Opret følgende arbejderforslag?",
           "owner": "Ejer: {owner} ({ownerOP})",
           "work_begin_date": "Startdato for arbejdet: {work_begin_date}",
           "work_end_date": "Arbejdets slutdato: {work_end_date}",
@@ -682,8 +882,12 @@
       "custom": {
         "method": "Brugerdefinerede",
         "title": "Brugerdefineret anmodning",
+        "result": "Tilpasset resultat",
+        "headers": {
+          "request": "Vil du oprette følgende brugerdefinerede handling?",
+          "result": "Følgende brugerdefinerede handling blev oprettet:"
+        },
         "rows": {
-          "header": "Brugerdefineret betjening:",
           "payer": "Betaler: {payer} ({payerOP})",
           "required_auths": "Nødvendige myndigheder: {required_auths}",
           "id": "Jeg {id}",
@@ -695,8 +899,12 @@
       "assert": {
         "method": "Hævde",
         "title": "Påstå anmodning",
+        "result": "Påstå resultat",
+        "headers": {
+          "request": "Vil du godkende følgende hævningsanmodningsoperation?",
+          "result": "Følgende påstandsanmodningsoperation blev godkendt:"
+        },
         "rows": {
-          "header": "Påstå operation:",
           "fee_paying_account": "Gebyrbetalingskonto: {fee_paying_account} ({fee_paying_accountOP})",
           "predicates": "Prædikater: {predicates}",
           "required_auths": "Nødvendige myndigheder: {required_auths}",
@@ -708,8 +916,12 @@
       "balance_claim": {
         "method": "Saldokrav",
         "title": "Anmodning om saldokrav",
+        "result": "Saldokrav resultat",
+        "headers": {
+          "request": "Gøre krav på følgende saldo?",
+          "result": "Der blev påstået følgende saldo:"
+        },
         "rows": {
-          "header": "Gøre krav på følgende saldo?",
           "deposit_to_account": "Indbetal til konto: {deposit_to_account} ({deposit_to_accountOP})",
           "balance_to_claim": "Saldo at gøre krav på: {balance_to_claim} ({asset_id})",
           "balance_owner_key": "Saldoejernøgle: {balance_owner_key}",
@@ -721,8 +933,12 @@
       "override_transfer": {
         "method": "Tilsidesæt overførsel",
         "title": "Tilsidesæt overførselsanmodning",
+        "result": "Tilsidesæt overførselsresultat",
+        "headers": {
+          "request": "Vil du tilsidesætte følgende overførsel?",
+          "result": "Følgende overførsel blev tilsidesat:"
+        },
         "rows": {
-          "header": "Vil du tilsidesætte følgende overførsel?",
           "issuer": "Udsteder: {issuer} ({issuerOP})",
           "from": "Fra: {from} ({fromOP})",
           "to": "Til: {to} ({toOP})",
@@ -735,8 +951,12 @@
       "transfer_to_blind": {
         "method": "Overfør til blind",
         "title": "Overførsel til blind anmodning",
+        "result": "Overfør til blind resultat",
+        "headers": {
+          "request": "Vil du overføre følgende til blind?",
+          "result": "Følgende blev overført til blind:"
+        },
         "rows": {
-          "header": "Vil du overføre følgende til blind?",
           "amount": "Beløb: {amount}",
           "from": "Fra: {from} ({fromOP})",
           "blinding_factor": "Blindingsfaktor: {blinding_factor}",
@@ -748,8 +968,12 @@
       "blind_transfer": {
         "method": "Blind overførsel",
         "title": "Blind anmodning om overførsel",
+        "result": "Blind overførsel resultat",
+        "headers": {
+          "request": "Godkende følgende blinde overførsel?",
+          "result": "Følgende blindoverførsel blev godkendt:"
+        },
         "rows": {
-          "header": "Godkende følgende blinde overførsel?",
           "inputs": "Input: {inputs}",
           "outputs": "Udgange: {outputs}",
           "fee": "Estimeret gebyr: {fee}"
@@ -759,8 +983,12 @@
       "transfer_from_blind": {
         "method": "Overførsel fra blind",
         "title": "Overførsel fra blind anmodning",
+        "result": "Overførsel fra blind resultat",
+        "headers": {
+          "request": "Vil du overføre følgende fra blind?",
+          "result": "Følgende blev overført fra blind:"
+        },
         "rows": {
-          "header": "Vil du overføre følgende fra blind?",
           "amount": "Beløb: {amount}",
           "to": "Til: {to} ({toOP})",
           "blinding_factor": "Blindingsfaktor: {blinding_factor}",
@@ -772,8 +1000,12 @@
       "asset_claim_fees": {
         "method": "Aktivkravsgebyrer",
         "title": "Anmodning om gebyr for aktivkrav",
+        "result": "Resultat af aktivkravsgebyrer",
+        "headers": {
+          "request": "Hæve gebyrerne fra følgende aktiv?",
+          "result": "Følgende aktivs gebyrer blev krævet:"
+        },
         "rows": {
-          "header": "Hæve gebyrerne fra følgende aktiv?",
           "issuer": "Udsteder: {issuer} ({issuerOP})",
           "amount_to_claim": "Beløb til krav: {amount_to_claim} ({asset_id})",
           "fee": "Estimeret gebyr: {fee}"
@@ -783,8 +1015,12 @@
       "bid_collateral": {
         "method": "Byd sikkerhed",
         "title": "Anmodning om budsikkerhed",
+        "result": "Budsikkerhedsresultat",
+        "headers": {
+          "request": "Godkend følgende sikkerhedsstillelsesbud?",
+          "result": "Følgende sikkerhedsstillelse blev godkendt:"
+        },
         "rows": {
-          "header": "Godkend følgende sikkerhedsstillelsesbud?",
           "bidder": "Budgiver: {bidder} ({bidderOP})",
           "additional_collateral": "Yderligere sikkerhed: {additional_collateral}",
           "debt_covered": "Gæld dækket: {debt_covered}",
@@ -795,20 +1031,28 @@
       "asset_claim_pool": {
         "method": "Aktivkravspulje",
         "title": "Anmodning om pool for aktivkrav",
+        "result": "Resultat af aktivkravpulje",
+        "headers": {
+          "request": "Gøre krav på følgende aktivpulje?",
+          "result": "Der blev gjort krav på følgende aktivpulje:"
+        },
         "rows": {
-          "header": "Gøre krav på følgende aktivpulje?",
           "issuer": "Udsteder: {issuer} ({issuerOP})",
           "asset_id": "Aktiv: {asset_id}",
           "amount_to_claim": "Beløb til krav: {amount_to_claim}",
           "fee": "Estimeret gebyr: {fee}"
         },
-        "tooltip": "Overfører BTS fra gebyrpuljen for et specificeret aktiv tilbage til udstederens saldo"
+        "tooltip": "Overfører BTS fra gebyrpuljen for et specificeret aktiv tilbage til udsteders saldo"
       },
       "asset_update_issuer": {
         "method": "Udsteder af aktivopdatering",
         "title": "Anmodning fra udsteder af aktivopdatering",
+        "result": "Resultat af aktivopdateringsudsteder",
+        "headers": {
+          "request": "Vil du opdatere udstederen af ​​følgende aktiv?",
+          "result": "Følgende aktivs udsteder blev opdateret:"
+        },
         "rows": {
-          "header": "Vil du opdatere udstederen af ​​følgende aktiv?",
           "issuer": "Udsteder: {issuer} ({issuerOP})",
           "asset_to_update": "Aktiv, der skal opdateres: {asset_to_update}",
           "new_issuer": "Ny udsteder: {new_issuer} ({new_issuerOP})",
@@ -819,8 +1063,12 @@
       "htlc_create": {
         "method": "HTC oprette",
         "title": "HTTP oprette anmodning",
+        "result": "HTLC skabe resultat",
+        "headers": {
+          "request": "Opret følgende hashed timelock kontrakt operation?",
+          "result": "Oprettelsen af ​​følgende hashed timelock-kontraktoperation blev godkendt:"
+        },
         "rows": {
-          "header": "Opret følgende HTTP-operation?",
           "from": "Fra: {from} ({fromOP})",
           "to": "Til: {to} ({toOP})",
           "amount": "Beløb: {amount}",
@@ -834,8 +1082,12 @@
       "htlc_redeem": {
         "method": "HTLC Indløs",
         "title": "HTLC Indløs anmodning",
+        "result": "HTLC Indløs resultat",
+        "headers": {
+          "request": "Indløse følgende hash-tidslåste kontraktoperation?",
+          "result": "Indløsningen af ​​følgende hash-tidslåste kontraktoperation blev godkendt:"
+        },
         "rows": {
-          "header": "Vil du indløse følgende HTLC-handling?",
           "htlc_id": "HTC ID: {htlc_id}",
           "redeemer": "Redeemer: {redeemer} ({redeemerOP})",
           "preimage": "Preimage: {preimage}",
@@ -847,8 +1099,12 @@
       "htlc_extend": {
         "method": "HTC Udvid",
         "title": "HTLC Udvid anmodning",
+        "result": "HTLC Udvid resultatet",
+        "headers": {
+          "request": "Godkende følgende hash-tidslåste kontraktforlængelse?",
+          "result": "Forlængelsen af ​​følgende hash-timelocked-kontrakt blev godkendt:"
+        },
         "rows": {
-          "header": "Godkend følgende HTLC-udvidelse?",
           "htlc_id": "HTC ID: {htlc_id}",
           "update_issuer": "Opdater udsteder: {update_issuer} ({update_issuerOP})",
           "seconds_to_add": "Sekunder at tilføje: {seconds_to_add}",
@@ -860,8 +1116,12 @@
       "custom_authority_create": {
         "method": "Opret brugerdefineret autoritet",
         "title": "Anmodning om oprettelse af brugerdefineret myndighed",
+        "result": "Brugerdefineret autoritet skabe resultat",
+        "headers": {
+          "request": "Vil du oprette følgende brugerdefinerede myndighed?",
+          "result": "Følgende brugerdefinerede autoritet blev oprettet:"
+        },
         "rows": {
-          "header": "Vil du oprette følgende brugerdefinerede myndighed?",
           "account": "Konto: {account} ({accountOP})",
           "enabled": "Aktiveret: {enabled}",
           "valid_from": "Gyldig fra: {valid_from}",
@@ -877,8 +1137,12 @@
       "custom_authority_update": {
         "method": "Opdatering af tilpasset myndighed",
         "title": "Anmodning om opdatering af tilpasset myndighed",
+        "result": "Resultat af opdatering af tilpasset myndighed",
+        "headers": {
+          "request": "Vil du opdatere følgende tilpassede autoritet?",
+          "result": "Følgende toldmyndighed blev opdateret:"
+        },
         "rows": {
-          "header": "Vil du opdatere følgende tilpassede autoritet?",
           "account": "Konto: {account} ({accountOP})",
           "authority_to_update": "Bemyndigelse til at opdatere: {authority_to_update}",
           "new_enabled": "Nyt aktiveret: {new_enabled}",
@@ -895,8 +1159,12 @@
       "custom_authority_delete": {
         "method": "Brugerdefineret autoritetssletning",
         "title": "Anmodning om sletning af brugerdefineret myndighed",
+        "result": "Slet resultat for brugerdefineret autoritet",
+        "headers": {
+          "request": "Vil du slette følgende tilpassede autoritet?",
+          "result": "Følgende toldmyndighed blev slettet:"
+        },
         "rows": {
-          "header": "Vil du slette følgende tilpassede autoritet?",
           "account": "Konto: {account} ({accountOP})",
           "authority_to_delete": "Bemyndigelse til at slette: {authority_to_delete}",
           "extensions": "Udvidelser: {extensions}",
@@ -906,9 +1174,13 @@
       },
       "ticket_create": {
         "method": "Billet oprettes",
-        "title": "Forespørgsel om oprettelse af billet",
+        "title": "Anmodning om oprettelse af billet",
+        "result": "Billetopret resultat",
+        "headers": {
+          "request": "Opret følgende billet?",
+          "result": "Følgende billet blev oprettet:"
+        },
         "rows": {
-          "header": "Opret følgende billet?",
           "account": "Konto: {account} ({accountOP})",
           "target_type": "Måltype: {target_type}",
           "amount": "Beløb: {amount}",
@@ -920,8 +1192,12 @@
       "ticket_update": {
         "method": "Billetopdatering",
         "title": "Anmodning om billetopdatering",
+        "result": "Billetopdateringsresultat",
+        "headers": {
+          "request": "Opdater følgende billet?",
+          "result": "Følgende billet blev opdateret:"
+        },
         "rows": {
-          "header": "Opdater følgende billet?",
           "ticket": "Billet: {ticket}",
           "account": "Konto: {account} ({accountOP})",
           "target_type": "Måltype: {target_type}",
@@ -933,14 +1209,18 @@
       "liquidity_pool_create": {
         "method": "Opret likviditetspulje",
         "title": "Likviditetspulje oprette anmodning",
+        "result": "Likviditetspulje skabe resultat",
+        "headers": {
+          "request": "Oprette en likviditetspulje med følgende detaljer?",
+          "result": "Følgende likviditetspulje blev oprettet:"
+        },
         "rows": {
-          "header": "Oprette en likviditetspulje med følgende detaljer?",
           "account": "Konto: {account} ({accountOP})",
           "asset_a": "Aktiv A: {asset_a} ({asset_aOP})",
           "asset_b": "Aktiv B: {asset_b} ({asset_bOP})",
           "share_asset": "Del aktiv: {share_asset} ({share_assetOP})",
           "taker_fee_percent": "Procent af takergebyr: {taker_fee_percent}",
-          "withdrawal_fee_percent": "Procent for tilbagetrækningsgebyr: {withdrawal_fee_percent}",
+          "withdrawal_fee_percent": "Udbetalingsgebyr procent: {withdrawal_fee_percent}",
           "extensions": "Udvidelser: {extensions}",
           "fee": "Estimeret gebyr: {fee}"
         },
@@ -949,8 +1229,12 @@
       "liquidity_pool_delete": {
         "method": "Sletning af likviditetspulje",
         "title": "Anmodning om sletning af likviditetspulje",
+        "result": "Resultat af sletning af likviditetspulje",
+        "headers": {
+          "request": "Vil du slette følgende likviditetspulje?",
+          "result": "Følgende likviditetspulje blev slettet:"
+        },
         "rows": {
-          "header": "Vil du slette følgende likviditetspulje?",
           "account": "Konto: {account} ({accountOP})",
           "pool_id": "Pool-id: {pool_id}",
           "extensions": "Udvidelser: {extensions}",
@@ -961,8 +1245,12 @@
       "liquidity_pool_deposit": {
         "method": "Likviditetspool depositum",
         "title": "Anmodning om depositum for likviditetspool",
+        "result": "Resultat af likviditetspuljeindskud",
+        "headers": {
+          "request": "Deponere følgende aktiver i likviditetspuljen?",
+          "result": "Følgende aktiver blev indsat i likviditetspuljen:"
+        },
         "rows": {
-          "header": "Deponere følgende aktiver i likviditetspuljen?",
           "account": "Konto: {account} ({accountOP})",
           "pool": "Pool: {pool}",
           "asset_a": "Aktiv A: {asset_a} ({asset_aOP})",
@@ -975,8 +1263,12 @@
       "liquidity_pool_withdraw": {
         "method": "Udtræk af likviditetspulje",
         "title": "Anmodning om tilbagetrækning af likviditetspulje",
+        "result": "Resultat af likviditetspuljetræk",
+        "headers": {
+          "request": "Træk følgende aktiver ud af likviditetspuljen?",
+          "result": "Følgende aktiver blev trukket ud af likviditetspuljen:"
+        },
         "rows": {
-          "header": "Træk følgende aktiver ud af likviditetspuljen?",
           "account": "Konto: {account} ({accountOP})",
           "pool": "Pool: {pool}",
           "share_asset": "Del aktiv: {share_asset} ({share_assetOP})",
@@ -988,8 +1280,12 @@
       "liquidity_pool_exchange": {
         "method": "Udveksling af likviditetspulje",
         "title": "Anmodning om ombytning af likviditetspulje",
+        "result": "Resultat af udveksling af likviditetspulje",
+        "headers": {
+          "request": "Godkender følgende likviditetspuljeudveksling?",
+          "result": "Følgende likviditetspuljeudveksling blev godkendt:"
+        },
         "rows": {
-          "header": "Godkender følgende likviditetspuljeudveksling?",
           "account": "Konto: {account} ({accountOP})",
           "pool": "Pool: {pool}",
           "amount_to_sell": "Salgsbeløb: {amount_to_sell}",
@@ -1002,8 +1298,12 @@
       "samet_fund_create": {
         "method": "SameT fond oprette",
         "title": "SameT fund oprette anmodning",
+        "result": "SameT fond skabe resultat",
+        "headers": {
+          "request": "Godkender du følgende oprettelse af samme fond?",
+          "result": "Følgende samet-fond blev oprettet:"
+        },
         "rows": {
-          "header": "Godkender du følgende oprettelse af samme fond?",
           "owner_account": "Ejerkonto: {owner_account} ({owner_accountOP})",
           "asset_type": "Aktivtype: {asset_type}",
           "balance": "Saldo: {balance}",
@@ -1016,8 +1316,12 @@
       "samet_fund_delete": {
         "method": "SameT fond sletning",
         "title": "Anmodning om sletning af SameT-fond",
+        "result": "SameT fund sletningsresultat",
+        "headers": {
+          "request": "Vil du slette følgende samme fond?",
+          "result": "Følgende samet-fond blev slettet:"
+        },
         "rows": {
-          "header": "Vil du slette følgende samme fond?",
           "owner_account": "Ejerkonto: {owner_account} ({owner_accountOP})",
           "fund_id": "Fonds-id: {fund_id}",
           "extensions": "Udvidelser: {extensions}",
@@ -1028,8 +1332,12 @@
       "samet_fund_update": {
         "method": "SameT-fondsopdatering",
         "title": "SameT-fondsopdateringsanmodning",
+        "result": "SameT-fondsopdateringsresultat",
+        "headers": {
+          "request": "Opdater følgende samet-fond?",
+          "result": "Følgende samet-fond blev opdateret:"
+        },
         "rows": {
-          "header": "Opdater følgende samet-fond?",
           "owner_account": "Ejerkonto: {owner_account} ({owner_accountOP})",
           "fund_id": "Fonds-id: {fund_id}",
           "delta_amount": "Deltabeløb: {delta_amount}",
@@ -1042,8 +1350,12 @@
       "samet_fund_borrow": {
         "method": "SameT fund lån",
         "title": "SameT fund låneanmodning",
+        "result": "SameT fund låneresultat",
+        "headers": {
+          "request": "Lån fra følgende samme fond?",
+          "result": "Lånet med succes fra følgende samet-fond:"
+        },
         "rows": {
-          "header": "Lån fra følgende samme fond?",
           "borrower": "Låntager: {borrower} ({borrowerOP})",
           "fund_id": "Fonds-id: {fund_id}",
           "borrow_amount": "Lånebeløb: {borrow_amount}",
@@ -1055,8 +1367,12 @@
       "samt_fund_repay": {
         "method": "SameT fonds tilbagebetaling",
         "title": "Anmodning om tilbagebetaling af SameT-fond",
+        "result": "SameT fonds tilbagebetalingsresultat",
+        "headers": {
+          "request": "Tilbagebetal følgende samme fond",
+          "result": "Tilbagebetalt følgende samme fond"
+        },
         "rows": {
-          "header": "Tilbagebetal følgende samme fond",
           "account": "Konto: {account} ({accountOP})",
           "fund_id": "Fonds-id: {fund_id}",
           "repay_amount": "Tilbagebetalingsbeløb: {repay_amount}",
@@ -1069,8 +1385,12 @@
       "credit_offer_create": {
         "method": "Kredittilbud opret",
         "title": "Kredittilbud opret anmodning",
+        "result": "Kredittilbud skaber resultat",
+        "headers": {
+          "request": "Godkend oprettelsen af ​​følgende kredittilbud?",
+          "result": "Følgende kredittilbud blev oprettet:"
+        },
         "rows": {
-          "header": "Godkend oprettelsen af ​​følgende kredittilbud?",
           "owner_account": "Ejerkonto: {owner_account} ({owner_accountOP})",
           "asset_type": "Aktivtype: {asset_type}",
           "balance": "Saldo: {balance}",
@@ -1089,8 +1409,12 @@
       "credit_offer_delete": {
         "method": "Kredittilbud slet",
         "title": "Anmodning om sletning af kredittilbud",
+        "result": "Kredittilbud slet resultat",
+        "headers": {
+          "request": "Vil du slette følgende kredittilbud?",
+          "result": "Følgende kredittilbud blev slettet:"
+        },
         "rows": {
-          "header": "Vil du slette følgende kredittilbud?",
           "owner_account": "Ejerkonto: {owner_account} ({owner_accountOP})",
           "offer_id": "Tilbuds-id: {offer_id}",
           "extensions": "Udvidelser: {extensions}",
@@ -1101,8 +1425,12 @@
       "credit_offer_update": {
         "method": "Opdatering af kredittilbud",
         "title": "Anmodning om opdatering af kredittilbud",
+        "result": "Resultat af opdatering af kredittilbud",
+        "headers": {
+          "request": "Vil du opdatere følgende kredittilbud?",
+          "result": "Følgende kredittilbud blev opdateret:"
+        },
         "rows": {
-          "header": "Vil du opdatere følgende kredittilbud?",
           "owner_account": "Ejerkonto: {owner_account} ({owner_accountOP})",
           "offer_id": "Tilbuds-id: {offer_id}",
           "delta_amount": "Deltabeløb: {delta_amount}",
@@ -1121,8 +1449,12 @@
       "credit_offer_accept": {
         "method": "Kredittilbud accepteres",
         "title": "Kredittilbud accepter anmodning",
+        "result": "Kredittilbud acceptere resultat",
+        "headers": {
+          "request": "Godkender du følgende kredittilbud?",
+          "result": "Følgende kredittilbud blev godkendt:"
+        },
         "rows": {
-          "header": "Godkender du følgende kredittilbud?",
           "borrower": "Låntager: {borrower} ({borrowerOP})",
           "offer_id": "Tilbuds-id: {offer_id}",
           "borrow_amount": "Lånebeløb: {borrow_amount}",
@@ -1137,8 +1469,12 @@
       "credit_deal_repay": {
         "method": "Tilbagebetaling af kreditaftale",
         "title": "Anmodning om tilbagebetaling af kreditaftale",
+        "result": "Resultat af tilbagebetaling af kreditaftale",
+        "headers": {
+          "request": "Tilbagebetale følgende kreditaftale?",
+          "result": "Du tilbagebetalte følgende kreditaftale"
+        },
         "rows": {
-          "header": "Tilbagebetale følgende kreditaftale?",
           "account": "Konto: {account} ({accountOP})",
           "deal_id": "Aftale-id: {deal_id}",
           "repay_amount": "Tilbagebetalingsbeløb: {repay_amount}",

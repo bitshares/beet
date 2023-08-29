@@ -14,7 +14,7 @@
   },
   "start": {
     "wallet_name": "지갑 이름",
-    "invalid_password": "유효하지 않은 비밀번호로 지갑 잠금 해제를 시도했습니다."
+    "invalid_password": "유효하지 않은 암호로 지갑 잠금 해제를 시도했습니다."
   },
   "apiUtils": {
     "broadcast": "거래가 성공적으로 방송되었습니다.",
@@ -32,7 +32,7 @@
   "recovery": {
     "decryptError": "계정 복구 오류!",
     "invalidPassword": "복구된 지갑 비밀번호가 잘못되었습니다.",
-    "duplicate": "같은 이름의 지갑이 이미 존재하여 지갑 복원을 중단합니다."
+    "duplicate": "동일한 이름의 지갑이 이미 존재하여 지갑 복원을 중단합니다."
   },
   "raw": {
     "label": "원시 딥 링크 페이지",
@@ -75,7 +75,7 @@
       "title": "웹캠으로 QR 코드 스캔"
     },
     "drag": {
-      "title": "QR 코드가 포함된 이미지 끌어다 놓기"
+      "title": "QR 코드가 포함된 이미지를 끌어다 놓습니다."
     },
     "upload": {
       "title": "QR 코드 스캔을 위한 이미지 파일 업로드"
@@ -111,9 +111,16 @@
     "Logout": "로그 아웃"
   },
   "popup": {
+    "keywords": {
+      "request": "작업 요청",
+      "result": "연산 결과"
+    },
     "preview": "신속한 미리보기",
-    "request": "요청 JSON 보기",
+    "evaluate": "신속한 결과 평가",
     "payload": "페이로드 JSON 보기",
+    "request": "요청 JSON 보기",
+    "result": "네트워크 결과 JSON 보기",
+    "details": "세부 정보보기",
     "language": "언어",
     "chainOperations": "체인 운영"
   },
@@ -188,7 +195,7 @@
   "confirm_cta": "비밀번호 확인:",
   "confirm_placeholder": "비밀번호 확인",
   "empty_wallet_error": "이름 없이 지갑을 만들 수 없습니다.",
-  "duplicate_wallet_error": "이 이름의 지갑이 이미 존재합니다.",
+  "duplicate_wallet_error": "이 이름을 가진 지갑이 이미 존재합니다.",
   "missing_account_error": "{chain} 계정 이름을 지정해야 합니다.",
   "invalid_key_error": "개인 키 형식이 잘못되었습니다.",
   "unverified_account_error": "제공된 계정 이름의 키를 확인할 수 없습니다. ",

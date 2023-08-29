@@ -2,8 +2,16 @@
     "general": {
         "content": "Content"
     },
+    "receipt": {
+        "id": "Transaction ID: { resultID }",
+        "block": "Block number: { resultBlockNum }",
+        "trxNum": "Transaction number: { resultTrxNum }",
+        "expiration": "Expiration: { resultExpiration }",
+        "signatures": "Signatures: { resultSignatures }"
+    },
     "link": {
         "title": "Account Link Request",
+        "result": "Account link result",
         "account_select": "Account select",
         "account_missing": "Requested account not present in this wallet.",
         "request": "The application '{appName}' from '{origin}' is requesting access to a {chain} account.",
@@ -16,12 +24,14 @@
     },
     "relink": {
         "title": "Account ReLink Request",
+        "result": "Account relink result",
         "error": "Error showing prompt",
         "request": "The application '{appName}' from '{origin}' is requesting to relink the previously linked {chain} account: {accountId}. This is usually due to having deleted your browser's cache. On rare ocassions, this may be a phishing attempt so please double check the site you are visiting.",
         "request_tooltip": "The previous link between the appplication and the account referencec will be reset."
     },
     "account_id": {
         "title": "Account Details Request",
+        "result": "Account details result",
         "request": "App: '{appName}' from '{origin}' is requesting access to the linked identity (account ID & account name) of account: {chain}: {accountName} ({accountId}).",
         "request_tooltip": "By default an anonymous link is provided. Certain apps/websites require access to your account id/name (e.g. for sign-in purposes). If this is the case, it is safe to 'Allow' here.",
         "accept_btn": "Allow",
@@ -29,6 +39,7 @@
     },
     "any_account_id": {
         "title": "Account Details Request",
+        "result": "Account details result",
         "request": "App: '{appName}' from '{origin}' is requesting access to an account.",
         "request_cta": "Select account to provide.",
         "accept_btn": "Allow",
@@ -36,6 +47,7 @@
     },
     "transfer": {
         "title": "Transfer Request",
+        "result": "Transfer result",
         "to": "Recipient",
         "amount": "Amount",
         "memo": "Memo",
@@ -48,6 +60,11 @@
     },
     "rawsig": {
         "title": "Request",
+        "result": "Request result",
+        "headers": {
+          "request": "Do you want to approve the following raw signature?",
+          "result": "The following raw signature was approved:"
+        },
         "loading": "Loading transaction details from blockchain, please wait.",
         "request": "App: '{appName}' from '{origin}' has submitted the following transaction for account { chain }:{ accountName }.",
         "summary": "This transaction contains {numOps} operations, you can browse through them below.",
@@ -56,6 +73,11 @@
         "accept_btn": "Sign & Broadcast",
         "sign_and_broadcast_btn": "Sign & Broadcast",
         "sign_btn": "Sign",
+        "receipt": {
+            "title": "Do you want a receipt?",
+            "yes": "Yes, I want a receipt.",
+            "no": "No, I don't want a receipt."
+        },
         "reject_btn": "Ignore"
     },
     "whitelist": {
@@ -63,6 +85,7 @@
     },
     "vote": {
         "title": "Vote Request",
+        "result": "Vote result",
         "request": "App: '{appName}' from '{origin}'  wants you to vote for the following {entity} with account { chain }:{ accountName }",
         "request_cta": "",
         "accept_btn": "Approve",
@@ -70,6 +93,7 @@
     },
     "message": {
         "title": "Sign Message Request",
+        "result": "Sign Message result",
         "request": "App: '{appName}' from '{origin}' wants you to sign the following text with account { chain }:{ accountName }",
         "request_cta": "",
         "accept_btn": "Approve",
@@ -80,41 +104,81 @@
             "getAccount": {
                 "method": "getAccount",
                 "title": "Account Details Request",
+                "result": "Account details result",
+                "headers": {
+                  "request": "Do you want to share your account details?",
+                  "result": "Your account details were shared."
+                },
                 "tooltip": "Asks your wallet for blockchain account details"
             },
             "requestSignature": {
                 "method": "requestSignature",
                 "title": "Signature Request",
+                "result": "Signature result",
+                "headers": {
+                  "request": "Do you want to share your signature?",
+                  "result": "Your signature was shared:"
+                },
                 "tooltip": "Asks your wallet for blockchain signatures"
             },
             "injectedCall": {
                 "method": "injectedCall",
                 "title": "Injected Call Request",
+                "result": "Injected call result",
+                "headers": {
+                  "request": "Approve the following injected call?",
+                  "result": "The following injected call was approved:"
+                },
                 "tooltip": "Asks your wallet to handle an injected blockchain operation"
             },
             "voteFor": {
                 "method": "voteFor",
                 "title": "Vote Request",
+                "result": "Vote result",
+                "headers": {
+                  "request": "Approve the following voting request?",
+                  "result": "The following voting request was approved"
+                },
                 "tooltip": "Perform a blockchain vote"
             },
             "signMessage": {
                 "method": "signMessage",
                 "title": "Sign Message Request",
+                "result": "Sign Message result",
+                "headers": {
+                  "request": "Approve signing the following message?",
+                  "result": "The following message was signed:"
+                },
                 "tooltip": "Sign a blockchain based message"
             },
             "signNFT": {
                 "method": "signNFT",
                 "title": "Sign NFT Request",
+                "result": "Sign NFT result",
+                "headers": {
+                  "request": "Approve signing the following NFT?",
+                  "result": "The following NFT was signed:"
+                },
                 "tooltip": "Sign an NFTs contents"
             },
             "verifyMessage": {
                 "method": "verifyMessage",
                 "title": "Verify Message Request",
+                "result": "Verify Message result",
+                "headers": {
+                  "request": "Do you want to verify the following message?",
+                  "result": "The following message was verified:"
+                },
                 "tooltip": "Verify a blockchain based signed message"
             },
             "transfer": {
               "method": "Transfer",
               "title": "Transfer Request",
+              "result": "Transfer result",
+              "headers": {
+                "request": "Do you want to approve the following transfer request?",
+                "result": "The following transfer request was approved:"
+              },
               "rows": {
                 "from": "From: {from} ({opFrom})",
                 "to": "To: {to} ({opTo})",
@@ -125,6 +189,11 @@
             "limit_order_create": {
               "method": "Limit order create",
               "title": "Limit order create request",
+              "result": "Limit order create result",
+              "headers": {
+                "request": "Approve the following limit order creation request?",
+                "result": "The following limit order was created:"
+              },
               "rows": {
                 "trade": "Trade",
                 "tradeFK": "Trade (Fill or kill)",
@@ -138,8 +207,12 @@
             "limit_order_cancel": {
               "method": "Limit order cancel",
               "title": "Limit order cancel request",
+              "result": "Limit order cancel result",
+              "headers": {
+                "request": "Cancel the following limit order?",
+                "result": "The following limit order was cancelled:"
+              },
               "rows": {
-                "header": "Cancel the following limit order?",
                 "id": "Order ID: {id}",
                 "fees": "Estimated fees: {fees}",
                 "account": "Fee paying account: {account}"
@@ -149,8 +222,12 @@
             "call_order_update": {
               "method": "Call order update",
               "title": "Call order update request",
+              "result": "Call order update result",
+              "headers": {
+                "request": "Update your call order to the following?",
+                "result": "The following call order was updated:"
+              },
               "rows": {
-                "header": "Update your call order to the following?",
                 "funding_account": "Funding account: {funding_account}",
                 "delta_collateral": "Delta collateral: {delta_collateral} ({id})",
                 "delta_debt": "Delta debt: {delta_debt} ({id})",
@@ -161,12 +238,16 @@
             "account_create": {
               "method": "Account create",
               "title": "Account create request",
+              "result": "Account create result",
+              "headers": {
+                "request": "Do you want to create the following account?",
+                "result": "The following account was created:"
+              },
               "rows": {
-                "header": "Do you want to create the following account?",
-                    "registrar": "Registrar: {registrar} ({opRegistrar})",
-                    "referrer": "Referrer: {referrer} ({opReferrer})",
-                    "referrer_percent": "Refferrer percent: {referrer_percent}",
-                    "name": "Name: {name}",
+                "registrar": "Registrar: {registrar} ({opRegistrar})",
+                "referrer": "Referrer: {referrer} ({opReferrer})",
+                "referrer_percent": "Refferrer percent: {referrer_percent}",
+                "name": "Name: {name}",
                 "ownerHeader": "Owner:",
                 "activeHeader": "Active:",
                     "weight_threshold": "Weight threshold: {weight_threshold}",
@@ -187,8 +268,12 @@
             "account_update": {
                 "method": "Account update",
                 "title": "Account update request",
+                "result": "Account update result",
+                "headers": {
+                  "request": "Do you want to update the following account?",
+                  "result": "The following account was updated:"
+                },
                 "rows": {
-                    "header": "Do you want to create the following account?",
                     "warning": "Warning: This operation is irreversible!",
                     "account": "Account: {account} ({opAccount})",
                     "owner": "Owner: {owner}",
@@ -202,8 +287,12 @@
             "account_whitelist": {
                 "method": "Account whitelist",
                 "title": "Account whitelist request",
+                "result": "Account whitelist result",
+                "headers": {
+                  "request": "Update your account whitelist to the following?",
+                  "result": "Your account whitelist was updated to the following:"
+                },
                 "rows": {
-                    "header": "Account whitelist details:",
                     "authorizing_account": "Authorizing account: {authorizingAccount} (authorizingAccountOP)",
                     "account_to_list": "Account to list: {accountToList} (accountToListOP)",
                     "new_listing": "New listing: {newListing}",
@@ -215,8 +304,12 @@
             "account_upgrade": {
                 "method": "Account upgrade",
                 "title": "Account upgrade request",
+                "result": "Account upgrade result",
+                "headers": {
+                  "request": "Upgrade your account to lifetime member?",
+                  "result": "Your account was upgraded to lifetime member!"
+                },
                 "rows": {
-                    "header": "Upgrade account to lifetime member?",
                     "account_to_upgrade": "Account to upgrade: {accountToUpgrade} (accountToUpgradeOP)",
                     "upgrade_to_lifetime_member": "Upgrade to lifetime member: {upgradeToLifetimeMember}",
                     "extensions": "Extensions: {extensions}",
@@ -227,8 +320,12 @@
             "account_transfer": {
                 "method": "Account transfer",
                 "title": "Account transfer request",
+                "result": "Account transfer result",
+                "headers": {
+                  "request": "Transfer account to a new owner?",
+                  "result": "The following account was transferred to a new owner:"
+                },
                 "rows": {
-                    "header": "Transfer account to a new owner?",
                     "warning": "Warning: This action is irreversible!",
                     "account_id": "Account ID: {originalOwner} ({account_id})",
                     "new_owner": "New owner: {newOwner} ({newOwnerOP})",
@@ -239,16 +336,20 @@
             "asset_create": {
                 "method": "Asset create",
                 "title": "Asset create request",
+                "result": "Asset create result",
+                "headers": {
+                  "request": "Create the following asset?",
+                  "result": "The following asset was created:"
+                },
                 "rows": {
-                    "header": "Create the following asset?",
-                        "symbol": "Symbol: {symbol}",
-                        "main": "Main: {main}",
-                        "market": "Market: {market}",
-                        "short_name": "Short name: {short_name}",
-                        "precision": "Precision: {precision}",
-                        "max_supply": "Max supply: {max_supply}",
-                        "market_fee_percent": "Market fee percent: {market_fee_percent}",
-                        "max_market_fee": "Max market fee: {max_market_fee}",
+                    "symbol": "Symbol: {symbol}",
+                    "main": "Main: {main}",
+                    "market": "Market: {market}",
+                    "short_name": "Short name: {short_name}",
+                    "precision": "Precision: {precision}",
+                    "max_supply": "Max supply: {max_supply}",
+                    "market_fee_percent": "Market fee percent: {market_fee_percent}",
+                    "max_market_fee": "Max market fee: {max_market_fee}",
                     "cer": "Core exchange rates:",
                         "cer_base_amount": "Base amount: {cer_base_amount}",
                         "cer_base_id": "Base asset ID: {cer_base_id}",
@@ -294,8 +395,12 @@
             "asset_update": {
                 "method": "Asset update",
                 "title": "Asset update request",
+                "result": "Asset update result",
+                "headers": {
+                  "request": "Update the following asset?",
+                  "result": "The asset was updated with the following details:"
+                },
                 "rows": {
-                    "header": "Update the following asset?",
                         "symbol": "Symbol: {symbol}",
                         "main": "Main: {main}",
                         "market": "Market: {market}",
@@ -349,8 +454,12 @@
             "asset_update_bitasset": {
               "method": "Asset update bitasset",
               "title": "Asset update bitasset request",
+              "result": "Asset update bitasset result",
+              "headers": {
+                "request": "Approve bitasset update?",
+                "result": "The following bitasset update was approved:"
+              },
               "rows": {
-                "header": "Approve bitasset update?",
                 "issuer": "Issuer: {issuer}",
                 "asset_to_update": "Asset to update: {asset_to_update}",
                 "new_options": "New options:",
@@ -369,8 +478,12 @@
             "asset_update_feed_producers": {
               "method": "Asset update feed producers",
               "title": "Asset update feed producers request",
+              "result": "Asset update feed producers result",
+              "headers": {
+                "request": "Approve change to bitasset feed producers?",
+                "result": "The following change to bitasset feed producers was approved:"
+              },
               "rows": {
-                "header": "Approve change to bitasset feed producers?",
                 "issuer": "Issuer: {issuer} ({issuerOP})",
                 "asset_to_update": "Asset to update: {symbol} ({asset_to_update})",
                 "new_feed_producers": "New feed producers: {new_feed_producers}",
@@ -381,8 +494,13 @@
             "asset_issue": {
               "method": "Asset issue",
               "title": "Asset issue request",
+              "result": "Asset issue result",
+              "headers": {
+                "request": "Approve the following asset issuance?",
+                "result": "The following asset issuance was approved:"
+              },
               "rows": {
-                "header": "Issue {amount} {symbol} ({assetID}) to {to} ({toID})?",
+                "prompt": "Issue {amount} {symbol} ({assetID}) to {to} ({toID})?",
                 "fee": "Estimated fee: {fee} ({id})"
               },
               "tooltip": "Issue your created assets to individuals"
@@ -390,8 +508,12 @@
             "asset_reserve": {
               "method": "Asset reserve",
               "title": "Asset reserve request",
+              "result": "Asset reserve result",
+              "headers": {
+                "request": "Approve the following asset reservation?",
+                "result": "The following asset reservation was approved:"
+              },
               "rows": {
-                "header": "Approve the following asset reservation?",
                 "payer": "Payer: {payer} ({payerOP})",
                 "amount_to_reserve": "Amount to reserve: {amount_to_reserve} ({amount_to_reserveOP})",
                 "extensions": "Extensions: {extensions}",
@@ -402,8 +524,12 @@
             "asset_fund_fee_pool": {
               "method": "Asset fund fee pool",
               "title": "Asset fund fee pool request",
+              "result": "Asset fund fee pool result",
+              "headers": {
+                "request": "Fund the following asset's fee pool?",
+                "result": "The following asset's fee pool funding was approved:"
+              },
               "rows": {
-                "header": "Fund the following asset's fee pool?",
                 "from_account": "From account: {from_account} ({from_accountOP})",
                 "asset": "Asset: {asset} ({assetOP})",
                 "amount": "Amount: {amount}",
@@ -414,8 +540,12 @@
             "asset_settle": {
               "method": "Asset settle",
               "title": "Asset settle request",
+              "result": "Asset settle result",
+              "headers": {
+                "request": "Settle the following asset for its backing collateral?",
+                "result": "The following asset was settled for its backing collateral:"
+              },
               "rows": {
-                "header": "Settle the following asset for its backing collateral?",
                 "account": "Account: {account} ({accountOP})",
                 "amount": "Amount: {amount} ({assetID})",
                 "fee": "Estimated fee: {fee}"
@@ -425,8 +555,12 @@
             "asset_global_settle": {
               "method": "Asset global settle",
               "title": "Asset global settle request",
+              "result": "Asset global settle result",
+              "headers": {
+                "request": "Perform global settlement on the following asset?",
+                "result": "The following asset was globally settled:"
+              },
               "rows": {
-                "header": "Perform global settlement on the following asset?",
                 "issuer": "Issuer: {issuer} ({issuerOP})",
                 "asset_to_settle": "Asset to settle: {asset_to_settle} ({asset_to_settleOP})",
                 "settle_price": "Settle price: {settle_price}",
@@ -437,10 +571,14 @@
             "asset_publish_feed": {
               "method": "Asset publish feed",
               "title": "Asset publish feed request",
+              "result": "Asset publish feed result",
+              "headers": {
+                "request": "Publish a price feed for the following asset?",
+                "result": "The following asset price feed update was published:"
+              },
               "rows": {
-                "header": "Publish a price feed for the following asset?",
-                    "publisher": "Publisher: {publisher} ({publisherOP})",
-                    "asset_id": "Asset ID: {symbol} ({asset_idOP})",
+                "publisher": "Publisher: {publisher} ({publisherOP})",
+                "asset_id": "Asset ID: {symbol} ({asset_idOP})",
                 "feed": "Feed:",
                     "core_exchange_rate": "Core exchange rate: {core_exchange_rate}",
                     "settlement_price": "Settlement price: {settlement_price}",
@@ -454,8 +592,12 @@
             "witness_create": {
               "method": "Witness create",
               "title": "Witness create request",
+              "result": "Witness create result",
+              "headers": {
+                "request": "Create a witness with the following details?",
+                "result": "The following witness was created:"
+              },
               "rows": {
-                "header": "Create a witness with the following details?",
                 "witness_account": "Witness account: {witness_account} ({witness_accountOP})",
                 "url": "URL: {url}",
                 "block_signing_key": "Block signing key: {block_signing_key}",
@@ -466,8 +608,12 @@
             "witness_update": {
               "method": "Witness update",
               "title": "Witness update request",
+              "result": "Witness update result",
+              "headers": {
+                "request": "Update witness details to the following?",
+                "result": "The following witness details were updated:"
+              },
               "rows": {
-                "header": "Update witness details to the following?",
                 "witness": "Witness: {witness}",
                 "witness_account": "Witness account: {witness_account} ({witness_accountOP})",
                 "new_url": "New URL: {new_url}",
@@ -479,9 +625,13 @@
             "proposal_create": {
               "method": "Proposal create",
               "title": "Proposal create request",
+              "result": "Proposal create result",
+              "headers": {
+                "request": "Create the following proposal?",
+                "result": "The following proposal was created:"
+              },
               "rows": {
-                "header": "Create the following proposal?",
-                    "expiration_time": "Expiration time: {expiration_time}",
+                "expiration_time": "Expiration time: {expiration_time}",
                 "proposed_ops": "Proposed operations: {proposed_ops}",
                 "review_period_seconds": "Review period seconds: {review_period_seconds}",
                 "fee_paying_account": "Fee paying account: {fee_paying_account} ({fee_paying_accountOP})",
@@ -492,26 +642,34 @@
             "proposal_update": {
               "method": "Proposal update",
               "title": "Proposal update request",
+              "result": "Proposal update result",
+              "headers": {
+                "request": "Update the following proposal?",
+                "result": "The following proposal was updated:"
+              },
               "rows": {
-                "header": "Update the following proposal?",
-                    "proposal": "Proposal: {proposal}",
-                    "active_approvals_to_add": "Active approvals to add: {active_approvals_to_add}",
-                    "active_approvals_to_remove": "Active approvals to remove: {active_approvals_to_remove}",
-                    "owner_approvals_to_add": "Owner approvals to add: {owner_approvals_to_add}",
-                    "owner_approvals_to_remove": "Owner approvals to remove: {owner_approvals_to_remove}",
-                    "key_approvals_to_add": "Key approvals to add: {key_approvals_to_add}",
-                    "key_approvals_to_remove": "Key approvals to remove: {key_approvals_to_remove}",
-                    "fee_paying_account": "Fee paying account: {fee_paying_account} ({fee_paying_accountOP})",
-                    "extensions": "Extensions: {extensions}",
-                    "fee": "Estimated fee: {fee}"
+                "proposal": "Proposal: {proposal}",
+                "active_approvals_to_add": "Active approvals to add: {active_approvals_to_add}",
+                "active_approvals_to_remove": "Active approvals to remove: {active_approvals_to_remove}",
+                "owner_approvals_to_add": "Owner approvals to add: {owner_approvals_to_add}",
+                "owner_approvals_to_remove": "Owner approvals to remove: {owner_approvals_to_remove}",
+                "key_approvals_to_add": "Key approvals to add: {key_approvals_to_add}",
+                "key_approvals_to_remove": "Key approvals to remove: {key_approvals_to_remove}",
+                "fee_paying_account": "Fee paying account: {fee_paying_account} ({fee_paying_accountOP})",
+                "extensions": "Extensions: {extensions}",
+                "fee": "Estimated fee: {fee}"
                 },
               "tooltip": "Update a blockchain operation proposal"
             },
             "proposal_delete": {
               "method": "Proposal delete",
               "title": "Proposal delete request",
+              "result": "Proposal delete result",
+              "headers": {
+                "request": "Delete the following proposal?",
+                "result": "The following proposal was deleted:"
+              },
               "rows": {
-                "header": "Delete the following proposal?",
                 "using_owner_authority": "Using owner authority: {using_owner_authority}",
                 "proposal": "Proposal: {proposal}",
                 "fee_paying_account": "Fee paying account: {fee_paying_account} ({fee_paying_accountOP})",
@@ -523,8 +681,12 @@
             "withdraw_permission_create": {
               "method": "Withdraw permission create",
               "title": "Withdraw permission create request",
+              "result": "Withdraw permission create result",
+              "headers": {
+                "request": "Direct Debit Authorization",
+                "result": "The following direct debit authorization was approved:"
+              },
               "rows": {
-                "header": "Direct Debit Authorization",
                 "recipient": "Recipient: {recipient} ({recipientOP})",
                 "withdraw_from": "Account to withdraw from: {withdraw_from} ({withdraw_fromOP})",
                 "taking": "Take {amount} every {period_sec} seconds, for {period_qty} periods",
@@ -535,8 +697,12 @@
             "withdraw_permission_update": {
               "method": "Withdraw permission update",
               "title": "Withdraw permission update request",
+              "result": "Withdraw permission update result",
+              "headers": {
+                "request": "Update witness permissions to the following?",
+                "result": "The following witness permission updates were approved:"
+              },
               "rows": {
-                "header": "Update witness permissions to the following?",
                 "withrdaw_from_account": "Withdraw from account: {withrdaw_from_account} ({withrdaw_from_accountOP})",
                 "authorized_account": "Authorized account: {authorized_account} ({authorized_accountOP})",
                 "permission_to_update": "Permission to update: {permission_to_update}",
@@ -552,8 +718,12 @@
             "withdraw_permission_claim": {
               "method": "Withdraw permission claim",
               "title": "Withdraw permission claim request",
+              "result": "Withdraw permission claim result",
+              "headers": {
+                "request": "Claim the following withdrawal permission",
+                "result": "The following withdrawal permission was claimed:"
+              },
               "rows": {
-                "header": "Claim the following withdrawal permission",
                 "withdraw_permission": "Withdraw permission: {withdraw_permission}",
                 "withdraw_from_account": "Withdraw from account: {withdraw_from_account} ({withdraw_from_accountOP})",
                 "withdraw_to_account": "Withdraw to account: {withdraw_to_account} ({withdraw_to_accountOP})",
@@ -566,8 +736,12 @@
             "withdraw_permission_delete": {
               "method": "Withdraw permission delete",
               "title": "Withdraw permission delete request",
+              "result": "Withdraw permission delete result",
+              "headers": {
+                "request": "Delete the following withdraw permission?",
+                "result": "The following withdraw permission was deleted:"
+              },
               "rows": {
-                "header": "Delete the following withdraw permission?",
                 "withdraw_from_account":"Withdraw from account: {withdraw_from_account} ({withdraw_from_accountOP})",
                 "authorized_account": "Authorized account: {authorized_account} ({authorized_accountOP})",
                 "withdrawal_permission": "Withdrawal permission: {withdrawal_permission}",
@@ -578,8 +752,12 @@
             "committee_member_create": {
               "method": "Committee member create",
               "title": "Committee member create request",
+              "result": "Committee member create result",
+              "headers": {
+                "request": "Create a committee member?",
+                "result": "The following committee member was created:"
+              },
               "rows": {
-                "header": "Create a committee member?",
                 "committee_member_account": "Committee member account: {committee_member_account} ({committee_member_accountOP})",
                 "url": "URL: {url}",
                 "fee": "Estimated fee: {fee}"
@@ -589,8 +767,12 @@
             "committee_member_update": {
               "method": "Committee member update",
               "title": "Committee member update request",
+              "result": "Committee member update result",
+              "headers": {
+                "request": "Update the following committee member's details?",
+                "result": "The following committee member's detail updates were approved:"
+              },
               "rows": {
-                "header": "Update the following committee member's details?",
                 "committee_member": "Committee member: {committee_member}",
                 "committee_member_account": "Committee member account: {committee_member_account} ({committee_member_accountOP})",
                 "new_url": "New URL: {new_url}",
@@ -601,8 +783,12 @@
             "committee_member_update_global_parameters": {
               "method": "Committee member update global parameters",
               "title": "Committee member update global parameters request",
+              "result": "Committee member update global parameters result",
+              "headers": {
+                "request": "Approve of following global parameters as a committee?",
+                "result": "The following global committee parameters were approved:"
+              },
               "rows": {
-                "header": "Approve of following global parameters as a committee?",
                 "new_parameters": "New parameters:",
                     "current_fees": "Current fees: {current_fees}",
                     "block_interval": "Block interval: {block_interval}",
@@ -640,11 +826,15 @@
             "vesting_balance_create": {
               "method": "Vesting balance create",
               "title": "Vesting balance create request",
+              "result": "Vesting balance create result",
+              "headers": {
+                "request": "Create the following vesting balance?",
+                "result": "The following vesting balance was created:"
+              },
               "rows": {
-                "header": "Create the following vesting balance?",
-                    "creator": "Creator: {creator} ({creatorOP})",
-                    "owner": "Owner: {owner} ({ownerOP})",
-                    "amount": "Amount: {amount} ({asset_id})",
+                "creator": "Creator: {creator} ({creatorOP})",
+                "owner": "Owner: {owner} ({ownerOP})",
+                "amount": "Amount: {amount} ({asset_id})",
                 "policy": "Policy:",
                     "begin_timestamp": "Begin timestamp: {begin_timestamp}",
                     "vesting_cliff_seconds": "Vesting cliff seconds: {vesting_cliff_seconds}",
@@ -658,8 +848,12 @@
             "vesting_balance_withdraw": {
               "method": "Vesting balance withdraw",
               "title": "Vesting balance withdraw request",
+              "result": "Vesting balance withdraw result",
+              "headers": {
+                "request": "Withdraw the following vesting balance?",
+                "result": "The following vesting balance was withdrawn:"
+              },
               "rows": {
-                "header": "Vesting Balance",
                 "owner":"Owner: {owner} ({ownerOP})",
                 "claim": "Claim: {claim} ({asset_id})"
               },
@@ -668,8 +862,12 @@
             "worker_create": {
               "method": "Worker create",
               "title": "Worker create request",
+              "result": "Worker create result",
+              "headers": {
+                "request": "Create the following worker proposal?",
+                "result": "The following worker proposal was created:"
+              },
               "rows": {
-                "header": "Create the following worker proposal?",
                 "owner":"Owner: {owner} ({ownerOP})",
                 "work_begin_date": "Work begin date: {work_begin_date}",
                 "work_end_date": "Work end date: {work_end_date}",
@@ -684,8 +882,12 @@
             "custom": {
                 "method": "Custom",
                 "title": "Custom request",
+                "result": "Custom result",
+                "headers": {
+                  "request": "Create the following custom operation?",
+                  "result": "The following custom operation was created:"
+                },
                 "rows": {
-                    "header": "Custom operation:",
                     "payer": "Payer: {payer} ({payerOP})",
                     "required_auths": "Required authorities: {required_auths}",
                     "id": "ID: {id}",
@@ -697,8 +899,12 @@
             "assert": {
                 "method": "Assert",
                 "title": "Assert request",
+                "result": "Assert result",
+                "headers": {
+                  "request": "Approve the following assert request operation?",
+                  "result": "The following assert request operation was approved:"
+                },
                 "rows": {
-                    "header": "Assert operation:",
                     "fee_paying_account": "Fee paying account: {fee_paying_account} ({fee_paying_accountOP})",
                     "predicates": "Predicates: {predicates}",
                     "required_auths": "Required authorities: {required_auths}",
@@ -710,8 +916,12 @@
             "balance_claim": {
               "method": "Balance claim",
               "title": "Balance claim request",
+              "result": "Balance claim result",
+              "headers": {
+                "request": "Claim the following balance?",
+                "result": "The following balance was claimed:"
+              },
               "rows": {
-                "header": "Claim the following balance?",
                 "deposit_to_account": "Deposit to account: {deposit_to_account} ({deposit_to_accountOP})",
                 "balance_to_claim": "Balance to claim: {balance_to_claim} ({asset_id})",
                 "balance_owner_key": "Balance owner key: {balance_owner_key}",
@@ -723,8 +933,12 @@
             "override_transfer": {
               "method": "Override transfer",
               "title": "Override transfer request",
+              "result": "Override transfer result",
+              "headers": {
+                "request": "Override the following transfer?",
+                "result": "The following transfer was overridden:"
+              },
               "rows": {
-                "header": "Override the following transfer?",
                 "issuer": "Issuer: {issuer} ({issuerOP})",
                 "from": "From: {from} ({fromOP})",
                 "to": "To: {to} ({toOP})",
@@ -737,8 +951,12 @@
             "transfer_to_blind": {
               "method": "Transfer to blind",
               "title": "Transfer to blind request",
+              "result": "Transfer to blind result",
+              "headers": {
+                "request": "Transfer the following to blind?",
+                "result": "The following was transferred to blind:"
+              },
               "rows": {
-                "header": "Transfer the following to blind?",
                 "amount":"Amount: {amount}",
                 "from": "From: {from} ({fromOP})",
                 "blinding_factor": "Blinding factor: {blinding_factor}",
@@ -750,8 +968,12 @@
             "blind_transfer": {
               "method": "Blind transfer",
               "title": "Blind transfer request",
+              "result": "Blind transfer result",
+              "headers": {
+                "request": "Approve the following blind transfer?",
+                "result": "The following blind transfer was approved:"
+              },
               "rows": {
-                "header": "Approve the following blind transfer?",
                 "inputs": "Inputs: {inputs}",
                 "outputs": "Outputs: {outputs}",
                 "fee": "Estimated fee: {fee}"
@@ -761,8 +983,12 @@
             "transfer_from_blind": {
               "method": "Transfer from blind",
               "title": "Transfer from blind request",
+              "result": "Transfer from blind result",
+              "headers": {
+                "request": "Transfer the following from blind?",
+                "result": "The following was transferred from blind:"
+              },
               "rows": {
-                "header": "Transfer the following from blind?",
                 "amount":"Amount: {amount}",
                 "to": "To: {to} ({toOP})",
                 "blinding_factor": "Blinding factor: {blinding_factor}",
@@ -774,8 +1000,12 @@
             "asset_claim_fees": {
               "method": "Asset claim fees",
               "title": "Asset claim fees request",
+              "result": "Asset claim fees result",
+              "headers": {
+                "request": "Withdraw the fees from the following asset?",
+                "result": "The following asset's fees were claimed:"
+              },
               "rows": {
-                "header": "Withdraw the fees from the following asset?",
                 "issuer": "Issuer: {issuer} ({issuerOP})",
                 "amount_to_claim": "Amount to claim: {amount_to_claim} ({asset_id})",
                 "fee": "Estimated fee: {fee}"
@@ -785,8 +1015,12 @@
             "bid_collateral": {
               "method": "Bid collateral",
               "title": "Bid collateral request",
+              "result": "Bid collateral result",
+              "headers": {
+                "request": "Approve the following collateral bid?",
+                "result": "The following collateral bid was approved:"
+              },
               "rows": {
-                "header": "Approve the following collateral bid?",
                 "bidder": "Bidder: {bidder} ({bidderOP})",
                 "additional_collateral": "Additional collateral: {additional_collateral}",
                 "debt_covered": "Debt covered: {debt_covered}",
@@ -797,8 +1031,12 @@
             "asset_claim_pool": {
               "method": "Asset claim pool",
               "title": "Asset claim pool request",
+              "result": "Asset claim pool result",
+              "headers": {
+                "request": "Claim the following asset pool?",
+                "result": "The following asset pool was claimed:"
+              },
               "rows": {
-                "header": "Claim the following asset pool?",
                 "issuer": "Issuer: {issuer} ({issuerOP})",
                 "asset_id": "Asset: {asset_id}",
                 "amount_to_claim": "Amount to claim: {amount_to_claim}",
@@ -809,48 +1047,64 @@
             "asset_update_issuer": {
               "method": "Asset update issuer",
               "title": "Asset update issuer request",
+              "result": "Asset update issuer result",
+              "headers": {
+                "request": "Update the issuer of the following asset?",
+                "result": "The following asset's issuer was updated:"
+              },
               "rows": {
-                "header": "Update the issuer of the following asset?",
-                    "issuer": "Issuer: {issuer} ({issuerOP})",
-                    "asset_to_update": "Asset to update: {asset_to_update}",
-                    "new_issuer": "New issuer: {new_issuer} ({new_issuerOP})",
-                    "fee": "Estimated fee: {fee}"
+                "issuer": "Issuer: {issuer} ({issuerOP})",
+                "asset_to_update": "Asset to update: {asset_to_update}",
+                "new_issuer": "New issuer: {new_issuer} ({new_issuerOP})",
+                "fee": "Estimated fee: {fee}"
               },
               "tooltip": "Update issuer of an asset to a new administrator account."
             },
             "htlc_create": {
               "method": "HTLC create",
               "title": "HTLC create request",
+              "result": "HTLC create result",
+              "headers": {
+                "request": "Create the following hashed timelock contract operation?",
+                "result": "The creation of the following hashed timelock contract operation was approved:"
+              },
               "rows": {
-                "header": "Create the following HTLC operation?",
-                    "from": "From: {from} ({fromOP})",
-                    "to": "To: {to} ({toOP})",
-                    "amount": "Amount: {amount}",
-                    "preimage_hash": "Preimage hash: {preimage_hash}",
-                    "preimage_size": "Preimage size: {preimage_size}",
-                    "claim_period_seconds": "Claim period (seconds): {claim_period_seconds}",
-                    "fee": "Estimated fee: {fee}"
+                "from": "From: {from} ({fromOP})",
+                "to": "To: {to} ({toOP})",
+                "amount": "Amount: {amount}",
+                "preimage_hash": "Preimage hash: {preimage_hash}",
+                "preimage_size": "Preimage size: {preimage_size}",
+                "claim_period_seconds": "Claim period (seconds): {claim_period_seconds}",
+                "fee": "Estimated fee: {fee}"
               },
               "tooltip": "Create a hash time locked contract (HTLC) operation"
             },
             "htlc_redeem": {
               "method": "HTLC Redeem",
               "title": "HTLC Redeem request",
+              "result": "HTLC Redeem result",
+              "headers": {
+                "request": "Redeem the following hash time locked contract operation?",
+                "result": "The redemption of the following hash time locked contract operation was approved:"
+              },
               "rows": {
-                "header": "Redeem the following HTLC operation?",
-                    "htlc_id": "HTLC ID: {htlc_id}",
-                    "redeemer": "Redeemer: {redeemer} ({redeemerOP})",
-                    "preimage": "Preimage: {preimage}",
-                    "extensions": "Extensions: {extensions}",
-                    "fee": "Estimated fee: {fee}"
+                "htlc_id": "HTLC ID: {htlc_id}",
+                "redeemer": "Redeemer: {redeemer} ({redeemerOP})",
+                "preimage": "Preimage: {preimage}",
+                "extensions": "Extensions: {extensions}",
+                "fee": "Estimated fee: {fee}"
               },
               "tooltip": "Redeem the contents of a HTLC operation"
             },
             "htlc_extend": {
               "method": "HTLC Extend",
               "title": "HTLC Extend request",
+              "result": "HTLC Extend result",
+              "headers": {
+                "request": "Approve the following hash timelocked contract extension?",
+                "result": "The extension of the following hash timelocked contract was approved:"
+              },
               "rows": {
-                "header": "Approve the following HTLC extension?",
                 "htlc_id": "HTLC ID: {htlc_id}",
                 "update_issuer": "Update issuer: {update_issuer} ({update_issuerOP})",
                 "seconds_to_add": "Seconds to add: {seconds_to_add}",
@@ -862,8 +1116,12 @@
             "custom_authority_create": {
               "method": "Custom authority create",
               "title": "Custom authority create request",
+              "result": "Custom authority create result",
+              "headers": {
+                "request": "Create the following custom authority?",
+                "result": "The following custom authority was created:"
+              },
               "rows": {
-                "header": "Create the following custom authority?",
                 "account": "Account: {account} ({accountOP})",
                 "enabled": "Enabled: {enabled}",
                 "valid_from": "Valid from: {valid_from}",
@@ -879,8 +1137,12 @@
             "custom_authority_update": {
               "method": "Custom authority update",
               "title": "Custom authority update request",
+              "result": "Custom authority update result",
+              "headers": {
+                "request": "Update the following custom authority?",
+                "result": "The following custom authority was updated:"
+              },
               "rows": {
-                "header": "Update the following custom authority?",
                 "account": "Account: {account} ({accountOP})",
                 "authority_to_update": "Authority to update: {authority_to_update}",
                 "new_enabled": "New enabled: {new_enabled}",
@@ -897,8 +1159,12 @@
             "custom_authority_delete": {
               "method": "Custom authority delete",
               "title": "Custom authority delete request",
+              "result": "Custom authority delete result",
+              "headers": {
+                "request": "Delete the following custom authority?",
+                "result": "The following custom authority was deleted:"
+              },
               "rows": {
-                "header": "Delete the following custom authority?",
                 "account": "Account: {account} ({accountOP})",
                 "authority_to_delete": "Authority to delete: {authority_to_delete}",
                 "extensions": "Extensions: {extensions}",
@@ -909,8 +1175,12 @@
             "ticket_create": {
               "method": "Ticket create",
               "title": "Ticket create request",
+              "result": "Ticket create result",
+              "headers": {
+                "request": "Create the following ticket?",
+                "result": "The following ticket was created:"
+              },
               "rows": {
-                "header": "Create the following ticket?",
                 "account": "Account: {account} ({accountOP})",
                 "target_type": "Target type: {target_type}",
                 "amount":"Amount: {amount}",
@@ -922,8 +1192,12 @@
             "ticket_update": {
               "method": "Ticket update",
               "title": "Ticket update request",
+              "result": "Ticket update result",
+              "headers": {
+                "request": "Update the following ticket?",
+                "result": "The following ticket was updated:"
+              },
               "rows": {
-                "header": "Update the following ticket?",
                 "ticket": "Ticket: {ticket}",
                 "account": "Account: {account} ({accountOP})",
                 "target_type": "Target type: {target_type}",
@@ -935,8 +1209,12 @@
             "liquidity_pool_create": {
               "method": "Liquidity pool create",
               "title": "Liquidity pool create request",
+              "result": "Liquidity pool create result",
+              "headers": {
+                "request": "Create a liquidity pool with the following details?",
+                "result": "The following liquidity pool was created:"
+              },
               "rows": {
-                "header": "Create a liquidity pool with the following details?",
                 "account": "Account: {account} ({accountOP})",
                 "asset_a": "Asset A: {asset_a} ({asset_aOP})",
                 "asset_b": "Asset B: {asset_b} ({asset_bOP})",
@@ -951,8 +1229,12 @@
             "liquidity_pool_delete": {
               "method": "Liquidity pool delete",
               "title": "Liquidity pool delete request",
+              "result": "Liquidity pool delete result",
+              "headers": {
+                "request": "Delete the following liquidity pool?",
+                "result": "The following liquidity pool was deleted:"
+              },
               "rows": {
-                "header": "Delete the following liquidity pool?",
                 "account": "Account: {account} ({accountOP})",
                 "pool_id": "Pool ID: {pool_id}",
                 "extensions": "Extensions: {extensions}",
@@ -963,8 +1245,12 @@
             "liquidity_pool_deposit": {
               "method": "Liquidity pool deposit",
               "title": "Liquidity pool deposit request",
+              "result": "Liquidity pool deposit result",
+              "headers": {
+                "request": "Deposit the following assets into the liquidity pool?",
+                "result": "The following assets were deposited into the liquidity pool:"
+              },
               "rows": {
-                "header": "Deposit the following assets into the liquidity pool?",
                 "account": "Account: {account} ({accountOP})",
                 "pool": "Pool: {pool}",
                 "asset_a": "Asset A: {asset_a} ({asset_aOP})",
@@ -977,8 +1263,12 @@
             "liquidity_pool_withdraw": {
               "method": "Liquidity pool withdraw",
               "title": "Liquidity pool withdraw request",
+              "result": "Liquidity pool withdraw result",
+              "headers": {
+                "request": "Withdraw the following assets from the liquidity pool?",
+                "result": "The following assets were withdrawn from the liquidity pool:"
+              },
               "rows": {
-                "header": "Withdraw the following assets from the liquidity pool?",
                 "account": "Account: {account} ({accountOP})",
                 "pool": "Pool: {pool}",
                 "share_asset": "Share asset: {share_asset} ({share_assetOP})",
@@ -990,8 +1280,12 @@
             "liquidity_pool_exchange": {
               "method": "Liquidity pool exchange",
               "title": "Liquidity pool exchange request",
+              "result": "Liquidity pool exchange result",
+              "headers": {
+                "request": "Approve of the following liquidity pool exchange?",
+                "result": "The following liquidity pool exchange was approved:"
+              },
               "rows": {
-                "header": "Approve of the following liquidity pool exchange?",
                 "account": "Account: {account} ({accountOP})",
                 "pool": "Pool: {pool}",
                 "amount_to_sell": "Amount to sell: {amount_to_sell}",
@@ -1004,8 +1298,12 @@
             "samet_fund_create": {
               "method": "SameT fund create",
               "title": "SameT fund create request",
+              "result": "SameT fund create result",
+              "headers": {
+                "request": "Approve of the following samet fund creation?",
+                "result": "The following samet fund was created:"
+              },
               "rows": {
-                "header": "Approve of the following samet fund creation?",
                 "owner_account": "Owner account: {owner_account} ({owner_accountOP})",
                 "asset_type": "Asset type: {asset_type}",
                 "balance": "Balance: {balance}",
@@ -1018,8 +1316,12 @@
             "samet_fund_delete": {
               "method": "SameT fund delete",
               "title": "SameT fund delete request",
+              "result": "SameT fund delete result",
+              "headers": {
+                "request": "Delete the following samet fund?",
+                "result": "The following samet fund was deleted:"
+              },
               "rows": {
-                "header": "Delete the following samet fund?",
                 "owner_account": "Owner account: {owner_account} ({owner_accountOP})",
                 "fund_id": "Fund ID: {fund_id}",
                 "extensions": "Extensions: {extensions}",
@@ -1030,8 +1332,12 @@
             "samet_fund_update": {
               "method": "SameT fund update",
               "title": "SameT fund update request",
+              "result": "SameT fund update result",
+              "headers": {
+                "request": "Update the following samet fund?",
+                "result": "The following samet fund was updated:"
+              },
               "rows": {
-                "header": "Update the following samet fund?",
                 "owner_account": "Owner account: {owner_account} ({owner_accountOP})",
                 "fund_id": "Fund ID: {fund_id}",
                 "delta_amount": "Delta amount: {delta_amount}",
@@ -1044,8 +1350,12 @@
             "samet_fund_borrow": {
               "method": "SameT fund borrow",
               "title": "SameT fund borrow request",
+              "result": "SameT fund borrow result",
+              "headers": {
+                "request": "Borrow from the following samet fund?",
+                "result": "Successfully borrowed from the following samet fund:"
+              },
               "rows": {
-                "header": "Borrow from the following samet fund?",
                 "borrower": "Borrower: {borrower} ({borrowerOP})",
                 "fund_id": "Fund ID: {fund_id}",
                 "borrow_amount": "Borrow amount: {borrow_amount}",
@@ -1057,8 +1367,12 @@
             "samt_fund_repay": {
               "method": "SameT fund repay",
               "title": "SameT fund repay request",
+              "result": "SameT fund repay result",
+              "headers": {
+                "request": "Repay the following samet fund",
+                "result": "Successfully repaid the following samet fund"
+              },
               "rows": {
-                "header": "Repay the following samet fund",
                 "account":"Account: {account} ({accountOP})",
                 "fund_id": "Fund ID: {fund_id}",
                 "repay_amount": "Repay amount: {repay_amount}",
@@ -1071,8 +1385,12 @@
             "credit_offer_create": {
               "method": "Credit offer create",
               "title": "Credit offer create request",
+              "result": "Credit offer create result",
+              "headers": {
+                "request": "Approve the creation of the following credit offer?",
+                "result": "The following credit offer was created:"
+              },
               "rows": {
-                "header": "Approve the creation of the following credit offer?",
                 "owner_account":"Owner account: {owner_account} ({owner_accountOP})",
                 "asset_type": "Asset type: {asset_type}",
                 "balance": "Balance: {balance}",
@@ -1091,8 +1409,12 @@
             "credit_offer_delete": {
               "method": "Credit offer delete",
               "title": "Credit offer delete request",
+              "result": "Credit offer delete result",
+              "headers": {
+                "request": "Delete the following credit offer?",
+                "result": "The following credit offer was deleted:"
+              },
               "rows": {
-                "header": "Delete the following credit offer?",
                 "owner_account": "Owner account: {owner_account} ({owner_accountOP})",
                 "offer_id": "Offer ID: {offer_id}",
                 "extensions": "Extensions: {extensions}",
@@ -1103,8 +1425,12 @@
             "credit_offer_update": {
               "method": "Credit offer update",
               "title": "Credit offer update request",
+              "result": "Credit offer update result",
+              "headers": {
+                "request": "Update the following credit offer?",
+                "result": "The following credit offer was updated:"
+              },
               "rows": {
-                "header": "Update the following credit offer?",
                 "owner_account": "Owner account: {owner_account} ({owner_accountOP})",
                 "offer_id": "Offer ID: {offer_id}",
                 "delta_amount": "Delta amount: {delta_amount}",
@@ -1123,8 +1449,12 @@
             "credit_offer_accept": {
               "method": "Credit offer accept",
               "title": "Credit offer accept request",
+              "result": "Credit offer accept result",
+              "headers": {
+                "request": "Approve of the following credit offer?",
+                "result": "The following credit offer was approved:"
+              },
               "rows": {
-                "header": "Approve of the following credit offer?",
                 "borrower": "Borrower: {borrower} ({borrowerOP})",
                 "offer_id": "Offer ID: {offer_id}",
                 "borrow_amount": "Borrow amount: {borrow_amount}",
@@ -1139,8 +1469,12 @@
             "credit_deal_repay": {
               "method": "Credit deal repay",
               "title": "Credit deal repay request",
+              "result": "Credit deal repay result",
+              "headers": {
+                "request": "Repay the following credit deal?",
+                "result": "You repayed the following credit deal"
+              },
               "rows": {
-                "header": "Repay the following credit deal?",
                 "account": "Account: {account} ({accountOP})",
                 "deal_id": "Deal ID: {deal_id}",
                 "repay_amount": "Repay amount: {repay_amount}",

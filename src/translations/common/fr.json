@@ -111,9 +111,16 @@
     "Logout": "Se déconnecter"
   },
   "popup": {
+    "keywords": {
+      "request": "Demande d'opération",
+      "result": "Résultat de l'opération"
+    },
     "preview": "Aperçu rapide",
-    "request": "Afficher la requête JSON",
+    "evaluate": "Évaluer le résultat rapide",
     "payload": "Afficher la charge utile JSON",
+    "request": "Afficher la requête JSON",
+    "result": "Afficher le résultat du réseau JSON",
+    "details": "Voir les détails",
     "language": "Langue",
     "chainOperations": "Opérations en chaîne"
   },

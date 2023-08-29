@@ -13,6 +13,7 @@ Thumbs.db
 /app/app.js
 /app/modal.js
 /app/background.js
+/app/receipt.js
 /app/**/*.map
 /app/*.ttf
 /app/*.woff

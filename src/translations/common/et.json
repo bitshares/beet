@@ -24,7 +24,7 @@
       "vote": "Hääletusviis",
       "signNFT": "NFT allkirja taotlus",
       "signMessage": "Taotlege allkirjastatud sõnumit",
-      "transfer": "Žetooni ülekandmise taotlus",
+      "transfer": "Tokenite ülekandmise taotlus",
       "transferComplete": "Tehingu ülekanne edastati edukalt.",
       "msgVerify": "Sõnumi kinnitamine",
       "getAccount": "Rakendus, mis taotleb teavet ühe teie konto kohta."
@@ -40,7 +40,7 @@
     },
     "totp": {
       "label": "Ajapõhised ühekordsed paroolid",
-      "promptFailure": "TOTP-sügavlink lükati tagasi. ",
+      "promptFailure": "TOTP süvalink lükati tagasi. ",
       "prompt": "Valige allpool soovitud toimingud",
       "chosen": "valitud toimingud",
       "request": "Küsi pääsukoodi",
@@ -83,7 +83,7 @@
       "exit": "Välju QR-lehelt",
       "back": "tagasi",
       "progress": "QR-koodi töötlemine",
-      "unsupported": "Kahjuks ei toetata selles ketis veel QR-koode.",
+      "unsupported": "Vabandust, QR-koode see kett veel ei toeta.",
       "promptSuccess": "QR-skannitud toimingu edastamine õnnestus",
       "promptFailure": "Midagi läks skannitud QR-ga valesti"
     },
@@ -111,9 +111,16 @@
       "Logout": "Logi välja"
     },
     "popup": {
+      "keywords": {
+        "request": "Operatsiooni taotlus",
+        "result": "Operatsiooni tulemus"
+      },
       "preview": "Kiire eelvaade",
-      "request": "Kuva taotlus JSON",
+      "evaluate": "Hinnake kiiret tulemust",
       "payload": "Kuva kasuliku koormuse JSON",
+      "request": "Kuva taotlus JSON",
+      "result": "Kuva võrgutulemuse JSON",
+      "details": "Vaata detaile",
       "language": "Keel",
       "chainOperations": "Aheloperatsioonid"
     },
