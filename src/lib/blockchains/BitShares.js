@@ -456,6 +456,21 @@ export default class BitShares extends BlockchainAPI {
                 id: 73,
                 from: 'account',
                 method: "credit_deal_repay"
+            },
+            {
+                id: 75,
+                from: 'account',
+                method: "liquidity_pool_update_operation"
+            },
+            {
+                id: 76,
+                from: 'account',
+                method: "credit_deal_update_operation"
+            },
+            {
+                id: 77,
+                from: 'seller',
+                method: "limit_order_update_operation"
             }
         ]
     }
