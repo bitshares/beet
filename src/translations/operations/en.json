@@ -1468,21 +1468,73 @@
             },
             "credit_deal_repay": {
               "method": "Credit deal repay",
-              "title": "Credit deal repay request",
-              "result": "Credit deal repay result",
-              "headers": {
-                "request": "Repay the following credit deal?",
-                "result": "You repayed the following credit deal"
-              },
-              "rows": {
-                "account": "Account: {account} ({accountOP})",
-                "deal_id": "Deal ID: {deal_id}",
-                "repay_amount": "Repay amount: {repay_amount}",
-                "credit_fee": "Credit fee: {credit_fee}",
-                "extensions": "Extensions: {extensions}",
-                "fee": "Estimated fee: {fee}"
-              },
-              "tooltip": "Repay a credit deal."
+                "title": "Credit deal repay request",
+                "result": "Credit deal repay result",
+                "headers": {
+                    "request": "Repay the following credit deal?",
+                    "result": "You repayed the following credit deal"
+                },
+                "rows": {
+                    "account": "Account: {account} ({accountOP})",
+                    "deal_id": "Deal ID: {deal_id}",
+                    "repay_amount": "Repay amount: {repay_amount}",
+                    "credit_fee": "Credit fee: {credit_fee}",
+                    "extensions": "Extensions: {extensions}",
+                    "fee": "Estimated fee: {fee}"
+                },
+                "tooltip": "Repay a credit deal."
+            },
+            "liquidity_pool_update_operation": {
+                "method": "Liquidity pool update",
+                "title": "Liquidity pool update request",
+                "result": "Liquidity pool update result",
+                "headers": {
+                    "request": "Update the following liquidity pool?",
+                    "result": "The following liquidity pool was updated:"
+                },
+                "rows": {
+                    "owner_account": "Owner account: {owner_account} ({owner_accountOP})",
+                    "pool_id": "Pool ID: {pool_id}",
+                    "new_parameters": "New parameters: {new_parameters}",
+                    "extensions": "Extensions: {extensions}",
+                    "fee": "Estimated fee: {fee}"
+                },
+                "tooltip": "Update a liquidity pool"
+            },
+            "credit_deal_update_operation": {
+                "method": "Credit deal update",
+                "title": "Credit deal update request",
+                "result": "Credit deal update result",
+                "headers": {
+                    "request": "Update the following credit deal?",
+                    "result": "The following credit deal was updated:"
+                },
+                "rows": {
+                    "fee": "Estimated fee: {fee}",
+                    "account": "Account: {account} ({accountOP})",
+                    "deal_id": "Deal ID: {deal_id}",
+                    "auto_repay": "Auto repay: {auto_repay}"
+                },
+                "tooltip": "Update a credit deal"
+            },
+            "limit_order_update_operation": {
+                "method": "Limit order update",
+                "title": "Limit order update request",
+                "result": "Limit order update result",
+                "headers": {
+                    "request": "Update the following limit order?",
+                    "result": "The following limit order was updated:"
+                },
+                "rows": {
+                    "fee": "Estimated fee: {fee}",
+                    "seller": "Seller: {seller} ({sellerOP})",
+                    "order": "Order: {order}",
+                    "new_price": "New price: {new_price}",
+                    "delta_amount_to_sell": "Delta amount to sell: {delta_amount_to_sell}",
+                    "new_expiration": "New expiration: {new_expiration}",
+                    "extensions": "Extensions: {extensions}"
+                },
+                "tooltip": "Update a limit order"
             }
         }
     }
