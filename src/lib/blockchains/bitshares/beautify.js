@@ -430,7 +430,7 @@ export default async function beautify(
             ]);
         }
 
-        return tempRows;
+        currentOperation["rows"] = tempRows;
     } else if (opType == 12) {
         // asset_update_bitasset
         let shortBackingAsset = assetResults.find((assRes) => assRes.id === opContents.new_options.short_backing_asset);
@@ -1601,6 +1601,84 @@ export default async function beautify(
                 {key: "fee", params: {fee: JSON.stringify(opContents.fee) }}
             ];
         }
+    } else if (opType == 75) {
+        // liquidity_pool_update_operation
+        let _ownerAccount = accountResults.find(
+            (resAcc) => resAcc.id === opContents.account
+        ).accountName;
+        currentOperation["rows"] = [
+            {
+                key: "account",
+                params: {
+                    owner_account: _ownerAccount,
+                    owner_accountOP: opContents.account,
+                },
+            },
+            { key: "pool", params: { pool_id: opContents.pool } },
+            {
+                key: "taker_fee_percent",
+                params: { taker_fee_percent: opContents.taker_fee_percent },
+            },
+            {
+                key: "withdrawal_fee_percent",
+                params: {
+                    withdrawal_fee_percent: opContents.withdrawal_fee_percent,
+                },
+            },
+            {
+                key: "extensions",
+                params: { extensions: JSON.stringify(opContents.extensions) },
+            },
+            { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+        ];
+    } else if (opType == 76) {
+        // credit_deal_update_operation
+        let _borrowerAccount = accountResults.find(
+            (resAcc) => resAcc.id === opContents.account
+        ).accountName;
+        currentOperation["rows"] = [
+            { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+            {
+                key: "account",
+                params: {
+                    account: _borrowerAccount,
+                    accountOP: opContents.account,
+                },
+            },
+            { key: "deal_id", params: { deal_id: opContents.deal_id } },
+            {
+                key: "auto_repay",
+                params: { auto_repay: opContents.auto_repay },
+            },
+        ];
+    } else if (opType == 77) {
+        // limit_order_update_operation
+        let _sellerAccount = accountResults.find(
+            (resAcc) => resAcc.id === opContents.seller
+        ).accountName;
+        currentOperation["rows"] = [
+            { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+            {
+                key: "seller",
+                params: { seller: _sellerAccount, sellerOP: opContents.seller },
+            },
+            { key: "order", params: { order: opContents.order } },
+            { key: "new_price", params: { new_price: opContents.new_price } },
+            {
+                key: "delta_amount_to_sell",
+                params: {
+                    delta_amount_to_sell: opContents.delta_amount_to_sell,
+                },
+            },
+            {
+                key: "new_expiration",
+                params: { new_expiration: opContents.new_expiration },
+            },
+            {
+                key: "extensions",
+                params: { extensions: JSON.stringify(opContents.extensions) },
+            },
+        ];
     }
 
     return currentOperation; // No matching operation
