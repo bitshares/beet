@@ -200,7 +200,8 @@
                 "seller": "Seller: {seller} ({opSeller})",
                 "selling": "Selling: {amount}",
                 "buying": "Buying: {amount}",
-                "price": "Price: {price} {sellSymbol}/{buySymbol}"
+                "price": "Price: {price} {sellSymbol}/{buySymbol}",
+                "extensions": "Extensions: {extensions}"
               },
               "tooltip": "An offer to sell an amount of an asset at a specified exchange rate by a certain time"
             },

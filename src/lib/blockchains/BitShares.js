@@ -1663,8 +1663,6 @@ export default class BitShares extends BlockchainAPI {
                 "amount_a.asset_id",
                 "amount_b.asset_id",
                 "share_amount.asset_id",
-                "amount_to_sell.asset_id",
-                "min_to_receive.asset_id",
                 "delta_amount.asset_id",
                 "borrow_amount.asset_id",
                 "repay_amount.asset_id",
@@ -1748,10 +1746,12 @@ export default class BitShares extends BlockchainAPI {
 
         return Promise.all(beautifiedOpPromises).then((operations) => {
             if (operations.some(op => !Object.prototype.hasOwnProperty.call(op, 'rows'))) {
+                /*
                 console.log({
                     invalid: operations.filter(op => !Object.prototype.hasOwnProperty.call(op, 'rows')),
                     valid: operations.filter(op => Object.prototype.hasOwnProperty.call(op, 'rows'))
                 });
+                */
                 throw new Error("There's an issue with the format of an operation!")
             }
             return operations;
