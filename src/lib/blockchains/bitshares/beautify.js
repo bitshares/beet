@@ -137,12 +137,6 @@ export default async function beautify(
         }
     } else if (opType == 1) {
         // limit_order_create
-        console.log({
-            accountResults,
-            assetResults,
-            rec: opContents.min_to_receive.asset_id,
-            sell: opContents.amount_to_sell.asset_id,
-        });
         let seller = accountResults.find(
             (resAcc) => resAcc.id === opContents.seller
         ).accountName;
