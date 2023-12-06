@@ -1533,6 +1533,7 @@
                     "new_price": "New price: {new_price}",
                     "delta_amount_to_sell": "Delta amount to sell: {delta_amount_to_sell}",
                     "new_expiration": "New expiration: {new_expiration}",
+                    "on_fill": "On fill: {on_fill}",
                     "extensions": "Extensions: {extensions}"
                 },
                 "tooltip": "Update a limit order"

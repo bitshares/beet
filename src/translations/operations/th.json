@@ -1532,6 +1532,7 @@
           "new_price": "ราคาใหม่: {new_price}",
           "delta_amount_to_sell": "จำนวนเดลต้าที่จะขาย: {delta_amount_to_sell}",
           "new_expiration": "การหมดอายุใหม่: {new_expiration}",
+          "on_fill": "เมื่อเติม: {on_fill}",
           "extensions": "ส่วนขยาย: {extensions}"
         },
         "tooltip": "อัพเดตคำสั่งจำกัด"

@@ -1532,6 +1532,7 @@
           "new_price": "Nouveau prix : {new_price}",
           "delta_amount_to_sell": "Montant delta à vendre : {delta_amount_to_sell}",
           "new_expiration": "Nouvelle expiration : {new_expiration}",
+          "on_fill": "Au remplissage : {on_fill}",
           "extensions": "Extensions : {extensions}"
         },
         "tooltip": "Mettre à jour un ordre limité"

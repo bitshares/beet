@@ -1532,6 +1532,7 @@
           "new_price": "Nuevo precio: {new_price}",
           "delta_amount_to_sell": "Monto delta para vender: {delta_amount_to_sell}",
           "new_expiration": "Nuevo vencimiento: {new_expiration}",
+          "on_fill": "Al completar: {on_fill}",
           "extensions": "Extensiones: {extensions}"
         },
         "tooltip": "Actualizar una orden límite"

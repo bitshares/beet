@@ -1532,6 +1532,7 @@
           "new_price": "Uus hind: {new_price}",
           "delta_amount_to_sell": "Müüdav deltasumma: {delta_amount_to_sell}",
           "new_expiration": "Uus aegumistähtaeg: {new_expiration}",
+          "on_fill": "Täitmisel: {on_fill}",
           "extensions": "Laiendused: {extensions}"
         },
         "tooltip": "Limiittellimuse värskendamine"

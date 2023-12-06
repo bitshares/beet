@@ -1532,6 +1532,7 @@
           "new_price": "새 가격: {new_price}",
           "delta_amount_to_sell": "판매할 델타 금액: {delta_amount_to_sell}",
           "new_expiration": "새 만료: {new_expiration}",
+          "on_fill": "채울 때: {on_fill}",
           "extensions": "확장자: {extensions}"
         },
         "tooltip": "지정가 주문 업데이트"

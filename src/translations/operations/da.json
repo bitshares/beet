@@ -1532,6 +1532,7 @@
           "new_price": "Ny pris: {new_price}",
           "delta_amount_to_sell": "Deltabeløb at sælge: {delta_amount_to_sell}",
           "new_expiration": "Nyt udløb: {new_expiration}",
+          "on_fill": "På udfyldning: {on_fill}",
           "extensions": "Udvidelser: {extensions}"
         },
         "tooltip": "Opdater en grænserækkefølge"

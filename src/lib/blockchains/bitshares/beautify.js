@@ -213,12 +213,22 @@ export default async function beautify(
             (resAcc) => resAcc.id === opContents.fee_paying_account
         ).accountName;
 
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
+        );
+
         if (feePayingAccount) {
             currentOperation["rows"] = [
                 { key: "id", params: { id: opContents.order } },
                 {
                     key: "fees",
-                    params: { fee: JSON.stringify(opContents.fee) },
+                    params: {
+                        fee: formatAsset(
+                            opContents.fee.amount,
+                            _feeAsset.symbol,
+                            _feeAsset.precision
+                        ),
+                    },
                 },
                 {
                     key: "account",
@@ -240,6 +250,10 @@ export default async function beautify(
         );
         let deltaDebt = assetResults.find(
             (assRes) => assRes.id === opContents.delta_debt.asset_id
+        );
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
         );
 
         if (fundingAccount && deltaCollateral && deltaDebt) {
@@ -276,8 +290,15 @@ export default async function beautify(
                 },
                 {
                     key: "fees",
-                    params: { fee: JSON.stringify(opContents.fee) },
+                    params: {
+                        fee: formatAsset(
+                            opContents.fee.amount,
+                            _feeAsset.symbol,
+                            _feeAsset.precision
+                        ),
+                    },
                 },
+                ,
             ];
         }
     } else if (opType == 5) {
@@ -288,6 +309,10 @@ export default async function beautify(
         let referrer = accountResults.find(
             (resAcc) => resAcc.id === opContents.referrer
         ).accountName;
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
+        );
 
         if (registrar && referrer) {
             currentOperation["rows"] = [
@@ -401,8 +426,15 @@ export default async function beautify(
                 },
                 {
                     key: "fees",
-                    params: { fee: JSON.stringify(opContents.fee) },
+                    params: {
+                        fee: formatAsset(
+                            opContents.fee.amount,
+                            _feeAsset.symbol,
+                            _feeAsset.precision
+                        ),
+                    },
                 },
+                ,
             ];
         }
     } else if (opType == 6) {
@@ -410,6 +442,10 @@ export default async function beautify(
         let targetAccount = accountResults.find(
             (resAcc) => resAcc.id === opContents.account
         ).accountName;
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
+        );
         if (targetAccount) {
             currentOperation["rows"] = [
                 { key: "warning", params: {} },
@@ -442,8 +478,15 @@ export default async function beautify(
                 },
                 {
                     key: "fees",
-                    params: { fee: JSON.stringify(opContents.fee) },
+                    params: {
+                        fee: formatAsset(
+                            opContents.fee.amount,
+                            _feeAsset.symbol,
+                            _feeAsset.precision
+                        ),
+                    },
                 },
+                ,
             ];
         }
     } else if (opType == 7) {
@@ -454,6 +497,10 @@ export default async function beautify(
         let accountToList = accountResults.find(
             (resAcc) => resAcc.id === opContents.account_to_list
         ).accountName;
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
+        );
 
         if (authorizingAccount && accountToList) {
             currentOperation["rows"] = [
@@ -483,7 +530,16 @@ export default async function beautify(
                             : "[]",
                     },
                 },
-                { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+                {
+                    key: "fee",
+                    params: {
+                        fee: formatAsset(
+                            opContents.fee.amount,
+                            _feeAsset.symbol,
+                            _feeAsset.precision
+                        ),
+                    },
+                },
             ];
         }
     } else if (opType == 8) {
@@ -491,6 +547,10 @@ export default async function beautify(
         let accountToUpgrade = accountResults.find(
             (resAcc) => resAcc.id === opContents.account_to_upgrade
         ).accountName;
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
+        );
         if (accountToUpgrade) {
             currentOperation["rows"] = [
                 {
@@ -515,7 +575,16 @@ export default async function beautify(
                             : "[]",
                     },
                 },
-                { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+                {
+                    key: "fee",
+                    params: {
+                        fee: formatAsset(
+                            opContents.fee.amount,
+                            _feeAsset.symbol,
+                            _feeAsset.precision
+                        ),
+                    },
+                },
             ];
         }
     } else if (opType == 9) {
@@ -526,6 +595,10 @@ export default async function beautify(
         let newOwner = accountResults.find(
             (resAcc) => resAcc.id === opContents.new_owner
         ).accountName;
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
+        );
 
         if (originalOwner && newOwner) {
             currentOperation["rows"] = [
@@ -544,7 +617,16 @@ export default async function beautify(
                         newOwnerOP: opContents.new_owner,
                     },
                 },
-                { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+                {
+                    key: "fee",
+                    params: {
+                        fee: formatAsset(
+                            opContents.fee.amount,
+                            _feeAsset.symbol,
+                            _feeAsset.precision
+                        ),
+                    },
+                },
             ];
         }
     } else if (opType == 10 || opType == 11) {
@@ -789,6 +871,10 @@ export default async function beautify(
             (assRes) => assRes.id === opContents.new_options.short_backing_asset
         );
 
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
+        );
+
         if (shortBackingAsset) {
             currentOperation["rows"] = [
                 { key: "issuer", params: { issuer: opContents.issuer } },
@@ -863,6 +949,10 @@ export default async function beautify(
             (assRes) => assRes.id === opContents.new_options.short_backing_asset
         );
 
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
+        );
+
         if (issuer && assetToUpdate) {
             currentOperation["rows"] = [
                 {
@@ -884,7 +974,16 @@ export default async function beautify(
                         ),
                     },
                 },
-                { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+                {
+                    key: "fee",
+                    params: {
+                        fee: formatAsset(
+                            opContents.fee.amount,
+                            _feeAsset.symbol,
+                            _feeAsset.precision
+                        ),
+                    },
+                },
             ];
         }
     } else if (opType == 14) {
@@ -895,6 +994,10 @@ export default async function beautify(
         ).accountName;
         let assetToIssue = assetResults.find(
             (assRes) => assRes.id === opContents.asset_to_issue.asset_id
+        );
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
         );
 
         if (targetAccount && assetToIssue) {
@@ -927,6 +1030,10 @@ export default async function beautify(
             (assRes) => assRes.id === opContents.amount_to_reserve.asset_id
         );
 
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
+        );
+
         if (payer && assetToReserve) {
             currentOperation["rows"] = [
                 {
@@ -952,7 +1059,16 @@ export default async function beautify(
                             : "[]",
                     },
                 },
-                { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+                {
+                    key: "fee",
+                    params: {
+                        fee: formatAsset(
+                            opContents.fee.amount,
+                            _feeAsset.symbol,
+                            _feeAsset.precision
+                        ),
+                    },
+                },
             ];
         }
     } else if (opType == 16) {
@@ -962,6 +1078,10 @@ export default async function beautify(
         ).accountName;
         let assetToFund = assetResults.find(
             (assRes) => assRes.id === opContents.asset_id
+        );
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
         );
 
         if (fromAccount && assetToFund) {
@@ -990,7 +1110,16 @@ export default async function beautify(
                         ),
                     },
                 },
-                { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+                {
+                    key: "fee",
+                    params: {
+                        fee: formatAsset(
+                            opContents.fee.amount,
+                            _feeAsset.symbol,
+                            _feeAsset.precision
+                        ),
+                    },
+                },
             ];
         }
     } else if (opType == 17) {
@@ -1000,6 +1129,10 @@ export default async function beautify(
         ).accountName;
         let assetToSettle = assetResults.find(
             (assRes) => assRes.id === opContents.amount.asset_id
+        );
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
         );
 
         if (account && assetToSettle) {
@@ -1019,7 +1152,16 @@ export default async function beautify(
                         assetID: opContents.amount.asset_id,
                     },
                 },
-                { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+                {
+                    key: "fee",
+                    params: {
+                        fee: formatAsset(
+                            opContents.fee.amount,
+                            _feeAsset.symbol,
+                            _feeAsset.precision
+                        ),
+                    },
+                },
             ];
         }
     } else if (opType == 18) {
@@ -1035,6 +1177,10 @@ export default async function beautify(
         );
         let quoteAsset = assetResults.find(
             (assRes) => assRes.id === opContents.settle_price.quote.asset_id
+        );
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
         );
 
         if (issuer && assetToSettle && baseAsset && quoteAsset) {
@@ -1061,7 +1207,16 @@ export default async function beautify(
                     },
                 },
                 { key: "settle_price", params: { settle_price: price } },
-                { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+                {
+                    key: "fee",
+                    params: {
+                        fee: formatAsset(
+                            opContents.fee.amount,
+                            _feeAsset.symbol,
+                            _feeAsset.precision
+                        ),
+                    },
+                },
             ];
         }
     } else if (opType == 19) {
@@ -1075,6 +1230,10 @@ export default async function beautify(
         let quoteAsset = assetResults.find(
             (assRes) => assRes.id === opContents.settle_price.quote.asset_id
         ); // same as asset_id
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
+        );
 
         if (publisher && baseAsset && quoteAsset) {
             let coreExchangeRate =
@@ -1143,7 +1302,16 @@ export default async function beautify(
                             : "[]",
                     },
                 },
-                { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+                {
+                    key: "fee",
+                    params: {
+                        fee: formatAsset(
+                            opContents.fee.amount,
+                            _feeAsset.symbol,
+                            _feeAsset.precision
+                        ),
+                    },
+                },
             ];
         }
     } else if (opType == 20) {
@@ -1151,6 +1319,10 @@ export default async function beautify(
         let witnessAccount = accountResults.find(
             (resAcc) => resAcc.id === opContents.witness_account
         ).accountName;
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
+        );
         if (witnessAccount) {
             currentOperation["rows"] = [
                 {
@@ -1165,7 +1337,16 @@ export default async function beautify(
                     key: "block_signing_key",
                     params: { block_signing_key: opContents.block_signing_key },
                 },
-                { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+                {
+                    key: "fee",
+                    params: {
+                        fee: formatAsset(
+                            opContents.fee.amount,
+                            _feeAsset.symbol,
+                            _feeAsset.precision
+                        ),
+                    },
+                },
             ];
         }
     } else if (opType == 21) {
@@ -1173,6 +1354,10 @@ export default async function beautify(
         let witnessAccount = accountResults.find(
             (resAcc) => resAcc.id === opContents.witness_account
         ).accountName;
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
+        );
         if (witnessAccount) {
             currentOperation["rows"] = [
                 {
@@ -1193,7 +1378,16 @@ export default async function beautify(
                     key: "new_signing_key",
                     params: { new_signing_key: opContents.new_signing_key },
                 },
-                { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+                {
+                    key: "fee",
+                    params: {
+                        fee: formatAsset(
+                            opContents.fee.amount,
+                            _feeAsset.symbol,
+                            _feeAsset.precision
+                        ),
+                    },
+                },
             ];
         }
     } else if (opType == 22) {
@@ -1201,6 +1395,10 @@ export default async function beautify(
         let feePayingAccount = accountResults.find(
             (resAcc) => resAcc.id === opContents.fee_paying_account
         ).accountName;
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
+        );
         if (feePayingAccount) {
             currentOperation["rows"] = [
                 {
@@ -1226,7 +1424,16 @@ export default async function beautify(
                         fee_paying_accountOP: opContents.fee_paying_account,
                     },
                 },
-                { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+                {
+                    key: "fee",
+                    params: {
+                        fee: formatAsset(
+                            opContents.fee.amount,
+                            _feeAsset.symbol,
+                            _feeAsset.precision
+                        ),
+                    },
+                },
             ];
         }
     } else if (opType == 23) {
@@ -1234,6 +1441,10 @@ export default async function beautify(
         let feePayingAccount = accountResults.find(
             (resAcc) => resAcc.id === opContents.fee_paying_account
         ).accountName;
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
+        );
         if (feePayingAccount) {
             currentOperation["rows"] = [
                 { key: "proposal", params: { proposal: opContents.proposal } },
@@ -1300,7 +1511,16 @@ export default async function beautify(
                             : "[]",
                     },
                 },
-                { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+                {
+                    key: "fee",
+                    params: {
+                        fee: formatAsset(
+                            opContents.fee.amount,
+                            _feeAsset.symbol,
+                            _feeAsset.precision
+                        ),
+                    },
+                },
             ];
         }
     } else if (opType == 24) {
@@ -1308,6 +1528,10 @@ export default async function beautify(
         let feePayingAccount = accountResults.find(
             (resAcc) => resAcc.id === opContents.fee_paying_account
         ).accountName;
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
+        );
         if (feePayingAccount) {
             currentOperation["rows"] = [
                 {
@@ -1332,7 +1556,16 @@ export default async function beautify(
                             : "[]",
                     },
                 },
-                { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+                {
+                    key: "fee",
+                    params: {
+                        fee: formatAsset(
+                            opContents.fee.amount,
+                            _feeAsset.symbol,
+                            _feeAsset.precision
+                        ),
+                    },
+                },
             ];
         }
     } else if (opType == 25) {
@@ -1345,6 +1578,10 @@ export default async function beautify(
         ).accountName;
         let asset = assetResults.find(
             (assRes) => assRes.id === opContents.withdrawal_limit.asset_id
+        );
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
         );
 
         if (to && from && asset) {
@@ -1387,6 +1624,10 @@ export default async function beautify(
         ).accountName;
         let withdrawalLimit = assetResults.find(
             (assRes) => assRes.id === opContents.withdrawal_limit.asset_id
+        );
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
         );
 
         if (withdrawFromAccount && authorizedAccount && withdrawalLimit) {
@@ -1449,7 +1690,16 @@ export default async function beautify(
                             opContents.periods_until_expiration,
                     },
                 },
-                { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+                {
+                    key: "fee",
+                    params: {
+                        fee: formatAsset(
+                            opContents.fee.amount,
+                            _feeAsset.symbol,
+                            _feeAsset.precision
+                        ),
+                    },
+                },
             ];
         }
     } else if (opType == 27) {
@@ -1462,6 +1712,10 @@ export default async function beautify(
         ).accountName;
         let withdrawnAsset = assetResults.find(
             (assRes) => assRes.id === opContents.amount_to_withdraw.asset_id
+        );
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
         );
 
         if (from && to && withdrawnAsset) {
@@ -1502,7 +1756,16 @@ export default async function beautify(
                     },
                 },
                 { key: "memo", params: { memo: opContents.memo } },
-                { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+                {
+                    key: "fee",
+                    params: {
+                        fee: formatAsset(
+                            opContents.fee.amount,
+                            _feeAsset.symbol,
+                            _feeAsset.precision
+                        ),
+                    },
+                },
             ];
         }
     } else if (opType == 28) {
@@ -1513,6 +1776,10 @@ export default async function beautify(
         let authorizedAccount = accountResults.find(
             (resAcc) => resAcc.id === opContents.authorized_account
         ).accountName;
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
+        );
 
         if (withdrawFromAccount && authorizedAccount) {
             currentOperation["rows"] = [
@@ -1537,7 +1804,16 @@ export default async function beautify(
                         withdrawal_permission: opContents.withdrawal_permission,
                     },
                 },
-                { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+                {
+                    key: "fee",
+                    params: {
+                        fee: formatAsset(
+                            opContents.fee.amount,
+                            _feeAsset.symbol,
+                            _feeAsset.precision
+                        ),
+                    },
+                },
             ];
         }
     } else if (opType == 29) {
@@ -1545,6 +1821,10 @@ export default async function beautify(
         let committeeMemberAccount = accountResults.find(
             (resAcc) => resAcc.id === opContents.committee_member_account
         ).accountName;
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
+        );
         if (committeeMemberAccount) {
             currentOperation["rows"] = [
                 {
@@ -1556,7 +1836,16 @@ export default async function beautify(
                     },
                 },
                 { key: "url", params: { url: opContents.url } },
-                { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+                {
+                    key: "fee",
+                    params: {
+                        fee: formatAsset(
+                            opContents.fee.amount,
+                            _feeAsset.symbol,
+                            _feeAsset.precision
+                        ),
+                    },
+                },
             ];
         }
     } else if (opType == 30) {
@@ -1564,6 +1853,10 @@ export default async function beautify(
         let committeeMemberAccount = accountResults.find(
             (resAcc) => resAcc.id === opContents.committee_member_account
         ).accountName;
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
+        );
         if (committeeMemberAccount) {
             currentOperation["rows"] = [
                 {
@@ -1579,11 +1872,24 @@ export default async function beautify(
                     },
                 },
                 { key: "new_url", params: { new_url: opContents.new_url } },
-                { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+                {
+                    key: "fee",
+                    params: {
+                        fee: formatAsset(
+                            opContents.fee.amount,
+                            _feeAsset.symbol,
+                            _feeAsset.precision
+                        ),
+                    },
+                },
             ];
         }
     } else if (opType == 31) {
         // committee_member_update_global_parameters
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
+        );
         currentOperation["rows"] = [
             { key: "new_parameters", params: {} },
             {
@@ -1767,7 +2073,17 @@ export default async function beautify(
                 key: "extensions",
                 params: { extensions: JSON.stringify(opContents.extensions) },
             },
-            { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+            {
+                key: "fee",
+                params: {
+                    fee: formatAsset(
+                        opContents.fee.amount,
+                        _feeAsset.symbol,
+                        _feeAsset.precision
+                    ),
+                },
+            },
+            ,
         ];
     } else if (opType == 32) {
         // vesting_balance_create
@@ -1779,6 +2095,10 @@ export default async function beautify(
         ).accountName;
         let amount = assetResults.find(
             (assRes) => assRes.id === opContents.amount.asset_id
+        );
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
         );
 
         if (creator && owner && amount) {
@@ -1874,6 +2194,10 @@ export default async function beautify(
         let owner = accountResults.find(
             (resAcc) => resAcc.id === opContents.owner
         ).accountName;
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
+        );
         if (owner) {
             currentOperation["rows"] = [
                 {
@@ -1900,7 +2224,16 @@ export default async function beautify(
                         initializer: JSON.stringify(opContents.initializer),
                     },
                 },
-                { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+                {
+                    key: "fee",
+                    params: {
+                        fee: formatAsset(
+                            opContents.fee.amount,
+                            _feeAsset.symbol,
+                            _feeAsset.precision
+                        ),
+                    },
+                },
             ];
         }
     } else if (opType == 35) {
@@ -1908,6 +2241,10 @@ export default async function beautify(
         let payer = accountResults.find(
             (resAcc) => resAcc.id === opContents.payer
         ).accountName;
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
+        );
         if (payer) {
             currentOperation["rows"] = [
                 {
@@ -1927,7 +2264,16 @@ export default async function beautify(
                     key: "data",
                     params: { data: JSON.stringify(opContents.data) },
                 },
-                { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+                {
+                    key: "fee",
+                    params: {
+                        fee: formatAsset(
+                            opContents.fee.amount,
+                            _feeAsset.symbol,
+                            _feeAsset.precision
+                        ),
+                    },
+                },
             ];
         }
     } else if (opType == 36) {
@@ -1935,6 +2281,10 @@ export default async function beautify(
         let feePayingAccount = accountResults.find(
             (resAcc) => resAcc.id === opContents.fee_paying_account
         ).accountName;
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
+        );
         if (feePayingAccount) {
             currentOperation["rows"] = [
                 {
@@ -1966,7 +2316,16 @@ export default async function beautify(
                             : "[]",
                     },
                 },
-                { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+                {
+                    key: "fee",
+                    params: {
+                        fee: formatAsset(
+                            opContents.fee.amount,
+                            _feeAsset.symbol,
+                            _feeAsset.precision
+                        ),
+                    },
+                },
             ];
         }
     } else if (opType == 37) {
@@ -1976,6 +2335,10 @@ export default async function beautify(
         ).accountName;
         let claimedAsset = assetResults.find(
             (assRes) => assRes.id === opContents.amount.asset_id
+        );
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
         );
 
         if (depositToAccount && claimedAsset) {
@@ -2006,7 +2369,16 @@ export default async function beautify(
                         asset_id: opContents.amount.asset_id,
                     },
                 },
-                { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+                {
+                    key: "fee",
+                    params: {
+                        fee: formatAsset(
+                            opContents.fee.amount,
+                            _feeAsset.symbol,
+                            _feeAsset.precision
+                        ),
+                    },
+                },
             ];
         }
     } else if (opType == 38) {
@@ -2022,6 +2394,10 @@ export default async function beautify(
         ).accountName;
         let overridenAsset = assetResults.find(
             (assRes) => assRes.id === opContents.amount.asset_id
+        );
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
         );
 
         if (issuer && from && to && overridenAsset) {
@@ -2047,7 +2423,16 @@ export default async function beautify(
                     },
                 },
                 { key: "memo", params: { memo: opContents.memo } },
-                { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+                {
+                    key: "fee",
+                    params: {
+                        fee: formatAsset(
+                            opContents.fee.amount,
+                            _feeAsset.symbol,
+                            _feeAsset.precision
+                        ),
+                    },
+                },
             ];
         }
     } else if (opType == 39) {
@@ -2057,6 +2442,10 @@ export default async function beautify(
         ).accountName;
         let assetToTransfer = assetResults.find(
             (assRes) => assRes.id === opContents.amount.asset_id
+        );
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
         );
 
         if (from && assetToTransfer) {
@@ -2083,11 +2472,23 @@ export default async function beautify(
                     key: "outputs",
                     params: { outputs: JSON.stringify(opContents.outputs) },
                 },
-                { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+                {
+                    key: "fee",
+                    params: {
+                        fee: formatAsset(
+                            opContents.fee.amount,
+                            _feeAsset.symbol,
+                            _feeAsset.precision
+                        ),
+                    },
+                },
             ];
         }
     } else if (opType == 40) {
         // blind_transfer
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
+        );
         currentOperation["rows"] = [
             {
                 key: "inputs",
@@ -2097,7 +2498,17 @@ export default async function beautify(
                 key: "outputs",
                 params: { outputs: JSON.stringify(opContents.outputs) },
             },
-            { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+            {
+                key: "fee",
+                params: {
+                    fee: formatAsset(
+                        opContents.fee.amount,
+                        _feeAsset.symbol,
+                        _feeAsset.precision
+                    ),
+                },
+            },
+            ,
         ];
     } else if (opType == 41) {
         // transfer_from_blind
@@ -2106,6 +2517,10 @@ export default async function beautify(
         ).accountName;
         let assetToTransfer = assetResults.find(
             (assRes) => assRes.id === opContents.amount.asset_id
+        );
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
         );
 
         if (to && assetToTransfer) {
@@ -2129,7 +2544,16 @@ export default async function beautify(
                     key: "inputs",
                     params: { inputs: JSON.stringify(opContents.inputs) },
                 },
-                { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+                {
+                    key: "fee",
+                    params: {
+                        fee: formatAsset(
+                            opContents.fee.amount,
+                            _feeAsset.symbol,
+                            _feeAsset.precision
+                        ),
+                    },
+                },
             ];
         }
     } else if (opType == 43) {
@@ -2139,6 +2563,10 @@ export default async function beautify(
         ).accountName;
         let assetToClaim = assetResults.find(
             (assRes) => assRes.id === opContents.amount_to_claim.asset_id
+        );
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
         );
 
         if (issuer && assetToClaim) {
@@ -2164,7 +2592,16 @@ export default async function beautify(
                         extensions: JSON.stringify(opContents.extensions),
                     },
                 },
-                { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+                {
+                    key: "fee",
+                    params: {
+                        fee: formatAsset(
+                            opContents.fee.amount,
+                            _feeAsset.symbol,
+                            _feeAsset.precision
+                        ),
+                    },
+                },
             ];
         }
     } else if (opType == 45) {
@@ -2177,6 +2614,10 @@ export default async function beautify(
         );
         let debtCovered = assetResults.find(
             (assRes) => assRes.id === opContents.debtCovered.asset_id
+        );
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
         );
 
         if (bidder && collateral && debtCovered) {
@@ -2205,7 +2646,16 @@ export default async function beautify(
                         ),
                     },
                 },
-                { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+                {
+                    key: "fee",
+                    params: {
+                        fee: formatAsset(
+                            opContents.fee.amount,
+                            _feeAsset.symbol,
+                            _feeAsset.precision
+                        ),
+                    },
+                },
             ];
         }
     } else if (opType == 47) {
@@ -2215,6 +2665,10 @@ export default async function beautify(
         ).accountName;
         let relevantAsset = assetResults.find(
             (assRes) => assRes.id === opContents.asset_id
+        );
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
         );
 
         if (issuer && relevantAsset) {
@@ -2234,7 +2688,16 @@ export default async function beautify(
                         ),
                     },
                 },
-                { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+                {
+                    key: "fee",
+                    params: {
+                        fee: formatAsset(
+                            opContents.fee.amount,
+                            _feeAsset.symbol,
+                            _feeAsset.precision
+                        ),
+                    },
+                },
             ];
         }
     } else if (opType == 48) {
@@ -2247,6 +2710,10 @@ export default async function beautify(
         ).accountName;
         let assetToUpdate = assetResults.find(
             (assRes) => assRes.id === opContents.asset_to_update
+        );
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
         );
 
         if (issuer && new_issuer && assetToUpdate) {
@@ -2266,7 +2733,16 @@ export default async function beautify(
                         new_issuerOP: opContents.new_issuer,
                     },
                 },
-                { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+                {
+                    key: "fee",
+                    params: {
+                        fee: formatAsset(
+                            opContents.fee.amount,
+                            _feeAsset.symbol,
+                            _feeAsset.precision
+                        ),
+                    },
+                },
             ];
         }
     } else if (opType == 49) {
@@ -2279,6 +2755,10 @@ export default async function beautify(
         ).accountName;
         let htlcAsset = assetResults.find(
             (assRes) => assRes.id === opContents.amount.asset_id
+        );
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
         );
 
         if (from && to && htlcAsset) {
@@ -2312,7 +2792,16 @@ export default async function beautify(
                         claim_period_seconds: opContents.claim_period_seconds,
                     },
                 },
-                { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+                {
+                    key: "fee",
+                    params: {
+                        fee: formatAsset(
+                            opContents.fee.amount,
+                            _feeAsset.symbol,
+                            _feeAsset.precision
+                        ),
+                    },
+                },
             ];
         }
     } else if (opType == 50) {
@@ -2320,6 +2809,10 @@ export default async function beautify(
         let redeemer = accountResults.find(
             (resAcc) => resAcc.id === opContents.redeemer
         ).accountName;
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
+        );
         if (redeemer) {
             currentOperation["rows"] = [
                 { key: "htlc_id", params: { htlc_id: opContents.htlc_id } },
@@ -2339,7 +2832,16 @@ export default async function beautify(
                             : "[]",
                     },
                 },
-                { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+                {
+                    key: "fee",
+                    params: {
+                        fee: formatAsset(
+                            opContents.fee.amount,
+                            _feeAsset.symbol,
+                            _feeAsset.precision
+                        ),
+                    },
+                },
             ];
         }
     } else if (opType == 52) {
@@ -2347,6 +2849,10 @@ export default async function beautify(
         let update_issuer = accountResults.find(
             (resAcc) => resAcc.id === opContents.update_issuer
         ).accountName;
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
+        );
         if (update_issuer) {
             currentOperation["rows"] = [
                 { key: "htlc_id", params: { htlc_id: opContents.htlc_id } },
@@ -2369,7 +2875,16 @@ export default async function beautify(
                             : "[]",
                     },
                 },
-                { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+                {
+                    key: "fee",
+                    params: {
+                        fee: formatAsset(
+                            opContents.fee.amount,
+                            _feeAsset.symbol,
+                            _feeAsset.precision
+                        ),
+                    },
+                },
             ];
         }
     } else if (opType == 54) {
@@ -2377,6 +2892,10 @@ export default async function beautify(
         let account = accountResults.find(
             (resAcc) => resAcc.id === opContents.account
         ).accountName;
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
+        );
         if (account) {
             currentOperation["rows"] = [
                 {
@@ -2411,7 +2930,16 @@ export default async function beautify(
                             : "[]",
                     },
                 },
-                { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+                {
+                    key: "fee",
+                    params: {
+                        fee: formatAsset(
+                            opContents.fee.amount,
+                            _feeAsset.symbol,
+                            _feeAsset.precision
+                        ),
+                    },
+                },
             ];
         }
     } else if (opType == 55) {
@@ -2419,6 +2947,10 @@ export default async function beautify(
         let account = accountResults.find(
             (resAcc) => resAcc.id === opContents.account
         ).accountName;
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
+        );
 
         if (account) {
             currentOperation["rows"] = [
@@ -2472,7 +3004,16 @@ export default async function beautify(
                             : "[]",
                     },
                 },
-                { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+                {
+                    key: "fee",
+                    params: {
+                        fee: formatAsset(
+                            opContents.fee.amount,
+                            _feeAsset.symbol,
+                            _feeAsset.precision
+                        ),
+                    },
+                },
             ];
         }
     } else if (opType == 56) {
@@ -2480,6 +3021,10 @@ export default async function beautify(
         let account = accountResults.find(
             (resAcc) => resAcc.id === opContents.account
         ).accountName;
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
+        );
         if (account) {
             currentOperation["rows"] = [
                 {
@@ -2500,7 +3045,16 @@ export default async function beautify(
                             : "[]",
                     },
                 },
-                { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+                {
+                    key: "fee",
+                    params: {
+                        fee: formatAsset(
+                            opContents.fee.amount,
+                            _feeAsset.symbol,
+                            _feeAsset.precision
+                        ),
+                    },
+                },
             ];
         }
     } else if (opType == 57) {
@@ -2510,6 +3064,10 @@ export default async function beautify(
         ).accountName;
         let ticketAsset = assetResults.find(
             (assRes) => assRes.id === opContents.amount.asset_id
+        );
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
         );
 
         if (account && ticketAsset) {
@@ -2540,7 +3098,16 @@ export default async function beautify(
                             : "[]",
                     },
                 },
-                { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+                {
+                    key: "fee",
+                    params: {
+                        fee: formatAsset(
+                            opContents.fee.amount,
+                            _feeAsset.symbol,
+                            _feeAsset.precision
+                        ),
+                    },
+                },
             ];
         }
     } else if (opType == 58) {
@@ -2550,6 +3117,10 @@ export default async function beautify(
         ).accountName;
         let ticketAsset = assetResults.find(
             (assRes) => assRes.id === opContents.amount_for_new_target.asset_id
+        );
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
         );
 
         if (account && ticketAsset) {
@@ -2598,6 +3169,10 @@ export default async function beautify(
             (assRes) => assRes.id === opContents.share_asset
         );
 
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
+        );
+
         if (account && assetA && assetB && shareAsset) {
             currentOperation["rows"] = [
                 {
@@ -2644,7 +3219,16 @@ export default async function beautify(
                             : "[]",
                     },
                 },
-                { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+                {
+                    key: "fee",
+                    params: {
+                        fee: formatAsset(
+                            opContents.fee.amount,
+                            _feeAsset.symbol,
+                            _feeAsset.precision
+                        ),
+                    },
+                },
             ];
         }
     } else if (opType == 60) {
@@ -2652,6 +3236,10 @@ export default async function beautify(
         let account = accountResults.find(
             (resAcc) => resAcc.id === opContents.account
         ).accountName;
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
+        );
         if (account) {
             currentOperation["rows"] = [
                 {
@@ -2667,7 +3255,16 @@ export default async function beautify(
                             : "[]",
                     },
                 },
-                { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+                {
+                    key: "fee",
+                    params: {
+                        fee: formatAsset(
+                            opContents.fee.amount,
+                            _feeAsset.symbol,
+                            _feeAsset.precision
+                        ),
+                    },
+                },
             ];
         }
     } else if (opType == 61) {
@@ -2680,6 +3277,10 @@ export default async function beautify(
         );
         let amountB = assetResults.find(
             (assRes) => assRes.id === opContents.amount_b.asset_id
+        );
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
         );
 
         if (account && amountA && amountB) {
@@ -2719,7 +3320,16 @@ export default async function beautify(
                             : "[]",
                     },
                 },
-                { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+                {
+                    key: "fee",
+                    params: {
+                        fee: formatAsset(
+                            opContents.fee.amount,
+                            _feeAsset.symbol,
+                            _feeAsset.precision
+                        ),
+                    },
+                },
             ];
         }
     } else if (opType == 62) {
@@ -2729,6 +3339,10 @@ export default async function beautify(
         ).accountName;
         let shareAsset = assetResults.find(
             (assRes) => assRes.id === opContents.share_amount.asset_id
+        );
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
         );
 
         if (account && shareAsset) {
@@ -2757,7 +3371,16 @@ export default async function beautify(
                             : "[]",
                     },
                 },
-                { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+                {
+                    key: "fee",
+                    params: {
+                        fee: formatAsset(
+                            opContents.fee.amount,
+                            _feeAsset.symbol,
+                            _feeAsset.precision
+                        ),
+                    },
+                },
             ];
         }
     } else if (opType == 63) {
@@ -2770,6 +3393,10 @@ export default async function beautify(
         );
         let receivedAsset = assetResults.find(
             (assRes) => assRes.id === opContents.min_to_receive.asset_id
+        );
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
         );
 
         if (account && soldAsset && receivedAsset) {
@@ -2807,7 +3434,16 @@ export default async function beautify(
                             : "[]",
                     },
                 },
-                { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+                {
+                    key: "fee",
+                    params: {
+                        fee: formatAsset(
+                            opContents.fee.amount,
+                            _feeAsset.symbol,
+                            _feeAsset.precision
+                        ),
+                    },
+                },
             ];
         }
     } else if (opType == 64) {
@@ -2815,6 +3451,10 @@ export default async function beautify(
         let ownerAccount = accountResults.find(
             (resAcc) => resAcc.id === opContents.owner_account
         ).accountName;
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
+        );
         if (ownerAccount) {
             currentOperation["rows"] = [
                 {
@@ -2838,7 +3478,16 @@ export default async function beautify(
                             : "[]",
                     },
                 },
-                { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+                {
+                    key: "fee",
+                    params: {
+                        fee: formatAsset(
+                            opContents.fee.amount,
+                            _feeAsset.symbol,
+                            _feeAsset.precision
+                        ),
+                    },
+                },
             ];
         }
     } else if (opType == 65) {
@@ -2846,6 +3495,10 @@ export default async function beautify(
         let ownerAccount = accountResults.find(
             (resAcc) => resAcc.id === opContents.owner_account
         ).accountName;
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
+        );
         if (ownerAccount) {
             currentOperation["rows"] = [
                 {
@@ -2864,7 +3517,16 @@ export default async function beautify(
                             : "[]",
                     },
                 },
-                { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+                {
+                    key: "fee",
+                    params: {
+                        fee: formatAsset(
+                            opContents.fee.amount,
+                            _feeAsset.symbol,
+                            _feeAsset.precision
+                        ),
+                    },
+                },
             ];
         }
     } else if (opType == 66) {
@@ -2872,6 +3534,10 @@ export default async function beautify(
         let ownerAccount = accountResults.find(
             (resAcc) => resAcc.id === opContents.owner_account
         ).accountName;
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
+        );
 
         let deltaAmount = opContents.delta_amount
             ? assetResults.find(
@@ -2912,7 +3578,16 @@ export default async function beautify(
                             : "[]",
                     },
                 },
-                { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+                {
+                    key: "fee",
+                    params: {
+                        fee: formatAsset(
+                            opContents.fee.amount,
+                            _feeAsset.symbol,
+                            _feeAsset.precision
+                        ),
+                    },
+                },
             ];
         }
     } else if (opType == 67) {
@@ -2922,6 +3597,10 @@ export default async function beautify(
         ).accountName;
         let borrowAmount = assetResults.find(
             (assRes) => assRes.id === opContents.borrow_amount.asset_id
+        );
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
         );
 
         if (borrower && borrowAmount) {
@@ -2952,7 +3631,16 @@ export default async function beautify(
                             : "[]",
                     },
                 },
-                { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+                {
+                    key: "fee",
+                    params: {
+                        fee: formatAsset(
+                            opContents.fee.amount,
+                            _feeAsset.symbol,
+                            _feeAsset.precision
+                        ),
+                    },
+                },
             ];
         }
     } else if (opType == 68) {
@@ -2965,6 +3653,10 @@ export default async function beautify(
         );
         let fundFee = assetResults.find(
             (assRes) => assRes.id === opContents.fund_fee.asset_id
+        );
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
         );
 
         if (account && repayAmount && fundFee) {
@@ -3002,7 +3694,16 @@ export default async function beautify(
                             : "[]",
                     },
                 },
-                { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+                {
+                    key: "fee",
+                    params: {
+                        fee: formatAsset(
+                            opContents.fee.amount,
+                            _feeAsset.symbol,
+                            _feeAsset.precision
+                        ),
+                    },
+                },
             ];
         }
     } else if (opType == 69) {
@@ -3010,6 +3711,10 @@ export default async function beautify(
         let ownerAccount = accountResults.find(
             (resAcc) => resAcc.id === opContents.owner_account
         ).accountName;
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
+        );
         if (ownerAccount) {
             currentOperation["rows"] = [
                 {
@@ -3064,7 +3769,16 @@ export default async function beautify(
                             : "[]",
                     },
                 },
-                { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+                {
+                    key: "fee",
+                    params: {
+                        fee: formatAsset(
+                            opContents.fee.amount,
+                            _feeAsset.symbol,
+                            _feeAsset.precision
+                        ),
+                    },
+                },
             ];
         }
     } else if (opType == 70) {
@@ -3072,6 +3786,10 @@ export default async function beautify(
         let ownerAccount = accountResults.find(
             (resAcc) => resAcc.id === opContents.owner_account
         ).accountName;
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
+        );
         if (ownerAccount) {
             currentOperation["rows"] = [
                 {
@@ -3090,7 +3808,16 @@ export default async function beautify(
                             : "[]",
                     },
                 },
-                { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+                {
+                    key: "fee",
+                    params: {
+                        fee: formatAsset(
+                            opContents.fee.amount,
+                            _feeAsset.symbol,
+                            _feeAsset.precision
+                        ),
+                    },
+                },
             ];
         }
     } else if (opType == 71) {
@@ -3104,6 +3831,10 @@ export default async function beautify(
                   (assRes) => assRes.id === opContents.delta_amount.asset_id
               )
             : null;
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
+        );
 
         if (ownerAccount && deltaAmount) {
             currentOperation["rows"] = [
@@ -3165,7 +3896,16 @@ export default async function beautify(
                             : "[]",
                     },
                 },
-                { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+                {
+                    key: "fee",
+                    params: {
+                        fee: formatAsset(
+                            opContents.fee.amount,
+                            _feeAsset.symbol,
+                            _feeAsset.precision
+                        ),
+                    },
+                },
             ];
         }
     } else if (opType == 72) {
@@ -3178,6 +3918,10 @@ export default async function beautify(
         );
         let collateral = assetResults.find(
             (assRes) => assRes.id === opContents.collateral.asset_id
+        );
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
         );
 
         if (borrower && borrowAmount && collateral) {
@@ -3228,7 +3972,16 @@ export default async function beautify(
                             : "[]",
                     },
                 },
-                { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+                {
+                    key: "fee",
+                    params: {
+                        fee: formatAsset(
+                            opContents.fee.amount,
+                            _feeAsset.symbol,
+                            _feeAsset.precision
+                        ),
+                    },
+                },
             ];
         }
     } else if (opType == 73) {
@@ -3241,6 +3994,10 @@ export default async function beautify(
         );
         let creditFee = assetResults.find(
             (assRes) => assRes.id === opContents.credit_fee.asset_id
+        );
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
         );
 
         if (account && repayAmount && creditFee) {
@@ -3278,7 +4035,16 @@ export default async function beautify(
                             : "[]",
                     },
                 },
-                { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+                {
+                    key: "fee",
+                    params: {
+                        fee: formatAsset(
+                            opContents.fee.amount,
+                            _feeAsset.symbol,
+                            _feeAsset.precision
+                        ),
+                    },
+                },
             ];
         }
     } else if (opType == 75) {
@@ -3286,6 +4052,10 @@ export default async function beautify(
         let _ownerAccount = accountResults.find(
             (resAcc) => resAcc.id === opContents.account
         ).accountName;
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
+        );
         currentOperation["rows"] = [
             {
                 key: "account",
@@ -3309,15 +4079,37 @@ export default async function beautify(
                 key: "extensions",
                 params: { extensions: JSON.stringify(opContents.extensions) },
             },
-            { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+            {
+                key: "fee",
+                params: {
+                    fee: formatAsset(
+                        opContents.fee.amount,
+                        _feeAsset.symbol,
+                        _feeAsset.precision
+                    ),
+                },
+            },
         ];
     } else if (opType == 76) {
         // credit_deal_update_operation
         let _borrowerAccount = accountResults.find(
             (resAcc) => resAcc.id === opContents.account
         ).accountName;
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
+        );
         currentOperation["rows"] = [
-            { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+            {
+                key: "fee",
+                params: {
+                    fee: formatAsset(
+                        opContents.fee.amount,
+                        _feeAsset.symbol,
+                        _feeAsset.precision
+                    ),
+                },
+            },
             {
                 key: "account",
                 params: {
@@ -3334,31 +4126,82 @@ export default async function beautify(
     } else if (opType == 77) {
         // limit_order_update_operation
         let _sellerAccount = accountResults.find(
-            (resAcc) => resAcc.id === opContents.seller
+            (resAcc) => resAcc.id === opContents.account_id_type
         ).accountName;
-        currentOperation["rows"] = [
-            { key: "fee", params: { fee: JSON.stringify(opContents.fee) } },
+
+        let _assetToSell = assetResults.find(
+            (assRes) => assRes.id === opContents.delta_amount_to_sell.asset_id
+        );
+
+        let _feeAsset = assetResults.find(
+            (assRes) => assRes.id === opContents.fee.asset_id
+        );
+
+        const rowContents = [
             {
-                key: "seller",
-                params: { seller: _sellerAccount, sellerOP: opContents.seller },
-            },
-            { key: "order", params: { order: opContents.order } },
-            { key: "new_price", params: { new_price: opContents.new_price } },
-            {
-                key: "delta_amount_to_sell",
+                key: "fee",
                 params: {
-                    delta_amount_to_sell: opContents.delta_amount_to_sell,
+                    fee: formatAsset(
+                        opContents.fee.amount,
+                        _feeAsset.symbol,
+                        _feeAsset.precision
+                    ),
                 },
             },
             {
+                key: "seller",
+                params: {
+                    seller: _sellerAccount,
+                    sellerOP: opContents.account_id_type,
+                },
+            },
+            { key: "order", params: { order: opContents.limit_order_id_type } },
+        ];
+
+        if (opContents.new_price) {
+            rowContents.push({
+                key: "new_price",
+                params: { new_price: opContents.new_price },
+            });
+        }
+
+        if (opContents.delta_amount_to_sell) {
+            rowContents.push({
+                key: "delta_amount_to_sell",
+                params: {
+                    delta_amount_to_sell: formatAsset(
+                        opContents.delta_amount_to_sell.amount,
+                        _assetToSell.symbol,
+                        _assetToSell.precision
+                    ),
+                },
+            });
+        }
+
+        if (opContents.new_expiration) {
+            rowContents.push({
                 key: "new_expiration",
                 params: { new_expiration: opContents.new_expiration },
-            },
-            {
+            });
+        }
+
+        if (opContents.on_fill) {
+            rowContents.push({
+                key: "on_fill",
+                params: { on_fill: JSON.stringify(opContents.on_fill) },
+            });
+        }
+
+        if (opContents.extensions) {
+            rowContents.push({
                 key: "extensions",
-                params: { extensions: JSON.stringify(opContents.extensions) },
-            },
-        ];
+                params: {
+                    extensions: JSON.stringify(opContents.extensions),
+                },
+            });
+        }
+
+        currentOperation["rows"] = rowContents;
     }
 
     return currentOperation; // No matching operation

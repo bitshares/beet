@@ -1532,6 +1532,7 @@
           "new_price": "Novo preço: {new_price}",
           "delta_amount_to_sell": "Valor delta para vender: {delta_amount_to_sell}",
           "new_expiration": "Nova expiração: {new_expiration}",
+          "on_fill": "No preenchimento: {on_fill}",
           "extensions": "Extensões: {extensions}"
         },
         "tooltip": "Atualizar um pedido com limite"

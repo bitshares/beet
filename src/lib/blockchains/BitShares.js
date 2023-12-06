@@ -1,16 +1,16 @@
 import BlockchainAPI from "./BlockchainAPI";
-import {Apis} from "bitsharesjs-ws";
+import { Apis } from "bitsharesjs-ws";
 import {
     Aes,
     TransactionHelper,
     PrivateKey,
     PublicKey,
     TransactionBuilder,
-    Signature
+    Signature,
 } from "bitsharesjs";
 import * as Socket from "simple-websocket";
 
-import * as Actions from '../Actions';
+import * as Actions from "../Actions";
 
 import beautify from "./bitshares/beautify";
 import RendererLogger from "../RendererLogger";
@@ -25,7 +25,12 @@ const logger = new RendererLogger();
  * @returns {*} The value of the property, or the default value if the property is not found.
  */
 const get = (obj, path, defaultValue = undefined) => {
-    const result = path.split('.').reduce((res, key) => (res !== null && res !== undefined) ? res[key] : res, obj);
+    const result = path
+        .split(".")
+        .reduce(
+            (res, key) => (res !== null && res !== undefined ? res[key] : res),
+            obj
+        );
     return result !== undefined && result !== obj ? result : defaultValue;
 };
 
@@ -37,14 +42,13 @@ const get = (obj, path, defaultValue = undefined) => {
  */
 const chunk = (input, size) => {
     return input.reduce((arr, item, idx) => {
-      return idx % size === 0
-        ? [...arr, [item]]
-        : [...arr.slice(0, -1), [...arr.slice(-1)[0], item]];
+        return idx % size === 0
+            ? [...arr, [item]]
+            : [...arr.slice(0, -1), [...arr.slice(-1)[0], item]];
     }, []);
 };
 
 export default class BitShares extends BlockchainAPI {
-
     /*
      * Signing a Bitshares NFT with the user's account.
      * @param {string} key
@@ -52,17 +56,20 @@ export default class BitShares extends BlockchainAPI {
      * @returns {Promise}
      */
     signNFT(key, nft_object) {
-        return new Promise((resolve,reject) => {
+        return new Promise((resolve, reject) => {
             let updatedObject = JSON.parse(nft_object);
             updatedObject.sig_pubkey_or_address = this.getPublicKey(key);
             try {
                 resolve({
                     key: this.getPublicKey(key),
                     signed: updatedObject,
-                    signature: this._signString(key, JSON.stringify(updatedObject))
+                    signature: this._signString(
+                        key,
+                        JSON.stringify(updatedObject)
+                    ),
                 });
             } catch (error) {
-                console.log(error)
+                console.log(error);
                 reject(error);
             }
         });
@@ -78,401 +85,401 @@ export default class BitShares extends BlockchainAPI {
             // Beet based
             {
                 id: Actions.GET_ACCOUNT,
-                from: '',
-                method: Actions.GET_ACCOUNT
+                from: "",
+                method: Actions.GET_ACCOUNT,
             },
             {
                 id: Actions.REQUEST_SIGNATURE,
-                from: '',
-                method: Actions.REQUEST_SIGNATURE
+                from: "",
+                method: Actions.REQUEST_SIGNATURE,
             },
             {
                 id: Actions.INJECTED_CALL,
-                from: '',
-                method: Actions.INJECTED_CALL
+                from: "",
+                method: Actions.INJECTED_CALL,
             },
             {
                 id: Actions.VOTE_FOR,
-                from: '',
-                method: Actions.VOTE_FOR
+                from: "",
+                method: Actions.VOTE_FOR,
             },
             {
                 id: Actions.SIGN_MESSAGE,
-                from: '',
-                method: Actions.SIGN_MESSAGE
+                from: "",
+                method: Actions.SIGN_MESSAGE,
             },
             {
                 id: Actions.SIGN_NFT,
-                from: '',
-                method: Actions.SIGN_NFT
+                from: "",
+                method: Actions.SIGN_NFT,
             },
             {
                 id: Actions.VERIFY_MESSAGE,
-                from: '',
-                method: Actions.VERIFY_MESSAGE
+                from: "",
+                method: Actions.VERIFY_MESSAGE,
             },
             {
                 id: Actions.TRANSFER,
-                from: '',
-                method: Actions.TRANSFER
+                from: "",
+                method: Actions.TRANSFER,
             },
             // Blockchain based:
             {
                 id: 0,
-                from: '',
-                method: "transfer"
+                from: "",
+                method: "transfer",
             },
             {
                 id: 1,
-                from: 'seller',
-                method: "limit_order_create"
+                from: "seller",
+                method: "limit_order_create",
             },
             {
                 id: 2,
-                from: 'fee_paying_account',
-                method: "limit_order_cancel"
+                from: "fee_paying_account",
+                method: "limit_order_cancel",
             },
             {
                 id: 3,
-                from: 'funding_account',
-                method: "call_order_update"
+                from: "funding_account",
+                method: "call_order_update",
             },
             {
                 id: 5,
-                from: 'registrar',
-                method: "account_create"
+                from: "registrar",
+                method: "account_create",
             },
             {
                 id: 6,
-                from: 'account',
-                method: "account_update"
+                from: "account",
+                method: "account_update",
             },
             {
                 id: 7,
-                from: 'authorizing_account',
-                method: "account_whitelist"
+                from: "authorizing_account",
+                method: "account_whitelist",
             },
             {
                 id: 8,
-                from: 'account_to_upgrade',
-                method: "account_upgrade"
+                from: "account_to_upgrade",
+                method: "account_upgrade",
             },
             {
                 id: 9,
-                from: 'account_id',
-                method: "account_transfer"
+                from: "account_id",
+                method: "account_transfer",
             },
             {
                 id: 10,
-                from: 'issuer',
-                method: "asset_create"
+                from: "issuer",
+                method: "asset_create",
             },
             {
                 id: 11,
-                from: 'issuer',
-                method: "asset_update"
+                from: "issuer",
+                method: "asset_update",
             },
             {
                 id: 12,
-                from: 'issuer',
-                method: "asset_update_bitasset"
+                from: "issuer",
+                method: "asset_update_bitasset",
             },
             {
                 id: 13,
-                from: 'issuer',
-                method: "asset_update_feed_producers"
+                from: "issuer",
+                method: "asset_update_feed_producers",
             },
             {
                 id: 14,
-                from: 'issuer',
-                method: "asset_issue"
+                from: "issuer",
+                method: "asset_issue",
             },
             {
                 id: 15,
-                from: 'payer',
-                method: "asset_reserve"
+                from: "payer",
+                method: "asset_reserve",
             },
             {
                 id: 16,
-                from: 'from_account',
-                method: "asset_fund_fee_pool"
+                from: "from_account",
+                method: "asset_fund_fee_pool",
             },
             {
                 id: 17,
-                from: 'account',
-                method: "asset_settle"
+                from: "account",
+                method: "asset_settle",
             },
             {
                 id: 18,
-                from: 'issuer',
-                method: "asset_global_settle"
+                from: "issuer",
+                method: "asset_global_settle",
             },
             {
                 id: 19,
-                from: 'publisher',
-                method: "asset_publish_feed"
+                from: "publisher",
+                method: "asset_publish_feed",
             },
             {
                 id: 20,
-                from: 'witness_account',
-                method: "witness_create"
+                from: "witness_account",
+                method: "witness_create",
             },
             {
                 id: 21,
-                from: 'witness_account',
-                method: "witness_update"
+                from: "witness_account",
+                method: "witness_update",
             },
             {
                 id: 22,
-                from: 'fee_paying_account',
-                method: "proposal_create"
+                from: "fee_paying_account",
+                method: "proposal_create",
             },
             {
                 id: 23,
-                from: 'fee_paying_account',
-                method: "proposal_update"
+                from: "fee_paying_account",
+                method: "proposal_update",
             },
             {
                 id: 24,
-                from: 'fee_paying_account',
-                method: "proposal_delete"
+                from: "fee_paying_account",
+                method: "proposal_delete",
             },
             {
                 id: 25,
-                from: 'withdraw_from_account',
-                method: "withdraw_permission_create"
+                from: "withdraw_from_account",
+                method: "withdraw_permission_create",
             },
             {
                 id: 26,
-                from: 'withdraw_from_account',
-                method: "withdraw_permission_update"
+                from: "withdraw_from_account",
+                method: "withdraw_permission_update",
             },
             {
                 id: 27,
-                from: 'withdraw_from_account',
-                method: "withdraw_permission_claim"
+                from: "withdraw_from_account",
+                method: "withdraw_permission_claim",
             },
             {
                 id: 28,
-                from: 'withdraw_from_account',
-                method: "withdraw_permission_delete"
+                from: "withdraw_from_account",
+                method: "withdraw_permission_delete",
             },
             {
                 id: 29,
-                from: 'committee_member_account',
-                method: "committee_member_create"
+                from: "committee_member_account",
+                method: "committee_member_create",
             },
             {
                 id: 30,
-                from: '',
-                method: "committee_member_update"
+                from: "",
+                method: "committee_member_update",
             },
             {
                 id: 31,
-                from: 'committee_member_account',
-                method: "committee_member_update_global_parameters"
+                from: "committee_member_account",
+                method: "committee_member_update_global_parameters",
             },
             {
                 id: 32,
-                from: '',
-                method: "vesting_balance_create"
+                from: "",
+                method: "vesting_balance_create",
             },
             {
                 id: 33,
-                from: 'owner',
-                method: "vesting_balance_withdraw"
+                from: "owner",
+                method: "vesting_balance_withdraw",
             },
             {
                 id: 34,
-                from: 'owner',
-                method: "worker_create"
+                from: "owner",
+                method: "worker_create",
             },
             {
                 id: 35,
-                from: 'payer',
-                method: "custom"
+                from: "payer",
+                method: "custom",
             },
             {
                 id: 36,
-                from: 'fee_paying_account',
-                method: "assert"
+                from: "fee_paying_account",
+                method: "assert",
             },
             {
                 id: 37,
-                from: 'deposit_to_account',
-                method: "balance_claim"
+                from: "deposit_to_account",
+                method: "balance_claim",
             },
             {
                 id: 38,
-                from: 'from',
-                method: "override_transfer"
+                from: "from",
+                method: "override_transfer",
             },
             {
                 id: 39,
-                from: 'from',
-                method: "transfer_to_blind"
+                from: "from",
+                method: "transfer_to_blind",
             },
             {
                 id: 40,
-                from: '',
-                method: "blind_transfer"
+                from: "",
+                method: "blind_transfer",
             },
             {
                 id: 41,
-                from: '',
-                method: "transfer_from_blind"
+                from: "",
+                method: "transfer_from_blind",
             },
             {
                 id: 43,
-                from: 'issuer',
-                method: "asset_claim_fees"
+                from: "issuer",
+                method: "asset_claim_fees",
             },
             {
                 id: 45,
-                from: 'bidder',
-                method: "bid_collateral"
+                from: "bidder",
+                method: "bid_collateral",
             },
             {
                 id: 47,
-                from: 'issuer',
-                method: "asset_claim_pool"
+                from: "issuer",
+                method: "asset_claim_pool",
             },
             {
                 id: 48,
-                from: 'issuer',
-                method: "asset_update_issuer"
+                from: "issuer",
+                method: "asset_update_issuer",
             },
             {
                 id: 49,
-                from: 'from',
-                method: "htlc_create"
+                from: "from",
+                method: "htlc_create",
             },
             {
                 id: 50,
-                from: 'redeemer',
-                method: "htlc_redeem"
+                from: "redeemer",
+                method: "htlc_redeem",
             },
             {
                 id: 52,
-                from: 'update_issuer',
-                method: "htlc_extend"
+                from: "update_issuer",
+                method: "htlc_extend",
             },
             {
                 id: 54,
-                from: 'account',
-                method: "custom_authority_create"
+                from: "account",
+                method: "custom_authority_create",
             },
             {
                 id: 55,
-                from: 'account',
-                method: "custom_authority_update"
+                from: "account",
+                method: "custom_authority_update",
             },
             {
                 id: 56,
-                from: 'account',
-                method: "custom_authority_delete"
+                from: "account",
+                method: "custom_authority_delete",
             },
             {
                 id: 57,
-                from: 'account',
-                method: "ticket_create"
+                from: "account",
+                method: "ticket_create",
             },
             {
                 id: 58,
-                from: 'account',
-                method: "ticket_update"
+                from: "account",
+                method: "ticket_update",
             },
             {
                 id: 59,
-                from: 'account',
-                method: "liquidity_pool_create"
+                from: "account",
+                method: "liquidity_pool_create",
             },
             {
                 id: 60,
-                from: 'account',
-                method: "liquidity_pool_delete"
+                from: "account",
+                method: "liquidity_pool_delete",
             },
             {
                 id: 61,
-                from: 'account',
-                method: "liquidity_pool_deposit"
+                from: "account",
+                method: "liquidity_pool_deposit",
             },
             {
                 id: 62,
-                from: 'account',
-                method: "liquidity_pool_withdraw"
+                from: "account",
+                method: "liquidity_pool_withdraw",
             },
             {
                 id: 63,
-                from: 'account',
-                method: "liquidity_pool_exchange"
+                from: "account",
+                method: "liquidity_pool_exchange",
             },
             {
                 id: 64,
-                from: 'owner_account',
-                method: "samet_fund_create"
+                from: "owner_account",
+                method: "samet_fund_create",
             },
             {
                 id: 65,
-                from: 'owner_account',
-                method: "samet_fund_delete"
+                from: "owner_account",
+                method: "samet_fund_delete",
             },
             {
                 id: 66,
-                from: 'owner_account',
-                method: "samet_fund_update"
+                from: "owner_account",
+                method: "samet_fund_update",
             },
             {
                 id: 67,
-                from: 'borrower',
-                method: "samet_fund_borrow"
+                from: "borrower",
+                method: "samet_fund_borrow",
             },
             {
                 id: 68,
-                from: 'account',
-                method: "samt_fund_repay"
+                from: "account",
+                method: "samt_fund_repay",
             },
             {
                 id: 69,
-                from: 'owner_account',
-                method: "credit_offer_create"
+                from: "owner_account",
+                method: "credit_offer_create",
             },
             {
                 id: 70,
-                from: 'owner_account',
-                method: "credit_offer_delete"
+                from: "owner_account",
+                method: "credit_offer_delete",
             },
             {
                 id: 71,
-                from: 'owner_account',
-                method: "credit_offer_update"
+                from: "owner_account",
+                method: "credit_offer_update",
             },
             {
                 id: 72,
-                from: 'borrower',
-                method: "credit_offer_accept"
+                from: "borrower",
+                method: "credit_offer_accept",
             },
             {
                 id: 73,
-                from: 'account',
-                method: "credit_deal_repay"
+                from: "account",
+                method: "credit_deal_repay",
             },
             {
                 id: 75,
-                from: 'account',
-                method: "liquidity_pool_update_operation"
+                from: "account",
+                method: "liquidity_pool_update_operation",
             },
             {
                 id: 76,
-                from: 'account',
-                method: "credit_deal_update_operation"
+                from: "account",
+                method: "credit_deal_update_operation",
             },
             {
                 id: 77,
-                from: 'seller',
-                method: "limit_order_update_operation"
-            }
-        ]
+                from: "seller",
+                method: "limit_order_update_operation",
+            },
+        ];
     }
 
     /**
@@ -493,7 +500,7 @@ export default class BitShares extends BlockchainAPI {
             let beforeTS = before.getTime();
 
             let socket = new Socket(url);
-            socket.on('connect', () => {
+            socket.on("connect", () => {
                 let now = new Date();
                 let nowTS = now.getTime();
                 socket.destroy();
@@ -501,83 +508,89 @@ export default class BitShares extends BlockchainAPI {
                 return resolve({ url: url, lag: nowTS - beforeTS });
             });
 
-            socket.on('error', (error) => {
+            socket.on("error", (error) => {
                 //console.log(`Failure: ${url}`);
                 socket.destroy();
                 return resolve(null);
             });
         });
 
-        const fastestPromise = Promise.race([connectionPromise, timeoutPromise]).catch(
-            (error) => {
-                return null;
-            }
-        );
+        const fastestPromise = Promise.race([
+            connectionPromise,
+            timeoutPromise,
+        ]).catch((error) => {
+            return null;
+        });
 
         return fastestPromise;
     }
 
-  /**
-   * Test the wss nodes, return latencies and fastest url.
-   * @returns {Promise}
-   */
+    /**
+     * Test the wss nodes, return latencies and fastest url.
+     * @returns {Promise}
+     */
     async _testNodes() {
-      return new Promise(async (resolve, reject) => {
-          let urls = this.getNodes().map(node => node.url);
+        return new Promise(async (resolve, reject) => {
+            let urls = this.getNodes().map((node) => node.url);
 
-          let filteredURLS = urls.filter(url => {
-            if (!this._tempBanned || !this._tempBanned.includes(url)) {
-              return true;
-            }
-          });
+            let filteredURLS = urls.filter((url) => {
+                if (!this._tempBanned || !this._tempBanned.includes(url)) {
+                    return true;
+                }
+            });
 
-          return Promise.all(filteredURLS.map(url => this._testConnection(url)))
-          .then((validNodes) => {
-            let filteredNodes = validNodes.filter(x => x);
-            if (filteredNodes.length) {
-              let sortedNodes = filteredNodes.sort((a, b) => a.lag - b.lag);
-              let now = new Date();
-              return resolve({
-                node: sortedNodes[0].url,
-                latencies: sortedNodes,
-                timestamp: now.getTime()
-              });
-            } else {
-              console.error("No valid BTS WSS connections established; Please check your internet connection.")
-              return reject();
-            }
-          })
-          .catch(error => {
-            console.log(error);
-          })
-
-
-      });
-
+            return Promise.all(
+                filteredURLS.map((url) => this._testConnection(url))
+            )
+                .then((validNodes) => {
+                    let filteredNodes = validNodes.filter((x) => x);
+                    if (filteredNodes.length) {
+                        let sortedNodes = filteredNodes.sort(
+                            (a, b) => a.lag - b.lag
+                        );
+                        let now = new Date();
+                        return resolve({
+                            node: sortedNodes[0].url,
+                            latencies: sortedNodes,
+                            timestamp: now.getTime(),
+                        });
+                    } else {
+                        console.error(
+                            "No valid BTS WSS connections established; Please check your internet connection."
+                        );
+                        return reject();
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        });
     }
 
     /*
-    * Fetch account/address list to warn users about
-    * List is maintained by the Bitshares committee
-    * @returns {Array}
-    */
+     * Fetch account/address list to warn users about
+     * List is maintained by the Bitshares committee
+     * @returns {Array}
+     */
     getBlockedAccounts() {
         return new Promise(async (resolve, reject) => {
             if (this._config.identifier === "BTS_TEST") {
-                console.log('testnet - no blocked accounts');
+                console.log("testnet - no blocked accounts");
                 return resolve([]);
             }
 
             let committeeAccountDetails;
             try {
-                committeeAccountDetails = await this.getAccount('committee-blacklist-manager');
+                committeeAccountDetails = await this.getAccount(
+                    "committee-blacklist-manager"
+                );
             } catch (error) {
                 console.log(error);
                 return reject(error);
             }
-            
+
             if (!committeeAccountDetails) {
-                return reject('Committee account details not found');
+                return reject("Committee account details not found");
             }
 
             let blockedAccounts = committeeAccountDetails.blacklisted_accounts;
@@ -590,7 +603,7 @@ export default class BitShares extends BlockchainAPI {
      * Unused code - manager class failed to disconnect fast enough.
      * @returns {Promise}
      */
-     /*
+    /*
     _fetchValidNode() {
         return new Promise((resolve, reject) => {
             let urls = this.getNodes().map(node => node.url);
@@ -649,14 +662,18 @@ export default class BitShares extends BlockchainAPI {
             ) {
                 return resolve(true);
             }
-      
+
             if (this._isTestnet()) {
-                let _isConnectedToTestnet = Apis.instance().url.indexOf("testnet") !== -1;
+                let _isConnectedToTestnet =
+                    Apis.instance().url.indexOf("testnet") !== -1;
                 return resolve(_isConnectedToTestnet !== this._isTestnet());
             }
-    
-            let testConnection = await this._testConnection(this._isConnectedToNode);
-            let connectionResult = testConnection && testConnection.url ? false : true;
+
+            let testConnection = await this._testConnection(
+                this._isConnectedToNode
+            );
+            let connectionResult =
+                testConnection && testConnection.url ? false : true;
             return resolve(connectionResult);
         });
     }
@@ -670,24 +687,24 @@ export default class BitShares extends BlockchainAPI {
      */
     _establishConnection(nodeToConnect, resolve, reject) {
         if (!nodeToConnect) {
-          this._connectionFailed(reject, '', 'No node url')
+            this._connectionFailed(reject, "", "No node url");
         }
 
         Apis.instance(
             nodeToConnect,
             true,
             4000,
-            {enableCrypto: false, enableOrders: false},
-            console.log('Initial WSS Connection closed')
-        ).init_promise
-        .then((res) => {
-          console.log({msg: "established connection", res})
-          this._connectionEstablished(resolve, nodeToConnect);
-        })
-        .catch(error => {
-          console.log(error);
-          this._connectionFailed(reject, nodeToConnect, error)
-        });
+            { enableCrypto: false, enableOrders: false },
+            console.log("Initial WSS Connection closed")
+        )
+            .init_promise.then((res) => {
+                console.log({ msg: "established connection", res });
+                this._connectionEstablished(resolve, nodeToConnect);
+            })
+            .catch((error) => {
+                console.log(error);
+                this._connectionFailed(reject, nodeToConnect, error);
+            });
     }
 
     /*
@@ -697,55 +714,85 @@ export default class BitShares extends BlockchainAPI {
      */
     _connect(nodeToConnect = null) {
         return new Promise((resolve, reject) => {
-
             if (nodeToConnect) {
                 //console.log(`nodetoconnect: ${nodeToConnect}`)
-                return this._establishConnection(nodeToConnect, resolve, reject);
+                return this._establishConnection(
+                    nodeToConnect,
+                    resolve,
+                    reject
+                );
             }
 
-            if (this._isConnected && this._isConnectedToNode && !nodeToConnect) {
+            if (
+                this._isConnected &&
+                this._isConnectedToNode &&
+                !nodeToConnect
+            ) {
                 //console.log(`isConnected: ${this._isConnectedToNode}`)
-                return this._connectionEstablished(resolve, this._isConnectedToNode);
+                return this._connectionEstablished(
+                    resolve,
+                    this._isConnectedToNode
+                );
             }
 
             let diff;
             if (this._nodeCheckTime) {
                 let now = new Date();
                 let nowTS = now.getTime();
-                diff = Math.abs(Math.round((nowTS - this._nodeCheckTime) / 1000));
+                diff = Math.abs(
+                    Math.round((nowTS - this._nodeCheckTime) / 1000)
+                );
             }
 
-            if (!nodeToConnect && (!this._nodeLatencies || diff && diff > 360)) {
+            if (
+                !nodeToConnect &&
+                (!this._nodeLatencies || (diff && diff > 360))
+            ) {
                 // initializing the blockchain
-                return this._testNodes().then((res) => {
-                  this._node = res.node;
-                  this._nodeLatencies = res.latencies;
-                  this._nodeCheckTime = res.timestamp;
-                  console.log(`Establishing connection to ${res.node}`);
-                  return this._establishConnection(res.node, resolve, reject);
-                })
-                .catch(error => {
-                  console.log(error);
-                  return this._connectionFailed(reject, '', 'Node test fail');
-                })
+                return this._testNodes()
+                    .then((res) => {
+                        this._node = res.node;
+                        this._nodeLatencies = res.latencies;
+                        this._nodeCheckTime = res.timestamp;
+                        console.log(`Establishing connection to ${res.node}`);
+                        return this._establishConnection(
+                            res.node,
+                            resolve,
+                            reject
+                        );
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                        return this._connectionFailed(
+                            reject,
+                            "",
+                            "Node test fail"
+                        );
+                    });
             } else if (!nodeToConnect && this._nodeLatencies) {
-              // blockchain has previously been initialized
-              let filteredNodes = this._nodeLatencies
-                                  .filter(item => {
-                                    if (!this._tempBanned.includes(item.url)) {
-                                      return true;
-                                    }
-                                  });
+                // blockchain has previously been initialized
+                let filteredNodes = this._nodeLatencies.filter((item) => {
+                    if (!this._tempBanned.includes(item.url)) {
+                        return true;
+                    }
+                });
 
-              this._nodeLatencies = filteredNodes;
-              if (!filteredNodes || !filteredNodes.length) {
-                return this._connectionFailed(reject, '', 'No working nodes');
-              }
+                this._nodeLatencies = filteredNodes;
+                if (!filteredNodes || !filteredNodes.length) {
+                    return this._connectionFailed(
+                        reject,
+                        "",
+                        "No working nodes"
+                    );
+                }
 
-              this._node = filteredNodes[0].url;
-              return this._establishConnection(filteredNodes[0].url, resolve, reject);
+                this._node = filteredNodes[0].url;
+                return this._establishConnection(
+                    filteredNodes[0].url,
+                    resolve,
+                    reject
+                );
             }
-
         });
     }
 
@@ -757,19 +804,19 @@ export default class BitShares extends BlockchainAPI {
         return [
             {
                 type: "ImportKeys",
-                translate_key: "import_keys"
+                translate_key: "import_keys",
             },
             {
                 type: "bitshares/ImportBinFile",
-                translate_key: "import_bin"
+                translate_key: "import_bin",
             },
             {
                 type: "bitshares/ImportCloudPass",
-                translate_key: "import_pass"
+                translate_key: "import_pass",
             },
             {
                 type: "bitshares/ImportMemo",
-                translate_key: "import_only_memo"
+                translate_key: "import_only_memo",
             },
         ];
     }
@@ -787,44 +834,58 @@ export default class BitShares extends BlockchainAPI {
         });
 
         let timeLimitedPromise = new Promise(async (resolve, reject) => {
-            this.ensureConnection().then(() => {
-                Apis.instance()
-                    .db_api()
-                    .exec("get_full_accounts", [[accountName], false])
-                    .then(response => {
-                        if (!response || !response.length || !response[0].length) {
-                            console.log({
-                                error: 'Failed to query blockchain',
-                                apiURL: Apis.instance().url,
-                                response: response,
-                                accountName: accountName
-                            })
-                            return reject('Failed to query BTS blockchain');
-                        }
+            this.ensureConnection()
+                .then(() => {
+                    Apis.instance()
+                        .db_api()
+                        .exec("get_full_accounts", [[accountName], false])
+                        .then((response) => {
+                            if (
+                                !response ||
+                                !response.length ||
+                                !response[0].length
+                            ) {
+                                console.log({
+                                    error: "Failed to query blockchain",
+                                    apiURL: Apis.instance().url,
+                                    response: response,
+                                    accountName: accountName,
+                                });
+                                return reject("Failed to query BTS blockchain");
+                            }
 
-                        let parsedAccount = response[0][1].account;
-                        parsedAccount.active.public_keys = parsedAccount.active.key_auths;
-                        parsedAccount.owner.public_keys = parsedAccount.owner.key_auths;
-                        parsedAccount.memo = {public_key: parsedAccount.options.memo_key};
-                        parsedAccount.balances = response[0][1].balances;
-                        return resolve(parsedAccount);
-                    })
-                    .catch(error => {
-                        console.log(`get_full_accounts: ${error}`);
-                        return this._connectionFailed(reject, this._node, error)
-                    })
-              })
-              .catch(error => {
-                  console.log(`ensureConnection: ${error}`);
-                  reject(error);
-              })
+                            let parsedAccount = response[0][1].account;
+                            parsedAccount.active.public_keys =
+                                parsedAccount.active.key_auths;
+                            parsedAccount.owner.public_keys =
+                                parsedAccount.owner.key_auths;
+                            parsedAccount.memo = {
+                                public_key: parsedAccount.options.memo_key,
+                            };
+                            parsedAccount.balances = response[0][1].balances;
+                            return resolve(parsedAccount);
+                        })
+                        .catch((error) => {
+                            console.log(`get_full_accounts: ${error}`);
+                            return this._connectionFailed(
+                                reject,
+                                this._node,
+                                error
+                            );
+                        });
+                })
+                .catch((error) => {
+                    console.log(`ensureConnection: ${error}`);
+                    reject(error);
+                });
         });
 
-        const fastestPromise = Promise.race([timeLimitedPromise, timeoutPromise]).catch(
-            (error) => {
-                return null;
-            }
-        );
+        const fastestPromise = Promise.race([
+            timeLimitedPromise,
+            timeoutPromise,
+        ]).catch((error) => {
+            return null;
+        });
 
         return fastestPromise;
     }
@@ -836,41 +897,57 @@ export default class BitShares extends BlockchainAPI {
      */
     _getAccountName(accountId) {
         return new Promise((resolve, reject) => {
-            this.ensureConnection().then(() => {
-                Apis.instance().db_api().exec("get_objects", [[accountId]]).then((asset_objects) => {
-                    if (asset_objects.length && asset_objects[0]) {
-                        resolve(asset_objects[0].name);
-                    }
-                }).catch(reject);
-            }).catch(reject);
+            this.ensureConnection()
+                .then(() => {
+                    Apis.instance()
+                        .db_api()
+                        .exec("get_objects", [[accountId]])
+                        .then((asset_objects) => {
+                            if (asset_objects.length && asset_objects[0]) {
+                                resolve(asset_objects[0].name);
+                            }
+                        })
+                        .catch(reject);
+                })
+                .catch(reject);
         });
     }
 
     /**
      * Given an array of account IDs, retrieve their account names
      * @param {Array} accountIDs
-     * @param {Object} 
+     * @param {Object}
      */
     _getMultipleAccountNames(accountIDs) {
         return new Promise((resolve, reject) => {
-            this.ensureConnection().then(() => {
-                if (!accountIDs) {
-                    resolve([]);
-                    return;
-                }
-
-                Apis.instance().db_api().exec("get_objects", [accountIDs, false]).then((results) => {
-                    if (results && results.length) {
-                        const filteredResults = results.filter(result => result !== null);
-                        resolve(filteredResults);
+            this.ensureConnection()
+                .then(() => {
+                    if (!accountIDs) {
+                        resolve([]);
                         return;
                     }
-                }).catch((error) => {
 
-                    console.error('Error fetching account details:', error);
-                    reject(error)
-                });
-            }).catch(reject);
+                    Apis.instance()
+                        .db_api()
+                        .exec("get_objects", [accountIDs, false])
+                        .then((results) => {
+                            if (results && results.length) {
+                                const filteredResults = results.filter(
+                                    (result) => result !== null
+                                );
+                                resolve(filteredResults);
+                                return;
+                            }
+                        })
+                        .catch((error) => {
+                            console.error(
+                                "Error fetching account details:",
+                                error
+                            );
+                            reject(error);
+                        });
+                })
+                .catch(reject);
         });
     }
 
@@ -882,32 +959,39 @@ export default class BitShares extends BlockchainAPI {
     _resolveMultipleAssets(assetIDs) {
         let timeoutPromise = new Promise((resolve) => {
             setTimeout(() => {
-                console.log('timed out');
+                console.log("timed out");
                 resolve(null);
             }, 3000);
         });
 
         let timeLimitedPromise = new Promise(async (resolve, reject) => {
-            this.ensureConnection().then(() => {
-                Apis.instance().db_api().exec("lookup_asset_symbols", [assetIDs]).then((asset_objects) => {
-                    if (asset_objects && asset_objects.length) {
-                        resolve(asset_objects);
-                    }
-                }).catch((error) => {
+            this.ensureConnection()
+                .then(() => {
+                    Apis.instance()
+                        .db_api()
+                        .exec("lookup_asset_symbols", [assetIDs])
+                        .then((asset_objects) => {
+                            if (asset_objects && asset_objects.length) {
+                                resolve(asset_objects);
+                            }
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                            reject(error);
+                        });
+                })
+                .catch((error) => {
                     console.log(error);
-                    reject(error)
+                    reject(error);
                 });
-            }).catch((error) => {
-                console.log(error);
-                reject(error)
-            });
         });
 
-        const fastestPromise = Promise.race([timeLimitedPromise, timeoutPromise]).catch(
-            (error) => {
-                return null;
-            }
-        );
+        const fastestPromise = Promise.race([
+            timeLimitedPromise,
+            timeoutPromise,
+        ]).catch((error) => {
+            return null;
+        });
 
         return fastestPromise;
     }
@@ -920,32 +1004,39 @@ export default class BitShares extends BlockchainAPI {
     _resolveAsset(assetSymbolOrId) {
         let timeoutPromise = new Promise((resolve) => {
             setTimeout(() => {
-                console.log('timed out');
+                console.log("timed out");
                 resolve(null);
             }, 3000);
         });
 
         let timeLimitedPromise = new Promise(async (resolve, reject) => {
-            this.ensureConnection().then(() => {
-                Apis.instance().db_api().exec("lookup_asset_symbols", [[assetSymbolOrId]]).then((asset_objects) => {
-                    if (asset_objects.length && asset_objects[0]) {
-                        resolve(asset_objects[0]);
-                    }
-                }).catch((error) => {
+            this.ensureConnection()
+                .then(() => {
+                    Apis.instance()
+                        .db_api()
+                        .exec("lookup_asset_symbols", [[assetSymbolOrId]])
+                        .then((asset_objects) => {
+                            if (asset_objects.length && asset_objects[0]) {
+                                resolve(asset_objects[0]);
+                            }
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                            reject(error);
+                        });
+                })
+                .catch((error) => {
                     console.log(error);
-                    reject(error)
+                    reject(error);
                 });
-            }).catch((error) => {
-                console.log(error);
-                reject(error)
-            });
         });
 
-        const fastestPromise = Promise.race([timeLimitedPromise, timeoutPromise]).catch(
-            (error) => {
-                return null;
-            }
-        );
+        const fastestPromise = Promise.race([
+            timeLimitedPromise,
+            timeoutPromise,
+        ]).catch((error) => {
+            return null;
+        });
 
         return fastestPromise;
     }
@@ -968,41 +1059,48 @@ export default class BitShares extends BlockchainAPI {
                     return resolve({
                         asset_id: "1.3.0",
                         symbol: "TEST",
-                        precision: 5
+                        precision: 5,
                     });
                 } else {
                     // TODO: Provide testnet bitshares lookup
                     return reject(null);
                 }
             }
-  
-            this.ensureConnection().then(() => {
-                Apis.instance().db_api().exec("lookup_asset_symbols", [[assetSymbolOrId]]).then((asset_objects) => {
-                    if (!asset_objects.length || !asset_objects[0]) {
-                      return resolve(null);
-                    }
-  
-                    let retrievedAsset = asset_objects[0];
-                    return resolve({
-                        asset_id: retrievedAsset.id,
-                        symbol: retrievedAsset.symbol,
-                        precision: retrievedAsset.precision
-                    });
-                  }).catch((error) => {
-                      console.log(error);
-                      reject(error)
-                  });
-              }).catch((error) => {
-                  console.log(error);
-                  reject(error)
-              });
+
+            this.ensureConnection()
+                .then(() => {
+                    Apis.instance()
+                        .db_api()
+                        .exec("lookup_asset_symbols", [[assetSymbolOrId]])
+                        .then((asset_objects) => {
+                            if (!asset_objects.length || !asset_objects[0]) {
+                                return resolve(null);
+                            }
+
+                            let retrievedAsset = asset_objects[0];
+                            return resolve({
+                                asset_id: retrievedAsset.id,
+                                symbol: retrievedAsset.symbol,
+                                precision: retrievedAsset.precision,
+                            });
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                            reject(error);
+                        });
+                })
+                .catch((error) => {
+                    console.log(error);
+                    reject(error);
+                });
         });
 
-        const fastestPromise = Promise.race([timeLimitedPromise, timeoutPromise]).catch(
-            (error) => {
-                return null;
-            }
-        );
+        const fastestPromise = Promise.race([
+            timeLimitedPromise,
+            timeoutPromise,
+        ]).catch((error) => {
+            return null;
+        });
 
         return fastestPromise;
     }
@@ -1021,37 +1119,49 @@ export default class BitShares extends BlockchainAPI {
 
         let timeLimitedPromise = new Promise(async (resolve, reject) => {
             // getAccount has already ensureConnection
-            this.getAccount(accountName).then((account) => {
-                let neededAssets = [];
-                for (let i = 0; i < account.balances.length; i++) {
-                    neededAssets.push(account.balances[i].asset_type);
-                }
-                Apis.instance().db_api().exec("get_objects", [neededAssets]).then((assets) => {
-                    let balances = [];
+            this.getAccount(accountName)
+                .then((account) => {
+                    let neededAssets = [];
                     for (let i = 0; i < account.balances.length; i++) {
-                        balances[i] = {
-                            asset_type: account.balances[i].asset_type,
-                            asset_name: assets[i].symbol,
-                            rawbalance: account.balances[i].balance,
-                            balance: humanReadableFloat(account.balances[i].balance, assets[i].precision),
-                            precision: assets[i].precision,
-                            owner: assets[i].issuer,
-                            prefix: assets[i].issuer == "1.2.0" ? "bit" : ""
-                        };
+                        neededAssets.push(account.balances[i].asset_type);
                     }
-                    resolve(balances);
+                    Apis.instance()
+                        .db_api()
+                        .exec("get_objects", [neededAssets])
+                        .then((assets) => {
+                            let balances = [];
+                            for (let i = 0; i < account.balances.length; i++) {
+                                balances[i] = {
+                                    asset_type: account.balances[i].asset_type,
+                                    asset_name: assets[i].symbol,
+                                    rawbalance: account.balances[i].balance,
+                                    balance: humanReadableFloat(
+                                        account.balances[i].balance,
+                                        assets[i].precision
+                                    ),
+                                    precision: assets[i].precision,
+                                    owner: assets[i].issuer,
+                                    prefix:
+                                        assets[i].issuer == "1.2.0"
+                                            ? "bit"
+                                            : "",
+                                };
+                            }
+                            resolve(balances);
+                        });
+                })
+                .catch((error) => {
+                    console.log(error);
+                    reject(error);
                 });
-            }).catch((error) => {
-                console.log(error);
-                reject(error);
-            });
         });
 
-        const fastestPromise = Promise.race([timeLimitedPromise, timeoutPromise]).catch(
-            (error) => {
-                return null;
-            }
-        );
+        const fastestPromise = Promise.race([
+            timeLimitedPromise,
+            timeoutPromise,
+        ]).catch((error) => {
+            return null;
+        });
 
         return fastestPromise;
     }
@@ -1075,100 +1185,128 @@ export default class BitShares extends BlockchainAPI {
      */
     mapOperationData(incoming) {
         return new Promise((resolve, reject) => {
-            this.ensureConnection().then(() => {
-                if (incoming.action == "vote") {
-                    let entity_id = incoming.params.id.split(".");
-                    if (entity_id[0] != "1") {
-                        reject("ID format unknown");
-                    }
-                    if (entity_id[1] != "5" && entity_id[1] != "6" && entity_id[1] != "14") {
-                        reject("Given object does not support voting");
-                    }
-                    Apis.instance().db_api().exec(
-                        "get_objects", [[incoming.params.id]]
-                    ).then(objdata => {
-                        switch (entity_id[1]) {
-                            case "5":
-                                Apis.instance().db_api().exec(
-                                    "get_objects", [[objdata[0].committee_member_account]]
-                                ).then(objextradata => {
-                                    resolve({
-                                        entity: "committee member",
-                                        description:
-                                            "Commitee member: " +
-                                            objextradata[0].name +
-                                            "\nCommittee Member ID: " +
-                                            incoming.params.id,
-                                        vote_id: objdata[0].vote_id
-                                    });
-                                }).catch(error => {
-                                  console.log(error);
-                                  reject(error)
-                                });
-                                break;
-                            case "6":
-                                Apis.instance().db_api().exec(
-                                    "get_objects", [[objdata[0].witness_account]]
-                                ).then(objextradata => {
-                                    resolve({
-                                        entity: "witness",
-                                        description:
-                                            "Witness: " +
-                                            objextradata[0].name +
-                                            "\nWitness ID: " +
-                                            incoming.params.id,
-                                        vote_id: objdata[0].vote_id
-                                    });
-                                }).catch(error => {
-                                  console.log(error);
-                                  reject(error)
-                                });
-                                break;
-                            case "14":
-                                Apis.instance().db_api().exec(
-                                    "get_objects", [[objdata[0].worker_account]]
-                                ).then(objextradata => {
-                                    let dailyPay = objdata[0].daily_pay / Math.pow(10, 5);
-                                    resolve({
-                                        entity: "worker proposal",
-                                        description:
-                                            "Proposal: " +
-                                            objdata[0].name +
-                                            "\nProposal ID: " +
-                                            incoming.params.id +
-                                            "\nDaily Pay: " +
-                                            dailyPay +
-                                            "BTS\nWorker Account: " +
-                                            objextradata[0].name,
-                                        vote_id: objdata[0].vote_for
-                                    });
-                                }).catch(error => {
-                                  console.log(error);
-                                  reject(error)
-                                });
-                                break;
+            this.ensureConnection()
+                .then(() => {
+                    if (incoming.action == "vote") {
+                        let entity_id = incoming.params.id.split(".");
+                        if (entity_id[0] != "1") {
+                            reject("ID format unknown");
                         }
-                    }).catch(error => {
-                      console.log(error);
-                      reject(error)
-                    });
-                }
-            }).catch((error) => {
-                console.log(error);
-                reject(error)
-            });
+                        if (
+                            entity_id[1] != "5" &&
+                            entity_id[1] != "6" &&
+                            entity_id[1] != "14"
+                        ) {
+                            reject("Given object does not support voting");
+                        }
+                        Apis.instance()
+                            .db_api()
+                            .exec("get_objects", [[incoming.params.id]])
+                            .then((objdata) => {
+                                switch (entity_id[1]) {
+                                    case "5":
+                                        Apis.instance()
+                                            .db_api()
+                                            .exec("get_objects", [
+                                                [
+                                                    objdata[0]
+                                                        .committee_member_account,
+                                                ],
+                                            ])
+                                            .then((objextradata) => {
+                                                resolve({
+                                                    entity: "committee member",
+                                                    description:
+                                                        "Commitee member: " +
+                                                        objextradata[0].name +
+                                                        "\nCommittee Member ID: " +
+                                                        incoming.params.id,
+                                                    vote_id: objdata[0].vote_id,
+                                                });
+                                            })
+                                            .catch((error) => {
+                                                console.log(error);
+                                                reject(error);
+                                            });
+                                        break;
+                                    case "6":
+                                        Apis.instance()
+                                            .db_api()
+                                            .exec("get_objects", [
+                                                [objdata[0].witness_account],
+                                            ])
+                                            .then((objextradata) => {
+                                                resolve({
+                                                    entity: "witness",
+                                                    description:
+                                                        "Witness: " +
+                                                        objextradata[0].name +
+                                                        "\nWitness ID: " +
+                                                        incoming.params.id,
+                                                    vote_id: objdata[0].vote_id,
+                                                });
+                                            })
+                                            .catch((error) => {
+                                                console.log(error);
+                                                reject(error);
+                                            });
+                                        break;
+                                    case "14":
+                                        Apis.instance()
+                                            .db_api()
+                                            .exec("get_objects", [
+                                                [objdata[0].worker_account],
+                                            ])
+                                            .then((objextradata) => {
+                                                let dailyPay =
+                                                    objdata[0].daily_pay /
+                                                    Math.pow(10, 5);
+                                                resolve({
+                                                    entity: "worker proposal",
+                                                    description:
+                                                        "Proposal: " +
+                                                        objdata[0].name +
+                                                        "\nProposal ID: " +
+                                                        incoming.params.id +
+                                                        "\nDaily Pay: " +
+                                                        dailyPay +
+                                                        "BTS\nWorker Account: " +
+                                                        objextradata[0].name,
+                                                    vote_id:
+                                                        objdata[0].vote_for,
+                                                });
+                                            })
+                                            .catch((error) => {
+                                                console.log(error);
+                                                reject(error);
+                                            });
+                                        break;
+                                }
+                            })
+                            .catch((error) => {
+                                console.log(error);
+                                reject(error);
+                            });
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                    reject(error);
+                });
         });
     }
 
     /**
      * Bitshares blockchain implementation of QR code scanning
      * Supported QR codes: Bitshares-ui reference QRs
-     * @param {Object} contents 
+     * @param {Object} contents
      */
     handleQR(contents) {
         let parsedTransaction;
         try {
-            parsedTransaction = this._parseTransactionBuilder(JSON.parse(contents))
+            parsedTransaction = this._parseTransactionBuilder(
+                JSON.parse(contents)
+            );
         } catch (error) {
             console.log(error);
             return;
@@ -1209,19 +1347,24 @@ export default class BitShares extends BlockchainAPI {
     _parseTransactionBuilder(incoming) {
         if (incoming instanceof TransactionBuilder) {
             return incoming;
-        } else if (typeof incoming == "object"
-            && incoming.length > 1
-            && (incoming[0] == "signAndBroadcast" || incoming[0] == "sign" || incoming[0] == "broadcast")
+        } else if (
+            typeof incoming == "object" &&
+            incoming.length > 1 &&
+            (incoming[0] == "signAndBroadcast" ||
+                incoming[0] == "sign" ||
+                incoming[0] == "broadcast")
         ) {
             if (incoming.length <= 3) {
                 return new TransactionBuilder(JSON.parse(incoming[1]));
             } else {
-                console.warn("This way of parsing TransactionBuilder is deprecated, use new constructor");
+                console.warn(
+                    "This way of parsing TransactionBuilder is deprecated, use new constructor"
+                );
                 let tr = new TransactionBuilder();
                 tr.ref_block_num = incoming[1];
                 tr.ref_block_prefix = incoming[2];
                 tr.expiration = incoming[3];
-                incoming[4].forEach(op => {
+                incoming[4].forEach((op) => {
                     tr.add_operation(tr.get_type_operation(op[0], op[1]));
                 });
                 return tr;
@@ -1244,10 +1387,7 @@ export default class BitShares extends BlockchainAPI {
             return tr;
         } else if (incoming.type) {
             let tr = new TransactionBuilder();
-            tr.add_type_operation(
-                incoming.type,
-                incoming.data
-            );
+            tr.add_type_operation(incoming.type, incoming.data);
             return tr;
         }
         throw "Reconstruction of TransactionBuilder failed";
@@ -1261,28 +1401,35 @@ export default class BitShares extends BlockchainAPI {
      */
     sign(operation, key) {
         return new Promise((resolve, reject) => {
-            this.ensureConnection().then(() => {
-                let tr = this._parseTransactionBuilder(operation);
-                Promise.all([
-                    tr.set_required_fees(),
-                    tr.update_head_block()
-                ]).then(() => {
-                    let privateKey = PrivateKey.fromWif(key);
-                    tr.add_signer(
-                      privateKey,
-                      privateKey.toPublicKey().toPublicKeyString(this._getCoreSymbol()));
-                    tr.finalize().then(() => {
-                        tr.sign();
-                        resolve(tr);
-                    }).catch((error) => {
-                        console.log(error);
-                        reject(error)
+            this.ensureConnection()
+                .then(() => {
+                    let tr = this._parseTransactionBuilder(operation);
+                    Promise.all([
+                        tr.set_required_fees(),
+                        tr.update_head_block(),
+                    ]).then(() => {
+                        let privateKey = PrivateKey.fromWif(key);
+                        tr.add_signer(
+                            privateKey,
+                            privateKey
+                                .toPublicKey()
+                                .toPublicKeyString(this._getCoreSymbol())
+                        );
+                        tr.finalize()
+                            .then(() => {
+                                tr.sign();
+                                resolve(tr);
+                            })
+                            .catch((error) => {
+                                console.log(error);
+                                reject(error);
+                            });
                     });
+                })
+                .catch((error) => {
+                    console.log(error);
+                    reject(error);
                 });
-            }).catch(error => {
-              console.log(error);
-              reject(error)
-            });
         });
     }
 
@@ -1293,18 +1440,23 @@ export default class BitShares extends BlockchainAPI {
      */
     broadcast(transaction) {
         return new Promise((resolve, reject) => {
-            this.ensureConnection().then(() => {
-                transaction = this._parseTransactionBuilder(transaction);
-                transaction.broadcast().then(id => {
-                    resolve(id);
-                }).catch(error => {
-                  console.log(error);
-                  reject(error)
+            this.ensureConnection()
+                .then(() => {
+                    transaction = this._parseTransactionBuilder(transaction);
+                    transaction
+                        .broadcast()
+                        .then((id) => {
+                            resolve(id);
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                            reject(error);
+                        });
+                })
+                .catch((error) => {
+                    console.log(error);
+                    reject(error);
                 });
-            }).catch((error) => {
-                console.log(error);
-                reject(error)
-            });
         });
     }
 
@@ -1322,61 +1474,71 @@ export default class BitShares extends BlockchainAPI {
         });
 
         let timeLimitedPromise = new Promise(async (resolve, reject) => {
-            this.ensureConnection().then(() => {
+            this.ensureConnection()
+                .then(() => {
+                    if (data.action === "vote") {
+                        let accountID;
+                        try {
+                            accountID = account.accountID;
+                        } catch (error) {
+                            console.log(error);
+                        }
 
-                if (data.action === 'vote') {
-                  let accountID;
-                  try {
-                    accountID = account.accountID;
-                  } catch (error) {
-                    console.log(error)
-                  }
+                        Apis.instance()
+                            .db_api()
+                            .exec("get_objects", [[accountID]])
+                            .then((accounts) => {
+                                let new_options = accounts[0].options;
+                                if (
+                                    new_options.votes.findIndex(
+                                        (item) => item == data.vote_id
+                                    ) !== -1
+                                ) {
+                                    resolve({
+                                        vote_id: data.vote_id,
+                                        nothingToDo: true,
+                                    });
+                                }
 
-                  Apis.instance().db_api().exec("get_objects", [[accountID]]).then((accounts) => {
-
-                      let new_options = accounts[0].options;
-                      if (new_options.votes.findIndex(item => item == data.vote_id) !== -1) {
-                          resolve({
-                             vote_id: data.vote_id,
-                             nothingToDo: true
-                          });
-                      }
-
-                      new_options.votes.push(data.vote_id);
-                      new_options.votes = new_options.votes.sort((a, b) => {
-                          let a_split = a.split(":");
-                          let b_split = b.split(":");
-                          return (
-                              parseInt(a_split[1], 10) - parseInt(b_split[1], 10)
-                          );
-                      });
-                      resolve({
-                        data: {
-                            account: accountID,
-                            new_options: new_options
-                        },
-                        type: 'account_update'
-                      });
-
-                  }).catch(error => {
-                      console.log(error)
-                      reject(error);
-                  });
-
-                } else {
-                  resolve({data: data, type: 'transfer'});
-                }
-            }).catch((error) => {
-                console.log(error);
-                reject(error)
-            });
+                                new_options.votes.push(data.vote_id);
+                                new_options.votes = new_options.votes.sort(
+                                    (a, b) => {
+                                        let a_split = a.split(":");
+                                        let b_split = b.split(":");
+                                        return (
+                                            parseInt(a_split[1], 10) -
+                                            parseInt(b_split[1], 10)
+                                        );
+                                    }
+                                );
+                                resolve({
+                                    data: {
+                                        account: accountID,
+                                        new_options: new_options,
+                                    },
+                                    type: "account_update",
+                                });
+                            })
+                            .catch((error) => {
+                                console.log(error);
+                                reject(error);
+                            });
+                    } else {
+                        resolve({ data: data, type: "transfer" });
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                    reject(error);
+                });
         });
 
-        const fastestPromise = Promise.race([timeLimitedPromise, timeoutPromise]).catch(
-            (error) => {
-                return null;
-            }
-        );
+        const fastestPromise = Promise.race([
+            timeLimitedPromise,
+            timeoutPromise,
+        ]).catch((error) => {
+            return null;
+        });
 
         return fastestPromise;
     }
@@ -1388,10 +1550,7 @@ export default class BitShares extends BlockchainAPI {
      * @returns {String} hexString
      */
     _signString(key, string) {
-        let signature = Signature.signBuffer(
-            string,
-            PrivateKey.fromWif(key)
-        );
+        let signature = Signature.signBuffer(string, PrivateKey.fromWif(key));
         return signature.toHex();
     }
 
@@ -1405,18 +1564,18 @@ export default class BitShares extends BlockchainAPI {
     _verifyString(signature, publicKey, string) {
         let _PublicKey = PublicKey;
         let sig = Signature.fromHex(signature);
-        let pkey = PublicKey.fromPublicKeyString(publicKey, this._getCoreSymbol());
-        return sig.verifyBuffer(
-            string,
-            pkey
+        let pkey = PublicKey.fromPublicKeyString(
+            publicKey,
+            this._getCoreSymbol()
         );
+        return sig.verifyBuffer(string, pkey);
     }
 
     /**
      * Create an encrypted memo for transfer operations
-     * @param {Object} from 
-     * @param {Object} to 
-     * @param {Object} memo 
+     * @param {Object} from
+     * @param {Object} to
+     * @param {Object} memo
      * @param {String} optionalNonce
      * @param {Boolean} encryptMemo
      * @returns {Object}
@@ -1429,21 +1588,21 @@ export default class BitShares extends BlockchainAPI {
         encryptMemo = true
     ) {
         let nonce = optionalNonce ?? TransactionHelper.unique_nonce_uint64();
-    
+
         return {
             from: from.memo.public_key,
             to: to.memo.public_key,
             nonce,
             message: encryptMemo
                 ? Aes.encrypt_with_checksum(
-                        PrivateKey.fromWif(memo.key),
-                        to.memo.public_key,
-                        nonce,
-                        memo.memo
-                    )
+                      PrivateKey.fromWif(memo.key),
+                      to.memo.public_key,
+                      nonce,
+                      memo.memo
+                  )
                 : Buffer.isBuffer(memo)
-                    ? memo.toString("utf-8")
-                    : memo.memo
+                ? memo.toString("utf-8")
+                : memo.memo,
         };
     }
 
@@ -1466,7 +1625,7 @@ export default class BitShares extends BlockchainAPI {
         encryptMemo = true
     ) {
         if (!amount.amount || !amount.asset_id) {
-            throw "Amount must be a dict with amount and asset_id as keys"
+            throw "Amount must be a dict with amount and asset_id as keys";
         }
 
         try {
@@ -1498,36 +1657,36 @@ export default class BitShares extends BlockchainAPI {
 
         let transaction;
         try {
-          transaction = await this.sign(
-            {
-                type: "transfer",
-                data: {
-                    fee: {
-                        amount: 0,
-                        asset_id: "1.3.0"
+            transaction = await this.sign(
+                {
+                    type: "transfer",
+                    data: {
+                        fee: {
+                            amount: 0,
+                            asset_id: "1.3.0",
+                        },
+                        from: from.id,
+                        to: to.id,
+                        amount: amount,
+                        memo: memoObject ?? undefined,
                     },
-                    from: from.id,
-                    to: to.id,
-                    amount: amount,
-                    memo: memoObject ?? undefined
-                }
-            },
-            key
-          );
+                },
+                key
+            );
         } catch (error) {
-          console.log(error);
-          throw "Could not sign operation with Bitshares key";
+            console.log(error);
+            throw "Could not sign operation with Bitshares key";
         }
 
         let broadcastResult;
         try {
-          broadcastResult = await this.broadcast(transaction);
+            broadcastResult = await this.broadcast(transaction);
         } catch (error) {
-          console.log(error);
-          throw "Could not broadcast signed Bitshares transaction";
+            console.log(error);
+            throw "Could not broadcast signed Bitshares transaction";
         }
 
-        return broadcastResult
+        return broadcastResult;
     }
 
     /*
@@ -1558,8 +1717,8 @@ export default class BitShares extends BlockchainAPI {
         return {
             active: false,
             memo: true,
-            owner: false
-        }
+            owner: false,
+        };
     }
 
     /*
@@ -1567,7 +1726,7 @@ export default class BitShares extends BlockchainAPI {
      * @returns {Array}
      */
     getLatencies() {
-      return this._nodeLatencies ?? [];
+        return this._nodeLatencies ?? [];
     }
 
     /*
@@ -1582,10 +1741,10 @@ export default class BitShares extends BlockchainAPI {
         }
 
         if (!thing) {
-            console.log('Nothing to visualize');
+            console.log("Nothing to visualize");
             return;
         }
-        
+
         let tr;
         try {
             tr = await this._parseTransactionBuilder(thing);
@@ -1603,6 +1762,7 @@ export default class BitShares extends BlockchainAPI {
             let operation = tr.operations[i];
             const op = operation[1];
             const idKeys = [
+                "account_id_type",
                 "from",
                 "from_account",
                 "to",
@@ -1634,7 +1794,7 @@ export default class BitShares extends BlockchainAPI {
                 "new_issuer",
                 "redeemer",
                 "update_issuer",
-                "borrower"
+                "borrower",
             ];
 
             const assetKeys = [
@@ -1668,8 +1828,10 @@ export default class BitShares extends BlockchainAPI {
                 "repay_amount.asset_id",
                 "fund_fee.asset_id",
                 "collateral.asset_id",
-                "credit_fee.asset_id"
-            ]
+                "credit_fee.asset_id",
+                "delta_amount_to_sell.asset_id",
+                "fee.asset_id",
+            ];
 
             for (let k = 0; k < idKeys.length; k++) {
                 const id = get(op, idKeys[k]);
@@ -1691,14 +1853,16 @@ export default class BitShares extends BlockchainAPI {
         for (let i = 0; i < accountBatches.length; i++) {
             let fetchedAccountNames;
             try {
-                fetchedAccountNames = await this._getMultipleAccountNames(accountBatches[i])
+                fetchedAccountNames = await this._getMultipleAccountNames(
+                    accountBatches[i]
+                );
             } catch (error) {
-                console.log(error)
+                console.log(error);
             }
 
             if (fetchedAccountNames && fetchedAccountNames.length) {
                 let finalNames = fetchedAccountNames.map((user) => {
-                    return {id: user.id, accountName: user.name}
+                    return { id: user.id, accountName: user.name };
                 });
 
                 accountResults.push(...finalNames);
@@ -1706,20 +1870,19 @@ export default class BitShares extends BlockchainAPI {
         }
 
         let assetResults = [];
-        let assetBatches = chunk(
-            assetsToFetch,
-            this._isTestnet() ? 9 : 49
-        );
+        let assetBatches = chunk(assetsToFetch, this._isTestnet() ? 9 : 49);
         for (let i = 0; i < assetBatches.length; i++) {
             let fetchedAssets;
             try {
-                fetchedAssets = await this._resolveMultipleAssets(assetBatches[i])
+                fetchedAssets = await this._resolveMultipleAssets(
+                    assetBatches[i]
+                );
             } catch (error) {
-                console.log(error)
+                console.log(error);
             }
 
             if (fetchedAssets && fetchedAssets.length) {
-                assetResults.push(...fetchedAssets)
+                assetResults.push(...fetchedAssets);
             }
         }
 
@@ -1731,7 +1894,9 @@ export default class BitShares extends BlockchainAPI {
             const opContents = operationArray[1]; // operation object
             const btsOperationTypes = this.getOperationTypes();
 
-            let relevantOperationType = btsOperationTypes.find((op) => op.id === opType);
+            let relevantOperationType = btsOperationTypes.find(
+                (op) => op.id === opType
+            );
             beautifiedOpPromises.push(
                 beautify(
                     accountResults, // fetched accounts
@@ -1744,20 +1909,28 @@ export default class BitShares extends BlockchainAPI {
             );
         }
 
-        return Promise.all(beautifiedOpPromises).then((operations) => {
-            if (operations.some(op => !Object.prototype.hasOwnProperty.call(op, 'rows'))) {
-                /*
+        return Promise.all(beautifiedOpPromises)
+            .then((operations) => {
+                if (
+                    operations.some(
+                        (op) =>
+                            !Object.prototype.hasOwnProperty.call(op, "rows")
+                    )
+                ) {
+                    /*
                 console.log({
                     invalid: operations.filter(op => !Object.prototype.hasOwnProperty.call(op, 'rows')),
                     valid: operations.filter(op => Object.prototype.hasOwnProperty.call(op, 'rows'))
                 });
                 */
-                throw new Error("There's an issue with the format of an operation!")
-            }
-            return operations;
-        }).catch((error) => {
-            console.log(error);
-        });
+                    throw new Error(
+                        "There's an issue with the format of an operation!"
+                    );
+                }
+                return operations;
+            })
+            .catch((error) => {
+                console.log(error);
+            });
     }
-
 }

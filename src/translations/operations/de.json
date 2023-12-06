@@ -1532,6 +1532,7 @@
           "new_price": "Neuer Preis: {new_price}",
           "delta_amount_to_sell": "Delta-Betrag zum Verkauf: {delta_amount_to_sell}",
           "new_expiration": "Neuer Ablauf: {new_expiration}",
+          "on_fill": "Bei Füllung: {on_fill}",
           "extensions": "Erweiterungen: {extensions}"
         },
         "tooltip": "Aktualisieren Sie eine Limit-Order"

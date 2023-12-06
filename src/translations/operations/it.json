@@ -1532,6 +1532,7 @@
           "new_price": "Nuovo prezzo: {new_price}",
           "delta_amount_to_sell": "Importo delta da vendere: {delta_amount_to_sell}",
           "new_expiration": "Nuova scadenza: {new_expiration}",
+          "on_fill": "In fase di riempimento: {on_fill}",
           "extensions": "Estensioni: {extensions}"
         },
         "tooltip": "Aggiorna un ordine limite"

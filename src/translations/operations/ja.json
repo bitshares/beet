@@ -1532,6 +1532,7 @@
           "new_price": "新しい価格: {new_price}",
           "delta_amount_to_sell": "売却するデルタ金額: {delta_amount_to_sell}",
           "new_expiration": "新しい有効期限: {new_expiration}",
+          "on_fill": "オンフィル: {on_fill}",
           "extensions": "拡張機能: {extensions}"
         },
         "tooltip": "指値注文を更新する"
