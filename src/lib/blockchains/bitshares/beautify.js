@@ -4126,7 +4126,7 @@ export default async function beautify(
     } else if (opType == 77) {
         // limit_order_update_operation
         let _sellerAccount = accountResults.find(
-            (resAcc) => resAcc.id === opContents.account_id_type
+            (resAcc) => resAcc.id === opContents.seller
         ).accountName;
 
         let _assetToSell = assetResults.find(
@@ -4152,10 +4152,10 @@ export default async function beautify(
                 key: "seller",
                 params: {
                     seller: _sellerAccount,
-                    sellerOP: opContents.account_id_type,
+                    sellerOP: opContents.seller,
                 },
             },
-            { key: "order", params: { order: opContents.limit_order_id_type } },
+            { key: "order", params: { order: opContents.order } },
         ];
 
         if (opContents.new_price) {
