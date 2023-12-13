@@ -15,7 +15,7 @@
     "account_select": "アカウントの選択",
     "account_missing": "要求されたアカウントはこのウォレットに存在しません。",
     "request": "「{origin}」のアプリケーション「{appName}」が {chain} アカウントへのアクセスをリクエストしています。",
-    "request_fresh": "アプリケーションは、以下のリストでマークされているように、以前に {chain} アカウントをすでにリンクしています。",
+    "request_fresh": "以下のリストでマークされているように、アプリケーションはすでに {chain} アカウントをリンクしています。",
     "request_tooltip": "アプリケーションはアカウントの詳細 (名前と ID) を受け取り、ウォレット リンクを確立します。",
     "request_cta": "提供するアカウントを選択してください。",
     "accept_btn": "許可する",
@@ -32,7 +32,7 @@
   "account_id": {
     "title": "アカウント詳細リクエスト",
     "result": "アカウント詳細結果",
-    "request": "アプリ: 「{origin}」の「{appName}」が、リンクされた ID (アカウント ID) へのアクセスを要求しています",
+    "request": "アプリ: 「{origin}」の「{appName}」がリンクされた ID (アカウント ID) へのアクセスを要求しています",
     "request_tooltip": "デフォルトでは、匿名リンクが提供されます。",
     "accept_btn": "許可する",
     "reject_btn": "拒否"
@@ -54,7 +54,7 @@
     "request": "アプリ: '{origin}' の '{appName}' は、{ chain }:{ accountName } から転送を開始しようとしています。",
     "request_cta": "実行しますか?",
     "accept_btn": "サイン",
-    "reject_btn": "無視",
+    "reject_btn": "無視する",
     "server_error": "既知の詐欺師のリストを確認のためにロードできませんでした。注意して続行してください。",
     "detected_scammer": "受信者は既知の詐欺師であるため、中止するようアドバイスされています。"
   },
@@ -78,7 +78,7 @@
       "yes": "はい、領収書が欲しいです。",
       "no": "いいえ、領収書はいりません。"
     },
-    "reject_btn": "無視"
+    "reject_btn": "無視する"
   },
   "whitelist": {
     "prompt": "このアプリからの後続の「{method}」リクエストをホワイトリストに登録しますか?"
@@ -88,16 +88,16 @@
     "result": "投票結果",
     "request": "アプリ: 「{origin}」の「{appName}」は、アカウント { accountName }:{ chain } を持つ次の {entity} に投票するよう求めています。",
     "request_cta": "",
-    "accept_btn": "承認",
-    "reject_btn": "無視"
+    "accept_btn": "承認する",
+    "reject_btn": "無視する"
   },
   "message": {
     "title": "メッセージリクエストに署名する",
     "result": "署名メッセージの結果",
     "request": "アプリ: '{origin}' の '{appName}' は、アカウント { chain }:{ accountName } で次のテキストに署名するよう求めています。",
     "request_cta": "",
-    "accept_btn": "承認",
-    "reject_btn": "無視"
+    "accept_btn": "承認する",
+    "reject_btn": "無視する"
   },
   "injected": {
     "BTS": {
@@ -156,7 +156,7 @@
         "title": "NFTリクエストに署名する",
         "result": "NFT結果に署名する",
         "headers": {
-          "request": "次の NFT への署名を承認しますか?",
+          "request": "次のNFTへの署名を承認しますか?",
           "result": "次の NFT が署名されました。"
         },
         "tooltip": "NFTの内容に署名する"
@@ -195,7 +195,7 @@
           "result": "次の指値注文が作成されました。"
         },
         "rows": {
-          "trade": "トレード",
+          "trade": "貿易",
           "tradeFK": "トレード（フィル・オア・キル）",
           "seller": "販売者: {seller} ({opSeller})",
           "selling": "販売: {amount}",
@@ -248,7 +248,7 @@
           "referrer": "リファラー: {referrer} ({opReferrer})",
           "referrer_percent": "参照者のパーセント: {referrer_percent}",
           "name": "名前: {name}",
-          "ownerHeader": "オーナー：",
+          "ownerHeader": "所有者：",
           "activeHeader": "アクティブ：",
           "weight_threshold": "体重のしきい値: {weight_threshold}",
           "account_auths": "アカウント認証: {account_auths}",
@@ -271,7 +271,7 @@
         "result": "アカウント更新結果",
         "headers": {
           "request": "次のアカウントを更新しますか?",
-          "result": "以下のアカウントを更新しました。"
+          "result": "以下のアカウントが更新されました。"
         },
         "rows": {
           "warning": "警告: この操作は元に戻すことができません。",
@@ -492,7 +492,7 @@
         "tooltip": "作成されたビットアセットの承認済みフィードプロデューサーのリストを更新します"
       },
       "asset_issue": {
-        "method": "資産の問題",
+        "method": "資産発行",
         "title": "資産発行リクエスト",
         "result": "資産発行結果",
         "headers": {
@@ -1026,7 +1026,7 @@
           "debt_covered": "カバーされた負債: {debt_covered}",
           "fee": "推定料金: {fee}"
         },
-        "tooltip": "グローバル決済時にビットアセットを裏付ける担保に入札する"
+        "tooltip": "グローバル決済時にビットアセットを裏付ける担保に入札"
       },
       "asset_claim_pool": {
         "method": "資産請求プール",
@@ -1195,7 +1195,7 @@
         "result": "チケット更新結果",
         "headers": {
           "request": "次のチケットを更新しますか?",
-          "result": "次のチケットが更新されました。"
+          "result": "次のチケットが更新されました:"
         },
         "rows": {
           "ticket": "チケット: {ticket}",
@@ -1211,7 +1211,7 @@
         "title": "流動性プール作成リクエスト",
         "result": "流動性プールの作成結果",
         "headers": {
-          "request": "以下の詳細を使用して流動性プールを作成しますか?",
+          "request": "次の詳細を使用して流動性プールを作成しますか?",
           "result": "次の流動性プールが作成されました。"
         },
         "rows": {
@@ -1319,7 +1319,7 @@
         "result": "SameT ファンド削除結果",
         "headers": {
           "request": "次の同じファンドを削除しますか?",
-          "result": "次の同じファンドが削除されました:"
+          "result": "次の同じファンドが削除されました。"
         },
         "rows": {
           "owner_account": "所有者のアカウント: {owner_account} ({owner_accountOP})",
@@ -1366,7 +1366,7 @@
       },
       "samt_fund_repay": {
         "method": "SameT 基金の返済",
-        "title": "SameT 基金の返済リクエスト",
+        "title": "SameT 資金の返済リクエスト",
         "result": "SameTファンド返済結果",
         "headers": {
           "request": "次の同じ資金を返済します",
@@ -1396,7 +1396,7 @@
           "balance": "残高: {balance}",
           "fee_rate": "手数料率: {fee_rate}",
           "max_duration_seconds": "最大継続時間秒: {max_duration_seconds}",
-          "min_deal_amount": "最低取引金額: {min_deal_amount}",
+          "min_deal_amount": "最低取引額: {min_deal_amount}",
           "enabled": "有効: {enabled}",
           "auto_disable_time": "自動無効化時間: {auto_disable_time}",
           "acceptable_collateral": "許容可能な担保: {acceptable_collateral}",
@@ -1436,7 +1436,7 @@
           "delta_amount": "デルタ金額: {delta_amount}",
           "fee_rate": "手数料率: {fee_rate}",
           "max_duration_seconds": "最大継続時間秒: {max_duration_seconds}",
-          "min_deal_amount": "最低取引金額: {min_deal_amount}",
+          "min_deal_amount": "最低取引額: {min_deal_amount}",
           "enabled": "有効: {enabled}",
           "auto_disable_time": "自動無効化時間: {auto_disable_time}",
           "acceptable_collateral": "許容可能な担保: {acceptable_collateral}",
@@ -1483,6 +1483,59 @@
           "fee": "推定料金: {fee}"
         },
         "tooltip": "クレジット契約を返済します。"
+      },
+      "liquidity_pool_update_operation": {
+        "method": "流動性プールの更新",
+        "title": "流動性プール更新リクエスト",
+        "result": "流動性プールの更新結果",
+        "headers": {
+          "request": "次の流動性プールを更新しますか?",
+          "result": "次の流動性プールが更新されました。"
+        },
+        "rows": {
+          "owner_account": "所有者のアカウント: {owner_account} ({owner_accountOP})",
+          "pool_id": "プール ID: {pool_id}",
+          "new_parameters": "新しいパラメータ: {new_parameters}",
+          "extensions": "拡張機能: {extensions}",
+          "fee": "推定料金: {fee}"
+        },
+        "tooltip": "流動性プールを更新する"
+      },
+      "credit_deal_update_operation": {
+        "method": "クレジット取引の更新",
+        "title": "クレジット取引更新リクエスト",
+        "result": "信用取引の更新結果",
+        "headers": {
+          "request": "次のクレジット取引を更新しますか?",
+          "result": "次のクレジット取引が更新されました:"
+        },
+        "rows": {
+          "fee": "推定料金: {fee}",
+          "account": "アカウント: {account} ({accountOP})",
+          "deal_id": "取引 ID: {deal_id}",
+          "auto_repay": "自動返済: {auto_repay}"
+        },
+        "tooltip": "クレジット取引を更新する"
+      },
+      "limit_order_update_operation": {
+        "method": "指値注文の更新",
+        "title": "指値注文更新リクエスト",
+        "result": "指値注文更新結果",
+        "headers": {
+          "request": "次の指値注文を更新しますか?",
+          "result": "次の指値注文が更新されました。"
+        },
+        "rows": {
+          "fee": "推定料金: {fee}",
+          "seller": "販売者: {seller} ({sellerOP})",
+          "order": "注文: {order}",
+          "new_price": "新しい価格: {new_price}",
+          "delta_amount_to_sell": "売却するデルタ金額: {delta_amount_to_sell}",
+          "new_expiration": "新しい有効期限: {new_expiration}",
+          "on_fill": "オンフィル: {on_fill}",
+          "extensions": "拡張機能: {extensions}"
+        },
+        "tooltip": "指値注文を更新する"
       }
     }
   }

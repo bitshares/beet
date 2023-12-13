@@ -294,7 +294,7 @@
                         </span>
                     </option>
                 </select>
-                <div v-if="selectedImportOptions.length > 1">
+                <div v-if="selectedImportOptions.length > 0">
                     <p class="my-3 font-weight-bold">
                         {{ t('common.bts_importtype_cta') }}
                     </p>
@@ -338,7 +338,7 @@
                             </ui-button>
                         </router-link>
 
-                        <span v-if="selectedImportOptions.length > 1">
+                        <span v-if="selectedImportOptions.length > 0">
                             <span v-if="selectedImport != 0">
                                 <ui-button
                                     raised
