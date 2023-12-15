@@ -1640,7 +1640,7 @@ export default class BitShares extends BlockchainAPI {
                 "asset_to_withdraw.asset_id",
                 "amount_to_claim.asset_id",
                 "additional_collateral.asset_id",
-                "debtCovered.asset_id",
+                "debt_covered.asset_id",
                 "amount_for_new_target.asset_id",
                 "asset_a",
                 "asset_b",

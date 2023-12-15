@@ -1121,7 +1121,7 @@ export default async function beautify(
         // bid_collateral
         let bidder = accountResults.find((resAcc) => resAcc.id === opContents.bidder).accountName;
         let collateral = assetResults.find((assRes) => assRes.id === opContents.additional_collateral.asset_id);
-        let debtCovered = assetResults.find((assRes) => assRes.id === opContents.debtCovered.asset_id);
+        let debtCovered = assetResults.find((assRes) => assRes.id === opContents.debt_covered.asset_id);
 
         if (bidder && collateral && debtCovered) {
             currentOperation['rows'] = [
