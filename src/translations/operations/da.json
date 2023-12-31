@@ -93,7 +93,7 @@
   },
   "message": {
     "title": "Underskriv beskedanmodning",
-    "result": "Signer Besked resultat",
+    "result": "Signer besked resultat",
     "request": "App: '{appName}' fra '{origin}' vil have dig til at underskrive følgende tekst med kontoen { chain }:{ accountName }",
     "request_cta": "",
     "accept_btn": "Godkende",
@@ -113,7 +113,7 @@
       },
       "requestSignature": {
         "method": "anmodningSignatur",
-        "title": "Signaturanmodning",
+        "title": "Underskriftsanmodning",
         "result": "Signatur resultat",
         "headers": {
           "request": "Vil du dele din signatur?",
@@ -137,14 +137,14 @@
         "result": "Afstemningsresultat",
         "headers": {
           "request": "Godkende følgende stemmeanmodning?",
-          "result": "Nedenstående stemmeanmodning blev godkendt"
+          "result": "Nedenstående afstemningsanmodning blev godkendt"
         },
         "tooltip": "Udfør en blockchain-afstemning"
       },
       "signMessage": {
         "method": "tegnBesked",
         "title": "Underskriv beskedanmodning",
-        "result": "Signer Besked resultat",
+        "result": "Signer besked resultat",
         "headers": {
           "request": "Vil du godkende at underskrive følgende meddelelse?",
           "result": "Følgende besked blev underskrevet:"
@@ -191,7 +191,7 @@
         "title": "Begræns ordre oprette anmodning",
         "result": "Begræns rækkefølge skabe resultat",
         "headers": {
-          "request": "Vil du godkende følgende anmodning om oprettelse af grænseordre?",
+          "request": "Vil du godkende følgende anmodning om oprettelse af grænseordrer?",
           "result": "Følgende grænseordre blev oprettet:"
         },
         "rows": {
@@ -299,7 +299,7 @@
           "extensions": "Udvidelser: {extensions}",
           "fee": "Gebyr: {fee}"
         },
-        "tooltip": "Denne handling bruges til at hvidliste og sortliste konti, primært til at handle i hvidlistede aktiver"
+        "tooltip": "Denne handling bruges til at hvidliste og sortliste konti, primært til at handle med hvidlistede aktiver"
       },
       "account_upgrade": {
         "method": "Kontoopgradering",
@@ -477,7 +477,7 @@
       },
       "asset_update_feed_producers": {
         "method": "Foderproducenter til opdatering af aktiv",
-        "title": "Anmodning fra feedproducenter om aktivopdatering",
+        "title": "Fedeproducenter anmoder om aktivopdatering",
         "result": "Resultat af feedproducenter til opdatering af aktiv",
         "headers": {
           "request": "Godkende ændring til producenter af bitasset-foder?",
@@ -555,7 +555,7 @@
       "asset_global_settle": {
         "method": "Global afregning af aktiver",
         "title": "Anmodning om global afregning af aktiv",
-        "result": "Aktiv globalt afregningsresultat",
+        "result": "Globalt afregningsresultat for aktiver",
         "headers": {
           "request": "Udføre global afregning på følgende aktiv?",
           "result": "Følgende aktiv blev afviklet globalt:"
@@ -571,7 +571,7 @@
       "asset_publish_feed": {
         "method": "Aktiv publiceringsfeed",
         "title": "Anmodning om feedudgivelse af aktiv",
-        "result": "Resultat af feed for aktiv publicering",
+        "result": "Resultat af feed-udgivelse af aktiv",
         "headers": {
           "request": "Vil du offentliggøre et prisfeed for følgende aktiv?",
           "result": "Følgende feed-opdatering for aktivpriser blev offentliggjort:"
@@ -583,7 +583,7 @@
           "core_exchange_rate": "Kernekurs: {core_exchange_rate}",
           "settlement_price": "Afregningspris: {settlement_price}",
           "maintenance_collateral_ratio": "Vedligeholdelsessikkerhedsforhold: {maintenance_collateral_ratio}",
-          "maximum_short_squeeze_ratio": "Maksimalt kort klem-forhold: {maximum_short_squeeze_ratio}",
+          "maximum_short_squeeze_ratio": "Maksimalt kort squeeze-forhold: {maximum_short_squeeze_ratio}",
           "extensions": "Udvidelser: {extensions}",
           "fee": "Estimeret gebyr: {fee}"
         },
@@ -653,7 +653,7 @@
           "active_approvals_to_remove": "Aktive godkendelser, der skal fjernes: {active_approvals_to_remove}",
           "owner_approvals_to_add": "Ejergodkendelser, der skal tilføjes: {owner_approvals_to_add}",
           "owner_approvals_to_remove": "Ejergodkendelser, der skal fjernes: {owner_approvals_to_remove}",
-          "key_approvals_to_add": "Nøglegodkendelser, der skal tilføjes: {key_approvals_to_add}",
+          "key_approvals_to_add": "Nøglegodkendelser at tilføje: {key_approvals_to_add}",
           "key_approvals_to_remove": "Nøglegodkendelser, der skal fjernes: {key_approvals_to_remove}",
           "fee_paying_account": "Gebyrbetalingskonto: {fee_paying_account} ({fee_paying_accountOP})",
           "extensions": "Udvidelser: {extensions}",
@@ -728,14 +728,14 @@
           "withdraw_from_account": "Hæv fra konto: {withdraw_from_account} ({withdraw_from_accountOP})",
           "withdraw_to_account": "Hæv til konto: {withdraw_to_account} ({withdraw_to_accountOP})",
           "amount_to_withdraw": "Beløb, der skal trækkes ud: {amount_to_withdraw} ({amount_to_withdrawOP})",
-          "memo": "Memo: {memo}",
+          "memo": "Notat: {memo}",
           "fee": "Estimeret gebyr: {fee}"
         },
         "tooltip": "Krav fra en tilbagetrækningstilladelse"
       },
       "withdraw_permission_delete": {
         "method": "Tilbagekald tilladelse sletning",
-        "title": "Træk anmodning om tilladelse til at slette",
+        "title": "Tilbagekald anmodning om tilladelse til sletning",
         "result": "Træk tilladelse til at slette resultat",
         "headers": {
           "request": "Vil du slette følgende tilbagetrækningstilladelse?",
@@ -801,7 +801,7 @@
           "maximum_proposal_lifetime": "Maksimal levetid for forslag: {maximum_proposal_lifetime}",
           "maximum_asset_whitelist_authorities": "Autoriteter for maksimal hvidliste af aktiver: {maximum_asset_whitelist_authorities}",
           "maximum_asset_feed_publishers": "Maksimalt antal aktivfeedudgivere: {maximum_asset_feed_publishers}",
-          "maximum_witness_count": "Maksimalt antal vidner: {maximum_witness_count}",
+          "maximum_witness_count": "Maksimalt vidneantal: {maximum_witness_count}",
           "maximum_committee_count": "Maksimalt antal udvalg: {maximum_committee_count}",
           "maximum_authority_membership": "Maksimalt autoritetsmedlemskab: {maximum_authority_membership}",
           "reserve_percent_of_fee": "Reserveprocent af gebyr: {reserve_percent_of_fee}",
@@ -943,7 +943,7 @@
           "from": "Fra: {from} ({fromOP})",
           "to": "Til: {to} ({toOP})",
           "amount": "Beløb: {amount} ({asset_id})",
-          "memo": "Memo: {memo}",
+          "memo": "Notat: {memo}",
           "fee": "Estimeret gebyr: {fee}"
         },
         "tooltip": "Tilsidesæt en overførselshandling"
@@ -968,9 +968,9 @@
       "blind_transfer": {
         "method": "Blind overførsel",
         "title": "Blind anmodning om overførsel",
-        "result": "Blind overførsel resultat",
+        "result": "Blind overførselsresultat",
         "headers": {
-          "request": "Godkende følgende blinde overførsel?",
+          "request": "Godkend følgende blinde overførsel?",
           "result": "Følgende blindoverførsel blev godkendt:"
         },
         "rows": {
@@ -1000,7 +1000,7 @@
       "asset_claim_fees": {
         "method": "Aktivkravsgebyrer",
         "title": "Anmodning om gebyr for aktivkrav",
-        "result": "Resultat af aktivkravsgebyrer",
+        "result": "Resultat af gebyrer for aktivkrav",
         "headers": {
           "request": "Hæve gebyrerne fra følgende aktiv?",
           "result": "Følgende aktivs gebyrer blev krævet:"
@@ -1031,7 +1031,7 @@
       "asset_claim_pool": {
         "method": "Aktivkravspulje",
         "title": "Anmodning om pool for aktivkrav",
-        "result": "Resultat af aktivkravpulje",
+        "result": "Resultat af aktivkravspulje",
         "headers": {
           "request": "Gøre krav på følgende aktivpulje?",
           "result": "Der blev gjort krav på følgende aktivpulje:"
@@ -1174,8 +1174,8 @@
       },
       "ticket_create": {
         "method": "Billet oprettes",
-        "title": "Anmodning om oprettelse af billet",
-        "result": "Billetopret resultat",
+        "title": "Forespørgsel om oprettelse af billet",
+        "result": "Billet skabe resultat",
         "headers": {
           "request": "Opret følgende billet?",
           "result": "Følgende billet blev oprettet:"
@@ -1208,7 +1208,7 @@
       },
       "liquidity_pool_create": {
         "method": "Opret likviditetspulje",
-        "title": "Likviditetspulje oprette anmodning",
+        "title": "Opret anmodning om likviditetspulje",
         "result": "Likviditetspulje skabe resultat",
         "headers": {
           "request": "Oprette en likviditetspulje med følgende detaljer?",
@@ -1220,7 +1220,7 @@
           "asset_b": "Aktiv B: {asset_b} ({asset_bOP})",
           "share_asset": "Del aktiv: {share_asset} ({share_assetOP})",
           "taker_fee_percent": "Procent af takergebyr: {taker_fee_percent}",
-          "withdrawal_fee_percent": "Udbetalingsgebyr procent: {withdrawal_fee_percent}",
+          "withdrawal_fee_percent": "Procent for tilbagetrækningsgebyr: {withdrawal_fee_percent}",
           "extensions": "Udvidelser: {extensions}",
           "fee": "Estimeret gebyr: {fee}"
         },
@@ -1300,7 +1300,7 @@
         "title": "SameT fund oprette anmodning",
         "result": "SameT fond skabe resultat",
         "headers": {
-          "request": "Godkender du følgende oprettelse af samme fond?",
+          "request": "Godkender følgende oprettelse af samme fond?",
           "result": "Følgende samet-fond blev oprettet:"
         },
         "rows": {
@@ -1383,7 +1383,7 @@
         "tooltip": "Indfri gæld til en SameT-fond."
       },
       "credit_offer_create": {
-        "method": "Kredittilbud opret",
+        "method": "Kredit tilbud oprette",
         "title": "Kredittilbud opret anmodning",
         "result": "Kredittilbud skaber resultat",
         "headers": {
@@ -1396,7 +1396,7 @@
           "balance": "Saldo: {balance}",
           "fee_rate": "Gebyrsats: {fee_rate}",
           "max_duration_seconds": "Maks. varighed sekunder: {max_duration_seconds}",
-          "min_deal_amount": "Min. aftalebeløb: {min_deal_amount}",
+          "min_deal_amount": "Minimum dealbeløb: {min_deal_amount}",
           "enabled": "Aktiveret: {enabled}",
           "auto_disable_time": "Automatisk deaktiveringstid: {auto_disable_time}",
           "acceptable_collateral": "Acceptabel sikkerhed: {acceptable_collateral}",
@@ -1436,7 +1436,7 @@
           "delta_amount": "Deltabeløb: {delta_amount}",
           "fee_rate": "Gebyrsats: {fee_rate}",
           "max_duration_seconds": "Maks. varighed sekunder: {max_duration_seconds}",
-          "min_deal_amount": "Min. aftalebeløb: {min_deal_amount}",
+          "min_deal_amount": "Minimum dealbeløb: {min_deal_amount}",
           "enabled": "Aktiveret: {enabled}",
           "auto_disable_time": "Automatisk deaktiveringstid: {auto_disable_time}",
           "acceptable_collateral": "Acceptabel sikkerhed: {acceptable_collateral}",
@@ -1483,6 +1483,59 @@
           "fee": "Estimeret gebyr: {fee}"
         },
         "tooltip": "Tilbagebetal en kreditaftale."
+      },
+      "liquidity_pool_update_operation": {
+        "method": "Opdatering af likviditetspulje",
+        "title": "Anmodning om opdatering af likviditetspulje",
+        "result": "Resultat af opdatering af likviditetspulje",
+        "headers": {
+          "request": "Opdatere følgende likviditetspulje?",
+          "result": "Følgende likviditetspulje blev opdateret:"
+        },
+        "rows": {
+          "owner_account": "Ejerkonto: {owner_account} ({owner_accountOP})",
+          "pool_id": "Pool-id: {pool_id}",
+          "new_parameters": "Nye parametre: {new_parameters}",
+          "extensions": "Udvidelser: {extensions}",
+          "fee": "Estimeret gebyr: {fee}"
+        },
+        "tooltip": "Opdater en likviditetspulje"
+      },
+      "credit_deal_update_operation": {
+        "method": "Opdatering af kreditaftale",
+        "title": "Anmodning om opdatering af kreditaftale",
+        "result": "Resultat af opdatering af kreditaftale",
+        "headers": {
+          "request": "Opdater følgende kreditaftale?",
+          "result": "Følgende kreditaftale blev opdateret:"
+        },
+        "rows": {
+          "fee": "Estimeret gebyr: {fee}",
+          "account": "Konto: {account} ({accountOP})",
+          "deal_id": "Aftale-id: {deal_id}",
+          "auto_repay": "Automatisk tilbagebetaling: {auto_repay}"
+        },
+        "tooltip": "Opdater en kreditaftale"
+      },
+      "limit_order_update_operation": {
+        "method": "Begræns ordreopdatering",
+        "title": "Begræns ordreopdateringsanmodning",
+        "result": "Resultat af opdatering af grænseordre",
+        "headers": {
+          "request": "Vil du opdatere følgende grænserækkefølge?",
+          "result": "Følgende grænserækkefølge blev opdateret:"
+        },
+        "rows": {
+          "fee": "Estimeret gebyr: {fee}",
+          "seller": "Sælger: {seller} ({sellerOP})",
+          "order": "Ordre: {order}",
+          "new_price": "Ny pris: {new_price}",
+          "delta_amount_to_sell": "Deltabeløb at sælge: {delta_amount_to_sell}",
+          "new_expiration": "Nyt udløb: {new_expiration}",
+          "on_fill": "På udfyldning: {on_fill}",
+          "extensions": "Udvidelser: {extensions}"
+        },
+        "tooltip": "Opdater en grænserækkefølge"
       }
     }
   }

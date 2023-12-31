@@ -195,7 +195,7 @@
           "result": "Die folgende Limit-Order wurde erstellt:"
         },
         "rows": {
-          "trade": "Handeln",
+          "trade": "Handel",
           "tradeFK": "Handel (Auffüllen oder Töten)",
           "seller": "Verkäufer: {seller} ({opSeller})",
           "selling": "Verkauf: {amount}",
@@ -751,7 +751,7 @@
       },
       "committee_member_create": {
         "method": "Ausschussmitglied erstellen",
-        "title": "Ausschussmitglied erstellt Anfrage",
+        "title": "Ausschussmitglied erstellt Antrag",
         "result": "Ausschussmitglied erstellt Ergebnis",
         "headers": {
           "request": "Ein Ausschussmitglied erstellen?",
@@ -1483,6 +1483,59 @@
           "fee": "Geschätzte Gebühr: {fee}"
         },
         "tooltip": "Einen Kreditvertrag zurückzahlen."
+      },
+      "liquidity_pool_update_operation": {
+        "method": "Aktualisierung des Liquiditätspools",
+        "title": "Anfrage zur Aktualisierung des Liquiditätspools",
+        "result": "Ergebnis der Aktualisierung des Liquiditätspools",
+        "headers": {
+          "request": "Den folgenden Liquiditätspool aktualisieren?",
+          "result": "Der folgende Liquiditätspool wurde aktualisiert:"
+        },
+        "rows": {
+          "owner_account": "Eigentümerkonto: {owner_account} ({owner_accountOP})",
+          "pool_id": "Pool-ID: {pool_id}",
+          "new_parameters": "Neue Parameter: {new_parameters}",
+          "extensions": "Erweiterungen: {extensions}",
+          "fee": "Geschätzte Gebühr: {fee}"
+        },
+        "tooltip": "Aktualisieren Sie einen Liquiditätspool"
+      },
+      "credit_deal_update_operation": {
+        "method": "Aktualisierung des Kreditvertrags",
+        "title": "Anfrage zur Aktualisierung des Kreditvertrags",
+        "result": "Ergebnis der Aktualisierung des Kreditgeschäfts",
+        "headers": {
+          "request": "Den folgenden Kreditvertrag aktualisieren?",
+          "result": "Der folgende Kreditvertrag wurde aktualisiert:"
+        },
+        "rows": {
+          "fee": "Geschätzte Gebühr: {fee}",
+          "account": "Konto: {account} ({accountOP})",
+          "deal_id": "Deal-ID: {deal_id}",
+          "auto_repay": "Automatische Rückzahlung: {auto_repay}"
+        },
+        "tooltip": "Aktualisieren Sie einen Kreditvertrag"
+      },
+      "limit_order_update_operation": {
+        "method": "Aktualisierung der Limit-Order",
+        "title": "Anfrage zur Aktualisierung der Limit-Order",
+        "result": "Ergebnis der Limit-Order-Aktualisierung",
+        "headers": {
+          "request": "Den folgenden Limitauftrag aktualisieren?",
+          "result": "Die folgende Limit-Order wurde aktualisiert:"
+        },
+        "rows": {
+          "fee": "Geschätzte Gebühr: {fee}",
+          "seller": "Verkäufer: {seller} ({sellerOP})",
+          "order": "Bestellung: {order}",
+          "new_price": "Neuer Preis: {new_price}",
+          "delta_amount_to_sell": "Delta-Betrag zum Verkauf: {delta_amount_to_sell}",
+          "new_expiration": "Neuer Ablauf: {new_expiration}",
+          "on_fill": "Bei Füllung: {on_fill}",
+          "extensions": "Erweiterungen: {extensions}"
+        },
+        "tooltip": "Aktualisieren Sie eine Limit-Order"
       }
     }
   }
