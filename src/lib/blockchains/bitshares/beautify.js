@@ -2606,16 +2606,9 @@ export default async function beautify(
         }
     } else if (opType == 45) {
         // bid_collateral
-        let bidder = accountResults.find(
-            (resAcc) => resAcc.id === opContents.bidder
-        ).accountName;
-        let collateral = assetResults.find(
-            (assRes) => assRes.id === opContents.additional_collateral.asset_id
-        );
-        let debtCovered = assetResults.find(
-            (assRes) => assRes.id === opContents.debtCovered.asset_id
-        );
-
+        let bidder = accountResults.find((resAcc) => resAcc.id === opContents.bidder).accountName;
+        let collateral = assetResults.find((assRes) => assRes.id === opContents.additional_collateral.asset_id);
+        let debtCovered = assetResults.find((assRes) => assRes.id === opContents.debt_covered.asset_id);
         let _feeAsset = assetResults.find(
             (assRes) => assRes.id === opContents.fee.asset_id
         );
