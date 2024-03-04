@@ -83,7 +83,7 @@
     "babel-loader": "^8.2.5",
     "css-loader": "^6.7.1",
     "electron": "^19.0.8",
-    "electron-builder": "^23.1.0",
+    "electron-builder": "^24.13.3",
     "eslint": "^8.20.0",
     "eslint-plugin-vue": "^9.2.0",
     "file-loader": "^6.2.0",
