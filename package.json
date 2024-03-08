@@ -1,7 +1,7 @@
 {
   "name": "beet",
   "productName": "Beet Blockchain Companion",
-  "version": "0.17.0-rc2",
+  "version": "0.17.0",
   "apiversion": 3,
   "description": "Beet is a stand-alone key-manager and signing app for blockchains like BitShares, Bitcoin and others.",
   "author": "clockworkgr <alex@clockwork.gr>",
@@ -83,7 +83,7 @@
     "babel-loader": "^8.2.5",
     "css-loader": "^6.7.1",
     "electron": "^24.2.0",
-    "electron-builder": "^23.1.0",
+    "electron-builder": "^24.13.3",
     "eslint": "^8.20.0",
     "eslint-plugin-vue": "^9.2.0",
     "file-loader": "^6.2.0",
