@@ -53,6 +53,16 @@
         "warning": "Do not share the code above with anyone",
         "inProgress": "A deeplink is being processed"
     },
+    "opPermissions": {
+        "title": {
+            "local": "Do you wish to configure the scope of scannable JSON files?",
+            "qr": "Do you wish to configure the scope of scannable QR codes?",
+            "rawLink": "Do you wish to configure the scope of incoming raw deeplinks?",
+            "totp": "Do you wish to configure the scope of incoming deeplinks?"
+        },
+        "yes": "Yes - customize scope",
+        "no": "No - allow all operations"
+    },
     "qr": {
         "label": "QR Code scanner",
         "main": {
@@ -77,10 +87,22 @@
         "promptSuccess": "Successfully broadcast QR scanned operation",
         "promptFailure": "Something went wrong with the scanned QR"
     },
+    "local": {
+        "label": "Local file op scanner",
+        "upload": "Upload proposed operation JSON file",
+        "exit": "Exit local file page",
+        "failed": "Failed to process JSON",
+        "back": "Back",
+        "progress": "Processing local file",
+        "unsupported": "Local file support isn't supported for this chain yet, sorry.",
+        "promptSuccess": "Successfully broadcast scanned operation",
+        "promptFailure": "Something went wrong with the scanned file"
+    },
     "actionBar": {
         "Home": "Home",
         "New": "New",
         "TOTP": "TOTP",
+        "Local": "Local",
         "RAW": "Raw Link",
         "QR": "QR",
         "Settings": "Settings",
@@ -89,9 +111,16 @@
         "Logout": "Logout"
     },
     "popup": {
+        "keywords": {
+            "request": "Operation request",
+            "result": "Operation result"
+        },
         "preview": "Prompt preview",
-        "request": "View request JSON",
+        "evaluate": "Evaluate prompt outcome",
         "payload": "View payload JSON",
+        "request": "View request JSON",
+        "result": "View network result JSON",
+        "details": "View details",
         "language": "Language",
         "chainOperations": "Chain operations"
     },

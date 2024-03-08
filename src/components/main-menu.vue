@@ -37,32 +37,38 @@
                 url: "/totp"
             },
             {
-                text: t("common.actionBar.RAW"),
+                text: t("common.actionBar.Local"),
                 index: 3,
+                icon: "upload",
+                url: "/local"
+            },
+            {
+                text: t("common.actionBar.RAW"),
+                index: 4,
                 icon: "raw_on",
                 url: "/raw-link"
             },
             {
                 text: t("common.actionBar.QR"),
-                index: 4,
+                index: 5,
                 icon: "qr_code_2",
                 url: "/qr"
             },
             {
                 text: t("common.actionBar.dapps"),
-                index: 5,
+                index: 6,
                 icon: "app_registration",
                 url: "/dapps"
             },
             {
                 text: t("common.actionBar.Backup"),
-                index: 6,
+                index: 7,
                 icon: "download",
                 url: "/backup"
             },
             {
                 text: t("common.actionBar.Logout"),
-                index: 7,
+                index: 8,
                 icon: "logout",
                 url: "/"
             }
@@ -72,7 +78,7 @@
     function onChange(data) {
         currentSelection.value = data.index;
 
-        if (data.index === 7) {
+        if (data.index === 8) {
             console.log('logout')
             store.dispatch("WalletStore/logout");
             router.replace("/");
@@ -117,7 +123,7 @@
                         v-if="currentSelection === item.index"
                         selected
                     >
-                        <ui-menuitem-icon>
+                        <ui-menuitem-icon dark>
                             <ui-icon style="color: #707070;">
                                 {{ item.icon }}
                             </ui-icon>
@@ -125,8 +131,11 @@
                         <ui-menuitem-text>{{ item.text }}</ui-menuitem-text>
                     </ui-menuitem>
                     <ui-menuitem v-else>
-                        <ui-menuitem-icon>
-                            <ui-icon style="color: #707070;">
+                        <ui-menuitem-icon dark>
+                            <ui-icon
+                                dark
+                                style="visibility: visible;"
+                            >
                                 {{ item.icon }}
                             </ui-icon>
                         </ui-menuitem-icon>

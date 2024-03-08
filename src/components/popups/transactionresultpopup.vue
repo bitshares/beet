@@ -16,6 +16,13 @@
                 return {}
             }
         },
+        result: {
+            type: Object,
+            required: true,
+            default() {
+                return {}
+            }
+        },
         visualizedAccount: {
             type: String,
             required: true,
@@ -39,6 +46,7 @@
         return JSON.parse(props.visualizedParams);
     });
 
+    let total = ref(visualizedParams.value.length);
     let open = ref(false);
     let page = ref(1);
     let receipt = ref(false);
@@ -72,28 +80,8 @@
     })
 
     onMounted(() => {
-        logger.debug("Transaction request popup initialised");
+        logger.debug("Transaction result popup initialised");
     });
-
-    function _clickedAllow() {
-        ipcRenderer.send(
-            "clickedAllow",
-            {
-                result: {success: true, receipt: receipt.value},
-                request: {id: props.request.id}
-            }
-        );
-    }
-
-    function _clickedDeny() {
-        ipcRenderer.send(
-            "clickedDeny",
-            {
-                result: {canceled: true},
-                request: {id: props.request.id}
-            }
-        );
-    }
 
     let jsonData = ref("");
     watchEffect(() => {
@@ -114,25 +102,25 @@
     <div
         v-if="!!visualizedParams"
         class="text-left custom-content"
-        style="marginTop: 10px;"
+        style="margin-top: 10px;"
     >
         <ui-card>
             <ui-card-content>
                 <ui-card-text>
                     <div
-                        v-if="visualizedParams.length > 1"
+                        v-if="total > 1"
                         :class="$tt('subtitle1')"
                     >
-                        {{ t(visualizedParams[page - 1].title) }} ({{ page }}/{{ visualizedParams.length }})
+                        <b>{{ t(visualizedParams[page - 1].title) }}</b> ({{ page }}/{{ total }})
                     </div>
                     <div
                         v-else
                         :class="$tt('subtitle1')"
                     >
-                        {{ t(visualizedParams[page - 1].title) }}
+                        <b>{{ t(visualizedParams[page - 1].title) }}</b>
                     </div>
                     <div>
-                        {{ t(`operations.injected.BTS.${visualizedParams[page - 1].method}.headers.request`) }}
+                        {{ t(`operations.injected.BTS.${visualizedParams[page - 1].method}.headers.result`) }}
                     </div>
                     <div
                         v-for="row in visualizedParams[page - 1].rows"
@@ -157,7 +145,7 @@
         </ui-card>
         <ui-pagination
             v-model="page"
-            :total="visualizedParams.length"
+            :total="total"
             mini
             show-total
             :page-size="[1]"
@@ -232,8 +220,8 @@
         v-model="open"
         fullscreen
     >
-        <ui-dialog-title v-if="visualizedParams.length > 1">
-            {{ t(visualizedParams[page - 1].title) }} ({{ page }}/{{ visualizedParams.length }})
+        <ui-dialog-title v-if="total > 1">
+            {{ t(visualizedParams[page - 1].title) }} ({{ page }}/{{ total }})
         </ui-dialog-title>
         <ui-dialog-title v-else>
             {{ t(visualizedParams[page - 1].title) }}

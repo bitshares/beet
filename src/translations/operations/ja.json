@@ -1,380 +1,1542 @@
 {
-    "general": {
-      "content": "コンテンツ"
+  "general": {
+    "content": "コンテンツ"
+  },
+  "receipt": {
+    "id": "トランザクション ID: { resultID }",
+    "block": "ブロック番号: { resultBlockNum }",
+    "trxNum": "トランザクション番号: { resultTrxNum }",
+    "expiration": "有効期限: { resultExpiration }",
+    "signatures": "署名: { resultSignatures }"
+  },
+  "link": {
+    "title": "アカウントリンクリクエスト",
+    "result": "アカウント連携結果",
+    "account_select": "アカウントの選択",
+    "account_missing": "要求されたアカウントはこのウォレットに存在しません。",
+    "request": "「{origin}」のアプリケーション「{appName}」が {chain} アカウントへのアクセスをリクエストしています。",
+    "request_fresh": "以下のリストでマークされているように、アプリケーションはすでに {chain} アカウントをリンクしています。",
+    "request_tooltip": "アプリケーションはアカウントの詳細 (名前と ID) を受け取り、ウォレット リンクを確立します。",
+    "request_cta": "提供するアカウントを選択してください。",
+    "accept_btn": "許可する",
+    "reject_btn": "拒否",
+    "invalid_operations": "不正なリンク要求 - 無効な操作。"
+  },
+  "relink": {
+    "title": "アカウント再リンクリクエスト",
+    "result": "アカウント再リンク結果",
+    "error": "プロンプト表示エラー",
+    "request": "「{origin}」のアプリケーション「{appName}」は、以前にリンクされた {chain} アカウントの再リンクをリクエストしています: {accountId}。",
+    "request_tooltip": "アプリケーションとアカウント参照間の以前のリンクはリセットされます。"
+  },
+  "account_id": {
+    "title": "アカウント詳細リクエスト",
+    "result": "アカウント詳細結果",
+    "request": "アプリ: 「{origin}」の「{appName}」がリンクされた ID (アカウント ID) へのアクセスを要求しています",
+    "request_tooltip": "デフォルトでは、匿名リンクが提供されます。",
+    "accept_btn": "許可する",
+    "reject_btn": "拒否"
+  },
+  "any_account_id": {
+    "title": "アカウント詳細リクエスト",
+    "result": "アカウント詳細結果",
+    "request": "アプリ: 「{origin}」の「{appName}」がアカウントへのアクセスを要求しています。",
+    "request_cta": "提供するアカウントを選択してください。",
+    "accept_btn": "許可する",
+    "reject_btn": "拒否"
+  },
+  "transfer": {
+    "title": "転送依頼",
+    "result": "転送結果",
+    "to": "受信者",
+    "amount": "額",
+    "memo": "メモ",
+    "request": "アプリ: '{origin}' の '{appName}' は、{ chain }:{ accountName } から転送を開始しようとしています。",
+    "request_cta": "実行しますか?",
+    "accept_btn": "サイン",
+    "reject_btn": "無視する",
+    "server_error": "既知の詐欺師のリストを確認のためにロードできませんでした。注意して続行してください。",
+    "detected_scammer": "受信者は既知の詐欺師であるため、中止するようアドバイスされています。"
+  },
+  "rawsig": {
+    "title": "リクエスト",
+    "result": "リクエスト結果",
+    "headers": {
+      "request": "次の生の署名を承認しますか?",
+      "result": "次の生の署名が承認されました。"
     },
-    "link": {
-      "title": "アカウント リンクのリクエスト",
-      "account_select": "アカウント選択",
-      "account_missing": "要求されたアカウントがこのウォレットにありません。",
-      "request": "「{origin}」のアプリケーション「{appName}」が {chain} アカウントへのアクセスをリクエストしています。",
-      "request_fresh": "以下のリストでマークされているように、アプリケーションはすでに {chain} アカウントをリンクしています。",
-      "request_tooltip": "アプリケーションはアカウントの詳細 (名前と ID) を受け取り、ウォレット リンクを確立します。",
-      "request_cta": "提供するアカウントを選択します。",
-      "accept_btn": "許可する",
-      "reject_btn": "拒否",
-      "invalid_operations": "不正なリンク リクエスト - 無効な操作。"
+    "loading": "ブロックチェーンからトランザクションの詳細をロードしています。お待ちください。",
+    "request": "アプリ: '{origin}' の '{appName}' がアカウント { chain }:{ accountName } に対して次のトランザクションを送信しました。",
+    "summary": "このトランザクションには {numOps} 個のオペレーションが含まれており、以下で参照できます。",
+    "summary_single": "このトランザクションには 1 つの操作が含まれており、以下で参照できます。",
+    "request_cta": "実行しますか?",
+    "accept_btn": "サイン",
+    "sign_and_broadcast_btn": "サイン",
+    "sign_btn": "サイン",
+    "receipt": {
+      "title": "領収書が欲しいですか？",
+      "yes": "はい、領収書が欲しいです。",
+      "no": "いいえ、領収書はいりません。"
     },
-    "relink": {
-      "title": "アカウント再リンクのリクエスト",
-      "error": "プロンプト表示エラー",
-      "request": "「{origin}」のアプリケーション「{appName}」が、以前にリンクされた {chain} アカウント {accountId} の再リンクをリクエストしています。",
-      "request_tooltip": "アプリケーションとアカウント参照c の間の以前のリンクはリセットされます。"
-    },
-    "account_id": {
-      "title": "アカウント詳細リクエスト",
-      "request": "アプリ: 「{origin}」の「{appName}」が、リンクされた ID (アカウント ID) へのアクセスを要求しています",
-      "request_tooltip": "デフォルトでは、匿名リンクが提供されます。",
-      "accept_btn": "許可する",
-      "reject_btn": "拒否"
-    },
-    "any_account_id": {
-      "title": "アカウント詳細リクエスト",
-      "request": "アプリ: 「{origin}」の「{appName}」がアカウントへのアクセスをリクエストしています。",
-      "request_cta": "提供するアカウントを選択します。",
-      "accept_btn": "許可する",
-      "reject_btn": "拒否"
-    },
-    "transfer": {
-      "title": "転送依頼",
-      "to": "受信者",
-      "amount": "額",
-      "memo": "メモ",
-      "request": "アプリ: '{origin}' の '{appName}' が { chain }:{ accountName } からの転送を開始しようとしています。",
-      "request_cta": "実行しますか？",
-      "accept_btn": "サイン",
-      "reject_btn": "無視",
-      "server_error": "確認のために既知の詐欺師のリストを読み込めませんでした。注意して進めてください。",
-      "detected_scammer": "受信者は既知の詐欺師です。中止するようアドバイスしてください。"
-    },
-    "rawsig": {
-      "title": "リクエスト",
-      "loading": "ブロックチェーンからトランザクションの詳細を読み込んでいます。お待ちください。",
-      "request": "アプリ: '{origin}' の '{appName}' は、アカウント { chain }:{ accountName } の次のトランザクションを送信しました。",
-      "request_cta": "実行しますか？",
-      "accept_btn": "サイン",
-      "sign_and_broadcast_btn": "サイン",
-      "sign_btn": "サイン",
-      "reject_btn": "無視"
-    },
-    "whitelist": {
-      "prompt": "このアプリからの後続の '{method}' リクエストをホワイトリストに登録しますか?"
-    },
-    "vote": {
-      "title": "投票リクエスト",
-      "request": "アプリ:「{origin}」の「{appName}」は、アカウント {chain}:{accountName} で次の {entity} に投票するよう求めています",
-      "request_cta": "",
-      "accept_btn": "承認",
-      "reject_btn": "無視"
-    },
-    "message": {
-      "title": "サインメッセージリクエスト",
-      "request": "アプリ: '{origin}' の '{appName}' は、次のテキストにアカウント { chain }:{ accountName } で署名するよう求めています",
-      "request_cta": "",
-      "accept_btn": "承認",
-      "reject_btn": "無視"
-    },
-    "injected": {
-      "BTS": {
-        "getAccount": {
-          "method": "getAccount",
-          "tooltip": "ウォレットにブロックチェーン アカウントの詳細を尋ねます"
-        },
-        "requestSignature": {
-          "method": "requestSignature",
-          "tooltip": "ウォレットにブロックチェーン署名を要求します"
-        },
-        "injectedCall": {
-          "method": "注入コール",
-          "tooltip": "注入されたブロックチェーン操作を処理するようウォレットに要求します"
-        },
-        "voteFor": {
-          "method": "に投票",
-          "tooltip": "ブロックチェーン投票を実行する"
-        },
-        "signMessage": {
-          "method": "サインメッセージ",
-          "tooltip": "ブロックチェーン ベースのメッセージに署名する"
-        },
-        "signNFT": {
-          "method": "サインNFT",
-          "tooltip": "NFTコンテンツに署名する"
-        },
-        "verifyMessage": {
-          "method": "検証メッセージ",
-          "tooltip": "ブロックチェーン ベースの署名付きメッセージを検証する"
-        },
-        "transfer": {
-          "method": "移行",
-          "tooltip": "あるアカウントから別のアカウントにアセットを送信する"
-        },
-        "limit_order_create": {
-          "method": "指値注文作成",
-          "tooltip": "一定額の資産を特定の為替レートで特定の時間までに売却するオファー"
-        },
-        "limit_order_cancel": {
-          "method": "指値注文キャンセル",
-          "tooltip": "指値注文のキャンセル"
-        },
-        "call_order_update": {
-          "method": "電話注文の更新",
-          "tooltip": "既存の呼び出し順序の更新"
-        },
-        "account_create": {
-          "method": "アカウントの作成",
-          "tooltip": "新しいアカウントの作成"
-        },
-        "asset_update": {
-          "method": "アセットの更新",
-          "tooltip": "作成したアセット設定を更新する"
-        },
-        "asset_update_bitasset": {
-          "method": "アセット更新ビットアセット",
-          "tooltip": "作成したビットアセットの設定を更新する"
-        },
-        "asset_update_feed_producers": {
-          "method": "アセット更新フィード プロデューサー",
-          "tooltip": "作成された bitasset の承認済みフィード プロデューサーのリストを更新する"
-        },
-        "asset_issue": {
-          "method": "資産の問題",
-          "tooltip": "作成したアセットを個人に発行する"
-        },
-        "asset_reserve": {
-          "method": "資産準備金",
-          "tooltip": "作成したアセットを予約する"
-        },
-        "asset_fund_fee_pool": {
-          "method": "アセットファンド手数料プール",
-          "tooltip": "作成したアセットの手数料プールに資金を提供する"
-        },
-        "asset_settle": {
-          "method": "資産決済",
-          "tooltip": "ポートフォリオで資産を決済する"
-        },
-        "asset_global_settle": {
-          "method": "資産のグローバル決済",
-          "tooltip": "作成したビットアセットの 1 つをグローバルに決済する"
-        },
-        "asset_publish_feed": {
-          "method": "アセット公開フィード",
-          "tooltip": "ビットアセットの価格フィードを発行する"
-        },
-        "witness_create": {
-          "method": "証人の作成",
-          "tooltip": "証人アカウントを作成する"
-        },
-        "witness_update": {
-          "method": "目撃者の更新",
-          "tooltip": "証人アカウントを更新する"
-        },
-        "proposal_create": {
-          "method": "提案作成",
-          "tooltip": "ブロックチェーン運用案の作成"
-        },
-        "proposal_update": {
-          "method": "提案の更新",
-          "tooltip": "ブロックチェーン運用提案を更新する"
-        },
-        "proposal_delete": {
-          "method": "提案の削除",
-          "tooltip": "ブロックチェーン運用提案の削除"
-        },
-        "withdraw_permission_create": {
-          "method": "権限の取り消し作成",
-          "tooltip": "出金許可を作成する"
-        },
-        "withdraw_permission_update": {
-          "method": "許可の更新を取り消す",
-          "tooltip": "出金許可を更新する"
-        },
-        "withdraw_permission_claim": {
-          "method": "許可請求を取り下げる",
-          "tooltip": "撤回許可からの請求"
-        },
-        "withdraw_permission_delete": {
-          "method": "権限の取り消し 削除",
-          "tooltip": "出金許可を削除する"
-        },
-        "committee_member_create": {
-          "method": "委員作成",
-          "tooltip": "委員会メンバーのアカウントを作成する"
-        },
-        "committee_member_update": {
-          "method": "委員更新",
-          "tooltip": "委員会メンバーのアカウントの詳細を更新する"
-        },
-        "committee_member_update_global_parameters": {
-          "method": "委員会メンバーがグローバル パラメータを更新",
-          "tooltip": "Bitshares ブロックチェーンのグローバル パラメータ値に対する委員会メンバーのスタンスを公開する"
-        },
-        "vesting_balance_create": {
-          "method": "権利確定残高の作成",
-          "tooltip": "ベスティングバランスを作成する"
-        },
-        "vesting_balance_withdraw": {
-          "method": "権利確定残高の引き出し",
-          "tooltip": "権利確定残高からの引き出し"
-        },
-        "worker_create": {
-          "method": "ワーカー作成",
-          "tooltip": "作業員の提案を作成する"
-        },
-        "balance_claim": {
-          "method": "残高請求",
-          "tooltip": "残高からの請求"
-        },
-        "override_transfer": {
-          "method": "オーバーライド転送",
-          "tooltip": "転送操作をオーバーライドする"
-        },
-        "transfer_to_blind": {
-          "method": "ブラインドへの転送",
-          "tooltip": "ブラインド宛先へのアセットの転送"
-        },
-        "blind_transfer": {
-          "method": "ブラインド転送",
-          "tooltip": "ブラインド アセットをブラインドで転送する"
-        },
-        "transfer_from_blind": {
-          "method": "ブラインドからの転送",
-          "tooltip": "ブラインド残高から資産を引き出す"
-        },
-        "asset_claim_fees": {
-          "method": "資産請求手数料",
-          "tooltip": "アセットから手数料を請求する"
-        },
-        "bid_collateral": {
-          "method": "入札担保",
-          "tooltip": "グローバルに決済されたときに、bitassets の裏付けとなる担保に入札する"
-        },
-        "asset_claim_pool": {
-          "method": "資産請求プール",
-          "tooltip": "指定した資産の手数料プールから BTS を発行者の残高に戻します"
-        },
-        "asset_update_issuer": {
-          "method": "資産更新発行者",
-          "tooltip": "アセットの発行者を新しい管理者アカウントに更新します。"
-        },
-        "htlc_create": {
-          "method": "ハッシュ タイム ロック コントラクトの作成",
-          "tooltip": "ハッシュ タイム ロック コントラクト操作を作成する"
-        },
-        "htlc_redeem": {
-          "method": "ハッシュ タイム ロック コントラクトの償還",
-          "tooltip": "Hash Time Locked Contract 操作の内容を引き換える"
-        },
-        "htlc_extend": {
-          "method": "ハッシュ タイム ロック コントラクト エクステンド",
-          "tooltip": "ハッシュ タイム ロック コントラクト操作の期間を延長する"
-        },
-        "custom_authority_create": {
-          "method": "カスタム権限の作成",
-          "tooltip": "新しいカスタム権限を作成します。"
-        },
-        "custom_authority_update": {
-          "method": "カスタム権限の更新",
-          "tooltip": "カスタム権限を更新します。"
-        },
-        "custom_authority_delete": {
-          "method": "カスタム権限の削除",
-          "tooltip": "カスタム権限を削除します。"
-        },
-        "ticket_create": {
-          "method": "チケット作成",
-          "tooltip": "新しいチケットを作成します。"
-        },
-        "ticket_update": {
-          "method": "チケットの更新",
-          "tooltip": "既存のチケットを更新します。"
-        },
-        "liquidity_pool_create": {
-          "method": "流動性プールの作成",
-          "tooltip": "流動性プールを作成する"
-        },
-        "liquidity_pool_delete": {
-          "method": "流動性プールの削除",
-          "tooltip": "流動性プールを削除する"
-        },
-        "liquidity_pool_deposit": {
-          "method": "流動性プール預金",
-          "tooltip": "資金を流動性プールに入金する"
-        },
-        "liquidity_pool_withdraw": {
-          "method": "流動性プールの撤回",
-          "tooltip": "流動性プールから資金を引き出す"
-        },
-        "liquidity_pool_exchange": {
-          "method": "流動性プール交換",
-          "tooltip": "流動性プールと交換します。"
-        },
-        "samet_fund_create": {
-          "method": "SameT ファンド作成",
-          "tooltip": "新しい SameT ファンドを作成します。 "
-        },
-        "samet_fund_delete": {
-          "method": "SameT ファンドの削除",
-          "tooltip": "SameT ファンド オブジェクトを削除します。"
-        },
-        "samet_fund_update": {
-          "method": "SameT ファンドの更新",
-          "tooltip": "SameT ファンド オブジェクトを更新します。"
-        },
-        "samet_fund_borrow": {
-          "method": "SameT 資金借入",
-          "tooltip": "SameT ファンドから借ります。"
-        },
-        "samt_fund_repay": {
-          "method": "SameT 資金の返済",
-          "tooltip": "負債を SameT ファンドに返済します。"
-        },
-        "credit_offer_create": {
-          "method": "クレジットオファーの作成",
-          "tooltip": "新しいクレジット オファーを作成します。"
-        },
-        "credit_offer_delete": {
-          "method": "クレジットオファーの削除",
-          "tooltip": "クレジットオファーを削除します。"
-        },
-        "credit_offer_update": {
-          "method": "クレジットオファーの更新",
-          "tooltip": "クレジットオファーを更新する"
-        },
-        "credit_offer_accept": {
-          "method": "クレジットオファーを受け入れる",
-          "tooltip": "信用提案を受け入れ、信用取引を作成します。"
-        },
-        "credit_deal_repay": {
-          "method": "信用取引の返済",
-          "tooltip": "信用取引を返済します。"
-        },
-        "custom": {
-          "method": "カスタム",
-          "tooltip": "証人コンセンサスの上に高レベルのプロトコルを追加する一般的な方法を提供します"
-        },
-        "assert": {
-          "method": "主張する",
-          "tooltip": "いくつかの条件が真であることをアサートします。"
-        },
-        "account_update": {
-          "method": "アカウントの更新",
-          "tooltip": "この操作は、既存のアカウントを更新するために使用されます。"
-        },
-        "account_whitelist": {
-          "method": "アカウントのホワイトリスト",
-          "tooltip": "この操作は、主にホワイトリストに登録された資産での取引のために、アカウントをホワイトリストおよびブラックリストに登録するために使用されます"
-        },
-        "account_upgrade": {
-          "method": "アカウントのアップグレード",
-          "tooltip": "この操作は、アカウントをメンバーにアップグレードするか、サブスクリプションを更新するために使用されます。"
-        },
-        "account_transfer": {
-          "method": "口座振替",
-          "tooltip": "ホワイトリストをクリアしながら、アカウントを別のアカウントに転送します"
-        },
-        "asset_create": {
-          "method": "アセットの作成",
-          "tooltip": "Bitshares ブロックチェーンに資産を作成します"
-        }
+    "reject_btn": "無視する"
+  },
+  "whitelist": {
+    "prompt": "このアプリからの後続の「{method}」リクエストをホワイトリストに登録しますか?"
+  },
+  "vote": {
+    "title": "投票リクエスト",
+    "result": "投票結果",
+    "request": "アプリ: 「{origin}」の「{appName}」は、アカウント { accountName }:{ chain } を持つ次の {entity} に投票するよう求めています。",
+    "request_cta": "",
+    "accept_btn": "承認する",
+    "reject_btn": "無視する"
+  },
+  "message": {
+    "title": "メッセージリクエストに署名する",
+    "result": "署名メッセージの結果",
+    "request": "アプリ: '{origin}' の '{appName}' は、アカウント { chain }:{ accountName } で次のテキストに署名するよう求めています。",
+    "request_cta": "",
+    "accept_btn": "承認する",
+    "reject_btn": "無視する"
+  },
+  "injected": {
+    "BTS": {
+      "getAccount": {
+        "method": "アカウントを取得する",
+        "title": "アカウント詳細リクエスト",
+        "result": "アカウント詳細結果",
+        "headers": {
+          "request": "アカウントの詳細を共有しますか?",
+          "result": "アカウントの詳細が共有されました。"
+        },
+        "tooltip": "ウォレットにブロックチェーンアカウントの詳細を要求します"
+      },
+      "requestSignature": {
+        "method": "要求署名",
+        "title": "署名リクエスト",
+        "result": "署名結果",
+        "headers": {
+          "request": "あなたの署名を共有したいですか?",
+          "result": "あなたの署名が共有されました:"
+        },
+        "tooltip": "ウォレットにブロックチェーン署名を要求します"
+      },
+      "injectedCall": {
+        "method": "注入されたコール",
+        "title": "挿入された通話リクエスト",
+        "result": "挿入された呼び出しの結果",
+        "headers": {
+          "request": "次の挿入された呼び出しを承認しますか?",
+          "result": "次の挿入された呼び出しが承認されました。"
+        },
+        "tooltip": "挿入されたブロックチェーン操作を処理するようにウォレットに要求します"
+      },
+      "voteFor": {
+        "method": "に投票",
+        "title": "投票リクエスト",
+        "result": "投票結果",
+        "headers": {
+          "request": "次の投票リクエストを承認しますか?",
+          "result": "次の投票リクエストが承認されました"
+        },
+        "tooltip": "ブロックチェーン投票を実行する"
+      },
+      "signMessage": {
+        "method": "サインメッセージ",
+        "title": "メッセージリクエストに署名する",
+        "result": "署名メッセージの結果",
+        "headers": {
+          "request": "次のメッセージへの署名を承認しますか?",
+          "result": "次のメッセージが署名されました。"
+        },
+        "tooltip": "ブロックチェーンベースのメッセージに署名する"
+      },
+      "signNFT": {
+        "method": "NFTに署名する",
+        "title": "NFTリクエストに署名する",
+        "result": "NFT結果に署名する",
+        "headers": {
+          "request": "次のNFTへの署名を承認しますか?",
+          "result": "次の NFT が署名されました。"
+        },
+        "tooltip": "NFTの内容に署名する"
+      },
+      "verifyMessage": {
+        "method": "verifyメッセージ",
+        "title": "メッセージリクエストの確認",
+        "result": "メッセージの結果を確認する",
+        "headers": {
+          "request": "次のメッセージを確認しますか?",
+          "result": "次のメッセージが確認されました。"
+        },
+        "tooltip": "ブロックチェーンベースの署名付きメッセージを検証する"
+      },
+      "transfer": {
+        "method": "移行",
+        "title": "転送依頼",
+        "result": "転送結果",
+        "headers": {
+          "request": "次の転送リクエストを承認しますか?",
+          "result": "次の転送リクエストが承認されました:"
+        },
+        "rows": {
+          "from": "差出人: {from} ({opFrom})",
+          "to": "宛先: {to} ({opTo})",
+          "amount": "金額: {amount}"
+        },
+        "tooltip": "あるアカウントから別のアカウントにアセットを送信する"
+      },
+      "limit_order_create": {
+        "method": "指値注文の作成",
+        "title": "指値注文作成リクエスト",
+        "result": "指値注文作成結果",
+        "headers": {
+          "request": "次の指値注文作成リクエストを承認しますか?",
+          "result": "次の指値注文が作成されました。"
+        },
+        "rows": {
+          "trade": "貿易",
+          "tradeFK": "トレード（フィル・オア・キル）",
+          "seller": "販売者: {seller} ({opSeller})",
+          "selling": "販売: {amount}",
+          "buying": "購入: {amount}",
+          "price": "価格: {price} {sellSymbol}/{buySymbol}"
+        },
+        "tooltip": "一定の期間までに指定された為替レートで一定量の資産を売却するというオファー"
+      },
+      "limit_order_cancel": {
+        "method": "指値注文キャンセル",
+        "title": "指値注文キャンセルリクエスト",
+        "result": "指値注文キャンセル結果",
+        "headers": {
+          "request": "次の指値注文をキャンセルしますか?",
+          "result": "次の指値注文がキャンセルされました:"
+        },
+        "rows": {
+          "id": "注文 ID: {id}",
+          "fees": "推定手数料: {fees}",
+          "account": "料金支払いアカウント: {account}"
+        },
+        "tooltip": "指値注文オペレーションのキャンセル"
+      },
+      "call_order_update": {
+        "method": "電話注文の更新",
+        "title": "電話注文更新リクエスト",
+        "result": "呼び出し順序更新結果",
+        "headers": {
+          "request": "通話順序を次のように更新しますか?",
+          "result": "次の呼び出し順序が更新されました。"
+        },
+        "rows": {
+          "funding_account": "資金調達アカウント: {funding_account}",
+          "delta_collateral": "デルタ担保: {delta_collateral} ({id})",
+          "delta_debt": "デルタ債務: {delta_debt} ({id})",
+          "fees": "推定手数料: {fees}"
+        },
+        "tooltip": "既存のコールオーダーの更新"
+      },
+      "account_create": {
+        "method": "アカウントの作成",
+        "title": "アカウント作成リクエスト",
+        "result": "アカウント作成結果",
+        "headers": {
+          "request": "次のアカウントを作成しますか?",
+          "result": "次のアカウントが作成されました。"
+        },
+        "rows": {
+          "registrar": "レジストラ: {registrar} ({opRegistrar})",
+          "referrer": "リファラー: {referrer} ({opReferrer})",
+          "referrer_percent": "参照者のパーセント: {referrer_percent}",
+          "name": "名前: {name}",
+          "ownerHeader": "所有者：",
+          "activeHeader": "アクティブ：",
+          "weight_threshold": "体重のしきい値: {weight_threshold}",
+          "account_auths": "アカウント認証: {account_auths}",
+          "key_auths": "キー認証: {key_auths}",
+          "address_auths": "アドレス認証: {address_auths}",
+          "optionsHeader": "オプション:",
+          "memo_key": "メモキー: {memo_key}",
+          "voting_account": "投票アカウント: {voting_account} ({opVotingAccount})",
+          "num_witness": "証人の数: {num_witness}",
+          "num_committee": "委員会メンバーの数: {num_committee}",
+          "votes": "投票: {votes}",
+          "extensions": "拡張機能: {extensions}",
+          "fees": "推定手数料: {fees}"
+        },
+        "tooltip": "新しいアカウントの作成"
+      },
+      "account_update": {
+        "method": "アカウントの更新",
+        "title": "アカウント更新リクエスト",
+        "result": "アカウント更新結果",
+        "headers": {
+          "request": "次のアカウントを更新しますか?",
+          "result": "以下のアカウントが更新されました。"
+        },
+        "rows": {
+          "warning": "警告: この操作は元に戻すことができません。",
+          "account": "アカウント: {account} ({opAccount})",
+          "owner": "所有者: {owner}",
+          "active": "アクティブ: {active}",
+          "new_options": "新しいオプション: {new_options}",
+          "extensions": "拡張機能: {extensions}",
+          "fees": "推定手数料: {fees}"
+        },
+        "tooltip": "この操作は、既存のアカウントを更新するために使用されます。"
+      },
+      "account_whitelist": {
+        "method": "アカウントのホワイトリスト",
+        "title": "アカウントのホワイトリストのリクエスト",
+        "result": "アカウントのホワイトリストの結果",
+        "headers": {
+          "request": "アカウントのホワイトリストを次のように更新しますか?",
+          "result": "アカウントのホワイトリストが次のように更新されました。"
+        },
+        "rows": {
+          "authorizing_account": "承認アカウント: {authorizingAccount} (authorizingAccountOP)",
+          "account_to_list": "リストするアカウント: {accountToList} (accountToListOP)",
+          "new_listing": "新しいリスト: {newListing}",
+          "extensions": "拡張機能: {extensions}",
+          "fee": "料金: {fee}"
+        },
+        "tooltip": "この操作は、主にホワイトリストに登録された資産の取引のために、アカウントをホワイトリストおよびブラックリストに登録するために使用されます。"
+      },
+      "account_upgrade": {
+        "method": "アカウントのアップグレード",
+        "title": "アカウントアップグレードリクエスト",
+        "result": "アカウントアップグレード結果",
+        "headers": {
+          "request": "アカウントを生涯会員にアップグレードしますか?",
+          "result": "あなたのアカウントは永久会員にアップグレードされました!"
+        },
+        "rows": {
+          "account_to_upgrade": "アップグレードするアカウント: {accountToUpgrade} (accountToUpgradeOP)",
+          "upgrade_to_lifetime_member": "生涯メンバーへのアップグレード: {upgradeToLifetimeMember}",
+          "extensions": "拡張機能: {extensions}",
+          "fee": "推定料金: {fee}"
+        },
+        "tooltip": "この操作は、アカウントをメンバーにアップグレードするか、サブスクリプションを更新するために使用されます。"
+      },
+      "account_transfer": {
+        "method": "口座振替",
+        "title": "口座振替リクエスト",
+        "result": "口座振替結果",
+        "headers": {
+          "request": "アカウントを新しい所有者に譲渡しますか?",
+          "result": "次のアカウントが新しい所有者に譲渡されました:"
+        },
+        "rows": {
+          "warning": "警告: この操作は元に戻すことができません。",
+          "account_id": "アカウント ID: {originalOwner} ({account_id})",
+          "new_owner": "新しい所有者: {newOwner} ({newOwnerOP})",
+          "fee": "推定料金: {fee}"
+        },
+        "tooltip": "ホワイトリストをクリアしながらアカウントを別のアカウントに転送します"
+      },
+      "asset_create": {
+        "method": "アセットの作成",
+        "title": "アセット作成リクエスト",
+        "result": "アセット作成結果",
+        "headers": {
+          "request": "次のアセットを作成しますか?",
+          "result": "次のアセットが作成されました。"
+        },
+        "rows": {
+          "symbol": "シンボル: {symbol}",
+          "main": "メイン: {main}",
+          "market": "マーケット: {market}",
+          "short_name": "ショートネーム: {short_name}",
+          "precision": "精度: {precision}",
+          "max_supply": "最大供給量: {max_supply}",
+          "market_fee_percent": "市場手数料パーセント: {market_fee_percent}",
+          "max_market_fee": "最大市場手数料: {max_market_fee}",
+          "cer": "コア為替レート:",
+          "cer_base_amount": "基本金額: {cer_base_amount}",
+          "cer_base_id": "基本アセット ID: {cer_base_id}",
+          "cer_quote_amount": "見積金額: {cer_quote_amount}",
+          "cer_quote_id": "見積アセット ID: {cer_quote_id}",
+          "whitelist_authorities": "ホワイトリスト権限: {whitelist_authorities}",
+          "blacklist_authorities": "ブラックリスト当局: {blacklist_authorities}",
+          "whitelist_markets": "ホワイトリスト マーケット: {whitelist_markets}",
+          "blacklist_markets": "ブラックリスト マーケット: {blacklist_markets}",
+          "is_prediction_market": "予測市場です: {is_prediction_market}",
+          "permissions": "権限:",
+          "perm_charge_market_fee": "チャージマーケット手数料: {charge_market_fee}",
+          "perm_white_list": "ホワイトリスト: {white_list}",
+          "perm_override_authority": "オーバーライド権限: {override_authority}",
+          "perm_transfer_restricted": "転送制限: {transfer_restricted}",
+          "perm_disable_confidential": "機密情報を無効にする: {disable_confidential}",
+          "flags": "フラグ:",
+          "flag_charge_market_fee": "チャージマーケット手数料: {charge_market_fee}",
+          "flag_white_list": "ホワイトリスト: {white_list}",
+          "flag_override_authority": "オーバーライド権限: {override_authority}",
+          "flag_transfer_restricted": "転送制限: {transfer_restricted}",
+          "flag_disable_confidential": "機密情報を無効にする: {disable_confidential}",
+          "bitasset": "ビットアセット情報:",
+          "feed_lifetime_sec": "フィードの有効期間 (秒): {feed_lifetime_sec}",
+          "force_settlement_delay_sec": "強制決済遅延 (秒): {force_settlement_delay_sec}",
+          "force_settlement_offset_percent": "強制決済オフセットパーセント: {force_settlement_offset_percent}",
+          "maximum_force_settlement_volume": "最大強制決済量: {maximum_force_settlement_volume}",
+          "minimum_feeds": "最小フィード: {minimum_feeds}",
+          "short_backing_asset": "ショートバッキングアセット: {short_backing_asset}",
+          "nft": "NFTの内容：",
+          "acknowledgements": "謝辞: {acknowledgements}",
+          "artist": "アーティスト: {artist}",
+          "attestation": "証明書: {attestation}",
+          "holder_license": "所有者ライセンス: {holder_license}",
+          "license": "ライセンス: {license}",
+          "narrative": "ナラティブ: {narrative}",
+          "title": "タイトル: {title}",
+          "tags": "タグ: {tags}",
+          "type": "タイプ: {type}"
+        },
+        "tooltip": "Bitshares ブロックチェーン上に資産を作成します"
+      },
+      "asset_update": {
+        "method": "アセットの更新",
+        "title": "アセット更新リクエスト",
+        "result": "アセットの更新結果",
+        "headers": {
+          "request": "次のアセットを更新しますか?",
+          "result": "アセットは次の詳細で更新されました。"
+        },
+        "rows": {
+          "symbol": "シンボル: {symbol}",
+          "main": "メイン: {main}",
+          "market": "マーケット: {market}",
+          "short_name": "ショートネーム: {short_name}",
+          "precision": "精度: {precision}",
+          "max_supply": "最大供給量: {max_supply}",
+          "market_fee_percent": "市場手数料パーセント: {market_fee_percent}",
+          "max_market_fee": "最大市場手数料: {max_market_fee}",
+          "cer": "コア為替レート:",
+          "cer_base_amount": "基本金額: {cer_base_amount}",
+          "cer_base_id": "基本アセット ID: {cer_base_id}",
+          "cer_quote_amount": "見積金額: {cer_quote_amount}",
+          "cer_quote_id": "見積アセット ID: {cer_quote_id}",
+          "whitelist_authorities": "ホワイトリスト権限: {whitelist_authorities}",
+          "blacklist_authorities": "ブラックリスト当局: {blacklist_authorities}",
+          "whitelist_markets": "ホワイトリスト マーケット: {whitelist_markets}",
+          "blacklist_markets": "ブラックリスト マーケット: {blacklist_markets}",
+          "is_prediction_market": "予測市場です: {is_prediction_market}",
+          "permissions": "権限:",
+          "perm_charge_market_fee": "チャージマーケット手数料: {charge_market_fee}",
+          "perm_white_list": "ホワイトリスト: {white_list}",
+          "perm_override_authority": "オーバーライド権限: {override_authority}",
+          "perm_transfer_restricted": "転送制限: {transfer_restricted}",
+          "perm_disable_confidential": "機密情報を無効にする: {disable_confidential}",
+          "flags": "フラグ:",
+          "flag_charge_market_fee": "チャージマーケット手数料: {charge_market_fee}",
+          "flag_white_list": "ホワイトリスト: {white_list}",
+          "flag_override_authority": "オーバーライド権限: {override_authority}",
+          "flag_transfer_restricted": "転送制限: {transfer_restricted}",
+          "flag_disable_confidential": "機密情報を無効にする: {disable_confidential}",
+          "bitasset": "ビットアセット情報:",
+          "feed_lifetime_sec": "フィードの有効期間 (秒): {feed_lifetime_sec}",
+          "force_settlement_delay_sec": "強制決済遅延 (秒): {force_settlement_delay_sec}",
+          "force_settlement_offset_percent": "強制決済オフセットパーセント: {force_settlement_offset_percent}",
+          "maximum_force_settlement_volume": "最大強制決済量: {maximum_force_settlement_volume}",
+          "minimum_feeds": "最小フィード: {minimum_feeds}",
+          "short_backing_asset": "ショートバッキングアセット: {short_backing_asset}",
+          "nft": "NFTの内容：",
+          "acknowledgements": "謝辞: {acknowledgements}",
+          "artist": "アーティスト: {artist}",
+          "attestation": "証明書: {attestation}",
+          "holder_license": "所有者ライセンス: {holder_license}",
+          "license": "ライセンス: {license}",
+          "narrative": "ナラティブ: {narrative}",
+          "title": "タイトル: {title}",
+          "tags": "タグ: {tags}",
+          "type": "タイプ: {type}"
+        },
+        "tooltip": "アセットの設定を更新します"
+      },
+      "asset_update_bitasset": {
+        "method": "アセット更新 bitasset",
+        "title": "アセット更新 bitasset リクエスト",
+        "result": "アセット更新ビットアセット結果",
+        "headers": {
+          "request": "bitasset の更新を承認しますか?",
+          "result": "次の bitasset 更新が承認されました。"
+        },
+        "rows": {
+          "issuer": "発行者: {issuer}",
+          "asset_to_update": "更新するアセット: {asset_to_update}",
+          "new_options": "新しいオプション:",
+          "feed_lifetime_sec": "フィードの有効期間 (秒): {feed_lifetime_sec}",
+          "minimum_feeds": "最小フィード: {minimum_feeds}",
+          "force_settlement_delay_sec": "強制決済遅延 (秒): {force_settlement_delay_sec}",
+          "force_settlement_offset_percent": "強制決済オフセットパーセント: {force_settlement_offset_percent}",
+          "maximum_force_settlement_volume": "最大強制決済量: {maximum_force_settlement_volume}",
+          "short_backing_asset": "ショートバッキングアセット: {symbol} ({short_backing_asset})",
+          "extensions": "拡張機能: {extensions}",
+          "noExtensions": "拡張子なし",
+          "fee": "推定料金: {fee} ({id})"
+        },
+        "tooltip": "作成した bitasset 設定を更新する"
+      },
+      "asset_update_feed_producers": {
+        "method": "アセット更新フィードプロデューサー",
+        "title": "アセット更新フィードプロデューサーのリクエスト",
+        "result": "アセット更新フィードプロデューサーの結果",
+        "headers": {
+          "request": "ビットアセット飼料生産者の変更を承認しますか?",
+          "result": "ビットアセット飼料生産者に対する次の変更が承認されました。"
+        },
+        "rows": {
+          "issuer": "発行者: {issuer} ({issuerOP})",
+          "asset_to_update": "更新するアセット: {symbol} ({asset_to_update})",
+          "new_feed_producers": "新しいフィードプロデューサー: {new_feed_producers}",
+          "fee": "推定料金: {fee}"
+        },
+        "tooltip": "作成されたビットアセットの承認済みフィードプロデューサーのリストを更新します"
+      },
+      "asset_issue": {
+        "method": "資産発行",
+        "title": "資産発行リクエスト",
+        "result": "資産発行結果",
+        "headers": {
+          "request": "次の資産発行を承認しますか?",
+          "result": "以下の資産発行が承認されました。"
+        },
+        "rows": {
+          "prompt": "{amount} {symbol} ({assetID}) を {to} ({toID}) に発行しますか?",
+          "fee": "推定料金: {fee} ({id})"
+        },
+        "tooltip": "作成したアセットを個人に発行する"
+      },
+      "asset_reserve": {
+        "method": "資産準備金",
+        "title": "資産留保リクエスト",
+        "result": "資産積立実績",
+        "headers": {
+          "request": "次の資産予約を承認しますか?",
+          "result": "次の資産予約が承認されました:"
+        },
+        "rows": {
+          "payer": "支払者: {payer} ({payerOP})",
+          "amount_to_reserve": "予約金額: {amount_to_reserve} ({amount_to_reserveOP})",
+          "extensions": "拡張機能: {extensions}",
+          "fee": "推定料金: {fee}"
+        },
+        "tooltip": "作成したアセットを予約する"
+      },
+      "asset_fund_fee_pool": {
+        "method": "アセットファンド手数料プール",
+        "title": "アセットファンド手数料プールリクエスト",
+        "result": "アセットファンド手数料プール結果",
+        "headers": {
+          "request": "次の資産の手数料プールに資金を提供しますか?",
+          "result": "次の資産の手数料プール資金調達が承認されました。"
+        },
+        "rows": {
+          "from_account": "アカウントから: {from_account} ({from_accountOP})",
+          "asset": "アセット: {asset} ({assetOP})",
+          "amount": "金額: {amount}",
+          "fee": "推定料金: {fee}"
+        },
+        "tooltip": "作成したアセットの料金プールに資金を提供します"
+      },
+      "asset_settle": {
+        "method": "資産決済",
+        "title": "資産決済リクエスト",
+        "result": "資産決済結果",
+        "headers": {
+          "request": "次の資産を裏付け担保として決済しますか?",
+          "result": "以下の資産は裏付け担保として決済されました。"
+        },
+        "rows": {
+          "account": "アカウント: {account} ({accountOP})",
+          "amount": "金額: {amount} ({assetID})",
+          "fee": "推定料金: {fee}"
+        },
+        "tooltip": "ポートフォリオ内の資産を決済する"
+      },
+      "asset_global_settle": {
+        "method": "資産のグローバル決済",
+        "title": "アセットのグローバル決済リクエスト",
+        "result": "アセットのグローバル決済結果",
+        "headers": {
+          "request": "次の資産に対してグローバル決済を実行しますか?",
+          "result": "次の資産はグローバルに決済されました。"
+        },
+        "rows": {
+          "issuer": "発行者: {issuer} ({issuerOP})",
+          "asset_to_settle": "決済する資産: {asset_to_settle} ({asset_to_settleOP})",
+          "settle_price": "決済価格: {settle_price}",
+          "fee": "推定料金: {fee}"
+        },
+        "tooltip": "作成したビットアセットの 1 つをグローバルに決済します"
+      },
+      "asset_publish_feed": {
+        "method": "アセット公開フィード",
+        "title": "アセット公開フィードリクエスト",
+        "result": "アセット公開フィードの結果",
+        "headers": {
+          "request": "次の資産の価格フィードを公開しますか?",
+          "result": "次の資産価格フィードの更新が公開されました。"
+        },
+        "rows": {
+          "publisher": "パブリッシャー: {publisher} ({publisherOP})",
+          "asset_id": "アセット ID: {symbol} ({asset_idOP})",
+          "feed": "餌：",
+          "core_exchange_rate": "コア為替レート: {core_exchange_rate}",
+          "settlement_price": "決済価格: {settlement_price}",
+          "maintenance_collateral_ratio": "維持担保比率: {maintenance_collateral_ratio}",
+          "maximum_short_squeeze_ratio": "最大ショートスクイーズ比: {maximum_short_squeeze_ratio}",
+          "extensions": "拡張機能: {extensions}",
+          "fee": "推定料金: {fee}"
+        },
+        "tooltip": "Bitasset の価格フィードを公開する"
+      },
+      "witness_create": {
+        "method": "証人作成",
+        "title": "証人作成リクエスト",
+        "result": "証人の作成結果",
+        "headers": {
+          "request": "以下の詳細を記載した証人を作成しますか?",
+          "result": "次の証人が作成されました。"
+        },
+        "rows": {
+          "witness_account": "証人アカウント: {witness_account} ({witness_accountOP})",
+          "url": "URL: {url}",
+          "block_signing_key": "ブロック署名キー: {block_signing_key}",
+          "fee": "推定料金: {fee}"
+        },
+        "tooltip": "証人アカウントを作成する"
+      },
+      "witness_update": {
+        "method": "目撃者の最新情報",
+        "title": "証人の更新リクエスト",
+        "result": "証人の更新結果",
+        "headers": {
+          "request": "証人の詳細を次のように更新しますか?",
+          "result": "次の証人の詳細が更新されました。"
+        },
+        "rows": {
+          "witness": "証人: {witness}",
+          "witness_account": "証人アカウント: {witness_account} ({witness_accountOP})",
+          "new_url": "新しい URL: {new_url}",
+          "new_signing_key": "新しい署名キー: {new_signing_key}",
+          "fee": "推定料金: {fee}"
+        },
+        "tooltip": "証人アカウントを更新する"
+      },
+      "proposal_create": {
+        "method": "提案書の作成",
+        "title": "提案作成リクエスト",
+        "result": "提案作成結果",
+        "headers": {
+          "request": "次の提案書を作成しますか?",
+          "result": "次のような提案書が作成されました。"
+        },
+        "rows": {
+          "expiration_time": "有効期限: {expiration_time}",
+          "proposed_ops": "提案されたオペレーション: {proposed_ops}",
+          "review_period_seconds": "レビュー期間の秒数: {review_period_seconds}",
+          "fee_paying_account": "料金支払いアカウント: {fee_paying_account} ({fee_paying_accountOP})",
+          "fee": "推定料金: {fee}"
+        },
+        "tooltip": "ブロックチェーン運用提案書を作成する"
+      },
+      "proposal_update": {
+        "method": "提案の更新",
+        "title": "提案更新リクエスト",
+        "result": "提案更新結果",
+        "headers": {
+          "request": "次の提案を更新しますか?",
+          "result": "次の提案が更新されました。"
+        },
+        "rows": {
+          "proposal": "提案: {proposal}",
+          "active_approvals_to_add": "追加するアクティブな承認: {active_approvals_to_add}",
+          "active_approvals_to_remove": "削除するアクティブな承認: {active_approvals_to_remove}",
+          "owner_approvals_to_add": "追加する所有者の承認: {owner_approvals_to_add}",
+          "owner_approvals_to_remove": "削除する所有者の承認: {owner_approvals_to_remove}",
+          "key_approvals_to_add": "追加する主要な承認: {key_approvals_to_add}",
+          "key_approvals_to_remove": "削除する主要な承認: {key_approvals_to_remove}",
+          "fee_paying_account": "料金支払いアカウント: {fee_paying_account} ({fee_paying_accountOP})",
+          "extensions": "拡張機能: {extensions}",
+          "fee": "推定料金: {fee}"
+        },
+        "tooltip": "ブロックチェーン運用提案を更新する"
+      },
+      "proposal_delete": {
+        "method": "プロポーザルの削除",
+        "title": "プロポーザルの削除リクエスト",
+        "result": "プロポーザルの削除結果",
+        "headers": {
+          "request": "次の提案を削除しますか?",
+          "result": "次の提案は削除されました。"
+        },
+        "rows": {
+          "using_owner_authority": "所有者権限の使用: {using_owner_authority}",
+          "proposal": "提案: {proposal}",
+          "fee_paying_account": "料金支払いアカウント: {fee_paying_account} ({fee_paying_accountOP})",
+          "extensions": "拡張機能: {extensions}",
+          "fee": "推定料金: {fee}"
+        },
+        "tooltip": "ブロックチェーン運用提案を削除する"
+      },
+      "withdraw_permission_create": {
+        "method": "取り消し権限の作成",
+        "title": "権限作成リクエストの取り消し",
+        "result": "権限の取り消しの結果の作成",
+        "headers": {
+          "request": "口座振替の認証",
+          "result": "次の口座振替の承認が承認されました。"
+        },
+        "rows": {
+          "recipient": "受信者: {recipient} ({recipientOP})",
+          "withdraw_from": "出金先のアカウント: {withdraw_from} ({withdraw_fromOP})",
+          "taking": "{period_qty} の期間、{period_sec} 秒ごとに {amount} を摂取します",
+          "start": "開始: {start}"
+        },
+        "tooltip": "引き出し権限を作成する"
+      },
+      "withdraw_permission_update": {
+        "method": "撤回許可の更新",
+        "title": "権限更新リクエストの撤回",
+        "result": "取消許可更新結果",
+        "headers": {
+          "request": "証人権限を次のように更新しますか?",
+          "result": "次の証人権限の更新が承認されました。"
+        },
+        "rows": {
+          "withrdaw_from_account": "アカウントからの出金: {withrdaw_from_account} ({withrdaw_from_accountOP})",
+          "authorized_account": "承認されたアカウント: {authorized_account} ({authorized_accountOP})",
+          "permission_to_update": "更新権限: {permission_to_update}",
+          "withdrawal_limited": "出金限度額: {withdrawal_limit}",
+          "withdrawal_unlimited": "出金制限: {withdrawal_limit} ({withdrawal_limitOP})",
+          "withdrawal_period_sec": "出金期間 (秒): {withdrawal_period_sec}",
+          "period_start_time": "期間の開始時刻: {period_start_time}",
+          "periods_until_expiration": "有効期限までの期間: {periods_until_expiration}",
+          "fee": "推定料金: {fee}"
+        },
+        "tooltip": "出金許可を更新する"
+      },
+      "withdraw_permission_claim": {
+        "method": "許可申請の撤回",
+        "title": "許可申請の撤回",
+        "result": "許可申請の取り消し結果",
+        "headers": {
+          "request": "以下の出金許可を申請してください",
+          "result": "次の引き出し許可が要求されました。"
+        },
+        "rows": {
+          "withdraw_permission": "権限の撤回: {withdraw_permission}",
+          "withdraw_from_account": "アカウントからの出金: {withdraw_from_account} ({withdraw_from_accountOP})",
+          "withdraw_to_account": "アカウントへの出金: {withdraw_to_account} ({withdraw_to_accountOP})",
+          "amount_to_withdraw": "出金金額: {amount_to_withdraw} ({amount_to_withdrawOP})",
+          "memo": "メモ: {memo}",
+          "fee": "推定料金: {fee}"
+        },
+        "tooltip": "撤回許可からの請求"
+      },
+      "withdraw_permission_delete": {
+        "method": "撤回許可の削除",
+        "title": "権限削除リクエストの撤回",
+        "result": "権限削除結果の撤回",
+        "headers": {
+          "request": "次の撤回許可を削除しますか?",
+          "result": "次の撤回権限が削除されました:"
+        },
+        "rows": {
+          "withdraw_from_account": "アカウントからの出金: {withdraw_from_account} ({withdraw_from_accountOP})",
+          "authorized_account": "承認されたアカウント: {authorized_account} ({authorized_accountOP})",
+          "withdrawal_permission": "出金許可: {withdrawal_permission}",
+          "fee": "推定料金: {fee}"
+        },
+        "tooltip": "撤回権限を削除する"
+      },
+      "committee_member_create": {
+        "method": "委員作成",
+        "title": "委員会メンバーがリクエストを作成",
+        "result": "委員が結果を作成",
+        "headers": {
+          "request": "委員会のメンバーを作成しますか?",
+          "result": "次の委員会メンバーが設立されました。"
+        },
+        "rows": {
+          "committee_member_account": "委員会メンバーのアカウント: {committee_member_account} ({committee_member_accountOP})",
+          "url": "URL: {url}",
+          "fee": "推定料金: {fee}"
+        },
+        "tooltip": "委員会メンバーのアカウントを作成する"
+      },
+      "committee_member_update": {
+        "method": "委員の最新情報",
+        "title": "委員更新依頼",
+        "result": "委員更新結果",
+        "headers": {
+          "request": "次の委員会メンバーの詳細を更新しますか?",
+          "result": "次の委員会メンバーによる詳細の更新が承認されました。"
+        },
+        "rows": {
+          "committee_member": "委員会メンバー: {committee_member}",
+          "committee_member_account": "委員会メンバーのアカウント: {committee_member_account} ({committee_member_accountOP})",
+          "new_url": "新しい URL: {new_url}",
+          "fee": "推定料金: {fee}"
+        },
+        "tooltip": "委員会メンバーのアカウント詳細を更新する"
+      },
+      "committee_member_update_global_parameters": {
+        "method": "委員会メンバーがグローバルパラメータを更新",
+        "title": "委員会メンバーのグローバルパラメータ更新リクエスト",
+        "result": "委員会メンバーがグローバルパラメータの結果を更新",
+        "headers": {
+          "request": "委員会として以下のグローバルパラメータを承認しますか?",
+          "result": "以下のグローバル委員会パラメータが承認されました。"
+        },
+        "rows": {
+          "new_parameters": "新しいパラメータ:",
+          "current_fees": "現在の料金: {current_fees}",
+          "block_interval": "ブロック間隔: {block_interval}",
+          "maintenance_interval": "メンテナンス間隔: {maintenance_interval}",
+          "maintenance_skip_slots": "メンテナンススキップスロット: {maintenance_skip_slots}",
+          "committee_proposal_review_period": "委員会提案のレビュー期間: {committee_proposal_review_period}",
+          "maximum_transaction_size": "最大トランザクション サイズ: {maximum_transaction_size}",
+          "maximum_block_size": "最大ブロック サイズ: {maximum_block_size}",
+          "maximum_time_until_expiration": "有効期限までの最大時間: {maximum_time_until_expiration}",
+          "maximum_proposal_lifetime": "プロポーザルの最大有効期間: {maximum_proposal_lifetime}",
+          "maximum_asset_whitelist_authorities": "アセットホワイトリストの最大権限: {maximum_asset_whitelist_authorities}",
+          "maximum_asset_feed_publishers": "アセット フィード パブリッシャーの最大数: {maximum_asset_feed_publishers}",
+          "maximum_witness_count": "最大目撃者数: {maximum_witness_count}",
+          "maximum_committee_count": "委員会の最大数: {maximum_committee_count}",
+          "maximum_authority_membership": "最大権限メンバーシップ: {maximum_authority_membership}",
+          "reserve_percent_of_fee": "料金の予約パーセント: {reserve_percent_of_fee}",
+          "network_percent_of_fee": "ネットワーク料金の割合: {network_percent_of_fee}",
+          "lifetime_referrer_percent_of_fee": "紹介者の生涯料金の割合: {lifetime_referrer_percent_of_fee}",
+          "cashback_vesting_period_seconds": "キャッシュバックの権利確定期間の秒数: {cashback_vesting_period_seconds}",
+          "cashback_vesting_threshold": "キャッシュバック権利確定しきい値: {cashback_vesting_threshold}",
+          "count_non_member_votes": "非メンバーの投票を数える: {count_non_member_votes}",
+          "allow_non_member_whitelists": "非メンバーのホワイトリストを許可: {allow_non_member_whitelists}",
+          "witness_pay_per_block": "証人はブロックごとに支払います: {witness_pay_per_block}",
+          "worker_budget_per_day": "従業員の 1 日あたりの予算: {worker_budget_per_day}",
+          "max_predicate_opcode": "最大述語オペコード: {max_predicate_opcode}",
+          "fee_liquidation_threshold": "料金清算しきい値: {fee_liquidation_threshold}",
+          "accounts_per_fee_scale": "料金スケールごとのアカウント数: {accounts_per_fee_scale}",
+          "account_fee_scale_bitshifts": "アカウント手数料スケールのビットシフト: {account_fee_scale_bitshifts}",
+          "max_authority_depth": "最大権限の深さ: {max_authority_depth}",
+          "extensions": "拡張機能: {extensions}",
+          "fee": "推定料金: {fee}"
+        },
+        "tooltip": "Bitshares ブロックチェーンのグローバル パラメーター値に対する委員会メンバーのスタンスを公開する"
+      },
+      "vesting_balance_create": {
+        "method": "権利確定残高の作成",
+        "title": "権利確定残高作成リクエスト",
+        "result": "権利確定残高作成結果",
+        "headers": {
+          "request": "次の権利確定残高を作成しますか?",
+          "result": "次の権利確定残高が作成されました。"
+        },
+        "rows": {
+          "creator": "作成者: {creator} ({creatorOP})",
+          "owner": "所有者: {owner} ({ownerOP})",
+          "amount": "金額: {amount} ({asset_id})",
+          "policy": "ポリシー：",
+          "begin_timestamp": "開始タイムスタンプ: {begin_timestamp}",
+          "vesting_cliff_seconds": "権利確定クリフ秒数: {vesting_cliff_seconds}",
+          "vesting_duration_seconds": "権利確定期間の秒数: {vesting_duration_seconds}",
+          "start_claim": "申請の開始: {start_claim}",
+          "vesting_seconds": "権利確定秒数: {vesting_seconds}",
+          "fee": "推定料金: {fee}"
+        },
+        "tooltip": "権利確定残高を作成する"
+      },
+      "vesting_balance_withdraw": {
+        "method": "権利確定残高の出金",
+        "title": "権利確定残高の出金リクエスト",
+        "result": "権利確定残高の出金結果",
+        "headers": {
+          "request": "次の権利確定残高を引き出しますか?",
+          "result": "次の権利確定残高が取り消されました。"
+        },
+        "rows": {
+          "owner": "所有者: {owner} ({ownerOP})",
+          "claim": "クレーム: {claim} ({asset_id})"
+        },
+        "tooltip": "権利確定残高からの出金"
+      },
+      "worker_create": {
+        "method": "ワーカー作成",
+        "title": "ワーカー作成リクエスト",
+        "result": "ワーカー作成結果",
+        "headers": {
+          "request": "次の従業員提案を作成しますか?",
+          "result": "次のワーカー提案が作成されました。"
+        },
+        "rows": {
+          "owner": "所有者: {owner} ({ownerOP})",
+          "work_begin_date": "作業開始日: {work_begin_date}",
+          "work_end_date": "作業終了日: {work_end_date}",
+          "daily_pay": "日給: {daily_pay}",
+          "name": "名前: {name}",
+          "url": "URL: {url}",
+          "initializer": "イニシャライザ: {initializer}",
+          "fee": "推定料金: {fee}"
+        },
+        "tooltip": "従業員の提案を作成する"
+      },
+      "custom": {
+        "method": "カスタム",
+        "title": "カスタムリクエスト",
+        "result": "カスタム結果",
+        "headers": {
+          "request": "次のカスタム オペレーションを作成しますか?",
+          "result": "次のカスタム オペレーションが作成されました。"
+        },
+        "rows": {
+          "payer": "支払者: {payer} ({payerOP})",
+          "required_auths": "必要な権限: {required_auths}",
+          "id": "{id}",
+          "data": "データ: {data}",
+          "fee": "推定料金: {fee}"
+        },
+        "tooltip": "証人コンセンサスの上に高レベルのプロトコルを追加する一般的な方法を提供します"
+      },
+      "assert": {
+        "method": "主張する",
+        "title": "リクエストのアサート",
+        "result": "結果のアサート",
+        "headers": {
+          "request": "次のアサートリクエスト操作を承認しますか?",
+          "result": "次のアサート要求操作が承認されました。"
+        },
+        "rows": {
+          "fee_paying_account": "料金支払いアカウント: {fee_paying_account} ({fee_paying_accountOP})",
+          "predicates": "述語: {predicates}",
+          "required_auths": "必要な権限: {required_auths}",
+          "extensions": "拡張機能: {extensions}",
+          "fee": "推定料金: {fee}"
+        },
+        "tooltip": "いくつかの条件が真であることをアサートします。"
+      },
+      "balance_claim": {
+        "method": "残高請求",
+        "title": "残高請求リクエスト",
+        "result": "残高請求結果",
+        "headers": {
+          "request": "次の残高を請求しますか?",
+          "result": "次の残高が主張されました。"
+        },
+        "rows": {
+          "deposit_to_account": "アカウントへの入金: {deposit_to_account} ({deposit_to_accountOP})",
+          "balance_to_claim": "請求残高: {balance_to_claim} ({asset_id})",
+          "balance_owner_key": "残高所有者キー: {balance_owner_key}",
+          "total_claimed": "請求総額: {total_claimed} ({asset_id})",
+          "fee": "推定料金: {fee}"
+        },
+        "tooltip": "残高からの請求"
+      },
+      "override_transfer": {
+        "method": "オーバーライド転送",
+        "title": "転送リクエストを上書きする",
+        "result": "転送結果を上書きする",
+        "headers": {
+          "request": "次の転送をオーバーライドしますか?",
+          "result": "次の転送はオーバーライドされました。"
+        },
+        "rows": {
+          "issuer": "発行者: {issuer} ({issuerOP})",
+          "from": "差出人: {from} ({fromOP})",
+          "to": "宛先: {to} ({toOP})",
+          "amount": "金額: {amount} ({asset_id})",
+          "memo": "メモ: {memo}",
+          "fee": "推定料金: {fee}"
+        },
+        "tooltip": "転送操作をオーバーライドする"
+      },
+      "transfer_to_blind": {
+        "method": "ブラインドに転送",
+        "title": "ブラインドリクエストに転送",
+        "result": "ブラインド結果への転送",
+        "headers": {
+          "request": "以下をブラインドに転送しますか?",
+          "result": "以下はブラインドに転送されました。"
+        },
+        "rows": {
+          "amount": "金額: {amount}",
+          "from": "差出人: {from} ({fromOP})",
+          "blinding_factor": "ブラインドファクター: {blinding_factor}",
+          "outputs": "出力: {outputs}",
+          "fee": "推定料金: {fee}"
+        },
+        "tooltip": "資産をブラインド先に転送する"
+      },
+      "blind_transfer": {
+        "method": "ブラインド転送",
+        "title": "ブラインド転送リクエスト",
+        "result": "ブラインド転送結果",
+        "headers": {
+          "request": "次のブラインド転送を承認しますか?",
+          "result": "以下のブラインド転送が承認されました。"
+        },
+        "rows": {
+          "inputs": "入力: {inputs}",
+          "outputs": "出力: {outputs}",
+          "fee": "推定料金: {fee}"
+        },
+        "tooltip": "ブラインド資産をブラインド方法で転送する"
+      },
+      "transfer_from_blind": {
+        "method": "ブラインドからの転送",
+        "title": "ブラインドリクエストからの転送",
+        "result": "ブラインド結果からの転送",
+        "headers": {
+          "request": "以下をブラインドから転送しますか?",
+          "result": "以下はブラインドから転送されました。"
+        },
+        "rows": {
+          "amount": "金額: {amount}",
+          "to": "宛先: {to} ({toOP})",
+          "blinding_factor": "ブラインドファクター: {blinding_factor}",
+          "inputs": "入力: {inputs}",
+          "fee": "推定料金: {fee}"
+        },
+        "tooltip": "ブラインド残高から資産を引き出す"
+      },
+      "asset_claim_fees": {
+        "method": "資産請求手数料",
+        "title": "資産請求手数料の請求",
+        "result": "資産請求手数料の結果",
+        "headers": {
+          "request": "次の資産から手数料を引き出しますか?",
+          "result": "次の資産の手数料が請求されました。"
+        },
+        "rows": {
+          "issuer": "発行者: {issuer} ({issuerOP})",
+          "amount_to_claim": "請求額: {amount_to_claim} ({asset_id})",
+          "fee": "推定料金: {fee}"
+        },
+        "tooltip": "資産から手数料を請求する"
+      },
+      "bid_collateral": {
+        "method": "入札担保",
+        "title": "入札担保請求",
+        "result": "入札担保結果",
+        "headers": {
+          "request": "次の担保入札を承認しますか?",
+          "result": "以下の担保入札が承認されました。"
+        },
+        "rows": {
+          "bidder": "入札者: {bidder} ({bidderOP})",
+          "additional_collateral": "追加の担保: {additional_collateral}",
+          "debt_covered": "カバーされた負債: {debt_covered}",
+          "fee": "推定料金: {fee}"
+        },
+        "tooltip": "グローバル決済時にビットアセットを裏付ける担保に入札"
+      },
+      "asset_claim_pool": {
+        "method": "資産請求プール",
+        "title": "資産請求プールのリクエスト",
+        "result": "資産請求プールの結果",
+        "headers": {
+          "request": "次の資産プールを要求しますか?",
+          "result": "次の資産プールが要求されました。"
+        },
+        "rows": {
+          "issuer": "発行者: {issuer} ({issuerOP})",
+          "asset_id": "アセット: {asset_id}",
+          "amount_to_claim": "請求額: {amount_to_claim}",
+          "fee": "推定料金: {fee}"
+        },
+        "tooltip": "指定された資産の手数料プールから BTS を発行者の残高に戻します"
+      },
+      "asset_update_issuer": {
+        "method": "アセット更新発行者",
+        "title": "資産更新発行者リクエスト",
+        "result": "アセット更新発行者の結果",
+        "headers": {
+          "request": "次のアセットの発行者を更新しますか?",
+          "result": "次のアセットの発行者が更新されました:"
+        },
+        "rows": {
+          "issuer": "発行者: {issuer} ({issuerOP})",
+          "asset_to_update": "更新するアセット: {asset_to_update}",
+          "new_issuer": "新しい発行者: {new_issuer} ({new_issuerOP})",
+          "fee": "推定料金: {fee}"
+        },
+        "tooltip": "資産の発行者を新しい管理者アカウントに更新します。"
+      },
+      "htlc_create": {
+        "method": "HTLCの作成",
+        "title": "HTLC作成リクエスト",
+        "result": "HTLC作成結果",
+        "headers": {
+          "request": "次のハッシュされたタイムロック コントラクト オペレーションを作成しますか?",
+          "result": "次のハッシュされたタイムロック コントラクト オペレーションの作成が承認されました。"
+        },
+        "rows": {
+          "from": "差出人: {from} ({fromOP})",
+          "to": "宛先: {to} ({toOP})",
+          "amount": "金額: {amount}",
+          "preimage_hash": "プリイメージハッシュ: {preimage_hash}",
+          "preimage_size": "プリイメージのサイズ: {preimage_size}",
+          "claim_period_seconds": "請求期間 (秒): {claim_period_seconds}",
+          "fee": "推定料金: {fee}"
+        },
+        "tooltip": "ハッシュ タイム ロック コントラクト (HTLC) オペレーションを作成する"
+      },
+      "htlc_redeem": {
+        "method": "HTLC 引き換え",
+        "title": "HTLC引き換えリクエスト",
+        "result": "HTLC引き換え結果",
+        "headers": {
+          "request": "次のハッシュ タイム ロック コントラクト オペレーションを引き換えますか?",
+          "result": "次のハッシュ タイム ロック コントラクト オペレーションの償還が承認されました。"
+        },
+        "rows": {
+          "htlc_id": "HTLC ID: {htlc_id}",
+          "redeemer": "引き換え者: {redeemer} ({redeemerOP})",
+          "preimage": "プリイメージ: {preimage}",
+          "extensions": "拡張機能: {extensions}",
+          "fee": "推定料金: {fee}"
+        },
+        "tooltip": "HTLC 操作のコンテンツを引き換える"
+      },
+      "htlc_extend": {
+        "method": "HTLC 拡張",
+        "title": "HTLC 拡張リクエスト",
+        "result": "HTLC 拡張結果",
+        "headers": {
+          "request": "次のハッシュタイムロック契約延長を承認しますか?",
+          "result": "以下のハッシュタイムロック契約の延長が承認されました。"
+        },
+        "rows": {
+          "htlc_id": "HTLC ID: {htlc_id}",
+          "update_issuer": "更新発行者: {update_issuer} ({update_issuerOP})",
+          "seconds_to_add": "追加する秒数: {seconds_to_add}",
+          "extensions": "拡張機能: {extensions}",
+          "fee": "推定料金: {fee}"
+        },
+        "tooltip": "HTLC 操作の継続時間を延長する"
+      },
+      "custom_authority_create": {
+        "method": "カスタム権限の作成",
+        "title": "カスタム権限作成リクエスト",
+        "result": "カスタム権限作成結果",
+        "headers": {
+          "request": "次のカスタム認証局を作成しますか?",
+          "result": "次のカスタム権限が作成されました。"
+        },
+        "rows": {
+          "account": "アカウント: {account} ({accountOP})",
+          "enabled": "有効: {enabled}",
+          "valid_from": "有効期限: {valid_from}",
+          "valid_to": "有効期限: {valid_to}",
+          "operation_type": "操作タイプ: {operation_type}",
+          "auth": "権限: {auth}",
+          "restrictions": "制限事項: {restrictions}",
+          "extensions": "拡張機能: {extensions}",
+          "fee": "推定料金: {fee}"
+        },
+        "tooltip": "新しいカスタム認証局を作成します。"
+      },
+      "custom_authority_update": {
+        "method": "カスタム権限の更新",
+        "title": "カスタム権限更新リクエスト",
+        "result": "カスタム権限更新結果",
+        "headers": {
+          "request": "次の税関当局を更新しますか?",
+          "result": "次のカスタム権限が更新されました。"
+        },
+        "rows": {
+          "account": "アカウント: {account} ({accountOP})",
+          "authority_to_update": "更新する権限: {authority_to_update}",
+          "new_enabled": "新しく有効になりました: {new_enabled}",
+          "new_valid_from": "新規有効期間: {new_valid_from}",
+          "new_valid_to": "新しい有効期限: {new_valid_to}",
+          "new_auth": "新しい権限: {new_auth}",
+          "restrictions_to_remove": "削除する制限: {restrictions_to_remove}",
+          "restrictions_to_add": "追加する制限: {restrictions_to_add}",
+          "extensions": "拡張機能: {extensions}",
+          "fee": "推定料金: {fee}"
+        },
+        "tooltip": "カスタム認証局を更新します。"
+      },
+      "custom_authority_delete": {
+        "method": "カスタム権限の削除",
+        "title": "カスタム権限削除リクエスト",
+        "result": "カスタム権限削除結果",
+        "headers": {
+          "request": "次のカスタム権限を削除しますか?",
+          "result": "次のカスタム権限が削除されました:"
+        },
+        "rows": {
+          "account": "アカウント: {account} ({accountOP})",
+          "authority_to_delete": "削除権限: {authority_to_delete}",
+          "extensions": "拡張機能: {extensions}",
+          "fee": "推定料金: {fee}"
+        },
+        "tooltip": "カスタム認証局を削除します。"
+      },
+      "ticket_create": {
+        "method": "チケットの作成",
+        "title": "チケット作成リクエスト",
+        "result": "チケット作成結果",
+        "headers": {
+          "request": "次のチケットを作成しますか?",
+          "result": "次のチケットが作成されました。"
+        },
+        "rows": {
+          "account": "アカウント: {account} ({accountOP})",
+          "target_type": "ターゲットタイプ: {target_type}",
+          "amount": "金額: {amount}",
+          "extensions": "拡張機能: {extensions}",
+          "fee": "推定料金: {fee}"
+        },
+        "tooltip": "新しいチケットを作成します。"
+      },
+      "ticket_update": {
+        "method": "チケット更新",
+        "title": "チケット更新リクエスト",
+        "result": "チケット更新結果",
+        "headers": {
+          "request": "次のチケットを更新しますか?",
+          "result": "次のチケットが更新されました:"
+        },
+        "rows": {
+          "ticket": "チケット: {ticket}",
+          "account": "アカウント: {account} ({accountOP})",
+          "target_type": "ターゲットタイプ: {target_type}",
+          "amount_for_new_target": "新しいターゲットの金額: {amount_for_new_target}",
+          "extensions": "拡張機能: {extensions}"
+        },
+        "tooltip": "既存のチケットを更新します。"
+      },
+      "liquidity_pool_create": {
+        "method": "流動性プールの作成",
+        "title": "流動性プール作成リクエスト",
+        "result": "流動性プールの作成結果",
+        "headers": {
+          "request": "次の詳細を使用して流動性プールを作成しますか?",
+          "result": "次の流動性プールが作成されました。"
+        },
+        "rows": {
+          "account": "アカウント: {account} ({accountOP})",
+          "asset_a": "アセット A: {asset_a} ({asset_aOP})",
+          "asset_b": "アセット B: {asset_b} ({asset_bOP})",
+          "share_asset": "アセットを共有: {share_asset} ({share_assetOP})",
+          "taker_fee_percent": "テイカー手数料パーセント: {taker_fee_percent}",
+          "withdrawal_fee_percent": "出金手数料パーセント: {withdrawal_fee_percent}",
+          "extensions": "拡張機能: {extensions}",
+          "fee": "推定料金: {fee}"
+        },
+        "tooltip": "流動性プールを作成する"
+      },
+      "liquidity_pool_delete": {
+        "method": "流動性プールの削除",
+        "title": "流動性プールの削除リクエスト",
+        "result": "流動性プールの削除結果",
+        "headers": {
+          "request": "次の流動性プールを削除しますか?",
+          "result": "次の流動性プールが削除されました:"
+        },
+        "rows": {
+          "account": "アカウント: {account} ({accountOP})",
+          "pool_id": "プール ID: {pool_id}",
+          "extensions": "拡張機能: {extensions}",
+          "fee": "推定料金: {fee}"
+        },
+        "tooltip": "流動性プールを削除する"
+      },
+      "liquidity_pool_deposit": {
+        "method": "流動性プール預金",
+        "title": "流動性プールの入金リクエスト",
+        "result": "流動性プールの入金結果",
+        "headers": {
+          "request": "次の資産を流動性プールに入金しますか?",
+          "result": "以下の資産が流動性プールに入金されました。"
+        },
+        "rows": {
+          "account": "アカウント: {account} ({accountOP})",
+          "pool": "プール: {pool}",
+          "asset_a": "アセット A: {asset_a} ({asset_aOP})",
+          "asset_b": "アセット B: {asset_b} ({asset_bOP})",
+          "extensions": "拡張機能: {extensions}",
+          "fee": "推定料金: {fee}"
+        },
+        "tooltip": "流動性プールに資金を入金する"
+      },
+      "liquidity_pool_withdraw": {
+        "method": "流動性プールの引き出し",
+        "title": "流動性プールの出金リクエスト",
+        "result": "流動性プールの引き出し結果",
+        "headers": {
+          "request": "次の資産を流動性プールから引き出しますか?",
+          "result": "以下の資産が流動性プールから引き上げられました。"
+        },
+        "rows": {
+          "account": "アカウント: {account} ({accountOP})",
+          "pool": "プール: {pool}",
+          "share_asset": "アセットを共有: {share_asset} ({share_assetOP})",
+          "extensions": "拡張機能: {extensions}",
+          "fee": "推定料金: {fee}"
+        },
+        "tooltip": "流動性プールから資金を引き出す"
+      },
+      "liquidity_pool_exchange": {
+        "method": "流動性プール交換",
+        "title": "流動性プール交換リクエスト",
+        "result": "流動性プール交換結果",
+        "headers": {
+          "request": "以下の流動性プール交換を承認しますか?",
+          "result": "以下の流動性プール交換が承認されました。"
+        },
+        "rows": {
+          "account": "アカウント: {account} ({accountOP})",
+          "pool": "プール: {pool}",
+          "amount_to_sell": "売却額: {amount_to_sell}",
+          "min_to_receive": "最小受信時間: {min_to_receive}",
+          "extensions": "拡張機能: {extensions}",
+          "fee": "推定料金: {fee}"
+        },
+        "tooltip": "流動性プールとの交換。"
+      },
+      "samet_fund_create": {
+        "method": "SameT ファンドの作成",
+        "title": "SameT ファンド作成リクエスト",
+        "result": "SameT ファンドの作成結果",
+        "headers": {
+          "request": "以下の同基金創設に同意しますか？",
+          "result": "次のサメット基金が設立されました。"
+        },
+        "rows": {
+          "owner_account": "所有者のアカウント: {owner_account} ({owner_accountOP})",
+          "asset_type": "アセットタイプ: {asset_type}",
+          "balance": "残高: {balance}",
+          "fee_rate": "手数料率: {fee_rate}",
+          "extensions": "拡張機能: {extensions}",
+          "fee": "推定料金: {fee}"
+        },
+        "tooltip": "新しい SameT ファンドを作成します。 "
+      },
+      "samet_fund_delete": {
+        "method": "SameT ファンドの削除",
+        "title": "SameT ファンド削除リクエスト",
+        "result": "SameT ファンド削除結果",
+        "headers": {
+          "request": "次の同じファンドを削除しますか?",
+          "result": "次の同じファンドが削除されました。"
+        },
+        "rows": {
+          "owner_account": "所有者のアカウント: {owner_account} ({owner_accountOP})",
+          "fund_id": "ファンド ID: {fund_id}",
+          "extensions": "拡張機能: {extensions}",
+          "fee": "推定料金: {fee}"
+        },
+        "tooltip": "SameT ファンド オブジェクトを削除します。"
+      },
+      "samet_fund_update": {
+        "method": "SameT ファンドの最新情報",
+        "title": "SameT ファンド更新リクエスト",
+        "result": "SameTファンド更新結果",
+        "headers": {
+          "request": "次のサメットファンドを更新しますか?",
+          "result": "次のサメットファンドが更新されました。"
+        },
+        "rows": {
+          "owner_account": "所有者のアカウント: {owner_account} ({owner_accountOP})",
+          "fund_id": "ファンド ID: {fund_id}",
+          "delta_amount": "デルタ金額: {delta_amount}",
+          "new_fee_rate": "新しい手数料率: {new_fee_rate}",
+          "extensions": "拡張機能: {extensions}",
+          "fee": "推定料金: {fee}"
+        },
+        "tooltip": "SameT ファンド オブジェクトを更新します。"
+      },
+      "samet_fund_borrow": {
+        "method": "SameT 資金の借入",
+        "title": "SameT 資金借入リクエスト",
+        "result": "SameT ファンド借入結果",
+        "headers": {
+          "request": "以下のサメットファンドから借りますか？",
+          "result": "以下のサメットファンドからの借入に成功しました。"
+        },
+        "rows": {
+          "borrower": "借り手: {borrower} ({borrowerOP})",
+          "fund_id": "ファンド ID: {fund_id}",
+          "borrow_amount": "借入額: {borrow_amount}",
+          "extensions": "拡張機能: {extensions}",
+          "fee": "推定料金: {fee}"
+        },
+        "tooltip": "SameT ファンドから借ります。"
+      },
+      "samt_fund_repay": {
+        "method": "SameT 基金の返済",
+        "title": "SameT 資金の返済リクエスト",
+        "result": "SameTファンド返済結果",
+        "headers": {
+          "request": "次の同じ資金を返済します",
+          "result": "下記の同基金を無事返済しました"
+        },
+        "rows": {
+          "account": "アカウント: {account} ({accountOP})",
+          "fund_id": "ファンド ID: {fund_id}",
+          "repay_amount": "返済額: {repay_amount}",
+          "fund_fee": "ファンド手数料: {fund_fee}",
+          "extensions": "拡張機能: {extensions}",
+          "fee": "推定料金: {fee}"
+        },
+        "tooltip": "SameT ファンドに借金を返済します。"
+      },
+      "credit_offer_create": {
+        "method": "クレジットオファーの作成",
+        "title": "クレジットオファー作成リクエスト",
+        "result": "クレジットオファーの作成結果",
+        "headers": {
+          "request": "次のクレジットオファーの作成を承認しますか?",
+          "result": "次のクレジット オファーが作成されました:"
+        },
+        "rows": {
+          "owner_account": "所有者のアカウント: {owner_account} ({owner_accountOP})",
+          "asset_type": "アセットタイプ: {asset_type}",
+          "balance": "残高: {balance}",
+          "fee_rate": "手数料率: {fee_rate}",
+          "max_duration_seconds": "最大継続時間秒: {max_duration_seconds}",
+          "min_deal_amount": "最低取引額: {min_deal_amount}",
+          "enabled": "有効: {enabled}",
+          "auto_disable_time": "自動無効化時間: {auto_disable_time}",
+          "acceptable_collateral": "許容可能な担保: {acceptable_collateral}",
+          "acceptable_borrowers": "受け入れ可能な借り手: {acceptable_borrowers}",
+          "extensions": "拡張機能: {extensions}",
+          "fee": "推定料金: {fee}"
+        },
+        "tooltip": "新しいクレジットオファーを作成します。"
+      },
+      "credit_offer_delete": {
+        "method": "クレジットオファーの削除",
+        "title": "クレジットオファーの削除リクエスト",
+        "result": "クレジットオファーの削除結果",
+        "headers": {
+          "request": "次のクレジットオファーを削除しますか?",
+          "result": "次のクレジット オファーが削除されました:"
+        },
+        "rows": {
+          "owner_account": "所有者のアカウント: {owner_account} ({owner_accountOP})",
+          "offer_id": "オファー ID: {offer_id}",
+          "extensions": "拡張機能: {extensions}",
+          "fee": "推定料金: {fee}"
+        },
+        "tooltip": "クレジットオファーを削除します。"
+      },
+      "credit_offer_update": {
+        "method": "クレジットオファーの更新",
+        "title": "クレジットオファーの更新リクエスト",
+        "result": "クレジットオファーの更新結果",
+        "headers": {
+          "request": "次のクレジット特典を更新しますか?",
+          "result": "次のクレジットオファーが更新されました:"
+        },
+        "rows": {
+          "owner_account": "所有者のアカウント: {owner_account} ({owner_accountOP})",
+          "offer_id": "オファー ID: {offer_id}",
+          "delta_amount": "デルタ金額: {delta_amount}",
+          "fee_rate": "手数料率: {fee_rate}",
+          "max_duration_seconds": "最大継続時間秒: {max_duration_seconds}",
+          "min_deal_amount": "最低取引額: {min_deal_amount}",
+          "enabled": "有効: {enabled}",
+          "auto_disable_time": "自動無効化時間: {auto_disable_time}",
+          "acceptable_collateral": "許容可能な担保: {acceptable_collateral}",
+          "acceptable_borrowers": "受け入れ可能な借り手: {acceptable_borrowers}",
+          "extensions": "拡張機能: {extensions}",
+          "fee": "推定料金: {fee}"
+        },
+        "tooltip": "クレジットオファーを更新する"
+      },
+      "credit_offer_accept": {
+        "method": "クレジットオファーを受け入れる",
+        "title": "クレジットオファー受諾リクエスト",
+        "result": "クレジットオファーの受け入れ結果",
+        "headers": {
+          "request": "次のクレジットオファーを承認しますか?",
+          "result": "次のクレジットオファーが承認されました:"
+        },
+        "rows": {
+          "borrower": "借り手: {borrower} ({borrowerOP})",
+          "offer_id": "オファー ID: {offer_id}",
+          "borrow_amount": "借入額: {borrow_amount}",
+          "collateral": "担保: {collateral}",
+          "max_fee_rate": "最大手数料率: {max_fee_rate}",
+          "min_duration_seconds": "最小継続時間秒: {min_duration_seconds}",
+          "extensions": "拡張機能: {extensions}",
+          "fee": "推定料金: {fee}"
+        },
+        "tooltip": "クレジットのオファーを受け入れ、クレジット取引を作成します。"
+      },
+      "credit_deal_repay": {
+        "method": "クレジット取引の返済",
+        "title": "クレジット取引の返済リクエスト",
+        "result": "信用取引の返済結果",
+        "headers": {
+          "request": "次のクレジット契約を返済しますか?",
+          "result": "次のクレジット取引を返済しました"
+        },
+        "rows": {
+          "account": "アカウント: {account} ({accountOP})",
+          "deal_id": "取引 ID: {deal_id}",
+          "repay_amount": "返済額: {repay_amount}",
+          "credit_fee": "クレジット手数料: {credit_fee}",
+          "extensions": "拡張機能: {extensions}",
+          "fee": "推定料金: {fee}"
+        },
+        "tooltip": "クレジット契約を返済します。"
+      },
+      "liquidity_pool_update_operation": {
+        "method": "流動性プールの更新",
+        "title": "流動性プール更新リクエスト",
+        "result": "流動性プールの更新結果",
+        "headers": {
+          "request": "次の流動性プールを更新しますか?",
+          "result": "次の流動性プールが更新されました。"
+        },
+        "rows": {
+          "owner_account": "所有者のアカウント: {owner_account} ({owner_accountOP})",
+          "pool_id": "プール ID: {pool_id}",
+          "new_parameters": "新しいパラメータ: {new_parameters}",
+          "extensions": "拡張機能: {extensions}",
+          "fee": "推定料金: {fee}"
+        },
+        "tooltip": "流動性プールを更新する"
+      },
+      "credit_deal_update_operation": {
+        "method": "クレジット取引の更新",
+        "title": "クレジット取引更新リクエスト",
+        "result": "信用取引の更新結果",
+        "headers": {
+          "request": "次のクレジット取引を更新しますか?",
+          "result": "次のクレジット取引が更新されました:"
+        },
+        "rows": {
+          "fee": "推定料金: {fee}",
+          "account": "アカウント: {account} ({accountOP})",
+          "deal_id": "取引 ID: {deal_id}",
+          "auto_repay": "自動返済: {auto_repay}"
+        },
+        "tooltip": "クレジット取引を更新する"
+      },
+      "limit_order_update_operation": {
+        "method": "指値注文の更新",
+        "title": "指値注文更新リクエスト",
+        "result": "指値注文更新結果",
+        "headers": {
+          "request": "次の指値注文を更新しますか?",
+          "result": "次の指値注文が更新されました。"
+        },
+        "rows": {
+          "fee": "推定料金: {fee}",
+          "seller": "販売者: {seller} ({sellerOP})",
+          "order": "注文: {order}",
+          "new_price": "新しい価格: {new_price}",
+          "delta_amount_to_sell": "売却するデルタ金額: {delta_amount_to_sell}",
+          "new_expiration": "新しい有効期限: {new_expiration}",
+          "on_fill": "オンフィル: {on_fill}",
+          "extensions": "拡張機能: {extensions}"
+        },
+        "tooltip": "指値注文を更新する"
       }
     }
   }
+}

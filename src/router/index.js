@@ -12,6 +12,8 @@ import Totp from "../components/totp";
 import RawLink from "../components/raw-link";
 import Qr from "../components/qr";
 import Popups from "../components/popups";
+import Receipt from "../components/receipt";
+import Local from "../components/local";
 
 const router = createRouter({
   routes: [{
@@ -32,6 +34,13 @@ const router = createRouter({
       path: '/dapps',
       components: {
         default: Dapps,
+        header: HeaderSmall
+      }
+    },
+    {
+      path: '/local',
+      components: {
+        default: Local,
         header: HeaderSmall
       }
     },
@@ -90,6 +99,13 @@ const router = createRouter({
         default: Popups,
         header: HeaderSmall
       }
+    },
+    {
+        path: '/receipt',
+        components: {
+            default: Receipt,
+            header: HeaderSmall
+        }
     }
   ],
   history: createWebHashHistory()

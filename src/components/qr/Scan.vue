@@ -1,7 +1,7 @@
 <script setup>
     import { ref, computed, inject, onMounted } from 'vue';
     import { useI18n } from 'vue-i18n';
-    import { QrcodeStream } from 'qrcode-reader-vue3'
+    import { QrcodeStream } from 'vue-qrcode-reader'
 
     const { t } = useI18n({ useScope: 'global' });
     const emitter = inject('emitter');
@@ -21,15 +21,15 @@
         }
         cameraInitializing.value = true;
         promise
-        .catch((error) => {
-            console.log(error)
-            camera.value = 'off';
-            cameraError.value = true;
-            cameraInitializing.value = false;
-        })
-        .then(() => {
-            cameraInitializing.value = false;
-        })
+            .catch((error) => {
+                console.log(error)
+                camera.value = 'off';
+                cameraError.value = true;
+                cameraInitializing.value = false;
+            })
+            .then(() => {
+                cameraInitializing.value = false;
+            })
     }
 
     let QRresult = ref();
@@ -74,28 +74,28 @@
      * @param {Canvas} ctx
      */
     function paintQR (detectedCodes, ctx) {
-      for (const detectedCode of detectedCodes) {
-        const [ firstPoint, ...otherPoints ] = detectedCode.cornerPoints
+        for (const detectedCode of detectedCodes) {
+            const [ firstPoint, ...otherPoints ] = detectedCode.cornerPoints
 
-        ctx.textAlign = "center"
-        var img = document.getElementById("beetScan");
-        ctx.drawImage(img, firstPoint.x + 25, firstPoint.y + 10);
-      }
-
-      for (const detectedCode of detectedCodes) {
-        const [ firstPoint, ...otherPoints ] = detectedCode.cornerPoints
-
-        ctx.strokeStyle = "#C7088E";
-
-        ctx.beginPath();
-        ctx.moveTo(firstPoint.x, firstPoint.y);
-        for (const { x, y } of otherPoints) {
-          ctx.lineTo(x, y);
+            ctx.textAlign = "center"
+            var img = document.getElementById("beetScan");
+            ctx.drawImage(img, firstPoint.x + 25, firstPoint.y + 10);
         }
-        ctx.lineTo(firstPoint.x, firstPoint.y);
-        ctx.closePath();
-        ctx.stroke();
-      }
+
+        for (const detectedCode of detectedCodes) {
+            const [ firstPoint, ...otherPoints ] = detectedCode.cornerPoints
+
+            ctx.strokeStyle = "#C7088E";
+
+            ctx.beginPath();
+            ctx.moveTo(firstPoint.x, firstPoint.y);
+            for (const { x, y } of otherPoints) {
+                ctx.lineTo(x, y);
+            }
+            ctx.lineTo(firstPoint.x, firstPoint.y);
+            ctx.closePath();
+            ctx.stroke();
+        }
     }
 
     /**
@@ -103,9 +103,9 @@
      * @param {Number} ms 
      */
     function timeout (ms) {
-      return new Promise(resolve => {
-        window.setTimeout(resolve, ms)
-      })
+        return new Promise(resolve => {
+            window.setTimeout(resolve, ms)
+        })
     }
 
     onMounted(async () => {
@@ -116,31 +116,53 @@
 
 <template>
     <div>
-        <span v-if="!QRresult && camera !== 'off' && !cameraError" style="height: 250px;">
+        <span
+            v-if="!QRresult && camera !== 'off' && !cameraError"
+            style="height: 300px;"
+        >
             <p>
                 {{ t('common.qr.scan.title') }}
             </p>
-            <ui-card
-                outlined
-                v-shadow="5"
-                style="height: 250px; border: 1px solid #C7088E;"
-            >
-                <qrcode-stream
-                    :camera="camera"
-                    :track="paintQR"
-                    @init="onInit"
-                    @decode="onDecode"
+            <div style="display: flex; justify-content: center;">
+                <ui-card
+                    v-shadow="5"
+                    outlined
+                    style="height: 300px; width: 300px; border: 1px solid #C7088E;"
                 >
-                    <span v-if="cameraInitializing">
-                        <ui-spinner style="padding-top: 65px;" active></ui-spinner>
-                    </span>
+                    <qrcode-stream
+                        :camera="camera"
+                        :track="paintQR"
+                        class="qrcode-stream-wrapper"
+                        @init="onInit"
+                        @decode="onDecode"
+                    >
+                        <span v-if="cameraInitializing">
+                            <ui-spinner
+                                style="padding-top: 65px;"
+                                active
+                            />
+                        </span>
 
-                    <div style="display:none;">
-                        <img id="beetScan" src="img/beetSmall.png" />
-                    </div>
-                </qrcode-stream>
-            </ui-card>
-            <ui-button v-if="videoDevices && videoDevices.length > 1" @click="switchCamera">
+                        <div style="display:none;">
+                            <img
+                                id="beetScan"
+                                src="img/beetSmall.png"
+                            >
+                        </div>
+
+                        <video
+                            class="qrcode-stream-camera"
+                            autoplay
+                            playsinline
+                            object-fit="cover"
+                        />
+                    </qrcode-stream>
+                </ui-card>
+            </div>
+            <ui-button
+                v-if="videoDevices && videoDevices.length > 1"
+                @click="switchCamera"
+            >
                 Switch camera
             </ui-button>
         </span>
@@ -165,3 +187,16 @@
         </span>
     </div>
 </template>
+
+<style>
+.qrcode-stream-wrapper {
+    max-width: 300px;
+    max-height: 300px;
+    overflow: hidden;
+}
+
+.qrcode-stream-camera {
+    width: 100%;
+    height: 100%;
+}
+</style>

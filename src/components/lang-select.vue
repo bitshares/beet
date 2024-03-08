@@ -1,7 +1,7 @@
 <script setup>
-    import { ref, onMounted, computed, inject } from 'vue';
+    import { ref, onMounted, computed, inject, defineProps } from 'vue';
     import { useI18n } from 'vue-i18n';
-    import { locales, defaultLocale, selectLocales, menuLocales } from "../config/i18n.js";
+    import { defaultLocale, selectLocales, menuLocales } from "../config/i18n.js";
     import RendererLogger from "../lib/RendererLogger";
     import store from '../store/index';
 
@@ -19,16 +19,12 @@
         }
     });
 
-    let localesRef = computed(() => {
-        return menuLocales;
-    });
-
     let location = computed(() => {
         return props.location;
     });
 
     let selected = ref(
-        store.state.SettingsStore.settings.locale.iso ?? defaultLocale.iso
+        store.state.SettingsStore.settings.locale?.iso ?? defaultLocale.iso
     );
 
     let open = ref(false);
@@ -42,13 +38,13 @@
     }
 
     function onSelected(locale) {
-        emitter.emit('i18n', locale.value);
-        store.dispatch("SettingsStore/setLocale", {locale: locale.value});
-        selected.value = locale.value;
+        const detectedLocale = selectLocales[locale.index].value
+        emitter.emit('i18n', detectedLocale);
+        store.dispatch("SettingsStore/setLocale", {locale: detectedLocale});
+        selected.value = detectedLocale;
         open.value = false;
     }
 </script>
-
 
 <template>
     <ui-menu-anchor
@@ -64,11 +60,18 @@
         </ui-button>
         <ui-menu
             v-model="open"
-            style="border: 1px solid #C7088E;"
+            style="border: 1px solid #C7088E; color: black;"
             position="BOTTOM_START"
-            :items="localesRef"
             @selected="onSelected"
-        />
+        >
+            <ui-menuitem
+                v-for="item in selectLocales"
+                :key="item.value"
+                :value="item.value"
+            >
+                {{ item.label }}
+            </ui-menuitem>
+        </ui-menu>
     </ui-menu-anchor>
     <ui-menu-anchor
         v-else
@@ -89,11 +92,9 @@
             <ui-menuitem
                 v-for="locale in selectLocales"
                 :key="locale.value"
-                :value="locale.value"
+                :value="locale.label"
             >
-                <ui-menuitem-text>
-                    {{ locale.label }}
-                </ui-menuitem-text>
+                {{ locale.label }}
             </ui-menuitem>
         </ui-menu>
     </ui-menu-anchor>

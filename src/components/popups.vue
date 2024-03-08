@@ -1,5 +1,6 @@
 <script setup>
-    import { computed } from "vue";
+    import { computed, watchEffect, ref } from "vue";
+    import { ipcRenderer } from 'electron';
     import queryString from "query-string";
     import { useI18n } from 'vue-i18n';
     import getBlockchainAPI from "../lib/blockchains/blockchainFactory";
@@ -39,72 +40,70 @@
         return decoded;
     }
 
-    let type = computed(() => {
-        return handleProp('type');
-    });
+    let type = ref();
+    let toSend = ref();
+    let chain = ref();
+    let accountName = ref();
+    let target = ref();
+    let warning = ref();
+    let visualizedAccount = ref();
+    let visualizedParams = ref();
+    let request = ref();
+    let moreRequest = ref();
+    let payload = ref();
+    let accounts = ref();
+    let existingLinks = ref();
 
-    let toSend = computed(() => {
-        return handleProp('toSend');
-    });
+    watchEffect(() => {
+        const id = handleProp('id');
 
-    let chain = computed(() => {
-        return handleProp('chain');
-    });
+        ipcRenderer.send(`get:prompt:${id}`);
 
-    let accountName = computed(() => {
-        return handleProp('accountName');
-    });
-
-    let target = computed(() => {
-        return handleProp('target');
-    });
-
-    let warning = computed(() => {
-        let thisWarning = handleProp('warning');
-        return thisWarning
-    });
-
-    let visualizedAccount = computed(() => {
-        return handleProp('visualizedAccount');
-    });
-
-    let visualizedParams = computed(() => {
-        return handleProp('visualizedParams');
-    });
-
-    let request = computed(() => {
-        let req = handleProp('request');
-        return req ? JSON.parse(req) : null;
-    });
-
-    let moreRequest = computed(() => {
-        let req = handleProp('request');
-        return req ? JSON.stringify(JSON.parse(req), undefined, 4) : null;
-    });
-
-    let payload = computed(() => {
-        let req = handleProp('payload');
-        return req ? JSON.parse(req) : null;
-    });
-
-    let accounts = computed(() => {
-        let req = handleProp('accounts');
-        let parsedReq = req ? JSON.parse(req) : null;
-
-        let request = handleProp('request')
-        let parsedRequest = request ? JSON.parse(request) : null;
-
-        let filteredAccounts = parsedReq.filter(account => parsedRequest.payload.chain === account.chain);
-        return filteredAccounts;
-    });
-
-    let existingLinks = computed(() => {
-        let req = handleProp('existingLinks');
-        return req ? JSON.parse(req) : null;
-    });
+        ipcRenderer.on(`respond:prompt:${id}`, (event, data) => {
+            if (data.type) {
+                type.value = data.type;
+            }
+            if (data.toSend) {
+                toSend.value = data.toSend;
+            }
+            if (data.chain) {
+                chain.value = data.chain;
+            }
+            if (data.accountName) {
+                accountName.value = data.accountName;
+            }
+            if (data.target) {
+                target.value = data.target;
+            }
+            if (data.warning) {
+                warning.value = data.warning;
+            }
+            if (data.visualizedAccount) {
+                visualizedAccount.value = data.visualizedAccount;
+            }
+            if (data.visualizedParams) {
+                visualizedParams.value = data.visualizedParams;
+            }
+            if (data.request) {
+                request.value = data.request;
+                moreRequest.value = JSON.stringify(data.request, undefined, 4);
+            }
+            if (data.payload) {
+                payload.value = JSON.parse(data.payload);
+            }
+            if (data.accounts && data.request) {
+                const parsedAccounts = data.accounts;
+                const parsedRequest = data.request;
+                const filteredAccounts = parsedAccounts.filter(account => parsedRequest.payload.chain === account.chain);
+                accounts.value = filteredAccounts;
+            }
+            if (data.existingLinks) {
+                existingLinks.value = JSON.parse(data.existingLinks);
+            }
+        });
+    })
 
     let chainOperations = computed(() => {
-
         let thisType = type.value ?? payload.value?.type;
         if (thisType !== Actions.REQUEST_LINK) {
             return [];
@@ -151,7 +150,10 @@
 </script>
 
 <template>
-    <div v-if="type && type !== '' && request">
+    <div
+        v-if="type && type !== '' && request"
+        style="overflow-y: auto; width: 750px;"
+    >
         <ui-collapse
             with-icon
             ripple
@@ -161,33 +163,43 @@
                 <div>{{ t('common.popup.preview') }}</div>
             </template>
             <LinkRequestPopup
-                v-if="type === Actions.REQUEST_LINK"
+                v-if="type === Actions.REQUEST_LINK && request && accounts"
                 :request="request"
                 :accounts="accounts"
                 :existing-links="existingLinks"
             />
             <ReLinkRequestPopup
-                v-else-if="type === Actions.REQUEST_RELINK"
+                v-else-if="type === Actions.REQUEST_RELINK && request && accounts"
                 :request="request"
                 :accounts="accounts"
             />
             <IdentityRequestPopup
-                v-else-if="type === Actions.GET_ACCOUNT"
+                v-else-if="type === Actions.GET_ACCOUNT && request && accounts"
                 :request="request"
                 :accounts="accounts"
             />
             <GenericRequestPopup
-                v-else-if="type === Actions.VOTE_FOR"
+                v-else-if="type === Actions.VOTE_FOR && request && payload"
                 :request="request"
                 :payload="payload"
             />
             <SignMessageRequestPopup
-                v-else-if="type === Actions.SIGN_MESSAGE || type === Actions.SIGN_NFT"
+                v-else-if="
+                    (type === Actions.SIGN_MESSAGE || type === Actions.SIGN_NFT)
+                        && request && accounts
+                "
                 :request="request"
                 :accounts="accounts"
             />
             <TransferRequestPopup
-                v-else-if="type === Actions.TRANSFER"
+                v-else-if="
+                    type === Actions.TRANSFER
+                        && request
+                        && chain
+                        && accountName
+                        && target
+                        && toSend
+                "
                 :request="request"
                 :chain="chain"
                 :account-name="accountName"
@@ -195,12 +207,21 @@
                 :warning="warning"
                 :to-send="toSend"
             />
-            <TransactionRequestPopup
-                v-else-if="type === Actions.REQUEST_SIGNATURE || type === Actions.INJECTED_CALL"
-                :request="request"
-                :visualized-params="visualizedParams"
-                :visualized-account="visualizedAccount"
-            />
+            <div
+                v-else-if="
+                    (type === Actions.REQUEST_SIGNATURE || type === Actions.INJECTED_CALL)
+                        && request
+                        && visualizedParams
+                        && visualizedAccount
+                "
+                style="overflow-y: auto; padding-right: 25px;"
+            >
+                <TransactionRequestPopup
+                    :request="request"
+                    :visualized-params="visualizedParams"
+                    :visualized-account="visualizedAccount"
+                />
+            </div>
         </ui-collapse>
         <ui-collapse
             v-if="type === Actions.REQUEST_LINK && chainOperations"

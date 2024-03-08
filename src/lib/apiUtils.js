@@ -148,13 +148,15 @@ export async function getAccount(request) {
  * @param {Object} request
  * @param {Promise} resolve
  * @param {Promise} reject
+ * @param {Object} receipt
  * @returns {Object}
  */
 async function _signOrBroadcast(
   blockchain,
   request,
   resolve,
-  reject
+  reject,
+  receipt = null
 ) {
   let finalResult;
   let notifyTXT = "";
@@ -211,6 +213,22 @@ async function _signOrBroadcast(
   }
 
   store.dispatch("WalletStore/notifyUser", {notify: "request", message: notifyTXT});
+
+  if (receipt) {
+    try {
+        ipcRenderer.send(
+            'createReceipt',
+            {
+                request: request,
+                result: finalResult,
+                notifyTXT: notifyTXT,
+                receipt: receipt
+            }
+        );
+    } catch (error) {
+        console.log(error)
+    }
+  }
 
   return resolve({result: finalResult});
 }
@@ -362,10 +380,10 @@ export async function injectedCall(request, blockchain) {
         return _promptFail("injectedCall", request.id, request, reject);
     }
 
-    let popupContents = {
+    const popupContents = {
         request: request,
         visualizedAccount: visualizedAccount || account.accountName,
-        visualizedParams: visualizedParams
+        visualizedParams: JSON.stringify(visualizedParams)
     };
 
     if (foundIDs.length) {
@@ -379,11 +397,15 @@ export async function injectedCall(request, blockchain) {
         popupContents['serverError'] = true;
     }
 
+    try {
+        ipcRenderer.send('createPopup', popupContents);
+    } catch (error) {
+        return _promptFail("injectedCall", request.id, request, reject);
+    }
+
     store.dispatch("WalletStore/notifyUser", {notify: "request", message: window.t('common.apiUtils.inject')});
 
-    ipcRenderer.send('createPopup', popupContents);
-
-    ipcRenderer.once(`popupApproved_${request.id}`, async (event, result) => {
+    ipcRenderer.once(`popupApproved_${request.id}`, async (event, args) => {
         let memoObject;
         let reference = request;
         if (request.payload.memo) {
@@ -415,7 +437,18 @@ export async function injectedCall(request, blockchain) {
             reference.payload.memo = memoObject;
         }
 
-        return _signOrBroadcast(blockchain, reference, resolve, reject);
+        return _signOrBroadcast(
+            blockchain,
+            reference,
+            resolve,
+            reject,
+            args?.result?.receipt
+                ? {
+                    visualizedAccount: popupContents.visualizedAccount,
+                    visualizedParams: popupContents.visualizedParams
+                }
+                : null
+        );
     })
 
     ipcRenderer.once(`popupRejected_${request.id}`, (event, result) => {

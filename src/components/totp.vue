@@ -187,7 +187,14 @@
             return;
         }
 
-        if (!request) {
+        if (
+            !request
+            || !request.id
+            || !request.payload
+            || !request.payload.chain
+            || !request.payload.method
+            || request.payload.method === Actions.INJECTED_CALL && !request.payload.params
+        ) {
             console.log('invalid request format')
             deepLinkInProgress.value = false;
             return;
@@ -258,7 +265,7 @@
             let authorizedUse = false;
             for (let i = 0; i < tr.operations.length; i++) {
                 let operation = tr.operations[i];
-                if (settingsRows.value.includes(operation[0])) {
+                if (settingsRows.value && settingsRows.value.includes(operation[0])) {
                     authorizedUse = true;
                     break;
                 }
@@ -337,21 +344,21 @@
                 >
                     <span v-if="!opPermissions">
                         <p>
-                            Do you wish to configure the scope of incoming deeplinks?
+                            {{ t('common.opPermissions.title.totp') }}
                         </p>
                         <ui-button
                             raised
                             style="margin-right:5px; margin-bottom: 5px;"
                             @click="setScope('Configure')"
                         >
-                            Yes - customize scope
+                            {{ t('common.opPermissions.yes') }}
                         </ui-button>
                         <ui-button
                             raised
                             style="margin-right:5px; margin-bottom: 5px;"
                             @click="setScope('AllowAll')"
                         >
-                            No - allow all operations
+                            {{ t('common.opPermissions.no') }}
                         </ui-button>
                     </span>
                     <span v-else-if="opPermissions == 'Configure' && !selectedRows">

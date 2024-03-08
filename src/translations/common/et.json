@@ -24,7 +24,7 @@
       "vote": "Hääletusviis",
       "signNFT": "NFT allkirja taotlus",
       "signMessage": "Taotlege allkirjastatud sõnumit",
-      "transfer": "Märgi ülekandmise taotlus",
+      "transfer": "Tokenite ülekandmise taotlus",
       "transferComplete": "Tehingu ülekanne edastati edukalt.",
       "msgVerify": "Sõnumi kinnitamine",
       "getAccount": "Rakendus, mis taotleb teavet ühe teie konto kohta."
@@ -53,6 +53,16 @@
       "warning": "Ärge jagage ülaltoodud koodi kellegagi",
       "inProgress": "Süvalinki töödeldakse"
     },
+    "opPermissions": {
+      "title": {
+        "local": "Kas soovite konfigureerida skannitavate JSON-failide ulatust?",
+        "qr": "Kas soovite konfigureerida skannitavate QR-koodide ulatust?",
+        "rawLink": "Kas soovite konfigureerida sissetulevate toores sügavlinkide ulatust?",
+        "totp": "Kas soovite konfigureerida sissetulevate süvalinkide ulatust?"
+      },
+      "yes": "Jah – kohandage ulatust",
+      "no": "Ei – lubage kõik toimingud"
+    },
     "qr": {
       "label": "QR-koodi skanner",
       "main": {
@@ -77,10 +87,22 @@
       "promptSuccess": "QR-skannitud toimingu edastamine õnnestus",
       "promptFailure": "Midagi läks skannitud QR-ga valesti"
     },
+    "local": {
+      "label": "Kohalik faili op skanner",
+      "upload": "Laadige üles pakutud toimingu JSON-fail",
+      "exit": "Välju kohaliku faili lehelt",
+      "failed": "JSON-i töötlemine ebaõnnestus",
+      "back": "tagasi",
+      "progress": "Kohaliku faili töötlemine",
+      "unsupported": "Vabandust, see kett ei toeta veel kohalikku failituge.",
+      "promptSuccess": "Skaneeritud toimingu edastamine õnnestus",
+      "promptFailure": "Midagi läks skannitud failiga valesti"
+    },
     "actionBar": {
       "Home": "Kodu",
       "New": "Uus",
       "TOTP": "TOTP",
+      "Local": "Kohalik",
       "RAW": "Toores link",
       "QR": "QR",
       "Settings": "Seaded",
@@ -89,9 +111,16 @@
       "Logout": "Logi välja"
     },
     "popup": {
+      "keywords": {
+        "request": "Operatsiooni taotlus",
+        "result": "Operatsiooni tulemus"
+      },
       "preview": "Kiire eelvaade",
-      "request": "Kuva taotlus JSON",
+      "evaluate": "Hinnake kiiret tulemust",
       "payload": "Kuva kasuliku koormuse JSON",
+      "request": "Kuva taotlus JSON",
+      "result": "Kuva võrgutulemuse JSON",
+      "details": "Vaata detaile",
       "language": "Keel",
       "chainOperations": "Aheloperatsioonid"
     },
@@ -139,7 +168,7 @@
     "tooltip_chain_cta": "Täiendavaid kontosid saate lisada ka hiljem teistest plokiahelatest, valige selle konto plokiahel, mida soovite kohe importida",
     "walletname_placeholder": "Rahakoti nimi",
     "chain_placeholder": "Keti nimi",
-    "select_chain": "Vali kett:",
+    "select_chain": "Valige kett:",
     "cancel_btn": "Tühista",
     "next_btn": "Edasi",
     "error_text": "Ilmnes viga, kontrollige oma parooli ja proovige uuesti.",
@@ -177,7 +206,7 @@
     "account_details_address_lbl": "Aadress",
     "account_details_id_lbl": "ID",
     "account_details_explorer_lbl": "Explorer",
-    "balances_lbl": "Tasakaalud",
+    "balances_lbl": "Saldo",
     "balances_error": "Viga saldode laadimisel",
     "settings_lbl": "Seaded",
     "error_lbl": "Viga",
@@ -197,6 +226,6 @@
     "backup_lbl": "Varundage oma rahakott",
     "backup_btn": "Laadige alla Backup",
     "backup_txt": "Kõigi rahakotivõtmetega krüptitud faili salvestamiseks klõpsake alloleval nupul „Laadi varukoopia alla”. ",
-    "tooltip_lock": "Klõpsake selle rahakoti lukustamiseks/väljalogimiseks ja naasmiseks rahakoti valikukuvale.",
+    "tooltip_lock": "Klõpsake selle rahakoti lukustamiseks / väljalogimiseks ja naasmiseks rahakoti valikukuvale.",
     "tooltip_refresh": "Ühendage uuesti plokiahelaga ja värskendage konto saldot"
   }
