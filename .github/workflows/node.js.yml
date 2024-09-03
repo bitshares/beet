@@ -90,32 +90,32 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Download exe
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4.1.7
       with:
         name: BeetSetup.exe
         path: ~/
     - name: Download exe blockmap
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4.1.7
       with:
         name: BeetSetup.exe.blockmap
         path: ~/
     - name: Download latest yml
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4.1.7
       with:
         name: latest.yml
         path: ~/
     - name: Download dmg
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4.1.7
       with:
         name: BeetSetup.dmg
         path: ~/
     - name: Download deb
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4.1.7
       with:
         name: BeetSetup.deb
         path: ~/
     - name: Download AppImage
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4.1.7
       with:
         name: BeetSetup.AppImage
         path: ~/
