@@ -62,7 +62,7 @@
     "lzma": "^2.3.2",
     "mitt": "^3.0.0",
     "otpauth": "^8.0.1",
-    "query-string": "^7.1.1",
+    "query-string": "^9.5.0",
     "simple-websocket": "^9.1.0",
     "socket.io": "^4.8.0",
     "typeface-rajdhani": "1.1.13",
