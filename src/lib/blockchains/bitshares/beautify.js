@@ -1,4 +1,4 @@
-import { formatAsset, humanReadableFloat } from "../../assetUtils";
+import { formatAsset, humanReadableFloat } from "../../assetUtils.js";
 
 const permission_flags = {
     charge_market_fee: 0x01 /**< an issuer-specified percentage of all market trades in this asset is paid to the issuer */,
@@ -297,8 +297,7 @@ export default async function beautify(
                             _feeAsset.precision
                         ),
                     },
-                },
-                ,
+                }
             ];
         }
     } else if (opType == 5) {
@@ -433,8 +432,7 @@ export default async function beautify(
                             _feeAsset.precision
                         ),
                     },
-                },
-                ,
+                }
             ];
         }
     } else if (opType == 6) {
@@ -485,8 +483,7 @@ export default async function beautify(
                             _feeAsset.precision
                         ),
                     },
-                },
-                ,
+                }
             ];
         }
     } else if (opType == 7) {
@@ -630,7 +627,7 @@ export default async function beautify(
             ];
         }
     } else if (opType == 10 || opType == 11) {
-        // Create or Update an asset
+        // asset_create & asset_update
         let asset =
             opType === 11
                 ? assetResults.find(
@@ -1167,7 +1164,7 @@ export default async function beautify(
     } else if (opType == 18) {
         // asset_global_settle
         let issuer = accountResults.find(
-            (resAcc) => resAcc.id === opContents.account
+            (resAcc) => resAcc.id === opContents.issuer
         ).accountName;
         let assetToSettle = assetResults.find(
             (assRes) => assRes.id === opContents.asset_to_settle
@@ -1184,8 +1181,9 @@ export default async function beautify(
         );
 
         if (issuer && assetToSettle && baseAsset && quoteAsset) {
-            let price =
-                humanReadableFloat(
+            let price = opContents.settle_price.quote.amount === 0 || opContents.settle_price.quote.amount === "0"
+                ? 0
+                : humanReadableFloat(
                     opContents.settle_price.base.amount,
                     baseAsset.precision
                 ) /
@@ -1197,7 +1195,7 @@ export default async function beautify(
             currentOperation["rows"] = [
                 {
                     key: "issuer",
-                    params: { issuer: issuer, issuerOP: opContents.account },
+                    params: { issuer: issuer, issuerOP: opContents.issuer },
                 },
                 {
                     key: "asset_to_settle",
@@ -1236,25 +1234,28 @@ export default async function beautify(
         );
 
         if (publisher && baseAsset && quoteAsset) {
-            let coreExchangeRate =
-                humanReadableFloat(
-                    opContents.feed.core_exchange_rate.base.amount,
-                    baseAsset.precision
-                ) /
-                humanReadableFloat(
-                    opContents.feed.core_exchange_rate.quote.amount,
-                    quoteAsset.precision
-                );
+            let coreExchangeRate = opContents.feed.core_exchange_rate.quote.amount === 0 || opContents.feed.core_exchange_rate.quote.amount === "0" ||
+                                   opContents.feed.core_exchange_rate.base.amount === 0 || opContents.feed.core_exchange_rate.base.amount === "0"
+                                    ? 0
+                                    : humanReadableFloat(
+                                        opContents.feed.core_exchange_rate.base.amount,
+                                        baseAsset.precision
+                                    ) /
+                                    humanReadableFloat(
+                                        opContents.feed.core_exchange_rate.quote.amount,
+                                        quoteAsset.precision
+                                    );
 
-            let settlementPrice =
-                humanReadableFloat(
-                    opContents.feed.settlement_price.base.amount,
-                    baseAsset.precision
-                ) /
-                humanReadableFloat(
-                    opContents.feed.settlement_price.quote.amount,
-                    quoteAsset.precision
-                );
+            let settlementPrice = opContents.feed.settlement_price.quote.amount === 0 || opContents.feed.settlement_price.quote.amount === "0"
+                                    ? 0
+                                    : humanReadableFloat(
+                                        opContents.feed.settlement_price.base.amount,
+                                        baseAsset.precision
+                                    ) /
+                                    humanReadableFloat(
+                                        opContents.feed.settlement_price.quote.amount,
+                                        quoteAsset.precision
+                                    );
 
             currentOperation["rows"] = [
                 {
@@ -2082,8 +2083,7 @@ export default async function beautify(
                         _feeAsset.precision
                     ),
                 },
-            },
-            ,
+            }
         ];
     } else if (opType == 32) {
         // vesting_balance_create
@@ -2507,8 +2507,7 @@ export default async function beautify(
                         _feeAsset.precision
                     ),
                 },
-            },
-            ,
+            }
         ];
     } else if (opType == 41) {
         // transfer_from_blind
@@ -2606,9 +2605,16 @@ export default async function beautify(
         }
     } else if (opType == 45) {
         // bid_collateral
-        let bidder = accountResults.find((resAcc) => resAcc.id === opContents.bidder).accountName;
-        let collateral = assetResults.find((assRes) => assRes.id === opContents.additional_collateral.asset_id);
-        let debtCovered = assetResults.find((assRes) => assRes.id === opContents.debt_covered.asset_id);
+        let bidder = accountResults.find(
+            (resAcc) => resAcc.id === opContents.bidder
+        ).accountName;
+        let collateral = assetResults.find(
+            (assRes) => assRes.id === opContents.additional_collateral.asset_id
+        );
+        let debtCovered = assetResults.find(
+            (assRes) => assRes.id === opContents.debtCovered.asset_id
+        );
+
         let _feeAsset = assetResults.find(
             (assRes) => assRes.id === opContents.fee.asset_id
         );
@@ -3829,8 +3835,8 @@ export default async function beautify(
             (assRes) => assRes.id === opContents.fee.asset_id
         );
 
-        if (ownerAccount && deltaAmount) {
-            currentOperation["rows"] = [
+        if (ownerAccount) {
+            const _temp = [
                 {
                     key: "owner_account",
                     params: {
@@ -3839,16 +3845,6 @@ export default async function beautify(
                     },
                 },
                 { key: "offer_id", params: { offer_id: opContents.offer_id } },
-                {
-                    key: "delta_amount",
-                    params: {
-                        delta_amount: formatAsset(
-                            opContents.delta_amount.amount,
-                            deltaAmount.symbol,
-                            deltaAmount.precision
-                        ),
-                    },
-                },
                 { key: "fee_rate", params: { fee_rate: opContents.fee_rate } },
                 {
                     key: "max_duration_seconds",
@@ -3900,6 +3896,21 @@ export default async function beautify(
                     },
                 },
             ];
+            if (deltaAmount) {
+                _temp.push(
+                    {
+                        key: "delta_amount",
+                        params: {
+                            delta_amount: formatAsset(
+                                opContents.delta_amount.amount,
+                                deltaAmount.symbol,
+                                deltaAmount.precision
+                            ),
+                        },
+                    }
+                )
+            }
+            currentOperation["rows"] = _temp;
         }
     } else if (opType == 72) {
         // credit_offer_accept
