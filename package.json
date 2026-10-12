@@ -85,7 +85,7 @@
     "electron": "^24.2.0",
     "electron-builder": "^26.15.3",
     "eslint": "^8.20.0",
-    "eslint-plugin-vue": "^9.2.0",
+    "eslint-plugin-vue": "^10.11.1",
     "file-loader": "^6.2.0",
     "sass": "^1.53.0",
     "sass-loader": "^13.0.2",
