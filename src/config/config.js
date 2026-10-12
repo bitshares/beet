@@ -8,10 +8,7 @@ let _blockchains = {
                 url: "wss://node.xbts.io/ws"
             },
              {
-                url: "wss://api.bts.mobi/ws"
-            },
-            {
-                url: "wss://nexus01.co.uk/ws"
+                url: "wss://api.bitshares.dev/ws"
             },
             {
                 url: "wss://dex.iobanker.com/ws"
@@ -20,7 +17,7 @@ let _blockchains = {
                 url: "wss://api.dex.trading/"
             },
             {
-                url: "wss://api.bitshares.bhuz.info/ws"
+                url: "wss://api.btslebin.com/ws"
             },
             {
                 url: "wss://btsws.roelandp.nl/ws"
@@ -38,19 +35,13 @@ let _blockchains = {
             },
             {
                 url: "wss://testnet.dex.trading/"
-            },
-            {
-                url: "wss://api-testnet.61bts.com/ws"
-            },
-            {
-                url: "wss://testnet.bitshares.im/ws"
-            },
-            {
-                url: "wss://eu.nodes.testnet.bitshares.ws/"
+            //},
+            //{
+            //    url: "wss://eu.nodes.testnet.bitshares.ws/"
             }
         ]
     },
-    TUSC: {
+    /*TUSC: {
         coreSymbol: 'TUSC',
         name: 'The Universal Settlement Coin',
         chainId: 'eb938e2a955e39e335120d0a99f3b9f8c04a9ed5690275ea5037d6bbadfc6cf3',
@@ -68,7 +59,7 @@ let _blockchains = {
                 url: "wss://api.readyrhino.one"
             }
         ]
-    },
+    },*/
     BTC: {
         coreSymbol: 'BTC',
         name: 'Bitcoin',
